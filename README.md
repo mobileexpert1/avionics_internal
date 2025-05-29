@@ -1,4 +1,4 @@
-# avionica_internal
+# avionics_internal
 
 A new Flutter project.
 

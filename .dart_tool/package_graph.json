@@ -1,10 +1,10 @@
 {
   "roots": [
-    "avionica_internal"
+    "avionics_internal"
   ],
   "packages": [
     {
-      "name": "avionica_internal",
+      "name": "avionics_internal",
       "version": "1.0.0+1",
       "dependencies": [
         "cupertino_icons",

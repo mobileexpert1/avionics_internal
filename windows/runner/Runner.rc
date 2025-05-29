@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "avionica_internal" "\0"
+            VALUE "FileDescription", "avionics_internal" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "avionica_internal" "\0"
+            VALUE "InternalName", "avionics_internal" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "avionica_internal.exe" "\0"
-            VALUE "ProductName", "avionica_internal" "\0"
+            VALUE "OriginalFilename", "avionics_internal.exe" "\0"
+            VALUE "ProductName", "avionics_internal" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

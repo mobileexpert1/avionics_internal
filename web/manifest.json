@@ -1,6 +1,6 @@
 {
-    "name": "avionica_internal",
-    "short_name": "avionica_internal",
+    "name": "avionics_internal",
+    "short_name": "avionics_internal",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -164,7 +164,7 @@
       "languageVersion": "3.3"
     },
     {
-      "name": "avionica_internal",
+      "name": "avionics_internal",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.8"
