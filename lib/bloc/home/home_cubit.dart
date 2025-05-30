@@ -4,5 +4,4 @@ import '../../Constants/Validators.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeState());
-
 }

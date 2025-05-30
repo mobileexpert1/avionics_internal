@@ -26,8 +26,14 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   void confirmPasswordChanged(String confirmPassword) {
-    final error = Validators().validateConfirmPassword(state.password, confirmPassword);
-    _emitUpdatedState(confirmPassword: confirmPassword, confirmPasswordError: error);
+    final error = Validators().validateConfirmPassword(
+      state.password,
+      confirmPassword,
+    );
+    _emitUpdatedState(
+      confirmPassword: confirmPassword,
+      confirmPasswordError: error,
+    );
   }
 
   void _emitUpdatedState({
@@ -48,24 +54,29 @@ class SignupCubit extends Cubit<SignupState> {
     final newPassword = password ?? state.password;
     final newConfirmPassword = confirmPassword ?? state.confirmPassword;
 
-    final updatedFirstNameError = firstNameError ?? Validators().validateName(newFirstName);
-    final updatedLastNameError = lastNameError ?? Validators().validateName(newLastName);
-    final updatedEmailError = emailError ?? Validators().validateEmail(newEmail);
-    final updatedPasswordError = passwordError ?? Validators().validatePassword(newPassword);
-    final updatedConfirmPasswordError = confirmPasswordError ??
+    final updatedFirstNameError =
+        firstNameError ?? Validators().validateName(newFirstName);
+    final updatedLastNameError =
+        lastNameError ?? Validators().validateName(newLastName);
+    final updatedEmailError =
+        emailError ?? Validators().validateEmail(newEmail);
+    final updatedPasswordError =
+        passwordError ?? Validators().validatePassword(newPassword);
+    final updatedConfirmPasswordError =
+        confirmPasswordError ??
         Validators().validateConfirmPassword(newPassword, newConfirmPassword);
 
     final isValid =
         updatedFirstNameError == null &&
-            updatedLastNameError == null &&
-            updatedEmailError == null &&
-            updatedPasswordError == null &&
-            updatedConfirmPasswordError == null &&
-            newFirstName.isNotEmpty &&
-            newLastName.isNotEmpty &&
-            newEmail.isNotEmpty &&
-            newPassword.isNotEmpty &&
-            newConfirmPassword.isNotEmpty;
+        updatedLastNameError == null &&
+        updatedEmailError == null &&
+        updatedPasswordError == null &&
+        updatedConfirmPasswordError == null &&
+        newFirstName.isNotEmpty &&
+        newLastName.isNotEmpty &&
+        newEmail.isNotEmpty &&
+        newPassword.isNotEmpty &&
+        newConfirmPassword.isNotEmpty;
 
     emit(
       state.copyWith(

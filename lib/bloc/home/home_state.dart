@@ -1,3 +1,1 @@
-class HomeState {
-
-}
+class HomeState {}
