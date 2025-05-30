@@ -1,9 +1,11 @@
 import 'package:avionics_internal/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'SignupScreen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
+import 'package:avionics_internal/bloc/forgotPassword/forgot_cubit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +21,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SignupCubit()),
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => LoginCubit()),
+        BlocProvider(create: (_) => ForgotCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
