@@ -17,7 +17,8 @@ class CreateNewPasswordScreen extends StatefulWidget {
 
 class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -32,7 +33,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => CreateNewPasswordCubit(),
+      create: (_) => CreatenNewPasswordCubit(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -57,7 +58,11 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                 const SizedBox(height: 30),
 
                 /// Password Field
-                BlocSelector<CreateNewPasswordCubit, CreateNewPasswordState, String?>(
+                BlocSelector<
+                  CreatenNewPasswordCubit,
+                  CreateNewPasswordState,
+                  String?
+                >(
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
                     return CustomTextField(
@@ -65,7 +70,9 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       controller: passwordController,
                       errorText: passwordError,
                       obscureText: _obscurePassword,
-                      onChanged: (val) => context.read<CreateNewPasswordCubit>().passwordChanged(val),
+                      onChanged: (val) => context
+                          .read<CreatenNewPasswordCubit>()
+                          .passwordChanged(val),
                     );
                   },
                 ),
@@ -73,7 +80,11 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                 const SizedBox(height: 15),
 
                 /// Confirm Password Field
-                BlocSelector<CreateNewPasswordCubit, CreateNewPasswordState, String?>(
+                BlocSelector<
+                  CreatenNewPasswordCubit,
+                  CreateNewPasswordState,
+                  String?
+                >(
                   selector: (state) => state.confirmPasswordError,
                   builder: (context, confirmPasswordError) {
                     return CustomTextField(
@@ -81,15 +92,21 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       controller: confirmPasswordController,
                       errorText: confirmPasswordError,
                       obscureText: _obscureConfirmPassword,
-                      onChanged: (val) => context.read<CreateNewPasswordCubit>().confirmPasswordChanged(val),
+                      onChanged: (val) => context
+                          .read<CreatenNewPasswordCubit>()
+                          .confirmPasswordChanged(val),
                     );
                   },
                 ),
 
                 const SizedBox(height: 30),
 
-                /// Submit Button
-                BlocSelector<CreateNewPasswordCubit, CreateNewPasswordState, bool>(
+                // Submit Button
+                BlocSelector<
+                  CreatenNewPasswordCubit,
+                  CreateNewPasswordState,
+                  bool
+                >(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
@@ -99,10 +116,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       icon: const SizedBox(width: 0),
                       isEnabled: isButtonEnabled,
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
+                        Navigator.pop(context);
                       },
                     );
                   },

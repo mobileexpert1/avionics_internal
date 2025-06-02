@@ -1,6 +1,9 @@
+import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Onboarding/splash_screen.dart';
+import 'Subscription/SubscriptionScreen.dart';
+import 'bloc/Subscription/subscription_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -15,21 +18,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => SignupCubit()),
-        BlocProvider(create: (_) => HomeCubit()),
-        BlocProvider(create: (_) => LoginCubit()),
-        BlocProvider(create: (_) => ForgotCubit()),
-      ],
-      child: MaterialApp(
+    return  MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: BlocProvider(
+          create: (context) => SubscriptionCubit(),
+          child: const SubscriptionScreen(),
         ),
-        home: SplashScreen(),
-      ),
-    );
+      );
   }
 }

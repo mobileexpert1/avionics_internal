@@ -1,61 +1,55 @@
+import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'createNewPassword_state.dart';
 import '../../Constants/Validators.dart';
 
-class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
-  CreateNewPasswordCubit() : super(CreateNewPasswordState());
+class CreatenNewPasswordCubit extends Cubit<CreateNewPasswordState> {
+  CreatenNewPasswordCubit() : super(CreateNewPasswordState());
 
   void passwordChanged(String password) {
-    final passwordError = Validators().validatePassword(password);
-    final confirmPasswordError = Validators().validateConfirmPassword(
-      password,
-      state.confirmPassword,
-    );
-
-    final isValid = _isFormValid(
-      password,
-      state.confirmPassword,
-      passwordError,
-      confirmPasswordError,
-    );
-
-    emit(state.copyWith(
-      password: password,
-      passwordError: passwordError,
-      confirmPasswordError: confirmPasswordError,
-      isButtonEnabled: isValid,
-    ));
+    final error = Validators().validatePassword(password);
+    _emitUpdatedState(password: password, passwordError: error);
   }
 
   void confirmPasswordChanged(String confirmPassword) {
-    final confirmPasswordError = Validators().validateConfirmPassword(
+    final error = Validators().validateConfirmPassword(
       state.password,
       confirmPassword,
     );
-
-    final isValid = _isFormValid(
-      state.password,
-      confirmPassword,
-      state.passwordError,
-      confirmPasswordError,
-    );
-
-    emit(state.copyWith(
+    _emitUpdatedState(
       confirmPassword: confirmPassword,
-      confirmPasswordError: confirmPasswordError,
-      isButtonEnabled: isValid,
-    ));
+      confirmPasswordError: error,
+    );
   }
 
-  bool _isFormValid(
-      String password,
-      String confirmPassword,
-      String? passwordError,
-      String? confirmPasswordError,
-      ) {
-    return passwordError == null &&
-        confirmPasswordError == null &&
-        password.isNotEmpty &&
-        confirmPassword.isNotEmpty;
+  void _emitUpdatedState({
+    String? password,
+    String? confirmPassword,
+    String? passwordError,
+    String? confirmPasswordError,
+  }) {
+    final newPassword = password ?? state.password;
+    final newConfirmPassword = confirmPassword ?? state.confirmPassword;
+
+    final updatedPasswordError =
+        passwordError ?? Validators().validatePassword(newPassword);
+    final updatedConfirmPasswordError =
+        confirmPasswordError ??
+            Validators().validateConfirmPassword(newPassword, newConfirmPassword);
+
+    final isValid =
+            updatedPasswordError == null &&
+            updatedConfirmPasswordError == null &&
+            newPassword.isNotEmpty &&
+            newConfirmPassword.isNotEmpty;
+
+    emit(
+      state.copyWith(
+        password: newPassword,
+        confirmPassword: newConfirmPassword,
+        passwordError: updatedPasswordError,
+        confirmPasswordError: updatedConfirmPasswordError,
+        isButtonEnabled: isValid,
+      ),
+    );
   }
 }

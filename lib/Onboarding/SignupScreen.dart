@@ -40,6 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: Wrap(),
           title: Text(OnboardingTexts.CreateAccount),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,

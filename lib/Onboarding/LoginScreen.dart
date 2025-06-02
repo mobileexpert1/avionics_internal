@@ -34,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: Wrap(),
           title: Text(OnboardingTexts.titleLogin),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
