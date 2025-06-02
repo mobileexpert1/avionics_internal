@@ -1,6 +1,8 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
+import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomBottomButton.dart';
 import 'LoginScreen.dart';
 import 'SignupScreen.dart';
 
@@ -68,25 +70,20 @@ class StartExploringScreen extends StatelessWidget {
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1C1733),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
+                        child: CustomBottomButton(
+                          title: OnboardingTexts.CreateAccount,
+                          backgroundColor: const Color(0xFF1C1733),
+                          textColor: Colors.white,
+                          icon: const SizedBox(width: 0), // No icon shown
+                          isEnabled: true,
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SignupScreen()),
+                              MaterialPageRoute(
+                                builder: (context) => SignupScreen(),
+                              ),
                             );
                           },
-                          child: const Text(
-                            OnboardingTexts.CreateAccount,
-                            style: TextStyle(fontSize: 16,color: Colors.white,
-                            ),
-                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -110,7 +107,7 @@ class StartExploringScreen extends StatelessWidget {
                             OnboardingTexts.loginButton,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Color(0xFF1C1733),
+                              color: AppColors.LoginTxt,
                             ),
                           ),
                         ),

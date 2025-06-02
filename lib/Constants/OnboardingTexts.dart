@@ -38,6 +38,8 @@ class OnboardingTexts {
 
   static const String titleHome = "Home";
   static const String titleLogin = "Login";
+  static const String titleHome="Home";
+  static const String titleLogin="Login";
 
   static const String CreateAccount = 'Create your account';
   static const String firstNameLabel = 'First Name';
@@ -50,4 +52,12 @@ class OnboardingTexts {
 
   static const String createPasswordLabel = 'Create Password';
   static const String resetPassword = '  Reset Password';
+  static const String createPasswordLabel = 'Create Password';
+  static const String resetPassword = '  Reset Password';
+  static const String titleSubscription = "Start Subscription";
+  static const String resetPassword = 'Reset Password';
+
+  static const String Otptitle = 'Enter four digits';
+  static const String continuee = 'Continue';
+  static const String goBack = 'Go Back';
 }

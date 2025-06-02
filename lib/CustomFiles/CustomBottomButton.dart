@@ -39,7 +39,7 @@ class CustomBottomButton extends StatelessWidget {
         ),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
+          backgroundColor: effectiveBgColor, // FIXED HERE
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),

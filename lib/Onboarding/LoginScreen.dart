@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: Wrap(),
           title: Text(OnboardingTexts.titleLogin),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
@@ -146,9 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 SizedBox(height: 12),
-
                 CustomSocialLoginButtons(
-                  backgroundColor: Color(0xFF1877F2),
+                  backgroundColor: AppColors.facebookButton,
                   textColor: Colors.white,
                   title: OnboardingTexts.loginWithFacebook,
                   icon: SvgPicture.asset(
