@@ -1,5 +1,6 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
+import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomBottomButton.dart';
 import 'LoginScreen.dart';
@@ -106,7 +107,7 @@ class StartExploringScreen extends StatelessWidget {
                             OnboardingTexts.loginButton,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Color(0xFF1C1733),
+                              color: AppColors.LoginTxt,
                             ),
                           ),
                         ),

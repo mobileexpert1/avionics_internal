@@ -10,27 +10,26 @@ abstract class AssetsPath {
   static const String facebook = "Facebook";
   static const String google = "Google";
   static const String logoMain = "LogoMain";
-
+  static const String sliders = "Sliders";
+  static const String avionicaHome = "avionicahome";
+  static const String search = "search";
+  static const String comparsion = "Comparsion";
+  static const String selectModel = "SelectModel";
 
   // jpg images
   static const String explore = "explore";
+  static const String manufacture = "manufacture";
+
 
 }
 
 
 class CommonUi {
-  //
+
   static String setjpgImage(String image) {
-    // return 'assets/images/$image.png';
     return 'assets/jpg_images/$image.jpg';
 
   }
-  //
-  // static String setPngNavImage(String image) {
-  //   // return 'assets/images/$image.png';
-  //   return 'assets/navIcons/$image.png';
-  // }
-
   static String setSvgImage(String image) {
     return 'assets/svg_images/$image.svg';
 

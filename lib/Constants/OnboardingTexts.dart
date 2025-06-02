@@ -44,5 +44,12 @@ class OnboardingTexts {
 
   static const String exploring = 'Start Exploring';
   static const String createPasswordLabel = 'Create Password';
-  static const String resetPassword = '  Reset Password';
+  static const String resetPassword = 'Reset Password';
+
+
+  static const String Otptitle = 'Enter four digits';
+  static const String continuee = 'Continue';
+  static const String goBack = 'Go Back';
+
+
 }
