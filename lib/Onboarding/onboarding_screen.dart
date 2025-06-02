@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Onboarding/startExploringScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -130,7 +131,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Text(
                         OnboardingTexts.skip,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: AppColors.skip,
                           fontSize: size.width * 0.042,
                         ),
                       ),
@@ -152,7 +153,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Text(
                         OnboardingTexts.next,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: AppColors.next,
                           fontSize: size.width * 0.042,
                         ),
                       ),

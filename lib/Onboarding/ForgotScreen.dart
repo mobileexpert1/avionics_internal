@@ -1,5 +1,6 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:avionics_internal/Onboarding/CreateNewPasswordScreen.dart';
+import 'package:avionics_internal/Onboarding/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -74,7 +75,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()),
+                          MaterialPageRoute(builder: (context) => OtpScreen()),
                         );
                       },
                     );
