@@ -87,7 +87,7 @@
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///E:/Mobile/flutter_3.32/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///Applications/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -171,7 +171,7 @@
     },
     {
       "name": "pinput",
-      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/pinput-3.0.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/pinput-3.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -189,7 +189,7 @@
     },
     {
       "name": "smart_auth",
-      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/smart_auth-1.1.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/smart_auth-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.16"
     },
@@ -243,7 +243,7 @@
     },
     {
       "name": "universal_platform",
-      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/universal_platform-1.1.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/universal_platform-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },

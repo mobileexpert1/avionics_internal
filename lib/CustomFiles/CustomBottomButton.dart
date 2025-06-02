@@ -41,14 +41,7 @@ class CustomBottomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: effectiveBgColor, // FIXED HERE
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-            side: BorderSide(
-              color: backgroundColor == Colors.white
-                  ? Colors.grey.shade300 // or Color(0xFF1C1733) if you want it consistent
-                  : backgroundColor,
-            ),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
       ),
     );

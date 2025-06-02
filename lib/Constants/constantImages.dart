@@ -10,6 +10,10 @@ abstract class AssetsPath {
   static const String google = "Google";
   static const String logoMain = "LogoMain";
 
+  static const String starIcon = "StarIcon";
+  static const String trackIcon = "TrackIcon";
+  static const String tickIcon = "TickIcon";
+
   // jpg images
   static const String explore = "explore";
   static const String sliders = "Sliders";
@@ -19,10 +23,7 @@ abstract class AssetsPath {
   static const String selectModel = "SelectModel";
 
   // jpg images
-  static const String explore = "explore";
   static const String manufacture = "manufacture";
-
-
 }
 
 class CommonUi {

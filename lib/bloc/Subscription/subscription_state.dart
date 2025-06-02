@@ -1,23 +1,19 @@
-// Define the subscription options
-enum SubscriptionOption {
-  oneYear,
-  oneMonth,
-}
+enum SubscriptionOption { oneYear, oneMonth }
 
-abstract class SubscriptionState {
-  const SubscriptionState(); // Make the constructor const
+abstract class SubscriptionState  {
+  const SubscriptionState();
 
   @override
-  List<Object?> get props => []; // Empty props for the base class
+  List<Object?> get props => [];
 }
 
 class SubscriptionInitial extends SubscriptionState {
   final SubscriptionOption selectedOption;
 
-  const SubscriptionInitial({this.selectedOption = SubscriptionOption.oneYear}); // Make constructor const
+  const SubscriptionInitial({this.selectedOption = SubscriptionOption.oneYear});
 
   @override
-  List<Object?> get props => [selectedOption]; // Define props for comparison
+  List<Object?> get props => [selectedOption];
 
   SubscriptionInitial copyWith({
     SubscriptionOption? selectedOption,

@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
-import 'package:avionics_internal/Onboarding/CreateNewPasswordScreen.dart';
 import 'package:avionics_internal/Onboarding/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

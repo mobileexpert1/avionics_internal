@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -145,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                          MaterialPageRoute(builder: (context) => SubscriptionScreen()),
                         );
                       },
                     );

@@ -1,14 +1,13 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
-import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit.dart';
-import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomBottomButton.dart';
 import '../CustomFiles/CustomTextField.dart';
-import '../bloc/login/login_cubit.dart';
-import 'HomeScreen.dart';
+import '../bloc/createNewPassword/createNewPassword_cubit.dart';
+import '../bloc/createNewPassword/createNewPassword_state.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
   @override
@@ -18,43 +17,50 @@ class CreateNewPasswordScreen extends StatefulWidget {
 class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
+
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginCubit(),
+      create: (_) => CreatenNewPasswordCubit(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(OnboardingTexts.titleLogin),
-          surfaceTintColor: Colors.white,
+          title: Text(OnboardingTexts.appBarTitleForgotPwd),
           backgroundColor: Colors.white,
           centerTitle: true,
-          shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+          surfaceTintColor: Colors.white,
+          shape: Border(
+            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 SvgPicture.asset(
                   CommonUi.setSvgImage(AssetsPath.logoMain),
                   fit: BoxFit.fill,
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
 
+                /// Password Field
                 BlocSelector<
-                  CreateNewPasswordCubit,
-                  CreateNewPasswordState,
-                  String?
+                    CreatenNewPasswordCubit,
+                    CreateNewPasswordState,
+                    String?
                 >(
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
@@ -62,19 +68,21 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       label: OnboardingTexts.createPasswordLabel,
                       controller: passwordController,
                       errorText: passwordError,
-                      obscureText: true,
+                      obscureText: _obscurePassword,
                       onChanged: (val) => context
-                          .read<CreateNewPasswordCubit>()
+                          .read<CreatenNewPasswordCubit>()
                           .passwordChanged(val),
                     );
                   },
                 ),
-                SizedBox(height: 15),
 
+                const SizedBox(height: 15),
+
+                /// Confirm Password Field
                 BlocSelector<
-                  CreateNewPasswordCubit,
-                  CreateNewPasswordState,
-                  String?
+                    CreatenNewPasswordCubit,
+                    CreateNewPasswordState,
+                    String?
                 >(
                   selector: (state) => state.confirmPasswordError,
                   builder: (context, confirmPasswordError) {
@@ -82,19 +90,21 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       label: OnboardingTexts.confirmPasswordLabel,
                       controller: confirmPasswordController,
                       errorText: confirmPasswordError,
-                      obscureText: true,
+                      obscureText: _obscureConfirmPassword,
                       onChanged: (val) => context
-                          .read<CreateNewPasswordCubit>()
+                          .read<CreatenNewPasswordCubit>()
                           .confirmPasswordChanged(val),
                     );
                   },
                 ),
-                SizedBox(height: 30),
 
+                const SizedBox(height: 30),
+
+                // Submit Button
                 BlocSelector<
-                  CreateNewPasswordCubit,
-                  CreateNewPasswordState,
-                  bool
+                    CreatenNewPasswordCubit,
+                    CreateNewPasswordState,
+                    bool
                 >(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
@@ -103,13 +113,9 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
-                      // No icon needed
                       isEnabled: isButtonEnabled,
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
+                        Navigator.pop(context);
                       },
                     );
                   },
@@ -122,3 +128,5 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
     );
   }
 }
+
+

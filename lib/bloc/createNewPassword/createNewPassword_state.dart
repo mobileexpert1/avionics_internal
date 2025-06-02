@@ -3,7 +3,6 @@ class CreateNewPasswordState {
   final String confirmPassword;
   final String? passwordError;
   final String? confirmPasswordError;
-
   final bool isButtonEnabled;
 
   CreateNewPasswordState({
@@ -24,11 +23,10 @@ class CreateNewPasswordState {
     return CreateNewPasswordState(
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
-
       passwordError: passwordError,
       confirmPasswordError: confirmPasswordError,
-
       isButtonEnabled: isButtonEnabled ?? this.isButtonEnabled,
     );
   }
 }
+

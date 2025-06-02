@@ -38,8 +38,6 @@ class OnboardingTexts {
 
   static const String titleHome = "Home";
   static const String titleLogin = "Login";
-  static const String titleHome="Home";
-  static const String titleLogin="Login";
 
   static const String CreateAccount = 'Create your account';
   static const String firstNameLabel = 'First Name';
@@ -52,12 +50,29 @@ class OnboardingTexts {
 
   static const String createPasswordLabel = 'Create Password';
   static const String resetPassword = '  Reset Password';
-  static const String createPasswordLabel = 'Create Password';
-  static const String resetPassword = '  Reset Password';
   static const String titleSubscription = "Start Subscription";
-  static const String resetPassword = 'Reset Password';
 
   static const String Otptitle = 'Enter four digits';
   static const String continuee = 'Continue';
   static const String goBack = 'Go Back';
+}
+
+class SubscriptionTexts {
+  static const String trialMessage = 'Free for 7 days then 80 EURO per year.\nCancel anytime.';
+  static const String goPremiumTitle = 'Go Premium';
+
+  // One Month Plan
+  static const String oneMonthTitle = '1 Month';
+  static const String oneMonthSubtitle = '+ 7 days free trial';
+  static const String oneMonthPrice = '10 EURO';
+
+  // One Year Plan
+  static const String oneYearTitle = '1 Year';
+  static const String oneYearSubtitle = '+ 7 days free trial';
+  static const String oneYearPrice = '80 EURO';
+
+  // Features
+  static const String featureTrackAircrafts = 'Track the aircrafts';
+  static const String featureComparePlanes = 'Compare planes';
+  static const String featureSaveFavorites = 'Save your Favorites Aircrafts';
 }
