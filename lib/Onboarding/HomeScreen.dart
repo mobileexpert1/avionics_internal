@@ -1,8 +1,8 @@
+import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'bloc/home/home_cubit.dart';
-import 'bloc/home/home_state.dart';
+import '../bloc/home/home_cubit.dart';
+import '../bloc/home/home_state.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text(OnboardingTexts.titleHome),
         leading: Wrap(),
         surfaceTintColor: Colors.white,
         backgroundColor: Colors.white,

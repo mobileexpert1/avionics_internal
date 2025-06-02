@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../Constants/constantImages.dart';
@@ -24,7 +25,7 @@ class SplashScreen extends StatelessWidget {
               fit: BoxFit.fill,
             ),
             const SizedBox(height: 20),
-            const Text("avionic", style: TextStyle(fontSize: 24)),
+            const Text(OnboardingTexts.avionica, style: TextStyle(fontSize: 24)),
           ],
         ),
       ),

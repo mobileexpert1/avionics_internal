@@ -1,9 +1,10 @@
+import 'package:avionics_internal/Onboarding/startExploringScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/onboarding_model.dart';
-import '../SignupScreen.dart';
 import '../widgets/OnboardingPages.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -23,8 +24,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     final List<OnboardingInfo> pages = [
       OnboardingInfo(
-        title: "Aircraft \nEncyclopedia",
-        description: "Database for professionals with\nup-to-date technical info",
+        title: OnboardingTexts.title1,
+        description: OnboardingTexts.description1,
         imageWidget: Padding(
           padding: EdgeInsets.only(top: size.width * 0.08,bottom: size.width * 0.08,left: size.width * 0.02),
           child: SvgPicture.asset(
@@ -33,23 +34,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
       ),
-        OnboardingInfo(
-          title: "Live Aircraft \nTracking",
-          description: "See how different aircraft \nperform on a live flight map",
-          imageWidget: Padding(
-            padding: EdgeInsets.only(bottom: size.height * 0.0, right: size.width * 0.00, left: size.width * 0.00),
-            child: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.map),
-              width: size.width ,
-              fit: BoxFit.contain,
-            ),
+      OnboardingInfo(
+        title: OnboardingTexts.title2,
+        description: OnboardingTexts.description2,
+        imageWidget: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.00,
+            vertical: size.height * 0.00,
+          ),
+          child: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.map),
+            width: size.width,
+            height: size.height * 0.7,
+            fit: BoxFit.cover,
           ),
         ),
+      ),
+
       OnboardingInfo(
-        title: "Compare \nModels",
-        description: "Learn quickly from data \nwith advanced compare features",
+        title: OnboardingTexts.title3,
+        description: OnboardingTexts.description3,
         imageWidget: Padding(
-          // padding: EdgeInsets.symmetric(horizontal: size.width * 0.02, vertical: size.height * 0.15),
           padding: EdgeInsets.only(top: size.width * 0.30,bottom: size.width * 0.08,left: size.width * 0.08),
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.compare),
@@ -59,8 +64,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       ),
       OnboardingInfo(
-        title: "Filter, Search \nand Save",
-        description: "Map filter and smart search options \ngive you quick access to data",
+        title: OnboardingTexts.title4,
+        description: OnboardingTexts.description4,
         imageWidget: Padding(
           padding: EdgeInsets.only(top: size.width * 0.30,bottom: size.width * 0.08,left: size.width * 0.08),
           child: SvgPicture.asset(
@@ -102,40 +107,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       spacing: size.width * 0.04,
                       activeDotColor: Colors.black,
                       dotColor: Colors.grey.shade300,
-                      dotHeight: size.height * 0.012,
-                      dotWidth: size.height * 0.012,
+                      dotHeight: size.height * 0.010,
+                      dotWidth: size.height * 0.010,
                     ),
                   ),
                 ),
               ),
               Positioned(
                 bottom: size.height * 0.07,
-                left: size.width * 0.05,
-                right: size.width * 0.05,
+                left: size.width * 0.08,
+                right: size.width * 0.08,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SignupScreen()),
+                          MaterialPageRoute(builder: (context) => StartExploringApp()),
                         );
                       },
                       child: Text(
-                        "Skip",
+                        OnboardingTexts.skip,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * 0.045,
+                          fontSize: size.width * 0.042,
                         ),
                       ),
                     ),
                     TextButton(
                       onPressed: () {
                         if (onLastPage) {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SignupScreen()),
+                            MaterialPageRoute(builder: (context) => StartExploringApp()),
                           );
                         } else {
                           _controller.nextPage(
@@ -145,10 +150,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         }
                       },
                       child: Text(
-                        "Next",
+                        OnboardingTexts.next,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: size.width * 0.045,
+                          fontSize: size.width * 0.042,
                         ),
                       ),
                     ),

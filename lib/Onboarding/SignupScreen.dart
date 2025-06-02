@@ -1,12 +1,14 @@
+import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomTextField.dart';
+import '../bloc/signup/signup_cubit.dart';
+import '../bloc/signup/signup_state.dart';
 import 'HomeScreen.dart';
 import 'LoginScreen.dart';
-import 'bloc/signup/signup_cubit.dart';
-import 'bloc/signup/signup_state.dart';
-import 'CustomFiles/CustomTextField.dart';
+
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -38,7 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Create your account'),
+          title: Text(OnboardingTexts.CreateAccount),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -50,14 +52,17 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-                SvgPicture.asset('assets/LogoMain.svg'),
+                SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.logoMain),
+                  fit: BoxFit.fill,
+                ),
                 SizedBox(height: 30),
 
                 BlocSelector<SignupCubit, SignupState, String?>(
                   selector: (state) => state.firstNameError,
                   builder: (context, firstNameError) {
                     return CustomTextField(
-                      label: 'First Name',
+                      label: OnboardingTexts.firstNameLabel,
                       controller: firstNameController,
                       errorText: firstNameError,
                       onChanged: (val) =>
@@ -71,7 +76,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   selector: (state) => state.lastNameError,
                   builder: (context, lastNameError) {
                     return CustomTextField(
-                      label: 'Last Name',
+                      label: OnboardingTexts.lastNameLabel,
                       controller: lastNameController,
                       errorText: lastNameError,
                       onChanged: (val) =>
@@ -85,7 +90,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   selector: (state) => state.emailError,
                   builder: (context, emailError) {
                     return CustomTextField(
-                      label: 'Email',
+                      label: OnboardingTexts.emailLabel,
                       controller: emailController,
                       errorText: emailError,
                       onChanged: (val) =>
@@ -99,7 +104,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
                     return CustomTextField(
-                      label: 'Password',
+                      label: OnboardingTexts.passwordLabel,
                       controller: passwordController,
                       errorText: passwordError,
                       obscureText: true,
@@ -114,7 +119,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   selector: (state) => state.confirmPasswordError,
                   builder: (context, confirmPasswordError) {
                     return CustomTextField(
-                      label: 'Confirm Password',
+                      label: OnboardingTexts.confirmPasswordLabel,
                       controller: confirmPasswordController,
                       errorText: confirmPasswordError,
                       obscureText: true,
@@ -158,7 +163,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                         ),
-                        child: Text('Start Subscription'),
+                        child: Text(OnboardingTexts.startSubscription),
                       ),
                     );
                   },
@@ -173,7 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     );
                   },
                   child: Text(
-                    "Already a user? Log in",
+                    OnboardingTexts.loginPrompt,
                     style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                   ),
                 ),

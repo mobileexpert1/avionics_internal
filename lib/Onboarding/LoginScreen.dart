@@ -1,13 +1,14 @@
+import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'HomeScreen.dart';
+import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomBottomButton.dart';
+import '../CustomFiles/CustomTextField.dart';
+import '../bloc/login/login_cubit.dart';
+import '../bloc/login/login_state.dart';
 import 'ForgotScreen.dart';
-import 'bloc/login/login_cubit.dart';
-import 'bloc/login/login_state.dart';
-import 'CustomFiles/CustomTextField.dart';
-import 'CustomFiles/CustomBottomButton.dart';
+import 'HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -32,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Login'),
+          title: Text(OnboardingTexts.titleLogin),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -44,14 +45,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-                SvgPicture.asset('assets/LogoMain.svg'),
+                SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.logoMain),
+                  fit: BoxFit.fill,
+                ),
                 SizedBox(height: 20),
-
                 BlocSelector<LoginCubit, LoginState, String?>(
                   selector: (state) => state.emailError,
                   builder: (context, emailError) {
                     return CustomTextField(
-                      label: 'Email',
+                      label: OnboardingTexts.emailLabel,
                       controller: emailController,
                       errorText: emailError,
                       onChanged: (val) =>
@@ -65,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
                     return CustomTextField(
-                      label: 'Password',
+                      label: OnboardingTexts.passwordLabel,
                       controller: passwordController,
                       obscureText: true,
                       errorText: passwordError,
@@ -108,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        child: Text('Login'),
+                        child: Text(OnboardingTexts.loginButton),
                       ),
                     );
                   },
@@ -123,13 +126,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                   child: Text(
-                    "Forgot your password?",
+                   OnboardingTexts.forgotPassword,
                     style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                   ),
                 ),
                 SizedBox(height: 20),
                 Text(
-                  "Or Continue with",
+                  OnboardingTexts.orContinue,
                   style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                 ),
                 SizedBox(height: 12),
@@ -137,8 +140,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomBottomButton(
                   backgroundColor: Colors.white,
                   textColor: Colors.black,
-                  title: "Log in with Google",
-                  icon: SvgPicture.asset('assets/Google.svg'),
+                  title: OnboardingTexts.loginWithGoogle,
+                  icon:  SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.google),
+                    fit: BoxFit.fill,
+                  ),
                   onPressed: () {
                     // Google login
                   },
@@ -148,8 +154,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomBottomButton(
                   backgroundColor: Colors.black,
                   textColor: Colors.white,
-                  title: "Log in with Apple",
-                  icon: SvgPicture.asset('assets/Apple.svg'),
+                  title: OnboardingTexts.loginWithApple,
+                  icon:  SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.apple),
+                    fit: BoxFit.fill,
+                  ),
                   onPressed: () {
                     // Apple login
                   },
@@ -159,8 +168,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomBottomButton(
                   backgroundColor: Color(0xFF1877F2),
                   textColor: Colors.white,
-                  title: "Log in with Facebook",
-                  icon: SvgPicture.asset('assets/Facebook.svg'),
+                  title: OnboardingTexts.loginWithFacebook,
+                  icon:  SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.facebook),
+                    fit: BoxFit.fill,
+                  ),
                   onPressed: () {
                     // Facebook login
                   },
@@ -171,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    "Don't have an account? Sign up",
+                    OnboardingTexts.signUpPrompt,
                     style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                   ),
                 ),

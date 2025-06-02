@@ -1,10 +1,11 @@
+import 'package:avionics_internal/Constants/OnboardingTexts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'CustomFiles/CustomTextField.dart';
-import 'bloc/forgotPassword/forgot_cubit.dart';
-import 'bloc/forgotPassword/forgot_state.dart';
+import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomTextField.dart';
+import '../bloc/forgotPassword/forgot_cubit.dart';
+import '../bloc/forgotPassword/forgot_state.dart';
 
 class Forgotscreen extends StatefulWidget {
   @override
@@ -27,7 +28,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Forgot Password'),
+          title: Text(OnboardingTexts.appBarTitleForgotPwd),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -39,13 +40,16 @@ class _ForgotScreenState extends State<Forgotscreen> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-                SvgPicture.asset('assets/LogoMain.svg'),
+                SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.logoMain),
+                  fit: BoxFit.fill,
+                ),
                 SizedBox(height: 20),
                 BlocSelector<ForgotCubit, ForgotState, String?>(
                   selector: (state) => state.emailError,
                   builder: (context, emailError) {
                     return CustomTextField(
-                      label: 'Email',
+                      label: OnboardingTexts.emailLabel,
                       controller: emailController,
                       errorText: emailError,
                       onChanged: (val) =>
@@ -82,7 +86,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
                             ),
                           ),
                         ),
-                        child: Text('Send Email Code'),
+                        child: Text(OnboardingTexts.sendEmailButton ),
                       ),
                     );
                   },
