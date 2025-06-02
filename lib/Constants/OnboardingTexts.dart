@@ -35,7 +35,6 @@ class OnboardingTexts {
   static const String titleHome="Home";
   static const String titleLogin="Login";
 
-
   static const String CreateAccount = 'Create your account';
   static const String firstNameLabel = 'First Name';
   static const String lastNameLabel = 'Last Name';
@@ -44,4 +43,6 @@ class OnboardingTexts {
   static const String loginPrompt = 'Already a user? Log in';
 
   static const String exploring = 'Start Exploring';
+  static const String createPasswordLabel = 'Create Password';
+  static const String resetPassword = '  Reset Password';
 }

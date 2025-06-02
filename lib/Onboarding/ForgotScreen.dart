@@ -1,8 +1,10 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Onboarding/CreateNewPasswordScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomBottomButton.dart';
 import '../CustomFiles/CustomTextField.dart';
 import '../bloc/forgotPassword/forgot_cubit.dart';
 import '../bloc/forgotPassword/forgot_state.dart';
@@ -62,32 +64,19 @@ class _ForgotScreenState extends State<Forgotscreen> {
                 BlocSelector<ForgotCubit, ForgotState, bool>(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: isButtonEnabled
-                            ? () {
-                                Navigator.pop(context);
-                              }
-                            : null,
-                        style: ButtonStyle(
-                          foregroundColor: WidgetStateProperty.all(
-                            Colors.white,
-                          ),
-                          backgroundColor: WidgetStateProperty.all(
-                            isButtonEnabled
-                                ? Color.fromRGBO(63, 61, 81, 1.0)
-                                : Colors.grey,
-                          ),
-                          shape: WidgetStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                        ),
-                        child: Text(OnboardingTexts.sendEmailButton ),
-                      ),
+                    return CustomBottomButton(
+                      title: OnboardingTexts.sendEmailButton,
+                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                      textColor: Colors.white,
+                      icon: const SizedBox(width: 0),
+                      // No icon shown
+                      isEnabled: isButtonEnabled,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()),
+                        );
+                      },
                     );
                   },
                 ),
