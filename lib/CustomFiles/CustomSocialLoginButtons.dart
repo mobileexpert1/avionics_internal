@@ -1,43 +1,30 @@
 import 'package:flutter/material.dart';
 
-class CustomBottomButton extends StatelessWidget {
+class CustomSocialLoginButtons extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final String title;
   final Widget icon;
   final VoidCallback onPressed;
-  final bool isEnabled;
 
-  const CustomBottomButton({
+  const CustomSocialLoginButtons({
     super.key,
     required this.backgroundColor,
     required this.textColor,
     required this.title,
     required this.icon,
     required this.onPressed,
-    this.isEnabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    final Color effectiveBgColor = isEnabled
-        ? backgroundColor
-        : Colors.grey.shade200;
-
-    final Color effectiveTextColor = isEnabled
-        ? textColor
-        : Colors.grey.shade600;
-
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton.icon(
         icon: icon,
-        label: Text(
-          title,
-          style: TextStyle(color: effectiveTextColor, fontSize: 16),
-        ),
-        onPressed: isEnabled ? onPressed : null,
+        label: Text(title, style: TextStyle(color: textColor, fontSize: 16)),
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           elevation: 0,
@@ -45,7 +32,7 @@ class CustomBottomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
             side: BorderSide(
               color: backgroundColor == Colors.white
-                  ? Colors.grey.shade300 // or Color(0xFF1C1733) if you want it consistent
+                  ? Colors.grey.shade300
                   : backgroundColor,
             ),
           ),

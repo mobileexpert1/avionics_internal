@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomBottomButton.dart';
 import '../CustomFiles/CustomTextField.dart';
 import '../bloc/signup/signup_cubit.dart';
 import '../bloc/signup/signup_state.dart';
 import 'HomeScreen.dart';
 import 'LoginScreen.dart';
-
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -134,41 +134,22 @@ class _SignupScreenState extends State<SignupScreen> {
                 BlocSelector<SignupCubit, SignupState, bool>(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: isButtonEnabled
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeScreen(),
-                                  ),
-                                );
-                              }
-                            : null,
-                        style: ButtonStyle(
-                          foregroundColor: WidgetStateProperty.all(
-                            Colors.white,
-                          ),
-                          backgroundColor: WidgetStateProperty.all(
-                            isButtonEnabled
-                                ? Color.fromRGBO(63, 61, 81, 1.0)
-                                : Colors.grey,
-                          ),
-                          shape: WidgetStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        ),
-                        child: Text(OnboardingTexts.startSubscription),
-                      ),
+                    return CustomBottomButton(
+                      title: OnboardingTexts.startSubscription,
+                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                      textColor: Colors.white,
+                      icon: const SizedBox(width: 0),
+                      // use SizedBox or an actual icon if needed
+                      isEnabled: isButtonEnabled,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
+                      },
                     );
                   },
                 ),
-
                 SizedBox(height: 15),
                 TextButton(
                   onPressed: () {

@@ -26,7 +26,6 @@ class LoginCubit extends Cubit<LoginState> {
 
     // Revalidate each field if its error is not explicitly passed
 
-    
     final updatedEmailError =
         emailError ?? Validators().validateEmail(newEmail);
     final updatedPasswordError =

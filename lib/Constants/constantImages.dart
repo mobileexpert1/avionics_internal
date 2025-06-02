@@ -1,4 +1,3 @@
-
 abstract class AssetsPath {
   /// svg Images
   static const String splashImage = "splashImage";
@@ -11,20 +10,17 @@ abstract class AssetsPath {
   static const String google = "Google";
   static const String logoMain = "LogoMain";
 
-
   // jpg images
   static const String explore = "explore";
-
 }
-
 
 class CommonUi {
   //
   static String setjpgImage(String image) {
     // return 'assets/images/$image.png';
     return 'assets/jpg_images/$image.jpg';
-
   }
+
   //
   // static String setPngNavImage(String image) {
   //   // return 'assets/images/$image.png';
@@ -33,6 +29,5 @@ class CommonUi {
 
   static String setSvgImage(String image) {
     return 'assets/svg_images/$image.svg';
-
   }
 }

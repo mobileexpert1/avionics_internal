@@ -1,3 +1,6 @@
+import 'package:avionics_internal/Onboarding/CreateNewPasswordScreen.dart';
+import 'package:avionics_internal/Onboarding/SignupScreen.dart';
+import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Onboarding/splash_screen.dart';
@@ -21,13 +24,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => LoginCubit()),
         BlocProvider(create: (_) => ForgotCubit()),
+        BlocProvider(create: (_) => CreateNewPasswordCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: ThemeData(primarySwatch: Colors.blue),
         home: SplashScreen(),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomBottomButton.dart';
+import '../CustomFiles/CustomSocialLoginButtons.dart';
 import '../CustomFiles/CustomTextField.dart';
 import '../bloc/login/login_cubit.dart';
 import '../bloc/login/login_state.dart';
@@ -82,41 +83,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 BlocSelector<LoginCubit, LoginState, bool>(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: isButtonEnabled
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeScreen(),
-                                  ),
-                                );
-                              }
-                            : null,
-                        style: ButtonStyle(
-                          foregroundColor: WidgetStateProperty.all(
-                            Colors.white,
-                          ),
-                          backgroundColor: WidgetStateProperty.all(
-                            isButtonEnabled
-                                ? Color.fromRGBO(63, 61, 81, 1.0)
-                                : Colors.grey,
-                          ),
-                          shape: WidgetStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                        ),
-                        child: Text(OnboardingTexts.loginButton),
-                      ),
+                    return CustomBottomButton(
+                      title: OnboardingTexts.loginButton,
+                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                      textColor: Colors.white,
+                      icon: const SizedBox(width: 0),
+                      // No icon shown
+                      isEnabled: isButtonEnabled,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
+                      },
                     );
                   },
                 ),
-
                 SizedBox(height: 10),
                 TextButton(
                   onPressed: () {
@@ -126,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                   child: Text(
-                   OnboardingTexts.forgotPassword,
+                    OnboardingTexts.forgotPassword,
                     style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                   ),
                 ),
@@ -137,11 +119,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 12),
 
-                CustomBottomButton(
+                CustomSocialLoginButtons(
                   backgroundColor: Colors.white,
                   textColor: Colors.black,
                   title: OnboardingTexts.loginWithGoogle,
-                  icon:  SvgPicture.asset(
+                  icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.google),
                     fit: BoxFit.fill,
                   ),
@@ -151,11 +133,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 12),
 
-                CustomBottomButton(
+                CustomSocialLoginButtons(
                   backgroundColor: Colors.black,
                   textColor: Colors.white,
                   title: OnboardingTexts.loginWithApple,
-                  icon:  SvgPicture.asset(
+                  icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.apple),
                     fit: BoxFit.fill,
                   ),
@@ -165,11 +147,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 12),
 
-                CustomBottomButton(
+                CustomSocialLoginButtons(
                   backgroundColor: Color(0xFF1877F2),
                   textColor: Colors.white,
                   title: OnboardingTexts.loginWithFacebook,
-                  icon:  SvgPicture.asset(
+                  icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.facebook),
                     fit: BoxFit.fill,
                   ),
