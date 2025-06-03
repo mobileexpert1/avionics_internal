@@ -1,6 +1,9 @@
-import 'package:avionics_internal/Onboarding/HomeScreen.dart';
+import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
+import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
+import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'Home/RootTabbarScreen.dart';
 import 'Onboarding/splash_screen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
@@ -24,13 +27,16 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => LoginCubit()),
         BlocProvider(create: (_) => ForgotCubit()),
         BlocProvider(create: (_) => CreatenNewPasswordCubit()),
+        BlocProvider(create: (_) => ManufacturerCubit()),
+        BlocProvider(create: (_) => FilterCubit()),
+        BlocProvider(create: (_) => SavedFlightCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
         theme: ThemeData(primarySwatch: Colors.blue),
         // home: SplashScreen(),
-        home: HomeScreen(),
+        home: RootTabbarscreen(),
       ),
     );
   }

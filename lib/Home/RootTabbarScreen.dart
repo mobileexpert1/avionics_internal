@@ -1,4 +1,7 @@
+import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
+import '../Constants/constantImages.dart';
+import 'HomeScreen.dart';
 import 'Manufacturer/ManufacturerScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
@@ -10,10 +13,10 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    ManufacturerScreen(),
+    HomeScreen(),
     Center(child: Text('Map')),
     Center(child: Text('Compare')),
-    Center(child: Text('Saved')),
+    SavedFlighScreen(showTabs: true),
     Center(child: Text('Profile')),
   ];
 
@@ -34,22 +37,45 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Image.asset(
+              CommonUi.setPngImage(AssetsPath.ExploreIcon),
+              width: 70,
+              height: 30,
+            ),
             label: 'Explore',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'Map'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.compare_arrows_outlined),
+            icon: Image.asset(
+              CommonUi.setPngImage(AssetsPath.MapIcon),
+              width: 70,
+              height: 24,
+            ),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              CommonUi.setPngImage(AssetsPath.CompareIcon),
+              width: 70,
+              height: 24,
+            ),
             label: 'Compare',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_outline),
+            icon: Image.asset(
+              CommonUi.setPngImage(AssetsPath.SavedIcon),
+              width: 70,
+              height: 24,
+            ),
             label: 'Saved',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
+            icon: Image.asset(
+              CommonUi.setPngImage(AssetsPath.ProfileIcon),
+              width: 70,
+              height: 24,
+            ),
             label: 'Profile',
           ),
         ],
