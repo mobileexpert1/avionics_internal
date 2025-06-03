@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Home/RootTabbarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -116,7 +117,7 @@ class SubscriptionScreen extends StatelessWidget {
                         final selected = state.selectedOption;
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                          MaterialPageRoute(builder: (context) => RootTabbarscreen()),
                         );
                         print('Go Premium clicked with option: $selected');
                         // Add your navigation or subscription logic here
