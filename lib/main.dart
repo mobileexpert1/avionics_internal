@@ -1,8 +1,11 @@
+import 'package:avionics_internal/Home/RootTabbarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'Home/Manufacturer/ManufacturerScreen.dart';
 import 'Onboarding/splash_screen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
+import 'bloc/manufacturer/manufacturer_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
 import 'package:avionics_internal/bloc/forgotPassword/forgot_cubit.dart';
 import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit.dart';
@@ -28,7 +31,10 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: SplashScreen(),
+        home: BlocProvider(
+          create: (_) => ManufacturerCubit()..loadManufacturers(),
+          child: RootTabbarscreen(),
+        ),
       ),
     );
   }

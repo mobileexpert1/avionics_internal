@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomBottomButton.dart';
-import '../Onboarding/HomeScreen.dart';
+import '../Home/HomeScreen.dart';
 import '../bloc/Subscription/subscription_cubit.dart';
 import '../bloc/Subscription/subscription_state.dart';
 
