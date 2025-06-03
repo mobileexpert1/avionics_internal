@@ -21,6 +21,7 @@ abstract class AssetsPath {
   static const String selectModel = "SelectModel";
   static const String aeroplaneIcon = "aeroplaneIcon";
   static const String Chatbot = "Chatbot";
+  static const String BackIcon = "BackIcon";
 
   //jpg
   // static const String airbus = "airbus";
@@ -38,8 +39,11 @@ abstract class AssetsPath {
   static const String ProfileIcon = "ProfileIcon";
   static const String SavedIcon = "SavedIcon";
   static const String airbus = "airbus";
-
-
+  static const String AirbusPageImage = "AirbusPageImage";
+  static const String manufacturerLogo = "manufacturerLogo";
+  static const String aeroplaneComparison = "aeroplaneComparison";
+  static const String boeinglogo = "boeinglogo";
+  static const String DhcLogo = "DhcLogo";
 
 }
 

@@ -7,6 +7,8 @@ import '../Helpers/AppListTileCard.dart';
 import '../Helpers/AppText.dart';
 import '../Helpers/CustomDivider.dart';
 import '../Helpers/SearchBarWidget.dart';
+import '../Onboarding/AircraftComparisonScreen.dart';
+import '../Onboarding/ManufacturerDetailScreen.dart';
 import '../bloc/home/home_cubit.dart';
 import '../bloc/home/home_state.dart';
 
@@ -102,7 +104,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   AppListTileCard(
                     title: "Select model for comparison",
                     imagePath: CommonUi.setSvgImage(AssetsPath.selectModel),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AircraftComparisonScreen()),
+                      );
+                    },
                     isSvg: true,
                   ),
                   SizedBox(height: 25),
@@ -126,7 +133,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   AppListTileCard(
                     title: "Airbus",
                     imagePath: CommonUi.setPngImage(AssetsPath.airbus),
-                    onTap: () {},
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (_) => ManufacturerDetailScreen()),
+                      // );
+                    },
                     isSvg: false,
                   ),
                   SizedBox(height: 18),
@@ -156,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 21),
                     child: AppTexts(
-                      text: "Text Don't know",
+                      text: "Flying in the area",
                       imageName:
                       CommonUi.setSvgImage(AssetsPath.manufacturer),
                       font: 'Roboto',

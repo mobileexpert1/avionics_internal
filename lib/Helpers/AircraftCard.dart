@@ -11,6 +11,19 @@ class AircraftCard {
     String? airlineImagePath,
     Key? key,
   }) {
+    // Determine which image to use for the manufacturer
+    String manufacturerImagePath;
+    switch (manufacturer) {
+      case 'Boeing':
+        manufacturerImagePath = AssetsPath.boeinglogo; // Add your path for Boeing image
+        break;
+      case 'Airbus':
+        manufacturerImagePath = AssetsPath.airbus; // Add your path for Airbus image
+        break;
+      default:
+        manufacturerImagePath = AssetsPath.DhcLogo; // Default image if none match
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12, left: 18, right: 18, top: 5),
       decoration: BoxDecoration(
@@ -74,8 +87,9 @@ class AircraftCard {
           ),
           subtitle: Row(
             children: [
+              // Display the correct manufacturer image
               Image.asset(
-                CommonUi.setPngImage(AssetsPath.airbus),
+                CommonUi.setPngImage(manufacturerImagePath), // Use the image path determined earlier
                 width: 16,
                 height: 16,
               ),
