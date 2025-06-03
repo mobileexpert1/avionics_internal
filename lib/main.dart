@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Onboarding/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Onboarding/splash_screen.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: SplashScreen(),
+        // home: SplashScreen(),
+        home: HomeScreen(),
       ),
     );
   }
