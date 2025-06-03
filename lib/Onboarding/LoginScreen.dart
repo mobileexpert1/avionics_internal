@@ -10,7 +10,7 @@ import '../CustomFiles/CustomTextField.dart';
 import '../bloc/login/login_cubit.dart';
 import '../bloc/login/login_state.dart';
 import 'ForgotScreen.dart';
-import 'HomeScreen.dart';
+import '../Home/HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

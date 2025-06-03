@@ -8,7 +8,7 @@ import '../CustomFiles/CustomBottomButton.dart';
 import '../CustomFiles/CustomTextField.dart';
 import '../bloc/signup/signup_cubit.dart';
 import '../bloc/signup/signup_state.dart';
-import 'HomeScreen.dart';
+import '../Home/HomeScreen.dart';
 import 'LoginScreen.dart';
 
 class SignupScreen extends StatefulWidget {
