@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   smooth_page_indicator: ^1.1.0
   pinput: ^3.0.1
+  responsive_sizer: ^3.3.1
 
 dev_dependencies:
   flutter_test:

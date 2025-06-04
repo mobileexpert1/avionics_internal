@@ -23,6 +23,7 @@ abstract class AssetsPath {
   static const String Chatbot = "Chatbot";
   static const String BackIcon = "BackIcon";
 
+
   //jpg
   // static const String airbus = "airbus";
   static const String explore = "explore";
@@ -44,6 +45,8 @@ abstract class AssetsPath {
   static const String aeroplaneComparison = "aeroplaneComparison";
   static const String boeinglogo = "boeinglogo";
   static const String DhcLogo = "DhcLogo";
+  static const String airbusplane = "airbusplane";
+  static const String HistoryImg = "HistoryImg";
 
 }
 

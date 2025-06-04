@@ -1,51 +1,39 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'AircraftComparisonState.dart';
 import 'AircraftModel.dart';
 
-
-
 class AircraftComparisonCubit extends Cubit<AircraftComparisonState> {
-  AircraftComparisonCubit() : super(AircraftComparisonInitial());
+  List<AircraftModel> _models = [];
+  Set<String> _selectedBadges = {};
+  List<AircraftModel> _filteredModels = [];
 
-  // List of all available aircraft models
-  final List<AircraftModel> allModels = [
-    AircraftModel(name: 'B-737-800', manufacturer: 'Boeing', id: 'B737'),
-    AircraftModel(name: 'A-321', manufacturer: 'Airbus', id: 'A321'),
-    AircraftModel(name: 'A-322', manufacturer: 'Airbus', id: 'A322'),
-    AircraftModel(name: 'B-757-200', manufacturer: 'Airbus', id: 'B757'),
-    AircraftModel(name: 'B-737-800', manufacturer: 'Boeing', id: 'B737'),
-    AircraftModel(name: 'B-737-800', manufacturer: 'Boeing', id: 'B737'),
-    AircraftModel(name: 'B-737-800', manufacturer: 'Boeing', id: 'B737'),
-    AircraftModel(name: 'DHC-8-400', manufacturer: 'DH Canada', id: 'DHC8'),
-    AircraftModel(name: 'DHC-8-400', manufacturer: 'DH Canada', id: 'DHC8'),
-  ];
+  AircraftComparisonCubit({required List allModels}) : super(AircraftComparisonModelsUpdated([], {}));
 
-  // List of selected models for comparison
-  List<AircraftModel> selectedModels = [];
-
-  // Method to filter models based on search query
-  void filterModels(String query) {
-    if (query.isEmpty) {
-      emit(AircraftComparisonModelsUpdated(allModels));
-    } else {
-      final filtered = allModels.where((model) {
-        return model.name.toLowerCase().contains(query.toLowerCase());
-      }).toList();
-      emit(AircraftComparisonModelsUpdated(filtered));
-    }
+  void loadAllModels(List<AircraftModel> models) {
+    _models = models;
+    _filteredModels = List.from(_models);
+    emit(AircraftComparisonModelsUpdated(_filteredModels, _selectedBadges));
   }
 
-  // Method to toggle selection of an aircraft model for comparison
-  void toggleSelection(AircraftModel model) {
-    if (selectedModels.contains(model)) {
-      selectedModels.remove(model);
+  void filterModels(String query) {
+    if (query.isEmpty) {
+      _filteredModels = List.from(_models);
     } else {
-      if (selectedModels.length < 3) { // Limit to 3 models for comparison
-        selectedModels.add(model);
-      }
+      _filteredModels = _models
+          .where((model) =>
+          model.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     }
-    emit(AircraftComparisonSelectionUpdated(selectedModels));
+    emit(AircraftComparisonModelsUpdated(_filteredModels, _selectedBadges));
+  }
+
+  void toggleSelection(String badge) {
+    if (_selectedBadges.contains(badge)) {
+      _selectedBadges.remove(badge);
+    } else {
+      if (_selectedBadges.length >= 2) return; // limit selection to 2
+      _selectedBadges.add(badge);
+    }
+    emit(AircraftComparisonModelsUpdated(_filteredModels, _selectedBadges));
   }
 }

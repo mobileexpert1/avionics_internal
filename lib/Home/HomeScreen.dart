@@ -9,11 +9,12 @@ import '../Helpers/AppListTileCard.dart';
 import '../Helpers/AppText.dart';
 import '../Helpers/CustomDivider.dart';
 import '../Helpers/SearchBarWidget.dart';
+import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../bloc/home/home_cubit.dart';
 import '../bloc/home/home_state.dart';
 import 'Manufacturer/ManufacturerScreen.dart';
 import '../Onboarding/AircraftComparisonScreen.dart';
-import '../Onboarding/ManufacturerDetailScreen.dart';
+import '../Onboarding/AirbusScreen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -37,7 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeContent() {
-    return Scaffold(
+    return BlocProvider(
+    create: (_) => AircraftComparisonCubit(allModels: []),
+    child: Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
@@ -136,7 +139,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     AppListTileCard(
                       title: "Airbus",
                       imagePath: CommonUi.setPngImage(AssetsPath.airbus),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AirbusScreen()),
+                      );},
                       isSvg: false,
                     ),
                     SizedBox(height: 18),
@@ -308,6 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }

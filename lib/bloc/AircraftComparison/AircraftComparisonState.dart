@@ -1,15 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'AircraftModel.dart';
 
-@immutable
 abstract class AircraftComparisonState {}
 
 class AircraftComparisonInitial extends AircraftComparisonState {}
 
 class AircraftComparisonModelsUpdated extends AircraftComparisonState {
   final List<AircraftModel> models;
+  final Set<String> selectedModelBadges;
 
-  AircraftComparisonModelsUpdated(this.models);
+  AircraftComparisonModelsUpdated(this.models, this.selectedModelBadges);
 }
 
 class AircraftComparisonSelectionUpdated extends AircraftComparisonState {

@@ -1,13 +1,12 @@
+import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'Onboarding/AircraftComparisonScreen.dart';
 import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
 import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
 import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'Home/RootTabbarScreen.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'Onboarding/splash_screen.dart';
+import 'bloc/AllPlanes/AllPlanes_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -33,12 +32,19 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ManufacturerCubit()),
         BlocProvider(create: (_) => FilterCubit()),
         BlocProvider(create: (_) => SavedFlightCubit()),
+        BlocProvider(create: (_) => AllplanesCubit()),
+        BlocProvider(create: (_) => AircraftComparisonCubit(allModels: [])),
       ],
-      child: MaterialApp(
+      //Responsive test case
+      child:ResponsiveSizer(
+        builder: (context, orientation, screenType) {
+        return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: SplashScreen(),
+        );
+       },
       ),
     );
   }

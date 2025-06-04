@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Helpers/ModelComparisonList.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonState.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import '../Constants/constantImages.dart';
 import '../Helpers/AircraftCard.dart';
 import '../Helpers/AppText.dart';
 import '../Helpers/SearchBarWidget.dart';
+import '../Helpers/SelectableAircraftCard.dart';
 import '../Home/HomeScreen.dart';
 import '../bloc/AircraftComparison/AircraftModel.dart';
 
@@ -22,16 +24,16 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AircraftComparisonCubit(),
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
           child: BlocBuilder<AircraftComparisonCubit, AircraftComparisonState>(
             builder: (context, state) {
               List<AircraftModel> models = [];
+              Set<String> selectedBadges = {};
               if (state is AircraftComparisonModelsUpdated) {
                 models = state.models;
+                selectedBadges = state.selectedModelBadges;
               }
 
               return SingleChildScrollView(
@@ -63,7 +65,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                             );
                           },
                           child: AppTexts(
-                            text: "Select model for comparison",
+                            text: "   Select Model for Comparison",
                             imageName: CommonUi.setSvgImage(AssetsPath.BackIcon),
                             font: 'Roboto',
                             side: 'left',
@@ -77,7 +79,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
 
                       const SizedBox(height: 10),
                       SizedBox(height: 13),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-737-800',
@@ -86,7 +88,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-321',
@@ -95,7 +97,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-322',
@@ -104,7 +106,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-757-200',
@@ -113,7 +115,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-737-800',
@@ -122,7 +124,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-737-800',
@@ -131,7 +133,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'A-737-800',
@@ -140,7 +142,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'DHC-8-400',
@@ -149,7 +151,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                       ),
                       SizedBox(height: 7),
-                      AircraftCard.buildAircraftCard(
+                      AircraftCardList.buildAircraftCardList(
                         imagePath:
                         CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
                         model: 'DHC-8-400',
@@ -157,14 +159,29 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         manufacturer: 'DH Canada',
                         airline: null,
                       ),
+                      ...models.map((model) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 7),
+                          child: SelectableAircraftCard(
+                            imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
+                            model: model.name,
+                            badge: model.id,
+                            manufacturer: model.manufacturer,
+                            airline: null,
+                            isSelected: selectedBadges.contains(model.id),
+                            onTap: () {
+                              context.read<AircraftComparisonCubit>().toggleSelection(model.id);
+                            },
+                          ),
+                        );
+                      }).toList(),
                     ],
                   ),
                 ),
               );
             },
           ),
-        ),
-      ),
+        )
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 
-class AircraftCard {
-  static Widget buildAircraftCard({
+class AircraftCardList {
+  static Widget buildAircraftCardList({
     required String imagePath,
     required String model,
     required String badge,
@@ -113,7 +113,6 @@ class AircraftCard {
               ],
             ],
           ),
-          trailing: const Icon(Icons.chevron_right),
         ),
       ),
     );
