@@ -41,6 +41,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
           child: Column(
             children: [
               SearchBarWidget(
+              enableBackArrow: false,
+              enableFilter: false,
+              enableCloseScreen: true,
                 controller: searchController,
                 onFilterTap: () {},
               ),

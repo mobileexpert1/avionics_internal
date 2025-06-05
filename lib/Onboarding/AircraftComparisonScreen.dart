@@ -44,6 +44,9 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SearchBarWidget(
+                        enableBackArrow: false,
+                        enableFilter: true,
+                        enableCloseScreen: false,
                         controller: searchController,
                         onFilterTap: () {
                           context

@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Onboarding/AllPlanesScreen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Avionica',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: SplashScreen(),
+        home: AllPlanesScreen(),
         );
        },
       ),
