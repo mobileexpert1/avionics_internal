@@ -40,18 +40,27 @@ class OnboardingTexts {
   static const String titleLogin = "Login";
 
   static const String CreateAccount = 'Create your account';
+  static const String manageAccount = 'Manage Your Account';
+
   static const String firstNameLabel = 'First Name';
   static const String lastNameLabel = 'Last Name';
   static const String confirmPasswordLabel = 'Confirm Password';
   static const String startSubscription = 'Start Subscription';
+  static const String changePassword = 'Change Password';
+  static const String saveTitle = 'Save';
+  static const String contactSupport = 'Contact Support';
+
+  static const String oldPasswordLabel = 'Old Password';
+  static const String newPasswordLabel = 'New Password';
+
   static const String loginPrompt = 'Already a user? Log in';
 
   static const String exploring = 'Start Exploring';
 
   static const String createPasswordLabel = 'Create Password';
-  static const String resetPassword = '  Reset Password';
-  static const String titleSubscription = "Start Subscription";
+  static const String changePasswordLabel = 'Change Password';
 
+  static const String resetPassword = '  Reset Password';
   static const String Otptitle = 'Enter four digits';
   static const String continuee = 'Continue';
   static const String goBack = 'Go Back';
