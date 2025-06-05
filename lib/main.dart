@@ -5,6 +5,7 @@ import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
 import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
 import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'Home/RootTabbarScreen.dart';
 import 'Onboarding/splash_screen.dart';
 import 'bloc/AllPlanes/AllPlanes_cubit.dart';
 import 'bloc/home/home_cubit.dart';
@@ -36,13 +37,15 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AircraftComparisonCubit(allModels: [])),
       ],
       //Responsive test case
-      child:ResponsiveSizer(
+      child: ResponsiveSizer(
         builder: (context, orientation, screenType) {
-        return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Avionica',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: RootTabbarscreen(),
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Avionica',
+            theme: ThemeData(primarySwatch: Colors.blue),
+            home: RootTabbarscreen(),
+          );
+        },
       ),
     );
   }
