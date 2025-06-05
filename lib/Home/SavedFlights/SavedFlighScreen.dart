@@ -2,8 +2,9 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../bloc/manufacturer/manufacturer_cubit.dart';
-import '../../bloc/manufacturer/manufacturer_state.dart';
+import '../../CustomFiles/CustomTabBar.dart';
+import '../../bloc/SavedFlighDetails/savedFlight_cubit.dart';
+import '../../bloc/SavedFlighDetails/savedFlight_state.dart';
 
 class SavedFlighScreen extends StatefulWidget {
   final bool showTabs;
@@ -14,21 +15,78 @@ class SavedFlighScreen extends StatefulWidget {
   State<SavedFlighScreen> createState() => _SavedFlighScreenState();
 }
 
-class _SavedFlighScreenState extends State<SavedFlighScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _SavedFlighScreenState extends State<SavedFlighScreen> {
+  int _currentTabIndex = 0;
+  final List<String> _tabTitles = ['SAVED', 'FAVORITE'];
+  late final List<Widget> _tabContents;
 
   @override
   void initState() {
     super.initState();
-    context.read<ManufacturerCubit>().loadManufacturers();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabContents = [_buildSavedTab(), _buildFavoriteTab()];
+    BlocProvider.of<SavedFlightCubit>(context).loadManufacturers();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  Widget _buildSavedTab() {
+    return BlocBuilder<SavedFlightCubit, SavedFlightState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state.savedflight.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.bookmark_border, size: 50, color: Colors.grey),
+                SizedBox(height: 10),
+                Text("No saved items yet."),
+              ],
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(15),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: Text(
+                _currentTabIndex == 1 ? 'Favorites' : 'Saved',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ...state.savedflight.map((item) {
+              return Card(
+                color: Colors.white,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ListTile(
+                  leading: SvgPicture.asset(
+                    CommonUi.setSvgImage(item.icon!), // Use your CommonUi
+                    width: 30,
+                    height: 30,
+                  ),
+                  title: Text(item.name),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 15),
+                  onTap: () {},
+                ),
+              );
+            }),
+          ],
+        );
+      },
+    );
+  }
+
+  // This method builds the content for the "FAVORITE" tab
+  Widget _buildFavoriteTab() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [SizedBox(height: 10), Text("Favorite list goes here")],
+      ),
+    );
   }
 
   @override
@@ -39,90 +97,32 @@ class _SavedFlighScreenState extends State<SavedFlighScreen>
         title: const Text("Saved"),
         backgroundColor: Colors.white,
         elevation: 4,
-        // <-- This adds shadow
         shadowColor: Colors.grey.withOpacity(0.5),
         surfaceTintColor: Colors.white,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.showTabs) ...[
-            const SizedBox(height: 10),
-            TabBar(
-              controller: _tabController,
-              labelColor: const Color(0xFF3F3D56),
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: const Color(0xFF1877F2),
-              indicatorWeight: 2.5,
-              tabs: const [
-                Tab(text: 'SAVED'),
-                Tab(text: 'FAVORITE'),
-              ],
+          if (widget.showTabs)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 1.0,
+              ),
+              child: CustomTabBar(
+                tabTitles: _tabTitles,
+                initialIndex: _currentTabIndex,
+                onTabSelected: (index) {
+                  setState(() {
+                    _currentTabIndex = index;
+                  });
+                  print('Tab selected: ${_tabTitles[index]}');
+                },
+              ),
             ),
-            const Divider(height: 1),
-          ],
-          Expanded(
-            child: widget.showTabs
-                ? TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildSavedTab(context),
-                      _buildFavoriteTab(context),
-                    ],
-                  )
-                : _buildSavedTab(context), // Only show one tab if hidden
-          ),
+          Expanded(child: _tabContents[_currentTabIndex]),
         ],
       ),
     );
-  }
-
-  Widget _buildSavedTab(BuildContext context) {
-    return BlocBuilder<ManufacturerCubit, ManufacturerState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state.manufacturers.isEmpty) {
-          return const Center(child: Text("No manufacturers available."));
-        }
-
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                widget.showTabs == true ? '' : 'Saved',
-                style: TextStyle(
-                  fontSize: widget.showTabs == true ? 0 : 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ...state.manufacturers.map((item) {
-              return Card(
-                color: Colors.white,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ListTile(
-                  leading: SvgPicture.asset(
-                    CommonUi.setSvgImage(item.icon!),
-                    width: 30,
-                    height: 30,
-                  ),
-                  title: Text(item.name),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {},
-                ),
-              );
-            }).toList(),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildFavoriteTab(BuildContext context) {
-    return const Center(child: Text("Favorite list goes here"));
   }
 }

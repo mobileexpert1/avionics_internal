@@ -23,6 +23,9 @@ abstract class AssetsPath {
   static const String Chatbot = "Chatbot";
   static const String BackIcon = "BackIcon";
 
+  static const String upArrow = "upArrow";
+  static const String downArrow = "downArrow";
+
   //jpg
   // static const String airbus = "airbus";
   static const String explore = "explore";
@@ -44,17 +47,17 @@ abstract class AssetsPath {
   static const String aeroplaneComparison = "aeroplaneComparison";
   static const String boeinglogo = "boeinglogo";
   static const String DhcLogo = "DhcLogo";
-
 }
 
 class CommonUi {
-
   static String setjpgImage(String image) {
     return 'assets/jpg_images/$image.jpg';
   }
+
   static String setPngImage(String image) {
     return 'assets/png_images/$image.png';
   }
+
   static String setSvgImage(String image) {
     return 'assets/svg_images/$image.svg';
   }
