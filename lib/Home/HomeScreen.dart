@@ -45,6 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SearchBarWidget(
+                      enableBackArrow: false,
+                      enableFilter: true,
+                      enableCloseScreen: false,
                       controller: searchController,
                       onFilterTap: () {
                         showModalBottomSheet(
