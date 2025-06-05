@@ -16,7 +16,6 @@ import 'Manufacturer/ManufacturerScreen.dart';
 import '../Onboarding/AircraftComparisonScreen.dart';
 import '../Onboarding/AirbusScreen.dart';
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -24,17 +23,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return _buildHomeContent();
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   Widget _buildHomeContent() {
@@ -55,12 +47,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     SearchBarWidget(
                       controller: searchController,
                       onFilterTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FilterScreen(),
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return FractionallySizedBox(
+                              heightFactor: 0.9,
+                              child: ClipRRect(
+                                // <--- Add this!
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                                // <--- Match the radius here
+                                child: FilterScreen(),
+                              ),
+                            );
+                          },
+                          shape: const RoundedRectangleBorder(
+                            // This is still good to have for the modal itself
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
                           ),
+                          backgroundColor: Colors
+                              .transparent, // Sometimes setting this helps for clearer clipping
                         );
+                        ;
                       },
                     ),
                     CustomDivider(),
@@ -112,7 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AircraftComparisonScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => AircraftComparisonScreen(),
+                          ),
                         );
                       },
                       isSvg: true,

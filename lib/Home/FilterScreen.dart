@@ -1,5 +1,7 @@
+import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../bloc/Filter/filter_cubit.dart';
 import '../bloc/Filter/filter_model.dart';
@@ -67,10 +69,7 @@ class _FilterScreenState extends State<FilterScreen> {
                           ),
                         ),
                       ),
-                      Text(
-                        selectedCount > 0 ? ' Applied ' : ' Applied ',
-                        style: TextStyle(color: Colors.black),
-                      ),
+                      Text(' Applied ', style: TextStyle(color: Colors.black)),
                     ],
                   ],
                 ),
@@ -108,16 +107,15 @@ class _FilterScreenState extends State<FilterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          padding: const EdgeInsets.symmetric(vertical: 0.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 category.name,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
+                                  fontSize: 15,
+                                  color: Color.fromRGBO(63, 81, 86, 1.0),
                                 ),
                               ),
                               // "Show Less/More" button
@@ -129,35 +127,31 @@ class _FilterScreenState extends State<FilterScreen> {
                                 },
                                 child: Row(
                                   children: [
-                                    CircleAvatar(
-                                      backgroundColor: Colors.blue,
-                                      minRadius: 13,
-                                      maxRadius: 13,
-                                      child: Center(
-                                        child: Text(
-                                          "88",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
                                     Text(
-                                      ' Applied ',
-                                      style: TextStyle(color: Colors.black),
+                                      category.isExpanded
+                                          ? 'Show Less'
+                                          : 'Show More',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    SvgPicture.asset(
+                                      CommonUi.setSvgImage(
+                                        category.isExpanded
+                                            ? AssetsPath.upArrow
+                                            : AssetsPath.downArrow,
+                                      ),
+                                      fit: BoxFit.fill,
+                                      width: 16,
+                                      height: 16,
+                                      color: Colors.black,
                                     ),
                                   ],
                                 ),
-
-                                // Text(
-                                //   category.isExpanded
-                                //       ? 'Show Less'
-                                //       : 'Show More',
-                                //   style: const TextStyle(color: Colors.blue),
-                                // ),
                               ),
                             ],
                           ),
                         ),
-                        // Conditionally display options based on expansion state
+
                         if (category.isExpanded)
                           ...optionsToDisplay.map((option) {
                             return Padding(
@@ -169,7 +163,10 @@ class _FilterScreenState extends State<FilterScreen> {
                                   Expanded(
                                     child: Text(
                                       option.name,
-                                      style: const TextStyle(fontSize: 16),
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: Color.fromRGBO(63, 81, 86, 1.0),
+                                      ),
                                     ),
                                   ),
                                   Checkbox(
@@ -187,7 +184,7 @@ class _FilterScreenState extends State<FilterScreen> {
                                 ],
                               ),
                             );
-                          }).toList()
+                          })
                         else if (optionsToDisplay
                             .isNotEmpty) // Show limited options when collapsed
                           ...optionsToDisplay.map((option) {
@@ -200,7 +197,10 @@ class _FilterScreenState extends State<FilterScreen> {
                                   Expanded(
                                     child: Text(
                                       option.name,
-                                      style: const TextStyle(fontSize: 16),
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                   Checkbox(
@@ -218,12 +218,7 @@ class _FilterScreenState extends State<FilterScreen> {
                                 ],
                               ),
                             );
-                          }).toList(),
-
-                        // If category is not expanded and there are more options than visibleOptionCountWhenCollapsed,
-                        // show a "..." or similar indicator if desired. For now, the "Show More" button handles this.
-                        if (index < state.filterCategories.length - 1)
-                          Divider(height: 1, color: Colors.grey[300]),
+                          }),
                       ],
                     );
                   },
@@ -232,8 +227,8 @@ class _FilterScreenState extends State<FilterScreen> {
               // Reset Filter button at the bottom
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
+                  horizontal: 30.0,
+                  vertical: 20.0,
                 ),
                 width: double.infinity,
                 child: ElevatedButton(
@@ -242,8 +237,8 @@ class _FilterScreenState extends State<FilterScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue,
-                    side: const BorderSide(color: Colors.blue),
+                    foregroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.black),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

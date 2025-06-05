@@ -30,27 +30,27 @@ class FilterCubit extends Cubit<FilterState> {
           FilterOption(
             id: 'no_of_engines',
             name: 'No of Engines',
-            isSelected: true,
+            isSelected: false,
           ),
           FilterOption(
             id: 'engine_manufacturer_model',
             name: 'Engine Manufacturer and Model',
-            isSelected: true,
+            isSelected: false,
           ),
           FilterOption(
             id: 'engine_type',
             name: 'Engine Type',
-            isSelected: true,
+            isSelected: false,
           ),
           FilterOption(
             id: 'engine_thrust',
             name: 'Engine Thrust (per engine, in kN or lbf)',
-            isSelected: true,
+            isSelected: false,
           ),
           FilterOption(
             id: 'fuel_consumption',
             name: 'Fuel Consumption (kg/hr at cruise)',
-            isSelected: true,
+            isSelected: false,
           ),
         ],
         isExpanded: true, // Initially expanded
