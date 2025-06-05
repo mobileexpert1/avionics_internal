@@ -24,6 +24,10 @@ abstract class AssetsPath {
   static const String BackIcon = "BackIcon";
   static const String upArrow = "upArrow";
   static const String downArrow = "downArrow";
+  static const String Plane1 = "Plane1";
+  static const String ChatIcon = "ChatIcon";
+  static const String SendIcon = "SendIcon";
+  static const String AttachFileIcon = "AttachFileIcon";
 
   //jpg
   // static const String airbus = "airbus";
@@ -48,6 +52,8 @@ abstract class AssetsPath {
   static const String DhcLogo = "DhcLogo";
   static const String airbusplane = "airbusplane";
   static const String HistoryImg = "HistoryImg";
+  static const String airCraftDetailImage = "airCraftDetailImage";
+  static const String infoIcon = "infoIcon";
 }
 
 class CommonUi {

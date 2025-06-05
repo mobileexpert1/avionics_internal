@@ -70,12 +70,15 @@ class StartExploringScreen extends StatelessWidget {
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
-                        child: CustomBottomButton(
-                          title: OnboardingTexts.CreateAccount,
-                          backgroundColor: const Color(0xFF1C1733),
-                          textColor: Colors.white,
-                          icon: const SizedBox(width: 0), // No icon shown
-                          isEnabled: true,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: const Color(0xFF1C1733),
+                            side: const BorderSide(color: Color(0xFF1C1733)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -84,6 +87,13 @@ class StartExploringScreen extends StatelessWidget {
                               ),
                             );
                           },
+                          child: const Text(
+                            OnboardingTexts.CreateAccount,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color:  Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),

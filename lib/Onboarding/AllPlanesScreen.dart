@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/AllPlanes/AllPlanes_cubit.dart';
 import '../Helpers/SearchBarWidget.dart';
-import 'PlaneDetailScreen.dart';
-
+import 'AirCraftDetailScreen.dart';
 
 class AllPlanesScreen extends StatefulWidget {
   const AllPlanesScreen({super.key});
@@ -110,10 +109,10 @@ class _AllPlanesScreenState extends State<AllPlanesScreen> {
                                 ),
                                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                                 onTap: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(builder: (context) => PlanDetailScreen()),
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => PlanDetailScreen()),
+                                  );
                                 },
                               ),
                             ),

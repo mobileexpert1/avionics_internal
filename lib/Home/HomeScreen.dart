@@ -9,6 +9,7 @@ import '../Helpers/AppListTileCard.dart';
 import '../Helpers/AppText.dart';
 import '../Helpers/CustomDivider.dart';
 import '../Helpers/SearchBarWidget.dart';
+import '../Onboarding/ChatBotScreen.dart';
 import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../bloc/home/home_cubit.dart';
 import '../bloc/home/home_state.dart';
@@ -319,7 +320,10 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 70,
           child: FloatingActionButton(
             onPressed: () {
-              // Action
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AskWilcoScreen()),
+              );
             },
             backgroundColor: Colors.transparent,
             elevation: 0, // optional: remove shadow

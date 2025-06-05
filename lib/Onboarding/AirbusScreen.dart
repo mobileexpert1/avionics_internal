@@ -1,6 +1,9 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../Helpers/CustomDivider.dart';
+import '../Helpers/Custom_widget.dart';
 import 'AllPlanesScreen.dart';
 
 class AirbusScreen extends StatefulWidget {
@@ -11,396 +14,323 @@ class AirbusScreen extends StatefulWidget {
 }
 
 class _AirbusScreenState extends State<AirbusScreen> {
+  bool showMoreGeneralInfo = false;
+  bool showMoreAboutInfo = false;
+  bool showMoreHistory = false;
+  bool showMoreProducts = false;
+
   @override
   Widget build(BuildContext context) {
-    // Screen size helpers
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Responsive font sizes (adjust as you like)
-    double titleFontSize = screenWidth * 0.05; // example ~20 on 400 width
-    double subtitleFontSize = screenWidth * 0.045;
-    double sectionTitleFontSize = screenWidth * 0.035;
-    double bodyFontSize = screenWidth * 0.035;
-
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.00), // 5% horizontal padding
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Airbus banner image
-                  ClipRRect(
-                    child: Image.asset(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Image.asset(
                       CommonUi.setPngImage(AssetsPath.AirbusPageImage),
-                      fit: BoxFit.fill,
                       width: double.infinity,
-                      height: screenHeight * 0.3, // 30% of screen height
+                      height: screenHeight * 0.3,
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                  SizedBox(height: screenHeight * 0.07),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Text(
-                      'Airbus',
-                      style: TextStyle(
-                        fontSize: titleFontSize,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.01),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Text(
-                      'European aircraft manufacturer',
-                      style: TextStyle(
-                        fontSize: subtitleFontSize,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.04),
+                    SizedBox(height: 50,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         Padding(
+                           padding: const EdgeInsets.symmetric(horizontal: 20),
+                           child: Text("Airbus", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                         ),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text("European aircraft manufacturer", style: TextStyle(fontSize: 16)),
+                        ),
+                        const SizedBox(height: 24),
 
-                  // Aircraft list card
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Card(
-                      color: Colors.white,
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-                        leading: Image.asset(
-                          CommonUi.setPngImage(AssetsPath.airbusplane),
-                          fit: BoxFit.contain,
-                          width: screenWidth * 0.09,
-                        ),
-                        title: Text(
-                          'List of All Planes',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: screenWidth * 0.04,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const AllPlanesScreen()));
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1))],
+                              color: Colors.white,
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(CommonUi.setSvgImage(AssetsPath.Plane1), width: screenWidth * 0.08),
+                                const SizedBox(width: 12),
+                                const Expanded(
+                                  child: Text("List of All Planes", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                ),
+                                const Icon(Icons.chevron_right),
+                              ],
+                            ),
                           ),
                         ),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          size: screenWidth * 0.07,
-                          color: Colors.black,
+
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildSectionHeader(
+                            title: "GENERAL INFORMATION",
+                            isExpanded: showMoreGeneralInfo,
+                            onTap: () => setState(() => showMoreGeneralInfo = !showMoreGeneralInfo),
+                          ),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AllPlanesScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                        Divider(
+                          height: 0,
+                          color: Colors.grey,
+                          thickness: 2,
+                          indent : 20,
+                          endIndent : 20,
+                        ),
+                        const SizedBox(height: 8),
+                        showMoreGeneralInfo ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildGeneralInfo(screenWidth),
+                        ) : const SizedBox.shrink(),
 
-                  SizedBox(height: screenHeight * 0.02),
-                  ..._buildExpansionTiles(sectionTitleFontSize, bodyFontSize, screenWidth),
-                  SizedBox(height: screenHeight * 0.1),
-                ],
-              ),
-              Positioned(
-                top: screenHeight * 0.06,
-                left: screenWidth * 0.07,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context); // Navigates back
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    child: Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 24,
-                      color: Colors.white,
+                        const SizedBox(height: 8),
+
+                        const CustomDivider(),
+
+                        const SizedBox(height: 10),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildSectionHeader(
+                            title: "ABOUT THE COMPANY",
+                            isExpanded: showMoreAboutInfo,
+                            onTap: () => setState(() => showMoreAboutInfo = !showMoreAboutInfo),
+                          ),
+                        ),
+                        Divider(
+                          height: 0,
+                          color: Colors.grey,
+                          thickness: 2,
+                          indent : 20,
+                          endIndent : 20,
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            showMoreAboutInfo
+                                ? "Airbus SE is a multinational aerospace corporation. Airbus designs, manufactures and sells civil and military aerospace products worldwide. "
+                                "The company is a leading aircraft manufacturer and operates globally with major facilities in Europe and production lines in Asia and North America."
+                                : "Airbus SE is a multinational aerospace corporation. Airbus designs, manufactures and sells civil and military aerospace products worldwide...",
+                            style: const TextStyle(height: 1.5),
+                          ),
+                        ),
+                        const CustomDivider(),
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildSectionHeader(
+                            title: "HISTORY",
+                            isExpanded: showMoreHistory,
+                            onTap: () => setState(() => showMoreHistory = !showMoreHistory),
+                          ),
+                        ),
+                        Divider(
+                          height: 0,
+                          color: Colors.grey,
+                          thickness: 2,
+                          indent : 20,
+                          endIndent : 20,
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            showMoreHistory
+                                ? "The current company is the product of consolidation in the European aerospace industry tracing back to 1970. Airbus was formally established as a European consortium of French, German, Spanish and UK aerospace companies to compete with American manufacturers. Over the years, it has grown through mergers and joint ventures..."
+                                : "The current company is the product of consolidation in the European aerospace industry tracing back to 1970...",
+                            style: const TextStyle(height: 1.5),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildImageScroller(),
+                        ),
+                        const CustomDivider(),
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildSectionHeader(
+                            title: "PRODUCTS",
+                            isExpanded: showMoreProducts,
+                            onTap: () => setState(() => showMoreProducts = !showMoreProducts),
+                          ),
+                        ),
+                        Divider(
+                          height: 0,
+                          color: Colors.grey,
+                          thickness: 2,
+                          indent : 20,
+                          endIndent : 20,
+                        ),
+                        const SizedBox(height: 8),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: const Text("Civilian", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            showMoreProducts
+                                ? "The Airbus product line started with the A300 in 1972, the world's first twin-aisle, twin-engined aircraft. "
+                                "A shorter, re-winged, re-engined variant of the A300 is the A310. The family evolved into the A320, A330, A340, and the iconic double-decker A380."
+                                : "The Airbus product line started with the A300 in 1972, the world's first twin-aisle, twin-engined aircraft...",
+                            style: const TextStyle(height: 1.5),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: const Text("Military", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            showMoreProducts
+                                ? "In the late 1990s, Airbus became increasingly interested in developing and selling to the military aviation market. "
+                                "It embarked on two main fields of development: aerial refueling tankers such as the A330 MRTT, and tactical airlifters such as the A400M Atlas."
+                                : "In the late 1990s, Airbus became increasingly interested in developing and selling to the military aviation market...",
+                            style: const TextStyle(height: 1.5),
+                          ),
+                        ),
+                        const CustomDivider(),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                    const SizedBox(height: 50),
+                  ],
+                ),
+                Positioned(
+                  top: screenHeight * 0.06,
+                  left: screenWidth * 0.05,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+                  ),
+                ),
+                Positioned(
+                  top: screenHeight * 0.25,
+                  left: screenWidth * 0.06,
+                  child: ClipOval(
+                    child: Image.asset(
+                      CommonUi.setPngImage(AssetsPath.manufacturerLogo),
+                      width: screenWidth * 0.22,
+                      height: screenWidth * 0.22,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-              ),
-
-              Positioned(
-                top: screenHeight * 0.25,
-                left: screenWidth * 0.07,
-                child: ClipOval(
-                  child: Image.asset(
-                    CommonUi.setPngImage(AssetsPath.manufacturerLogo),
-                    width: screenWidth * 0.22,
-                    height: screenWidth * 0.22,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            )
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18));
+  }
+
+  Widget _buildGeneralInfo(double screenWidth) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            customField(label: 'Headquarters', text: 'Leiden, Netherlands', width: screenWidth * 0.4),
+            const SizedBox(width: 12),
+            customField(label: 'CEO', text: 'Guillaume Faury', width: screenWidth * 0.4),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            customField(label: 'Founding Date', text: '1970', width: screenWidth * 0.4),
+            const SizedBox(width: 12),
+            customField(label: 'Last year revenue', text: '52.15 bil EUR', width: screenWidth * 0.4),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader({
+    required String title,
+    required bool isExpanded,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  isExpanded ? "Show Less" : "Show More",
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
+                ),
+                Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildExpansionTiles(double titleFontSize, double bodyFontSize, double screenWidth) {
-    return [
-      // GENERAL INFORMATION
-      ExpansionTile(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'GENERAL INFORMATION',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: titleFontSize,
-              ),
-            ),
-            SizedBox(height: 4),
-            Divider(
-              thickness: 1.5,
-              height: 0,
-              color: Colors.grey,
-            ),
-          ],
-        ),
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: screenWidth * 0.00, bottom: 8),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    customField(label: 'Headquarters', text: 'Leiden, Netherlands', width: screenWidth * 0.4, fontSize: bodyFontSize),
-                    SizedBox(width: 10),
-                    customField(label: 'CEO', text: 'Guillaume Faury', width: screenWidth * 0.4, fontSize: bodyFontSize),
-                  ],
-                ),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    customField(label: 'Founding Date', text: '1970', width: screenWidth * 0.4, fontSize: bodyFontSize),
-                    SizedBox(width: 10),
-                    customField(label: 'Last year revenue', text: '52.15 bil EUR', width: screenWidth * 0.4, fontSize: bodyFontSize),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
 
-      // ABOUT THE COMPANY
-      Padding(
-        padding: EdgeInsets.only(top: 8.0),
-        child: ExpansionTile(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'ABOUT THE COMPANY',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: titleFontSize,
-                ),
-              ),
-              SizedBox(height: 4),
-              Divider(
-                thickness: 1.5,
-                height: 0,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.04, bottom: 8),
-              child: Text(
-                "Airbus SE is a multinational aerospace corporation. Airbus designs, manufactures and sells civil and military aerospace products worldwide. "
-                    "The company is a leading aircraft manufacturer and operates globally with major facilities in Europe and production lines in Asia and North America.",
-                style: TextStyle(
-                  fontSize: bodyFontSize,
-                  height: 1.5,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-
-      // HISTORY
-      Padding(
-        padding: EdgeInsets.only(top: 8.0),
-        child: ExpansionTile(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'HISTORY',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: titleFontSize,
-                ),
-              ),
-              SizedBox(height: 4),
-              Divider(
-                thickness: 1.5,
-                height: 0,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.04, bottom: 8),
-              child: Text(
-                "The current company is the product of consolidation in the European aerospace industry tracing back to 1970...",
-                style: TextStyle(
-                  fontSize: bodyFontSize,
-                  height: 1.5,
-                ),
-              ),
-            ),
-            SizedBox(height: 12),
-            SizedBox(
-              height: 120,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-                child: Row(
-                  children: List.generate(
-                    3,
-                        (index) => Padding(
-                      padding: EdgeInsets.only(right: index == 2 ? 0 : 10),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset(
-                          CommonUi.setPngImage(AssetsPath.HistoryImg),
-                          width: 300,
-                          height: 120,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-
-      // PRODUCTS
-      Padding(
-        padding: EdgeInsets.only(top: 8.0),
-        child: ExpansionTile(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'PRODUCTS',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: titleFontSize,
-                ),
-              ),
-              SizedBox(height: 4),
-              Divider(
-                thickness: 1.5,
-                height: 0,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.03, bottom: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Civilian',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'The Airbus product line started with the A300 in 1972, the world\'s first twin-aisle, twin-engined aircraft. '
-                        'A shorter, re-winged, re-engined variant of the A300 is...',
-                    style: TextStyle(
-                      fontSize: bodyFontSize,
-                      height: 1.5,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Military',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'In the late 1990s, Airbus became increasingly interested in developing and selling to the military aviation market. '
-                        'It embarked on two main fields of development: aerial...',
-                    style: TextStyle(
-                      fontSize: bodyFontSize,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    ];
-  }
-
-  Widget customField({
-    required String label,
-    required String text,
-    double? width,
-    double? fontSize,
-  }) {
+  Widget _buildImageScroller() {
     return SizedBox(
-      width: width ?? MediaQuery.of(context).size.width / 2.4,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: TextStyle(color: Colors.grey, fontSize: fontSize != null ? fontSize - 2 : 14)),
-          SizedBox(height: 5),
-          Text(text, style: TextStyle(color: Colors.black, fontSize: fontSize ?? 16)),
-          Divider(
-            height: 10,
-            color: Colors.grey,
-            thickness: 1,
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (context, index) => Container(
+          margin: EdgeInsets.only(right: index == 2 ? 0 : 10),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              CommonUi.setPngImage(AssetsPath.HistoryImg),
+              width: 300,
+              height: 120,
+              fit: BoxFit.cover,
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
