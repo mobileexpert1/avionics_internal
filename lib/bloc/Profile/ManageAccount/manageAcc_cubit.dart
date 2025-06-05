@@ -6,6 +6,27 @@ import 'manageAcc_state.dart';
 class ManageaccCubit extends Cubit<ManageAccState> {
   ManageaccCubit() : super(ManageAccState());
 
+  void initializeUserData({
+    required String firstName,
+    required String lastName,
+    required String email,
+  }) {
+    emit(state.copyWith(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      firstNameError: Validators().validateName(firstName),
+      lastNameError: Validators().validateName(lastName),
+      emailError: Validators().validateEmail(email),
+      isButtonEnabled: firstName.isNotEmpty &&
+          lastName.isNotEmpty &&
+          email.isNotEmpty &&
+          Validators().validateName(firstName) == null &&
+          Validators().validateName(lastName) == null &&
+          Validators().validateEmail(email) == null,
+    ));
+  }
+
   void firstNameChanged(String firstName) {
     final error = Validators().validateName(firstName);
     _emitUpdatedState(firstName: firstName, firstNameError: error);

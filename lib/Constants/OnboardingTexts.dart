@@ -42,6 +42,10 @@ class OnboardingTexts {
   static const String CreateAccount = 'Create your account';
   static const String manageAccount = 'Manage Your Account';
 
+  static const String profileTitle = 'Profile';
+
+
+
   static const String firstNameLabel = 'First Name';
   static const String lastNameLabel = 'Last Name';
   static const String confirmPasswordLabel = 'Confirm Password';

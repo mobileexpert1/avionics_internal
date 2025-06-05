@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Home/RootTabbarScreen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => HomeCubit()),
         BlocProvider(create: (_) => LoginCubit()),
         BlocProvider(create: (_) => ForgotCubit()),
-        BlocProvider(create: (_) => CreatenNewPasswordCubit()),
+        BlocProvider(create: (_) => CreateNewPasswordCubit()),
         BlocProvider(create: (_) => ManufacturerCubit()),
         BlocProvider(create: (_) => FilterCubit()),
         BlocProvider(create: (_) => SavedFlightCubit()),
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: RootTabbarscreen(),
           );
         },
       ),

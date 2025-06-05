@@ -1,38 +1,38 @@
-class ChangepasswordState {
+class CreateNewPasswordState {
   final String oldPassword;
-  final String newPassword;
-  final String newConfirmPassword;
+  final String password;
+  final String confirmPassword;
   final String? oldPasswordError;
-  final String? newPasswordError;
-  final String? newConfirmPasswordError;
+  final String? passwordError;
+  final String? confirmPasswordError;
   final bool isButtonEnabled;
 
-  ChangepasswordState({
+  CreateNewPasswordState({
     this.oldPassword = '',
-    this.newPassword = '',
-    this.newConfirmPassword = '',
+    this.password = '',
+    this.confirmPassword = '',
     this.oldPasswordError,
-    this.newPasswordError,
-    this.newConfirmPasswordError,
+    this.passwordError,
+    this.confirmPasswordError,
     this.isButtonEnabled = false,
   });
 
-  ChangepasswordState copyWith({
+  CreateNewPasswordState copyWith({
     String? oldPassword,
-    String? newPassword,
-    String? newConfirmPassword,
+    String? password,
+    String? confirmPassword,
     String? oldPasswordError,
-    String? newPasswordError,
-    String? newConfirmPasswordError,
+    String? passwordError,
+    String? confirmPasswordError,
     bool? isButtonEnabled,
   }) {
-    return ChangepasswordState(
+    return CreateNewPasswordState(
       oldPassword: oldPassword ?? this.oldPassword,
-      newPassword: newPassword ?? this.newPassword,
-      newConfirmPassword: newConfirmPassword ?? this.newConfirmPassword,
-      oldPasswordError: oldPasswordError ?? this.oldPasswordError,
-      newPasswordError: newPasswordError ?? this.newPasswordError,
-      newConfirmPasswordError: newConfirmPasswordError ?? this.newConfirmPasswordError,
+      password: password ?? this.password,
+      confirmPassword: confirmPassword ?? this.confirmPassword,
+      oldPasswordError: oldPasswordError,
+      passwordError: passwordError,
+      confirmPasswordError: confirmPasswordError,
       isButtonEnabled: isButtonEnabled ?? this.isButtonEnabled,
     );
   }

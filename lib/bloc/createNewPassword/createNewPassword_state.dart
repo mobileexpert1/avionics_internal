@@ -23,10 +23,9 @@ class CreateNewPasswordState {
     return CreateNewPasswordState(
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
-      passwordError: passwordError,
-      confirmPasswordError: confirmPasswordError,
+      passwordError: passwordError ?? this.passwordError,
+      confirmPasswordError: confirmPasswordError ?? this.confirmPasswordError,
       isButtonEnabled: isButtonEnabled ?? this.isButtonEnabled,
     );
   }
 }
-

@@ -1,9 +1,9 @@
-import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/Validators.dart';
+import 'createNewPassword_state.dart';
 
-class CreatenNewPasswordCubit extends Cubit<CreateNewPasswordState> {
-  CreatenNewPasswordCubit() : super(CreateNewPasswordState());
+class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
+  CreateNewPasswordCubit() : super(CreateNewPasswordState());
 
   void passwordChanged(String password) {
     final error = Validators().validatePassword(password);
@@ -36,11 +36,10 @@ class CreatenNewPasswordCubit extends Cubit<CreateNewPasswordState> {
         confirmPasswordError ??
             Validators().validateConfirmPassword(newPassword, newConfirmPassword);
 
-    final isValid =
-        updatedPasswordError == null &&
-            updatedConfirmPasswordError == null &&
-            newPassword.isNotEmpty &&
-            newConfirmPassword.isNotEmpty;
+    final isValid = updatedPasswordError == null &&
+        updatedConfirmPasswordError == null &&
+        newPassword.isNotEmpty &&
+        newConfirmPassword.isNotEmpty;
 
     emit(
       state.copyWith(
@@ -53,4 +52,3 @@ class CreatenNewPasswordCubit extends Cubit<CreateNewPasswordState> {
     );
   }
 }
-

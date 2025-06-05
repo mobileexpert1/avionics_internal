@@ -3,6 +3,7 @@ import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../CustomFiles/CustomAppBar.dart';
 import '../../CustomFiles/CustomBottomButton.dart';
 import '../../CustomFiles/CustomTextField.dart';
 import '../../bloc/Profile/ChangePassword/changePassword_cubit.dart';
@@ -33,15 +34,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       create: (_) => ChangePasswordCubit(),
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(
-            OnboardingTexts.changePasswordLabel,
-            style: TextStyle(fontSize: 16),
+        appBar: CustomAppBar(
+          title: OnboardingTexts.changePasswordLabel,
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -49,7 +49,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-                BlocSelector<ChangePasswordCubit, ChangepasswordState, String?>(
+                BlocSelector<
+                  ChangePasswordCubit,
+                  CreateNewPasswordState,
+                  String?
+                >(
                   selector: (state) => state.oldPasswordError,
                   builder: (context, firstNameError) {
                     return CustomTextField(
@@ -66,8 +70,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 SizedBox(height: 15),
 
-                BlocSelector<ChangePasswordCubit, ChangepasswordState, String?>(
-                  selector: (state) => state.newPasswordError,
+                BlocSelector<
+                  ChangePasswordCubit,
+                  CreateNewPasswordState,
+                  String?
+                >(
+                  selector: (state) => state.passwordError,
                   builder: (context, lastNameError) {
                     return CustomTextField(
                       obscureText: true,
@@ -83,8 +91,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 SizedBox(height: 15),
 
-                BlocSelector<ChangePasswordCubit, ChangepasswordState, String?>(
-                  selector: (state) => state.newConfirmPasswordError,
+                BlocSelector<
+                  ChangePasswordCubit,
+                  CreateNewPasswordState,
+                  String?
+                >(
+                  selector: (state) => state.confirmPasswordError,
                   builder: (context, emailError) {
                     return CustomTextField(
                       obscureText: true,
@@ -99,7 +111,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 SizedBox(height: 30),
 
-                BlocSelector<ChangePasswordCubit, ChangepasswordState, bool>(
+                BlocSelector<ChangePasswordCubit, CreateNewPasswordState, bool>(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
@@ -108,14 +120,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
                       // use SizedBox or an actual icon if needed
-                      isEnabled: true,
+                      isEnabled: isButtonEnabled,
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SubscriptionScreen(),
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
                     );
                   },

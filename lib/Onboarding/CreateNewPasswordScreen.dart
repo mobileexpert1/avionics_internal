@@ -17,7 +17,7 @@ class CreateNewPasswordScreen extends StatefulWidget {
 class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -32,7 +32,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => CreatenNewPasswordCubit(),
+      create: (_) => CreateNewPasswordCubit(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -58,9 +58,9 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
 
                 /// Password Field
                 BlocSelector<
-                    CreatenNewPasswordCubit,
-                    CreateNewPasswordState,
-                    String?
+                  CreateNewPasswordCubit,
+                  CreateNewPasswordState,
+                  String?
                 >(
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
@@ -70,7 +70,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       errorText: passwordError,
                       obscureText: _obscurePassword,
                       onChanged: (val) => context
-                          .read<CreatenNewPasswordCubit>()
+                          .read<CreateNewPasswordCubit>()
                           .passwordChanged(val),
                     );
                   },
@@ -80,9 +80,9 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
 
                 /// Confirm Password Field
                 BlocSelector<
-                    CreatenNewPasswordCubit,
-                    CreateNewPasswordState,
-                    String?
+                  CreateNewPasswordCubit,
+                  CreateNewPasswordState,
+                  String?
                 >(
                   selector: (state) => state.confirmPasswordError,
                   builder: (context, confirmPasswordError) {
@@ -92,7 +92,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       errorText: confirmPasswordError,
                       obscureText: _obscureConfirmPassword,
                       onChanged: (val) => context
-                          .read<CreatenNewPasswordCubit>()
+                          .read<CreateNewPasswordCubit>()
                           .confirmPasswordChanged(val),
                     );
                   },
@@ -102,9 +102,9 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
 
                 // Submit Button
                 BlocSelector<
-                    CreatenNewPasswordCubit,
-                    CreateNewPasswordState,
-                    bool
+                  CreateNewPasswordCubit,
+                  CreateNewPasswordState,
+                  bool
                 >(
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
@@ -128,5 +128,3 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
     );
   }
 }
-
-

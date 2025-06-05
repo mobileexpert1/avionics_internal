@@ -1,11 +1,15 @@
 import 'package:avionics_internal/Profile/ManageAccount/ManageAccountScreen.dart';
+import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
+import '../CustomFiles/CustomAppBar.dart';
+import 'ContactSupportScreen/ContactSupportScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -19,12 +23,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Profile"),
-        backgroundColor: Colors.white,
-        elevation: 4,
-        shadowColor: Colors.grey.withOpacity(0.5),
-        surfaceTintColor: Colors.white,
+      appBar: CustomAppBar(
+        title: OnboardingTexts.profileTitle,
       ),
       body: BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
         builder: (context, state) {
@@ -56,7 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ManageAccountScreen(),
+                            builder: (context) => ManageAccountScreen(
+                              firstName: "John",
+                              lastName: "Doe",
+                              email: "john@example.com",
+                            ),
                           ),
                         );
                       },
@@ -119,6 +123,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AssetsPath.contactAcc,
                       ),
                       title: "Contact Support",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ContactSupportScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

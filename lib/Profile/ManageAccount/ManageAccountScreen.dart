@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Home/HomeScreen.dart';
 import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
@@ -12,6 +13,18 @@ import '../../CustomFiles/CustomTextField.dart';
 import '../ChangePassword/ChangePasswordScreen.dart';
 
 class ManageAccountScreen extends StatefulWidget {
+
+  final String firstName;
+  final String lastName;
+  final String email;
+
+  const ManageAccountScreen({
+    Key? key,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+  }) : super(key: key);
+
   @override
   _ManageAccountScreenState createState() => _ManageAccountScreenState();
 }
@@ -34,40 +47,49 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    firstNameController.text = widget.firstName;
+    lastNameController.text = widget.lastName;
+    emailController.text = widget.email;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ManageaccCubit(),
+      create: (_) => ManageaccCubit()..initializeUserData(
+        firstName: widget.firstName,
+        lastName: widget.lastName,
+        email: widget.email,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(
-            OnboardingTexts.manageAccount,
-            style: TextStyle(fontSize: 16),
+        appBar: CustomAppBar(
+          title: OnboardingTexts.manageAccount,
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
-          actions: [
-            if (isRightButtonShow)
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: GestureDetector(
-                  child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.editIcon),
-                    width: 20,
-                    height: 20,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isTextfiledEnabled = true;
-                      isRightButtonShow = false;
-                      buttonBottomTitle = OnboardingTexts.saveTitle;
-                    });
-                  },
+            rightButton: isRightButtonShow == true ?
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: GestureDetector(
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.editIcon),
+                  width: 20,
+                  height: 20,
                 ),
+                onTap: () {
+                  setState(() {
+                    isTextfiledEnabled = true;
+                    isRightButtonShow = false;
+                    buttonBottomTitle = OnboardingTexts.saveTitle;
+                  });
+                },
               ),
-          ],
+            ) : null
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -140,12 +162,11 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             );
                             break;
                           case OnboardingTexts.saveTitle:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
-                              ),
-                            );
+                            setState(() {
+                              isTextfiledEnabled = false;
+                              isRightButtonShow = true;
+                              buttonBottomTitle = OnboardingTexts.changePassword;
+                            });
                             break;
                           default:
                             print("Unhandled button title: $buttonBottomTitle");

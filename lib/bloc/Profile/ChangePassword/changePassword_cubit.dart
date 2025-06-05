@@ -3,67 +3,68 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/Validators.dart';
 import 'changePassword_state.dart';
 
-class ChangePasswordCubit extends Cubit<ChangepasswordState> {
-  ChangePasswordCubit() : super(ChangepasswordState());
+class ChangePasswordCubit extends Cubit<CreateNewPasswordState> {
+  ChangePasswordCubit() : super(CreateNewPasswordState());
 
-  void oldPasswordChanged(String password) {
-    final error = Validators().validatePassword(password);
-    _emitUpdatedState(oldPassword: password, oldPasswordError: error);
+  void oldPasswordChanged(String oldPassword) {
+    final error = Validators().validatePassword(
+      oldPassword,
+    ); // or separate validator
+    _emitUpdatedState(oldPassword: oldPassword, oldPasswordError: error);
   }
 
   void newPasswordChanged(String password) {
     final error = Validators().validatePassword(password);
-    _emitUpdatedState(newPassword: password, newPasswordError: error);
+    _emitUpdatedState(password: password, passwordError: error);
   }
 
   void confirmPasswordChanged(String confirmPassword) {
     final error = Validators().validateConfirmPassword(
-      state.newPassword,
+      state.password,
       confirmPassword,
     );
     _emitUpdatedState(
-      newConfirmPassword: confirmPassword,
-      newConfirmPasswordError: error,
+      confirmPassword: confirmPassword,
+      confirmPasswordError: error,
     );
   }
 
   void _emitUpdatedState({
     String? oldPassword,
-    String? newPassword,
-    String? newConfirmPassword,
+    String? password,
+    String? confirmPassword,
     String? oldPasswordError,
-    String? newPasswordError,
-    String? newConfirmPasswordError,
+    String? passwordError,
+    String? confirmPasswordError,
   }) {
-    final updatedOldPassword = oldPassword ?? state.oldPassword;
-    final updatedNewPassword = newPassword ?? state.newPassword;
-    final updatedConfirmPassword = newConfirmPassword ?? state.newConfirmPassword;
+    final newOldPassword = oldPassword ?? state.oldPassword;
+    final newPassword = password ?? state.password;
+    final newConfirmPassword = confirmPassword ?? state.confirmPassword;
 
     final updatedOldPasswordError =
-        oldPasswordError ?? Validators().validatePassword(updatedOldPassword);
-
-    final updatedNewPasswordError =
-        newPasswordError ?? Validators().validatePassword(updatedNewPassword);
-
-    final updatedConfirmPasswordError = newConfirmPasswordError ??
-        Validators().validateConfirmPassword(updatedNewPassword, updatedConfirmPassword);
+        oldPasswordError ?? Validators().validatePassword(newOldPassword);
+    final updatedPasswordError =
+        passwordError ?? Validators().validatePassword(newPassword);
+    final updatedConfirmPasswordError =
+        confirmPasswordError ??
+        Validators().validateConfirmPassword(newPassword, newConfirmPassword);
 
     final isValid =
         updatedOldPasswordError == null &&
-            updatedNewPasswordError == null &&
-            updatedConfirmPasswordError == null &&
-            updatedOldPassword.isNotEmpty &&
-            updatedNewPassword.isNotEmpty &&
-            updatedConfirmPassword.isNotEmpty;
+        updatedPasswordError == null &&
+        updatedConfirmPasswordError == null &&
+        newOldPassword.isNotEmpty &&
+        newPassword.isNotEmpty &&
+        newConfirmPassword.isNotEmpty;
 
     emit(
       state.copyWith(
-        oldPassword: updatedOldPassword,
-        newPassword: updatedNewPassword,
-        newConfirmPassword: updatedConfirmPassword,
+        oldPassword: newOldPassword,
+        password: newPassword,
+        confirmPassword: newConfirmPassword,
         oldPasswordError: updatedOldPasswordError,
-        newPasswordError: updatedNewPasswordError,
-        newConfirmPasswordError: updatedConfirmPasswordError,
+        passwordError: updatedPasswordError,
+        confirmPasswordError: updatedConfirmPasswordError,
         isButtonEnabled: isValid,
       ),
     );
