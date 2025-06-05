@@ -1,5 +1,8 @@
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
+import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
@@ -37,6 +40,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AllplanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
         BlocProvider(create: (_) => ChatCubit()),
+        BlocProvider(create: (_) => ProfileScreenCubit()),
+        BlocProvider(create: (_) => ManageaccCubit()),
+        BlocProvider(create: (_) => ChangePasswordCubit()),
         BlocProvider(create: (_) => AircraftComparisonCubit(allModels: [])),
       ],
       //Responsive test case

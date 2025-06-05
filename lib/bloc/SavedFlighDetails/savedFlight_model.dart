@@ -1,6 +1,6 @@
-class SavedFlight {
+class SavedFlightAndProfileSectionModel {
   final String name;
   final String? icon;
 
-  SavedFlight({required this.name, this.icon});
+  SavedFlightAndProfileSectionModel({required this.name, this.icon});
 }

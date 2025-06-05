@@ -1,13 +1,13 @@
 import 'savedFlight_model.dart';
 
 class SavedFlightState {
-  final List<SavedFlight> savedflight;
+  final List<SavedFlightAndProfileSectionModel> savedflight;
   final bool isLoading;
 
 SavedFlightState({required this.savedflight, this.isLoading = false});
 
 SavedFlightState copyWith({
-    List<SavedFlight>? savedflight,
+    List<SavedFlightAndProfileSectionModel>? savedflight,
     bool? isLoading,
   }) {
     return SavedFlightState(

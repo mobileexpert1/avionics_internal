@@ -1,12 +1,14 @@
+import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'savedFlight_model.dart';
-import 'savedFlight_state.dart';
 
-class SavedFlightCubit extends Cubit<SavedFlightState> {
-  SavedFlightCubit() : super(SavedFlightState(savedflight: []));
+import '../../SavedFlighDetails/savedFlight_model.dart';
 
-  void loadManufacturers() {
+class ProfileScreenCubit extends Cubit<ProfileScreenState> {
+  ProfileScreenCubit() : super(ProfileScreenState(savedflight: []));
+
+  void loadManufacturers() async {
     emit(state.copyWith(isLoading: true));
+    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
 
     // Mock data
     final mockData = [
@@ -21,7 +23,15 @@ class SavedFlightCubit extends Cubit<SavedFlightState> {
       SavedFlightAndProfileSectionModel(name: 'Agusta / AgustaWestland', icon: 'ManuFirstImage'),
       SavedFlightAndProfileSectionModel(name: 'American Air Corp', icon: 'ManuFirstImage'),
     ];
-
     emit(state.copyWith(savedflight: mockData, isLoading: false));
+  }
+
+  void resetActionState() {
+    emit(state.copyWith(
+      isLoading: false, // Reset loading state for generic actions
+      errorMessage: null,
+      logoutSuccess: false,
+      deleteAccountSuccess: false,
+    ));
   }
 }

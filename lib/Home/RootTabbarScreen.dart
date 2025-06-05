@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
 import '../Constants/constantImages.dart';
+import '../Profile/ProfileScreen.dart';
 import 'HomeScreen.dart';
 import 'Manufacturer/ManufacturerScreen.dart';
 
@@ -17,7 +18,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
     Center(child: Text('Map')),
     Center(child: Text('Compare')),
     SavedFlighScreen(showTabs: true),
-    Center(child: Text('Profile')),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

@@ -6,6 +6,7 @@ class CustomTextField extends StatelessWidget {
   final String? errorText;
   final bool obscureText;
   final ValueChanged<String>? onChanged;
+  final bool enabled;
 
   const CustomTextField({
     required this.label,
@@ -13,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     this.errorText,
     this.obscureText = false,
     this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -22,6 +24,7 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       onChanged: onChanged,
       decoration: InputDecoration(labelText: label, errorText: errorText),
+      enabled: enabled,
     );
   }
 }

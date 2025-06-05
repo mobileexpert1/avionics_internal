@@ -29,6 +29,17 @@ abstract class AssetsPath {
   static const String SendIcon = "SendIcon";
   static const String AttachFileIcon = "AttachFileIcon";
 
+  static const String deleteAcc = "Delete";
+  static const String contactAcc = "Contact";
+  static const String reviewsAcc = "Reviews";
+  static const String glossaryAcc = "Glossary";
+  static const String unitMeasureAcc = "UnitsMeasurments";
+  static const String avtarAcc = "Avatar";
+  static const String subsrcitAcc = "Subscriptions";
+  static const String manageAccountAcc = "manageAccount";
+  static const String editIcon = "EditIcon";
+
+
   //jpg
   // static const String airbus = "airbus";
   static const String explore = "explore";
