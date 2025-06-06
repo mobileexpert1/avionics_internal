@@ -1,5 +1,6 @@
-import 'package:avionics_internal/Home/RootTabbarScreen.dart';
+import 'package:avionics_internal/Onboarding/splash_screen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
+import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChangePasswordCubit()),
         BlocProvider(create: (_) => AircraftComparisonCubit()),
         BlocProvider(create: (_) => GlossaryCubit()),
+        BlocProvider(create: (_) => ComparisonCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(
@@ -54,8 +56,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
-            // home: HomeScreen(),
-            home: RootTabbarscreen(),
+             home: SplashScreen(),
           );
         },
       ),

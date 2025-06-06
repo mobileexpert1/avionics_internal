@@ -28,6 +28,7 @@ abstract class AssetsPath {
   static const String ChatIcon = "ChatIcon";
   static const String SendIcon = "SendIcon";
   static const String AttachFileIcon = "AttachFileIcon";
+  static const String filterIconCompare = "filterIconCompare";
 
   static const String deleteAcc = "Delete";
   static const String contactAcc = "Contact";
