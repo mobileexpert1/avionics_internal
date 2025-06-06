@@ -1,4 +1,7 @@
+import 'package:avionics_internal/Onboarding/LoginScreen.dart';
+import 'package:avionics_internal/Onboarding/splash_screen.dart';
 import 'package:avionics_internal/Profile/ManageAccount/ManageAccountScreen.dart';
+import 'package:avionics_internal/Profile/ProfileSubsciption/ProfileSubsciptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
@@ -9,8 +12,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomAppBar.dart';
+import 'Avtar/AvtarScreen.dart';
 import 'ContactSupportScreen/ContactSupportScreen.dart';
 import 'Glossary/GlossaryScreen.dart';
+import 'UnitSettings/UnitSettingsScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -24,9 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: OnboardingTexts.profileTitle,
-      ),
+      appBar: CustomAppBar(title: OnboardingTexts.profileTitle),
       body: BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -72,6 +75,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       leadingIconColor: Colors.blue,
                       title: "Subscription",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileSubscriptionScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -85,12 +96,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AssetsPath.avtarAcc,
                       ),
                       title: "Avatar",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AvtarScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.unitMeasureAcc,
                       ),
                       title: "Units & Measurements",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UnitSelectionScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -107,7 +134,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => GlossaryScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => GlossaryScreen(),
+                          ),
                         );
                       },
                     ),
@@ -144,6 +173,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AssetsPath.deleteAcc,
                       ),
                       title: "Logout",
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SplashScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

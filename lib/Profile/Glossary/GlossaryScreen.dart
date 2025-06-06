@@ -1,11 +1,11 @@
+import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/Glossary/glossary_model.dart';
 import '../../bloc/Profile/Glossary/glossary_state.dart';
-
-
 
 class GlossaryScreen extends StatefulWidget {
   const GlossaryScreen({super.key});
@@ -22,12 +22,14 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     return BlocProvider(
       create: (_) => GlossaryCubit(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Glossary'),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new),
-            onPressed: () => Navigator.pop(context),
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          title: OnboardingTexts.glossaryTitle,
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
         body: BlocBuilder<GlossaryCubit, GlossaryState>(
@@ -51,24 +53,56 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                     Container(
                       color: const Color(0xFFD2E6FC),
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Text(
                         letter,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                     ...items.map((item) {
                       final key = '$letter-${item.title}';
                       final isExpanded = _expandedItems[key] ?? false;
 
+                      if (item.description.trim().isEmpty) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text(
+                                item.title,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            const Divider(
+                              height: 0,
+                              thickness: 1,
+                              color: Color(0xFFE0E0E0),
+                              indent: 16,
+                              endIndent: 16,
+                            ),
+                          ],
+                        );
+                      }
+
                       return Column(
                         children: [
                           ExpansionTile(
-                            tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                            tilePadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
                             childrenPadding: const EdgeInsets.only(
-                                left: 16, right: 16, bottom: 12),
-                            backgroundColor: Colors.transparent,
-                            collapsedBackgroundColor: Colors.transparent,
+                              left: 16,
+                              right: 16,
+                              bottom: 12,
+                            ),
                             title: Text(
                               item.title,
                               style: const TextStyle(
@@ -83,23 +117,21 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                               });
                             },
                             children: [
-                              if (item.description.isNotEmpty)
-                                Text(
-                                  item.description,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    height: 1.4,
-                                  ),
+                              Text(
+                                item.description,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  height: 1.4,
                                 ),
+                              ),
                             ],
                           ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Divider(
-                              height: 0,
-                              thickness: 1,
-                              color: Color(0xFFE0E0E0),
-                            ),
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                            color: Color(0xFFE0E0E0),
+                            indent: 16,
+                            endIndent: 16,
                           ),
                         ],
                       );

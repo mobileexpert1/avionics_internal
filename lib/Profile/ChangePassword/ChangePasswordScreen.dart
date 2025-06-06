@@ -35,7 +35,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: OnboardingTexts.changePasswordLabel,
+          title: OnboardingTexts.changePassword,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {

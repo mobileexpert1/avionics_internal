@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Home/RootTabbarScreen.dart';
+import 'package:avionics_internal/Onboarding/splash_screen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';

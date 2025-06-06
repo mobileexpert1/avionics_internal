@@ -39,6 +39,10 @@ abstract class AssetsPath {
   static const String manageAccountAcc = "manageAccount";
   static const String editIcon = "EditIcon";
 
+  static const String avtarFirst = "AvtarFirst";
+  static const String avtarSecond = "AvtarSecond";
+  static const String avtarThird = "AvtarThird";
+  static const String avtarFouth = "AvtarFourth";
 
   //jpg
   // static const String airbus = "airbus";

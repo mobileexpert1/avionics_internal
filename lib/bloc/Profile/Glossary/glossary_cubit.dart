@@ -12,21 +12,26 @@ class GlossaryCubit extends Cubit<GlossaryState> {
     // Your glossary data here
     final data = {
       'A': [
-        GlossaryItem(title: 'ADSHEX', description: 'Unique code for each airframe. Used as the unique identifier for ADS-B broadcasts.'),
-        GlossaryItem(title: 'ATC Callsign', description: 'Used for air traffic control communication.'),
+        GlossaryItem(
+          title: 'ADSHEX',
+          description:
+              'Unique code for each airframe. Used as the unique identifier for ADS-B broadcasts.',
+        ),
+        GlossaryItem(
+          title: 'ATC Callsign',
+          description: 'Used for air traffic control communication.',
+        ),
         GlossaryItem(title: 'ATC Callsign', description: ''),
       ],
       'B': [
-        GlossaryItem(title: 'Barometer', description: 'Instrument for measuring atmospheric pressure.'),
-        GlossaryItem(title: 'Barometer', description: ''),
-      ],
-      'C': [
-        GlossaryItem(title: 'C', description: ''),
-        GlossaryItem(title: 'C', description: ''),
-      ],
-      'D': [
-        GlossaryItem(title: 'D', description: ''),
-        GlossaryItem(title: 'D', description: ''),
+        GlossaryItem(
+          title: 'Barometer',
+          description: 'Instrument for measuring atmospheric pressure.',
+        ),
+        GlossaryItem(
+          title: 'Barometer',
+          description: 'Instrument for measuring atmospheric pressure.',
+        ),
       ],
     };
     emit(GlossaryState(glossaryData: data));

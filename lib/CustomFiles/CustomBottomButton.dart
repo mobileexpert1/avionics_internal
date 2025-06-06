@@ -30,7 +30,7 @@ class CustomBottomButton extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 50,
       child: ElevatedButton.icon(
         icon: icon,
         label: Text(

@@ -126,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           borderRadius: BorderRadius.circular(8)),
                     ),
                     child: Text(
-                      OnboardingTexts.continuee,
+                      OnboardingTexts.continueText,
                       style: TextStyle(fontSize: 20),
                     ),
                   );
