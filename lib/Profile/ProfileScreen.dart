@@ -10,6 +10,7 @@ import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomAppBar.dart';
 import 'ContactSupportScreen/ContactSupportScreen.dart';
+import 'Glossary/GlossaryScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -103,6 +104,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AssetsPath.glossaryAcc,
                       ),
                       title: "Glossary",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GlossaryScreen()),
+                        );
+                      },
                     ),
                   ],
                 ),

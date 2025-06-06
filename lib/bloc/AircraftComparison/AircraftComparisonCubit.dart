@@ -3,37 +3,54 @@ import 'AircraftComparisonState.dart';
 import 'AircraftModel.dart';
 
 class AircraftComparisonCubit extends Cubit<AircraftComparisonState> {
-  List<AircraftModel> _models = [];
-  Set<String> _selectedBadges = {};
-  List<AircraftModel> _filteredModels = [];
+  List<AircraftModel> allModels = [
+    AircraftModel(name: 'A-737-800', id: 'A737', manufacturer: 'Boeing'),
+    AircraftModel(name: 'A-321', id: 'A321', manufacturer: 'Airbus'),
+    AircraftModel(name: 'A-322', id: 'A322', manufacturer: 'Airbus'),
+    AircraftModel(name: 'A-757-200', id: 'A757', manufacturer: 'Airbus'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+    AircraftModel(name: 'DHC-8-400', id: 'DH8D', manufacturer: 'DH Canada'),
+  ];
 
-  AircraftComparisonCubit({required List allModels}) : super(AircraftComparisonModelsUpdated([], {}));
+  Set<String> selectedBadges = {};
 
-  void loadAllModels(List<AircraftModel> models) {
-    _models = models;
-    _filteredModels = List.from(_models);
-    emit(AircraftComparisonModelsUpdated(_filteredModels, _selectedBadges));
-  }
-
-  void filterModels(String query) {
-    if (query.isEmpty) {
-      _filteredModels = List.from(_models);
-    } else {
-      _filteredModels = _models
-          .where((model) =>
-          model.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-    emit(AircraftComparisonModelsUpdated(_filteredModels, _selectedBadges));
+  AircraftComparisonCubit() : super(AircraftComparisonInitial()) {
+    emit(AircraftComparisonModelsUpdated(
+      models: allModels,
+      selectedModelBadges: selectedBadges,
+    ));
   }
 
   void toggleSelection(String badge) {
-    if (_selectedBadges.contains(badge)) {
-      _selectedBadges.remove(badge);
+    if (selectedBadges.contains(badge)) {
+      selectedBadges.remove(badge);
     } else {
-      if (_selectedBadges.length >= 2) return; // limit selection to 2
-      _selectedBadges.add(badge);
+      if (selectedBadges.length >= 2) return;
+      selectedBadges.add(badge);
     }
-    emit(AircraftComparisonModelsUpdated(_filteredModels, _selectedBadges));
+
+    emit(AircraftComparisonModelsUpdated(
+      models: allModels,
+      selectedModelBadges: selectedBadges,
+    ));
+  }
+
+  void filterModels(String query) {
+    final filtered = allModels
+        .where((model) =>
+    model.name.toLowerCase().contains(query.toLowerCase()) ||
+        model.id.toLowerCase().contains(query.toLowerCase()) ||
+        model.manufacturer.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    emit(AircraftComparisonModelsUpdated(
+      models: filtered,
+      selectedModelBadges: selectedBadges,
+    ));
   }
 }

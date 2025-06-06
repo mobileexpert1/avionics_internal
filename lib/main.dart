@@ -10,9 +10,9 @@ import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
 import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
 import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'Onboarding/splash_screen.dart';
 import 'bloc/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/AllPlanes/AllPlanes_cubit.dart';
+import 'bloc/Profile/Glossary/glossary_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -44,7 +44,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ProfileScreenCubit()),
         BlocProvider(create: (_) => ManageaccCubit()),
         BlocProvider(create: (_) => ChangePasswordCubit()),
-        BlocProvider(create: (_) => AircraftComparisonCubit(allModels: [])),
+        BlocProvider(create: (_) => AircraftComparisonCubit()),
+        BlocProvider(create: (_) => GlossaryCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
+            // home: HomeScreen(),
             home: RootTabbarscreen(),
           );
         },

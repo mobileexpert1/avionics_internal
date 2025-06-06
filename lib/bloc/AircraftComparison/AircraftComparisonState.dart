@@ -8,11 +8,14 @@ class AircraftComparisonModelsUpdated extends AircraftComparisonState {
   final List<AircraftModel> models;
   final Set<String> selectedModelBadges;
 
-  AircraftComparisonModelsUpdated(this.models, this.selectedModelBadges);
+  AircraftComparisonModelsUpdated({
+    required this.models,
+    required this.selectedModelBadges,
+  });
 }
 
-class AircraftComparisonSelectionUpdated extends AircraftComparisonState {
-  final List<AircraftModel> selectedModels;
 
-  AircraftComparisonSelectionUpdated(this.selectedModels);
-}
+
+
+
+

@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeContent() {
     return BlocProvider(
-    create: (_) => AircraftComparisonCubit(allModels: []),
+    create: (_) => AircraftComparisonCubit(),
     child: Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
