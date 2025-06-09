@@ -12,8 +12,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../Constants/OnboardingTexts.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomAppBar.dart';
+import '../CustomFiles/CustomBottomButton.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'ContactSupportScreen/ContactSupportScreen.dart';
+import 'Feedback/FeedbackScreen.dart';
 import 'Glossary/GlossaryScreen.dart';
 import 'UnitSettings/UnitSettingsScreen.dart';
 
@@ -153,6 +155,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AssetsPath.reviewsAcc,
                       ),
                       title: "Write Review",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FeedbackScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -187,6 +197,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AssetsPath.deleteAcc,
                       ),
                       title: "Delete account",
+                      onTap: () {
+                        showDeleteConfirmation(context);
+                      },
                     ),
                   ],
                 ),
@@ -204,6 +217,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void showDeleteConfirmation(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => InfoBottomSheet(
+        onYes: () {
+          Navigator.pop(context);
+          // Handle delete action here
+        },
+        onNo: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+}
+
+class InfoBottomSheet extends StatelessWidget {
+  final VoidCallback onYes;
+  final VoidCallback onNo;
+
+  const InfoBottomSheet({super.key, required this.onYes, required this.onNo});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            "Do you want to Delete account",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.38,
+                child: ElevatedButton(
+                  onPressed: onYes,
+                  style: ElevatedButton.styleFrom(
+                    side: const BorderSide(color: Colors.transparent),
+                    backgroundColor: const Color(0xFF3F3D51),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.38,
+                child: OutlinedButton(
+                  onPressed: onNo,
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.transparent),
+                    backgroundColor: Color.fromRGBO(234, 234, 234, 1.0),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    "No",
+                    style: TextStyle(color: Color(0xFF3F3D51), fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
