@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
 import '../Constants/constantImages.dart';
+import '../Onboarding/AircraftComparisonScreen.dart';
 import '../Profile/ProfileScreen.dart';
 import 'HomeScreen.dart';
 import 'Manufacturer/ManufacturerScreen.dart';
@@ -16,7 +17,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
   final List<Widget> _pages = [
     HomeScreen(),
     Center(child: Text('Map')),
-    Center(child: Text('Compare')),
+    AircraftComparisonScreen(),
     SavedFlighScreen(showTabs: true),
     ProfileScreen(),
   ];
