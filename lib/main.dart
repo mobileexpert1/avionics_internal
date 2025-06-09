@@ -14,6 +14,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'bloc/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/AllPlanes/AllPlanes_cubit.dart';
 import 'bloc/Profile/Glossary/glossary_cubit.dart';
+import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChangePasswordCubit()),
         BlocProvider(create: (_) => AircraftComparisonCubit()),
         BlocProvider(create: (_) => GlossaryCubit()),
+        BlocProvider(create: (_) => UnitSelectionCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

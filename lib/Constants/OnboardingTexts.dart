@@ -72,6 +72,8 @@ class OnboardingTexts {
   static const String saveTitle = 'Save';
   static const String exploring = 'Start Exploring';
   static const String contactSupport = 'Contact Support';
+  static const String reviewTitle = 'Review';
+
 
   // ─────────────────────────────
   // Section Titles
