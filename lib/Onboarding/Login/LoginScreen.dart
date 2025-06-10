@@ -1,17 +1,17 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/Home/RootTabbarScreen.dart';
+import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Constants/constantImages.dart';
-import '../CustomFiles/CustomBottomButton.dart';
-import '../CustomFiles/CustomSocialLoginButtons.dart';
-import '../CustomFiles/CustomTextField.dart';
-import '../bloc/login/login_cubit.dart';
-import '../bloc/login/login_state.dart';
-import 'ForgotScreen.dart';
-import '../Home/HomeScreen.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomBottomButton.dart';
+import '../../CustomFiles/CustomSocialLoginButtons.dart';
+import '../../CustomFiles/CustomTextField.dart';
+import '../../bloc/login/login_cubit.dart';
+import '../../bloc/login/login_state.dart';
+import '../ForgotCreateNewPassword/ForgotScreen.dart';
+import '../../Home/HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

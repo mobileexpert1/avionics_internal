@@ -1,6 +1,8 @@
+import 'package:avionics_internal/Onboarding/Otp/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'SignupRepository.dart';
+import '../../Constants/ApiErrorModel.dart';
+import 'signup_repository.dart';
 import 'signup_state.dart';
 import '../../Constants/Validators.dart';
 import '../../Subscription/SubscriptionScreen.dart';
@@ -9,7 +11,9 @@ class SignupCubit extends Cubit<SignupState> {
   SignupCubit() : super(SignupState());
 
   Future<void> submitSignupApi(BuildContext context) async {
-    emit(state.copyWith(status: SignupStatus.submitting, errorMessage: null));
+    emit(
+      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+    );
     try {
       await SignupRepository().register(
         first_name: state.firstName,
@@ -24,17 +28,19 @@ class SignupCubit extends Cubit<SignupState> {
         auth_type: '',
       );
 
-      emit(state.copyWith(status: SignupStatus.success));
+      emit(state.copyWith(status: CommonApiStatus.success));
 
       // Navigate after emitting success state
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => SubscriptionScreen()),
+        MaterialPageRoute(
+          builder: (_) => OtpScreen(email: state.email, isComeFromSignup: true),
+        ),
       );
     } catch (e) {
       emit(
         state.copyWith(
-          status: SignupStatus.failure,
+          status: CommonApiStatus.failure,
           errorMessage: e.toString(),
         ),
       );

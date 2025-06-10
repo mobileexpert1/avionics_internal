@@ -1,10 +1,10 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
-import '../Constants/AppColors.dart';
-import '../Constants/constantImages.dart';
-import '../CustomFiles/CustomBottomButton.dart';
-import 'LoginScreen.dart';
-import 'SignupScreen.dart';
+import '../../Constants/AppColors.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomBottomButton.dart';
+import '../Login/LoginScreen.dart';
+import '../Signup/SignupScreen.dart';
 
 void main() {
   runApp(StartExploringApp());

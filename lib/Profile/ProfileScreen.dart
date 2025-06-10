@@ -1,5 +1,5 @@
-import 'package:avionics_internal/Onboarding/LoginScreen.dart';
-import 'package:avionics_internal/Onboarding/splash_screen.dart';
+import 'package:avionics_internal/Onboarding/Login/LoginScreen.dart';
+import 'package:avionics_internal/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/Profile/ManageAccount/ManageAccountScreen.dart';
 import 'package:avionics_internal/Profile/ProfileSubsciption/ProfileSubsciptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';

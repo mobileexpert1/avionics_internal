@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../Constants/constantImages.dart';
-import '../bloc/ChatBot/ChatCubit.dart';
+import '../../Constants/constantImages.dart';
+import '../../bloc/ChatBot/ChatCubit.dart';
 
 class AskWilcoScreen extends StatelessWidget {
   AskWilcoScreen({super.key});

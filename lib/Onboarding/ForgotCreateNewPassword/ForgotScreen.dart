@@ -1,13 +1,13 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/Onboarding/OtpScreen.dart';
+import 'package:avionics_internal/Onboarding/Otp/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Constants/constantImages.dart';
-import '../CustomFiles/CustomBottomButton.dart';
-import '../CustomFiles/CustomTextField.dart';
-import '../bloc/forgotPassword/forgot_cubit.dart';
-import '../bloc/forgotPassword/forgot_state.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomBottomButton.dart';
+import '../../CustomFiles/CustomTextField.dart';
+import '../../bloc/forgotPassword/forgot_cubit.dart';
+import '../../bloc/forgotPassword/forgot_state.dart';
 
 class Forgotscreen extends StatefulWidget {
   @override
@@ -74,8 +74,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => OtpScreen()),
-                        );
+                          MaterialPageRoute(builder: (context) => OtpScreen(email: '', isComeFromSignup: false)));
                       },
                     );
                   },

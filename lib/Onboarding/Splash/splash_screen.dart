@@ -1,7 +1,7 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../Constants/constantImages.dart';
+import '../../Constants/constantImages.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {

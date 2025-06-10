@@ -2,8 +2,8 @@ import 'package:avionics_internal/Helpers/CustomDivider.dart';
 import 'package:avionics_internal/bloc/AllPlanes/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/AllPlanes/AllPlanes_cubit.dart';
-import '../Helpers/SearchBarWidget.dart';
+import '../../bloc/AllPlanes/AllPlanes_cubit.dart';
+import '../../Helpers/SearchBarWidget.dart';
 import 'AirCraftDetailScreen.dart';
 
 class AllPlanesScreen extends StatefulWidget {

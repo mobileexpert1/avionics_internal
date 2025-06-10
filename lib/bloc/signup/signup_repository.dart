@@ -34,22 +34,13 @@ class SignupRepository {
         "user_type": user_type,
       }),
     );
-    // final response = await http.post(
-    //   url,
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode({
-    //     "first_name": first_name,
-    //     "last_name": last_name,
-    //     "email": email,
-    //     "username": username,
-    //     "password": password,
-    //     "phone_number": phone_number,
-    //     "professional_role": professional_role,
-    //     "experience_level": experience_level,
-    //     "user_type": user_type,
-    //     "auth_type": auth_type,
-    //   }),
-    // );
+
+    print('URL: $url');
+    print(
+      'Request Body: ${jsonEncode({"first_name": first_name, "last_name": last_name, "email": email, "username": username, "password": password, "user_type": user_type})}',
+    );
+    print('Response Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
       return response.body;

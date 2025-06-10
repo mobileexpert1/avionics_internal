@@ -2,8 +2,8 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../Helpers/CustomDivider.dart';
-import '../Helpers/Custom_widget.dart';
+import '../../Helpers/CustomDivider.dart';
+import '../../Helpers/Custom_widget.dart';
 import 'AllPlanesScreen.dart';
 
 class AirbusScreen extends StatefulWidget {

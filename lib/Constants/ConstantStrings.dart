@@ -45,6 +45,7 @@ class ConstantStrings {
   // Passwords & Reset
   // ─────────────────────────────
   static const String appBarTitleForgotPwd = 'Forgot Password';
+  static const String appBarTitleOTPScreen = 'Verify OTP Screen';
   static const String sendEmailButton = 'Send Email Code';
   static const String createPasswordLabel = 'Create Password';
   static const String confirmPasswordLabel = 'Confirm Password';
@@ -53,7 +54,7 @@ class ConstantStrings {
   static const String oldPasswordLabel = 'Old Password';
   static const String newPasswordLabel = 'New Password';
   static const String resetPassword = ' Reset Password';
-  static const String Otptitle = 'Enter four digits';
+  static const String Otptitle = 'Enter four digits otp';
   static const String continueText = 'Continue';
   static const String goBack = 'Go Back';
 
@@ -129,4 +130,5 @@ class ApiFunctionUrlConstant {
 
 class ApiServiceUrlConstant {
   static const String authSignup = 'auth/sign-up';
+  static const String verifyOtp = 'auth/verify-otp';
 }

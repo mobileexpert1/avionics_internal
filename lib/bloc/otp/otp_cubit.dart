@@ -1,8 +1,45 @@
+import 'dart:ffi';
+
+import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
+import 'package:avionics_internal/bloc/otp/otp_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../Constants/ApiErrorModel.dart';
 import 'otp_state.dart';
 
 class OtpCubit extends Cubit<OtpState> {
   OtpCubit() : super(OtpState());
+
+  Future<void> submitOtpApi(
+    BuildContext context,
+    String email,
+    bool isFromSignup,
+  ) async {
+    emit(
+      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+    );
+    try {
+      await OtpRepository().register(
+        email: email,
+        otp_type: isFromSignup == true ? 'sign_up' : 'forgot',
+        otp: state.otp,
+      );
+
+      emit(state.copyWith(status: CommonApiStatus.success));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => SubscriptionScreen()),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
 
   void otpChanged(String otp) {
     final error = _validateOtp(otp);
@@ -21,12 +58,6 @@ class OtpCubit extends Cubit<OtpState> {
 
     final isValid = updatedOtpError == null && newOtp.isNotEmpty;
 
-    emit(
-      state.copyWith(
-        otp: newOtp,
-        otpError: updatedOtpError,
-        isButtonEnabled: isValid,
-      ),
-    );
+    emit(state.copyWith(otp: newOtp, isButtonEnabled: isValid));
   }
 }

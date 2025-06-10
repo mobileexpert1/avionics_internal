@@ -1,6 +1,5 @@
+import 'package:avionics_internal/Constants/ApiErrorModel.dart';
 import 'package:equatable/equatable.dart';
-
-enum SignupStatus { initial, submitting, success, failure }
 
 class SignupState extends Equatable {
   final String firstName;
@@ -19,7 +18,7 @@ class SignupState extends Equatable {
   final bool isLoading;
   final bool isSuccess;
   final String? apiError;
-  final SignupStatus status;
+  final CommonApiStatus status;
   final String? errorMessage;
 
   const SignupState({
@@ -37,7 +36,7 @@ class SignupState extends Equatable {
     this.isLoading = false,
     this.isSuccess = false,
     this.apiError,
-    this.status = SignupStatus.initial,
+    this.status = CommonApiStatus.initial,
     this.errorMessage,
   });
 
@@ -56,7 +55,7 @@ class SignupState extends Equatable {
     bool? isLoading,
     bool? isSuccess,
     String? apiError,
-    SignupStatus? status,
+    CommonApiStatus? status,
     String? errorMessage,
   }) {
     return SignupState(

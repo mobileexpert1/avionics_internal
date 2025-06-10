@@ -1,10 +1,10 @@
 import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
-import '../Constants/constantImages.dart';
-import '../Onboarding/AircraftComparisonScreen.dart';
-import '../Profile/ProfileScreen.dart';
-import 'HomeScreen.dart';
-import 'Manufacturer/ManufacturerScreen.dart';
+import '../../Constants/constantImages.dart';
+import '../../Profile/ProfileScreen.dart';
+import '../HomeAirbus/AircraftComparisonScreen.dart';
+import '../HomeScreen.dart';
+import '../Manufacturer/ManufacturerScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
   @override

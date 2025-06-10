@@ -1,12 +1,12 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Onboarding/startExploringScreen.dart';
+import 'package:avionics_internal/Onboarding/Splash/startExploringScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../Constants/ConstantStrings.dart';
-import '../Constants/constantImages.dart';
-import '../CustomFiles/onboarding_model.dart';
-import '../widgets/OnboardingPages.dart';
+import '../../Constants/ConstantStrings.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/onboarding_model.dart';
+import '../../widgets/OnboardingPages.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

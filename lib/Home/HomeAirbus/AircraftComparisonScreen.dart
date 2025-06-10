@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Home/HomeScreen.dart';
-import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
-import '../bloc/AircraftComparison/AircraftComparisonState.dart';
-import '../Constants/constantImages.dart';
-import '../Helpers/AppText.dart';
-import '../Helpers/SearchBarWidget.dart';
-import '../Helpers/SelectableAircraftCard.dart';
+import '../HomeScreen.dart';
+import '../../bloc/AircraftComparison/AircraftComparisonCubit.dart';
+import '../../bloc/AircraftComparison/AircraftComparisonState.dart';
+import '../../Constants/constantImages.dart';
+import '../../Helpers/AppText.dart';
+import '../../Helpers/SearchBarWidget.dart';
+import '../../Helpers/SelectableAircraftCard.dart';
 
 class AircraftComparisonScreen extends StatefulWidget {
   const AircraftComparisonScreen({super.key});

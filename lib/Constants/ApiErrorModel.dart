@@ -1,3 +1,6 @@
+
+enum CommonApiStatus { initial, submitting, success, failure }
+
 class ApiErrorModel {
   final List<ApiErrorDetail> detail;
 

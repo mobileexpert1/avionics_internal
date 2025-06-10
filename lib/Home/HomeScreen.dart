@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Home/FilterScreen.dart';
+import 'package:avionics_internal/Home/AppBarFilter/FilterScreen.dart';
 import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,13 +10,13 @@ import '../Helpers/AppListTileCard.dart';
 import '../Helpers/AppText.dart';
 import '../Helpers/CustomDivider.dart';
 import '../Helpers/SearchBarWidget.dart';
-import '../Onboarding/ChatBotScreen.dart';
+import 'HomeAirbus/ChatBotScreen.dart';
 import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../bloc/home/home_cubit.dart';
 import '../bloc/home/home_state.dart';
 import 'Manufacturer/ManufacturerScreen.dart';
-import '../Onboarding/AircraftComparisonScreen.dart';
-import '../Onboarding/AirbusScreen.dart';
+import 'HomeAirbus/AircraftComparisonScreen.dart';
+import 'HomeAirbus/AirbusScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

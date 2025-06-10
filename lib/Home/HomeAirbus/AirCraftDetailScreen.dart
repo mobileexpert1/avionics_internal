@@ -2,9 +2,10 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/Helpers/CustomDivider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Helpers/Custom_widget.dart';
-import '../Helpers/FactList.dart';
-import '../bloc/AirCraftDetail/airCraftDetail_cubit.dart';
+
+import '../../Helpers/Custom_widget.dart';
+import '../../Helpers/FactList.dart';
+import '../../bloc/AirCraftDetail/airCraftDetail_cubit.dart';
 
 class PlanDetailScreen extends StatefulWidget {
   const PlanDetailScreen({super.key});
