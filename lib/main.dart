@@ -1,6 +1,4 @@
 import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
-import 'package:avionics_internal/Onboarding/Signup/SignupScreen.dart';
-import 'package:avionics_internal/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
@@ -12,6 +10,9 @@ import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
 import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
 import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'RootDecider.dart';
+import 'Screens/Onboarding/Signup/SignupScreen.dart';
+import 'Screens/Onboarding/Splash/splash_screen.dart';
 import 'bloc/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/AllPlanes/AllPlanes_cubit.dart';
 import 'bloc/Profile/Glossary/glossary_cubit.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
             // home: HomeScreen(),
-            home: SignupScreen(),
+            home: SplashScreen(),
           );
         },
       ),

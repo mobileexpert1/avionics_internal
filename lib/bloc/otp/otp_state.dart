@@ -1,4 +1,4 @@
-import '../../Constants/ApiErrorModel.dart';
+import '../../Constants/ApiClass/ApiErrorModel.dart';
 
 class OtpState {
   final String otp;

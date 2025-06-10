@@ -1,10 +1,11 @@
 import 'dart:ffi';
 
-import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/otp/otp_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Constants/ApiErrorModel.dart';
+import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'otp_state.dart';
 
 class OtpCubit extends Cubit<OtpState> {
@@ -19,13 +20,16 @@ class OtpCubit extends Cubit<OtpState> {
       state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
     );
     try {
-      await OtpRepository().register(
+      await OtpRepository().otpVerifyApi(
         email: email,
         otp_type: isFromSignup == true ? 'sign_up' : 'forgot',
         otp: state.otp,
       );
 
       emit(state.copyWith(status: CommonApiStatus.success));
+
+      await SharedPrefsHelper.saveEmail(email);
+      await SharedPrefsHelper.saveIsUserLogin(true);
 
       Navigator.pushReplacement(
         context,

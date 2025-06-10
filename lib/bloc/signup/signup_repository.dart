@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../Constants/ApiErrorModel.dart';
-import '../../Constants/ConstantStrings.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
+
+import '../../Constants/ApiClass/api_service.dart';
 
 class SignupRepository {
-  Future<String> register({
+  Future<String> registerUser({
     required String first_name,
     required String last_name,
     required String email,
@@ -22,41 +22,22 @@ class SignupRepository {
           ApiServiceUrlConstant.authSignup,
     );
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "first_name": first_name,
-        "last_name": last_name,
-        "email": email,
-        "username": username,
-        "password": password,
-        "user_type": user_type,
-      }),
-    );
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {
+          "first_name": first_name,
+          "last_name": last_name,
+          "email": email,
+          "username": username,
+          "password": password,
+          "user_type": user_type,
+        },
+      );
 
-    print('URL: $url');
-    print(
-      'Request Body: ${jsonEncode({"first_name": first_name, "last_name": last_name, "email": email, "username": username, "password": password, "user_type": user_type})}',
-    );
-    print('Response Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      return response.body;
-    } else if (response.statusCode == 201) {
-      final body = jsonDecode(response.body);
-      return body['detail'] ?? "Signup success";
-    } else if (response.statusCode == 422) {
-      final body = jsonDecode(response.body);
-      final error = ApiErrorModel.fromJson(body);
-      throw error.toString();
-    } else if (response.statusCode == 400) {
-      final body = jsonDecode(response.body);
-      final messages = body.entries.map((e) => '${e.value}').join('\n');
-      throw messages;
-    } else {
-      throw 'Signup failed: ${response.statusCode}';
+      return response['detail'] ?? "Signup success";
+    } catch (e) {
+      throw e.toString();
     }
   }
 }

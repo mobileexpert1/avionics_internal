@@ -1,11 +1,10 @@
-import 'package:avionics_internal/Onboarding/Otp/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Constants/ApiErrorModel.dart';
+import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Screens/Onboarding/Otp/OtpScreen.dart';
 import 'signup_repository.dart';
 import 'signup_state.dart';
 import '../../Constants/Validators.dart';
-import '../../Subscription/SubscriptionScreen.dart';
 
 class SignupCubit extends Cubit<SignupState> {
   SignupCubit() : super(SignupState());
@@ -15,7 +14,7 @@ class SignupCubit extends Cubit<SignupState> {
       state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
     );
     try {
-      await SignupRepository().register(
+      await SignupRepository().registerUser(
         first_name: state.firstName,
         last_name: state.lastName,
         email: state.email,

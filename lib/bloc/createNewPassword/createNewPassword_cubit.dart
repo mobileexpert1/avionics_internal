@@ -34,9 +34,10 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
         passwordError ?? Validators().validatePassword(newPassword);
     final updatedConfirmPasswordError =
         confirmPasswordError ??
-            Validators().validateConfirmPassword(newPassword, newConfirmPassword);
+        Validators().validateConfirmPassword(newPassword, newConfirmPassword);
 
-    final isValid = updatedPasswordError == null &&
+    final isValid =
+        updatedPasswordError == null &&
         updatedConfirmPasswordError == null &&
         newPassword.isNotEmpty &&
         newConfirmPassword.isNotEmpty;

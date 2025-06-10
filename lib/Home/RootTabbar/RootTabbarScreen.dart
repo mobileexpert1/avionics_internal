@@ -1,7 +1,7 @@
 import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
 import '../../Constants/constantImages.dart';
-import '../../Profile/ProfileScreen.dart';
+import '../../Screens/Profile/ProfileScreen.dart';
 import '../HomeAirbus/AircraftComparisonScreen.dart';
 import '../HomeScreen.dart';
 import '../Manufacturer/ManufacturerScreen.dart';

@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/ApiErrorModel.dart';
+import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:equatable/equatable.dart';
 
 class SignupState extends Equatable {
