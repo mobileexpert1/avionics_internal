@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +11,7 @@ class UnitSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: OnboardingTexts.unitsMeasurmentsTitle,
+        title: ConstantStrings.unitsMeasurmentsTitle,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Navigator.pop(context),

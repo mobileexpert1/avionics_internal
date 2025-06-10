@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Onboarding/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,7 +30,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(OnboardingTexts.appBarTitleForgotPwd),
+          title: Text(ConstantStrings.appBarTitleForgotPwd),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -51,7 +51,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
                   selector: (state) => state.emailError,
                   builder: (context, emailError) {
                     return CustomTextField(
-                      label: OnboardingTexts.emailLabel,
+                      label: ConstantStrings.emailLabel,
                       controller: emailController,
                       errorText: emailError,
                       onChanged: (val) =>
@@ -65,7 +65,7 @@ class _ForgotScreenState extends State<Forgotscreen> {
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
-                      title: OnboardingTexts.sendEmailButton,
+                      title: ConstantStrings.sendEmailButton,
                       backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),

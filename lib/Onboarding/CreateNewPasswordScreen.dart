@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../Constants/OnboardingTexts.dart';
+import '../Constants/ConstantStrings.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomBottomButton.dart';
 import '../CustomFiles/CustomTextField.dart';
@@ -36,7 +36,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(OnboardingTexts.appBarTitleForgotPwd),
+          title: Text(ConstantStrings.appBarTitleForgotPwd),
           backgroundColor: Colors.white,
           centerTitle: true,
           surfaceTintColor: Colors.white,
@@ -65,7 +65,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
                     return CustomTextField(
-                      label: OnboardingTexts.createPasswordLabel,
+                      label: ConstantStrings.createPasswordLabel,
                       controller: passwordController,
                       errorText: passwordError,
                       obscureText: _obscurePassword,
@@ -87,7 +87,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                   selector: (state) => state.confirmPasswordError,
                   builder: (context, confirmPasswordError) {
                     return CustomTextField(
-                      label: OnboardingTexts.confirmPasswordLabel,
+                      label: ConstantStrings.confirmPasswordLabel,
                       controller: confirmPasswordController,
                       errorText: confirmPasswordError,
                       obscureText: _obscureConfirmPassword,
@@ -109,7 +109,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
-                      title: OnboardingTexts.resetPassword,
+                      title: ConstantStrings.resetPassword,
                       backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),

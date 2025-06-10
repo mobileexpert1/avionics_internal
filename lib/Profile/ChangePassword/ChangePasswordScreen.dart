@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +35,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: OnboardingTexts.changePassword,
+          title: ConstantStrings.changePassword,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
@@ -59,7 +59,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     return CustomTextField(
                       obscureText: true,
 
-                      label: OnboardingTexts.oldPasswordLabel,
+                      label: ConstantStrings.oldPasswordLabel,
                       controller: oldPasswordController,
                       errorText: firstNameError,
                       onChanged: (val) => context
@@ -80,7 +80,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     return CustomTextField(
                       obscureText: true,
 
-                      label: OnboardingTexts.newPasswordLabel,
+                      label: ConstantStrings.newPasswordLabel,
                       controller: namePasswordController,
                       errorText: lastNameError,
                       onChanged: (val) => context
@@ -100,7 +100,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   builder: (context, emailError) {
                     return CustomTextField(
                       obscureText: true,
-                      label: OnboardingTexts.confirmPasswordLabel,
+                      label: ConstantStrings.confirmPasswordLabel,
                       controller: confirmPasswordController,
                       errorText: emailError,
                       onChanged: (val) => context
@@ -115,7 +115,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
-                      title: OnboardingTexts.saveTitle,
+                      title: ConstantStrings.saveTitle,
                       backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),

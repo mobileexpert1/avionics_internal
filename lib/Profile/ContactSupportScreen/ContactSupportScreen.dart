@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 
 import '../../CustomFiles/CustomAppBar.dart';
@@ -11,7 +11,7 @@ class ContactSupportScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: OnboardingTexts.contactSupport,
+        title: ConstantStrings.contactSupport,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {

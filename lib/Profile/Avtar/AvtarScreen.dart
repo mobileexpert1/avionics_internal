@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,7 +25,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: OnboardingTexts.avtarTitle,
+        title: ConstantStrings.avtarTitle,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {

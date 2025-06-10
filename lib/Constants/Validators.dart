@@ -8,9 +8,15 @@ class Validators {
 
   String? validatePassword(String value) {
     if (value.isEmpty) return 'Password is required';
-    if (value.length < 6) return 'Password must be at least 6 characters';
+    if (value.length < 8) return 'Password must be at least 8 characters';
+
+    final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$');
+    if (!regex.hasMatch(value)) {
+      return 'Password must include uppercase, lowercase, and a special character';
+    }
     return null;
   }
+
 
   String? validateConfirmPassword(String? password, String? confirmPassword) {
     if (confirmPassword == null || confirmPassword.isEmpty) {
@@ -27,3 +33,4 @@ class Validators {
     return null;
   }
 }
+

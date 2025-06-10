@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
@@ -14,7 +14,7 @@ class StartExploringApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: OnboardingTexts.exploring,
+      title: ConstantStrings.exploring,
       home: StartExploringScreen(),
       debugShowCheckedModeBanner: false,
     );
@@ -60,7 +60,7 @@ class StartExploringScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
-                       OnboardingTexts.exploring,
+                        ConstantStrings.exploring,
                         style: TextStyle(
                           fontSize: 35,
                           fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class StartExploringScreen extends StatelessWidget {
                             );
                           },
                           child: const Text(
-                            OnboardingTexts.CreateAccount,
+                            ConstantStrings.CreateAccount,
                             style: TextStyle(
                               fontSize: 16,
                               color:  Colors.white,
@@ -114,7 +114,7 @@ class StartExploringScreen extends StatelessWidget {
                             );
                           },
                           child: const Text(
-                            OnboardingTexts.loginButton,
+                            ConstantStrings.loginButton,
                             style: TextStyle(
                               fontSize: 16,
                               color: AppColors.LoginTxt,

@@ -1,5 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Onboarding/CreateNewPasswordScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +37,7 @@ class _OtpScreenState extends State<OtpScreen> {
           leading: BackButton(color: Colors.black),
           centerTitle: true,
           title: Text(
-            OnboardingTexts.appBarTitleForgotPwd,
+            ConstantStrings.appBarTitleForgotPwd,
             style: TextStyle(color: AppColors.fogotPwd),
           ),
           backgroundColor: Colors.white,
@@ -58,7 +58,7 @@ class _OtpScreenState extends State<OtpScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  OnboardingTexts.Otptitle,
+                  ConstantStrings.Otptitle,
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
               ),
@@ -126,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           borderRadius: BorderRadius.circular(8)),
                     ),
                     child: Text(
-                      OnboardingTexts.continueText,
+                      ConstantStrings.continueText,
                       style: TextStyle(fontSize: 20),
                     ),
                   );
@@ -138,7 +138,7 @@ class _OtpScreenState extends State<OtpScreen> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
-                  OnboardingTexts.goBack,
+                  ConstantStrings.goBack,
                   style: TextStyle(color: AppColors.goBack, fontSize: 18),
                 ),
               ),

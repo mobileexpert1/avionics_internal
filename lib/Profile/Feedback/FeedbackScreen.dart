@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../Constants/OnboardingTexts.dart';
+import '../../Constants/ConstantStrings.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../CustomFiles/CustomBottomButton.dart';
 import '../../bloc/Profile/FeedbackState/feedback_cubit.dart';
@@ -17,7 +17,7 @@ class FeedbackScreen extends StatelessWidget {
       create: (_) => FeedbackCubit(),
       child: Scaffold(
         appBar: CustomAppBar(
-          title: OnboardingTexts.reviewTitle,
+          title: ConstantStrings.reviewTitle,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {

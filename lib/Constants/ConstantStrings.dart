@@ -1,4 +1,4 @@
-class OnboardingTexts {
+class ConstantStrings {
   // ─────────────────────────────
   // App Name
   // ─────────────────────────────
@@ -117,4 +117,16 @@ class SubscriptionTexts {
   static const String featureTrackAircrafts = 'Track the aircrafts';
   static const String featureComparePlanes = 'Compare planes';
   static const String featureSaveFavorites = 'Save your Favorites Aircrafts';
+}
+
+class ApiBaseUrlConstant {
+  static const String baseUrl = 'https://avionica.csdevhub.com/';
+}
+
+class ApiFunctionUrlConstant {
+  static const String userService = 'user-service/';
+}
+
+class ApiServiceUrlConstant {
+  static const String authSignup = 'auth/sign-up';
 }

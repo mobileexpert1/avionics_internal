@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../Constants/OnboardingTexts.dart';
+import '../../Constants/ConstantStrings.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomBottomButton.dart';
 import '../../Subscription/SubscriptionOptionCard.dart';

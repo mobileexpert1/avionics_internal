@@ -1,9 +1,45 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'SignupRepository.dart';
 import 'signup_state.dart';
 import '../../Constants/Validators.dart';
+import '../../Subscription/SubscriptionScreen.dart';
 
 class SignupCubit extends Cubit<SignupState> {
   SignupCubit() : super(SignupState());
+
+  Future<void> submitSignupApi(BuildContext context) async {
+    emit(state.copyWith(status: SignupStatus.submitting, errorMessage: null));
+    try {
+      await SignupRepository().register(
+        first_name: state.firstName,
+        last_name: state.lastName,
+        email: state.email,
+        password: state.password,
+        username: state.firstName + state.lastName,
+        phone_number: '',
+        professional_role: '',
+        experience_level: '',
+        user_type: 'student',
+        auth_type: '',
+      );
+
+      emit(state.copyWith(status: SignupStatus.success));
+
+      // Navigate after emitting success state
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => SubscriptionScreen()),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: SignupStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
 
   void firstNameChanged(String firstName) {
     final error = Validators().validateName(firstName);

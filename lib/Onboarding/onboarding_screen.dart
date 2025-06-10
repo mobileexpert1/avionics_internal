@@ -3,7 +3,7 @@ import 'package:avionics_internal/Onboarding/startExploringScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../Constants/OnboardingTexts.dart';
+import '../Constants/ConstantStrings.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/onboarding_model.dart';
 import '../widgets/OnboardingPages.dart';
@@ -25,8 +25,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     final List<OnboardingInfo> pages = [
       OnboardingInfo(
-        title: OnboardingTexts.title1,
-        description: OnboardingTexts.description1,
+        title: ConstantStrings.title1,
+        description: ConstantStrings.description1,
         imageWidget: Padding(
           padding: EdgeInsets.only(top: size.width * 0.08,bottom: size.width * 0.08,left: size.width * 0.02),
           child: SvgPicture.asset(
@@ -36,8 +36,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       ),
       OnboardingInfo(
-        title: OnboardingTexts.title2,
-        description: OnboardingTexts.description2,
+        title: ConstantStrings.title2,
+        description: ConstantStrings.description2,
         imageWidget: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: size.width * 0.00,
@@ -53,8 +53,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
 
       OnboardingInfo(
-        title: OnboardingTexts.title3,
-        description: OnboardingTexts.description3,
+        title: ConstantStrings.title3,
+        description: ConstantStrings.description3,
         imageWidget: Padding(
           padding: EdgeInsets.only(top: size.width * 0.30,bottom: size.width * 0.08,left: size.width * 0.08),
           child: SvgPicture.asset(
@@ -65,8 +65,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       ),
       OnboardingInfo(
-        title: OnboardingTexts.title4,
-        description: OnboardingTexts.description4,
+        title: ConstantStrings.title4,
+        description: ConstantStrings.description4,
         imageWidget: Padding(
           padding: EdgeInsets.only(top: size.width * 0.30,bottom: size.width * 0.08,left: size.width * 0.08),
           child: SvgPicture.asset(
@@ -129,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         );
                       },
                       child: Text(
-                        OnboardingTexts.skip,
+                        ConstantStrings.skip,
                         style: TextStyle(
                           color: AppColors.skip,
                           fontSize: size.width * 0.042,
@@ -151,7 +151,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         }
                       },
                       child: Text(
-                        OnboardingTexts.next,
+                        ConstantStrings.next,
                         style: TextStyle(
                           color: AppColors.next,
                           fontSize: size.width * 0.042,

@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../Constants/constantImages.dart';
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 20),
             const Text(
-              OnboardingTexts.avionica,
+              ConstantStrings.avionica,
               style: TextStyle(fontSize: 24),
             ),
           ],

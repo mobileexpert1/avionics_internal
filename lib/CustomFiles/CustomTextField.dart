@@ -23,8 +23,12 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       onChanged: onChanged,
-      decoration: InputDecoration(labelText: label, errorText: errorText),
       enabled: enabled,
+      decoration: InputDecoration(
+        labelText: label,
+        errorText: errorText,
+        errorMaxLines: 3,
+      ),
     );
   }
 }

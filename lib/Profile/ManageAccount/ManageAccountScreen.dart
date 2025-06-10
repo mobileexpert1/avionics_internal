@@ -1,4 +1,4 @@
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Home/HomeScreen.dart';
 import 'package:avionics_internal/Subscription/SubscriptionScreen.dart';
@@ -34,7 +34,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
-  String buttonBottomTitle = OnboardingTexts.changePassword;
+  String buttonBottomTitle = ConstantStrings.changePassword;
   bool isRightButtonShow = true;
   bool isTextfiledEnabled = false;
 
@@ -65,7 +65,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: OnboardingTexts.manageAccount,
+          title: ConstantStrings.manageAccount,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
@@ -85,7 +85,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                   setState(() {
                     isTextfiledEnabled = true;
                     isRightButtonShow = false;
-                    buttonBottomTitle = OnboardingTexts.saveTitle;
+                    buttonBottomTitle = ConstantStrings.saveTitle;
                   });
                 },
               ),
@@ -101,7 +101,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                   selector: (state) => state.firstNameError,
                   builder: (context, firstNameError) {
                     return CustomTextField(
-                      label: OnboardingTexts.firstNameLabel,
+                      label: ConstantStrings.firstNameLabel,
                       controller: firstNameController,
                       errorText: firstNameError,
                       onChanged: (val) =>
@@ -116,7 +116,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                   selector: (state) => state.lastNameError,
                   builder: (context, lastNameError) {
                     return CustomTextField(
-                      label: OnboardingTexts.lastNameLabel,
+                      label: ConstantStrings.lastNameLabel,
                       controller: lastNameController,
                       errorText: lastNameError,
                       onChanged: (val) =>
@@ -131,7 +131,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                   selector: (state) => state.emailError,
                   builder: (context, emailError) {
                     return CustomTextField(
-                      label: OnboardingTexts.emailLabel,
+                      label: ConstantStrings.emailLabel,
                       controller: emailController,
                       errorText: emailError,
                       //onChanged: (val) =>   context.read<ManageaccCubit>().emailChanged(val),
@@ -153,7 +153,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                       isEnabled: true,
                       onPressed: () {
                         switch (buttonBottomTitle) {
-                          case OnboardingTexts.changePassword:
+                          case ConstantStrings.changePassword:
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -161,11 +161,11 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                               ),
                             );
                             break;
-                          case OnboardingTexts.saveTitle:
+                          case ConstantStrings.saveTitle:
                             setState(() {
                               isTextfiledEnabled = false;
                               isRightButtonShow = true;
-                              buttonBottomTitle = OnboardingTexts.changePassword;
+                              buttonBottomTitle = ConstantStrings.changePassword;
                             });
                             break;
                           default:

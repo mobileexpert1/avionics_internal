@@ -1,5 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Constants/OnboardingTexts.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Home/RootTabbarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           leading: Wrap(),
-          title: Text(OnboardingTexts.titleLogin),
+          title: Text(ConstantStrings.titleLogin),
           surfaceTintColor: Colors.white,
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   selector: (state) => state.emailError,
                   builder: (context, emailError) {
                     return CustomTextField(
-                      label: OnboardingTexts.emailLabel,
+                      label: ConstantStrings.emailLabel,
                       controller: emailController,
                       errorText: emailError,
                       onChanged: (val) =>
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
                     return CustomTextField(
-                      label: OnboardingTexts.passwordLabel,
+                      label: ConstantStrings.passwordLabel,
                       controller: passwordController,
                       obscureText: true,
                       errorText: passwordError,
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   selector: (state) => state.isButtonEnabled,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
-                      title: OnboardingTexts.loginButton,
+                      title: ConstantStrings.loginButton,
                       backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
@@ -111,13 +111,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                   child: Text(
-                    OnboardingTexts.forgotPassword,
+                    ConstantStrings.forgotPassword,
                     style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                   ),
                 ),
                 SizedBox(height: 20),
                 Text(
-                  OnboardingTexts.orContinue,
+                  ConstantStrings.orContinue,
                   style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                 ),
                 SizedBox(height: 12),
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomSocialLoginButtons(
                   backgroundColor: Colors.white,
                   textColor: Colors.black,
-                  title: OnboardingTexts.loginWithGoogle,
+                  title: ConstantStrings.loginWithGoogle,
                   icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.google),
                     fit: BoxFit.fill,
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomSocialLoginButtons(
                   backgroundColor: Colors.black,
                   textColor: Colors.white,
-                  title: OnboardingTexts.loginWithApple,
+                  title: ConstantStrings.loginWithApple,
                   icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.apple),
                     fit: BoxFit.fill,
@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomSocialLoginButtons(
                   backgroundColor: AppColors.facebookButton,
                   textColor: Colors.white,
-                  title: OnboardingTexts.loginWithFacebook,
+                  title: ConstantStrings.loginWithFacebook,
                   icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.facebook),
                     fit: BoxFit.fill,
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    OnboardingTexts.signUpPrompt,
+                    ConstantStrings.signUpPrompt,
                     style: TextStyle(color: Color.fromRGBO(63, 61, 81, 1.0)),
                   ),
                 ),

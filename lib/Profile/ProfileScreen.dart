@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../Constants/OnboardingTexts.dart';
+import '../Constants/ConstantStrings.dart';
 import '../Constants/constantImages.dart';
 import '../CustomFiles/CustomAppBar.dart';
 import '../CustomFiles/CustomBottomButton.dart';
@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: OnboardingTexts.profileTitle),
+      appBar: CustomAppBar(title: ConstantStrings.profileTitle),
       body: BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
         builder: (context, state) {
           if (state.isLoading) {
