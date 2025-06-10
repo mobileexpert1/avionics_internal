@@ -8,7 +8,6 @@ import '../CustomFiles/CustomBottomButton.dart';
 import '../CustomFiles/CustomTextField.dart';
 import '../bloc/signup/signup_cubit.dart';
 import '../bloc/signup/signup_state.dart';
-import '../Home/HomeScreen.dart';
 import 'LoginScreen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -38,6 +37,19 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => SignupCubit(),
+      child: BlocListener<SignupCubit, SignupState>(
+      listener: (context, state) {
+       if (state.status == SignupStatus.success) {
+           Navigator.push(
+               context,
+               MaterialPageRoute(builder: (_) => SubscriptionScreen()),
+             );
+       } else if (state.status == SignupStatus.failure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage ?? "Signup failed")),
+           );
+         }
+       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -144,10 +156,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       // use SizedBox or an actual icon if needed
                       isEnabled: isButtonEnabled,
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SubscriptionScreen()),
-                        );
+                        context.read<SignupCubit>().submitSignup();
                       },
                     );
                   },
@@ -169,6 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

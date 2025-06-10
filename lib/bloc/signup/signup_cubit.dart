@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'signup_state.dart';
 import '../../Constants/Validators.dart';
 
@@ -94,4 +97,49 @@ class SignupCubit extends Cubit<SignupState> {
       ),
     );
   }
+
+
+  Future<void> submitSignup() async {
+    emit(state.copyWith(status: SignupStatus.loading));
+
+    final url = Uri.parse("https://avionica.csdevhub.com/user-service/docs");
+
+    final body = {
+      "first_name": state.firstName,
+      "last_name": state.lastName,
+      "email": state.email,
+      "username": state.username,
+      "password": state.password,
+      "user_type": state.userType,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(body),
+      );
+
+      print("Signup Response: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        emit(state.copyWith(status: SignupStatus.success));
+      } else {
+        final error = jsonDecode(response.body);
+        emit(state.copyWith(
+          status: SignupStatus.failure,
+          errorMessage: error['message'] ?? "Signup failed",
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        status: SignupStatus.failure,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+
 }
