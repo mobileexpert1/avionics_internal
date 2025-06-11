@@ -19,7 +19,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
     Center(child: Text('Map')),
     AircraftComparisonScreen(),
     SavedFlighScreen(showTabs: true),
-    ProfileScreen(),
+    // ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {

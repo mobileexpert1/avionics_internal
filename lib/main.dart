@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
+import 'package:avionics_internal/Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
             // home: HomeScreen(),
-            home: SplashScreen(),
+            home: SubscriptionScreen(),
           );
         },
       ),

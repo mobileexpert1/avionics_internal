@@ -1,25 +1,40 @@
-enum SubscriptionOption { oneYear, oneMonth }
+import 'package:avionics_internal/bloc/Subscription/subscription_model.dart';
 
-abstract class SubscriptionState  {
-  const SubscriptionState();
+enum CommonApiStatus { initial, submitting, success, failure }
 
-  @override
-  List<Object?> get props => [];
-}
+class SubscriptionState {
+  final CommonApiStatus status;
+  final List<SubscriptionPlanModel> plans;
+  final SubscriptionPlanModel? selectedOption;
+  final String? errorMessage;
 
-class SubscriptionInitial extends SubscriptionState {
-  final SubscriptionOption selectedOption;
+  SubscriptionState({
+    required this.status,
+    required this.plans,
+    this.selectedOption,
+    this.errorMessage,
+  });
 
-  const SubscriptionInitial({this.selectedOption = SubscriptionOption.oneYear});
+  factory SubscriptionState.initial() {
+    return SubscriptionState(
+      status: CommonApiStatus.initial,
+      plans: [],
+      selectedOption: null,
+      errorMessage: null,
+    );
+  }
 
-  @override
-  List<Object?> get props => [selectedOption];
-
-  SubscriptionInitial copyWith({
-    SubscriptionOption? selectedOption,
+  SubscriptionState copyWith({
+    CommonApiStatus? status,
+    List<SubscriptionPlanModel>? plans,
+    SubscriptionPlanModel? selectedOption,
+    String? errorMessage,
   }) {
-    return SubscriptionInitial(
+    return SubscriptionState(
+      status: status ?? this.status,
+      plans: plans ?? this.plans,
       selectedOption: selectedOption ?? this.selectedOption,
+      errorMessage: errorMessage,
     );
   }
 }

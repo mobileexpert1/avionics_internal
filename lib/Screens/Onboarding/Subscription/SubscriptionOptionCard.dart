@@ -1,38 +1,30 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/constantImages.dart';
 import '../../../bloc/Subscription/subscription_cubit.dart';
-import '../../../bloc/Subscription/subscription_state.dart';
-
+import '../../../bloc/Subscription/subscription_model.dart';
 
 class SubscriptionOptionCard extends StatelessWidget {
-  final SubscriptionOption option;
-  final String title;
-  final String subtitle;
-  final String price;
+  final SubscriptionPlanModel plan;
   final bool isSelected;
 
   const SubscriptionOptionCard({
     Key? key,
-    required this.option,
-    required this.title,
-    required this.subtitle,
-    required this.price,
+    required this.plan,
     required this.isSelected,
-    required BuildContext context,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.read<SubscriptionCubit>().selectOption(option),
+      onTap: () => context.read<SubscriptionCubit>().selectOption(plan),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? Colors.black : Colors.grey,
             width: 1.5,
@@ -41,11 +33,12 @@ class SubscriptionOptionCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            /// Title and Subtitle
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  plan.isYearly ? "1 Year Plan" : "1 Month Plan",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 18,
@@ -53,23 +46,27 @@ class SubscriptionOptionCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.black87, fontSize: 14),
+                  "${plan.trial}-Day Free Trial",
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
+
+            /// Price and Tick Icon
             Row(
               children: [
                 Text(
-                  price,
+                  "\$${plan.price}",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 15,
-                    fontWeight: FontWeight.normal,
                   ),
                 ),
                 const SizedBox(width: 10),
-                if (isSelected) // No need for '== true'
+                if (isSelected)
                   SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.tickIcon),
                     fit: BoxFit.fill,

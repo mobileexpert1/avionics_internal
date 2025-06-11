@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
-import '../../../Home/HomeScreen.dart';
 import '../../../bloc/Subscription/subscription_cubit.dart';
 import '../../../bloc/Subscription/subscription_state.dart';
 import 'SubscriptionOptionCard.dart';
@@ -16,11 +15,11 @@ class SubscriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SubscriptionCubit(),
+      create: (context) => SubscriptionCubit()..submitSubscription(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          leading: Wrap(),
+          leading: const SizedBox(),
           title: Text(ConstantStrings.startSubscription),
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -31,19 +30,16 @@ class SubscriptionScreen extends StatelessWidget {
         ),
         body: BlocBuilder<SubscriptionCubit, SubscriptionState>(
           builder: (context, state) {
-            final selectedOption = state is SubscriptionInitial
-                ? state.selectedOption
-                : SubscriptionOption.oneYear;
+            final selectedOption = state.selectedOption;
 
             return Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: ListView(
                 children: [
                   const SizedBox(height: 20),
                   SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.logoMain),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 30),
 
@@ -56,10 +52,7 @@ class SubscriptionScreen extends StatelessWidget {
                     ),
                     text: SubscriptionTexts.featureSaveFavorites,
                   ),
-                  const Divider(
-                    color: Color.fromRGBO(246, 246, 246, 1.0),
-                    height: 3,
-                  ),
+                  const Divider(color: Color.fromRGBO(246, 246, 246, 1.0), height: 3),
                   _buildFeatureRow(
                     iconWidget: SvgPicture.asset(
                       CommonUi.setSvgImage(AssetsPath.trackIcon),
@@ -68,12 +61,7 @@ class SubscriptionScreen extends StatelessWidget {
                     ),
                     text: SubscriptionTexts.featureComparePlanes,
                   ),
-
-                  const Divider(
-                    color: Color.fromRGBO(246, 246, 246, 1.0),
-                    height: 3,
-                  ),
-
+                  const Divider(color: Color.fromRGBO(246, 246, 246, 1.0), height: 3),
                   _buildFeatureRow(
                     iconWidget: SvgPicture.asset(
                       CommonUi.setSvgImage(AssetsPath.trackIcon),
@@ -82,27 +70,17 @@ class SubscriptionScreen extends StatelessWidget {
                     ),
                     text: SubscriptionTexts.featureTrackAircrafts,
                   ),
-
                   const SizedBox(height: 20),
 
                   /// Subscription Options
-                  SubscriptionOptionCard(
-                    context: context,
-                    option: SubscriptionOption.oneYear,
-                    title: SubscriptionTexts.oneYearTitle,
-                    subtitle: SubscriptionTexts.sevenDaysTrialSubtitle,
-                    price: SubscriptionTexts.oneYearPrice,
-                    isSelected: selectedOption == SubscriptionOption.oneYear,
+                  if (state.plans.isNotEmpty) ...state.plans.map(
+                        (plan) => SubscriptionOptionCard(
+                      plan: plan,
+                      isSelected: selectedOption?.id == plan.id,
+                    ),
                   ),
-                  const SizedBox(height: 15),
-                  SubscriptionOptionCard(
-                    context: context,
-                    option: SubscriptionOption.oneMonth,
-                    title: SubscriptionTexts.oneMonthTitle,
-                    subtitle: SubscriptionTexts.sevenDaysTrialSubtitle,
-                    price: SubscriptionTexts.oneMonthPrice,
-                    isSelected: selectedOption == SubscriptionOption.oneMonth,
-                  ),
+                  if (state.plans.isEmpty)
+                    const Center(child: CircularProgressIndicator()),
                   const SizedBox(height: 40),
 
                   /// Go Premium Button
@@ -110,19 +88,10 @@ class SubscriptionScreen extends StatelessWidget {
                     backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                     textColor: Colors.white,
                     title: SubscriptionTexts.goPremiumTitle,
-                    icon: Wrap(),
-                    isEnabled: state is SubscriptionInitial,
-                    // Enable only when state is valid
+                    icon: const SizedBox(),
+                    isEnabled: state.status != CommonApiStatus.submitting,
                     onPressed: () {
-                      if (state is SubscriptionInitial) {
-                        final selected = state.selectedOption;
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                          (route) => false,
-                        );
-                        print('Go Premium clicked with option: $selected');
-                        // Add your navigation or subscription logic here
-                      }
+                      context.read<SubscriptionCubit>().submitSubscription();
                     },
                   ),
                   const SizedBox(height: 20),
