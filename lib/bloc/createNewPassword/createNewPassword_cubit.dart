@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/Validators.dart';
-import 'createNewPassword_state.dart';
+import '../Profile/ChangePassword/changePassword_state.dart';
 
 class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
   CreateNewPasswordCubit() : super(CreateNewPasswordState());
