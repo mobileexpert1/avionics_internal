@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
@@ -182,12 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Logout",
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SplashScreen(),
-                          ),
-                        );
+                        _clearAllDataAndRedirectToSplashScreen(context);
                       },
                     ),
                     SettingsListItem(
@@ -219,13 +215,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> _clearAllDataAndRedirectToSplashScreen(
+    BuildContext context,
+  ) async {
+    await SharedPrefsHelper.clearAll();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => SplashScreen()),
+      (route) => false,
+    );
+  }
+
   void showDeleteConfirmation(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => InfoBottomSheet(
         onYes: () {
-          Navigator.pop(context);
+          _clearAllDataAndRedirectToSplashScreen(context);
           // Handle delete action here
         },
         onNo: () {

@@ -18,6 +18,7 @@ class RootDecider extends StatelessWidget {
           );
         } else {
           final isUserLoggedIn = snapshot.data ?? false;
+          print(isUserLoggedIn);
           return isUserLoggedIn ? RootTabbarscreen() : StartExploringScreen();
         }
       },

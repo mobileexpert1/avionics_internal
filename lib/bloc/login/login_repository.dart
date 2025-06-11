@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/api_service.dart';
 import '../../Constants/ConstantStrings.dart';
+import 'login_response_model.dart'; // <- Import the model here
 
 class LoginRepository {
-  Future<String> loginUser({
+  Future<LoginResponseModel> loginUser({
     required String email,
     required String password,
   }) async {
@@ -14,34 +16,19 @@ class LoginRepository {
           ApiServiceUrlConstant.signIn,
     );
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({"email": email, "password": password}),
-    );
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {"email": email, "password": password},
+      );
 
-    print('URL: $url');
-    print(
-      'Request Body: ${jsonEncode({"email": email, "password": password})}',
-    );
-    print('Response Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
+      print('URL: $url');
+      print('Request Body: ${jsonEncode({"email": email, "password": password})}');
+      print('Response: $response');
 
-    if (response.statusCode == 200) {
-      return response.body;
-    } else if (response.statusCode == 201) {
-      final body = jsonDecode(response.body);
-      return body['detail'] ?? "Login successfully";
-    } else if (response.statusCode == 422) {
-      final body = jsonDecode(response.body);
-      final error = ApiErrorModel.fromJson(body);
-      throw error.toString();
-    } else if (response.statusCode == 400) {
-      final body = jsonDecode(response.body);
-      final messages = body.entries.map((e) => '${e.value}').join('\n');
-      throw messages;
-    } else {
-      throw 'Login failed: ${response.statusCode}';
+      return LoginResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
     }
   }
 }

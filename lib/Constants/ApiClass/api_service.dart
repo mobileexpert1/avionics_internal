@@ -1,11 +1,17 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'ApiErrorModel.dart';
 
 class ApiService {
   static final Map<String, String> defaultHeaders = {
     'Content-Type': 'application/json',
   };
+
+  static Future<bool> _hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
 
   /// POST request
   static Future<dynamic> post({
@@ -68,6 +74,12 @@ class ApiService {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
   }) async {
+    // ✅ Check internet connectivity
+    final hasInternet = await _hasInternetConnection();
+    if (!hasInternet) {
+      throw 'No internet connection. Please check your network.';
+    }
+
     final requestHeaders = {...defaultHeaders, if (headers != null) ...headers};
     final encodedBody = body != null ? jsonEncode(body) : null;
 
@@ -106,6 +118,7 @@ class ApiService {
         case 422:
           throw ApiErrorModel.fromJson(jsonResponse).toString();
         case 400:
+        case 404:
           final messages = jsonResponse.entries.map((e) => '${e.value}').join('\n');
           throw messages;
         default:

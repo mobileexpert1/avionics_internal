@@ -7,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPrefsHelper {
   static const String _emailKey = 'emailKey';
   static const String _isUserLoginKey = 'UserLoginKey';
-  static const String _isFirstLaunchKey = 'isFirstLaunchKey';
+  static const String _isFirstLaunchKey = 'FirstLaunchKey';
+  static const String _isUserAccessTokenKey = 'UserAccessTokenKey';
 
   static Future<void> saveEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
@@ -37,6 +38,16 @@ class SharedPrefsHelper {
   static Future<bool> isFirstLaunch() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_isFirstLaunchKey) ?? false;
+  }
+
+  static Future<void> setUserAccessToken(String userAccessToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_isUserAccessTokenKey, userAccessToken);
+  }
+
+  static Future<String?> getUserAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_isUserAccessTokenKey);
   }
 
   static Future<void> clearAll() async {

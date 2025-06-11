@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
@@ -28,62 +29,94 @@ class _ForgotScreenState extends State<Forgotscreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ForgotCubit(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(ConstantStrings.appBarTitleForgotPwd),
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          shape: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.logoMain),
-                  fit: BoxFit.fill,
+      child: BlocConsumer<ForgotCubit, ForgotState>(
+        listenWhen: (prev, curr) => prev.status != curr.status,
+        listener: (context, state) {
+          if (state.status == CommonApiStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage ?? 'Forgot email failed'),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Stack(
+            children: [
+              Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  title: Text(ConstantStrings.appBarTitleForgotPwd),
+                  surfaceTintColor: Colors.white,
+                  backgroundColor: Colors.white,
+                  centerTitle: true,
+                  shape: Border(
+                    bottom: BorderSide(color: Colors.grey, width: 1),
+                  ),
                 ),
-                SizedBox(height: 20),
-                BlocSelector<ForgotCubit, ForgotState, String?>(
-                  selector: (state) => state.emailError,
-                  builder: (context, emailError) {
-                    return CustomTextField(
-                      label: ConstantStrings.emailLabel,
-                      controller: emailController,
-                      errorText: emailError,
-                      onChanged: (val) =>
-                          context.read<ForgotCubit>().emailChanged(val),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
+                body: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20),
+                        SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.logoMain),
+                          fit: BoxFit.fill,
+                        ),
+                        SizedBox(height: 20),
+                        BlocSelector<ForgotCubit, ForgotState, String?>(
+                          selector: (state) => state.emailError,
+                          builder: (context, emailError) {
+                            return CustomTextField(
+                              label: ConstantStrings.emailLabel,
+                              controller: emailController,
+                              errorText: emailError,
+                              onChanged: (val) =>
+                                  context.read<ForgotCubit>().emailChanged(val),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 20),
 
-                BlocSelector<ForgotCubit, ForgotState, bool>(
-                  selector: (state) => state.isButtonEnabled,
-                  builder: (context, isButtonEnabled) {
-                    return CustomBottomButton(
-                      title: ConstantStrings.sendEmailButton,
-                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      // No icon shown
-                      isEnabled: isButtonEnabled,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => OtpScreen(email: '', isComeFromSignup: false)));
-                      },
-                    );
-                  },
+                        BlocSelector<ForgotCubit, ForgotState, bool>(
+                          selector: (state) => state.isButtonEnabled,
+                          builder: (context, isButtonEnabled) {
+                            return CustomBottomButton(
+                              title: ConstantStrings.sendEmailButton,
+                              backgroundColor: const Color.fromRGBO(
+                                63,
+                                61,
+                                81,
+                                1.0,
+                              ),
+                              textColor: Colors.white,
+                              icon: const SizedBox(width: 0),
+                              // No icon shown
+                              isEnabled: isButtonEnabled,
+                              onPressed: () {
+                                context.read<ForgotCubit>().forgotUserApi(
+                                  context,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
+
+              // Full-screen loading indicator
+              if (state.status == CommonApiStatus.submitting)
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

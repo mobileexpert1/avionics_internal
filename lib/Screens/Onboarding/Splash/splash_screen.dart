@@ -26,13 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!isFirst) {
       await SharedPrefsHelper.setFirstLaunchDone();
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => OnboardingScreen()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => OnboardingScreen()));
     } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => RootDecider()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => RootDecider()));
     }
   }
 

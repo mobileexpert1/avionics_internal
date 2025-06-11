@@ -114,11 +114,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               // No icon shown
                               isEnabled: isButtonEnabled,
                               onPressed: () {
-                                Navigator.push(
+                                context.read<LoginCubit>().loginUserApi(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RootTabbarscreen(),
-                                  ),
                                 );
                               },
                             );
@@ -172,11 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             CommonUi.setSvgImage(AssetsPath.apple),
                             fit: BoxFit.fill,
                           ),
-                            onPressed: () {
-                              context.read<LoginCubit>().loginUserApi(
-                                context,
-                              );
-                          },
+                          onPressed: () {},
                         ),
                         SizedBox(height: 12),
                         CustomSocialLoginButtons(

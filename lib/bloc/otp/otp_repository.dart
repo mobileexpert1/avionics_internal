@@ -21,6 +21,13 @@ class OtpRepository {
         body: {"email": email, "otp": otp, "otp_type": otp_type},
       );
 
+      print('URL: $url');
+      print(
+        'Request Body: ${jsonEncode({"email": email, "otp": otp, "otp_type": otp_type})}',
+      );
+      print('Response Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
       return response['detail'] ?? "OTP verified successfully";
     } catch (e) {
       throw e.toString();

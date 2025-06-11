@@ -3,7 +3,9 @@ import 'package:avionics_internal/bloc/login/login_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Home/RootTabbar/RootTabbarScreen.dart';
 import 'login_state.dart';
 import '../../Constants/Validators.dart';
@@ -16,10 +18,16 @@ class LoginCubit extends Cubit<LoginState> {
       state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
     );
     try {
-      await LoginRepository().loginUser(
+      final result = await LoginRepository().loginUser(
         email: state.email,
         password: state.password,
       );
+
+      print("Access token: ${result.accessToken}");
+      print("User name: ${result.userDetails.firstName}");
+
+      await SharedPrefsHelper.setUserAccessToken(result.accessToken);
+      await SharedPrefsHelper.saveIsUserLogin(true);
 
       emit(state.copyWith(status: CommonApiStatus.success));
 
