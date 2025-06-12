@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'ApiErrorModel.dart';
 
 class ApiService {
@@ -67,6 +68,11 @@ class ApiService {
     );
   }
 
+  static Future<String?> _getBearerToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('UserAccessTokenKey');
+  }
+
   /// Internal method to handle all HTTP verbs
   static Future<dynamic> _handleRequest({
     required String method,
@@ -80,7 +86,9 @@ class ApiService {
       throw 'No internet connection. Please check your network.';
     }
 
-    final requestHeaders = {...defaultHeaders, if (headers != null) ...headers};
+    final token = await _getBearerToken();
+
+    final requestHeaders = {...defaultHeaders, if (headers != null) ...headers, if (token != null) 'Authorization': 'Bearer $token',};
     final encodedBody = body != null ? jsonEncode(body) : null;
 
     print('[$method] URL: $url');

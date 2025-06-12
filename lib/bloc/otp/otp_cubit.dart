@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:avionics_internal/bloc/login/login_repository.dart';
 import 'package:avionics_internal/bloc/otp/otp_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,7 @@ class OtpCubit extends Cubit<OtpState> {
       state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
     );
     try {
-      await OtpRepository().otpVerifyApi(
+      final result =  await OtpRepository().otpVerifyApi(
         email: email,
         otp_type: isFromSignup == true ? 'sign_up' : 'forgot',
         otp: state.otp,
@@ -29,6 +30,7 @@ class OtpCubit extends Cubit<OtpState> {
       emit(state.copyWith(status: CommonApiStatus.success));
 
       await SharedPrefsHelper.saveEmail(email);
+      await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);
 
       Navigator.pushReplacement(

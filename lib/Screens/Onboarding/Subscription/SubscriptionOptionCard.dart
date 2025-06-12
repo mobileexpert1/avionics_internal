@@ -5,30 +5,23 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../Constants/constantImages.dart';
 import '../../../bloc/Subscription/subscription_cubit.dart';
+import '../../../bloc/Subscription/subscription_list_model.dart';
 import '../../../bloc/Subscription/subscription_state.dart';
 
-
 class SubscriptionOptionCard extends StatelessWidget {
-  final SubscriptionOption option;
-  final String title;
-  final String subtitle;
-  final String price;
+  final SubscriptionItemModel item;
   final bool isSelected;
 
   const SubscriptionOptionCard({
     Key? key,
-    required this.option,
-    required this.title,
-    required this.subtitle,
-    required this.price,
+    required this.item,
     required this.isSelected,
-    required BuildContext context,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.read<SubscriptionCubit>().selectOption(option),
+      onTap: () => context.read<SubscriptionCubit>().selectOption(item),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -45,7 +38,7 @@ class SubscriptionOptionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  "${item.duration} ${item.isYearly ? 'Year' : 'Month'}",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 18,
@@ -53,7 +46,7 @@ class SubscriptionOptionCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  subtitle,
+                  "${item.trial}-day free trial",
                   style: const TextStyle(color: Colors.black87, fontSize: 14),
                 ),
               ],
@@ -61,7 +54,7 @@ class SubscriptionOptionCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  price,
+                  "\$${item.price.toStringAsFixed(2)}",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 15,
@@ -69,7 +62,7 @@ class SubscriptionOptionCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                if (isSelected) // No need for '== true'
+                if (isSelected)
                   SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.tickIcon),
                     fit: BoxFit.fill,

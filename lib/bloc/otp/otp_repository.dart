@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 
 import '../../Constants/ApiClass/api_service.dart';
+import '../login/login_response_model.dart';
 
 class OtpRepository {
-  Future<String> otpVerifyApi({
+  Future<LoginResponseModel> otpVerifyApi({
     required String email,
     required String otp,
     required String otp_type,
@@ -20,15 +21,7 @@ class OtpRepository {
         url: url,
         body: {"email": email, "otp": otp, "otp_type": otp_type},
       );
-
-      print('URL: $url');
-      print(
-        'Request Body: ${jsonEncode({"email": email, "otp": otp, "otp_type": otp_type})}',
-      );
-      print('Response Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-
-      return response['detail'] ?? "OTP verified successfully";
+      return LoginResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();
     }

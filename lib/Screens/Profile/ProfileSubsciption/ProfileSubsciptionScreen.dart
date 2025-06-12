@@ -10,7 +10,6 @@ import '../../../bloc/Subscription/subscription_cubit.dart';
 import '../../../bloc/Subscription/subscription_state.dart';
 import '../../Onboarding/Subscription/SubscriptionOptionCard.dart';
 
-
 class ProfileSubscriptionScreen extends StatelessWidget {
   const ProfileSubscriptionScreen({super.key});
 
@@ -32,76 +31,80 @@ class ProfileSubscriptionScreen extends StatelessWidget {
 
         body: BlocBuilder<SubscriptionCubit, SubscriptionState>(
           builder: (context, state) {
-            final selectedOption = state is SubscriptionInitial
-                ? state.selectedOption
-                : SubscriptionOption.oneYear;
+            if (state is! SubscriptionInitial) return SizedBox.shrink();
+
+            final selectedOption = state.selectedId;
+            final subscriptionList = state.subscriptionList;
 
             return Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(SubscriptionTexts.currentPlanTitle),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(SubscriptionTexts.currentPlanTitle),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    ...state.subscriptionList.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: SubscriptionOptionCard(
+                          item: item,
+                          isSelected: selectedOption == item.id,
+                        ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                    ),
 
-                  /// Subscription Options
-                  SubscriptionOptionCard(
-                    context: context,
-                    option: SubscriptionOption.oneYear,
-                    title: SubscriptionTexts.oneYearTitle,
-                    subtitle: SubscriptionTexts.sevenDaysTrialSubtitle,
-                    price: SubscriptionTexts.oneYearPrice,
-                    isSelected: selectedOption == SubscriptionOption.oneYear,
-                  ),
-                  const SizedBox(height: 15),
-                  SubscriptionOptionCard(
-                    context: context,
-                    option: SubscriptionOption.oneMonth,
-                    title: SubscriptionTexts.oneMonthTitle,
-                    subtitle: SubscriptionTexts.sevenDaysTrialSubtitle,
-                    price: SubscriptionTexts.oneMonthPrice,
-                    isSelected: selectedOption == SubscriptionOption.oneMonth,
-                  ),
-                  const SizedBox(height: 40),
+                    const SizedBox(height: 40),
 
-                  /// Go Premium Button
-                  CustomBottomButton(
-                    backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
-                    textColor: Colors.white,
-                    title: SubscriptionTexts.changeSubPlanTitle,
-                    icon: Wrap(),
-                    isEnabled: state is SubscriptionInitial,
-                    // Enable only when state is valid
-                    onPressed: () {
-                      if (state is SubscriptionInitial) {
-                        final selected = state.selectedOption;
-                        print('Go Premium clicked with option: $selected');
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 20),
+                    /// Go Premium Button
+                    CustomBottomButton(
+                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                      textColor: Colors.white,
+                      title: SubscriptionTexts.changeSubPlanTitle,
+                      icon: Wrap(),
+                      isEnabled: state is SubscriptionInitial,
+                      // Enable only when state is valid
+                      onPressed: () {
+                        if (state is SubscriptionInitial) {
+                          final selected = context
+                              .read<SubscriptionCubit>()
+                              .selectedItem;
+                          if (selected != null) {
+                            print({
+                              "duration": selected.duration,
+                              "is_yearly": selected.isYearly,
+                              "price": selected.price,
+                              "trial": selected.trial,
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 20),
 
-                  CustomBottomButton(
-                    backgroundColor: const Color.fromRGBO(30, 128, 242, 1.0),
-                    textColor: Colors.white,
-                    title: SubscriptionTexts.restoreSubTitle,
-                    icon: Wrap(),
-                    isEnabled: state is SubscriptionInitial,
-                    onPressed: () {
-                      if (state is SubscriptionInitial) {
-                        final selected = state.selectedOption;
-                        print('Go Premium clicked with option: $selected');
-                      }
-                    },
-                  ),
-                ],
+                    CustomBottomButton(
+                      backgroundColor: const Color.fromRGBO(30, 128, 242, 1.0),
+                      textColor: Colors.white,
+                      title: SubscriptionTexts.restoreSubTitle,
+                      icon: Wrap(),
+                      isEnabled: state is SubscriptionInitial,
+                      onPressed: () {
+                        if (state is SubscriptionInitial) {
+                          final selected = state.selectedId;
+                          print('Go Premium clicked with option: $selected');
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           },

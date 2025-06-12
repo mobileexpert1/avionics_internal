@@ -29,16 +29,9 @@ class AircraftCard {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(5),
-        border: Border.all(
-          color: Colors.grey.shade300,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Card(
@@ -69,8 +62,7 @@ class AircraftCard {
               ),
               const SizedBox(width: 6),
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(4),
@@ -89,27 +81,18 @@ class AircraftCard {
             children: [
               // Display the correct manufacturer image
               Image.asset(
-                CommonUi.setPngImage(manufacturerImagePath), // Use the image path determined earlier
+                CommonUi.setPngImage(manufacturerImagePath),
+                // Use the image path determined earlier
                 width: 16,
                 height: 16,
               ),
               const SizedBox(width: 4),
-              Text(
-                manufacturer,
-                style: const TextStyle(fontSize: 13),
-              ),
+              Text(manufacturer, style: const TextStyle(fontSize: 13)),
               if (airline != null) ...[
                 const SizedBox(width: 10),
-                Image.asset(
-                  airlineImagePath!,
-                  width: 16,
-                  height: 16,
-                ),
+                Image.asset(airlineImagePath!, width: 16, height: 16),
                 const SizedBox(width: 4),
-                Text(
-                  airline,
-                  style: const TextStyle(fontSize: 13),
-                ),
+                Text(airline, style: const TextStyle(fontSize: 13)),
               ],
             ],
           ),

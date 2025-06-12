@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/api_service.dart';
+import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ConstantStrings.dart';
 
 class ForgotRepository {
-  Future<String> forgotUserApi({required String email}) async {
+  Future<BaseDetailResponseModel> forgotUserApi({required String email}) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -14,13 +15,7 @@ class ForgotRepository {
 
     try {
       final response = await ApiService.post(url: url, body: {"email": email});
-
-      print('URL: $url');
-      print('Request Body: ${jsonEncode({"email": email})}');
-      print('Response Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-
-      return response['detail'] ?? "Login successfully";
+      return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();
     }

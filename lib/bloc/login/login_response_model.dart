@@ -1,25 +1,30 @@
 class LoginResponseModel {
   final String detail;
-  final String accessToken;
-  final String refreshToken;
-  final String tokenType;
-  final UserDetails userDetails;
+  final bool? isVerified; // Present only in unverified response
+  final String? accessToken;
+  final String? refreshToken;
+  final String? tokenType;
+  final UserDetails? userDetails;
 
   LoginResponseModel({
     required this.detail,
-    required this.accessToken,
-    required this.refreshToken,
-    required this.tokenType,
-    required this.userDetails,
+    this.isVerified,
+    this.accessToken,
+    this.refreshToken,
+    this.tokenType,
+    this.userDetails,
   });
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
-      detail: json['detail'],
+      detail: json['detail'] ?? '',
+      isVerified: json['is_verified'],
       accessToken: json['access'],
       refreshToken: json['refresh'],
       tokenType: json['token_type'],
-      userDetails: UserDetails.fromJson(json['user_details']),
+      userDetails: json['user_details'] != null
+          ? UserDetails.fromJson(json['user_details'])
+          : null,
     );
   }
 }
@@ -57,10 +62,10 @@ class UserDetails {
       email: json['email'],
       username: json['username'],
       phoneNumber: json['phone_number'],
-      professionalRole: json['professional_role'],
-      experienceLevel: json['experience_level'],
-      userType: json['user_type'],
-      authType: json['auth_type'],
+      professionalRole: json['professional_role'] ?? '',
+      experienceLevel: json['experience_level'] ?? '',
+      userType: json['user_type'] ?? '',
+      authType: json['auth_type'] ?? '',
     );
   }
 }

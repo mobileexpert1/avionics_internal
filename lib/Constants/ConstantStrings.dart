@@ -133,4 +133,5 @@ class ApiServiceUrlConstant {
   static const String verifyOtp = 'auth/verify-otp';
   static const String signIn = 'auth/sign-in';
   static const String forgot = 'auth/forgot';
+  static const String subscrition = 'subscription/';
 }

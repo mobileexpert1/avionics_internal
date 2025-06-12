@@ -21,11 +21,6 @@ class LoginRepository {
         url: url,
         body: {"email": email, "password": password},
       );
-
-      print('URL: $url');
-      print('Request Body: ${jsonEncode({"email": email, "password": password})}');
-      print('Response: $response');
-
       return LoginResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();

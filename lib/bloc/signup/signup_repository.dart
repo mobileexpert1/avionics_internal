@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 
 import '../../Constants/ApiClass/api_service.dart';
+import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 
 class SignupRepository {
-  Future<String> registerUser({
+  Future<BaseDetailResponseModel> registerUser({
     required String first_name,
     required String last_name,
     required String email,
@@ -35,7 +36,7 @@ class SignupRepository {
         },
       );
 
-      return response['detail'] ?? "Signup success";
+      return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();
     }

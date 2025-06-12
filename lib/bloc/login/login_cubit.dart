@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Home/HomeScreen.dart';
+import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
 import 'package:avionics_internal/bloc/login/login_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,18 +24,30 @@ class LoginCubit extends Cubit<LoginState> {
         password: state.password,
       );
 
-      print("Access token: ${result.accessToken}");
-      print("User name: ${result.userDetails.firstName}");
-
-      await SharedPrefsHelper.setUserAccessToken(result.accessToken);
-      await SharedPrefsHelper.saveIsUserLogin(true);
-
       emit(state.copyWith(status: CommonApiStatus.success));
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-        (route) => false,
-      );
+      if (result.userDetails != null) {
+        // User is verified
+        print("Access token: ${result.accessToken}");
+        print("User name: ${result.userDetails?.firstName}");
+
+        await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
+        await SharedPrefsHelper.saveIsUserLogin(true);
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+          (route) => false,
+        );
+      } else if (result.isVerified == false) {
+        // User is not verified
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) =>
+                OtpScreen(email: state.email, isComeFromSignup: true),
+          ),
+          (route) => false,
+        );
+      }
     } catch (e) {
       emit(
         state.copyWith(
