@@ -1,6 +1,4 @@
-import 'dart:ffi';
 
-import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Constants/ApiClass/api_service.dart';
 import 'package:avionics_internal/bloc/Subscription/subscription_list_model.dart';
