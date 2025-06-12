@@ -27,6 +27,22 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
   bool _obscureConfirmPassword = true;
 
   @override
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            ConstantStrings.OtpVerified
+          ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    });
+  }
+
+  @override
   void dispose() {
     passwordController.dispose();
     confirmPasswordController.dispose();

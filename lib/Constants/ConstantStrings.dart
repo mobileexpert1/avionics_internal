@@ -85,6 +85,12 @@ class ConstantStrings {
   static const String profileTitle = 'Profile';
   static const String glossaryTitle = 'Glossary';
   static const String avtarTitle = 'Avatar';
+
+// ─────────────────────────────
+// Create New Password
+// ─────────────────────────────
+  static const String OtpVerified = 'Your OTP verified successfully. Please reset your password within 5 minutes.';
+
 }
 
 
