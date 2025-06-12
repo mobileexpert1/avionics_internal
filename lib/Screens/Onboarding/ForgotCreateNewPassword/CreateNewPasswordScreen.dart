@@ -68,6 +68,8 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                 >(
                   selector: (state) => state.passwordError,
                   builder: (context, passwordError) {
+                    print("BlocSelector ------ 👀 UI passwordError: $passwordError");
+
                     return CustomTextField(
                       label: ConstantStrings.createPasswordLabel,
                       controller: passwordController,
@@ -90,6 +92,8 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                 >(
                   selector: (state) => state.confirmPasswordError,
                   builder: (context, confirmPasswordError) {
+                    print("BlocSelector ------ 👀 UI confirmPasswordError: $confirmPasswordError");
+
                     return CustomTextField(
                       label: ConstantStrings.confirmPasswordLabel,
                       controller: confirmPasswordController,

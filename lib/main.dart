@@ -11,6 +11,7 @@ import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart'
 import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'RootDecider.dart';
+import 'Screens/Onboarding/ForgotCreateNewPassword/CreateNewPasswordScreen.dart';
 import 'Screens/Onboarding/Signup/SignupScreen.dart';
 import 'Screens/Onboarding/Splash/splash_screen.dart';
 import 'bloc/AirCraftDetail/airCraftDetail_cubit.dart';
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
             // home: HomeScreen(),
-            home: SplashScreen(),
+            home: CreateNewPasswordScreen(email: ''),
           );
         },
       ),

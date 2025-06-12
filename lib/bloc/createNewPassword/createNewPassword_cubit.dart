@@ -62,7 +62,7 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
     final newPassword = password ?? state.password;
     final newConfirmPassword = confirmPassword ?? state.confirmPassword;
 
-    final updatedPasswordError =
+    var updatedPasswordError =
         passwordError ?? Validators().validatePassword(newPassword);
     final updatedConfirmPasswordError =
         confirmPasswordError ??
@@ -74,12 +74,13 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
         newPassword.isNotEmpty &&
         newConfirmPassword.isNotEmpty;
 
+
     emit(
       state.copyWith(
         password: newPassword,
         confirmPassword: newConfirmPassword,
-        passwordError: updatedPasswordError,
         confirmPasswordError: updatedConfirmPasswordError,
+        passwordError: updatedPasswordError,
         isButtonEnabled: isValid,
       ),
     );
