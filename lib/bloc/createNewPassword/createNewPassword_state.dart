@@ -19,7 +19,6 @@ class CreateNewPasswordState {
     this.passwordError,
     this.confirmPasswordError,
     this.isButtonEnabled = false,
-
     this.isLoading = false,
     this.isSuccess = false,
     this.apiError,
@@ -33,7 +32,6 @@ class CreateNewPasswordState {
     String? passwordError,
     String? confirmPasswordError,
     bool? isButtonEnabled,
-
     bool? isLoading,
     bool? isSuccess,
     String? apiError,
@@ -43,10 +41,9 @@ class CreateNewPasswordState {
     return CreateNewPasswordState(
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
-      passwordError: passwordError ?? this.passwordError,
-      confirmPasswordError: confirmPasswordError ?? this.confirmPasswordError,
+      passwordError: passwordError,
+      confirmPasswordError: confirmPasswordError,
       isButtonEnabled: isButtonEnabled ?? this.isButtonEnabled,
-
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,
       apiError: apiError,
