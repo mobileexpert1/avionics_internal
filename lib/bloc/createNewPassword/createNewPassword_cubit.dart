@@ -10,7 +10,9 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
   CreateNewPasswordCubit() : super(CreateNewPasswordState());
 
   Future<void> resetPasswordApi(BuildContext context, String email) async {
-    emit(state.copyWith(status: CommonApiStatus.submitting, errorMessage: null));
+    emit(
+      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+    );
     try {
       await CreateNewPasswordRepository().resetPasswordApi(
         email: email,
@@ -20,15 +22,28 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
 
       emit(state.copyWith(status: CommonApiStatus.success));
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) =>  LoginScreen()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Your password has been reset successfully. Please log in again.',
+          ),
+        ),
       );
+
+      // Delay for 2 seconds, then navigate
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+        );
+      });
     } catch (e) {
-      emit(state.copyWith(
-        status: CommonApiStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -59,10 +74,13 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
 
     // Validate both
     final updatedPasswordError = Validators().validatePassword(newPassword);
-    final updatedConfirmPasswordError =
-    Validators().validateConfirmPassword(newPassword, newConfirmPassword);
+    final updatedConfirmPasswordError = Validators().validateConfirmPassword(
+      newPassword,
+      newConfirmPassword,
+    );
 
-    final isValid = updatedPasswordError == null &&
+    final isValid =
+        updatedPasswordError == null &&
         updatedConfirmPasswordError == null &&
         newPassword.isNotEmpty &&
         newConfirmPassword.isNotEmpty;

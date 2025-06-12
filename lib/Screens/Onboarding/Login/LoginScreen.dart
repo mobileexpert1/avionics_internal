@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
+import 'package:avionics_internal/Screens/Onboarding/Signup/SignupScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -187,7 +188,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: 30),
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignupScreen(),
+                              ),
+                            );
                           },
                           child: Text(
                             ConstantStrings.signUpPrompt,

@@ -31,9 +31,11 @@ class OtpCubit extends Cubit<OtpState> {
 
       emit(state.copyWith(status: CommonApiStatus.success));
 
-      await SharedPrefsHelper.saveEmail(email);
-      await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
-      await SharedPrefsHelper.saveIsUserLogin(true);
+      if (isFromSignup == 'sign_up') {
+        await SharedPrefsHelper.saveEmail(email);
+        await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
+        await SharedPrefsHelper.saveIsUserLogin(true);
+      }
 
       Navigator.pushReplacement(
         context,

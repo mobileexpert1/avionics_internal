@@ -68,10 +68,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
       try {
         await SubscriptionRepository().postSubscriptionApi(
-          duration: selectedFinalItem.duration,
-          is_yearly: selectedFinalItem.isYearly,
-          price: selectedFinalItem.price.toInt(),
-          trial: selectedFinalItem.trial,
+          subscription_id: selectedFinalItem.id,
         );
 
         emit(

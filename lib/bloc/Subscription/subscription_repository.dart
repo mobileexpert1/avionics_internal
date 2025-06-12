@@ -26,10 +26,7 @@ class SubscriptionRepository {
   }
 
   Future<SubscriptionItemModel> postSubscriptionApi({
-    required int duration,
-    required bool is_yearly,
-    required int price,
-    required int trial,
+    required String subscription_id,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -41,10 +38,7 @@ class SubscriptionRepository {
       final response = await ApiService.post(
         url: url,
         body: {
-          "duration": duration,
-          "is_yearly": is_yearly,
-          "price": price,
-          "trial": trial,
+          "subscription_id": subscription_id,
         },
       );
 
