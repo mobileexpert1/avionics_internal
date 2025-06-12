@@ -10,7 +10,7 @@ class ForgotRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.forgot,
+          ApiServiceUrlConstant.forgotEmaiiSend,
     );
 
     try {

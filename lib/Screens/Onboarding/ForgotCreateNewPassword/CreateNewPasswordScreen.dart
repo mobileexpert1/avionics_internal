@@ -6,10 +6,14 @@ import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
-import '../../../bloc/Profile/ChangePassword/changePassword_state.dart';
 import '../../../bloc/createNewPassword/createNewPassword_cubit.dart';
+import '../../../bloc/createNewPassword/createNewPassword_state.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
+
+  final String email;
+  const CreateNewPasswordScreen({super.key, required this.email});
+
   @override
   _CreateNewPasswordState createState() => _CreateNewPasswordState();
 }
@@ -115,7 +119,10 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       icon: const SizedBox(width: 0),
                       isEnabled: isButtonEnabled,
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.read<CreateNewPasswordCubit>().resetPasswordApi(
+                          context,
+                          widget.email,
+                        );
                       },
                     );
                   },

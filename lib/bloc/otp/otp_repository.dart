@@ -13,7 +13,9 @@ class OtpRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.verifyOtp,
+          (otp_type == 'sign_up'
+              ? ApiServiceUrlConstant.verifyOtp
+              : ApiServiceUrlConstant.forgotPasswordVerify),
     );
 
     try {

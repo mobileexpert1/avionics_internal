@@ -1,3 +1,5 @@
+import '../../Constants/ApiClass/ApiErrorModel.dart';
+
 class CreateNewPasswordState {
   final String password;
   final String confirmPassword;
@@ -5,12 +7,24 @@ class CreateNewPasswordState {
   final String? confirmPasswordError;
   final bool isButtonEnabled;
 
+  final bool isLoading;
+  final bool isSuccess;
+  final String? apiError;
+  final CommonApiStatus status;
+  final String? errorMessage;
+
   CreateNewPasswordState({
     this.password = '',
     this.confirmPassword = '',
     this.passwordError,
     this.confirmPasswordError,
     this.isButtonEnabled = false,
+
+    this.isLoading = false,
+    this.isSuccess = false,
+    this.apiError,
+    this.status = CommonApiStatus.initial,
+    this.errorMessage,
   });
 
   CreateNewPasswordState copyWith({
@@ -19,6 +33,12 @@ class CreateNewPasswordState {
     String? passwordError,
     String? confirmPasswordError,
     bool? isButtonEnabled,
+
+    bool? isLoading,
+    bool? isSuccess,
+    String? apiError,
+    CommonApiStatus? status,
+    String? errorMessage,
   }) {
     return CreateNewPasswordState(
       password: password ?? this.password,
@@ -26,6 +46,12 @@ class CreateNewPasswordState {
       passwordError: passwordError ?? this.passwordError,
       confirmPasswordError: confirmPasswordError ?? this.confirmPasswordError,
       isButtonEnabled: isButtonEnabled ?? this.isButtonEnabled,
+
+      isLoading: isLoading ?? this.isLoading,
+      isSuccess: isSuccess ?? this.isSuccess,
+      apiError: apiError,
+      status: status ?? this.status,
+      errorMessage: errorMessage,
     );
   }
 }
