@@ -1,12 +1,11 @@
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../CustomFiles/CustomAppBar.dart';
-import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../CustomFiles/CustomBottomButton.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../../../bloc/Profile/ChangePassword/changePassword_cubit.dart';
-import '../../../bloc/Profile/ChangePassword/changePassword_state.dart' show CreateNewPasswordState;
+import '../../../bloc/Profile/ChangePassword/changePassword_state.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   @override

@@ -1,30 +1,24 @@
-import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
-import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
-import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
-import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
-
-
-
-
-
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
+import 'package:flutter/material.dart';
+import 'bloc/AllPlanes/AllPlanes_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Screens/Onboarding/Splash/splash_screen.dart';
 import 'bloc/AirCraftDetail/airCraftDetail_cubit.dart';
-import 'bloc/AllPlanes/AllPlanes_cubit.dart';
 import 'bloc/Profile/Glossary/glossary_cubit.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
-import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
-import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:avionics_internal/bloc/forgotPassword/forgot_cubit.dart';
+import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
+import 'package:avionics_internal/bloc/SavedFlighDetails/savedFlight_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit.dart';
+import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
+import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,7 +57,7 @@ class MyApp extends StatelessWidget {
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
             // home: HomeScreen(),
-            home: SubscriptionScreen(),
+            home: SplashScreen(),
           );
         },
       ),

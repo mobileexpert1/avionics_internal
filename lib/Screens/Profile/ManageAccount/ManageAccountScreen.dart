@@ -1,15 +1,14 @@
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'package:avionics_internal/Home/HomeScreen.dart';
-import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../Constants/constantImages.dart';
-import '../../../CustomFiles/CustomBottomButton.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomTextField.dart';
 import '../ChangePassword/ChangePasswordScreen.dart';
+import '../../../CustomFiles/CustomBottomButton.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_state.dart';
 
 class ManageAccountScreen extends StatefulWidget {
 

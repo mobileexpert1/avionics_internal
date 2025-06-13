@@ -1,22 +1,20 @@
-import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../Constants/ConstantStrings.dart';
-import '../../Constants/constantImages.dart';
-import '../../CustomFiles/CustomAppBar.dart';
-import '../Onboarding/Splash/splash_screen.dart';
 import 'Avtar/AvtarScreen.dart';
-import 'ContactSupportScreen/ContactSupportScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
 import 'Glossary/GlossaryScreen.dart';
-import 'ManageAccount/ManageAccountScreen.dart';
-import 'ProfileSubsciption/ProfileSubsciptionScreen.dart';
+import 'package:flutter/material.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomAppBar.dart';
 import 'UnitSettings/UnitSettingsScreen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../Constants/ConstantStrings.dart';
+import 'ManageAccount/ManageAccountScreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../Onboarding/Splash/splash_screen.dart';
+import 'ContactSupportScreen/ContactSupportScreen.dart';
+import 'ProfileSubsciption/ProfileSubsciptionScreen.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
+import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);

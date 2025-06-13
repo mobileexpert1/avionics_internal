@@ -1,11 +1,10 @@
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../../bloc/Profile/Glossary/glossary_model.dart';
 import '../../../bloc/Profile/Glossary/glossary_state.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 
 class GlossaryScreen extends StatefulWidget {
   const GlossaryScreen({super.key});

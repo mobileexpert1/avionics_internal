@@ -6,23 +6,12 @@ import '../../Constants/ApiClass/ApiErrorModel.dart';
 enum SubscriptionOption { oneYear, oneMonth }
 
 abstract class SubscriptionState extends Equatable {
-  const SubscriptionState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class SubscriptionInitial extends SubscriptionState {
-  final String selectedId;
-  final List<SubscriptionItemModel> subscriptionList;
   final bool isLoading;
   final bool isSuccess;
   final CommonApiStatus status;
   final String? errorMessage;
 
-  const SubscriptionInitial({
-    required this.selectedId,
-    this.subscriptionList = const [],
+  const SubscriptionState({
     this.isLoading = false,
     this.isSuccess = false,
     this.status = CommonApiStatus.initial,
@@ -30,8 +19,29 @@ class SubscriptionInitial extends SubscriptionState {
   });
 
   @override
-  List<Object?> get props =>
-      [selectedId, subscriptionList, isLoading, isSuccess, status, errorMessage];
+  List<Object?> get props => [isLoading, isSuccess, status, errorMessage];
+}
+
+class SubscriptionInitial extends SubscriptionState {
+  final String selectedId;
+  final List<SubscriptionItemModel> subscriptionList;
+
+  const SubscriptionInitial({
+    required this.selectedId,
+    this.subscriptionList = const [],
+    bool isLoading = false,
+    bool isSuccess = false,
+    CommonApiStatus status = CommonApiStatus.initial,
+    String? errorMessage,
+  }) : super(
+         isLoading: isLoading,
+         isSuccess: isSuccess,
+         status: status,
+         errorMessage: errorMessage,
+       );
+
+  @override
+  List<Object?> get props => super.props + [selectedId, subscriptionList];
 
   SubscriptionInitial copyWith({
     String? selectedId,

@@ -2,6 +2,7 @@ import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
@@ -14,160 +15,186 @@ import 'SubscriptionOptionCard.dart';
 class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => SubscriptionCubit(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: Wrap(),
-          title: Text(ConstantStrings.startSubscription),
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          surfaceTintColor: Colors.white,
-          shape: Border(
-            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-          ),
-        ),
-        body: BlocBuilder<SubscriptionCubit, SubscriptionState>(
-          builder: (context, state) {
-            if (state is! SubscriptionInitial) return SizedBox.shrink();
+      child: BlocConsumer<SubscriptionCubit, SubscriptionState>(
+        listenWhen: (prev, curr) => prev.status != curr.status,
+        listener: (context, state) {
+          if (state.status == CommonApiStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage ?? 'Login failed')),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Stack(
+            children: [
+              Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  leading: Wrap(),
+                  title: Text(ConstantStrings.startSubscription),
+                  backgroundColor: Colors.white,
+                  centerTitle: true,
+                  surfaceTintColor: Colors.white,
+                  shape: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                  ),
+                ),
+                body: BlocBuilder<SubscriptionCubit, SubscriptionState>(
+                  builder: (context, state) {
+                    if (state is! SubscriptionInitial) return SizedBox.shrink();
 
-            final selectedId = state.selectedId;
-            final subscriptionList = state.subscriptionList;
+                    final selectedId = state.selectedId;
+                    final subscriptionList = state.subscriptionList;
 
-            return Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 20),
-                    SvgPicture.asset(
-                      CommonUi.setSvgImage(AssetsPath.logoMain),
-                      fit: BoxFit.fill,
-                    ),
-                    const SizedBox(height: 30),
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+                            SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.logoMain),
+                              fit: BoxFit.fill,
+                            ),
+                            const SizedBox(height: 30),
 
-                    /// Features
-                    _buildFeatureRow(
-                      iconWidget: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.starIcon),
-                        height: 25,
-                        width: 25,
-                      ),
-                      text: SubscriptionTexts.featureSaveFavorites,
-                    ),
-                    const Divider(
-                      color: Color.fromRGBO(246, 246, 246, 1.0),
-                      height: 3,
-                    ),
-                    _buildFeatureRow(
-                      iconWidget: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.trackIcon),
-                        height: 25,
-                        width: 25,
-                      ),
-                      text: SubscriptionTexts.featureComparePlanes,
-                    ),
+                            /// Features
+                            _buildFeatureRow(
+                              iconWidget: SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.starIcon),
+                                height: 25,
+                                width: 25,
+                              ),
+                              text: SubscriptionTexts.featureSaveFavorites,
+                            ),
+                            const Divider(
+                              color: Color.fromRGBO(246, 246, 246, 1.0),
+                              height: 3,
+                            ),
+                            _buildFeatureRow(
+                              iconWidget: SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.trackIcon),
+                                height: 25,
+                                width: 25,
+                              ),
+                              text: SubscriptionTexts.featureComparePlanes,
+                            ),
 
-                    const Divider(
-                      color: Color.fromRGBO(246, 246, 246, 1.0),
-                      height: 3,
-                    ),
+                            const Divider(
+                              color: Color.fromRGBO(246, 246, 246, 1.0),
+                              height: 3,
+                            ),
 
-                    _buildFeatureRow(
-                      iconWidget: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.trackIcon),
-                        height: 25,
-                        width: 25,
-                      ),
-                      text: SubscriptionTexts.featureTrackAircrafts,
-                    ),
+                            _buildFeatureRow(
+                              iconWidget: SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.trackIcon),
+                                height: 25,
+                                width: 25,
+                              ),
+                              text: SubscriptionTexts.featureTrackAircrafts,
+                            ),
 
-                    const SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
-                    ...state.subscriptionList.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: SubscriptionOptionCard(
-                          item: item,
-                          isSelected: selectedId == item.id,
+                            ...state.subscriptionList.map(
+                              (item) => Padding(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                child: SubscriptionOptionCard(
+                                  item: item,
+                                  isSelected: selectedId == item.id,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 40),
+
+                            /// Go Premium Button
+                            CustomBottomButton(
+                              backgroundColor: const Color.fromRGBO(
+                                63,
+                                61,
+                                81,
+                                1.0,
+                              ),
+                              textColor: Colors.white,
+                              title: SubscriptionTexts.goPremiumTitle,
+                              icon: Wrap(),
+                              isEnabled: state is SubscriptionInitial,
+                              onPressed: () async {
+                                if (state is SubscriptionInitial) {
+                                  final selected = context
+                                      .read<SubscriptionCubit>()
+                                      .selectedItem;
+                                  if (selected != null) {
+                                    print({
+                                      "duration": selected.duration,
+                                      "is_yearly": selected.isYearly,
+                                      "price": selected.price,
+                                      "trial": selected.trial,
+                                    });
+                                  }
+
+                                  context
+                                      .read<SubscriptionCubit>()
+                                      .submitSubscriptionApi(context);
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+
+                            const Text(
+                              SubscriptionTexts.trialMessage,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color.fromRGBO(98, 98, 98, 1.0),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    /// Go Premium Button
-                    CustomBottomButton(
-                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
-                      textColor: Colors.white,
-                      title: SubscriptionTexts.goPremiumTitle,
-                      icon: Wrap(),
-                      isEnabled: state is SubscriptionInitial,
-                      onPressed: () async {
-                        if (state is SubscriptionInitial) {
-                          final selected = context
-                              .read<SubscriptionCubit>()
-                              .selectedItem;
-                          if (selected != null) {
-                            print({
-                              "duration": selected.duration,
-                              "is_yearly": selected.isYearly,
-                              "price": selected.price,
-                              "trial": selected.trial,
-                            });
-                          }
-
-                          context
-                              .read<SubscriptionCubit>()
-                              .submitSubscriptionApi(context);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      SubscriptionTexts.trialMessage,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color.fromRGBO(98, 98, 98, 1.0),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
-            );
-          },
-        ),
+
+              // Full-screen loading indicator
+              if (state.status == CommonApiStatus.submitting)
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
+}
 
-  Widget _buildFeatureRow({required Widget iconWidget, required String text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          iconWidget,
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Color.fromRGBO(98, 98, 98, 1.0),
-                fontSize: 14,
-              ),
+Widget _buildFeatureRow({required Widget iconWidget, required String text}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        iconWidget,
+        const SizedBox(width: 15),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Color.fromRGBO(98, 98, 98, 1.0),
+              fontSize: 14,
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

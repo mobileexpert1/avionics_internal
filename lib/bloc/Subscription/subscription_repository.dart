@@ -1,4 +1,3 @@
-
 import '../../Constants/ConstantStrings.dart';
 import '../../Constants/ApiClass/api_service.dart';
 import 'package:avionics_internal/bloc/Subscription/subscription_list_model.dart';
@@ -35,9 +34,7 @@ class SubscriptionRepository {
     try {
       final response = await ApiService.post(
         url: url,
-        body: {
-          "subscription_id": subscription_id,
-        },
+        body: {"subscription_id": subscription_id},
       );
 
       return SubscriptionItemModel.fromJson(response);
