@@ -23,6 +23,14 @@ class StartExploringApp extends StatelessWidget {
 class StartExploringScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    double logoWidth = screenWidth * 0.4; // adjust as needed
+    double textFontSize = screenWidth < 360
+        ? 24
+        : screenWidth < 600
+        ? 28
+        : 35;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: LayoutBuilder(
@@ -39,11 +47,11 @@ class StartExploringScreen extends StatelessWidget {
                   ),
                   child: Image.asset(
                     CommonUi.setjpgImage(AssetsPath.explore),
+                    width: logoWidth,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -58,12 +66,12 @@ class StartExploringScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         ConstantStrings.exploring,
                         style: TextStyle(
-                          fontSize: 35,
+                          fontSize: textFontSize,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1C1733),
+                          color: const Color(0xFF1C1733),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -90,7 +98,7 @@ class StartExploringScreen extends StatelessWidget {
                             ConstantStrings.CreateAccount,
                             style: TextStyle(
                               fontSize: 16,
-                              color:  Colors.white,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -132,3 +140,4 @@ class StartExploringScreen extends StatelessWidget {
     );
   }
 }
+

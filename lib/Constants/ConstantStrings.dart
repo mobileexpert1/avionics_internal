@@ -2,7 +2,7 @@ class ConstantStrings {
   // ─────────────────────────────
   // App Name
   // ─────────────────────────────
-  static const String avionica = "avionic";
+  static const String poweredBy = "Powered by AI";
 
   // ─────────────────────────────
   // Onboarding Titles
@@ -11,6 +11,8 @@ class ConstantStrings {
   static const String title2 = "Live Aircraft \nTracking";
   static const String title3 = "Compare \nModels";
   static const String title4 = "Filter, Search \nand Save";
+  static const String title5 = "AskWILCO";
+  static const String title6 = "Learning Games";
 
   // ─────────────────────────────
   // Onboarding Descriptions
@@ -19,6 +21,8 @@ class ConstantStrings {
   static const String description2 = "See how different aircraft \nperform on a live flight map";
   static const String description3 = "Learn quickly from data \nwith advanced compare features";
   static const String description4 = "Map filter and smart search options \ngive you quick access to data";
+  static const String description5 = "Get instant AI-powered answers to \naviation questions and flight procedures";
+  static const String description6 = "Master the skies through 4 thrilling \nchallenges. Quiz battles, Word puzzles, \nSurvival missions, and Fuel strategy games";
 
   // ─────────────────────────────
   // Onboarding Buttons

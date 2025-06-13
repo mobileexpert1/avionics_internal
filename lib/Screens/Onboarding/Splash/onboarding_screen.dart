@@ -22,14 +22,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
+    double textFontSize = size.width < 600 ? 13 : 16;
 
     final List<OnboardingInfo> pages = [
       OnboardingInfo(
         title: ConstantStrings.title1,
         description: ConstantStrings.description1,
         imageWidget: Padding(
-          padding: EdgeInsets.only(top: size.width * 0.08,bottom: size.width * 0.08,left: size.width * 0.02),
+          padding: EdgeInsets.only(top: size.width * 0.08, bottom: size.width * 0.08, left: size.width * 0.02),
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.undraw_aircraft_fbvl),
             fit: BoxFit.fill,
@@ -40,10 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title2,
         description: ConstantStrings.description2,
         imageWidget: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.width * 0.00,
-            vertical: size.height * 0.00,
-          ),
+          padding: EdgeInsets.zero,
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.map),
             width: size.width,
@@ -52,12 +50,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
       ),
-
       OnboardingInfo(
         title: ConstantStrings.title3,
         description: ConstantStrings.description3,
         imageWidget: Padding(
-          padding: EdgeInsets.only(top: size.width * 0.30,bottom: size.width * 0.08,left: size.width * 0.08),
+          padding: EdgeInsets.only(top: size.width * 0.30, bottom: size.width * 0.08, left: size.width * 0.08),
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.compare),
             height: size.height * 0.40,
@@ -69,9 +66,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title4,
         description: ConstantStrings.description4,
         imageWidget: Padding(
-          padding: EdgeInsets.only(top: size.width * 0.30,bottom: size.width * 0.08,left: size.width * 0.08),
+          padding: EdgeInsets.only(top: size.width * 0.30, bottom: size.width * 0.08, left: size.width * 0.08),
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.filter),
+            height: size.height * 0.40,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+      OnboardingInfo(
+        title: ConstantStrings.title5,
+        description: ConstantStrings.description5,
+        imageWidget: Padding(
+          padding: EdgeInsets.only(top: size.width * 0.35, bottom: size.width * 0.08),
+          child: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.instantAI),
+            height: size.height * 0.40,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+      OnboardingInfo(
+        title: ConstantStrings.title6,
+        description: ConstantStrings.description6,
+        imageWidget: Padding(
+          padding: EdgeInsets.only(top: size.width * 0.35, bottom: size.width * 0.08, left: size.width * 0.04),
+          child: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.Quiz),
             height: size.height * 0.40,
             fit: BoxFit.contain,
           ),
@@ -133,7 +154,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ConstantStrings.skip,
                         style: TextStyle(
                           color: AppColors.skip,
-                          fontSize: size.width * 0.042,
+                          fontSize: textFontSize,
                         ),
                       ),
                     ),
@@ -155,7 +176,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ConstantStrings.next,
                         style: TextStyle(
                           color: AppColors.next,
-                          fontSize: size.width * 0.042,
+                          fontSize: textFontSize,
                         ),
                       ),
                     ),
@@ -168,4 +189,5 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
+
 }

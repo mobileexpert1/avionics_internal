@@ -1,6 +1,5 @@
 abstract class AssetsPath {
   /// svg Images
-  static const String splashImage = "splashImage";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl";
   static const String map = "map";
   static const String compare = "compare";
@@ -8,14 +7,14 @@ abstract class AssetsPath {
   static const String apple = "Apple";
   static const String facebook = "Facebook";
   static const String google = "Google";
-  static const String logoMain = "LogoMain";
+  static const String logoMain = "mainLogo";
   static const String manufacturer = "manufacturer";
   static const String starIcon = "StarIcon";
   static const String star = "star";
   static const String trackIcon = "TrackIcon";
   static const String tickIcon = "TickIcon";
   static const String sliders = "Sliders";
-  static const String avionicaHome = "avionicahome";
+  static const String avionicaHome = "homeLogo";
   static const String search = "search";
   static const String comparsion = "Comparsion";
   static const String selectModel = "SelectModel";
@@ -30,6 +29,9 @@ abstract class AssetsPath {
   static const String AttachFileIcon = "AttachFileIcon";
   static const String filterIconCompare = "filterIconCompare";
   static const String flyingareaicon = "flyingareaicon";
+  static const String instantAI = "instantAI";
+  static const String Quiz = "Quiz";
+
 
   static const String deleteAcc = "Delete";
   static const String contactAcc = "Contact";
