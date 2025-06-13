@@ -9,6 +9,7 @@ import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cub
 
 
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -62,7 +63,7 @@ class MyApp extends StatelessWidget {
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
             // home: HomeScreen(),
-            home: SplashScreen(),
+            home: SubscriptionScreen(),
           );
         },
       ),

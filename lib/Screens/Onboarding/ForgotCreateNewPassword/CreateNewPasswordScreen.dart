@@ -100,7 +100,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                               label: ConstantStrings.createPasswordLabel,
                               controller: passwordController,
                               errorText: passwordError,
-                              obscureText: true,
+                               obscureText: true,
                               onChanged: (val) => context
                                   .read<CreateNewPasswordCubit>()
                                   .passwordChanged(val),

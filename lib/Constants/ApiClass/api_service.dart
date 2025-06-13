@@ -92,6 +92,7 @@ class ApiService {
     final encodedBody = body != null ? jsonEncode(body) : null;
 
     print('[$method] URL: $url');
+    print('token: $token');
     if (encodedBody != null) print('Request Body: $encodedBody');
 
     late http.Response response;

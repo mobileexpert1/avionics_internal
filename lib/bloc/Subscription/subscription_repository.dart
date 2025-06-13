@@ -8,7 +8,7 @@ class SubscriptionRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.subscrition,
+          ApiServiceUrlConstant.getSubscritionList,
     );
 
     try {
@@ -29,7 +29,7 @@ class SubscriptionRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.subscrition,
+          ApiServiceUrlConstant.postSubscrition,
     );
 
     try {

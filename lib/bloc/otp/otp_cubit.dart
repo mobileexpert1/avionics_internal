@@ -29,7 +29,7 @@ class OtpCubit extends Cubit<OtpState> {
 
       emit(state.copyWith(status: CommonApiStatus.success));
 
-      if (isFromSignup == 'sign_up') {
+      if (isFromSignup == true) {
         await SharedPrefsHelper.saveEmail(email);
         await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
         await SharedPrefsHelper.saveIsUserLogin(true);
@@ -38,7 +38,7 @@ class OtpCubit extends Cubit<OtpState> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => (isFromSignup == 'sign_up')
+          builder: (_) => (isFromSignup == true)
               ? SubscriptionScreen()
               : CreateNewPasswordScreen(email: email),
         ),

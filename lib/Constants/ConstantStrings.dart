@@ -141,5 +141,5 @@ class ApiServiceUrlConstant {
   static const String forgotEmaiiSend = 'auth/forget-password';
   static const String forgotPasswordVerify = 'auth/verify-forget-password';
   static const String resetPassword = 'auth/reset-password';
-  static const String subscrition = 'subscription/';
-}
+  static const String getSubscritionList = 'subscription/';
+  static const String postSubscrition = 'subscription/user';}
