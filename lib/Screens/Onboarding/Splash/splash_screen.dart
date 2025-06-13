@@ -21,39 +21,60 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateAfterDelay() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
     final isFirst = await SharedPrefsHelper.isFirstLaunch();
 
     if (!isFirst) {
       await SharedPrefsHelper.setFirstLaunchDone();
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => OnboardingScreen()));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => OnboardingScreen()),
+      );
     } else {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => RootDecider()));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => RootDecider()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Adjust sizes based on screen width
+    double logoWidth = screenWidth * 0.4;
+    double textFontSize = screenWidth < 600 ? 13 : 16;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.splashImage),
-              fit: BoxFit.fill,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              ConstantStrings.avionica,
-              style: TextStyle(fontSize: 24),
-            ),
-          ],
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                Center(
+                  child: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.logoMain),
+                    width: logoWidth.clamp(100, 300), // limit range
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Text(
+                    ConstantStrings.poweredBy,
+                    style: TextStyle(
+                      fontSize: textFontSize,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

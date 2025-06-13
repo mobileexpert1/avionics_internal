@@ -1,6 +1,4 @@
 import 'package:avionics_internal/Screens/Onboarding/ForgotCreateNewPassword/CreateNewPasswordScreen.dart';
-import 'package:avionics_internal/Screens/Onboarding/ForgotCreateNewPassword/ForgotScreen.dart';
-import 'package:avionics_internal/bloc/login/login_repository.dart';
 import 'package:avionics_internal/bloc/otp/otp_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,7 +36,7 @@ class OtpCubit extends Cubit<OtpState> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => (isFromSignup == 'sign_up')
+          builder: (_) => isFromSignup == true
               ? SubscriptionScreen()
               : CreateNewPasswordScreen(email: email),
         ),
