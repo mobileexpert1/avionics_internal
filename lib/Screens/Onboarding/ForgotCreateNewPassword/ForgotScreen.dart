@@ -1,4 +1,6 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,13 +47,13 @@ class _ForgotScreenState extends State<Forgotscreen> {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: AppBar(
-                  title: Text(ConstantStrings.appBarTitleForgotPwd),
-                  surfaceTintColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  centerTitle: true,
-                  shape: Border(
-                    bottom: BorderSide(color: Colors.grey, width: 1),
+                appBar: CustomAppBar(
+                  title: ConstantStrings.appBarTitleForgotPwd,
+                  leftButton: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
                 body: Padding(
@@ -84,18 +86,14 @@ class _ForgotScreenState extends State<Forgotscreen> {
                           builder: (context, isButtonEnabled) {
                             return CustomBottomButton(
                               title: ConstantStrings.sendEmailButton,
-                              backgroundColor: const Color.fromRGBO(
-                                63,
-                                61,
-                                81,
-                                1.0,
-                              ),
+                              backgroundColor: state.isButtonEnabled == true
+                                  ? AppColors.customBottomEnabledColour
+                                  : AppColors.customBottomDisableColour,
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
-                              // No icon shown
                               isEnabled: isButtonEnabled,
                               onPressed: () {
-                                context.read<ForgotCubit>().forgotUserApi(
+                                context.read<ForgotCubit>().validateAndSubmit(
                                   context,
                                 );
                               },

@@ -1,12 +1,14 @@
+// LoginScreen.dart
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Signup/SignupScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomSocialLoginButtons.dart';
 import '../../../CustomFiles/CustomTextField.dart';
@@ -15,6 +17,11 @@ import '../../../bloc/login/login_state.dart';
 import '../ForgotCreateNewPassword/ForgotScreen.dart';
 
 class LoginScreen extends StatefulWidget {
+  final bool isComeFromLoginScreen;
+
+  const LoginScreen({Key? key, required this.isComeFromLoginScreen})
+    : super(key: key);
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -48,81 +55,83 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: AppBar(
-                  leading: Wrap(),
-                  title: Text(ConstantStrings.titleLogin),
-                  surfaceTintColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  centerTitle: true,
-                  shape: Border(
-                    bottom: BorderSide(color: Colors.grey, width: 1),
-                  ),
+                appBar: CustomAppBar(
+                  title: ConstantStrings.loginButton,
+                  leftButton: widget.isComeFromLoginScreen == false
+                      ? null
+                      : IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         SvgPicture.asset(
                           CommonUi.setSvgImage(AssetsPath.logoMain),
                           fit: BoxFit.fill,
                         ),
-                        SizedBox(height: 20),
-                        BlocSelector<LoginCubit, LoginState, String?>(
-                          selector: (state) => state.emailError,
-                          builder: (context, emailError) {
+                        const SizedBox(height: 20),
+
+                        BlocBuilder<LoginCubit, LoginState>(
+                          buildWhen: (prev, curr) =>
+                              prev.emailError != curr.emailError,
+                          builder: (context, state) {
                             return CustomTextField(
                               label: ConstantStrings.emailLabel,
                               controller: emailController,
-                              errorText: emailError,
+                              errorText: state.emailError,
                               onChanged: (val) =>
                                   context.read<LoginCubit>().emailChanged(val),
                             );
                           },
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
 
-                        BlocSelector<LoginCubit, LoginState, String?>(
-                          selector: (state) => state.passwordError,
-                          builder: (context, passwordError) {
+                        BlocBuilder<LoginCubit, LoginState>(
+                          buildWhen: (prev, curr) =>
+                              prev.passwordError != curr.passwordError,
+                          builder: (context, state) {
                             return CustomTextField(
                               label: ConstantStrings.passwordLabel,
                               controller: passwordController,
                               obscureText: true,
-                              errorText: passwordError,
+                              errorText: state.passwordError,
                               onChanged: (val) => context
                                   .read<LoginCubit>()
                                   .passwordChanged(val),
                             );
                           },
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
 
                         BlocSelector<LoginCubit, LoginState, bool>(
                           selector: (state) => state.isButtonEnabled,
                           builder: (context, isButtonEnabled) {
                             return CustomBottomButton(
                               title: ConstantStrings.loginButton,
-                              backgroundColor: const Color.fromRGBO(
-                                63,
-                                61,
-                                81,
-                                1.0,
-                              ),
+                              backgroundColor: state.isButtonEnabled == true
+                                  ? AppColors.customBottomEnabledColour
+                                  : AppColors.customBottomDisableColour,
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
-                              // No icon shown
-                              isEnabled: isButtonEnabled,
-                              onPressed: () {
-                                context.read<LoginCubit>().loginUserApi(
-                                  context,
-                                );
-                              },
+                              isEnabled: state.isButtonEnabled,
+                              onPressed: () => context
+                                  .read<LoginCubit>()
+                                  .validateAndLogin(context),
                             );
                           },
                         ),
-                        SizedBox(height: 10),
+
+                        const SizedBox(height: 10),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -134,19 +143,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             ConstantStrings.forgotPassword,
-                            style: TextStyle(
-                              color: Color.fromRGBO(63, 61, 81, 1.0),
-                            ),
+                            style: TextStyle(color: AppColors.textColour),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
+
                         Text(
                           ConstantStrings.orContinue,
-                          style: TextStyle(
-                            color: Color.fromRGBO(63, 61, 81, 1.0),
-                          ),
+                          style: TextStyle(color: AppColors.textColour),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 20),
 
                         CustomSocialLoginButtons(
                           backgroundColor: Colors.white,
@@ -160,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             // Google login
                           },
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
                         CustomSocialLoginButtons(
                           backgroundColor: Colors.black,
@@ -172,7 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () {},
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
+
                         CustomSocialLoginButtons(
                           backgroundColor: AppColors.facebookButton,
                           textColor: Colors.white,
@@ -185,7 +192,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             // Facebook login
                           },
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
+
                         TextButton(
                           onPressed: () {
                             Navigator.pushReplacement(
@@ -197,18 +205,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             ConstantStrings.signUpPrompt,
-                            style: TextStyle(
-                              color: Color.fromRGBO(63, 61, 81, 1.0),
-                            ),
+                            style: TextStyle(color: AppColors.textColour),
                           ),
                         ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ),
               ),
-
-              // Full-screen loading indicator
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),

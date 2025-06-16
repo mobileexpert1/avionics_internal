@@ -9,6 +9,49 @@ import 'createNewPassword_state.dart';
 class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
   CreateNewPasswordCubit() : super(CreateNewPasswordState());
 
+  void passwordChanged(String password) {
+    final isButtonEnabled =
+        password.isNotEmpty && state.confirmPassword.isNotEmpty;
+
+    emit(state.copyWith(
+      password: password,
+      isButtonEnabled: isButtonEnabled,
+      // Clear previous error only when user edits
+      passwordError: null,
+    ));
+  }
+
+  void confirmPasswordChanged(String confirmPassword) {
+    final isButtonEnabled =
+        confirmPassword.isNotEmpty && state.password.isNotEmpty;
+
+    emit(state.copyWith(
+      confirmPassword: confirmPassword,
+      isButtonEnabled: isButtonEnabled,
+      // Clear previous error only when user edits
+      confirmPasswordError: null,
+    ));
+  }
+
+  void validateAndSubmit(BuildContext context, String email) {
+    final passwordError = Validators().validatePassword(state.password);
+    final confirmPasswordError = Validators().validateConfirmPassword(
+      state.password,
+      state.confirmPassword,
+    );
+
+    final hasError = passwordError != null || confirmPasswordError != null;
+
+    emit(state.copyWith(
+      passwordError: passwordError,
+      confirmPasswordError: confirmPasswordError,
+    ));
+
+    if (hasError) return;
+
+    resetPasswordApi(context, email);
+  }
+
   Future<void> resetPasswordApi(BuildContext context, String email) async {
     emit(
       state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
@@ -30,11 +73,10 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
         ),
       );
 
-      // Delay for 2 seconds, then navigate
       Future.delayed(Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginScreen(isComeFromLoginScreen: false)),
         );
       });
     } catch (e) {
@@ -45,54 +87,5 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
         ),
       );
     }
-  }
-
-  void passwordChanged(String password) {
-    final error = Validators().validatePassword(password);
-    _emitUpdatedState(password: password, passwordError: error);
-  }
-
-  void confirmPasswordChanged(String confirmPassword) {
-    final error = Validators().validateConfirmPassword(
-      state.password,
-      confirmPassword,
-    );
-    _emitUpdatedState(
-      confirmPassword: confirmPassword,
-      confirmPasswordError: error,
-    );
-  }
-
-  void _emitUpdatedState({
-    String? password,
-    String? confirmPassword,
-    String? passwordError,
-    String? confirmPasswordError,
-  }) {
-    final newPassword = password ?? state.password;
-    final newConfirmPassword = confirmPassword ?? state.confirmPassword;
-
-    // Validate both
-    final updatedPasswordError = Validators().validatePassword(newPassword);
-    final updatedConfirmPasswordError = Validators().validateConfirmPassword(
-      newPassword,
-      newConfirmPassword,
-    );
-
-    final isValid =
-        updatedPasswordError == null &&
-        updatedConfirmPasswordError == null &&
-        newPassword.isNotEmpty &&
-        newConfirmPassword.isNotEmpty;
-
-    emit(
-      state.copyWith(
-        password: newPassword,
-        confirmPassword: newConfirmPassword,
-        passwordError: updatedPasswordError,
-        confirmPasswordError: updatedConfirmPasswordError,
-        isButtonEnabled: isValid,
-      ),
-    );
   }
 }

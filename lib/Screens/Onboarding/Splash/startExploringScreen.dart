@@ -117,7 +117,7 @@ class StartExploringScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => LoginScreen()),
+                              MaterialPageRoute(builder: (context) => LoginScreen(isComeFromLoginScreen: true)),
                             );
                           },
                           child: const Text(

@@ -1,8 +1,10 @@
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
@@ -51,25 +53,23 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: AppBar(
-                  leading: Wrap(),
-                  title: Text(ConstantStrings.CreateAccount),
-                  surfaceTintColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  centerTitle: true,
-                  shape: Border(
-                    bottom: BorderSide(color: Colors.grey, width: 1),
-                  ),
+                appBar: CustomAppBar(
+                  title: ConstantStrings.CreateAccount,
+                  leftButton: null,
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20),
-                        SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.logoMain),
-                          fit: BoxFit.fill,
+                        Center(
+                          child: SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.logoMain),
+                            height: 80,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                         const SizedBox(height: 30),
 
@@ -80,14 +80,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             return CustomTextField(
                               label: ConstantStrings.firstNameLabel,
                               controller: firstNameController,
-                              errorText: firstNameError,
+                              errorText: state.firstNameError,
                               onChanged: (val) => context
                                   .read<SignupCubit>()
                                   .firstNameChanged(val),
                             );
                           },
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 20),
 
                         // Last Name
                         BlocSelector<SignupCubit, SignupState, String?>(
@@ -96,14 +96,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             return CustomTextField(
                               label: ConstantStrings.lastNameLabel,
                               controller: lastNameController,
-                              errorText: lastNameError,
+                              errorText: state.lastNameError,
                               onChanged: (val) => context
                                   .read<SignupCubit>()
                                   .lastNameChanged(val),
                             );
                           },
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 20),
 
                         // Email
                         BlocSelector<SignupCubit, SignupState, String?>(
@@ -112,13 +112,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             return CustomTextField(
                               label: ConstantStrings.emailLabel,
                               controller: emailController,
-                              errorText: emailError,
+                              errorText: state.emailError,
                               onChanged: (val) =>
                                   context.read<SignupCubit>().emailChanged(val),
                             );
                           },
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 20),
 
                         // Password
                         BlocSelector<SignupCubit, SignupState, String?>(
@@ -127,7 +127,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             return CustomTextField(
                               label: ConstantStrings.passwordLabel,
                               controller: passwordController,
-                              errorText: passwordError,
+                              errorText: state.passwordError,
                               obscureText: true,
                               onChanged: (val) => context
                                   .read<SignupCubit>()
@@ -135,7 +135,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 20),
 
                         // Confirm Password
                         BlocSelector<SignupCubit, SignupState, String?>(
@@ -144,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             return CustomTextField(
                               label: ConstantStrings.confirmPasswordLabel,
                               controller: confirmPasswordController,
-                              errorText: confirmPasswordError,
+                              errorText: state.confirmPasswordError,
                               obscureText: true,
                               onChanged: (val) => context
                                   .read<SignupCubit>()
@@ -159,40 +159,39 @@ class _SignupScreenState extends State<SignupScreen> {
                           selector: (state) => state.isButtonEnabled,
                           builder: (context, isButtonEnabled) {
                             return CustomBottomButton(
-                              title: ConstantStrings.startSubscription,
-                              backgroundColor: const Color.fromRGBO(
-                                63,
-                                61,
-                                81,
-                                1.0,
-                              ),
+                              title: ConstantStrings.signupTitle,
+                              backgroundColor: state.isButtonEnabled
+                                  ? AppColors.customBottomEnabledColour
+                                  : AppColors.customBottomDisableColour,
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
-                              isEnabled: isButtonEnabled,
-                              onPressed: () {
-                                context.read<SignupCubit>().submitSignupApi(
-                                  context,
-                                );
-                              },
+                              isEnabled: state.isButtonEnabled,
+                              onPressed: () => context
+                                  .read<SignupCubit>()
+                                  .submitSignupApi(context),
                             );
                           },
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 10),
 
                         // Login Redirect
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
+                        Center(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      LoginScreen(isComeFromLoginScreen: true),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              ConstantStrings.loginPrompt,
+                              style: TextStyle(
+                                color: AppColors.textColour,
+                                fontSize: 14,
                               ),
-                            );
-                          },
-                          child: Text(
-                            ConstantStrings.loginPrompt,
-                            style: TextStyle(
-                              color: Color.fromRGBO(63, 61, 81, 1.0),
                             ),
                           ),
                         ),
@@ -201,8 +200,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
-
-              // Full-screen loading indicator
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),

@@ -14,10 +14,39 @@ import '../../Constants/Validators.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
 
+  void emailChanged(String email) {
+    emit(state.copyWith(
+      email: email,
+      isButtonEnabled: email.isNotEmpty && state.password.isNotEmpty,
+    ));
+  }
+
+  void passwordChanged(String password) {
+    emit(state.copyWith(
+      password: password,
+      isButtonEnabled: password.isNotEmpty && state.email.isNotEmpty,
+    ));
+  }
+
+  Future<void> validateAndLogin(BuildContext context) async {
+    final emailError = Validators().validateEmail(state.email);
+    final passwordError = Validators().validatePassword(state.password);
+
+    if (emailError != null || passwordError != null) {
+      emit(
+        state.copyWith(
+          emailError: emailError,
+          passwordError: passwordError,
+        ),
+      );
+      return;
+    }
+
+    await loginUserApi(context);
+  }
+
   Future<void> loginUserApi(BuildContext context) async {
-    emit(
-      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
-    );
+    emit(state.copyWith(status: CommonApiStatus.submitting, errorMessage: null));
     try {
       final result = await LoginRepository().loginUser(
         email: state.email,
@@ -27,25 +56,19 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: CommonApiStatus.success));
 
       if (result.userDetails != null) {
-        // User is verified
-        print("Access token: ${result.accessToken}");
-        print("User name: ${result.userDetails?.firstName}");
-
         await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
         await SharedPrefsHelper.saveIsUserLogin(true);
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-          (route) => false,
+              (route) => false,
         );
       } else if (result.isVerified == false) {
-        // User is not verified
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) =>
-                OtpScreen(email: state.email, isComeFromSignup: true),
+            builder: (_) => OtpScreen(email: state.email, isComeFromSignup: true),
           ),
-          (route) => false,
+              (route) => false,
         );
       }
     } catch (e) {
@@ -56,46 +79,5 @@ class LoginCubit extends Cubit<LoginState> {
         ),
       );
     }
-  }
-
-  void emailChanged(String email) {
-    final error = Validators().validateEmail(email);
-    _emitUpdatedState(email: email, emailError: error);
-  }
-
-  void passwordChanged(String password) {
-    final error = Validators().validatePassword(password);
-    _emitUpdatedState(password: password, passwordError: error);
-  }
-
-  void _emitUpdatedState({
-    String? email,
-    String? password,
-    String? emailError,
-    String? passwordError,
-  }) {
-    final newEmail = email ?? state.email;
-    final newPassword = password ?? state.password;
-
-    final updatedEmailError =
-        emailError ?? Validators().validateEmail(newEmail);
-    final updatedPasswordError =
-        passwordError ?? Validators().validatePassword(newPassword);
-
-    final isValid =
-        updatedEmailError == null &&
-        updatedPasswordError == null &&
-        newEmail.isNotEmpty &&
-        newPassword.isNotEmpty;
-
-    emit(
-      state.copyWith(
-        email: newEmail,
-        password: newPassword,
-        emailError: updatedEmailError,
-        passwordError: updatedPasswordError,
-        isButtonEnabled: isValid,
-      ),
-    );
   }
 }

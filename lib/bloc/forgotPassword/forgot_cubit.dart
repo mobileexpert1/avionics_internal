@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
 import 'package:avionics_internal/bloc/forgotPassword/forgot_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -10,6 +9,24 @@ import 'forgot_state.dart';
 
 class ForgotCubit extends Cubit<ForgotState> {
   ForgotCubit() : super(ForgotState());
+
+  void emailChanged(String email) {
+    emit(state.copyWith(
+      email: email,
+      isButtonEnabled: email.isNotEmpty,
+    ));
+  }
+
+  Future<void> validateAndSubmit(BuildContext context) async {
+    final emailError = Validators().validateEmail(state.email);
+
+    if (emailError != null) {
+      emit(state.copyWith(emailError: emailError));
+      return;
+    }
+
+    await forgotUserApi(context);
+  }
 
   Future<void> forgotUserApi(BuildContext context) async {
     emit(
@@ -35,27 +52,5 @@ class ForgotCubit extends Cubit<ForgotState> {
         ),
       );
     }
-  }
-
-  void emailChanged(String email) {
-    final error = Validators().validateEmail(email);
-    _emitUpdatedState(email: email, emailError: error);
-  }
-
-  void _emitUpdatedState({String? email, String? emailError}) {
-    final newEmail = email ?? state.email;
-
-    final updatedEmailError =
-        emailError ?? Validators().validateEmail(newEmail);
-
-    final isValid = updatedEmailError == null && newEmail.isNotEmpty;
-
-    emit(
-      state.copyWith(
-        email: newEmail,
-        emailError: updatedEmailError,
-        isButtonEnabled: isValid,
-      ),
-    );
   }
 }

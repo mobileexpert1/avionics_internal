@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
         labelText: label,
         errorText: errorText,
         errorMaxLines: 3,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
     );
   }

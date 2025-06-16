@@ -20,10 +20,6 @@ class CustomBottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color effectiveBgColor = isEnabled
-        ? backgroundColor
-        : Colors.grey.shade200;
-
     final Color effectiveTextColor = isEnabled
         ? textColor
         : Colors.grey.shade600;
@@ -39,7 +35,7 @@ class CustomBottomButton extends StatelessWidget {
         ),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: effectiveBgColor, // FIXED HERE
+          backgroundColor: backgroundColor, // FIXED HERE
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),

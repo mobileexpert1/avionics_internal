@@ -1,8 +1,10 @@
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -25,16 +27,13 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
       TextEditingController();
 
   @override
-  @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            ConstantStrings.OtpVerified
-          ),
-          duration: const Duration(seconds: 4),
+        const SnackBar(
+          content: Text(ConstantStrings.OtpVerified),
+          duration: Duration(seconds: 4),
         ),
       );
     });
@@ -57,7 +56,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Forgot email failed'),
+                content: Text(state.errorMessage ?? 'Password reset failed'),
               ),
             );
           }
@@ -67,14 +66,8 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: AppBar(
-                  title: Text(ConstantStrings.appBarTitleForgotPwd),
-                  backgroundColor: Colors.white,
-                  centerTitle: true,
-                  surfaceTintColor: Colors.white,
-                  shape: Border(
-                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-                  ),
+                appBar: CustomAppBar(
+                  title: ConstantStrings.appBarTitleForgotPwd,
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -95,12 +88,12 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                           String?
                         >(
                           selector: (state) => state.passwordError,
-                          builder: (context, passwordError) {
+                          builder: (_, passwordError) {
                             return CustomTextField(
                               label: ConstantStrings.createPasswordLabel,
                               controller: passwordController,
                               errorText: passwordError,
-                               obscureText: true,
+                              obscureText: true,
                               onChanged: (val) => context
                                   .read<CreateNewPasswordCubit>()
                                   .passwordChanged(val),
@@ -117,7 +110,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                           String?
                         >(
                           selector: (state) => state.confirmPasswordError,
-                          builder: (context, confirmPasswordError) {
+                          builder: (_, confirmPasswordError) {
                             return CustomTextField(
                               label: ConstantStrings.confirmPasswordLabel,
                               controller: confirmPasswordController,
@@ -132,29 +125,26 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
 
                         const SizedBox(height: 30),
 
-                        // Submit Button
+                        /// Submit Button
                         BlocSelector<
                           CreateNewPasswordCubit,
                           CreateNewPasswordState,
                           bool
                         >(
                           selector: (state) => state.isButtonEnabled,
-                          builder: (context, isButtonEnabled) {
+                          builder: (_, isButtonEnabled) {
                             return CustomBottomButton(
                               title: ConstantStrings.resetPassword,
-                              backgroundColor: const Color.fromRGBO(
-                                63,
-                                61,
-                                81,
-                                1.0,
-                              ),
+                              backgroundColor: isButtonEnabled
+                                  ? AppColors.customBottomEnabledColour
+                                  : AppColors.customBottomDisableColour,
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
                               isEnabled: isButtonEnabled,
                               onPressed: () {
                                 context
                                     .read<CreateNewPasswordCubit>()
-                                    .resetPasswordApi(context, widget.email);
+                                    .validateAndSubmit(context, widget.email);
                               },
                             );
                           },
@@ -164,6 +154,8 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                   ),
                 ),
               ),
+
+              /// Loading Overlay
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),

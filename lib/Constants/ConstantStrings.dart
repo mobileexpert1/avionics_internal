@@ -83,6 +83,8 @@ class ConstantStrings {
   // ─────────────────────────────
   // Section Titles
   // ─────────────────────────────
+
+  static const String signupTitle = 'Sign up';
   static const String startSubscription = 'Start Subscription';
   static const String manageAccount = 'Manage Your Account';
   static const String titleHome = "Home";

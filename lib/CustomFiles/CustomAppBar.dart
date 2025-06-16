@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -20,7 +21,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       elevation: 1,
       surfaceTintColor: Colors.white,
-      shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.8)),
+      shape: const Border(
+        bottom: BorderSide(color: AppColors.sepratorColourAppBar, width: 1.0),
+      ),
       title: Text(
         title,
         style: const TextStyle(fontSize: 18, color: Colors.black),
