@@ -80,19 +80,6 @@ class ContactSupportScreen extends StatelessWidget {
     );
   }
 
-  // void _launchEmail(BuildContext context) async {
-  //   final Uri emailUri = Uri(
-  //     scheme: 'mailto',
-  //     path: 'Avinoncia@gmail.com',
-  //     queryParameters: {'subject': 'Support Request'},
-  //   );
-  //   if (await canLaunchUrl(emailUri)) {
-  //     await launchUrl(emailUri);
-  //   } else {
-  //     _showErrorSnack(context, "Unable to open email app.");
-  //   }
-  // }
-
   void _launchEmail(BuildContext context) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
