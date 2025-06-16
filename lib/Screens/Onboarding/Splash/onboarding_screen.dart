@@ -30,7 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title1,
         description: ConstantStrings.description1,
         imageWidget: Padding(
-          padding: EdgeInsets.only(top: size.width * 0.08, bottom: size.width * 0.08, left: size.width * 0.02),
+          padding: EdgeInsets.only(top: size.width * 0.15, bottom: size.width * 0.08, left: size.width * 0.02),
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.undraw_aircraft_fbvl),
             fit: BoxFit.fill,
