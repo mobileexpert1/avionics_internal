@@ -108,7 +108,7 @@ class StartExploringScreen extends StatelessWidget {
                         width: double.infinity,
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                             side: const BorderSide(color: Color(0xFF1C1733)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
