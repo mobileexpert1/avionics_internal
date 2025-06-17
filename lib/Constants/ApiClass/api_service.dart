@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,12 +20,14 @@ class ApiService {
     required Uri url,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
+    VoidCallback? onUnauthorized,
   }) async {
     return _handleRequest(
       method: 'POST',
       url: url,
       headers: headers,
       body: body,
+      onUnauthorized: onUnauthorized,
     );
   }
 
@@ -32,11 +35,13 @@ class ApiService {
   static Future<dynamic> get({
     required Uri url,
     Map<String, String>? headers,
+    VoidCallback? onUnauthorized,
   }) async {
     return _handleRequest(
       method: 'GET',
       url: url,
       headers: headers,
+      onUnauthorized: onUnauthorized,
     );
   }
 
@@ -45,12 +50,30 @@ class ApiService {
     required Uri url,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
+    VoidCallback? onUnauthorized,
   }) async {
     return _handleRequest(
       method: 'PUT',
       url: url,
       headers: headers,
       body: body,
+      onUnauthorized: onUnauthorized,
+    );
+  }
+
+  ///PATCH REQUEST
+  static Future<dynamic> patch({
+    required Uri url,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+    VoidCallback? onUnauthorized,
+  }) async {
+    return _handleRequest(
+      method: 'PATCH',
+      url: url,
+      headers: headers,
+      body: body,
+      onUnauthorized: onUnauthorized,
     );
   }
 
@@ -59,12 +82,14 @@ class ApiService {
     required Uri url,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
+    VoidCallback? onUnauthorized,
   }) async {
     return _handleRequest(
       method: 'DELETE',
       url: url,
       headers: headers,
       body: body,
+      onUnauthorized: onUnauthorized,
     );
   }
 
@@ -73,14 +98,13 @@ class ApiService {
     return prefs.getString('UserAccessTokenKey');
   }
 
-  /// Internal method to handle all HTTP verbs
   static Future<dynamic> _handleRequest({
     required String method,
     required Uri url,
     Map<String, String>? headers,
     Map<String, dynamic>? body,
+    VoidCallback? onUnauthorized, // <-- already added
   }) async {
-    // ✅ Check internet connectivity
     final hasInternet = await _hasInternetConnection();
     if (!hasInternet) {
       throw 'No internet connection. Please check your network.';
@@ -88,7 +112,12 @@ class ApiService {
 
     final token = await _getBearerToken();
 
-    final requestHeaders = {...defaultHeaders, if (headers != null) ...headers, if (token != null) 'Authorization': 'Bearer $token',};
+    final requestHeaders = {
+      ...defaultHeaders,
+      if (headers != null) ...headers,
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
     final encodedBody = body != null ? jsonEncode(body) : null;
 
     print('[$method] URL: $url');
@@ -100,16 +129,35 @@ class ApiService {
     try {
       switch (method) {
         case 'POST':
-          response = await http.post(url, headers: requestHeaders, body: encodedBody);
+          response = await http.post(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         case 'GET':
           response = await http.get(url, headers: requestHeaders);
           break;
         case 'PUT':
-          response = await http.put(url, headers: requestHeaders, body: encodedBody);
+          response = await http.put(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
+          break;
+        case 'PATCH':
+          response = await http.patch(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         case 'DELETE':
-          response = await http.delete(url, headers: requestHeaders, body: encodedBody);
+          response = await http.delete(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         default:
           throw 'Unsupported HTTP method: $method';
@@ -128,8 +176,15 @@ class ApiService {
           throw ApiErrorModel.fromJson(jsonResponse).toString();
         case 400:
         case 404:
-          final messages = jsonResponse.entries.map((e) => '${e.value}').join('\n');
+          final messages = jsonResponse.entries
+              .map((e) => '${e.value}')
+              .join('\n');
           throw messages;
+        case 401:
+          if (onUnauthorized != null) {
+            onUnauthorized();
+          }
+          throw 'Unauthorized access. Please login again.';
         default:
           throw 'Request failed with status: ${response.statusCode}';
       }
