@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
+import 'manageAcc_model.dart';
+import 'manageAcc_repository.dart';
 import 'manageAcc_state.dart';
 
 class ManageaccCubit extends Cubit<ManageAccState> {
@@ -77,4 +80,51 @@ class ManageaccCubit extends Cubit<ManageAccState> {
       ),
     );
   }
+
+  final ManageAccountRepository repository = ManageAccountRepository();
+
+  Future<void> fetchUserDetails() async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+    try {
+      final token = await SharedPrefsHelper.getUserAccessToken();
+
+      if (token == null || token.isEmpty) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Access token is missing.',
+        ));
+        return;
+      }
+
+      final ManageAccountModel user = await repository.getUserDetail(token: token);
+
+      final firstNameError = Validators().validateName(user.firstName);
+      final lastNameError = Validators().validateName(user.lastName);
+      final emailError = Validators().validateEmail(user.email);
+
+      final isValid = firstNameError == null &&
+          lastNameError == null &&
+          emailError == null &&
+          user.firstName.isNotEmpty &&
+          user.lastName.isNotEmpty &&
+          user.email.isNotEmpty;
+
+      emit(state.copyWith(
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        firstNameError: firstNameError,
+        lastNameError: lastNameError,
+        emailError: emailError,
+        isButtonEnabled: isValid,
+        isLoading: false,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to fetch user data: ${e.toString()}',
+      ));
+    }
+  }
+
 }
