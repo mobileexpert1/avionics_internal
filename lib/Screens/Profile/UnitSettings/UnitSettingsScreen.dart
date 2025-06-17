@@ -22,48 +22,55 @@ class UnitSelectionScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: BlocBuilder<UnitSelectionCubit, UnitSelectionState>(
             builder: (context, state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildSegmentedControl(
-                    title: 'Speed',
-                    options: ['Kts', 'MPH', 'Km/h'],
-                    selectedValue: state.speed,
-                    onChanged: (val) =>
-                        context.read<UnitSelectionCubit>().selectSpeed(val),
-                  ),
-                  buildSegmentedControl(
-                    title: 'Altitude',
-                    options: ['Feet', 'Meters'],
-                    selectedValue: state.altitude,
-                    onChanged: (val) =>
-                        context.read<UnitSelectionCubit>().selectAltitude(val),
-                  ),
-                  buildSegmentedControl(
-                    title: 'Distances',
-                    options: ['Miles', 'Kilometers'],
-                    selectedValue: state.distance,
-                    onChanged: (val) =>
-                        context.read<UnitSelectionCubit>().selectDistance(val),
-                  ),
-                  buildSegmentedControl(
-                    title: 'Temperatures',
-                    options: ['Celsius', 'Fahrenheit'],
-                    selectedValue: state.temperature,
-                    onChanged: (val) => context
-                        .read<UnitSelectionCubit>()
-                        .selectTemperature(val),
-                  ),
-                ],
-              );
+              if (state is UnitSelectionInitial) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildSegmentedControl(
+                      context: context,
+                      title: 'Speed',
+                      options: ['Kts', 'MPH', 'Km/h'],
+                      selectedValue: state.speed,
+                      onChanged: (val) => context.read<UnitSelectionCubit>().selectSpeed(val),
+                    ),
+                    buildSegmentedControl(
+                      context: context,
+                      title: 'Altitude',
+                      options: ['Feet', 'Meters'],
+                      selectedValue: state.altitude,
+                      onChanged: (val) => context.read<UnitSelectionCubit>().selectAltitude(val),
+                    ),
+                    buildSegmentedControl(
+                      context: context,
+                      title: 'Distances',
+                      options: ['Miles', 'Kilometers'],
+                      selectedValue: state.distance,
+                      onChanged: (val) => context.read<UnitSelectionCubit>().selectDistance(val),
+                    ),
+                    buildSegmentedControl(
+                      context: context,
+                      title: 'Temperatures',
+                      options: ['Celsius', 'Fahrenheit'],
+                      selectedValue: state.temperature,
+                      onChanged: (val) => context.read<UnitSelectionCubit>().selectTemperature(val),
+                    ),
+                  ],
+                );
+              } else if (state.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return const Center(child: Text("Unable to load unit preferences."));
+              }
             },
           ),
+
         ),
       ),
     );
   }
 
   Widget buildSegmentedControl({
+    required BuildContext context,
     required String title,
     required List<String> options,
     required String selectedValue,
@@ -95,7 +102,12 @@ class UnitSelectionScreen extends StatelessWidget {
               final isSelected = option == selectedValue;
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => onChanged(option),
+                  onTap: () {
+                    if (!isSelected) {
+                      onChanged(option);
+                      context.read<UnitSelectionCubit>().submitPreferences();
+                    }
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 7),
                     decoration: BoxDecoration(
@@ -120,4 +132,5 @@ class UnitSelectionScreen extends StatelessWidget {
       ],
     );
   }
+
 }

@@ -1,3 +1,4 @@
+import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
 import 'Glossary/GlossaryScreen.dart';
@@ -113,7 +114,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => UnitSelectionScreen(),
+                            builder: (_) => BlocProvider(
+                              create: (_) => UnitSelectionCubit(),
+                              child: UnitSelectionScreen(),
+                            ),
                           ),
                         );
                       },
