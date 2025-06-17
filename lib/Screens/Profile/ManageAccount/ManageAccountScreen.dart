@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomTextField.dart';
@@ -44,6 +46,16 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             firstNameController.text = state.firstName;
             lastNameController.text = state.lastName;
             emailController.text = state.email;
+          } else if (state.status == CommonApiStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage ?? 'profile update failed')),
+            );
+          } else if (state.status == CommonApiStatus.success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Your profile has been successfully updated'),
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -114,12 +126,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           const SizedBox(height: 30),
                           CustomBottomButton(
                             title: buttonBottomTitle,
-                            backgroundColor: const Color.fromRGBO(
-                              63,
-                              61,
-                              81,
-                              1.0,
-                            ),
+                            backgroundColor: state.isButtonEnabled
+                                ? AppColors.customBottomEnabledColour
+                                : AppColors.customBottomDisableColour,
                             textColor: Colors.white,
                             icon: const SizedBox(width: 0),
                             isEnabled: state.isButtonEnabled,
@@ -147,18 +156,6 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                       buttonBottomTitle =
                                           ConstantStrings.changePassword;
                                     });
-
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Profile updated successfully',
-                                          ),
-                                        ),
-                                      );
-                                    }
                                   }
                                   break;
                               }

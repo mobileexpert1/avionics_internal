@@ -129,23 +129,35 @@ class ApiService {
     try {
       switch (method) {
         case 'POST':
-          response =
-          await http.post(url, headers: requestHeaders, body: encodedBody);
+          response = await http.post(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         case 'GET':
           response = await http.get(url, headers: requestHeaders);
           break;
         case 'PUT':
-          response =
-          await http.put(url, headers: requestHeaders, body: encodedBody);
+          response = await http.put(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         case 'PATCH':
-          response =
-          await http.patch(url, headers: requestHeaders, body: encodedBody);
+          response = await http.patch(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         case 'DELETE':
-          response =
-          await http.delete(url, headers: requestHeaders, body: encodedBody);
+          response = await http.delete(
+            url,
+            headers: requestHeaders,
+            body: encodedBody,
+          );
           break;
         default:
           throw 'Unsupported HTTP method: $method';
@@ -164,7 +176,9 @@ class ApiService {
           throw ApiErrorModel.fromJson(jsonResponse).toString();
         case 400:
         case 404:
-          final messages = jsonResponse.entries.map((e) => '${e.value}').join('\n');
+          final messages = jsonResponse.entries
+              .map((e) => '${e.value}')
+              .join('\n');
           throw messages;
         case 401:
           if (onUnauthorized != null) {

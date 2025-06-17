@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/Validators.dart';
 import 'manageAcc_repository.dart';
@@ -27,6 +28,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
     emit(
       state.copyWith(
         firstName: firstName,
+        firstNameError: null,
         isButtonEnabled: firstName.isNotEmpty && state.lastName.isNotEmpty,
       ),
     );
@@ -36,15 +38,17 @@ class ManageaccCubit extends Cubit<ManageAccState> {
     emit(
       state.copyWith(
         lastName: lastName,
+        lastNameError: null,
         isButtonEnabled: state.firstName.isNotEmpty && lastName.isNotEmpty,
       ),
     );
   }
 
-  /// Called on button press
   bool validateFields() {
     final firstNameError = Validators().validateName(state.firstName);
     final lastNameError = Validators().validateName(state.lastName);
+
+    final isValid = firstNameError == null && lastNameError == null;
 
     emit(
       state.copyWith(
@@ -52,8 +56,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         lastNameError: lastNameError,
       ),
     );
-
-    return firstNameError == null && lastNameError == null;
+    return isValid;
   }
 
   Future<void> fetchUserDetails() async {
@@ -81,7 +84,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         lastName: state.lastName,
       );
 
-      emit(state.copyWith(isLoading: false));
+      emit(state.copyWith(isLoading: false,status:CommonApiStatus.success));
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
