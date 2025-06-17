@@ -54,6 +54,20 @@ class ApiService {
     );
   }
 
+///PATCH REQUEST
+  static Future<dynamic> patch({
+    required Uri url,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+  }) async {
+    return _handleRequest(
+      method: 'PATCH',
+      url: url,
+      headers: headers,
+      body: body,
+    );
+  }
+
   /// DELETE request
   static Future<dynamic> delete({
     required Uri url,

@@ -119,26 +119,42 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
                       isEnabled: true,
-                      onPressed: () {
-                        switch (buttonBottomTitle) {
-                          case ConstantStrings.changePassword:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChangePasswordScreen(),
-                              ),
-                            );
-                            break;
-                          case ConstantStrings.saveTitle:
-                            setState(() {
-                              isTextfiledEnabled = false;
-                              isRightButtonShow = true;
-                              buttonBottomTitle =
-                                  ConstantStrings.changePassword;
-                            });
-                            break;
+                        onPressed: () async {
+                          switch (buttonBottomTitle) {
+                            case ConstantStrings.changePassword:
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChangePasswordScreen(),
+                                ),
+                              );
+                              break;
+
+                            case ConstantStrings.saveTitle:
+                              final cubit = context.read<ManageaccCubit>();
+                              final token = await cubit.getUserToken(); // implement or call helper to get token
+
+                              await cubit.updateUserDetails(
+                                token: token,
+                                firstName: firstNameController.text.trim(),
+                                lastName: lastNameController.text.trim(),
+                              );
+
+                              setState(() {
+                                isTextfiledEnabled = false;
+                                isRightButtonShow = true;
+                                buttonBottomTitle = ConstantStrings.changePassword;
+                              });
+
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Profile updated successfully')),
+                                );
+                              }
+                              break;
+                          }
                         }
-                      },
+
                     ),
                   ],
                 ),

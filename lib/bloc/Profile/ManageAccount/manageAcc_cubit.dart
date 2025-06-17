@@ -1,12 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
-import 'manageAcc_model.dart';
 import 'manageAcc_repository.dart';
 import 'manageAcc_state.dart';
 
 class ManageaccCubit extends Cubit<ManageAccState> {
+  final ManageAccountRepository repository = ManageAccountRepository();
+
   ManageaccCubit() : super(ManageAccState());
 
   void initializeUserData({
@@ -61,33 +61,31 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         firstNameError ?? Validators().validateName(newFirstName);
     final updatedLastNameError =
         lastNameError ?? Validators().validateName(newLastName);
+    final updatedEmailError =
+        emailError ?? Validators().validateEmail(newEmail);
 
-    final isValid =
-        updatedFirstNameError == null &&
+    final isValid = updatedFirstNameError == null &&
         updatedLastNameError == null &&
+        updatedEmailError == null &&
         newFirstName.isNotEmpty &&
         newLastName.isNotEmpty &&
         newEmail.isNotEmpty;
 
-    emit(
-      state.copyWith(
-        firstName: newFirstName,
-        lastName: newLastName,
-        email: newEmail,
-        firstNameError: updatedFirstNameError,
-        lastNameError: updatedLastNameError,
-        isButtonEnabled: isValid,
-      ),
-    );
+    emit(state.copyWith(
+      firstName: newFirstName,
+      lastName: newLastName,
+      email: newEmail,
+      firstNameError: updatedFirstNameError,
+      lastNameError: updatedLastNameError,
+      emailError: updatedEmailError,
+      isButtonEnabled: isValid,
+    ));
   }
-
-  final ManageAccountRepository repository = ManageAccountRepository();
 
   Future<void> fetchUserDetails() async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final token = await SharedPrefsHelper.getUserAccessToken();
-
       if (token == null || token.isEmpty) {
         emit(state.copyWith(
           isLoading: false,
@@ -96,29 +94,15 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         return;
       }
 
-      final ManageAccountModel user = await repository.getUserDetail(token: token);
+      final user = await repository.getUserDetail(token: token);
 
-      final firstNameError = Validators().validateName(user.firstName);
-      final lastNameError = Validators().validateName(user.lastName);
-      final emailError = Validators().validateEmail(user.email);
-
-      final isValid = firstNameError == null &&
-          lastNameError == null &&
-          emailError == null &&
-          user.firstName.isNotEmpty &&
-          user.lastName.isNotEmpty &&
-          user.email.isNotEmpty;
-
-      emit(state.copyWith(
+      initializeUserData(
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        firstNameError: firstNameError,
-        lastNameError: lastNameError,
-        emailError: emailError,
-        isButtonEnabled: isValid,
-        isLoading: false,
-      ));
+      );
+
+      emit(state.copyWith(isLoading: false));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
@@ -127,4 +111,38 @@ class ManageaccCubit extends Cubit<ManageAccState> {
     }
   }
 
+  Future<void> updateUserDetails({required String token, required String firstName, required String lastName}) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
+    try {
+      final token = await SharedPrefsHelper.getUserAccessToken();
+      if (token == null || token.isEmpty) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Access token is missing.',
+        ));
+        return;
+      }
+
+      await repository.updateUserDetail(
+        token: token,
+        firstName: state.firstName,
+        lastName: state.lastName,
+      );
+
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: null,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to update user data: ${e.toString()}',
+      ));
+    }
+  }
+
+  Future<String> getUserToken() async {
+    return await SharedPrefsHelper.getUserAccessToken() ?? '';
+  }
 }
