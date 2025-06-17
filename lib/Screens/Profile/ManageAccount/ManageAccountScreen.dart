@@ -59,107 +59,115 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
               ),
               rightButton: isRightButtonShow
                   ? Padding(
-                padding: const EdgeInsets.all(15),
-                child: GestureDetector(
-                  child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.editIcon),
-                    width: 20,
-                    height: 20,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isTextfiledEnabled = true;
-                      isRightButtonShow = false;
-                      buttonBottomTitle = ConstantStrings.saveTitle;
-                    });
-                  },
-                ),
-              )
+                      padding: const EdgeInsets.all(15),
+                      child: GestureDetector(
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.editIcon),
+                          width: 20,
+                          height: 20,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            isTextfiledEnabled = true;
+                            isRightButtonShow = false;
+                            buttonBottomTitle = ConstantStrings.saveTitle;
+                          });
+                        },
+                      ),
+                    )
                   : null,
             ),
             body: state.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      label: ConstantStrings.firstNameLabel,
-                      controller: firstNameController,
-                      errorText: state.firstNameError,
-                      onChanged: (val) => context
-                          .read<ManageaccCubit>()
-                          .firstNameChanged(val),
-                      enabled: isTextfiledEnabled,
-                    ),
-                    const SizedBox(height: 15),
-                    CustomTextField(
-                      label: ConstantStrings.lastNameLabel,
-                      controller: lastNameController,
-                      errorText: state.lastNameError,
-                      onChanged: (val) => context
-                          .read<ManageaccCubit>()
-                          .lastNameChanged(val),
-                      enabled: isTextfiledEnabled,
-                    ),
-                    const SizedBox(height: 15),
-                    CustomTextField(
-                      label: ConstantStrings.emailLabel,
-                      controller: emailController,
-                      errorText: state.emailError,
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 30),
-                    CustomBottomButton(
-                      title: buttonBottomTitle,
-                      backgroundColor:
-                      const Color.fromRGBO(63, 61, 81, 1.0),
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      isEnabled: true,
-                        onPressed: () async {
-                          switch (buttonBottomTitle) {
-                            case ConstantStrings.changePassword:
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChangePasswordScreen(),
-                                ),
-                              );
-                              break;
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            label: ConstantStrings.firstNameLabel,
+                            controller: firstNameController,
+                            errorText: state.firstNameError,
+                            onChanged: (val) => context
+                                .read<ManageaccCubit>()
+                                .firstNameChanged(val),
+                            enabled: isTextfiledEnabled,
+                          ),
+                          const SizedBox(height: 15),
+                          CustomTextField(
+                            label: ConstantStrings.lastNameLabel,
+                            controller: lastNameController,
+                            errorText: state.lastNameError,
+                            onChanged: (val) => context
+                                .read<ManageaccCubit>()
+                                .lastNameChanged(val),
+                            enabled: isTextfiledEnabled,
+                          ),
+                          const SizedBox(height: 15),
+                          CustomTextField(
+                            label: ConstantStrings.emailLabel,
+                            controller: emailController,
+                            errorText: state.emailError,
+                            enabled: false,
+                          ),
+                          const SizedBox(height: 30),
+                          CustomBottomButton(
+                            title: buttonBottomTitle,
+                            backgroundColor: const Color.fromRGBO(
+                              63,
+                              61,
+                              81,
+                              1.0,
+                            ),
+                            textColor: Colors.white,
+                            icon: const SizedBox(width: 0),
+                            isEnabled: state.isButtonEnabled,
+                            onPressed: () async {
+                              switch (buttonBottomTitle) {
+                                case ConstantStrings.changePassword:
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ChangePasswordScreen(),
+                                    ),
+                                  );
+                                  break;
 
-                            case ConstantStrings.saveTitle:
-                              final cubit = context.read<ManageaccCubit>();
-                              final token = await cubit.getUserToken(); // implement or call helper to get token
+                                case ConstantStrings.saveTitle:
+                                  final cubit = context.read<ManageaccCubit>();
 
-                              await cubit.updateUserDetails(
-                                token: token,
-                                firstName: firstNameController.text.trim(),
-                                lastName: lastNameController.text.trim(),
-                              );
+                                  if (cubit.validateFields()) {
+                                    await cubit.updateUserDetails();
 
-                              setState(() {
-                                isTextfiledEnabled = false;
-                                isRightButtonShow = true;
-                                buttonBottomTitle = ConstantStrings.changePassword;
-                              });
+                                    setState(() {
+                                      isTextfiledEnabled = false;
+                                      isRightButtonShow = true;
+                                      buttonBottomTitle =
+                                          ConstantStrings.changePassword;
+                                    });
 
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Profile updated successfully')),
-                                );
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Profile updated successfully',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  break;
                               }
-                              break;
-                          }
-                        }
-
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           );
         },
       ),

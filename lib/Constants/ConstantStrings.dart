@@ -153,8 +153,5 @@ class ApiServiceUrlConstant {
   //Profile
   static const String getUnitselection = 'user/measurement';
   static const String updateUnitselection = 'user/measurement';
-  static const String getUserDetail = 'user/';
-  static const String updateUserDetail = 'user/';
-
-
+  static const String getAndSetUserDetail = 'user/';
 }
