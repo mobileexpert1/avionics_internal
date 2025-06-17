@@ -56,18 +56,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.manageAccountAcc,
                       ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ManageAccountScreen(
-                              firstName: "John",
-                              lastName: "Doe",
-                              email: "john@example.com",
-                            ),
-                          ),
-                        );
-                      },
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => ManageAccountScreen(
+                      //         firstName: "John",
+                      //         lastName: "Doe",
+                      //         email: "john@example.com",
+                      //       ),
+                      //     ),
+                      //   );
+                      // },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ManageAccountScreen()),
+                          );
+                        }
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

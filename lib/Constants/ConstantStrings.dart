@@ -154,4 +154,5 @@ class ApiServiceUrlConstant {
   static const String getUnitselection = 'user/measurement';
   static const String updateUnitselection = 'user/measurement';
   static const String changeCurrentPassword = 'auth/change-password';
+  static const String getUserDetail = 'user/';
 }

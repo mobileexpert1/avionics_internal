@@ -11,17 +11,7 @@ import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dar
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_state.dart';
 
 class ManageAccountScreen extends StatefulWidget {
-
-  final String firstName;
-  final String lastName;
-  final String email;
-
-  const ManageAccountScreen({
-    Key? key,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-  }) : super(key: key);
+  const ManageAccountScreen({Key? key}) : super(key: key);
 
   @override
   _ManageAccountScreenState createState() => _ManageAccountScreenState();
@@ -45,109 +35,89 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    firstNameController.text = widget.firstName;
-    lastNameController.text = widget.lastName;
-    emailController.text = widget.email;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ManageaccCubit()..initializeUserData(
-        firstName: widget.firstName,
-        lastName: widget.lastName,
-        email: widget.email,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          title: ConstantStrings.manageAccount,
-          leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-            rightButton: isRightButtonShow == true ?
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: GestureDetector(
-                child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.editIcon),
-                  width: 20,
-                  height: 20,
-                ),
-                onTap: () {
-                  setState(() {
-                    isTextfiledEnabled = true;
-                    isRightButtonShow = false;
-                    buttonBottomTitle = ConstantStrings.saveTitle;
-                  });
+      create: (_) => ManageaccCubit()..fetchUserDetails(),
+      child: BlocConsumer<ManageaccCubit, ManageAccState>(
+        listener: (context, state) {
+          if (!state.isLoading) {
+            firstNameController.text = state.firstName;
+            lastNameController.text = state.lastName;
+            emailController.text = state.email;
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: CustomAppBar(
+              title: ConstantStrings.manageAccount,
+              leftButton: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
-            ) : null
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                BlocSelector<ManageaccCubit, ManageAccState, String?>(
-                  selector: (state) => state.firstNameError,
-                  builder: (context, firstNameError) {
-                    return CustomTextField(
+              rightButton: isRightButtonShow
+                  ? Padding(
+                padding: const EdgeInsets.all(15),
+                child: GestureDetector(
+                  child: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.editIcon),
+                    width: 20,
+                    height: 20,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      isTextfiledEnabled = true;
+                      isRightButtonShow = false;
+                      buttonBottomTitle = ConstantStrings.saveTitle;
+                    });
+                  },
+                ),
+              )
+                  : null,
+            ),
+            body: state.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CustomTextField(
                       label: ConstantStrings.firstNameLabel,
                       controller: firstNameController,
-                      errorText: firstNameError,
-                      onChanged: (val) =>
-                          context.read<ManageaccCubit>().firstNameChanged(val),
+                      errorText: state.firstNameError,
+                      onChanged: (val) => context
+                          .read<ManageaccCubit>()
+                          .firstNameChanged(val),
                       enabled: isTextfiledEnabled,
-                    );
-                  },
-                ),
-                SizedBox(height: 15),
-
-                BlocSelector<ManageaccCubit, ManageAccState, String?>(
-                  selector: (state) => state.lastNameError,
-                  builder: (context, lastNameError) {
-                    return CustomTextField(
+                    ),
+                    const SizedBox(height: 15),
+                    CustomTextField(
                       label: ConstantStrings.lastNameLabel,
                       controller: lastNameController,
-                      errorText: lastNameError,
-                      onChanged: (val) =>
-                          context.read<ManageaccCubit>().lastNameChanged(val),
+                      errorText: state.lastNameError,
+                      onChanged: (val) => context
+                          .read<ManageaccCubit>()
+                          .lastNameChanged(val),
                       enabled: isTextfiledEnabled,
-                    );
-                  },
-                ),
-                SizedBox(height: 15),
-
-                BlocSelector<ManageaccCubit, ManageAccState, String?>(
-                  selector: (state) => state.emailError,
-                  builder: (context, emailError) {
-                    return CustomTextField(
+                    ),
+                    const SizedBox(height: 15),
+                    CustomTextField(
                       label: ConstantStrings.emailLabel,
                       controller: emailController,
-                      errorText: emailError,
-                      //onChanged: (val) =>   context.read<ManageaccCubit>().emailChanged(val),
+                      errorText: state.emailError,
                       enabled: false,
-                    );
-                  },
-                ),
-                SizedBox(height: 30),
-
-                BlocSelector<ManageaccCubit, ManageAccState, bool>(
-                  selector: (state) => state.isButtonEnabled,
-                  builder: (context, isButtonEnabled) {
-                    return CustomBottomButton(
+                    ),
+                    const SizedBox(height: 30),
+                    CustomBottomButton(
                       title: buttonBottomTitle,
-                      backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                      backgroundColor:
+                      const Color.fromRGBO(63, 61, 81, 1.0),
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
-                      // use SizedBox or an actual icon if needed
                       isEnabled: true,
                       onPressed: () {
                         switch (buttonBottomTitle) {
@@ -163,21 +133,19 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             setState(() {
                               isTextfiledEnabled = false;
                               isRightButtonShow = true;
-                              buttonBottomTitle = ConstantStrings.changePassword;
+                              buttonBottomTitle =
+                                  ConstantStrings.changePassword;
                             });
-                            break;
-                          default:
-                            print("Unhandled button title: $buttonBottomTitle");
                             break;
                         }
                       },
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
