@@ -26,110 +26,120 @@ class FeedbackScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: BlocBuilder<FeedbackCubit, FeedbackState>(
-            builder: (context, state) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: 80,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(5, (index) {
-                          return IconButton(
-                            icon: Icon(
-                              Icons.star,
-                              size: 51,
-                              color: index < state.rating
-                                  ? Colors.amber
-                                  : Colors.grey[300],
-                            ),
-                            onPressed: () {
-                              final currentRating = context
-                                  .read<FeedbackCubit>()
-                                  .state
-                                  .rating;
-                              final tappedRating = index + 1;
-                              context.read<FeedbackCubit>().updateRating(
-                                currentRating == tappedRating
-                                    ? 0
-                                    : tappedRating,
-                              );
-                            },
-                          );
-                        }),
-                      ),
-                      const SizedBox(height: 30),
-                      const Text(
-                        "Please leave your feedback about the app",
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15,
+          child: BlocListener<FeedbackCubit, FeedbackState>(
+            listenWhen: (previous, current) =>
+                current.submissionSuccess && !previous.submissionSuccess,
+            listener: (context, state) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Review submitted successfully.")),
+              );
+              Navigator.pop(context);
+            },
+            child: BlocBuilder<FeedbackCubit, FeedbackState>(
+              builder: (context, state) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 25,
+                    vertical: 80,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (index) {
+                            return IconButton(
+                              icon: Icon(
+                                Icons.star,
+                                size: 51,
+                                color: index < state.rating
+                                    ? Colors.amber
+                                    : Colors.grey[300],
+                              ),
+                              onPressed: () {
+                                final currentRating = context
+                                    .read<FeedbackCubit>()
+                                    .state
+                                    .rating;
+                                final tappedRating = index + 1;
+                                context.read<FeedbackCubit>().updateRating(
+                                  currentRating == tappedRating
+                                      ? 0
+                                      : tappedRating,
+                                );
+                              },
+                            );
+                          }),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF5F5F5),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
+                        const SizedBox(height: 30),
+                        const Text(
+                          "Please leave your feedback about the app",
                           style: TextStyle(
                             fontWeight: FontWeight.normal,
-                            fontSize: 12,
+                            fontSize: 15,
                           ),
-                          controller: controller,
-                          maxLines: 14,
-                          decoration: const InputDecoration(
-                            hintText: "Enter some suggestions for us...",
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) => context
-                              .read<FeedbackCubit>()
-                              .updateComment(value),
+                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: CustomBottomButton(
-                          title: state.isSubmitting ? "" : "Submit",
-                          backgroundColor: const Color.fromRGBO(
-                            63,
-                            61,
-                            81,
-                            1.0,
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          textColor: Colors.white,
-                          icon: state.isSubmitting
-                              ? const SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                          child: TextField(
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 12,
+                            ),
+                            controller: controller,
+                            maxLines: 14,
+                            decoration: const InputDecoration(
+                              hintText: "Enter some suggestions for us...",
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (value) => context
+                                .read<FeedbackCubit>()
+                                .updateComment(value),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomBottomButton(
+                            title: state.isSubmitting ? "" : "Submit",
+                            backgroundColor: const Color.fromRGBO(
+                              63,
+                              61,
+                              81,
+                              1.0,
+                            ),
+                            textColor: Colors.white,
+                            icon: state.isSubmitting
+                                ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                      strokeWidth: 2,
                                     ),
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const SizedBox(width: 0),
-                          isEnabled: !state.isSubmitting,
-                          onPressed: () {
-                            FocusScope.of(context).unfocus();
-                            context.read<FeedbackCubit>().submitFeedback();
-                          },
+                                  )
+                                : const SizedBox(width: 0),
+                            isEnabled: !state.isSubmitting,
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              context.read<FeedbackCubit>().submitFeedback();
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
