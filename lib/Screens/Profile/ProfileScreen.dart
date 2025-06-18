@@ -1,3 +1,5 @@
+import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
@@ -19,6 +21,13 @@ import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return BlocProvider<DeleteCubit>(
+      create: (_) => DeleteCubit(),
+      child: ProfileScreen(),
+    );
+  }
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -183,9 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.deleteAcc,
-                      ),
+                      leadingSvgAsset: CommonUi.setSvgImage(AssetsPath.deleteAcc),
                       title: "Delete account",
                       onTap: () {
                         showDeleteConfirmation(context);
@@ -221,21 +228,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void showDeleteConfirmation(BuildContext context) {
+  void showDeleteConfirmation(BuildContext bottomSheetContext) {
     showModalBottomSheet(
-      context: context,
+      context: bottomSheetContext,
       backgroundColor: Colors.transparent,
-      builder: (_) => InfoBottomSheet(
-        onYes: () {
-          _clearAllDataAndRedirectToSplashScreen(context);
-          // Handle delete action here
-        },
-        onNo: () {
-          Navigator.pop(context);
-        },
-      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return BlocProvider<DeleteCubit>(
+          create: (_) => DeleteCubit(),
+          child: BlocListener<DeleteCubit, DeleteState>(
+            listener: (listenerContext, state) async {
+              if (state.isSuccess) {
+                Navigator.pop(bottomSheetContext);
+                await _clearAllDataAndRedirectToSplashScreen(bottomSheetContext);
+              } else if (state.errorMessage.isNotEmpty) {
+                Navigator.pop(bottomSheetContext);
+                ScaffoldMessenger.of(bottomSheetContext).showSnackBar(
+                  SnackBar(content: Text(state.errorMessage)),
+                );
+              }
+            },
+            child: Builder(
+              builder: (innerContext) {
+                return InfoBottomSheet(
+                  onYes: () async {
+                    final token =
+                    await SharedPrefsHelper.getUserAccessToken();
+                    if (token != null) {
+                      innerContext.read<DeleteCubit>().delete(token);
+                    } else {
+                      Navigator.pop(innerContext);
+                      ScaffoldMessenger.of(innerContext).showSnackBar(
+                        const SnackBar(content: Text("Token not found")),
+                      );
+                    }
+                  },
+                  onNo: () => Navigator.pop(innerContext),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
+
 }
 
 class InfoBottomSheet extends StatelessWidget {

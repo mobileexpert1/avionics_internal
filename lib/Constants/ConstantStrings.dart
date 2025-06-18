@@ -157,4 +157,5 @@ class ApiServiceUrlConstant {
   static const String getAndSetUserDetail = 'user/';
   static const String review = 'user/review';
   static const String setAvtar = 'user/avatar';
+  static const String delete = 'user/';
 }
