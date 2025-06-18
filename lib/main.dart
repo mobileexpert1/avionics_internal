@@ -1,4 +1,5 @@
 import 'Screens/Profile/ContactSupportScreen/ContactSupportScreen.dart';
+import 'bloc/Profile/Avtar/avtar_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AircraftComparisonCubit()),
         BlocProvider(create: (_) => GlossaryCubit()),
         BlocProvider(create: (_) => UnitSelectionCubit()),
+        BlocProvider(create: (_) => AvtarCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

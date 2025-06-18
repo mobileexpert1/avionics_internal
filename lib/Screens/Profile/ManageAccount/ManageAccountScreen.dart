@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
@@ -48,7 +49,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             emailController.text = state.email;
           } else if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage ?? 'profile update failed')),
+              SnackBar(
+                content: Text(state.errorMessage ?? 'profile update failed'),
+              ),
             );
           } else if (state.status == CommonApiStatus.success) {
             ScaffoldMessenger.of(context).showSnackBar(

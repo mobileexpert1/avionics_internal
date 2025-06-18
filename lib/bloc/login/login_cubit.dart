@@ -57,6 +57,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (result.userDetails != null) {
         await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
+        await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
         await SharedPrefsHelper.saveIsUserLogin(true);
 
         Navigator.of(context).pushAndRemoveUntil(

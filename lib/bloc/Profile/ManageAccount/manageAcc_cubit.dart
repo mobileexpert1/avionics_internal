@@ -1,5 +1,10 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Constants/ApiClass/refresh_accessRepository.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
 import 'manageAcc_repository.dart';
 import 'manageAcc_state.dart';
@@ -67,12 +72,14 @@ class ManageaccCubit extends Cubit<ManageAccState> {
       initializeUserData(
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email, // This will only be displayed
+        email: user.email,
       );
+
+      await SharedPrefsHelper.setAvtarUserType(user.userType);
 
       emit(state.copyWith(isLoading: false));
     } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      _handleApiError(e);
     }
   }
 
@@ -84,9 +91,20 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         lastName: state.lastName,
       );
 
-      emit(state.copyWith(isLoading: false,status:CommonApiStatus.success));
+      emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
     } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      _handleApiError(e);
     }
+  }
+
+  void _handleApiError(Object e) async {
+    final error = e.toString().toLowerCase();
+    if (error.contains("unauthorized") || error.contains("401")) {
+      // final prefs = await SharedPreferences.getInstance();
+      // final refreshToken = prefs.getString('UserAccessTokenKey');
+      // final accessToken = await RefreshAccesstokenRepository().getAndUpdateTheRefreshToken(refreshToken: refreshToken ?? '');
+      // print(accessToken);
+    }
+    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
   }
 }

@@ -5,6 +5,8 @@ class SharedPrefsHelper {
   static const String _isUserLoginKey = 'UserLoginKey';
   static const String _isFirstLaunchKey = 'FirstLaunchKey';
   static const String _isUserAccessTokenKey = 'UserAccessTokenKey';
+  static const String _isUserRefreshTokenKey = 'UserRefreshTokenKey';
+  static const String _isAvtarForProfileKey = 'AvtarForProfileKey';
 
   static Future<void> saveEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
@@ -44,6 +46,26 @@ class SharedPrefsHelper {
   static Future<String?> getUserAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_isUserAccessTokenKey);
+  }
+
+  static Future<void> setUserRefreshToken(String userAccessToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_isUserRefreshTokenKey, userAccessToken);
+  }
+
+  static Future<String?> getUserRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_isUserRefreshTokenKey);
+  }
+
+  static Future<void> setAvtarUserType(String userType) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_isAvtarForProfileKey, userType);
+  }
+
+  static Future<String> getAvtarUserType() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_isAvtarForProfileKey) ?? 'student';
   }
 
   static Future<void> clearAll() async {

@@ -30,6 +30,7 @@ class OtpCubit extends Cubit<OtpState> {
       if (isFromSignup == true) {
         await SharedPrefsHelper.saveEmail(email);
         await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
+        await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
         await SharedPrefsHelper.saveIsUserLogin(true);
       }
 
