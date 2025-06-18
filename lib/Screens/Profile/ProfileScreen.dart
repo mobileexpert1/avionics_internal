@@ -251,17 +251,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Builder(
               builder: (innerContext) {
                 return InfoBottomSheet(
-                  onYes: () async {
-                    final token =
-                    await SharedPrefsHelper.getUserAccessToken();
-                    if (token != null) {
-                      innerContext.read<DeleteCubit>().delete(token);
-                    } else {
-                      Navigator.pop(innerContext);
-                      ScaffoldMessenger.of(innerContext).showSnackBar(
-                        const SnackBar(content: Text("Token not found")),
-                      );
-                    }
+                  onYes: () {
+                      innerContext.read<DeleteCubit>().delete(context);
                   },
                   onNo: () => Navigator.pop(innerContext),
                 );
