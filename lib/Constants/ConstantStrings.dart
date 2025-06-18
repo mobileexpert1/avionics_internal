@@ -156,4 +156,5 @@ class ApiServiceUrlConstant {
   static const String changeCurrentPassword = 'auth/change-password';
   static const String getAndSetUserDetail = 'user/';
   static const String review = 'user/review';
+  static const String delete = 'user/';
 }

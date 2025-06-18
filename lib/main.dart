@@ -1,4 +1,5 @@
 import 'Screens/Profile/ContactSupportScreen/ContactSupportScreen.dart';
+import 'Screens/Profile/ProfileScreen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: ProfileScreen(),
           );
         },
       ),
