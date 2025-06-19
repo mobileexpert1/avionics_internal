@@ -1,39 +1,21 @@
+import 'package:avionics_internal/bloc/Profile/Glossary/glossary_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'glossary_model.dart';
 import 'glossary_state.dart';
 
 class GlossaryCubit extends Cubit<GlossaryState> {
+  final GlossaryRepository repository =GlossaryRepository();
   GlossaryCubit() : super(const GlossaryState(glossaryData: {})) {
     loadGlossary();
   }
 
-  void loadGlossary() {
-    // Your glossary data here
-    final data = {
-      'A': [
-        GlossaryItem(
-          title: 'ADSHEX',
-          description:
-              'Unique code for each airframe. Used as the unique identifier for ADS-B broadcasts.',
-        ),
-        GlossaryItem(
-          title: 'ATC Callsign',
-          description: 'Used for air traffic control communication.',
-        ),
-        GlossaryItem(title: 'ATC Callsign', description: ''),
-      ],
-      'B': [
-        GlossaryItem(
-          title: 'Barometer',
-          description: 'Instrument for measuring atmospheric pressure.',
-        ),
-        GlossaryItem(
-          title: 'Barometer',
-          description: 'Instrument for measuring atmospheric pressure.',
-        ),
-      ],
-    };
-    emit(GlossaryState(glossaryData: data));
+  Future<void> loadGlossary({String? query}) async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      final glossaryData = await repository.getGlossaryData(query: query);
+      emit(GlossaryState(glossaryData: glossaryData, isLoading: false));
+    } catch (e) {
+      emit(GlossaryState(glossaryData: {}, isLoading: false));
+    }
   }
 }

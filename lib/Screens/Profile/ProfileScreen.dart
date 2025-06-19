@@ -1,5 +1,7 @@
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
+import '../../bloc/Profile/Glossary/glossary_cubit.dart';
+import '../../bloc/Profile/Glossary/glossary_repository.dart';
 import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
@@ -141,14 +143,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => GlossaryScreen(),
+                            builder: (context) => BlocProvider(
+                              create: (_) => GlossaryCubit(),
+                              child: const GlossaryScreen(),
+                            ),
                           ),
                         );
                       },
                     ),
                   ],
                 ),
-
                 // FEEDBACK Section
                 SettingsListGroup(
                   headerTitle: "FEEDBACK",

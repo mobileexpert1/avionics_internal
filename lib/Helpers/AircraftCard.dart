@@ -78,24 +78,38 @@ class AircraftCard {
             ],
           ),
           subtitle: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Display the correct manufacturer image
               Image.asset(
                 CommonUi.setPngImage(manufacturerImagePath),
-                // Use the image path determined earlier
                 width: 16,
                 height: 16,
               ),
               const SizedBox(width: 4),
-              Text(manufacturer, style: const TextStyle(fontSize: 13)),
+              Expanded(
+                child: Text(
+                  manufacturer,
+                  style: const TextStyle(fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
               if (airline != null) ...[
                 const SizedBox(width: 10),
                 Image.asset(airlineImagePath!, width: 16, height: 16),
                 const SizedBox(width: 4),
-                Text(airline, style: const TextStyle(fontSize: 13)),
+                Expanded(
+                  child: Text(
+                    airline,
+                    style: const TextStyle(fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ],
           ),
+
           trailing: const Icon(Icons.chevron_right),
         ),
       ),
