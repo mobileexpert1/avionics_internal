@@ -17,8 +17,8 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
   final List<Widget> _pages = [
     HomeScreen(),
     Center(child: Text('Map')),
-    AircraftComparisonScreen(),
-    SavedFlighScreen(showTabs: true),
+    Center(child: Text('Game')),
+    Center(child: Text('AskWILCO')),
     ProfileScreen(),
   ];
 
@@ -58,19 +58,19 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.CompareIcon),
+              CommonUi.setPngImage(AssetsPath.gameIcon),
               width: 70,
               height: 24,
             ),
-            label: 'Compare',
+            label: 'Game',
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.SavedIcon),
+              CommonUi.setPngImage(AssetsPath.chatIcon),
               width: 70,
               height: 24,
             ),
-            label: 'Saved',
+            label: 'AskWILCO',
           ),
           BottomNavigationBarItem(
             icon: Image.asset(

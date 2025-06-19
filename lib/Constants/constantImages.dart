@@ -58,6 +58,8 @@ abstract class AssetsPath {
   static const String aeroplane3 = "aeroplane3";
   static const String CroatiaAirlineLogo = "CroatiaAirline";
   static const String AirFranceLogo = "AirFrance";
+  static const String gameIcon = "gameIcon";
+  static const String chatIcon = "chatIcon";
   static const String CompareIcon = "CompareIcon";
   static const String ExploreIcon = "ExploreIcon";
   static const String MapIcon = "MapIcon";
