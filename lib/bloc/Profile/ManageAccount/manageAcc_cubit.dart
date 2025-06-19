@@ -100,10 +100,10 @@ class ManageaccCubit extends Cubit<ManageAccState> {
   void _handleApiError(Object e) async {
     final error = e.toString().toLowerCase();
     if (error.contains("unauthorized") || error.contains("401")) {
-      // final prefs = await SharedPreferences.getInstance();
-      // final refreshToken = prefs.getString('UserAccessTokenKey');
-      // final accessToken = await RefreshAccesstokenRepository().getAndUpdateTheRefreshToken(refreshToken: refreshToken ?? '');
-      // print(accessToken);
+      final prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString('UserAccessTokenKey');
+      final accessToken = await RefreshAccesstokenRepository().getAndUpdateTheRefreshToken(refreshToken: refreshToken ?? '');
+      print(accessToken);
     }
     emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
   }
