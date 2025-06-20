@@ -10,6 +10,7 @@ import '../Helpers/AppListTileCard.dart';
 import '../Helpers/AppText.dart';
 import '../Helpers/CustomDivider.dart';
 import '../Helpers/SearchBarWidget.dart';
+import '../bloc/manufacturer/manufacturer_cubit.dart';
 import 'HomeAirbus/ChatBotScreen.dart';
 import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../bloc/home/home_cubit.dart';
@@ -159,10 +160,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     Center(
                       child: TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => ManufacturerScreen()),
-                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider(
+                                create: (_) => ManufacturerCubit(),
+                                child:  ManufacturerScreen(),
+                              ),
+                            ),
+                          );
+                        },
                         child: Text(
                           'See All',
                           style: TextStyle(
@@ -173,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+
 
                     SizedBox(height: screenWidth * 0.025),
                     CustomDivider(),

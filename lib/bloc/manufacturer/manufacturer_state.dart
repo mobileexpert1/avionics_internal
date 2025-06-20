@@ -4,7 +4,10 @@ class ManufacturerState {
   final List<Manufacturer> manufacturers;
   final bool isLoading;
 
-  ManufacturerState({required this.manufacturers, this.isLoading = false});
+  const ManufacturerState({
+    required this.manufacturers,
+    this.isLoading = false,
+  });
 
   ManufacturerState copyWith({
     List<Manufacturer>? manufacturers,

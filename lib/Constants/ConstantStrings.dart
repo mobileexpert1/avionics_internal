@@ -159,4 +159,17 @@ class ApiServiceUrlConstant {
   static const String setAvtar = 'user/avatar';
   static const String delete = 'user/';
   static const String getGlossary = 'user/glossary';
+
+
+}
+
+
+class ApiFunctionUrlAirplaneConstant {
+  static const String airplaneService = 'airplane-service/';
+}
+
+
+class ApiServiceUrlAirplaneConstant {
+  //Home
+  static const String getManufacturer = 'manufacturer/';
 }

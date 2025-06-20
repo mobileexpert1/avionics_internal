@@ -1,27 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'manufacturer_model.dart';
 import 'manufacturer_state.dart';
+import 'manufacturer_repository.dart';
 
 class ManufacturerCubit extends Cubit<ManufacturerState> {
-  ManufacturerCubit() : super(ManufacturerState(manufacturers: []));
+  final ManufacturerRepository repository;
 
-  void loadManufacturers() {
+  ManufacturerCubit({ManufacturerRepository? repo})
+      : repository = repo ?? ManufacturerRepository(),
+        super(ManufacturerState(manufacturers: []));
+
+  Future<void> loadManufacturers({String? query}) async {
     emit(state.copyWith(isLoading: true));
-
-    // Mock data
-    final mockData = [
-      Manufacturer(name: 'Antonov', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Airbus', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Aquila Aviation', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Adam Aircraft Industries', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Ayres', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'AVRO', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Aero Commander Aircraft', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Air Tractor', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'Agusta / AgustaWestland', icon: 'ManuFirstImage'),
-      Manufacturer(name: 'American Air Corp', icon: 'ManuFirstImage'),
-    ];
-
-    emit(state.copyWith(manufacturers: mockData, isLoading: false));
+    try {
+      final manufacturers = await repository.getManufacturers(query: query);
+      emit(state.copyWith(manufacturers: manufacturers, isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(manufacturers: [], isLoading: false));
+    }
   }
 }

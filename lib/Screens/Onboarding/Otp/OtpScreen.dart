@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +39,39 @@ class _OtpScreenState extends State<OtpScreen> {
       border: Border(bottom: BorderSide(color: Colors.grey.shade400, width: 2)),
     ),
   );
+
+  int _secondsRemaining = 60;
+  late Timer _timer;
+  bool _isResendEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    _isResendEnabled = false;
+    _secondsRemaining = 60;
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_secondsRemaining == 0) {
+        setState(() {
+          _isResendEnabled = true;
+          _timer.cancel();
+        });
+      } else {
+        setState(() {
+          _secondsRemaining--;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,10 +127,9 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                       ),
                       SizedBox(height: 16),
-
                       BlocBuilder<OtpCubit, OtpState>(
                         buildWhen: (previous, current) =>
-                            previous.otp != current.otp,
+                        previous.otp != current.otp,
                         builder: (context, state) {
                           return Pinput(
                             length: 4,
@@ -111,7 +145,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               ),
                             ),
                             separatorBuilder: (index) =>
-                                const SizedBox(width: 60),
+                            const SizedBox(width: 60),
                             showCursor: true,
                             onChanged: (otp) {
                               context.read<OtpCubit>().otpChanged(otp);
@@ -119,7 +153,6 @@ class _OtpScreenState extends State<OtpScreen> {
                           );
                         },
                       ),
-
                       SizedBox(height: 24),
                       BlocSelector<OtpCubit, OtpState, bool>(
                         selector: (state) => state.isButtonEnabled,
@@ -127,12 +160,12 @@ class _OtpScreenState extends State<OtpScreen> {
                           return ElevatedButton(
                             onPressed: isButtonEnabled
                                 ? () {
-                                    context.read<OtpCubit>().submitOtpApi(
-                                      context,
-                                      widget.email,
-                                      widget.isComeFromSignup,
-                                    );
-                                  }
+                              context.read<OtpCubit>().submitOtpApi(
+                                context,
+                                widget.email,
+                                widget.isComeFromSignup,
+                              );
+                            }
                                 : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: isButtonEnabled
@@ -153,27 +186,29 @@ class _OtpScreenState extends State<OtpScreen> {
                           );
                         },
                       ),
-
-                      SizedBox(height: 18),
-                      if (widget.isComeFromSignup == false)
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(
-                            ConstantStrings.goBack,
-                            style: TextStyle(
-                              color: AppColors.goBack,
-                              fontSize: 18,
-                            ),
+                      TextButton(
+                        onPressed: _isResendEnabled
+                            ? () {
+                          _startCountdown();
+                          // TODO: Add resend OTP logic here
+                        }
+                            : null,
+                        child: Text(
+                          _isResendEnabled
+                              ? "Resend Code"
+                              : "Resend Code in $_secondsRemaining sec",
+                          style: TextStyle(
+                            color: _isResendEnabled ? Colors.blue : Colors.grey,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-
+                      ),
                       Spacer(flex: 2),
                     ],
                   ),
                 ),
               ),
-
-              // Full-screen loading indicator
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),

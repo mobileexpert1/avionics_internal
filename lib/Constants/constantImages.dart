@@ -48,8 +48,7 @@ abstract class AssetsPath {
   static const String avtarThird = "AvtarThird";
   static const String avtarFouth = "AvtarFourth";
 
-  //jpg
-  // static const String airbus = "airbus";
+
   static const String explore = "explore";
 
   // png
@@ -90,3 +89,5 @@ class CommonUi {
     return 'assets/svg_images/$image.svg';
   }
 }
+
+const String imageBaseUrl = 'https://avionica.csdevhub.com/airplane-service';

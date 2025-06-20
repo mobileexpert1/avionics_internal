@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../Constants/ConstantStrings.dart';
 import '../../Helpers/AppText.dart';
 import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/SearchBarWidget.dart';
@@ -26,7 +27,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Responsive units
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -42,10 +42,15 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
             children: [
               SearchBarWidget(
               enableBackArrow: false,
-              enableFilter: false,
+              enableFilter: true,
               enableCloseScreen: true,
                 controller: searchController,
                 onFilterTap: () {},
+                onChanged: (value) {
+                  context.read<ManufacturerCubit>().loadManufacturers(
+                    query: value.trim(),
+                  );
+                },
               ),
               // CustomDivider(),
               SizedBox(height: screenHeight * 0.02),
@@ -107,11 +112,18 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                   horizontal: screenWidth * 0.04,
                                   vertical: screenHeight * 0.012,
                                 ),
-                                leading: SvgPicture.asset(
-                                  CommonUi.setSvgImage(item.icon!),
-                                  width: screenWidth * 0.1,
-                                  height: screenWidth * 0.1,
-                                ),
+                                leading: item.icon != null
+                                    ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    imageBaseUrl + item.icon!,
+                                    width: screenWidth * 0.1,
+                                    height: screenWidth * 0.1,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+                                  ),
+                                )
+                                    : const Icon(Icons.image_not_supported),
                                 title: Text(
                                   item.name,
                                   style: TextStyle(
@@ -125,6 +137,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                 },
                               ),
                             ),
+
                           ],
                         );
                       },
