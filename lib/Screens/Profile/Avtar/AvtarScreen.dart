@@ -11,24 +11,41 @@ import '../../../bloc/Profile/Avtar/avtar_state.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 
 class AvtarScreen extends StatefulWidget {
+  final bool isComeFromSignupScreen;
+  final String userEmail;
+
+  const AvtarScreen({
+    Key? key,
+    required this.isComeFromSignupScreen,
+    required this.userEmail,
+  }) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _AvtarScreenState();
 }
 
 class _AvtarScreenState extends State<AvtarScreen> {
   final List<String> titles = ['Student', 'Professional', 'Enthusiast', 'ATCO'];
-  final List<String> userTypes = ['student', 'professional', 'enthusiast', 'atco'];
+  final List<String> userTypes = [
+    'student',
+    'professional',
+    'enthusiast',
+    'atco',
+  ];
+
   final List<String> icons = [
-    AssetsPath.avtarThird,   // student
-    AssetsPath.avtarFirst,   // professional
-    AssetsPath.avtarFouth,   // enthusiast
-    AssetsPath.avtarSecond,  // atco
+    AssetsPath.avtarThird, // student
+    AssetsPath.avtarFirst, // professional
+    AssetsPath.avtarFouth, // enthusiast
+    AssetsPath.avtarSecond, // atco
   ];
 
   @override
   void initState() {
     super.initState();
-    context.read<AvtarCubit>().loadAvatarFromPrefs();
+    context.read<AvtarCubit>().loadAvatarFromPrefs(
+      widget.isComeFromSignupScreen,
+    );
   }
 
   @override
@@ -49,9 +66,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  state.errorMessage ?? 'Failed to select avatar',
-                ),
+                content: Text(state.errorMessage ?? 'Failed to select avatar'),
               ),
             );
           } else if (state.status == CommonApiStatus.success) {
@@ -64,21 +79,26 @@ class _AvtarScreenState extends State<AvtarScreen> {
           return ListView.separated(
             padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
             itemCount: titles.length,
-            separatorBuilder: (context, index) => const Divider(
-              height: 0.1,
-              color: Colors.grey,
-              thickness: 0.1,
-            ),
+            separatorBuilder: (context, index) =>
+                const Divider(height: 0.1, color: Colors.grey, thickness: 0.1),
             itemBuilder: (context, index) {
               final userType = userTypes[index];
               final isSelected = state.selectedUserType == userType;
 
               return GestureDetector(
                 onTap: () {
-                  context.read<AvtarCubit>().selectAvatar(userType);
+                  context.read<AvtarCubit>().selectAvatar(
+                    userType,
+                    widget.isComeFromSignupScreen,
+                    widget.userEmail,
+                    context,
+                  );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 20,
+                  ),
                   child: Card(
                     color: Colors.white,
                     elevation: 0,
@@ -99,11 +119,18 @@ class _AvtarScreenState extends State<AvtarScreen> {
                           Expanded(
                             child: Text(
                               titles[index],
-                              style: const TextStyle(fontSize: 16, color: Colors.black),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                           if (isSelected)
-                            const Icon(Icons.check, size: 20, color: Colors.blue),
+                            const Icon(
+                              Icons.check,
+                              size: 20,
+                              color: Colors.blue,
+                            ),
                         ],
                       ),
                     ),

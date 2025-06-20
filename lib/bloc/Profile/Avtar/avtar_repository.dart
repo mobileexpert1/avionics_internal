@@ -19,7 +19,27 @@ class AvtarRepository {
       final response = await ApiService.post(
         url: url,
         body: {"user_type": userType},
+      );
+      return BaseDetailResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 
+  Future<BaseDetailResponseModel> setAvtarForProfileWhileSignup({
+    required String userType,
+    required String userEmail,
+  }) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlConstant.userService +
+          ApiServiceUrlConstant.setAvtarWhileSignup,
+    );
+
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {"email": userEmail, "user_type": userType},
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
