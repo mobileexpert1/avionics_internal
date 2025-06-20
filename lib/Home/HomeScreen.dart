@@ -28,10 +28,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+
     return BlocProvider(
       create: (_) => AircraftComparisonCubit(),
       child: Scaffold(
         backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight + 50),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: SearchBarWidget(
+                    enableBackArrow: false,
+                    enableFilter: true,
+                    enableCloseScreen: false,
+                    controller: searchController,
+                    onFilterTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        builder: (context) {
+                          return FractionallySizedBox(
+                            heightFactor: 0.9,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                              child: FilterScreen(),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: screenWidth * 0.04),
+                const Divider(
+                  height: 1.5,
+                  thickness: 1.5,
+                  color: Color(0xFFDDDDDD),
+                ),
+              ],
+            ),
+          ),
+        ),
+
         body: SafeArea(
           child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
@@ -41,189 +89,181 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SearchBarWidget(
-                      enableBackArrow: false,
-                      enableFilter: true,
-                      enableCloseScreen: false,
-                      controller: searchController,
-                      onFilterTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          builder: (context) {
-                            return FractionallySizedBox(
-                              heightFactor: 0.9,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                                child: FilterScreen(),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    CustomDivider(),
-                    SizedBox(height: 20),
+                    SizedBox(height: screenWidth * 0.05),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                       child: Text(
                         "Welcome Onboard",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: screenWidth * 0.05,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+
+                    SizedBox(height: screenWidth * 0.04),
+
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(20),
-                      color: Color(0xFF3F3D51),
+                      padding: EdgeInsets.all(screenWidth * 0.05),
+                      color: const Color(0xFF3F3D51),
                       child: SvgPicture.asset(
                         CommonUi.setSvgImage(AssetsPath.avionicaHome),
                         fit: BoxFit.fill,
                       ),
                     ),
-                    SizedBox(height: 27),
-                    _buildSectionTitle("Model Comparison", AssetsPath.comparsion),
-                    SizedBox(height: 18),
+
+                    SizedBox(height: screenWidth * 0.07),
+                    _buildSectionTitle("Model Comparison", AssetsPath.comparsion, screenWidth),
+
+                    SizedBox(height: screenWidth * 0.045),
+
                     AppListTileCard(
                       title: "Select model for comparison",
                       imagePath: CommonUi.setSvgImage(AssetsPath.selectModel),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AircraftComparisonScreen()),
-                        );
-                      },
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => AircraftComparisonScreen()),
+                      ),
                       isSvg: true,
                     ),
-                    SizedBox(height: 25),
+
+                    SizedBox(height: screenWidth * 0.06),
                     CustomDivider(),
-                    SizedBox(height: 20),
-                    _buildSectionTitle("Manufacturer", AssetsPath.manufacturer),
-                    SizedBox(height: 18),
+                    SizedBox(height: screenWidth * 0.05),
+
+                    _buildSectionTitle("Manufacturer", AssetsPath.manufacturer, screenWidth),
+                    SizedBox(height: screenWidth * 0.045),
+
                     AppListTileCard(
                       title: "Airbus",
                       imagePath: CommonUi.setPngImage(AssetsPath.airbus),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AirbusScreen()),
-                        );
-                      },
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => AirbusScreen()),
+                      ),
                       isSvg: false,
                     ),
-                    SizedBox(height: 18),
+
+                    SizedBox(height: screenWidth * 0.045),
+
                     AppListTileCard(
                       title: "Aquila Aviation",
                       imagePath: CommonUi.setSvgImage(AssetsPath.manufacturer),
                       onTap: () {},
                       isSvg: true,
                     ),
-                    SizedBox(height: 15),
+
+                    SizedBox(height: screenWidth * 0.02),
+
                     Center(
                       child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ManufacturerScreen()),
-                          );
-                        },
-                        child: const Text(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => ManufacturerScreen()),
+                        ),
+                        child: Text(
                           'See All',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF626262),
+                            color: const Color(0xFF626262),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+
+                    SizedBox(height: screenWidth * 0.025),
                     CustomDivider(),
-                    SizedBox(height: 20),
-                    _buildSectionTitle("Flying in the area", AssetsPath.flyingareaicon),
-                    SizedBox(height: 18),
+                    SizedBox(height: screenWidth * 0.05),
+
+                    _buildSectionTitle("Flying in the area", AssetsPath.flyingareaicon, screenWidth),
+                    SizedBox(height: screenWidth * 0.045),
+
                     AircraftCard.buildAircraftCard(
                       imagePath: CommonUi.setPngImage(AssetsPath.aeroplane),
                       model: 'A-320-200',
                       badge: 'A320',
                       manufacturer: 'Airbus',
-                      airline: null,
+                      registrationNumber:'A35819',
                     ),
-                    SizedBox(height: 8),
+
+                    SizedBox(height: screenWidth * 0.02),
+
                     AircraftCard.buildAircraftCard(
                       imagePath: CommonUi.setPngImage(AssetsPath.aeroplane2),
                       model: 'A-319',
                       badge: 'A319',
                       manufacturer: 'Airbus',
-                      airline: 'Croatia Airlines',
-                      airlineImagePath: CommonUi.setPngImage(AssetsPath.CroatiaAirlineLogo),
+                      registrationNumber: 'A35819',
                     ),
-                    SizedBox(height: 8),
+
+                    SizedBox(height: screenWidth * 0.02),
+
                     AircraftCard.buildAircraftCard(
                       imagePath: CommonUi.setPngImage(AssetsPath.aeroplane3),
                       model: 'A-319',
                       badge: 'A319',
                       manufacturer: 'Airbus',
-                      airline: 'Air France',
-                      airlineImagePath: CommonUi.setPngImage(AssetsPath.AirFranceLogo),
+                      registrationNumber:'A35819',
                     ),
-                    SizedBox(height: 8),
+
+                    SizedBox(height: screenWidth * 0.02),
+
                     Center(
                       child: TextButton(
                         onPressed: () {},
-                        child: const Text(
+                        child: Text(
                           'See All',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF626262),
+                            color: const Color(0xFF626262),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+
+                    SizedBox(height: screenWidth * 0.025),
                     CustomDivider(),
-                    SizedBox(height: 20),
-                    _buildSectionTitle("Favourites", AssetsPath.star, fontSize: 22, imageSize: 35),
-                    SizedBox(height: 18),
+                    SizedBox(height: screenWidth * 0.05),
+
+                    _buildSectionTitle("Favourites", AssetsPath.star,
+                        screenWidth, fontSize: 0.055, imageSize: 0.09),
+
+                    SizedBox(height: screenWidth * 0.045),
+
                     AppListTileCard(
                       title: "Airbus",
                       imagePath: CommonUi.setSvgImage(AssetsPath.manufacturer),
                       onTap: () {},
                       isSvg: true,
                     ),
-                    SizedBox(height: 18),
+
+                    SizedBox(height: screenWidth * 0.045),
+
                     AppListTileCard(
                       title: "A-319B",
                       imagePath: CommonUi.setSvgImage(AssetsPath.aeroplaneIcon),
                       onTap: () {},
                       isSvg: true,
                     ),
-                    SizedBox(height: 8),
+
+                    SizedBox(height: screenWidth * 0.02),
+
                     Center(
                       child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SavedFlighScreen(showTabs: false),
-                            ),
-                          );
-                        },
-                        child: const Text(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => SavedFlighScreen(showTabs: false)),
+                        ),
+                        child: Text(
                           'See All',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF626262),
+                            color: const Color(0xFF626262),
                           ),
                         ),
                       ),
@@ -235,17 +275,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(right: 7),
+          padding: EdgeInsets.only(right: 7),
           child: SizedBox(
             width: 70,
             height: 70,
             child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AskWilcoScreen()),
-                );
-              },
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => AskWilcoScreen()),
+              ),
               backgroundColor: Colors.transparent,
               elevation: 0,
               child: SvgPicture.asset(
@@ -261,10 +299,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String text, String iconPath,
-      {double fontSize = 19, double imageSize = 25}) {
+  Widget _buildSectionTitle(String text, String iconPath, double screenWidth,
+      {double fontSize = 0.048, double imageSize = 0.065}) {
     return Padding(
-      padding: const EdgeInsets.only(left: 21),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
       child: AppTexts(
         text: text,
         imageName: CommonUi.setSvgImage(iconPath),
@@ -272,9 +310,10 @@ class _HomeScreenState extends State<HomeScreen> {
         side: 'left',
         color: Colors.black,
         weight: FontWeight.w600,
-        fontSize: fontSize,
-        imageSize: imageSize,
+        fontSize: screenWidth * fontSize,
+        imageSize: screenWidth * imageSize,
       ),
     );
   }
+
 }

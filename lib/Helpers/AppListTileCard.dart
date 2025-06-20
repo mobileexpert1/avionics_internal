@@ -17,8 +17,18 @@ class AppListTileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final horizontalPadding = screenWidth * 0.045;
+    final verticalPadding = screenWidth * 0.01;
+    final iconSize = screenWidth * 0.075;
+    final fontSize = screenWidth * 0.042;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 3),
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -26,27 +36,34 @@ class AppListTileCard extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade300),
         ),
         child: ListTile(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.03,
+            vertical: screenWidth * 0.01,
+          ),
           leading: isSvg
               ? SvgPicture.asset(
             imagePath,
-            height: 30,
-            width: 30,
+            height: iconSize,
+            width: iconSize,
             fit: BoxFit.contain,
           )
               : Image.asset(
             imagePath,
-            height: 30,
-            width: 30,
+            height: iconSize,
+            width: iconSize,
             fit: BoxFit.contain,
           ),
           title: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 17,
+              fontSize: fontSize,
             ),
           ),
-          trailing: const Icon(Icons.arrow_forward_ios, size: 19),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: screenWidth * 0.045,
+          ),
           onTap: onTap,
         ),
       ),

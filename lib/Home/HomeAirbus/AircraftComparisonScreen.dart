@@ -27,8 +27,38 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final appBarHeight = screenWidth * 0.22;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(appBarHeight),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04, // ~16
+                  vertical: screenWidth * 0.02,   // ~8
+                ),
+                child: SearchBarWidget(
+                  enableBackArrow: false,
+                  enableFilter: true,
+                  enableCloseScreen: false,
+                  controller: searchController,
+                  onFilterTap: () {
+                    context.read<AircraftComparisonCubit>().filterModels(searchController.text);
+                  },
+                ),
+              ),
+              const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+
       body: SafeArea(
         child: BlocBuilder<AircraftComparisonCubit, AircraftComparisonState>(
           builder: (context, state) {
@@ -38,75 +68,57 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
               models = state.models;
               selectedBadges = state.selectedModelBadges;
             }
-
+            SizedBox(height: screenWidth * 0.03);
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SearchBarWidget(
-                      enableBackArrow: false,
-                      enableFilter: true,
-                      enableCloseScreen: false,
-                      controller: searchController,
-                      onFilterTap: () {
-                        context
-                            .read<AircraftComparisonCubit>()
-                            .filterModels(searchController.text);
+              padding: EdgeInsets.only(bottom: screenWidth * 0.05),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: screenWidth * 0.04),
+                  Padding(
+                    padding: EdgeInsets.only(left: screenWidth * 0.06),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => HomeScreen()),
+                        );
                       },
-                    ),
-                    const SizedBox(height: 2),
-                    const Divider(),
-                    const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>  HomeScreen(),
-                            ),
-                          );
-                        },
-                        child: AppTexts(
-                          text: "   Select Model for Comparison",
-                          imageName:
-                          CommonUi.setSvgImage(AssetsPath.BackIcon),
-                          font: 'Roboto',
-                          side: 'left',
-                          color: Colors.black,
-                          weight: FontWeight.w600,
-                          fontSize: 19,
-                          imageSize: 25,
-                        ),
+                      child: AppTexts(
+                        text: "   Select Model for Comparison",
+                        imageName: CommonUi.setSvgImage(AssetsPath.BackIcon),
+                        font: 'Roboto',
+                        side: 'left',
+                        color: Colors.black,
+                        weight: FontWeight.w600,
+                        fontSize: screenWidth * 0.047, // ~19 on 400px
+                        imageSize: screenWidth * 0.06,  // ~25 on 400px
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    const SizedBox(height: 13),
-                    ...models.map((model) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal:10,vertical: 7),
-                        child: SelectableAircraftCard(
-                          imagePath: CommonUi.setPngImage(
-                              AssetsPath.aeroplaneComparison),
-                          model: model.name,
-                          badge: model.id,
-                          manufacturer: model.manufacturer,
-                          airline: null,
-                          isSelected: selectedBadges.contains(model.id),
-                          onTap: () {
-                            context
-                                .read<AircraftComparisonCubit>()
-                                .toggleSelection(model.id);
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: screenWidth * 0.03),
+
+                  ...models.map((model) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.025, // ~10
+                        vertical: screenWidth * 0.017,   // ~7
+                      ),
+                      child: SelectableAircraftCard(
+                        imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
+                        model: model.name,
+                        badge: model.id,
+                        manufacturer: model.manufacturer,
+                        airline: null,
+                        isSelected: selectedBadges.contains(model.id),
+                        onTap: () {
+                          context.read<AircraftComparisonCubit>().toggleSelection(model.id);
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ],
               ),
             );
           },
