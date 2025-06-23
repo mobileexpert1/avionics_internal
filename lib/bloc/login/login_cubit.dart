@@ -1,5 +1,6 @@
 import 'package:avionics_internal/Home/HomeScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
+import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:avionics_internal/bloc/login/login_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,17 +16,21 @@ class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
 
   void emailChanged(String email) {
-    emit(state.copyWith(
-      email: email,
-      isButtonEnabled: email.isNotEmpty && state.password.isNotEmpty,
-    ));
+    emit(
+      state.copyWith(
+        email: email,
+        isButtonEnabled: email.isNotEmpty && state.password.isNotEmpty,
+      ),
+    );
   }
 
   void passwordChanged(String password) {
-    emit(state.copyWith(
-      password: password,
-      isButtonEnabled: password.isNotEmpty && state.email.isNotEmpty,
-    ));
+    emit(
+      state.copyWith(
+        password: password,
+        isButtonEnabled: password.isNotEmpty && state.email.isNotEmpty,
+      ),
+    );
   }
 
   Future<void> validateAndLogin(BuildContext context) async {
@@ -34,10 +39,7 @@ class LoginCubit extends Cubit<LoginState> {
 
     if (emailError != null || passwordError != null) {
       emit(
-        state.copyWith(
-          emailError: emailError,
-          passwordError: passwordError,
-        ),
+        state.copyWith(emailError: emailError, passwordError: passwordError),
       );
       return;
     }
@@ -46,7 +48,9 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginUserApi(BuildContext context) async {
-    emit(state.copyWith(status: CommonApiStatus.submitting, errorMessage: null));
+    emit(
+      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+    );
     try {
       final result = await LoginRepository().loginUser(
         email: state.email,
@@ -62,14 +66,26 @@ class LoginCubit extends Cubit<LoginState> {
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-              (route) => false,
+          (route) => false,
         );
       } else if (result.isVerified == false) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) =>
+                OtpScreen(email: state.email, isComeFromSignup: true),
+          ),
+        );
+      } else if (result.isAvatar == false) {
+        final signupData = {'email': state.email};
+
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => OtpScreen(email: state.email, isComeFromSignup: true),
+            builder: (_) => AvtarScreen(
+              isComeFromSignupScreen: true,
+              signupData: signupData,
+            ),
           ),
-              (route) => false,
+          (route) => false,
         );
       }
     } catch (e) {

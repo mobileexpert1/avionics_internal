@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -10,30 +11,95 @@ class SignupCubit extends Cubit<SignupState> {
   SignupCubit() : super(SignupState());
 
   void firstNameChanged(String value) {
-    emit(state.copyWith(firstName: value, isButtonEnabled: _canEnableButton(value, state.lastName, state.email, state.password, state.confirmPassword)));
+    emit(
+      state.copyWith(
+        firstName: value,
+        isButtonEnabled: _canEnableButton(
+          value,
+          state.lastName,
+          state.email,
+          state.password,
+          state.confirmPassword,
+        ),
+      ),
+    );
   }
 
   void lastNameChanged(String value) {
-    emit(state.copyWith(lastName: value, isButtonEnabled: _canEnableButton(state.firstName, value, state.email, state.password, state.confirmPassword)));
+    emit(
+      state.copyWith(
+        lastName: value,
+        isButtonEnabled: _canEnableButton(
+          state.firstName,
+          value,
+          state.email,
+          state.password,
+          state.confirmPassword,
+        ),
+      ),
+    );
   }
 
   void emailChanged(String value) {
-    emit(state.copyWith(email: value, isButtonEnabled: _canEnableButton(state.firstName, state.lastName, value, state.password, state.confirmPassword)));
+    emit(
+      state.copyWith(
+        email: value,
+        isButtonEnabled: _canEnableButton(
+          state.firstName,
+          state.lastName,
+          value,
+          state.password,
+          state.confirmPassword,
+        ),
+      ),
+    );
   }
 
   void passwordChanged(String value) {
-    emit(state.copyWith(password: value, isButtonEnabled: _canEnableButton(state.firstName, state.lastName, state.email, value, state.confirmPassword)));
+    emit(
+      state.copyWith(
+        password: value,
+        isButtonEnabled: _canEnableButton(
+          state.firstName,
+          state.lastName,
+          state.email,
+          value,
+          state.confirmPassword,
+        ),
+      ),
+    );
   }
 
   void confirmPasswordChanged(String value) {
-    emit(state.copyWith(confirmPassword: value, isButtonEnabled: _canEnableButton(state.firstName, state.lastName, state.email, state.password, value)));
+    emit(
+      state.copyWith(
+        confirmPassword: value,
+        isButtonEnabled: _canEnableButton(
+          state.firstName,
+          state.lastName,
+          state.email,
+          state.password,
+          value,
+        ),
+      ),
+    );
   }
 
-  bool _canEnableButton(String fn, String ln, String email, String pass, String confirmPass) {
-    return fn.isNotEmpty && ln.isNotEmpty && email.isNotEmpty && pass.isNotEmpty && confirmPass.isNotEmpty;
+  bool _canEnableButton(
+    String fn,
+    String ln,
+    String email,
+    String pass,
+    String confirmPass,
+  ) {
+    return fn.isNotEmpty &&
+        ln.isNotEmpty &&
+        email.isNotEmpty &&
+        pass.isNotEmpty &&
+        confirmPass.isNotEmpty;
   }
 
-  Future<void> submitSignupApi(BuildContext context) async {
+  Future<void> verifyEmailRegisteredOrNot(BuildContext context) async {
     final firstNameError = Validators().validateName(state.firstName);
     final lastNameError = Validators().validateName(state.lastName);
     final emailError = Validators().validateEmail(state.email);
@@ -68,25 +134,32 @@ class SignupCubit extends Cubit<SignupState> {
     );
 
     try {
-      await SignupRepository().registerUser(
-        first_name: state.firstName,
-        last_name: state.lastName,
+      await SignupRepository().checkIsEmailAlreadyResgisteredOrNot(
         email: state.email,
-        password: state.password,
-        username: state.firstName + state.lastName,
-        phone_number: '',
-        professional_role: '',
-        experience_level: '',
-        user_type: 'student',
-        auth_type: '',
       );
 
       emit(state.copyWith(status: CommonApiStatus.success));
 
+      final signupData = {
+        'first_name': state.firstName,
+        'last_name': state.lastName,
+        'email': state.email,
+        'password': state.password,
+        'username': state.firstName + state.lastName,
+        'phone_number': '',
+        'professional_role': '',
+        'experience_level': '',
+        'user_type': '',
+        'auth_type': '',
+      };
+
+      print(signupData);
+
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => OtpScreen(email: state.email, isComeFromSignup: true),
+          builder: (_) =>
+              AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
         ),
       );
     } catch (e) {

@@ -1,6 +1,7 @@
 class LoginResponseModel {
   final String detail;
   final bool? isVerified; // Present only in unverified response
+  final bool? isAvatar;
   final String? accessToken;
   final String? refreshToken;
   final String? tokenType;
@@ -9,6 +10,7 @@ class LoginResponseModel {
   LoginResponseModel({
     required this.detail,
     this.isVerified,
+    this.isAvatar,
     this.accessToken,
     this.refreshToken,
     this.tokenType,
@@ -19,6 +21,7 @@ class LoginResponseModel {
     return LoginResponseModel(
       detail: json['detail'] ?? '',
       isVerified: json['is_verified'],
+      isAvatar: json['is_avatar'],
       accessToken: json['access'],
       refreshToken: json['refresh'],
       tokenType: json['token_type'],

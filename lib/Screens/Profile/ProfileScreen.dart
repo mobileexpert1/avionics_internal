@@ -67,12 +67,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.manageAccountAcc,
                       ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const ManageAccountScreen()),
-                          );
-                        }
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ManageAccountScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -105,7 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AvtarScreen(),
+                            builder: (context) => AvtarScreen(
+                              isComeFromSignupScreen: false,
+                              signupData: {},
+                            ),
                           ),
                         );
                       },
@@ -196,7 +201,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(AssetsPath.deleteAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.deleteAcc,
+                      ),
                       title: "Delete account",
                       onTap: () {
                         showDeleteConfirmation(context);
@@ -244,19 +251,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             listener: (listenerContext, state) async {
               if (state.isSuccess) {
                 Navigator.pop(bottomSheetContext);
-                await _clearAllDataAndRedirectToSplashScreen(bottomSheetContext);
+                await _clearAllDataAndRedirectToSplashScreen(
+                  bottomSheetContext,
+                );
               } else if (state.errorMessage.isNotEmpty) {
                 Navigator.pop(bottomSheetContext);
-                ScaffoldMessenger.of(bottomSheetContext).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage)),
-                );
+                ScaffoldMessenger.of(
+                  bottomSheetContext,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
               }
             },
             child: Builder(
               builder: (innerContext) {
                 return InfoBottomSheet(
                   onYes: () {
-                      innerContext.read<DeleteCubit>().delete(context);
+                    innerContext.read<DeleteCubit>().delete(context);
                   },
                   onNo: () => Navigator.pop(innerContext),
                 );
@@ -267,7 +276,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
-
 }
 
 class InfoBottomSheet extends StatelessWidget {
