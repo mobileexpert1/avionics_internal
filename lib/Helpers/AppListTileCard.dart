@@ -6,6 +6,7 @@ class AppListTileCard extends StatelessWidget {
   final String imagePath;
   final VoidCallback? onTap;
   final bool isSvg;
+  final bool isNetwork;
 
   const AppListTileCard({
     Key? key,
@@ -13,6 +14,7 @@ class AppListTileCard extends StatelessWidget {
     required this.imagePath,
     this.onTap,
     this.isSvg = true,
+    this.isNetwork = false,
   }) : super(key: key);
 
   @override
@@ -40,19 +42,7 @@ class AppListTileCard extends StatelessWidget {
             horizontal: screenWidth * 0.03,
             vertical: screenWidth * 0.01,
           ),
-          leading: isSvg
-              ? SvgPicture.asset(
-            imagePath,
-            height: iconSize,
-            width: iconSize,
-            fit: BoxFit.contain,
-          )
-              : Image.asset(
-            imagePath,
-            height: iconSize,
-            width: iconSize,
-            fit: BoxFit.contain,
-          ),
+          leading: _buildLeadingImage(iconSize),
           title: Text(
             title,
             style: TextStyle(
@@ -68,5 +58,31 @@ class AppListTileCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildLeadingImage(double size) {
+    if (isSvg) {
+      return SvgPicture.asset(
+        imagePath,
+        height: size,
+        width: size,
+        fit: BoxFit.contain,
+      );
+    } else if (isNetwork) {
+      return Image.network(
+        imagePath,
+        height: size,
+        width: size,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Icon(Icons.broken_image, size: size),
+      );
+    } else {
+      return Image.asset(
+        imagePath,
+        height: size,
+        width: size,
+        fit: BoxFit.contain,
+      );
+    }
   }
 }

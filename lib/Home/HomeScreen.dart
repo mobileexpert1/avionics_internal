@@ -26,14 +26,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
+  late HomeCubit homeCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    homeCubit = HomeCubit();
+    homeCubit.fetchHomeData();
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
 
-    return BlocProvider(
-      create: (_) => AircraftComparisonCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeCubit>(create: (_) => homeCubit),
+        BlocProvider<AircraftComparisonCubit>(
+          create: (_) => AircraftComparisonCubit(),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
@@ -43,7 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: SearchBarWidget(
                     enableBackArrow: false,
                     enableFilter: true,
@@ -54,14 +70,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
                         ),
                         backgroundColor: Colors.transparent,
                         builder: (context) {
                           return FractionallySizedBox(
                             heightFactor: 0.9,
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
                               child: FilterScreen(),
                             ),
                           );
@@ -81,9 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        body: SafeArea(
-          child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
+        body: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            if (state is HomeLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is HomeError) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else if (state is HomeLoaded) {
               return SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 padding: const EdgeInsets.only(bottom: 20),
@@ -92,7 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     SizedBox(height: screenWidth * 0.05),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.05,
+                      ),
                       child: Text(
                         "Welcome Onboard",
                         style: TextStyle(
@@ -102,9 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
                     SizedBox(height: screenWidth * 0.04),
-
                     Container(
                       width: double.infinity,
                       padding: EdgeInsets.all(screenWidth * 0.05),
@@ -114,50 +138,46 @@ class _HomeScreenState extends State<HomeScreen> {
                         fit: BoxFit.fill,
                       ),
                     ),
-
                     SizedBox(height: screenWidth * 0.07),
-                    _buildSectionTitle("Model Comparison", AssetsPath.comparsion, screenWidth),
 
+                    /// Model Comparison
+                    _buildSectionTitle(
+                      "Model Comparison",
+                      AssetsPath.comparsion,
+                      screenWidth,
+                    ),
                     SizedBox(height: screenWidth * 0.045),
-
                     AppListTileCard(
                       title: "Select model for comparison",
                       imagePath: CommonUi.setSvgImage(AssetsPath.selectModel),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => AircraftComparisonScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => AircraftComparisonScreen(),
+                        ),
                       ),
                       isSvg: true,
                     ),
-
                     SizedBox(height: screenWidth * 0.06),
                     CustomDivider(),
+
+                    /// Manufacturer
                     SizedBox(height: screenWidth * 0.05),
-
-                    _buildSectionTitle("Manufacturer", AssetsPath.manufacturer, screenWidth),
+                    _buildSectionTitle(
+                      "Manufacturer",
+                      AssetsPath.manufacturer,
+                      screenWidth,
+                    ),
                     SizedBox(height: screenWidth * 0.045),
-
-                    AppListTileCard(
-                      title: "Airbus",
-                      imagePath: CommonUi.setPngImage(AssetsPath.airbus),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => AirbusScreen()),
+                    ...state.manufacturers.map(
+                      (m) => AppListTileCard(
+                        title: m.companyName ?? '',
+                        imagePath: imageBaseUrl + (m.logo ?? ''),
+                        onTap: () {},
+                        isSvg: false,
+                        isNetwork: true,
                       ),
-                      isSvg: false,
                     ),
-
-                    SizedBox(height: screenWidth * 0.045),
-
-                    AppListTileCard(
-                      title: "Aquila Aviation",
-                      imagePath: CommonUi.setSvgImage(AssetsPath.manufacturer),
-                      onTap: () {},
-                      isSvg: true,
-                    ),
-
-                    SizedBox(height: screenWidth * 0.02),
-
                     Center(
                       child: TextButton(
                         onPressed: () {
@@ -166,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             MaterialPageRoute(
                               builder: (_) => BlocProvider(
                                 create: (_) => ManufacturerCubit(),
-                                child:  ManufacturerScreen(),
+                                child: ManufacturerScreen(),
                               ),
                             ),
                           );
@@ -182,44 +202,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-
+                    /// Flights
                     SizedBox(height: screenWidth * 0.025),
                     CustomDivider(),
                     SizedBox(height: screenWidth * 0.05),
-
-                    _buildSectionTitle("Flying in the area", AssetsPath.flyingareaicon, screenWidth),
+                    _buildSectionTitle(
+                      "Flying in the area",
+                      AssetsPath.flyingareaicon,
+                      screenWidth,
+                    ),
                     SizedBox(height: screenWidth * 0.045),
-
-                    AircraftCard.buildAircraftCard(
-                      imagePath: CommonUi.setPngImage(AssetsPath.aeroplane),
-                      model: 'A-320-200',
-                      badge: 'A320',
-                      manufacturer: 'Airbus',
-                      registrationNumber:'A35819',
+                    ...state.flights.map(
+                      (f) => AircraftCard.buildAircraftCard(
+                        imagePath: imageBaseUrl + (f.image),
+                        model: f.model,
+                        badge: f.code,
+                        manufacturer: f.companyName,
+                        manufacturerLogoPath: f.logo,
+                        registrationNumber: f.flightId,
+                      ),
                     ),
-
-                    SizedBox(height: screenWidth * 0.02),
-
-                    AircraftCard.buildAircraftCard(
-                      imagePath: CommonUi.setPngImage(AssetsPath.aeroplane2),
-                      model: 'A-319',
-                      badge: 'A319',
-                      manufacturer: 'Airbus',
-                      registrationNumber: 'A35819',
-                    ),
-
-                    SizedBox(height: screenWidth * 0.02),
-
-                    AircraftCard.buildAircraftCard(
-                      imagePath: CommonUi.setPngImage(AssetsPath.aeroplane3),
-                      model: 'A-319',
-                      badge: 'A319',
-                      manufacturer: 'Airbus',
-                      registrationNumber:'A35819',
-                    ),
-
-                    SizedBox(height: screenWidth * 0.02),
-
                     Center(
                       child: TextButton(
                         onPressed: () {},
@@ -234,39 +236,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
+                    /// Favourites
+                    /// Favourites
                     SizedBox(height: screenWidth * 0.025),
                     CustomDivider(),
                     SizedBox(height: screenWidth * 0.05),
-
-                    _buildSectionTitle("Favourites", AssetsPath.star,
-                        screenWidth, fontSize: 0.055, imageSize: 0.09),
-
-                    SizedBox(height: screenWidth * 0.045),
-
-                    AppListTileCard(
-                      title: "Airbus",
-                      imagePath: CommonUi.setSvgImage(AssetsPath.manufacturer),
-                      onTap: () {},
-                      isSvg: true,
+                    _buildSectionTitle(
+                      "Favourites",
+                      AssetsPath.star,
+                      screenWidth,
+                      fontSize: 0.055,
+                      imageSize: 0.09,
                     ),
-
                     SizedBox(height: screenWidth * 0.045),
-
-                    AppListTileCard(
-                      title: "A-319B",
-                      imagePath: CommonUi.setSvgImage(AssetsPath.aeroplaneIcon),
-                      onTap: () {},
-                      isSvg: true,
+                    ...state.favourites.map(
+                      (f) => AppListTileCard(
+                        title: f.model,
+                        imagePath: imageBaseUrl + (f.logo ?? ''),
+                        onTap: () {},
+                        isSvg: false,
+                        isNetwork: true,
+                      ),
                     ),
-
-                    SizedBox(height: screenWidth * 0.02),
-
                     Center(
                       child: TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => SavedFlighScreen(showTabs: false)),
-                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SavedFlighScreen(showTabs: false),
+                            ),
+                          );
+                        },
                         child: Text(
                           'See All',
                           style: TextStyle(
@@ -280,8 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               );
-            },
-          ),
+            }
+            return const SizedBox();
+          },
         ),
         floatingActionButton: Padding(
           padding: EdgeInsets.only(right: 7),
@@ -308,8 +310,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String text, String iconPath, double screenWidth,
-      {double fontSize = 0.048, double imageSize = 0.065}) {
+  Widget _buildSectionTitle(
+    String text,
+    String iconPath,
+    double screenWidth, {
+    double fontSize = 0.048,
+    double imageSize = 0.065,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
       child: AppTexts(
@@ -324,5 +331,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }

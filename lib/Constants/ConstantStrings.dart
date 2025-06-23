@@ -171,5 +171,6 @@ class ApiFunctionUrlAirplaneConstant {
 
 class ApiServiceUrlAirplaneConstant {
   //Home
+  static const String getExploreData = 'explore/';
   static const String getManufacturer = 'manufacturer/';
 }

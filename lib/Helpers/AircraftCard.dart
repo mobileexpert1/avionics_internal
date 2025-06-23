@@ -8,6 +8,7 @@ class AircraftCard {
     required String badge,
     required String manufacturer,
     required String registrationNumber,
+    required String manufacturerLogoPath,
     Key? key,
   }) {
     return LayoutBuilder(
@@ -22,16 +23,21 @@ class AircraftCard {
         final infoFontSize = screenWidth * 0.033;
         final iconSize = screenWidth * 0.045;
 
+        // Assume manufacturer might be a full URL OR a known name
         String manufacturerImagePath;
-        switch (manufacturer) {
-          case 'Boeing':
-            manufacturerImagePath = AssetsPath.boeinglogo;
-            break;
-          case 'Airbus':
-            manufacturerImagePath = AssetsPath.airbus;
-            break;
-          default:
-            manufacturerImagePath = AssetsPath.DhcLogo;
+        bool isNetworkLogo = false;
+
+        if (manufacturer == 'Boeing') {
+          manufacturerImagePath = AssetsPath.boeinglogo;
+        } else if (manufacturer == 'Airbus') {
+          manufacturerImagePath = AssetsPath.airbus;
+        } else if (manufacturerLogoPath.startsWith('http') || manufacturerLogoPath.startsWith('/media')) {
+          manufacturerImagePath = manufacturerLogoPath.startsWith('http')
+              ? manufacturerLogoPath
+              : imageBaseUrl + manufacturerLogoPath;
+          isNetworkLogo = true;
+        } else {
+          manufacturerImagePath = AssetsPath.DhcLogo;
         }
 
         return Container(
@@ -65,11 +71,14 @@ class AircraftCard {
               contentPadding: EdgeInsets.all(screenWidth * 0.025),
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
+                child: Image.network(
                   imagePath,
                   width: imageWidth,
                   height: imageHeight,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image, size: imageHeight);
+                  },
                 ),
               ),
               title: Row(
@@ -108,7 +117,15 @@ class AircraftCard {
                 padding: EdgeInsets.only(top: screenWidth * 0.01),
                 child: Row(
                   children: [
-                    Image.asset(
+                    isNetworkLogo
+                        ? Image.network(
+                      manufacturerImagePath,
+                      width: iconSize,
+                      height: iconSize,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Icon(Icons.error, size: iconSize),
+                    )
+                        : Image.asset(
                       CommonUi.setPngImage(manufacturerImagePath),
                       width: iconSize,
                       height: iconSize,
