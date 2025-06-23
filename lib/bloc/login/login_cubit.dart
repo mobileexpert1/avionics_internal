@@ -76,11 +76,13 @@ class LoginCubit extends Cubit<LoginState> {
           ),
         );
       } else if (result.isAvatar == false) {
+        final signupData = {'email': state.email};
+
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => AvtarScreen(
               isComeFromSignupScreen: true,
-              userEmail: state.email,
+              signupData: signupData,
             ),
           ),
           (route) => false,

@@ -85,6 +85,7 @@ class ConstantStrings {
   // ─────────────────────────────
 
   static const String signupTitle = 'Sign up';
+  static const String submitTitle = 'Submit';
   static const String startSubscription = 'Start Subscription';
   static const String manageAccount = 'Manage Your Account';
   static const String titleHome = "Home";
@@ -141,6 +142,8 @@ class ApiFunctionUrlConstant {
 }
 
 class ApiServiceUrlConstant {
+
+  static const String checkEmail = 'auth/check-email';
   static const String authSignup = 'auth/sign-up';
   static const String verifyOtp = 'auth/verify-otp';
   static const String signIn = 'auth/sign-in';

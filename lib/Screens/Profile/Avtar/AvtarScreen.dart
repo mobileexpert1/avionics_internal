@@ -5,19 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
 import '../../../bloc/Profile/Avtar/avtar_state.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;
-  final String userEmail;
+  final Map<String, String> signupData;
 
   const AvtarScreen({
     Key? key,
     required this.isComeFromSignupScreen,
-    required this.userEmail,
+    required this.signupData,
   }) : super(key: key);
 
   @override
@@ -32,12 +34,11 @@ class _AvtarScreenState extends State<AvtarScreen> {
     'enthusiast',
     'atco',
   ];
-
   final List<String> icons = [
-    AssetsPath.avtarThird, // student
-    AssetsPath.avtarFirst, // professional
-    AssetsPath.avtarFouth, // enthusiast
-    AssetsPath.avtarSecond, // atco
+    AssetsPath.avtarThird,
+    AssetsPath.avtarFirst,
+    AssetsPath.avtarFouth,
+    AssetsPath.avtarSecond,
   ];
 
   @override
@@ -56,9 +57,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
         title: ConstantStrings.avtarTitle,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(
@@ -69,10 +68,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                 content: Text(state.errorMessage ?? 'Failed to select avatar'),
               ),
             );
-          } else if (state.status == CommonApiStatus.success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Avatar updated successfully')),
-            );
+            context.read<AvtarCubit>().resetStatus();
           }
         },
         builder: (context, state) {
@@ -87,12 +83,17 @@ class _AvtarScreenState extends State<AvtarScreen> {
 
               return GestureDetector(
                 onTap: () {
-                  context.read<AvtarCubit>().selectAvatar(
-                    userType,
-                    widget.isComeFromSignupScreen,
-                    widget.userEmail,
-                    context,
-                  );
+                  final cubit = context.read<AvtarCubit>();
+                  if (widget.isComeFromSignupScreen) {
+                    cubit.selectAvatarTypeOnly(userType);
+                  } else {
+                    cubit.selectAvatar(
+                      userType,
+                      widget.isComeFromSignupScreen,
+                      context,
+                      {},
+                    );
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -111,7 +112,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                       child: Row(
                         children: [
                           SvgPicture.asset(
-                            CommonUi.setSvgImage(icons[index])!,
+                            CommonUi.setSvgImage(icons[index]),
                             height: 30,
                             width: 30,
                           ),
@@ -141,6 +142,41 @@ class _AvtarScreenState extends State<AvtarScreen> {
           );
         },
       ),
+      bottomNavigationBar: widget.isComeFromSignupScreen
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 20,
+                ),
+                child: BlocSelector<AvtarCubit, AvtarState, bool>(
+                  selector: (state) =>
+                      state.selectedUserType != null &&
+                      state.selectedUserType!.isNotEmpty,
+                  builder: (context, isButtonEnabled) {
+                    return CustomBottomButton(
+                      title: ConstantStrings.submitTitle,
+                      backgroundColor: AppColors.customBottomEnabledColour,
+                      textColor: Colors.white,
+                      icon: const SizedBox(width: 0),
+                      isEnabled: isButtonEnabled,
+                      onPressed: () {
+                        final selectedUserType =
+                            context.read<AvtarCubit>().state.selectedUserType ??
+                            '';
+                        context.read<AvtarCubit>().selectAvatar(
+                          selectedUserType,
+                          widget.isComeFromSignupScreen,
+                          context,
+                          widget.signupData,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 }

@@ -109,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           MaterialPageRoute(
                             builder: (context) => AvtarScreen(
                               isComeFromSignupScreen: false,
-                              userEmail: '',
+                              signupData: {},
                             ),
                           ),
                         );

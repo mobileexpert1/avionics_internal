@@ -99,7 +99,7 @@ class SignupCubit extends Cubit<SignupState> {
         confirmPass.isNotEmpty;
   }
 
-  Future<void> submitSignupApi(BuildContext context) async {
+  Future<void> verifyEmailRegisteredOrNot(BuildContext context) async {
     final firstNameError = Validators().validateName(state.firstName);
     final lastNameError = Validators().validateName(state.lastName);
     final emailError = Validators().validateEmail(state.email);
@@ -134,27 +134,32 @@ class SignupCubit extends Cubit<SignupState> {
     );
 
     try {
-      await SignupRepository().registerUser(
-        first_name: state.firstName,
-        last_name: state.lastName,
+      await SignupRepository().checkIsEmailAlreadyResgisteredOrNot(
         email: state.email,
-        password: state.password,
-        username: state.firstName + state.lastName,
-        phone_number: '',
-        professional_role: '',
-        experience_level: '',
-        user_type: 'student',
-        auth_type: '',
       );
 
       emit(state.copyWith(status: CommonApiStatus.success));
+
+      final signupData = {
+        'first_name': state.firstName,
+        'last_name': state.lastName,
+        'email': state.email,
+        'password': state.password,
+        'username': state.firstName + state.lastName,
+        'phone_number': '',
+        'professional_role': '',
+        'experience_level': '',
+        'user_type': '',
+        'auth_type': '',
+      };
+
+      print(signupData);
 
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) =>
-              AvtarScreen(isComeFromSignupScreen: true, userEmail: state.email),
-          //builder: (_) => OtpScreen(email: state.email, isComeFromSignup: true),
+              AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
         ),
       );
     } catch (e) {

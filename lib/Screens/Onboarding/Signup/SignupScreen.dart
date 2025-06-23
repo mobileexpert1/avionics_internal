@@ -159,7 +159,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           selector: (state) => state.isButtonEnabled,
                           builder: (context, isButtonEnabled) {
                             return CustomBottomButton(
-                              title: ConstantStrings.signupTitle,
+                              title: ConstantStrings.next,
                               backgroundColor: state.isButtonEnabled
                                   ? AppColors.customBottomEnabledColour
                                   : AppColors.customBottomDisableColour,
@@ -168,7 +168,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               isEnabled: state.isButtonEnabled,
                               onPressed: () => context
                                   .read<SignupCubit>()
-                                  .submitSignupApi(context),
+                                  .verifyEmailRegisteredOrNot(context),
                             );
                           },
                         ),

@@ -5,6 +5,29 @@ import '../../Constants/ApiClass/api_service.dart';
 import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 
 class SignupRepository {
+
+  Future<BaseDetailResponseModel> checkIsEmailAlreadyResgisteredOrNot({
+    required String email,
+  }) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlConstant.userService +
+          ApiServiceUrlConstant.checkEmail,
+    );
+
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {
+          "email": email,
+        },
+      );
+      return BaseDetailResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   Future<BaseDetailResponseModel> registerUser({
     required String first_name,
     required String last_name,

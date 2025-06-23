@@ -65,7 +65,7 @@ class SharedPrefsHelper {
 
   static Future<String> getAvtarUserType() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_isAvtarForProfileKey) ?? '';
+    return prefs.getString(_isAvtarForProfileKey) ?? 'student';
   }
 
   static Future<void> clearAll() async {
