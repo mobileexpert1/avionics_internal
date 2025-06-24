@@ -8,6 +8,7 @@ abstract class AssetsPath {
   static const String facebook = "Facebook";
   static const String google = "Google";
   static const String logoMain = "mainLogo";
+  static const String splashLogo = "splashLogo";
   static const String manufacturer = "manufacturer";
   static const String starIcon = "StarIcon";
   static const String star = "star";

@@ -2,7 +2,7 @@ class ConstantStrings {
   // ─────────────────────────────
   // App Name
   // ─────────────────────────────
-  static const String poweredBy = "Powered by AI";
+  static const String poweredBy = "Powered by AskWILCO";
 
   // ─────────────────────────────
   // Onboarding Titles
@@ -65,10 +65,10 @@ class ConstantStrings {
   // ─────────────────────────────
   // Labels / Form Fields
   // ─────────────────────────────
-  static const String emailLabel = 'Email';
+  static const String emailLabel = 'Email address';
   static const String passwordLabel = 'Password';
-  static const String firstNameLabel = 'First Name';
-  static const String lastNameLabel = 'Last Name';
+  static const String firstNameLabel = 'First name';
+  static const String lastNameLabel = 'Last name';
 
   // ─────────────────────────────
   // General Navigation / Actions

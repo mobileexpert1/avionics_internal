@@ -71,4 +71,23 @@ class OtpCubit extends Cubit<OtpState> {
 
     emit(state.copyWith(otp: newOtp, isButtonEnabled: isValid));
   }
+
+
+  Future<void> resendOtp(String email, bool isFromSignup) async {
+    try {
+      emit(state.copyWith(status: CommonApiStatus.submitting, errorMessage: null));
+
+      await OtpRepository().otpVerifyApi(
+        email: email,
+        otp: '',
+        otp_type: isFromSignup ? 'sign_up' : 'forget_password',
+        resend: true,
+      );
+
+      emit(state.copyWith(status: CommonApiStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: CommonApiStatus.failure, errorMessage: e.toString()));
+    }
+  }
+
 }

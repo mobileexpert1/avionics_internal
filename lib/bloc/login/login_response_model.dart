@@ -1,6 +1,6 @@
 class LoginResponseModel {
   final String detail;
-  final bool? isVerified; // Present only in unverified response
+  final bool? isVerified;
   final bool? isAvatar;
   final String? accessToken;
   final String? refreshToken;
@@ -42,6 +42,8 @@ class UserDetails {
   final String experienceLevel;
   final String userType;
   final String authType;
+  final bool isActive;
+  final bool isActiveSubscription;
 
   UserDetails({
     required this.id,
@@ -53,6 +55,8 @@ class UserDetails {
     required this.experienceLevel,
     required this.userType,
     required this.authType,
+    required this.isActive,
+    required this.isActiveSubscription,
   });
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
@@ -66,6 +70,10 @@ class UserDetails {
       experienceLevel: json['experience_level'] ?? '',
       userType: json['user_type'] ?? '',
       authType: json['auth_type'] ?? '',
+      isActive: json['is_active'] ?? false,
+      isActiveSubscription: json['is_active_subscription'] ?? false,
     );
   }
 }
+
+
