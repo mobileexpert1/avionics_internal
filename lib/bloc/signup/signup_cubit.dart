@@ -145,7 +145,6 @@ class SignupCubit extends Cubit<SignupState> {
         'last_name': state.lastName,
         'email': state.email,
         'password': state.password,
-        'username': state.firstName + state.lastName,
         'phone_number': '',
         'professional_role': '',
         'experience_level': '',

@@ -3,7 +3,6 @@ class ManageAccountModel {
   final String firstName;
   final String lastName;
   final String email;
-  final String username;
   final String? phone;
   final String userType;
   final String authType;
@@ -28,7 +27,6 @@ class ManageAccountModel {
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.username,
     this.phone,
     required this.userType,
     required this.authType,
@@ -53,7 +51,6 @@ class ManageAccountModel {
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
       email: json['email'] ?? '',
-      username: json['username'] ?? '',
       phone: json['phone_number'],
       userType: json['user_type'] ?? '',
       authType: json['auth_type'] ?? '',
@@ -79,7 +76,6 @@ class ManageAccountModel {
       'first_name': firstName,
       'last_name': lastName,
       'email': email,
-      'username': username,
       'phone_number': phone,
       'user_type': userType,
       'auth_type': authType,

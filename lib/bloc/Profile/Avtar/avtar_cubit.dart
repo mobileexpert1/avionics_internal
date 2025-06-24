@@ -36,8 +36,6 @@ class AvtarCubit extends Cubit<AvtarState> {
           last_name: signupData['last_name'] ?? '',
           email: signupData['email'] ?? '',
           password: signupData['password'] ?? '',
-          username:
-          '${signupData['first_name'] ?? ''}${signupData['last_name'] ?? ''}',
           phone_number: '',
           professional_role: '',
           experience_level: '',

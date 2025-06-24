@@ -32,7 +32,6 @@ class SignupRepository {
     required String first_name,
     required String last_name,
     required String email,
-    required String username,
     required String password,
     required String phone_number,
     required String professional_role,
@@ -53,9 +52,9 @@ class SignupRepository {
           "first_name": first_name,
           "last_name": last_name,
           "email": email,
-          "username": username,
           "password": password,
           "user_type": user_type,
+          "auth_type": "email"
         },
       );
 

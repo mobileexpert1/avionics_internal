@@ -37,7 +37,6 @@ class UserDetails {
   final String firstName;
   final String lastName;
   final String email;
-  final String username;
   final String? phoneNumber;
   final String professionalRole;
   final String experienceLevel;
@@ -49,7 +48,6 @@ class UserDetails {
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.username,
     this.phoneNumber,
     required this.professionalRole,
     required this.experienceLevel,
@@ -63,7 +61,6 @@ class UserDetails {
       firstName: json['first_name'],
       lastName: json['last_name'],
       email: json['email'],
-      username: json['username'],
       phoneNumber: json['phone_number'],
       professionalRole: json['professional_role'] ?? '',
       experienceLevel: json['experience_level'] ?? '',
