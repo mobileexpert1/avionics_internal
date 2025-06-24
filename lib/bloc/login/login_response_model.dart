@@ -1,6 +1,6 @@
 class LoginResponseModel {
   final String detail;
-  final bool? isVerified; // Present only in unverified response
+  final bool? isVerified;
   final bool? isAvatar;
   final String? accessToken;
   final String? refreshToken;
@@ -37,24 +37,26 @@ class UserDetails {
   final String firstName;
   final String lastName;
   final String email;
-  final String username;
   final String? phoneNumber;
   final String professionalRole;
   final String experienceLevel;
   final String userType;
   final String authType;
+  final bool isActive;
+  final bool isActiveSubscription;
 
   UserDetails({
     required this.id,
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.username,
     this.phoneNumber,
     required this.professionalRole,
     required this.experienceLevel,
     required this.userType,
     required this.authType,
+    required this.isActive,
+    required this.isActiveSubscription,
   });
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
@@ -63,12 +65,15 @@ class UserDetails {
       firstName: json['first_name'],
       lastName: json['last_name'],
       email: json['email'],
-      username: json['username'],
       phoneNumber: json['phone_number'],
       professionalRole: json['professional_role'] ?? '',
       experienceLevel: json['experience_level'] ?? '',
       userType: json['user_type'] ?? '',
       authType: json['auth_type'] ?? '',
+      isActive: json['is_active'] ?? false,
+      isActiveSubscription: json['is_active_subscription'] ?? false,
     );
   }
 }
+
+

@@ -190,7 +190,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         onPressed: _isResendEnabled
                             ? () {
                           _startCountdown();
-                          // TODO: Add resend OTP logic here
+                          context.read<OtpCubit>().resendOtp(widget.email, widget.isComeFromSignup);
                         }
                             : null,
                         child: Text(

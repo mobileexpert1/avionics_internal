@@ -9,13 +9,15 @@ class OtpRepository {
     required String email,
     required String otp,
     required String otp_type,
+    bool resend = false,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
           (otp_type == 'sign_up'
               ? ApiServiceUrlConstant.verifyOtp
-              : ApiServiceUrlConstant.forgotPasswordVerify),
+              : ApiServiceUrlConstant.forgotPasswordVerify) +
+          (resend ? '?resend=true' : ''),
     );
 
     try {

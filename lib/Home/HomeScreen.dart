@@ -213,12 +213,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: screenWidth * 0.045),
                     ...state.flights.map(
-                      (f) => AircraftCard.buildAircraftCard(
-                        imagePath: imageBaseUrl + (f.image),
+                          (f) => AircraftCard.buildAircraftCard(
+                        imagePath: imageBaseUrl + (f.image ?? ''),
                         model: f.model,
                         badge: f.code,
                         manufacturer: f.companyName,
-                        manufacturerLogoPath: f.logo,
+                        manufacturerLogoPath: f.logo ?? '',
                         registrationNumber: f.flightId,
                       ),
                     ),

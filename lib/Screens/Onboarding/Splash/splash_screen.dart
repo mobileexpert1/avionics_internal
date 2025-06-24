@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
     double textFontSize = screenWidth < 600 ? 13 : 16;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF3F3D56),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 const Spacer(),
                 Center(
                   child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.logoMain),
+                    CommonUi.setSvgImage(AssetsPath.splashLogo),
                     width: logoWidth.clamp(100, 300), // limit range
                     fit: BoxFit.contain,
                   ),
