@@ -130,7 +130,7 @@ class FeedbackScreen extends StatelessWidget {
                             isEnabled: !state.isSubmitting,
                             onPressed: () {
                               FocusScope.of(context).unfocus();
-                              context.read<FeedbackCubit>().submitFeedback();
+                              context.read<FeedbackCubit>().submitFeedback(context);
                             },
                           ),
                         ),

@@ -143,6 +143,7 @@ class ApiFunctionUrlConstant {
 
 class ApiServiceUrlConstant {
 
+  static const String authRefreshToken = 'auth/refresh';
   static const String checkEmail = 'auth/check-email';
   static const String authSignup = 'auth/sign-up';
   static const String verifyOtp = 'auth/verify-otp';

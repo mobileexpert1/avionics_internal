@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'delete_state.dart';
 import 'delete_repository.dart';
 
@@ -23,6 +24,8 @@ class DeleteCubit extends Cubit<DeleteState> {
         emit(state.copyWith(isSuccess:true));
       });
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(state.copyWith(
         isLoading: false,
         errorMessage: 'An error occurred: ${e.toString()}',

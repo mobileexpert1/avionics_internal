@@ -125,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => BlocProvider(
-                              create: (_) => UnitSelectionCubit(),
+                              create: (_) => UnitSelectionCubit(context),
                               child: UnitSelectionScreen(),
                             ),
                           ),
@@ -149,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => BlocProvider(
-                              create: (_) => GlossaryCubit(),
+                              create: (_) => GlossaryCubit(context),
                               child: const GlossaryScreen(),
                             ),
                           ),

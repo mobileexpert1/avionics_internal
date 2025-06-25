@@ -40,7 +40,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ManageaccCubit()..fetchUserDetails(),
+      create: (_) => ManageaccCubit()..fetchUserDetails(context),
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) {
           if (!state.isLoading) {
@@ -151,7 +151,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                   final cubit = context.read<ManageaccCubit>();
 
                                   if (cubit.validateFields()) {
-                                    await cubit.updateUserDetails();
+                                    await cubit.updateUserDetails(context);
 
                                     setState(() {
                                       isTextfiledEnabled = false;

@@ -13,7 +13,7 @@ class ProfileSubscriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SubscriptionCubit(),
+      create: (_) => SubscriptionCubit(context),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(

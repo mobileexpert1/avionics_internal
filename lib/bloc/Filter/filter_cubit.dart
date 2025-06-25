@@ -53,7 +53,7 @@ class FilterCubit extends Cubit<FilterState> {
             isSelected: false,
           ),
         ],
-        isExpanded: true, // Initially expanded
+        isExpanded: false, // Initially expanded
       ),
       FilterCategory(
         id: 'technical_data',
@@ -66,7 +66,7 @@ class FilterCubit extends Cubit<FilterState> {
           FilterOption(id: 'max_payload', name: 'Max Payload'),
           FilterOption(id: 'mtow', name: 'MTOW'),
         ],
-        isExpanded: true, // Initially expanded
+        isExpanded: false, // Initially expanded
       ),
       FilterCategory(
         id: 'operational_data',
@@ -79,7 +79,7 @@ class FilterCubit extends Cubit<FilterState> {
           FilterOption(
             id: 'service_ceiling',
             name: 'Service Ceiling (ft / FL)',
-            isSelected: true,
+            isSelected: false,
           ),
           FilterOption(
             id: 'max_certified_altitude',
@@ -117,7 +117,7 @@ class FilterCubit extends Cubit<FilterState> {
           ),
           FilterOption(id: 'stall_speed', name: 'Stall Speed (if available)'),
         ],
-        isExpanded: true, // Initially expanded
+        isExpanded: false, // Initially expanded
       ),
     ];
 
@@ -166,7 +166,7 @@ class FilterCubit extends Cubit<FilterState> {
       }).toList();
       return category.copyWith(
         options: resetOptions,
-        isExpanded: true,
+        isExpanded: false,
       ); // Reset expansion to true
     }).toList();
     emit(state.copyWith(filterCategories: resetCategories, isApplied: false));
