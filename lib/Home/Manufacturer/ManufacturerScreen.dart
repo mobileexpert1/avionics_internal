@@ -22,7 +22,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ManufacturerCubit>().loadManufacturers();
+    context.read<ManufacturerCubit>().loadManufacturers(context: context);
   }
 
   @override
@@ -47,7 +47,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                 controller: searchController,
                 onFilterTap: () {},
                 onChanged: (value) {
-                  context.read<ManufacturerCubit>().loadManufacturers(
+                  context.read<ManufacturerCubit>().loadManufacturers(context: context,
                     query: value.trim(),
                   );
                 },

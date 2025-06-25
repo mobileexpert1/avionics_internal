@@ -68,8 +68,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ManageaccCubit()),
         BlocProvider(create: (_) => ChangePasswordCubit()),
         BlocProvider(create: (_) => AircraftComparisonCubit()),
-        BlocProvider(create: (_) => GlossaryCubit()),
-        BlocProvider(create: (_) => UnitSelectionCubit()),
+        BlocProvider(create: (_) => GlossaryCubit(context)),
+        BlocProvider(create: (_) => UnitSelectionCubit(context)),
         BlocProvider(create: (_) => AvtarCubit()),
       ],
       //Responsive test case

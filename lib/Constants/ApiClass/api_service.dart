@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'ApiErrorModel.dart';
+import 'SessionTokenClass/refresh_accessRepository.dart';
 
 class ApiService {
   static final Map<String, String> defaultHeaders = {
@@ -15,84 +17,91 @@ class ApiService {
     return connectivityResult != ConnectivityResult.none;
   }
 
-  /// POST request
+  // POST
   static Future<dynamic> post({
     required Uri url,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
-  }) async {
+    bool retry = true,
+  }) {
     return _handleRequest(
       method: 'POST',
       url: url,
       headers: headers,
       body: body,
+      retry: retry,
       onUnauthorized: onUnauthorized,
     );
   }
 
-  /// GET request
+  // GET
   static Future<dynamic> get({
     required Uri url,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
-  }) async {
+  }) {
     return _handleRequest(
       method: 'GET',
       url: url,
       headers: headers,
+      retry: true,
       onUnauthorized: onUnauthorized,
     );
   }
 
-  /// PUT request
+  // PUT
   static Future<dynamic> put({
     required Uri url,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
-  }) async {
+  }) {
     return _handleRequest(
       method: 'PUT',
       url: url,
       headers: headers,
       body: body,
+      retry: true,
       onUnauthorized: onUnauthorized,
     );
   }
 
-  ///PATCH REQUEST
+  // PATCH
   static Future<dynamic> patch({
     required Uri url,
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
-  }) async {
+  }) {
     return _handleRequest(
       method: 'PATCH',
       url: url,
       headers: headers,
       body: body,
+      retry: true,
       onUnauthorized: onUnauthorized,
     );
   }
 
-  /// DELETE request
+  // DELETE
   static Future<dynamic> delete({
     required Uri url,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
-  }) async {
+  }) {
     return _handleRequest(
       method: 'DELETE',
       url: url,
       headers: headers,
       body: body,
+      retry: true,
       onUnauthorized: onUnauthorized,
     );
   }
 
+  // Get bearer token from SharedPreferences
   static Future<String?> _getBearerToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('UserAccessTokenKey');
@@ -103,15 +112,14 @@ class ApiService {
     required Uri url,
     Map<String, String>? headers,
     Map<String, dynamic>? body,
-    VoidCallback? onUnauthorized, // <-- already added
+    required bool retry,
+    VoidCallback? onUnauthorized,
   }) async {
-    final hasInternet = await _hasInternetConnection();
-    if (!hasInternet) {
+    if (!await _hasInternetConnection()) {
       throw 'No internet connection. Please check your network.';
     }
 
     final token = await _getBearerToken();
-
     final requestHeaders = {
       ...defaultHeaders,
       if (headers != null) ...headers,
@@ -121,12 +129,12 @@ class ApiService {
     final encodedBody = body != null ? jsonEncode(body) : null;
 
     print('[$method] URL: $url');
-    print('token: $token');
+    print('Bearer Token: $token');
     if (encodedBody != null) print('Request Body: $encodedBody');
 
-    late http.Response response;
-
     try {
+      late http.Response response;
+
       switch (method) {
         case 'POST':
           response = await http.post(
@@ -172,19 +180,38 @@ class ApiService {
         case 200:
         case 201:
           return jsonResponse;
+
         case 422:
           throw ApiErrorModel.fromJson(jsonResponse).toString();
+
         case 400:
         case 404:
           final messages = jsonResponse.entries
               .map((e) => '${e.value}')
               .join('\n');
           throw messages;
+
         case 401:
-          if (onUnauthorized != null) {
-            onUnauthorized();
+          if (retry) {
+            try {
+              await RefreshAccessTokenRepository().getAndUpdateTheRefreshToken(
+                onUnauthorized: onUnauthorized,
+              );
+
+              return _handleRequest(
+                method: method,
+                url: url,
+                headers: headers,
+                body: body,
+                retry: false,
+                onUnauthorized: onUnauthorized,
+              );
+            } catch (e) {
+              throw 'Unauthorized. Please log in again.';
+            }
+          } else {
+            throw 'Unauthorized. Please log in again.';
           }
-          throw 'Unauthorized access. Please login again.';
         default:
           throw 'Request failed with status: ${response.statusCode}';
       }
@@ -193,4 +220,13 @@ class ApiService {
       rethrow;
     }
   }
+}
+
+class AuthException implements Exception {
+  final String message;
+
+  const AuthException(this.message);
+
+  @override
+  String toString() => message;
 }

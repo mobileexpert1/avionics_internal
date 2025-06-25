@@ -28,7 +28,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
 
   void _onSearchChanged() {
     final query = _searchController.text.trim();
-    context.read<GlossaryCubit>().loadGlossary(query: query);
+    context.read<GlossaryCubit>().loadGlossary(query: query,context: context);
   }
 
   @override
@@ -56,7 +56,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             enableCloseScreen: false,
             controller: _searchController,
             onChanged: (value) {
-              context.read<GlossaryCubit>().loadGlossary(query: value.trim());
+              context.read<GlossaryCubit>().loadGlossary(query: value.trim(),context: context);
             },
           ),
           const SizedBox(height: 10),

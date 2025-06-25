@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
 import '../../signup/signup_repository.dart';
@@ -65,6 +66,8 @@ class AvtarCubit extends Cubit<AvtarState> {
         );
       }
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(state.copyWith(
         status: CommonApiStatus.failure,
         errorMessage: e.toString(),

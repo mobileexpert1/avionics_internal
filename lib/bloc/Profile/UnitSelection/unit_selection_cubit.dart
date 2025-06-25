@@ -1,11 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import 'unit_selection_state.dart';
 import 'unit_selection_repository.dart';
 
 class UnitSelectionCubit extends Cubit<UnitSelectionState> {
-  UnitSelectionCubit()
+  UnitSelectionCubit(BuildContext context)
       : super(const UnitSelectionInitial(
     speed: 'Kts',
     altitude: 'Feet',
@@ -14,12 +16,12 @@ class UnitSelectionCubit extends Cubit<UnitSelectionState> {
     isLoading: false,
     isSuccess: false,
   )) {
-    getUnitPreferences();
+    getUnitPreferences(context);
   }
 
   final UnitSelectionRepository repository = UnitSelectionRepository();
 
-  Future<void> getUnitPreferences() async {
+  Future<void> getUnitPreferences(BuildContext context) async {
     final currentState = state;
     emit(
       UnitSelectionInitial(
@@ -54,6 +56,8 @@ class UnitSelectionCubit extends Cubit<UnitSelectionState> {
         ),
       );
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(
         UnitSelectionInitial(
           speed: '',
@@ -97,7 +101,7 @@ class UnitSelectionCubit extends Cubit<UnitSelectionState> {
     }
   }
 
-  Future<void> submitPreferences() async {
+  Future<void> submitPreferences(BuildContext context) async {
     final currentState = state;
     if (currentState is! UnitSelectionInitial) return;
 
@@ -135,6 +139,8 @@ class UnitSelectionCubit extends Cubit<UnitSelectionState> {
         ),
       );
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(currentState.copyWith(
         isLoading: false,
         isSuccess: false,

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'feedback_model.dart';
 import 'feedback_state.dart';
 import 'feedback_repository.dart';
@@ -16,7 +18,7 @@ class FeedbackCubit extends Cubit<FeedbackState> {
     emit(state.copyWith(comment: comment));
   }
 
-  Future<void> submitFeedback() async {
+  Future<void> submitFeedback(BuildContext context) async {
     emit(state.copyWith(isSubmitting: true, submissionSuccess: false));
 
     final feedback = FeedbackModel(
@@ -31,7 +33,8 @@ class FeedbackCubit extends Cubit<FeedbackState> {
         submissionSuccess: true,
       ));
     } catch (e) {
-      print("Error submitting feedback: $e");
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(state.copyWith(isSubmitting: false));
     }
   }

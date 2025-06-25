@@ -3,6 +3,7 @@ import 'package:avionics_internal/bloc/forgotPassword/forgot_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Constants/Validators.dart';
 import '../../Home/RootTabbar/RootTabbarScreen.dart';
 import 'forgot_state.dart';
@@ -45,6 +46,7 @@ class ForgotCubit extends Cubit<ForgotState> {
         ),
       );
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,

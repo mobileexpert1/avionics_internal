@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/Validators.dart';
 import 'changePassword_repository.dart';
 import 'changePassword_state.dart';
@@ -95,6 +96,8 @@ class ChangePasswordCubit extends Cubit<ChangeNewPasswordState> {
         Navigator.pop(context);
       });
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,

@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     homeCubit = HomeCubit();
-    homeCubit.fetchHomeData();
+    homeCubit.fetchHomeData(context);
   }
 
   @override

@@ -1,9 +1,9 @@
-import 'dart:ui';
 
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
+import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../Constants/ApiClass/refresh_accessRepository.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
 import 'manageAcc_repository.dart';
@@ -64,7 +64,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
     return isValid;
   }
 
-  Future<void> fetchUserDetails() async {
+  Future<void> fetchUserDetails(BuildContext context) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final user = await repository.getUserDetail();
@@ -79,11 +79,12 @@ class ManageaccCubit extends Cubit<ManageAccState> {
 
       emit(state.copyWith(isLoading: false));
     } catch (e) {
-      _handleApiError(e);
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
-  Future<void> updateUserDetails() async {
+  Future<void> updateUserDetails(BuildContext context) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       await repository.updateProfileInformation(
@@ -93,18 +94,8 @@ class ManageaccCubit extends Cubit<ManageAccState> {
 
       emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
     } catch (e) {
-      _handleApiError(e);
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
-  }
-
-  void _handleApiError(Object e) async {
-    final error = e.toString().toLowerCase();
-    if (error.contains("unauthorized") || error.contains("401")) {
-      final prefs = await SharedPreferences.getInstance();
-      final refreshToken = prefs.getString('UserAccessTokenKey');
-      final accessToken = await RefreshAccesstokenRepository().getAndUpdateTheRefreshToken(refreshToken: refreshToken ?? '');
-      print(accessToken);
-    }
-    emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
   }
 }

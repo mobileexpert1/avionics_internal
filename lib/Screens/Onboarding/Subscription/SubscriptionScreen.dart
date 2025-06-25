@@ -18,7 +18,7 @@ class SubscriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SubscriptionCubit(),
+      create: (_) => SubscriptionCubit(context),
       child: BlocConsumer<SubscriptionCubit, SubscriptionState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {

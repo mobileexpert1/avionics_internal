@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Constants/Validators.dart';
 import '../../Screens/Onboarding/Login/LoginScreen.dart';
 import 'createNewPassword_repository.dart';
@@ -80,6 +81,7 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
         );
       });
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,

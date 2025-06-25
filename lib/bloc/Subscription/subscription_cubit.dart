@@ -3,16 +3,17 @@ import 'package:avionics_internal/bloc/Subscription/subscription_list_model.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'subscription_repository.dart';
 import 'subscription_state.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
-  SubscriptionCubit()
+  SubscriptionCubit(BuildContext context)
     : super(SubscriptionInitial(selectedId: '', subscriptionList: [])) {
-    getSubscriptions();
+    getSubscriptions(context);
   }
 
-  Future<void> getSubscriptions() async {
+  Future<void> getSubscriptions(BuildContext context) async {
     emit(
       SubscriptionInitial(
         selectedId: '',
@@ -37,6 +38,8 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
         ),
       );
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
       emit(
         SubscriptionInitial(
           selectedId: '',
@@ -83,6 +86,8 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
         );
       } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
         emit(
           currentState.copyWith(
             isLoading: false,

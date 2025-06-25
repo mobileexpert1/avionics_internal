@@ -105,7 +105,7 @@ class UnitSelectionScreen extends StatelessWidget {
                   onTap: () {
                     if (!isSelected) {
                       onChanged(option);
-                      context.read<UnitSelectionCubit>().submitPreferences();
+                      context.read<UnitSelectionCubit>().submitPreferences(context);
                     }
                   },
                   child: Container(
