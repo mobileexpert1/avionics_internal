@@ -1,6 +1,8 @@
-import 'Screens/Profile/ContactSupportScreen/ContactSupportScreen.dart';
+import 'dart:io';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'Database/db_helper.dart';
 import 'bloc/Profile/Avtar/avtar_cubit.dart';
-import 'Screens/Profile/ProfileScreen.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/login/login_cubit.dart';
 import 'bloc/signup/signup_cubit.dart';
@@ -23,7 +25,24 @@ import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 
-void main() {
+
+//// for delete LocalDB
+// Future<void> wipeDb() async {
+//   final path = join(await getDatabasesPath(), 'avionics.db');
+//   await deleteDatabase(path);
+//   debugPrint('Local DB deleted');
+// }
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+  // await wipeDb();
+  await printDbPath();
+  await DBHelper.database;
   runApp(const MyApp());
 }
 

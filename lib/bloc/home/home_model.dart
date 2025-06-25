@@ -1,5 +1,7 @@
+import '../manufacturer/manufacturer_model.dart';
+
 class HomeResponse {
-  final List<ManufacturerHome> manufacturers;
+  final List<Manufacturer> manufacturers;
   final List<Flight> flights;
   final List<Favourite> favourites;
 
@@ -12,7 +14,7 @@ class HomeResponse {
   factory HomeResponse.fromJson(Map<String, dynamic> json) {
     return HomeResponse(
       manufacturers: (json['manufacturer'] as List<dynamic>?)
-          ?.map((x) => ManufacturerHome.fromJson(x))
+          ?.map((x) => Manufacturer.fromJson(x))
           .toList() ??
           [],
       flights: (json['flight'] as List<dynamic>?)
@@ -29,25 +31,32 @@ class HomeResponse {
 }
 
 
-class ManufacturerHome {
-  final String id;
-  final String companyName;
-  final String? logo;
-
-  ManufacturerHome({
-    required this.id,
-    required this.companyName,
-    this.logo,
-  });
-
-  factory ManufacturerHome.fromJson(Map<String, dynamic> json) {
-    return ManufacturerHome(
-      id: json['id'] ?? '',
-      companyName: json['company_name'] ?? '',
-      logo: json['logo'] ?? '',
-    );
-  }
-}
+// class ManufacturerHome {
+//   final String id;
+//   final String companyName;
+//   final String? logo;
+//
+//   ManufacturerHome({
+//     required this.id,
+//     required this.companyName,
+//     this.logo,
+//   });
+//
+//   factory ManufacturerHome.fromJson(Map<String, dynamic> json) {
+//     return ManufacturerHome(
+//       id: json['id'] ?? '',
+//       companyName: json['company_name'] ?? '',
+//       logo: json['logo'] ?? '',
+//     );
+//   }
+//   Map<String, dynamic> toMap() {
+//     return {
+//       'id': id,
+//       'company_name': companyName,
+//       'logo': logo,
+//     };
+//   }
+// }
 
 
 class Flight {
@@ -100,6 +109,14 @@ class Favourite {
       model: json['model'] ?? '',
       logo: json['logo'],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'model': model,
+      'logo': logo,
+    };
   }
 }
 

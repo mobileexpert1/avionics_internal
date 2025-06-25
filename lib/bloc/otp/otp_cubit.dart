@@ -79,7 +79,7 @@ class OtpCubit extends Cubit<OtpState> {
 
       await OtpRepository().otpVerifyApi(
         email: email,
-        otp: '',
+        otp: '1234',
         otp_type: isFromSignup ? 'sign_up' : 'forget_password',
         resend: true,
       );

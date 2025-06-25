@@ -163,8 +163,6 @@ class ApiServiceUrlConstant {
   static const String setAvtarWhileSignup = 'auth/avtar';
   static const String delete = 'user/';
   static const String getGlossary = 'user/glossary';
-
-
 }
 
 

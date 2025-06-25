@@ -52,8 +52,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                   );
                 },
               ),
-              // CustomDivider(),
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: screenHeight * 0.06),
 
               // Expanded to allow list rendering
               Expanded(
@@ -125,7 +124,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                 )
                                     : const Icon(Icons.image_not_supported),
                                 title: Text(
-                                  item.name,
+                                  item.companyName,
                                   style: TextStyle(
                                     fontSize: bodyFontSize,
                                     fontWeight: FontWeight.w500,

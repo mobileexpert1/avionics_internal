@@ -163,25 +163,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     /// Manufacturer
                     SizedBox(height: screenWidth * 0.05),
+                    /* ───────────── Manufacturer ───────────── */
                     _buildSectionTitle(
-                      "Manufacturer",
-                      AssetsPath.manufacturer,
+                      'Manufacturer',
+                      AssetsPath.manufacturer,  
                       screenWidth,
                     ),
                     SizedBox(height: screenWidth * 0.045),
-                    ...state.manufacturers.map(
-                      (m) => AppListTileCard(
-                        title: m.companyName ?? '',
-                        imagePath: imageBaseUrl + (m.logo ?? ''),
-                        onTap: () {},
-                        isSvg: false,
-                        isNetwork: true,
+                    if (state.manufacturers.isNotEmpty) ...[
+                      ...state.manufacturers.take(2).map(
+                        (m) => AppListTileCard(
+                          title: m.companyName ?? '',
+                          imagePath: imageBaseUrl + (m.icon ?? ''),
+                          onTap: () {},
+                          isSvg: false,
+                          isNetwork: true,
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
+                      Center(
+                        child: TextButton(
+                          onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => BlocProvider(
@@ -189,95 +190,95 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: ManufacturerScreen(),
                               ),
                             ),
-                          );
-                        },
-                        child: Text(
-                          'See All',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.045,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF626262),
+                          ),
+                          child: Text(
+                            'See All',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF626262),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-
-                    /// Flights
-                    SizedBox(height: screenWidth * 0.025),
+                    ] else
+                      _emptyRow('No manufacturers available yet.', screenWidth),
                     CustomDivider(),
-                    SizedBox(height: screenWidth * 0.05),
+
+                    /* ────────── Flying in the area ─────────── */
                     _buildSectionTitle(
-                      "Flying in the area",
+                      'Flying in the area',
                       AssetsPath.flyingareaicon,
                       screenWidth,
                     ),
                     SizedBox(height: screenWidth * 0.045),
-                    ...state.flights.map(
-                          (f) => AircraftCard.buildAircraftCard(
-                        imagePath: imageBaseUrl + (f.image ?? ''),
-                        model: f.model,
-                        badge: f.code,
-                        manufacturer: f.companyName,
-                        manufacturerLogoPath: f.logo ?? '',
-                        registrationNumber: f.flightId,
+                    if (state.flights.isNotEmpty) ...[
+                      ...state.flights.take(2).map(
+                        (f) => AircraftCard.buildAircraftCard(
+                          imagePath: imageBaseUrl + (f.image ?? ''),
+                          model: f.model,
+                          badge: f.code,
+                          manufacturer: f.companyName,
+                          manufacturerLogoPath: f.logo ?? '',
+                          registrationNumber: f.flightId,
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'See All',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.045,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF626262),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'See All',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF626262),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-
-                    /// Favourites
-                    /// Favourites
-                    SizedBox(height: screenWidth * 0.025),
+                    ] else
+                      _emptyRow('No flights found in this area.', screenWidth),
                     CustomDivider(),
-                    SizedBox(height: screenWidth * 0.05),
+
+                    /* ───────────────── Favourites ──────────── */
                     _buildSectionTitle(
-                      "Favourites",
+                      'Favourites',
                       AssetsPath.star,
                       screenWidth,
                       fontSize: 0.055,
                       imageSize: 0.09,
                     ),
                     SizedBox(height: screenWidth * 0.045),
-                    ...state.favourites.map(
-                      (f) => AppListTileCard(
-                        title: f.model,
-                        imagePath: imageBaseUrl + (f.logo ?? ''),
-                        onTap: () {},
-                        isSvg: false,
-                        isNetwork: true,
+                    if (state.favourites.isNotEmpty) ...[
+                      ...state.favourites.take(2).map(
+                        (f) => AppListTileCard(
+                          title: f.model,
+                          imagePath: imageBaseUrl + (f.logo ?? ''),
+                          onTap: () {},
+                          isSvg: false,
+                          isNetwork: true,
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
+                      Center(
+                        child: TextButton(
+                          onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => SavedFlighScreen(showTabs: false),
                             ),
-                          );
-                        },
-                        child: Text(
-                          'See All',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.045,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF626262),
+                          ),
+                          child: Text(
+                            'See All',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF626262),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ] else
+                      _emptyRow('No favourites saved yet.', screenWidth),
                   ],
                 ),
               );
@@ -309,6 +310,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget _emptyRow(String message, double screenWidth) => Padding(
+    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+    child: Text(
+      message,
+      style: TextStyle(
+        fontSize: screenWidth * 0.042,
+        color: const Color(0xFF9E9E9E),
+      ),
+    ),
+  );
 
   Widget _buildSectionTitle(
     String text,
