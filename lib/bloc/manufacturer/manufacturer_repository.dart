@@ -1,9 +1,14 @@
+import 'dart:developer' as dev;
+import 'package:avionics_internal/Database/generic_methods.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../Database/db_helper.dart';
 import 'manufacturer_model.dart';
 
 class ManufacturerRepository {
+
+  ManufacturerRepository() : _repository = GenericMethods<Manufacturer>(Manufacturer.fromMap);
+  final GenericMethods<Manufacturer> _repository;
+
   Future<List<Manufacturer>> getManufacturers({String? query}) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -13,27 +18,22 @@ class ManufacturerRepository {
     );
 
     try {
-         final Map<String, dynamic> jsonData =
-      await ApiService.get(url: uri) as Map<String, dynamic>;
 
-      final List<dynamic> dataList = jsonData['data'] ?? [];
-      final manufacturers = dataList
-          .map((item) => Manufacturer.fromJson(item))
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final manufacturers = (jsonData['data'] as List<dynamic>? ?? [])
+          .map((e) => Manufacturer.fromJson(e))
           .toList();
-      await DBHelper.insertManufacturers(manufacturers);
+
+      await _repository.insertAll(manufacturers);
+
       return manufacturers;
     } catch (e) {
-      final cached = await DBHelper.getManufacturersFromDb();
-      if (cached.isNotEmpty) {
-        return cached
-            .map((row) => Manufacturer(
-          id: row.id,
-          companyName: row.companyName,
-          icon: row.icon,
-        ))
-            .toList();
-      }
-      throw Exception('Failed to fetch manufacturers: $e');
+      dev.log('Network failed → fall back to cache', error: e, name: 'repo');
+
+      final cached = await _repository.getAll('manufacturers');
+      if (cached.isNotEmpty) return cached;
+
+      throw Exception('No manufacturers in cache and network call failed.');
     }
 
   }

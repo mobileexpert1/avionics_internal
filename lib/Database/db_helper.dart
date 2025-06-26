@@ -1,8 +1,6 @@
-import 'package:avionics_internal/bloc/manufacturer/manufacturer_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../bloc/home/home_model.dart';
 
 
 Future<void> printDbPath() async {
@@ -58,55 +56,38 @@ class DBHelper {
     ''');
   }
 
-  // INSERT METHODS
-  static Future<void> insertManufacturers(List<Manufacturer> list) async {
+
+  Future<int> insert(String table, Map<String, dynamic> values,
+      {ConflictAlgorithm algo = ConflictAlgorithm.abort}) async {
     final db = await database;
-    for (var item in list) {
-      await db.insert(
-        'manufacturers',
-        {
-          'id': item.id,
-          'company_name': item.companyName,
-          'logo': item.icon,
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
+    return db.insert(table, values, conflictAlgorithm: algo);
   }
 
-  static Future<void> insertFavourites(List<Favourite> list) async {
+  Future<List<Map<String, Object?>>> get(String table,
+      {String? where,
+        List<Object?>? whereArgs,
+        String? orderBy}) async {
     final db = await database;
-    for (var item in list) {
-      await db.insert(
-        'favourites',
-        {
-          'id': item.id,
-          'model': item.model,
-          'logo': item.logo,
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    }
+    return db.query(table,
+        where: where, whereArgs: whereArgs, orderBy: orderBy);
   }
 
-  // FETCH METHODS
-  static Future<List<Manufacturer>> getManufacturersFromDb() async {
+  Future<int> update(String table, Map<String, dynamic> values,
+      {required String where, required List<Object?> whereArgs}) async {
     final db = await database;
-    final result = await db.query('manufacturers');
-    return result.map((e) => Manufacturer(
-      id: e['id'] as String,
-      companyName: e['company_name'] as String,
-      icon: e['logo'] as String,
-    )).toList();
+    return db.update(table, values, where: where, whereArgs: whereArgs);
   }
 
-  static Future<List<Favourite>> getFavouritesFromDb() async {
+  Future<int> delete(String table,
+      {required String where, required List<Object?> whereArgs}) async {
     final db = await database;
-    final result = await db.query('favourites');
-    return result.map((e) => Favourite(
-      id: e['id'] as String,
-      model: e['model'] as String,
-      logo: e['logo'] as String,
-    )).toList();
+    return db.delete(table, where: where, whereArgs: whereArgs);
   }
+}
+
+
+abstract class BaseModel {
+  String get table;
+  String get id;
+  Map<String, dynamic> toMap();
 }

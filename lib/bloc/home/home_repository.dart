@@ -1,13 +1,19 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:avionics_internal/Database/generic_methods.dart';
+import '../manufacturer/manufacturer_model.dart';
 import 'home_model.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../Database/db_helper.dart';
-
-
 
 class HomeRepository {
+  HomeRepository()
+      : _manufacturers  = GenericMethods<Manufacturer>(Manufacturer.fromMap),
+        _favorites   = GenericMethods<Favourite>(Favourite.fromMap);
+
+  final GenericMethods<Manufacturer> _manufacturers;
+  final GenericMethods<Favourite>    _favorites;
+
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -25,15 +31,15 @@ class HomeRepository {
           : response as Map<String, dynamic>;
       final homeData = HomeResponse.fromJson(json);
 
-      await DBHelper.insertManufacturers(homeData.manufacturers);
-      await DBHelper.insertFavourites(homeData.favourites);
+      await _manufacturers.insertAll(homeData.manufacturers);
+      await _favorites.insertAll(homeData.favourites);
 
       return homeData;
     }
      catch (e) {
 
-      final manufacturers = await DBHelper.getManufacturersFromDb();
-      final favourites = await DBHelper.getFavouritesFromDb();
+      final manufacturers = await _manufacturers.getAll('manufacturers');
+      final favourites = await _favorites.getAll('favourites');
       if (manufacturers.isNotEmpty || favourites.isNotEmpty) {
         return HomeResponse(
           manufacturers: manufacturers,

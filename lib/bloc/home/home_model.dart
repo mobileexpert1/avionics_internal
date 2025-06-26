@@ -1,3 +1,4 @@
+import '../../Database/db_helper.dart';
 import '../manufacturer/manufacturer_model.dart';
 
 class HomeResponse {
@@ -30,36 +31,7 @@ class HomeResponse {
 
 }
 
-
-// class ManufacturerHome {
-//   final String id;
-//   final String companyName;
-//   final String? logo;
-//
-//   ManufacturerHome({
-//     required this.id,
-//     required this.companyName,
-//     this.logo,
-//   });
-//
-//   factory ManufacturerHome.fromJson(Map<String, dynamic> json) {
-//     return ManufacturerHome(
-//       id: json['id'] ?? '',
-//       companyName: json['company_name'] ?? '',
-//       logo: json['logo'] ?? '',
-//     );
-//   }
-//   Map<String, dynamic> toMap() {
-//     return {
-//       'id': id,
-//       'company_name': companyName,
-//       'logo': logo,
-//     };
-//   }
-// }
-
-
-class Flight {
+class Flight implements BaseModel {
   final String id;
   final String model;
   final String code;
@@ -78,21 +50,55 @@ class Flight {
     required this.flightId,
   });
 
-  factory Flight.fromJson(Map<String, dynamic> json) {
-    return Flight(
-      id: json['id'] ?? '',
-      model: json['model'] ?? '',
-      code: json['code'] ?? '',
-      image: json['image'],
-      companyName: json['company_name'] ?? '',
-      logo: json['logo'],
-      flightId: json['flight_id'] ?? '',
-    );
-  }
+
+  factory Flight.fromJson(Map<String, dynamic> json) => Flight(
+    id: json['id'] ?? '',
+    model: json['model'] ?? '',
+    code: json['code'] ?? '',
+    image: json['image'],
+    companyName: json['company_name'] ?? '',
+    logo: json['logo'],
+    flightId: json['flight_id'] ?? '',
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'model': model,
+    'code': code,
+    'image': image,
+    'company_name': companyName,
+    'logo': logo,
+    'flight_id': flightId,
+  };
+
+
+  @override
+  String get table => 'flights';
+
+  factory Flight.fromMap(Map<String, dynamic> m) => Flight(
+    id: m['id'] as String,
+    model: m['model'] as String,
+    code: m['code'] as String,
+    image: m['image'] as String?,
+    companyName: m['company_name'] as String,
+    logo: m['logo'] as String?,
+    flightId: m['flight_id'] as String,
+  );
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'model': model,
+    'code': code,
+    'image': image,
+    'company_name': companyName,
+    'logo': logo,
+    'flight_id': flightId,
+  };
 }
 
 
-class Favourite {
+class Favourite implements BaseModel {
   final String id;
   final String model;
   final String? logo;
@@ -103,21 +109,34 @@ class Favourite {
     this.logo,
   });
 
-  factory Favourite.fromJson(Map<String, dynamic> json) {
-    return Favourite(
-      id: json['id'] ?? '',
-      model: json['model'] ?? '',
-      logo: json['logo'],
-    );
-  }
+  factory Favourite.fromJson(Map<String, dynamic> json) => Favourite(
+    id: json['id'] ?? '',
+    model: json['model'] ?? '',
+    logo: json['logo'],
+  );
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'model': model,
-      'logo': logo,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'model': model,
+    'logo': logo,
+  };
+
+
+  @override
+  String get table => 'favourites';
+
+  factory Favourite.fromMap(Map<String, dynamic> m) => Favourite(
+    id: m['id'] as String,
+    model: m['model'] as String,
+    logo: m['logo'] as String?,
+  );
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'model': model,
+    'logo': logo,
+  };
 }
 
 
