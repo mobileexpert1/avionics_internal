@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'home_model.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../Database/db_helper.dart';
 
-
-
 class HomeRepository {
-  Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
+  Future<HomeResponse> getHomeData({onUnauthorized}) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
@@ -29,9 +26,7 @@ class HomeRepository {
       await DBHelper.insertFavourites(homeData.favourites);
 
       return homeData;
-    }
-     catch (e) {
-
+    } catch (e) {
       final manufacturers = await DBHelper.getManufacturersFromDb();
       final favourites = await DBHelper.getFavouritesFromDb();
       if (manufacturers.isNotEmpty || favourites.isNotEmpty) {
@@ -45,4 +40,3 @@ class HomeRepository {
     }
   }
 }
-

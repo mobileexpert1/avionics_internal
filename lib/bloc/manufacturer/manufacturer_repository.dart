@@ -33,8 +33,7 @@ class ManufacturerRepository {
         ))
             .toList();
       }
-      throw Exception('Failed to fetch manufacturers: $e');
+      throw e.toString();
     }
-
   }
 }

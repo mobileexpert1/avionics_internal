@@ -25,7 +25,7 @@ class GlossaryRepository {
 
       return glossary;
     } catch (e) {
-      throw Exception('Failed to fetch glossary data: $e');
+      throw e.toString();
     }
   }
 }

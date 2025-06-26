@@ -16,10 +16,9 @@ class UnitSelectionRepository {
         url: url,
         headers: {"Authorization": "Bearer $token"},
       );
-
       return UnitSelectionModel.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to fetch unit preferences: $e');
+      throw e.toString();
     }
   }
 

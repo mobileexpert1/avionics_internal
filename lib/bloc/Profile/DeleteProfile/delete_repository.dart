@@ -18,7 +18,7 @@ class DeleteRepository{
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to delete unit preference: $e');
+      throw e.toString();
     }
   }
 }

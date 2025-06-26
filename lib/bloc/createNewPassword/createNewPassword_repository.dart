@@ -10,7 +10,6 @@ class CreateNewPasswordRepository {
     required String email,
     required String password,
     required String confirmPassword,
-    VoidCallback? onUnauthorized,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -27,17 +26,8 @@ class CreateNewPasswordRepository {
           "confirm_password": confirmPassword,
         },
       );
-
-      if (response['statusCode'] == 401 || response['code'] == 401) {
-        onUnauthorized?.call();
-        throw 'Unauthorized';
-      }
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
-
-      if (e.toString().contains('401')) {
-        onUnauthorized?.call(); // 👈 call callback if 401 found in error
-      }
       throw e.toString();
     }
   }

@@ -18,12 +18,12 @@ class SubscriptionRepository {
           .map((jsonItem) => SubscriptionItemModel.fromJson(jsonItem))
           .toList();
     } catch (e) {
-      throw Exception("Error parsing subscription list: $e");
+      throw e.toString();
     }
   }
 
   Future<SubscriptionItemModel> postSubscriptionApi({
-    required String subscription_id,
+    required subscription_id,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +

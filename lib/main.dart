@@ -25,22 +25,12 @@ import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 
-
-//// for delete LocalDB
-// Future<void> wipeDb() async {
-//   final path = join(await getDatabasesPath(), 'avionics.db');
-//   await deleteDatabase(path);
-//   debugPrint('Local DB deleted');
-// }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
-  // await wipeDb();
   await printDbPath();
   await DBHelper.database;
   runApp(const MyApp());

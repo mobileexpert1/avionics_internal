@@ -25,10 +25,9 @@ class DeleteCubit extends Cubit<DeleteState> {
       });
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'An error occurred: ${e.toString()}',
+        errorMessage: e.toString(),
         isSuccess: false,
       ));
     }
