@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +17,8 @@ Widget customField({
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey,
-            fontSize: fontSize != null ? fontSize - 2 : 14,
+            color: Colors.grey.shade700,
+            fontSize: fontSize != null ? fontSize - 2 : 13,
           ),
         ),
         const SizedBox(height: 5),
@@ -30,7 +31,7 @@ Widget customField({
                 text,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: fontSize ?? 16,
+                  fontSize: fontSize ?? 15,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -42,8 +43,8 @@ Widget customField({
 
         const Divider(
           height: 10,
-          color: Colors.grey,
-          thickness: 1,
+          color: AppColors.sepratorColourAppBar,
+          thickness: 2,
         ),
       ],
     ),

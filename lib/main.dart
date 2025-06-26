@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:avionics_internal/Home/HomeAirbus/AirbusScreen.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
@@ -79,7 +80,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: AirbusScreen(),
           );
         },
       ),

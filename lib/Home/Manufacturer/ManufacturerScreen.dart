@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
+import 'package:avionics_internal/Home/HomeAirbus/AirbusScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -139,7 +140,12 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                             ),
                             onTap: () {
                               print(item.id);
-                              // TODO: Navigate to details screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AirbusScreen(),
+                                ),
+                              );
                             },
                           ),
                         );
