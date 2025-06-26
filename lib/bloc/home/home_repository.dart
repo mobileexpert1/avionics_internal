@@ -1,9 +1,10 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'home_model.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../Database/db_helper.dart';
-import 'home_model.dart';
+
 
 
 class HomeRepository {
@@ -17,27 +18,30 @@ class HomeRepository {
     try {
       final response = await ApiService.get(
         url: uri,
+        onUnauthorized: onUnauthorized,
       );
-
-      final homeData = HomeResponse.fromJson(jsonData);
-
+      final Map<String, dynamic> json = response is String
+          ? jsonDecode(response) as Map<String, dynamic>
+          : response as Map<String, dynamic>;
+      final homeData = HomeResponse.fromJson(json);
 
       await DBHelper.insertManufacturers(homeData.manufacturers);
       await DBHelper.insertFavourites(homeData.favourites);
 
       return homeData;
-    } catch (e) {
+    }
+     catch (e) {
 
       final manufacturers = await DBHelper.getManufacturersFromDb();
       final favourites = await DBHelper.getFavouritesFromDb();
-
-      return HomeResponse(
-        manufacturers: manufacturers,
-        favourites: favourites,
-        flights: [],
-      );
-    } catch (e) {
-      throw e.toString();
+      if (manufacturers.isNotEmpty || favourites.isNotEmpty) {
+        return HomeResponse(
+          manufacturers: manufacturers,
+          favourites: favourites,
+          flights: const [],
+        );
+      }
+      rethrow;
     }
   }
 }
