@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avionica',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: AirbusScreen(),
+            home: SplashScreen(),
           );
         },
       ),
