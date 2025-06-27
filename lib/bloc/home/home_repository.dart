@@ -8,19 +8,21 @@ import '../../../Constants/ConstantStrings.dart';
 
 class HomeRepository {
   HomeRepository()
-      : _manufacturers  = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap),
-        _favorites   = GenericMethods<Favourite>(Favourite.fromMap);
+    : _manufacturers = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap),
+      _favorites = GenericMethods<Favourite>(Favourite.fromMap);
 
   final GenericMethods<ManufacturerListModel> _manufacturers;
-  final GenericMethods<Favourite>    _favorites;
+  final GenericMethods<Favourite> _favorites;
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
+    if (!await GenericMethods.hasInternet()) {
+      return _getLocalData();
+    }
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
           ApiServiceUrlAirplaneConstant.getExploreData,
     );
-
     try {
       final response = await ApiService.get(
         url: uri,
@@ -35,20 +37,26 @@ class HomeRepository {
       await _favorites.insertAll(homeData.favourites);
 
       return homeData;
-    }
-     catch (e) {
-
-      final manufacturers = await _manufacturers.getAll('manufacturers');
-      final favourites = await _favorites.getAll('favourites');
-      if (manufacturers.isNotEmpty || favourites.isNotEmpty) {
-        return HomeResponse(
-          manufacturers: manufacturers,
-          favourites: favourites,
-          flights: const [],
-        );
       }
-      rethrow;
-    }
+      on HttpStatusException catch (e) {
+        if (e.statusCode == 400 || e.statusCode == 404) {
+          return _getLocalData();
+        }
+        throw e.toString();
+      }
+      catch (e) {
+        throw e.toString();
+      }
+  }
+
+  Future<HomeResponse> _getLocalData() async {
+    final manufacturers = await _manufacturers.getAll('manufacturers');
+    final favourites = await _favorites.getAll('favourites');
+
+    return HomeResponse(
+      manufacturers: manufacturers,
+      favourites: favourites,
+      flights: const [],
+    );
   }
 }
-

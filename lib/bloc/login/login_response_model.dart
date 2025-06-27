@@ -1,3 +1,5 @@
+import '../../Database/db_helper.dart';
+
 class LoginResponseModel {
   final String detail;
   final bool? isVerified;
@@ -32,7 +34,8 @@ class LoginResponseModel {
   }
 }
 
-class UserDetails {
+class UserDetails extends BaseModel {
+  @override
   final String id;
   final String firstName;
   final String lastName;
@@ -59,21 +62,38 @@ class UserDetails {
     required this.isActiveSubscription,
   });
 
-  factory UserDetails.fromJson(Map<String, dynamic> json) {
-    return UserDetails(
-      id: json['id'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      email: json['email'],
-      phoneNumber: json['phone_number'],
-      professionalRole: json['professional_role'] ?? '',
-      experienceLevel: json['experience_level'] ?? '',
-      userType: json['user_type'] ?? '',
-      authType: json['auth_type'] ?? '',
-      isActive: json['is_active'] ?? false,
-      isActiveSubscription: json['is_active_subscription'] ?? false,
-    );
-  }
+  factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
+    id: json['id'],
+    firstName: json['first_name'],
+    lastName: json['last_name'],
+    email: json['email'],
+    phoneNumber: json['phone_number'],
+    professionalRole: json['professional_role'] ?? '',
+    experienceLevel: json['experience_level'] ?? '',
+    userType: json['user_type'] ?? '',
+    authType: json['auth_type'] ?? '',
+    isActive: json['is_active'] ?? false,
+    isActiveSubscription: json['is_active_subscription'] ?? false,
+  );
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'first_name': firstName,
+    'last_name': lastName,
+    'email': email,
+    'phone_number': phoneNumber,
+    'professional_role': professionalRole,
+    'experience_level': experienceLevel,
+    'user_type': userType,
+    'auth_type': authType,
+    'is_active': isActive ? 1 : 0,
+    'is_active_subscription': isActiveSubscription ? 1 : 0,
+  };
+
+  @override
+  String get table => 'user_details';
 }
+
 
 
