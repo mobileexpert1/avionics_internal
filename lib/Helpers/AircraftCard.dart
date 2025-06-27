@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,7 @@ class AircraftCard {
         } else if (manufacturerLogoPath.startsWith('http') || manufacturerLogoPath.startsWith('/media')) {
           manufacturerImagePath = manufacturerLogoPath.startsWith('http')
               ? manufacturerLogoPath
-              : imageBaseUrl + manufacturerLogoPath;
+              : ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + manufacturerLogoPath;
           isNetworkLogo = true;
         } else {
           manufacturerImagePath = AssetsPath.DhcLogo;

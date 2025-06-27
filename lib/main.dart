@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:avionics_internal/Home/HomeAirbus/AirbusScreen.dart';
+import 'package:avionics_internal/Home/Manufacturer/ManufacturerDetailScreen.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';

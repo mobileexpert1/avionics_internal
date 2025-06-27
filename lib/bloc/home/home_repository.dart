@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:avionics_internal/Database/generic_methods.dart';
-import '../manufacturer/manufacturer_model.dart';
+import '../manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 
 class HomeRepository {
   HomeRepository()
-      : _manufacturers  = GenericMethods<Manufacturer>(Manufacturer.fromMap),
+      : _manufacturers  = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap),
         _favorites   = GenericMethods<Favourite>(Favourite.fromMap);
 
-  final GenericMethods<Manufacturer> _manufacturers;
+  final GenericMethods<ManufacturerListModel> _manufacturers;
   final GenericMethods<Favourite>    _favorites;
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {

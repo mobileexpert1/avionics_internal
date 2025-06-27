@@ -90,5 +90,3 @@ class CommonUi {
     return 'assets/svg_images/$image.svg';
   }
 }
-
-const String imageBaseUrl = 'https://avionica.csdevhub.com/airplane-service';

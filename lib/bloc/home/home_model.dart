@@ -1,8 +1,8 @@
 import '../../Database/db_helper.dart';
-import '../manufacturer/manufacturer_model.dart';
+import '../manufacturer/manufacturer_list_model.dart';
 
 class HomeResponse {
-  final List<Manufacturer> manufacturers;
+  final List<ManufacturerListModel> manufacturers;
   final List<Flight> flights;
   final List<Favourite> favourites;
 
@@ -15,7 +15,7 @@ class HomeResponse {
   factory HomeResponse.fromJson(Map<String, dynamic> json) {
     return HomeResponse(
       manufacturers: (json['manufacturer'] as List<dynamic>?)
-          ?.map((x) => Manufacturer.fromJson(x))
+          ?.map((x) => ManufacturerListModel.fromJson(x))
           .toList() ??
           [],
       flights: (json['flight'] as List<dynamic>?)

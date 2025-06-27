@@ -48,7 +48,7 @@ class SearchBarWidget extends StatelessWidget {
                     color: Colors.black87,
                   ),
                 ),
-              if (enableBackArrow) const SizedBox(width: 12),
+              if (enableBackArrow) const SizedBox(width: 15),
               Expanded(
                 child: TextField(
                   controller: controller,

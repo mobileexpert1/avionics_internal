@@ -1,4 +1,4 @@
-import '../manufacturer/manufacturer_model.dart';
+import '../manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 
 abstract class HomeState {}
@@ -8,7 +8,7 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
-  final List<Manufacturer> manufacturers;
+  final List<ManufacturerListModel> manufacturers;
   final List<Flight> flights;
   final List<Favourite> favourites;
   final int selectedIndex;

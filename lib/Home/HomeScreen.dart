@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../Constants/ConstantStrings.dart';
 import '../Constants/constantImages.dart';
 import '../Helpers/AircraftCard.dart';
 import '../Helpers/AppListTileCard.dart';
@@ -15,9 +16,9 @@ import 'HomeAirbus/ChatBotScreen.dart';
 import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../bloc/home/home_cubit.dart';
 import '../bloc/home/home_state.dart';
-import 'Manufacturer/ManufacturerScreen.dart';
+import 'Manufacturer/ManufacturerListScreen.dart';
 import 'HomeAirbus/AircraftComparisonScreen.dart';
-import 'HomeAirbus/AirbusScreen.dart';
+import 'Manufacturer/ManufacturerDetailScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -172,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .map(
                             (m) => AppListTileCard(
                               title: m.companyName ?? '',
-                              imagePath: imageBaseUrl + (m.icon ?? ''),
+                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (m.icon ?? ''),
                               onTap: () {},
                               isSvg: false,
                               isNetwork: true,
@@ -215,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(2)
                           .map(
                             (f) => AircraftCard.buildAircraftCard(
-                              imagePath: imageBaseUrl + (f.image ?? ''),
+                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (f.image ?? ''),
                               model: f.model,
                               badge: f.code,
                               manufacturer: f.companyName,
@@ -255,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .map(
                             (f) => AppListTileCard(
                               title: f.model,
-                              imagePath: imageBaseUrl + (f.logo ?? ''),
+                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (f.logo ?? ''),
                               onTap: () {},
                               isSvg: false,
                               isNetwork: true,

@@ -1,5 +1,5 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
-import 'package:avionics_internal/Home/HomeAirbus/AirbusScreen.dart';
+import 'package:avionics_internal/Home/Manufacturer/ManufacturerDetailScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +23,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ManufacturerCubit>().loadManufacturers(context: context);
+    context.read<ManufacturerCubit>().loadListOfManufacturers(context: context);
   }
 
   @override
@@ -48,7 +48,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                 controller: searchController,
                 onFilterTap: () {},
                 onChanged: (value) {
-                  context.read<ManufacturerCubit>().loadManufacturers(
+                  context.read<ManufacturerCubit>().loadListOfManufacturers(
                     context: context,
                     query: value.trim(),
                   );
@@ -117,7 +117,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(5),
                                     child: Image.network(
-                                      imageBaseUrl + item.icon!,
+                                      ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + item.icon!,
                                       width: screenWidth * 0.1,
                                       height: screenWidth * 0.1,
                                       fit: BoxFit.cover,
@@ -139,11 +139,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               size: 16,
                             ),
                             onTap: () {
-                              print(item.id);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => AirbusScreen(),
+                                  builder: (_) => ManufacturerDetailScreen(manufacturerDetailId: item.id),
                                 ),
                               );
                             },
