@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'db_helper.dart';
 
@@ -37,4 +40,22 @@ class GenericMethods<T extends BaseModel> {
 
   Future<int> deleteById(String table, String id) =>
       _db.delete(table, where: 'id = ?', whereArgs: [id]);
+
+
+  static Future<bool> hasInternet({
+    List<String> lookupHosts = const ['google.com', 'cloudflare.com'],
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
+
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.none) return false;
+
+    for (final host in lookupHosts) {
+      try {
+        final lookup = await InternetAddress.lookup(host).timeout(timeout);
+        if (lookup.isNotEmpty) return true;
+      } catch (_) {}
+    }
+    return false;
+  }
 }

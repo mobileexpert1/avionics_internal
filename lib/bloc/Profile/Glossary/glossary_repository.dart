@@ -1,9 +1,23 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:sqflite/sqflite.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
+import '../../../Database/generic_methods.dart';
 import 'glossary_model.dart';
 
 class GlossaryRepository {
-  Future<Map<String, List<GlossaryItem>>> getGlossaryData({String? query}) async {
+  GlossaryRepository()
+    : _glossary = GenericMethods<GlossaryItem>(GlossaryItem.fromJson);
+
+  final GenericMethods<GlossaryItem> _glossary;
+  Future<Map<String, List<GlossaryItem>>> getGlossaryData({
+    String? query,
+  }) async {
+    if (!await GenericMethods.hasInternet()) {
+      return _getLocalData();
+    }
+
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -12,20 +26,46 @@ class GlossaryRepository {
     );
 
     try {
-      final response = await ApiService.get(url: uri);
+      final raw = await ApiService.get(url: uri);
+      final Map<String, dynamic> json = raw is String
+          ? jsonDecode(raw) as Map<String, dynamic>
+          : raw;
 
-      final Map<String, dynamic> jsonData = response;
-      final Map<String, List<GlossaryItem>> glossary = {};
-
-      jsonData.forEach((key, value) {
-        glossary[key] = (value as List)
-            .map((item) => GlossaryItem.fromJson(item))
-            .toList();
+      final List<GlossaryItem> all = [];
+      json.forEach((_, list) {
+        for (final el in (list as List<dynamic>)) {
+          all.add(GlossaryItem.fromJson(el as Map<String, dynamic>));
+        }
       });
+      await _glossary.insertAll(all, algo: ConflictAlgorithm.replace);
 
-      return glossary;
+      return json.map(
+        (k, v) => MapEntry(
+          k,
+          (v as List<dynamic>)
+              .map((e) => GlossaryItem.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+    } on HttpStatusException catch (e) {
+      if (e.statusCode == 400 || e.statusCode == 404) {
+        return _getLocalData();
+      }
+      throw e.toString();
     } catch (e) {
-      throw Exception('Failed to fetch glossary data: $e');
+      throw e.toString();
     }
+  }
+
+  Future<Map<String, List<GlossaryItem>>> _getLocalData() async {
+    final list = await _glossary.getAll('glossary');
+    final Map<String, List<GlossaryItem>> grouped = {};
+    for (final item in list) {
+      final key = item.title.isNotEmpty
+          ? item.title[0].toUpperCase()
+          : '#'; // fallback key
+      grouped.putIfAbsent(key, () => []).add(item);
+    }
+    return grouped;
   }
 }
