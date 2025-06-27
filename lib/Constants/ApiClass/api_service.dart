@@ -8,6 +8,7 @@ import 'ApiErrorModel.dart';
 import 'SessionTokenClass/refresh_accessRepository.dart';
 
 class ApiService {
+
   static final Map<String, String> defaultHeaders = {
     'Content-Type': 'application/json',
   };
@@ -184,12 +185,16 @@ class ApiService {
         case 422:
           throw ApiErrorModel.fromJson(jsonResponse).toString();
 
+        // case 400:
+        // case 404:
+        //   final messages = jsonResponse.entries
+        //       .map((e) => '${e.value}')
+        //       .join('\n');
+        //   throw messages;
+
         case 400:
         case 404:
-          final messages = jsonResponse.entries
-              .map((e) => '${e.value}')
-              .join('\n');
-          throw messages;
+          throw HttpStatusException(response.statusCode, jsonResponse);
 
         case 401:
           if (retry) {
@@ -229,4 +234,14 @@ class AuthException implements Exception {
 
   @override
   String toString() => message;
+}
+
+class HttpStatusException implements Exception {
+  HttpStatusException(this.statusCode, this.body);
+
+  final int statusCode;
+  final dynamic body;
+
+  @override
+  String toString() => 'HTTP $statusCode → $body';
 }

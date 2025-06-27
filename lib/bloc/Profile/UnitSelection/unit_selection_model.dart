@@ -1,14 +1,39 @@
-class UnitOption {
+import '../../../Database/db_helper.dart';
+
+class UnitOption extends BaseModel {
+  @override
+  late final String id;
   final String unit;
   final bool isSelected;
 
-  UnitOption({required this.unit, required this.isSelected});
+  UnitOption({required this.unit, required this.isSelected})
+      : id = unit;
 
-  factory UnitOption.fromJson(Map<String, dynamic> json) {
-    return UnitOption(
-      unit: json['unit'],
-      isSelected: json['is_selected'],
-    );
+  factory UnitOption.fromJson(Map<String, dynamic> json) => UnitOption(
+    unit: json['unit'],
+    isSelected: json['is_selected'],
+  );
+
+  factory UnitOption.fromMap(Map<String, dynamic> map) => UnitOption(
+    unit: map['unit'],
+    isSelected: (map['is_selected'] as int) == 1,
+  );
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'unit': unit,
+    'is_selected': isSelected ? 1 : 0,
+  };
+
+  @override
+  String get table => 'unit_prefs';
+
+  static bool _toBool(Object? v) {
+    if (v is bool) return v;
+    if (v is int) return v == 1;
+    if (v is String) return v == '1' || v.toLowerCase() == 'true';
+    return false;
   }
 }
 
@@ -26,21 +51,30 @@ class UnitSelectionModel {
   });
 
   factory UnitSelectionModel.fromJson(Map<String, dynamic> json) {
-    final prefs = json['preferences'];
+    final prefs = json['preferences'] as Map<String, dynamic>? ?? {};
+
+    List<UnitOption> _parse(String key) =>
+        (prefs[key] as List<dynamic>? ?? [])
+            .map((e) => UnitOption.fromJson(e as Map<String, dynamic>))
+            .toList();
 
     return UnitSelectionModel(
-      speed: (prefs['speed'] as List)
-          .map((item) => UnitOption.fromJson(item))
-          .toList(),
-      altitude: (prefs['altitude'] as List)
-          .map((item) => UnitOption.fromJson(item))
-          .toList(),
-      distance: (prefs['distance'] as List)
-          .map((item) => UnitOption.fromJson(item))
-          .toList(),
-      temperature: (prefs['temperature'] as List)
-          .map((item) => UnitOption.fromJson(item))
-          .toList(),
+      speed: _parse('speed'),
+      altitude: _parse('altitude'),
+      distance: _parse('distance'),
+      temperature: _parse('temperature'),
+    );
+  }
+
+  factory UnitSelectionModel.fromPrefs(List<UnitOption> all) {
+    List<UnitOption> _pick(String category) =>
+        all.where((u) => u.id.startsWith(category)).toList();
+
+    return UnitSelectionModel(
+      speed: _pick('speed'),
+      altitude: _pick('altitude'),
+      distance: _pick('distance'),
+      temperature: _pick('temperature'),
     );
   }
 }
@@ -52,10 +86,11 @@ class UnitItem {
 
   UnitItem({required this.unit, required this.isSelected});
 
-  factory UnitItem.fromJson(Map<String, dynamic> json) {
-    return UnitItem(
-      unit: json['unit'],
-      isSelected: json['is_selected'],
-    );
-  }
+  factory UnitItem.fromJson(Map<String, dynamic> json) => UnitItem(
+    unit: json['unit'] as String? ?? '',
+    isSelected: UnitOption._toBool(json['is_selected']),
+  );
+
+  factory UnitItem.fromOption(UnitOption o) =>
+      UnitItem(unit: o.unit, isSelected: o.isSelected);
 }

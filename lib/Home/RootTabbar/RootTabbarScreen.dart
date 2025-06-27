@@ -4,7 +4,7 @@ import '../../Constants/constantImages.dart';
 import '../../Screens/Profile/ProfileScreen.dart';
 import '../HomeAirbus/AircraftComparisonScreen.dart';
 import '../HomeScreen.dart';
-import '../Manufacturer/ManufacturerScreen.dart';
+import '../Manufacturer/ManufacturerListScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
   @override

@@ -33,7 +33,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(appBarHeight),
+        preferredSize: Size.fromHeight(110),
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,

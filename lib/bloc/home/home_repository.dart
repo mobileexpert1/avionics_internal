@@ -1,17 +1,28 @@
 import 'dart:convert';
+import 'dart:ui';
+import 'package:avionics_internal/Database/generic_methods.dart';
+import '../manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../Database/db_helper.dart';
 
 class HomeRepository {
-  Future<HomeResponse> getHomeData({onUnauthorized}) async {
+  HomeRepository()
+      : _manufacturers = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap),
+        _favorites = GenericMethods<Favourite>(Favourite.fromMap);
+
+  final GenericMethods<ManufacturerListModel> _manufacturers;
+  final GenericMethods<Favourite> _favorites;
+
+  Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
+    if (!await GenericMethods.hasInternet()) {
+      return _getLocalData();
+    }
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
           ApiServiceUrlAirplaneConstant.getExploreData,
     );
-
     try {
       final response = await ApiService.get(
         url: uri,
@@ -22,21 +33,31 @@ class HomeRepository {
           : response as Map<String, dynamic>;
       final homeData = HomeResponse.fromJson(json);
 
-      await DBHelper.insertManufacturers(homeData.manufacturers);
-      await DBHelper.insertFavourites(homeData.favourites);
+      await _manufacturers.insertAll(homeData.manufacturers);
+      await _favorites.insertAll(homeData.favourites);
 
       return homeData;
-    } catch (e) {
-      final manufacturers = await DBHelper.getManufacturersFromDb();
-      final favourites = await DBHelper.getFavouritesFromDb();
-      if (manufacturers.isNotEmpty || favourites.isNotEmpty) {
-        return HomeResponse(
-          manufacturers: manufacturers,
-          favourites: favourites,
-          flights: const [],
-        );
+    }
+    on HttpStatusException catch (e) {
+      if (e.statusCode == 400 || e.statusCode == 404) {
+        return _getLocalData();
       }
-      rethrow;
+      throw e.toString();
+    }
+    catch (e) {
+      throw e.toString();
     }
   }
+
+  Future<HomeResponse> _getLocalData() async {
+    final manufacturers = await _manufacturers.getAll('manufacturers');
+    final favourites = await _favorites.getAll('favourites');
+
+    return HomeResponse(
+      manufacturers: manufacturers,
+      favourites: favourites,
+      flights: const [],
+    );
+  }
 }
+

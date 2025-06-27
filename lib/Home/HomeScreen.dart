@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../Constants/ConstantStrings.dart';
 import '../Constants/constantImages.dart';
 import '../Helpers/AircraftCard.dart';
 import '../Helpers/AppListTileCard.dart';
@@ -15,9 +16,9 @@ import 'HomeAirbus/ChatBotScreen.dart';
 import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../bloc/home/home_cubit.dart';
 import '../bloc/home/home_state.dart';
-import 'Manufacturer/ManufacturerScreen.dart';
+import 'Manufacturer/ManufacturerListScreen.dart';
 import 'HomeAirbus/AircraftComparisonScreen.dart';
-import 'HomeAirbus/AirbusScreen.dart';
+import 'Manufacturer/ManufacturerDetailScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -49,46 +50,42 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: true,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight + 50),
+          preferredSize: Size.fromHeight(110),
+          // adjust to fit your search bar height
           child: SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: SearchBarWidget(
-                    enableBackArrow: false,
-                    enableFilter: true,
-                    enableCloseScreen: false,
-                    controller: searchController,
-                    onFilterTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
+                SearchBarWidget(
+                  enableBackArrow: false,
+                  enableFilter: true,
+                  enableCloseScreen: false,
+                  controller: searchController,
+                  onFilterTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
                         ),
-                        backgroundColor: Colors.transparent,
-                        builder: (context) {
-                          return FractionallySizedBox(
-                            heightFactor: 0.9,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(20),
-                              ),
-                              child: FilterScreen(),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return FractionallySizedBox(
+                          heightFactor: 0.9,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(20),
                             ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                            child: FilterScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
                 SizedBox(height: screenWidth * 0.04),
                 const Divider(
@@ -166,20 +163,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     /* ───────────── Manufacturer ───────────── */
                     _buildSectionTitle(
                       'Manufacturer',
-                      AssetsPath.manufacturer,  
+                      AssetsPath.manufacturer,
                       screenWidth,
                     ),
                     SizedBox(height: screenWidth * 0.045),
                     if (state.manufacturers.isNotEmpty) ...[
-                      ...state.manufacturers.take(2).map(
-                        (m) => AppListTileCard(
-                          title: m.companyName ?? '',
-                          imagePath: imageBaseUrl + (m.icon ?? ''),
-                          onTap: () {},
-                          isSvg: false,
-                          isNetwork: true,
-                        ),
-                      ),
+                      ...state.manufacturers
+                          .take(2)
+                          .map(
+                            (m) => AppListTileCard(
+                              title: m.companyName ?? '',
+                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (m.icon ?? ''),
+                              onTap: () {},
+                              isSvg: false,
+                              isNetwork: true,
+                            ),
+                          ),
                       Center(
                         child: TextButton(
                           onPressed: () => Navigator.push(
@@ -213,16 +212,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: screenWidth * 0.045),
                     if (state.flights.isNotEmpty) ...[
-                      ...state.flights.take(2).map(
-                        (f) => AircraftCard.buildAircraftCard(
-                          imagePath: imageBaseUrl + (f.image ?? ''),
-                          model: f.model,
-                          badge: f.code,
-                          manufacturer: f.companyName,
-                          manufacturerLogoPath: f.logo ?? '',
-                          registrationNumber: f.flightId,
-                        ),
-                      ),
+                      ...state.flights
+                          .take(2)
+                          .map(
+                            (f) => AircraftCard.buildAircraftCard(
+                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (f.image ?? ''),
+                              model: f.model,
+                              badge: f.code,
+                              manufacturer: f.companyName,
+                              manufacturerLogoPath: f.logo ?? '',
+                              registrationNumber: f.flightId,
+                            ),
+                          ),
                       Center(
                         child: TextButton(
                           onPressed: () {},
@@ -250,15 +251,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: screenWidth * 0.045),
                     if (state.favourites.isNotEmpty) ...[
-                      ...state.favourites.take(2).map(
-                        (f) => AppListTileCard(
-                          title: f.model,
-                          imagePath: imageBaseUrl + (f.logo ?? ''),
-                          onTap: () {},
-                          isSvg: false,
-                          isNetwork: true,
-                        ),
-                      ),
+                      ...state.favourites
+                          .take(2)
+                          .map(
+                            (f) => AppListTileCard(
+                              title: f.model,
+                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (f.logo ?? ''),
+                              onTap: () {},
+                              isSvg: false,
+                              isNetwork: true,
+                            ),
+                          ),
                       Center(
                         child: TextButton(
                           onPressed: () => Navigator.push(
