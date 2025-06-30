@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Helpers/SearchBarWidget.dart';
-import '../../../Home/AppBarFilter/FilterScreen.dart';
 import '../../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../../bloc/Profile/Glossary/glossary_model.dart';
 import '../../../bloc/Profile/Glossary/glossary_state.dart';
@@ -154,6 +153,5 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
       ),
     );
   }
-
 }
 

@@ -7,7 +7,8 @@ Widget customField({
   required String text,
   double? width,
   double? fontSize,
-  bool showInfoIcon = false, // Toggle icon visibility
+  bool showInfoIcon = false,
+  bool isDarkDivider = false,// Toggle icon visibility
 }) {
   return SizedBox(
     width: width,
@@ -18,7 +19,7 @@ Widget customField({
           label,
           style: TextStyle(
             color: Colors.grey.shade700,
-            fontSize: fontSize != null ? fontSize - 2 : 13,
+            fontSize: fontSize != null ? fontSize - 2 : 11,
           ),
         ),
         const SizedBox(height: 5),
@@ -31,7 +32,7 @@ Widget customField({
                 text,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: fontSize ?? 15,
+                  fontSize: fontSize ?? 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -41,9 +42,9 @@ Widget customField({
           ],
         ),
 
-        const Divider(
+        Divider(
           height: 10,
-          color: AppColors.sepratorColourAppBar,
+          color: isDarkDivider == false ? AppColors.sepratorColourAppBar : AppColors.darkSepratorColourAppBar,
           thickness: 2,
         ),
       ],

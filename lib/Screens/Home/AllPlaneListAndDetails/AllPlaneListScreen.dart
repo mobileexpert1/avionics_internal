@@ -2,9 +2,9 @@ import 'package:avionics_internal/Helpers/CustomDivider.dart';
 import 'package:avionics_internal/bloc/AllPlanes/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Constants/AppColors.dart';
-import '../../bloc/AllPlanes/AllPlanes_cubit.dart';
-import '../../Helpers/SearchBarWidget.dart';
+import '../../../Constants/AppColors.dart';
+import '../../../Helpers/SearchBarWidget.dart';
+import '../../../bloc/AllPlanes/AllPlanes_cubit.dart';
 import '../HomeAirbus/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
@@ -152,7 +152,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => PlanDetailScreen(),
+                                  builder: (context) => AirCraftDetailScreen(),
                                 ),
                               );
                             },

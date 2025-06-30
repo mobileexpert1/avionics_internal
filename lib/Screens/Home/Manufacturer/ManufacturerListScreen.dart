@@ -1,16 +1,15 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
-import 'package:avionics_internal/Home/Manufacturer/ManufacturerDetailScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
-import '../../Constants/ConstantStrings.dart';
-import '../../Helpers/AppText.dart';
-import '../../Helpers/CustomDivider.dart';
-import '../../Helpers/SearchBarWidget.dart';
-import '../../bloc/manufacturer/manufacturer_cubit.dart';
-import '../../bloc/manufacturer/manufacturer_state.dart';
+import '../../../Constants/ConstantStrings.dart';
+import '../../../Helpers/AppText.dart';
+import '../../../Helpers/SearchBarWidget.dart';
+import '../../../bloc/manufacturer/manufacturer_cubit.dart';
+import '../../../bloc/manufacturer/manufacturer_state.dart';
 import '../HomeScreen.dart';
+import 'ManufacturerDetailScreen.dart';
+
 
 class ManufacturerScreen extends StatefulWidget {
   @override
@@ -117,7 +116,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(5),
                                     child: Image.network(
-                                      ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + item.icon!,
+                                      item.icon!,
                                       width: screenWidth * 0.1,
                                       height: screenWidth * 0.1,
                                       fit: BoxFit.cover,

@@ -2,9 +2,10 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../CustomFiles/CustomTabBar.dart';
-import '../../bloc/SavedFlighDetails/savedFlight_cubit.dart';
-import '../../bloc/SavedFlighDetails/savedFlight_state.dart';
+
+import '../../../CustomFiles/CustomTabBar.dart';
+import '../../../bloc/SavedFlighDetails/savedFlight_cubit.dart';
+import '../../../bloc/SavedFlighDetails/savedFlight_state.dart';
 
 class SavedFlighScreen extends StatefulWidget {
   final bool showTabs;

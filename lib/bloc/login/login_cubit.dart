@@ -1,4 +1,3 @@
-import 'package:avionics_internal/Home/HomeScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
 import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:avionics_internal/bloc/login/login_repository.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import 'login_state.dart';
 import '../../Constants/Validators.dart';
 

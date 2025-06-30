@@ -3,11 +3,11 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../Constants/ConstantStrings.dart';
-import '../../Helpers/Custom_widget.dart';
-import '../../bloc/manufacturer/Manufacturer_detail_model.dart';
-import '../../bloc/manufacturer/manufacturer_cubit.dart';
-import '../../bloc/manufacturer/manufacturer_state.dart';
+import '../../../Constants/ConstantStrings.dart';
+import '../../../Helpers/Custom_widget.dart';
+import '../../../bloc/manufacturer/Manufacturer_detail_model.dart';
+import '../../../bloc/manufacturer/manufacturer_cubit.dart';
+import '../../../bloc/manufacturer/manufacturer_state.dart';
 import '../AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
 class ManufacturerDetailScreen extends StatefulWidget {
@@ -43,7 +43,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
     return BlocBuilder<ManufacturerCubit, ManufacturerState>(
       builder: (context, state) {
         final detail = state.manufacturerDetail?.data;
-
         return detail == null
             ? const Center(child: CircularProgressIndicator())
             : Scaffold(
@@ -226,7 +225,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                               ),
 
                               // Image Scroller (only shown when expanded)
-                              _buildImageGalleryScroller(detail.general.gallery),
+                              _buildImageGalleryScroller(
+                                detail.general.gallery,
+                              ),
 
                               Divider(
                                 height: 0,
@@ -243,27 +244,38 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                               ),
 
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 25),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: List.generate(
                                     detail.product?.length ?? 0,
-                                        (index) {
+                                    (index) {
                                       final product = detail.product![index];
                                       return Padding(
-                                        padding: const EdgeInsets.only(bottom: 12),
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12,
+                                        ),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               product.series ?? '',
-                                              style: const TextStyle(fontSize: 15),
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
                                               product.description ?? '',
-                                              style: const TextStyle(height: 1.5),
-                                              maxLines: showMoreProducts ? null : 2,
+                                              style: const TextStyle(
+                                                height: 1.5,
+                                              ),
+                                              maxLines: showMoreProducts
+                                                  ? null
+                                                  : 2,
                                               overflow: showMoreProducts
                                                   ? TextOverflow.visible
                                                   : TextOverflow.ellipsis,
@@ -296,9 +308,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                         top: screenHeight * 0.21,
                         left: screenWidth * 0.06,
                         child: ClipOval(
-                          child:Image.network(
-                        ApiImageBaseUrlConstant.imageAirPlaneBaseUrl +
-                        detail.general.logo,
+                          child: Image.network(
+                            detail.general.logo,
                             width: screenWidth * 0.22,
                             height: screenWidth * 0.22,
                             fit: BoxFit.cover,
@@ -417,7 +428,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         itemBuilder: (context, index) {
           return ClipRRect(
             child: Image.network(
-              ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + coverImages[index],
+              coverImages[index],
               width: MediaQuery.of(context).size.width,
               height: screenHeight * 0.26,
               fit: BoxFit.cover,
@@ -437,12 +448,11 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
           scrollDirection: Axis.horizontal,
           itemCount: galleryImages.length,
           itemBuilder: (context, index) => Container(
-            margin: EdgeInsets.only(right: index == 2 ? 0 : 10),
+            margin: EdgeInsets.all(2),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                ApiImageBaseUrlConstant.imageAirPlaneBaseUrl +
-                    galleryImages[index],
+                galleryImages[index],
                 width: 300,
                 height: 120,
                 fit: BoxFit.cover,

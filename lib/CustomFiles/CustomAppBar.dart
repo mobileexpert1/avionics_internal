@@ -5,12 +5,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget? leftButton;
   final Widget? rightButton;
+  final bool? centerTitle;
+  final double? titleSpacing;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.leftButton,
     this.rightButton,
+    this.centerTitle,
+    this.titleSpacing,
   });
 
   @override
@@ -28,7 +32,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: const TextStyle(fontSize: 18, color: Colors.black),
       ),
-      centerTitle: true,
+      centerTitle: centerTitle ?? true,
+      titleSpacing: centerTitle == true ? titleSpacing : 0,
       leading: leftButton != null
           ? Padding(
               padding: const EdgeInsets.only(left: 12),

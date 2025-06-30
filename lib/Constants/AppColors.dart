@@ -11,6 +11,7 @@ class AppColors {
   static const Color goBack = Color(0xFF626262);
 
   static const Color sepratorColourAppBar = Color.fromRGBO(246, 246, 246, 1.0);
+  static const Color darkSepratorColourAppBar = Color.fromRGBO(225, 228, 234, 1.0);
   static const Color customBottomDisableColour = Color.fromRGBO(225, 228, 234, 1.0);
   static const Color customBottomEnabledColour = Color.fromRGBO(63, 61, 86, 1.0);
 

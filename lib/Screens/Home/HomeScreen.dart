@@ -1,24 +1,22 @@
-import 'package:avionics_internal/Home/AppBarFilter/FilterScreen.dart';
-import 'package:avionics_internal/Home/SavedFlights/SavedFlighScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../Constants/ConstantStrings.dart';
-import '../Constants/constantImages.dart';
-import '../Helpers/AircraftCard.dart';
-import '../Helpers/AppListTileCard.dart';
-import '../Helpers/AppText.dart';
-import '../Helpers/CustomDivider.dart';
-import '../Helpers/SearchBarWidget.dart';
-import '../bloc/manufacturer/manufacturer_cubit.dart';
+import '../../Constants/constantImages.dart';
+import '../../Helpers/AircraftCard.dart';
+import '../../Helpers/AppListTileCard.dart';
+import '../../Helpers/AppText.dart';
+import '../../Helpers/CustomDivider.dart';
+import '../../Helpers/SearchBarWidget.dart';
+import '../../bloc/AircraftComparison/AircraftComparisonCubit.dart';
+import '../../bloc/home/home_cubit.dart';
+import '../../bloc/home/home_state.dart';
+import '../../bloc/manufacturer/manufacturer_cubit.dart';
+import 'AppBarFilter/FilterScreen.dart';
 import 'HomeAirbus/ChatBotScreen.dart';
-import '../bloc/AircraftComparison/AircraftComparisonCubit.dart';
-import '../bloc/home/home_cubit.dart';
-import '../bloc/home/home_state.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'HomeAirbus/AircraftComparisonScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
+import 'SavedFlights/SavedFlighScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -172,9 +170,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(2)
                           .map(
                             (m) => AppListTileCard(
-                              title: m.companyName ?? '',
-                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (m.icon ?? ''),
-                              onTap: () {},
+                              title: m.companyName,
+                              imagePath: (m.icon ?? ''),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ManufacturerDetailScreen(
+                                      manufacturerDetailId: m.id,
+                                    ),
+                                  ),
+                                );
+                              },
                               isSvg: false,
                               isNetwork: true,
                             ),
@@ -216,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(2)
                           .map(
                             (f) => AircraftCard.buildAircraftCard(
-                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (f.image ?? ''),
+                              imagePath: (f.image ?? ''),
                               model: f.model,
                               badge: f.code,
                               manufacturer: f.companyName,
@@ -256,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .map(
                             (f) => AppListTileCard(
                               title: f.model,
-                              imagePath: ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + (f.logo ?? ''),
+                              imagePath: (f.logo ?? ''),
                               onTap: () {},
                               isSvg: false,
                               isNetwork: true,

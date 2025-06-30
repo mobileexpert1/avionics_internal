@@ -133,10 +133,6 @@ class SubscriptionTexts {
   static const String featureSaveFavorites = 'Save your Favorites Aircrafts';
 }
 
-class ApiImageBaseUrlConstant {
-  static String imageAirPlaneBaseUrl = 'https://avionica.csdevhub.com/airplane-service';
-}
-
 class ApiBaseUrlConstant {
   static const String baseUrl = 'https://avionica.csdevhub.com/';
 }

@@ -35,7 +35,7 @@ class AircraftCard {
         } else if (manufacturerLogoPath.startsWith('http') || manufacturerLogoPath.startsWith('/media')) {
           manufacturerImagePath = manufacturerLogoPath.startsWith('http')
               ? manufacturerLogoPath
-              : ApiImageBaseUrlConstant.imageAirPlaneBaseUrl + manufacturerLogoPath;
+              : manufacturerLogoPath;
           isNetworkLogo = true;
         } else {
           manufacturerImagePath = AssetsPath.DhcLogo;

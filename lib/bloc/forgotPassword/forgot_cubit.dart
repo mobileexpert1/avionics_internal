@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Constants/Validators.dart';
-import '../../Home/RootTabbar/RootTabbarScreen.dart';
 import 'forgot_state.dart';
 
 class ForgotCubit extends Cubit<ForgotState> {

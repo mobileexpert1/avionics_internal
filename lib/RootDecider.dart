@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Constants/ApiClass/shared_prefs_helper.dart';
+import 'Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import 'Screens/Onboarding/Splash/startExploringScreen.dart';
-import 'package:avionics_internal/Home/RootTabbar/RootTabbarScreen.dart';
 
 class RootDecider extends StatelessWidget {
   @override
