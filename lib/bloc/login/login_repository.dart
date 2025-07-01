@@ -43,9 +43,7 @@ class LoginRepository {
         await prefs.setString('UserRefreshTokenKey', response.refreshToken!);
       }
       return response;
-    } catch (e,stack) {
-      // print('LoginRepository.loginUser → $e');
-      // print(stack);
+    } catch (e) {
       throw e.toString();
     }
   }

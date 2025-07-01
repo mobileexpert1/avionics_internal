@@ -51,7 +51,7 @@ class UnitSelectionRepository {
     required String distance,
     required String temperature,
   }) async {
-    final body = {
+    final Map<String, String> body = {
       'speed': speed,
       'altitude': altitude,
       'distance': distance,
@@ -67,28 +67,33 @@ class UnitSelectionRepository {
     try {
       final raw = await ApiService.put(
         url: url,
-        headers: {
+        headers: <String, String>{
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: body,
+        body: body.cast<String, dynamic>(),
       );
 
       final Map<String, dynamic> json = raw is String
           ? jsonDecode(raw) as Map<String, dynamic>
-          : raw;
+          : raw as Map<String, dynamic>;
 
-      // await _updatePrefs(json);
+      await _updatePrefs(body);
       return UnitSelectionModel.fromJson(json);
-    } on HttpStatusException catch (e) {
+    }
+
+    on HttpStatusException catch (e) {
       if (e.statusCode == 400 || e.statusCode == 404) {
         return _getLocalData();
       }
       throw e.toString();
-    } catch (e) {
+    }
+    catch(e)
+    {
       throw e.toString();
     }
   }
+
 
   Future<UnitSelectionModel> _getLocalData() async =>
       UnitSelectionModel.fromPrefs(await _prefs.getAll('unit_prefs'));
@@ -117,8 +122,11 @@ class UnitSelectionRepository {
   }
 }
 
-extension _UnitOptionExt on UnitOption {
-  UnitOption copyWithIdPrefix(String prefix) =>
-      UnitOption(unit: unit, isSelected: isSelected)..id = '${prefix}_$unit';
+extension UnitOptionExt on UnitOption {
+  UnitOption copyWithIdPrefix(String prefix) => UnitOption.withId(
+    id: '${prefix}_$unit',
+    unit: unit,
+    isSelected: isSelected,
+  );
 }
 

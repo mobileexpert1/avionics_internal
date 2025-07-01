@@ -2,21 +2,29 @@ import '../../../Database/db_helper.dart';
 
 class UnitOption extends BaseModel {
   @override
-  late final String id;
+  final String id;
   final String unit;
   final bool isSelected;
 
-  UnitOption({required this.unit, required this.isSelected})
-      : id = unit;
+  UnitOption({
+    required this.unit,
+    required this.isSelected,
+  }) : id = unit;
 
+  UnitOption.withId({
+    required this.id,
+    required this.unit,
+    required this.isSelected,
+  });
   factory UnitOption.fromJson(Map<String, dynamic> json) => UnitOption(
     unit: json['unit'],
-    isSelected: json['is_selected'],
+    isSelected: _toBool(json['is_selected']),
   );
 
-  factory UnitOption.fromMap(Map<String, dynamic> map) => UnitOption(
+  factory UnitOption.fromMap(Map<String, dynamic> map) => UnitOption.withId(
+    id: map['id'],
     unit: map['unit'],
-    isSelected: (map['is_selected'] as int) == 1,
+    isSelected: _toBool(map['is_selected']),
   );
 
   @override

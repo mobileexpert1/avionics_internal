@@ -41,12 +41,10 @@ class GenericMethods<T extends BaseModel> {
   Future<int> deleteById(String table, String id) =>
       _db.delete(table, where: 'id = ?', whereArgs: [id]);
 
-
   static Future<bool> hasInternet({
     List<String> lookupHosts = const ['google.com', 'cloudflare.com'],
     Duration timeout = const Duration(seconds: 3),
   }) async {
-
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.none) return false;
 
