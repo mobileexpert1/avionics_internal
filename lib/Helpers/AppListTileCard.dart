@@ -21,38 +21,46 @@ class AppListTileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final horizontalPadding = screenWidth * 0.045;
-    final verticalPadding = screenWidth * 0.01;
-    final iconSize = screenWidth * 0.075;
-    final fontSize = screenWidth * 0.042;
+    final horizontalPadding = screenWidth * 0.042;
+    final iconSize = screenWidth * 0.055;
+    final fontSize = screenWidth * 0.038;
 
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: horizontalPadding,
-        vertical: verticalPadding,
+        vertical: 6,
       ),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
         child: ListTile(
+          dense: true,
+          visualDensity: VisualDensity(vertical: -3),
           contentPadding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.03,
-            vertical: screenWidth * 0.01,
+            vertical: 6,
           ),
           leading: _buildLeadingImage(iconSize),
           title: Text(
             title,
             style: TextStyle(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               fontSize: fontSize,
             ),
           ),
           trailing: Icon(
             Icons.arrow_forward_ios,
-            size: screenWidth * 0.045,
+            size: screenWidth * 0.040,
           ),
           onTap: onTap,
         ),

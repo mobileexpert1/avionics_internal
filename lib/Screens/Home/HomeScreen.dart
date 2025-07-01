@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../Helpers/AircraftCard.dart';
 import '../../Helpers/AppListTileCard.dart';
@@ -86,11 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 SizedBox(height: screenWidth * 0.04),
-                const Divider(
-                  height: 1.5,
-                  thickness: 1.5,
-                  color: Color(0xFFDDDDDD),
-                ),
               ],
             ),
           ),
@@ -109,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: screenWidth * 0.05),
+                    SizedBox(height: screenWidth * 0.03),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: screenWidth * 0.05,
@@ -117,13 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         "Welcome Onboard",
                         style: TextStyle(
-                          fontSize: screenWidth * 0.05,
+                          fontSize: screenWidth * 0.04,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
                     ),
-                    SizedBox(height: screenWidth * 0.04),
+
+                    SizedBox(height: screenWidth * 0.05),
                     Container(
                       width: double.infinity,
                       padding: EdgeInsets.all(screenWidth * 0.05),
@@ -133,7 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         fit: BoxFit.fill,
                       ),
                     ),
-                    SizedBox(height: screenWidth * 0.07),
+
+                    SizedBox(height: screenWidth * 0.06),
 
                     /// Model Comparison
                     _buildSectionTitle(
@@ -141,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       AssetsPath.comparsion,
                       screenWidth,
                     ),
-                    SizedBox(height: screenWidth * 0.045),
+                    SizedBox(height: screenWidth * 0.035),
                     AppListTileCard(
                       title: "Select model for comparison",
                       imagePath: CommonUi.setSvgImage(AssetsPath.selectModel),
@@ -153,11 +151,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       isSvg: true,
                     ),
-                    SizedBox(height: screenWidth * 0.06),
-                    CustomDivider(),
+                    SizedBox(height: screenWidth * 0.045),
 
-                    /// Manufacturer
-                    SizedBox(height: screenWidth * 0.05),
+                    const Divider(
+                      height: 0,
+                      thickness: 3,
+                      color: AppColors.sepratorColourAppBar,
+                    ),
+                    // Manufacturer
+                    SizedBox(height: screenWidth * 0.045),
+
                     /* ───────────── Manufacturer ───────────── */
                     _buildSectionTitle(
                       'Manufacturer',
@@ -200,16 +203,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'See All',
                             style: TextStyle(
-                              fontSize: screenWidth * 0.045,
+                              fontSize: screenWidth * 0.04,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF626262),
+                              color: AppColors.textColour,
                             ),
                           ),
                         ),
                       ),
+                      SizedBox(height: screenWidth * 0.03),
                     ] else
                       _emptyRow('No manufacturers available yet.', screenWidth),
-                    CustomDivider(),
+                    const Divider(
+                      height: 0,
+                      thickness: 3,
+                      color: AppColors.sepratorColourAppBar,
+                    ),
+
+                    SizedBox(height: screenWidth * 0.05),
 
                     /* ────────── Flying in the area ─────────── */
                     _buildSectionTitle(
@@ -218,6 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       screenWidth,
                     ),
                     SizedBox(height: screenWidth * 0.045),
+
                     if (state.flights.isNotEmpty) ...[
                       ...state.flights
                           .take(2)
@@ -231,30 +242,37 @@ class _HomeScreenState extends State<HomeScreen> {
                               registrationNumber: f.flightId,
                             ),
                           ),
+
                       Center(
                         child: TextButton(
                           onPressed: () {},
                           child: Text(
                             'See All',
                             style: TextStyle(
-                              fontSize: screenWidth * 0.045,
+                              fontSize: screenWidth * 0.04,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF626262),
+                              color: AppColors.textColour,
                             ),
                           ),
                         ),
                       ),
+                      SizedBox(height: screenWidth * 0.03),
                     ] else
                       _emptyRow('No flights found in this area.', screenWidth),
-                    CustomDivider(),
+
+                    const Divider(
+                      height: 0,
+                      thickness: 3,
+                      color: AppColors.sepratorColourAppBar,
+                    ),
 
                     /* ───────────────── Favourites ──────────── */
+                    SizedBox(height: screenWidth * 0.045),
+
                     _buildSectionTitle(
                       'Favourites',
                       AssetsPath.star,
                       screenWidth,
-                      fontSize: 0.055,
-                      imageSize: 0.09,
                     ),
                     SizedBox(height: screenWidth * 0.045),
                     if (state.favourites.isNotEmpty) ...[
@@ -297,23 +315,19 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         floatingActionButton: Padding(
-          padding: EdgeInsets.only(right: 7),
-          child: SizedBox(
-            width: 70,
-            height: 70,
-            child: FloatingActionButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => AskWilcoScreen()),
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.Chatbot),
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-              ),
+          padding: EdgeInsets.only(right: 10, bottom: 10),
+          child: FloatingActionButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AskWilcoScreen()),
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.Chatbot),
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -336,8 +350,8 @@ class _HomeScreenState extends State<HomeScreen> {
     String text,
     String iconPath,
     double screenWidth, {
-    double fontSize = 0.048,
-    double imageSize = 0.065,
+    double fontSize = 0.045,
+    double imageSize = 0.060,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -347,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
         font: 'Roboto',
         side: 'left',
         color: Colors.black,
-        weight: FontWeight.w600,
+        weight: FontWeight.w500,
         fontSize: screenWidth * fontSize,
         imageSize: screenWidth * imageSize,
       ),

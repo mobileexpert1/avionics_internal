@@ -38,12 +38,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
               controller: searchController,
             ),
             const SizedBox(height: 10),
-            const Divider(
-              height: 0,
-              color: AppColors.sepratorColourAppBar,
-              thickness: 2,
-            ),
-            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Align(

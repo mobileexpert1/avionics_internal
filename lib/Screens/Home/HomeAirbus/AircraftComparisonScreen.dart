@@ -38,12 +38,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.04, // ~16
-                  vertical: screenWidth * 0.02,   // ~8
-                ),
-                child: SearchBarWidget(
+                 SearchBarWidget(
                   enableBackArrow: false,
                   enableFilter: true,
                   enableCloseScreen: false,
@@ -52,8 +47,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                     context.read<AircraftComparisonCubit>().filterModels(searchController.text);
                   },
                 ),
-              ),
-              const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
             ],
           ),
         ),
@@ -80,10 +73,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                     padding: EdgeInsets.only(left: screenWidth * 0.06),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => HomeScreen()),
-                        );
+                        Navigator.pop(context);
                       },
                       child: AppTexts(
                         text: "   Select Model for Comparison",
