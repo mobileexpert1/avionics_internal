@@ -5,10 +5,15 @@ import 'Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import 'Screens/Onboarding/Splash/startExploringScreen.dart';
 
 class RootDecider extends StatelessWidget {
+  RootDecider({super.key});
+
+  static final Future<bool?> _cachedLoginFuture =
+  SharedPrefsHelper.getIsUserLogin();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool?>(
-      future: SharedPrefsHelper.getIsUserLogin(),
+      future: _cachedLoginFuture, // Only runs once
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(

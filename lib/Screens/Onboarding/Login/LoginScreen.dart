@@ -111,9 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
                               isEnabled: state.isButtonEnabled,
-                              onPressed: () => state.isButtonEnabled
-                                  ? () => context.read<LoginCubit>().validateAndLogin(context)
-                                  : null,
+                              onPressed: () => context
+                                  .read<LoginCubit>()
+                                  .validateAndLogin(context),
                             );
                           },
                         ),
