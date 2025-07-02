@@ -91,6 +91,9 @@ class UserDetails extends BaseModel {
     'is_active_subscription': isActiveSubscription ? 1 : 0,
   };
 
+  factory UserDetails.fromMap(Map<String, dynamic> map) =>
+      UserDetails.fromJson(map);
+
   @override
   String get table => 'user_details';
 }

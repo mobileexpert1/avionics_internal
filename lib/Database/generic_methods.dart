@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'auth_storage.dart';   // ❶ new: stores current user id in SharedPreferences
 import 'db_helper.dart';
 
 typedef FromMap<T> = T Function(Map<String, dynamic> row);
@@ -12,41 +14,70 @@ class GenericMethods<T extends BaseModel> {
   final FromMap<T> _fromMap;
   final DBHelper _db = DBHelper();
 
-  Future<void> insertAll(
-    List<T> items, {
-    ConflictAlgorithm algo = ConflictAlgorithm.replace,
-  }) async {
-    for (final item in items) {
-      await _db.insert(item.table, item.toMap(), algo: algo);
-    }
-  }
+    /* ───────────────── INSERT ───────────────── */
+    Future<void> insertAll(
+        List<T> items, {
+          ConflictAlgorithm algo = ConflictAlgorithm.replace,
+        }) async {
+      final uid = await AuthStorage.read();
+      if (uid == null) throw Exception('No current user id set');
 
+      for (final item in items) {
+        item.userId = uid;
+        await _db.insert(item.table, item.toMap(), algo: algo);
+      }
+    }
+
+  /* ───────────────── SELECT ───────────────── */
   Future<List<T>> getAll(String table) async {
-    final rows = await _db.get(table);
+    final uid = await AuthStorage.read();
+    if (uid == null) return [];               // not logged in yet
+
+    final rows = await _db.get(
+      table,
+      where: 'user_id = ?',
+      whereArgs: [uid],
+    );
     return rows.map(_fromMap).toList();
   }
 
   Future<T?> getById(String table, String id) async {
-    final rows = await _db.get(table, where: 'id = ?', whereArgs: [id]);
+    final uid = await AuthStorage.read();
+    final rows = await _db.get(
+      table,
+      where: 'id = ? AND user_id = ?',
+      whereArgs: [id, uid],
+    );
     return rows.isEmpty ? null : _fromMap(rows.first);
   }
 
-  Future<int> update(T item) => _db.update(
-    item.table,
-    item.toMap(),
-    where: 'id = ?',
-    whereArgs: [item.id],
-  );
+  /* ───────────────── UPDATE ───────────────── */
+  Future<int> update(T item) async {
+    final uid = await AuthStorage.read();
+    item.userId = uid;                        // keep row consistent
+    return _db.update(
+      item.table,
+      item.toMap(),
+      where: 'id = ? AND user_id = ?',
+      whereArgs: [item.id, uid],
+    );
+  }
 
-  Future<int> deleteById(String table, String id) =>
-      _db.delete(table, where: 'id = ?', whereArgs: [id]);
+  /* ───────────────── DELETE ───────────────── */
+  Future<int> deleteById(String table, String id) async {
+    final uid = await AuthStorage.read();
+    return _db.delete(
+      table,
+      where: 'id = ? AND user_id = ?',
+      whereArgs: [id, uid],
+    );
+  }
 
-
+  /* ───────────────── CONNECTIVITY ─────────── */
   static Future<bool> hasInternet({
     List<String> lookupHosts = const ['google.com', 'cloudflare.com'],
     Duration timeout = const Duration(seconds: 3),
   }) async {
-
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.none) return false;
 
@@ -54,7 +85,7 @@ class GenericMethods<T extends BaseModel> {
       try {
         final lookup = await InternetAddress.lookup(host).timeout(timeout);
         if (lookup.isNotEmpty) return true;
-      } catch (_) {}
+      } catch (_) {/* ignore & try next host */}
     }
     return false;
   }

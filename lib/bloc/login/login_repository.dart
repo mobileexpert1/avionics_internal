@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/api_service.dart';
 import '../../Constants/ConstantStrings.dart';
+import '../../Database/auth_storage.dart';
 import '../../Database/generic_methods.dart';
 import 'login_response_model.dart';
 
@@ -32,6 +33,7 @@ class LoginRepository {
       final response = LoginResponseModel.fromJson(user);
 
       if (response.userDetails != null) {
+        await AuthStorage.save(response.userDetails!.id);
         await _users.insertAll([response.userDetails!]);
       }
 
@@ -43,9 +45,7 @@ class LoginRepository {
         await prefs.setString('UserRefreshTokenKey', response.refreshToken!);
       }
       return response;
-    } catch (e,stack) {
-      // print('LoginRepository.loginUser → $e');
-      // print(stack);
+    } catch (e) {
       throw e.toString();
     }
   }
