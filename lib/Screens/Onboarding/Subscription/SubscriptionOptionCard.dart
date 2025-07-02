@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,8 +28,8 @@ class SubscriptionOptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
-            color: isSelected ? Colors.black : Colors.grey,
-            width: 1.5,
+            color: isSelected ? Colors.black : AppColors.sepratorColourAppBar,
+            width: 1.2,
           ),
         ),
         child: Row(
@@ -42,11 +43,11 @@ class SubscriptionOptionCard extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
-                  "${item.trial}-day free trial",
+                  " + ${item.trial} day free trial",
                   style: const TextStyle(color: Colors.black87, fontSize: 14),
                 ),
               ],

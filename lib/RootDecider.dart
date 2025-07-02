@@ -8,7 +8,7 @@ class RootDecider extends StatelessWidget {
   RootDecider({super.key});
 
   static final Future<bool?> _cachedLoginFuture =
-  SharedPrefsHelper.getIsUserLogin();
+      SharedPrefsHelper.getIsUserLogin();
 
   @override
   Widget build(BuildContext context) {
