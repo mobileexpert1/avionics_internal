@@ -138,7 +138,6 @@
 //   Map<String, dynamic> toMap();
 // }
 
-
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -150,8 +149,8 @@ Future<void> printDbPath() async {
 
 class DBHelper {
   /* ── constants ─────────────────────────────────── */
-  static const _dbName    = 'avionics.db';
-  static const _dbVersion = 2;        // ← bump when schema changes
+  static const _dbName = 'avionics.db';
+  static const _dbVersion = 2; // ← bump when schema changes
 
   /* ── singleton instance ────────────────────────── */
   static Database? _db;
@@ -258,6 +257,32 @@ class DBHelper {
         user_id TEXT
       );
     ''');
+
+    await db.execute('''
+  CREATE TABLE user_profile (
+    id TEXT PRIMARY KEY,
+    first_name TEXT,
+    last_name TEXT,
+    email TEXT,
+    phone_number TEXT,
+    user_type TEXT,
+    auth_type TEXT,
+    is_active INTEGER,
+    is_active_subscription INTEGER,
+    professional_role TEXT,
+    experience_level TEXT,
+    country_code TEXT,
+    profile_image TEXT,
+    gender TEXT,
+    dob TEXT,
+    address TEXT,
+    city TEXT,
+    state TEXT,
+    zip_code TEXT,
+    country TEXT,
+    user_id TEXT
+  );
+''');
   }
 
   static Future<void> _createUserIdIndices(Database db) async {
@@ -275,50 +300,52 @@ class DBHelper {
     'user_details',
     'glossary',
     'unit_prefs',
+    'user_profile',
   ];
 
   /* ── CRUD convenience wrappers ─────────────────── */
   Future<int> insert(
-      String table,
-      Map<String, dynamic> values, {
-        ConflictAlgorithm algo = ConflictAlgorithm.abort,
-      }) async =>
-      (await database).insert(table, values, conflictAlgorithm: algo);
+    String table,
+    Map<String, dynamic> values, {
+    ConflictAlgorithm algo = ConflictAlgorithm.abort,
+  }) async => (await database).insert(table, values, conflictAlgorithm: algo);
 
   Future<List<Map<String, Object?>>> get(
-      String table, {
-        String? where,
-        List<Object?>? whereArgs,
-        String? orderBy,
-      }) async =>
-      (await database).query(
-        table,
-        where: where,
-        whereArgs: whereArgs,
-        orderBy: orderBy,
-      );
+    String table, {
+    String? where,
+    List<Object?>? whereArgs,
+    String? orderBy,
+  }) async => (await database).query(
+    table,
+    where: where,
+    whereArgs: whereArgs,
+    orderBy: orderBy,
+  );
 
   Future<int> update(
-      String table,
-      Map<String, dynamic> values, {
-        required String where,
-        required List<Object?> whereArgs,
-      }) async =>
-      (await database).update(table, values, where: where, whereArgs: whereArgs);
+    String table,
+    Map<String, dynamic> values, {
+    required String where,
+    required List<Object?> whereArgs,
+  }) async => (await database).update(
+    table,
+    values,
+    where: where,
+    whereArgs: whereArgs,
+  );
 
   Future<int> delete(
-      String table, {
-        required String where,
-        required List<Object?> whereArgs,
-      }) async =>
+    String table, {
+    required String where,
+    required List<Object?> whereArgs,
+  }) async =>
       (await database).delete(table, where: where, whereArgs: whereArgs);
 }
 
 /* ── BaseModel contract remains unchanged ────────── */
 abstract class BaseModel {
-  String? userId;                       // <-- inject at insert time
+  String? userId; // <-- inject at insert time
   String get table;
   String get id;
   Map<String, dynamic> toMap();
 }
-
