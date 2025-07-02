@@ -122,11 +122,13 @@ class UnitSelectionRepository {
   }
 }
 
-extension UnitOptionExt on UnitOption {
-  UnitOption copyWithIdPrefix(String prefix) => UnitOption.withId(
-    id: '${prefix}_$unit',
+extension _UnitOptionCopy on UnitOption {
+
+  UnitOption copyWithIdPrefix(String category) => UnitOption.withId(
+    id: '${category}_$unit',
     unit: unit,
     isSelected: isSelected,
+    userId: userId,
   );
 }
 

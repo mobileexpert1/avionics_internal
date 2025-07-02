@@ -63,7 +63,7 @@ class GlossaryRepository {
     for (final item in list) {
       final key = item.title.isNotEmpty
           ? item.title[0].toUpperCase()
-          : '#'; // fallback key
+          : '#';
       grouped.putIfAbsent(key, () => []).add(item);
     }
     return grouped;

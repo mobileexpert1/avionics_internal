@@ -1,5 +1,6 @@
+import 'package:avionics_internal/bloc/manufacturer/manufacturer_list_model.dart';
+
 import '../../Database/db_helper.dart';
-import '../manufacturer/manufacturer_list_model.dart';
 
 class HomeResponse {
   final List<ManufacturerListModel> manufacturers;
@@ -12,27 +13,25 @@ class HomeResponse {
     required this.favourites,
   });
 
-  factory HomeResponse.fromJson(Map<String, dynamic> json) {
-    return HomeResponse(
-      manufacturers: (json['manufacturer'] as List<dynamic>?)
-          ?.map((x) => ManufacturerListModel.fromJson(x))
-          .toList() ??
-          [],
-      flights: (json['flight'] as List<dynamic>?)
-          ?.map((x) => Flight.fromJson(x))
-          .toList() ??
-          [],
-      favourites: (json['favourite'] as List<dynamic>?)
-          ?.map((x) => Favourite.fromJson(x))
-          .toList() ??
-          [],
-    );
-  }
-
+  factory HomeResponse.fromJson(Map<String, dynamic> json) => HomeResponse(
+    manufacturers: (json['manufacturer'] as List<dynamic>? ?? [])
+        .map((e) => ManufacturerListModel.fromJson(e))
+        .toList(),
+    flights: (json['flight'] as List<dynamic>? ?? [])
+        .map((e) => Flight.fromJson(e))
+        .toList(),
+    favourites: (json['favourite'] as List<dynamic>? ?? [])
+        .map((e) => Favourite.fromJson(e))
+        .toList(),
+  );
 }
 
-class Flight implements BaseModel {
+class Flight extends BaseModel {
+  @override
   final String id;
+  @override
+  String? userId;
+
   final String model;
   final String code;
   final String? image;
@@ -48,8 +47,8 @@ class Flight implements BaseModel {
     required this.companyName,
     this.logo,
     required this.flightId,
+    this.userId,
   });
-
 
   factory Flight.fromJson(Map<String, dynamic> json) => Flight(
     id: json['id'] ?? '',
@@ -59,30 +58,18 @@ class Flight implements BaseModel {
     companyName: json['company_name'] ?? '',
     logo: json['logo'],
     flightId: json['flight_id'] ?? '',
+    userId: json['user_id'],
   );
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'model': model,
-    'code': code,
-    'image': image,
-    'company_name': companyName,
-    'logo': logo,
-    'flight_id': flightId,
-  };
-
-
-  @override
-  String get table => 'flights';
-
   factory Flight.fromMap(Map<String, dynamic> m) => Flight(
-    id: m['id'] as String,
-    model: m['model'] as String,
-    code: m['code'] as String,
-    image: m['image'] as String?,
-    companyName: m['company_name'] as String,
-    logo: m['logo'] as String?,
-    flightId: m['flight_id'] as String,
+    id: m['id'],
+    model: m['model'],
+    code: m['code'],
+    image: m['image'],
+    companyName: m['company_name'],
+    logo: m['logo'],
+    flightId: m['flight_id'],
+    userId: m['user_id'],
   );
 
   @override
@@ -94,41 +81,46 @@ class Flight implements BaseModel {
     'company_name': companyName,
     'logo': logo,
     'flight_id': flightId,
+    'user_id': userId,
   };
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'model': model,
+    'code': code,
+    'image': image,
+    'company_name': companyName,
+    'logo': logo,
+    'flight_id': flightId,
+  };
+
+  @override
+  String get table => 'flights';
 }
 
-
-class Favourite implements BaseModel {
+class Favourite extends BaseModel {
+  @override
   final String id;
+  @override
+  String? userId;
+
   final String model;
   final String? logo;
 
-  Favourite({
-    required this.id,
-    required this.model,
-    this.logo,
-  });
+  Favourite({required this.id, required this.model, this.logo, this.userId});
 
   factory Favourite.fromJson(Map<String, dynamic> json) => Favourite(
     id: json['id'] ?? '',
     model: json['model'] ?? '',
     logo: json['logo'],
+    userId: json['user_id'],
   );
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'model': model,
-    'logo': logo,
-  };
-
-
-  @override
-  String get table => 'favourites';
-
   factory Favourite.fromMap(Map<String, dynamic> m) => Favourite(
-    id: m['id'] as String,
-    model: m['model'] as String,
-    logo: m['logo'] as String?,
+    id: m['id'],
+    model: m['model'],
+    logo: m['logo'],
+    userId: m['user_id'],
   );
 
   @override
@@ -136,8 +128,11 @@ class Favourite implements BaseModel {
     'id': id,
     'model': model,
     'logo': logo,
+    'user_id': userId,
   };
+
+  Map<String, dynamic> toJson() => {'id': id, 'model': model, 'logo': logo};
+
+  @override
+  String get table => 'favourites';
 }
-
-
-
