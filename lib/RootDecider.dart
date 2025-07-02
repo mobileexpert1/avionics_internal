@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'Constants/ApiClass/shared_prefs_helper.dart';
 import 'Screens/Home/RootTabbar/RootTabbarScreen.dart';
@@ -16,8 +17,7 @@ class RootDecider extends StatelessWidget {
           );
         } else {
           final isUserLoggedIn = snapshot.data ?? false;
-          print(isUserLoggedIn);
-          return isUserLoggedIn ? RootTabbarscreen() : StartExploringScreen();
+          return isUserLoggedIn ? RootTabbarscreen() : LoginScreen();
         }
       },
     );

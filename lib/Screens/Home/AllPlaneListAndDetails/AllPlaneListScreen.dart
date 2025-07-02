@@ -1,7 +1,7 @@
-import 'package:avionics_internal/Helpers/CustomDivider.dart';
 import 'package:avionics_internal/bloc/AllPlanes/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/AllPlanes/AllPlanes_cubit.dart';
@@ -76,81 +76,129 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
-                          horizontal: 20,
+                          horizontal: 30,
                         ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 5,
-                                spreadRadius: 1,
-                                offset: const Offset(0, 1),
+                        child: Stack(
+                          children: [
+                            // Background action button
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color:AppColors.saveButtonColour,
+
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 13),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.bookmark,
+                                      color: Colors.black,
+                                      size: 25,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 0,
                             ),
-                            leading: Image.asset(
-                              model.image,
-                              width: 90,
-                              height: 60,
-                              fit: BoxFit.contain,
-                            ),
-                            title: Row(
-                              children: [
-                                Text(
-                                  model.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+
+                            // Slidable foreground
+                            Slidable(
+                              key: ValueKey(model.code),
+                              endActionPane: ActionPane(
+                                motion: const BehindMotion(),
+                                extentRatio: 0.15,
+                                children: [
+                                  // invisible SlidableAction just to enable swipe
+                                  CustomSlidableAction(
+                                    onPressed: (_) {
+                                      print("Tapped delete");
+                                    },
+                                    backgroundColor: Colors.transparent,
+                                    child:
+                                        const SizedBox.shrink(), // no extra UI here
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                if ((model.code ?? '').isNotEmpty)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
+                                ],
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 5,
+                                      spreadRadius: 1,
+                                      offset: const Offset(0, 1),
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(4),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          spreadRadius: 0.1,
+                                  ],
+                                ),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  leading: Image.asset(
+                                    model.image,
+                                    width: 90,
+                                    height: 60,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Text(
+                                        model.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
-                                      ],
-                                    ),
-                                    child: Text(
-                                      model.code!,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
+                                      const SizedBox(width: 8),
+                                      if ((model.code).isNotEmpty)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.grey,
+                                                spreadRadius: 0.1,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Text(
+                                            model.code,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
-                              ],
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 15,
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AirCraftDetailScreen(),
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 15,
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AirCraftDetailScreen(),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },

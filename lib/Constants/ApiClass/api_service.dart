@@ -185,16 +185,16 @@ class ApiService {
         case 422:
           throw ApiErrorModel.fromJson(jsonResponse).toString();
 
-        // case 400:
-        // case 404:
-        //   final messages = jsonResponse.entries
-        //       .map((e) => '${e.value}')
-        //       .join('\n');
-        //   throw messages;
-
         case 400:
         case 404:
-          throw HttpStatusException(response.statusCode, jsonResponse);
+          final messages = jsonResponse.entries
+              .map((e) => '${e.value}')
+              .join('\n');
+          throw messages;
+        //
+        // case 400:
+        // case 404:
+        //   throw HttpStatusException(response.statusCode, jsonResponse);
 
         case 401:
           if (retry) {
