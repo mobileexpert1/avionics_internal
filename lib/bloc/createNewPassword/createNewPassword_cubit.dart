@@ -77,7 +77,7 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
       Future.delayed(Duration(seconds: 1), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen(isComeFromLoginScreen: false)),
+          MaterialPageRoute(builder: (_) => LoginScreen()),
         );
       });
     } catch (e) {

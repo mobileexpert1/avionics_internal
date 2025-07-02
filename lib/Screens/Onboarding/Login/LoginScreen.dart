@@ -17,9 +17,7 @@ import '../../../bloc/login/login_state.dart';
 import '../ForgotCreateNewPassword/ForgotScreen.dart';
 
 class LoginScreen extends StatefulWidget {
-  final bool isComeFromLoginScreen;
-
-  const LoginScreen({Key? key, required this.isComeFromLoginScreen})
+  const LoginScreen({Key? key})
     : super(key: key);
 
   @override
@@ -57,17 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title: ConstantStrings.loginButton,
-                  leftButton: widget.isComeFromLoginScreen == false
-                      ? null
-                      : IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -124,9 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
                               isEnabled: state.isButtonEnabled,
-                              onPressed: () => context
-                                  .read<LoginCubit>()
-                                  .validateAndLogin(context),
+                              onPressed: () => state.isButtonEnabled
+                                  ? () => context.read<LoginCubit>().validateAndLogin(context)
+                                  : null,
                             );
                           },
                         ),

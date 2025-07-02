@@ -91,7 +91,7 @@ class ConstantStrings {
   static const String titleHome = "Home";
   static const String profileTitle = 'Profile';
   static const String glossaryTitle = 'Glossary';
-  static const String avtarTitle = 'Avatar';
+  static const String avtarTitle = 'Choose Your Avatar';
 
 // ─────────────────────────────
 // Create New Password

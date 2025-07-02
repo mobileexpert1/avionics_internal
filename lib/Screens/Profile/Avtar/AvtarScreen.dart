@@ -27,18 +27,18 @@ class AvtarScreen extends StatefulWidget {
 }
 
 class _AvtarScreenState extends State<AvtarScreen> {
-  final List<String> titles = ['Student', 'Professional', 'Enthusiast', 'ATCO'];
+  final List<String> titles = ['Pilot', 'ATCO', 'Student', 'Enthusiasts'];
   final List<String> userTypes = [
-    'student',
-    'professional',
-    'enthusiast',
+    'pilot',
     'atco',
+    'student',
+    'enthusiast',
   ];
   final List<String> icons = [
-    AssetsPath.avtarThird,
     AssetsPath.avtarFirst,
-    AssetsPath.avtarFouth,
     AssetsPath.avtarSecond,
+    AssetsPath.avtarThird,
+    AssetsPath.avtarFouth,
   ];
 
   @override
@@ -73,7 +73,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
         },
         builder: (context, state) {
           return ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
             itemCount: titles.length,
             separatorBuilder: (context, index) =>
                 const Divider(height: 0.1, color: Colors.grey, thickness: 0.1),
@@ -113,15 +113,16 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         children: [
                           SvgPicture.asset(
                             CommonUi.setSvgImage(icons[index]),
-                            height: 30,
-                            width: 30,
+                            height: 40,
+                            width: 40,
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
                               titles[index],
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
                             ),
@@ -129,7 +130,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                           if (isSelected)
                             const Icon(
                               Icons.check,
-                              size: 20,
+                              size: 25,
                               color: Colors.blue,
                             ),
                         ],

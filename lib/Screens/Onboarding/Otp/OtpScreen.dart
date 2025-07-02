@@ -1,14 +1,13 @@
 import 'dart:async';
-
-import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pinput/pinput.dart';
-
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/otp/otp_cubit.dart';
 import '../../../bloc/otp/otp_state.dart';
 
@@ -30,7 +29,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final defaultPinTheme = PinTheme(
     width: 50,
     height: 55,
-    textStyle: TextStyle(
+    textStyle: const TextStyle(
       fontSize: 30,
       color: Colors.black,
       fontWeight: FontWeight.w600,
@@ -39,9 +38,8 @@ class _OtpScreenState extends State<OtpScreen> {
       border: Border(bottom: BorderSide(color: Colors.grey.shade400, width: 2)),
     ),
   );
-
   int _secondsRemaining = 60;
-  late Timer _timer;
+  Timer? _timer;
   bool _isResendEnabled = false;
 
   @override
@@ -51,13 +49,17 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   void _startCountdown() {
-    _isResendEnabled = false;
-    _secondsRemaining = 60;
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_secondsRemaining == 0) {
+    setState(() {
+      _isResendEnabled = false;
+      _secondsRemaining = 60;
+    });
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_secondsRemaining <= 1) {
+        timer.cancel();
         setState(() {
           _isResendEnabled = true;
-          _timer.cancel();
+          _secondsRemaining = 0;
         });
       } else {
         setState(() {
@@ -69,7 +71,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -92,120 +94,125 @@ class _OtpScreenState extends State<OtpScreen> {
           return Stack(
             children: [
               Scaffold(
+                resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.white,
-                appBar: AppBar(
-                  leading: BackButton(color: Colors.black),
+                appBar: CustomAppBar(
+                  title: widget.isComeFromSignup == true
+                      ? ConstantStrings.appBarTitleOTPScreen
+                      : ConstantStrings.appBarTitleForgotPwd,
+                  leftButton: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                   centerTitle: true,
-                  title: Text(
-                    widget.isComeFromSignup == true
-                        ? ConstantStrings.appBarTitleOTPScreen
-                        : ConstantStrings.appBarTitleForgotPwd,
-                    style: TextStyle(color: AppColors.fogotPwd),
-                  ),
-                  backgroundColor: Colors.white,
-                  elevation: 0,
-                  shape: Border(
-                    bottom: BorderSide(color: Colors.grey, width: 1),
-                  ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 80),
-                      SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.logoMain),
-                        fit: BoxFit.fill,
-                      ),
-                      SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          ConstantStrings.Otptitle,
-                          style: TextStyle(color: Colors.grey.shade600),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 80),
+                        SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.logoMain),
+                          fit: BoxFit.fill,
                         ),
-                      ),
-                      SizedBox(height: 16),
-                      BlocBuilder<OtpCubit, OtpState>(
-                        buildWhen: (previous, current) =>
-                        previous.otp != current.otp,
-                        builder: (context, state) {
-                          return Pinput(
-                            length: 4,
-                            defaultPinTheme: defaultPinTheme,
-                            focusedPinTheme: defaultPinTheme.copyWith(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey.shade400,
-                                    width: 4,
+                        const SizedBox(height: 20),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            ConstantStrings.Otptitle,
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        BlocBuilder<OtpCubit, OtpState>(
+                          buildWhen: (previous, current) =>
+                              previous.otp != current.otp,
+                          builder: (context, state) {
+                            return Pinput(
+                              autofocus: true,
+                              length: 4,
+                              defaultPinTheme: defaultPinTheme,
+                              focusedPinTheme: defaultPinTheme.copyWith(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey.shade400,
+                                      width: 4,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            separatorBuilder: (index) =>
-                            const SizedBox(width: 60),
-                            showCursor: true,
-                            onChanged: (otp) {
-                              context.read<OtpCubit>().otpChanged(otp);
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 24),
-                      BlocSelector<OtpCubit, OtpState, bool>(
-                        selector: (state) => state.isButtonEnabled,
-                        builder: (context, isButtonEnabled) {
-                          return ElevatedButton(
-                            onPressed: isButtonEnabled
-                                ? () {
-                              context.read<OtpCubit>().submitOtpApi(
-                                context,
-                                widget.email,
-                                widget.isComeFromSignup,
-                              );
-                            }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isButtonEnabled
-                                  ? Color.fromRGBO(63, 61, 81, 1.0)
-                                  : Colors.grey.shade300,
-                              foregroundColor: isButtonEnabled
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
-                              minimumSize: Size.fromHeight(52),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              separatorBuilder: (index) =>
+                                  const SizedBox(width: 60),
+                              showCursor: true,
+                              onChanged: (otp) {
+                                context.read<OtpCubit>().otpChanged(otp);
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        BlocSelector<OtpCubit, OtpState, bool>(
+                          selector: (state) => state.isButtonEnabled,
+                          builder: (context, isButtonEnabled) {
+                            return ElevatedButton(
+                              onPressed: isButtonEnabled
+                                  ? () {
+                                      context.read<OtpCubit>().submitOtpApi(
+                                        context,
+                                        widget.email,
+                                        widget.isComeFromSignup,
+                                      );
+                                    }
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isButtonEnabled
+                                    ? const Color.fromRGBO(63, 61, 81, 1.0)
+                                    : Colors.grey.shade300,
+                                foregroundColor: isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
+                                minimumSize: const Size.fromHeight(52),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
+                              child: const Text(
+                                ConstantStrings.continueText,
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            );
+                          },
+                        ),
+                        TextButton(
+                          onPressed: _isResendEnabled
+                              ? () {
+                                  _startCountdown();
+                                  context.read<OtpCubit>().resendOtp(
+                                    widget.email,
+                                    widget.isComeFromSignup,
+                                  );
+                                }
+                              : null,
+                          child: Text(
+                            _isResendEnabled
+                                ? "Resend Code"
+                                : "Resend Code in $_secondsRemaining sec",
+                            style: TextStyle(
+                              color: _isResendEnabled
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
-                            child: Text(
-                              ConstantStrings.continueText,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          );
-                        },
-                      ),
-                      TextButton(
-                        onPressed: _isResendEnabled
-                            ? () {
-                          _startCountdown();
-                          context.read<OtpCubit>().resendOtp(widget.email, widget.isComeFromSignup);
-                        }
-                            : null,
-                        child: Text(
-                          _isResendEnabled
-                              ? "Resend Code"
-                              : "Resend Code in $_secondsRemaining sec",
-                          style: TextStyle(
-                            color: _isResendEnabled ? Colors.blue : Colors.grey,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
-                      Spacer(flex: 2),
-                    ],
+                        const SizedBox(height: 50),
+                      ],
+                    ),
                   ),
                 ),
               ),

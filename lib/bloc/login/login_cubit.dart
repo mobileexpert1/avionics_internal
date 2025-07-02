@@ -15,6 +15,8 @@ class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
 
   void emailChanged(String email) {
+    if (email == state.email) return;
+
     emit(
       state.copyWith(
         email: email,
@@ -24,6 +26,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void passwordChanged(String password) {
+    if (password == state.password) return;
+
     emit(
       state.copyWith(
         password: password,
@@ -31,6 +35,7 @@ class LoginCubit extends Cubit<LoginState> {
       ),
     );
   }
+
 
   Future<void> validateAndLogin(BuildContext context) async {
     final emailError = Validators().validateEmail(state.email);

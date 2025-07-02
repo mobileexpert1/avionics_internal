@@ -16,4 +16,6 @@ class AppColors {
   static const Color customBottomEnabledColour = Color.fromRGBO(63, 61, 86, 1.0);
 
   static const Color textColour = Color.fromRGBO(98, 98, 98, 1.0);
+
+  static const Color saveButtonColour = Color.fromRGBO(210, 230, 252, 1.0);
 }

@@ -13,7 +13,7 @@ class SessionCommonTokenError {
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => LoginScreen(isComeFromLoginScreen: false),
+            builder: (_) => LoginScreen(),
           ),
               (route) => false,
         );
