@@ -26,6 +26,7 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
+  final TextEditingController _otpController = TextEditingController();
   final defaultPinTheme = PinTheme(
     width: 50,
     height: 55,
@@ -72,6 +73,7 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _otpController.dispose();
     super.dispose();
   }
 
@@ -83,6 +85,8 @@ class _OtpScreenState extends State<OtpScreen> {
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
           if (state.status == CommonApiStatus.failure) {
+            _otpController.clear();
+            context.read<OtpCubit>().otpChanged('');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage ?? 'Otp verification failed'),
@@ -132,6 +136,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               previous.otp != current.otp,
                           builder: (context, state) {
                             return Pinput(
+                              controller: _otpController,
                               autofocus: true,
                               length: 4,
                               defaultPinTheme: defaultPinTheme,
@@ -190,6 +195,8 @@ class _OtpScreenState extends State<OtpScreen> {
                         TextButton(
                           onPressed: _isResendEnabled
                               ? () {
+                                  _otpController.clear();
+                                  context.read<OtpCubit>().otpChanged('');
                                   _startCountdown();
                                   context.read<OtpCubit>().resendOtp(
                                     widget.email,

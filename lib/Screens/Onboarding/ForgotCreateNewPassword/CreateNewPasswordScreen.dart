@@ -67,7 +67,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
               Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
-                  title: ConstantStrings.appBarTitleForgotPwd,
+                  title: ConstantStrings.appBarTitleResetPwd,
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -90,7 +90,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                           selector: (state) => state.passwordError,
                           builder: (_, passwordError) {
                             return CustomTextField(
-                              label: ConstantStrings.createPasswordLabel,
+                              label: ConstantStrings.createNewPasswordLabel,
                               controller: passwordController,
                               errorText: passwordError,
                               obscureText: true,
