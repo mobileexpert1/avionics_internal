@@ -49,9 +49,11 @@ class ConstantStrings {
   // Passwords & Reset
   // ─────────────────────────────
   static const String appBarTitleForgotPwd = 'Forgot Password';
+  static const String appBarTitleResetPwd = 'Reset Password';
   static const String appBarTitleOTPScreen = 'Verify OTP';
   static const String sendEmailButton = 'Send Email Code';
   static const String createPasswordLabel = 'Create Password';
+  static const String createNewPasswordLabel = 'Create New Password';
   static const String confirmPasswordLabel = 'Confirm Password';
   static const String changePassword = 'Change Password';
   static const String changePasswordLabel = 'Change Password';

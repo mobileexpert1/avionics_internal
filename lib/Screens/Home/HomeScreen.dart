@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../Helpers/AircraftCard.dart';
@@ -28,12 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
 
+
   @override
   void initState() {
     super.initState();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
+
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -315,12 +320,25 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         floatingActionButton: Padding(
-          padding: EdgeInsets.only(right: 10, bottom: 10),
+          padding: const EdgeInsets.only(right: 10, bottom: 10),
           child: FloatingActionButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => AskWilcoScreen()),
-            ),
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final token = prefs.getString('UserAccessTokenKey');
+
+              if (token != null && token.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AskWilcoScreen(accessToken: token),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Access token not found")),
+                );
+              }
+            },
             backgroundColor: Colors.transparent,
             elevation: 0,
             child: SvgPicture.asset(

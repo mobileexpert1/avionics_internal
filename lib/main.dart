@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SavedFlightCubit()),
         BlocProvider(create: (_) => AllplanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
-        BlocProvider(create: (_) => ChatCubit()),
+        // BlocProvider(create: (_) => ChatCubit()),
         BlocProvider(create: (_) => ProfileScreenCubit()),
         BlocProvider(create: (_) => ManageaccCubit()),
         BlocProvider(create: (_) => ChangePasswordCubit()),

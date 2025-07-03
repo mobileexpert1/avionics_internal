@@ -32,6 +32,7 @@ abstract class AssetsPath {
   static const String flyingareaicon = "flyingareaicon";
   static const String instantAI = "instantAI";
   static const String Quiz = "Quiz";
+  static const String chatHistoryicon = "chatHistoryicon";
 
 
   static const String deleteAcc = "Delete";
