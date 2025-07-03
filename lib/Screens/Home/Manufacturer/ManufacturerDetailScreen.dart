@@ -44,7 +44,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       builder: (context, state) {
         final detail = state.manufacturerDetail?.data;
         return detail == null
-            ? const Center(child: CircularProgressIndicator())
+            ? const Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(child: CircularProgressIndicator()),
+        )
             : Scaffold(
                 backgroundColor: Colors.white,
                 body: SingleChildScrollView(

@@ -15,9 +15,9 @@
     },
     {
       "name": "bloc",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/bloc-8.1.4",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/bloc-9.0.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.14"
     },
     {
       "name": "boolean_selector",
@@ -45,15 +45,15 @@
     },
     {
       "name": "connectivity_plus",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/connectivity_plus-5.0.2",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.4",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.2"
     },
     {
       "name": "connectivity_plus_platform_interface",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-2.0.1",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "cupertino_icons",
@@ -99,27 +99,27 @@
     },
     {
       "name": "flutter_bloc",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_bloc-8.1.6",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_bloc-9.1.1",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.14"
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.8"
     },
     {
       "name": "flutter_slidable",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_slidable-3.1.2",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_slidable-4.0.0",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "3.6"
     },
     {
       "name": "flutter_svg",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_svg-2.1.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_svg-2.2.0",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.6"
     },
     {
       "name": "flutter_test",
@@ -146,12 +146,6 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "js",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/js-0.6.7",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
-    },
-    {
       "name": "leak_tracker",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/leak_tracker-10.0.9",
       "packageUri": "lib/",
@@ -171,9 +165,9 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/lints-5.1.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.8"
     },
     {
       "name": "matcher",
@@ -261,7 +255,7 @@
     },
     {
       "name": "pinput",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/pinput-3.0.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/pinput-5.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -338,12 +332,6 @@
       "languageVersion": "3.7"
     },
     {
-      "name": "smart_auth",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/smart_auth-1.1.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.16"
-    },
-    {
       "name": "smooth_page_indicator",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/smooth_page_indicator-1.2.1",
       "packageUri": "lib/",
@@ -417,9 +405,9 @@
     },
     {
       "name": "synchronized",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/synchronized-3.3.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/synchronized-3.4.0",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "term_glyph",
