@@ -33,7 +33,6 @@ abstract class AssetsPath {
   static const String instantAI = "instantAI";
   static const String Quiz = "Quiz";
 
-
   static const String deleteAcc = "Delete";
   static const String contactAcc = "Contact";
   static const String reviewsAcc = "Reviews";
@@ -48,7 +47,6 @@ abstract class AssetsPath {
   static const String avtarSecond = "AvtarSecond";
   static const String avtarThird = "AvtarThird";
   static const String avtarFouth = "AvtarFourth";
-
 
   static const String explore = "explore";
 
