@@ -10,6 +10,7 @@ class SelectableAircraftCard extends StatelessWidget {
   final String? airlineImagePath;
   final bool isSelected;
   final VoidCallback? onTap;
+  final bool isComeFromPopUp;
 
   const SelectableAircraftCard({
     Key? key,
@@ -20,6 +21,7 @@ class SelectableAircraftCard extends StatelessWidget {
     this.airline,
     this.airlineImagePath,
     this.isSelected = false,
+    this.isComeFromPopUp = false,
     this.onTap,
   }) : super(key: key);
 
@@ -119,8 +121,9 @@ class SelectableAircraftCard extends StatelessWidget {
             ),
           ),
 
+
           // Trailing icon logic
-          trailing: isSelected
+          trailing: isComeFromPopUp == true ? Wrap() : isSelected
               ? const Icon(Icons.check_circle, color: Colors.blue, size: 20)
               : const Icon(Icons.chevron_right, size: 18),
         ),

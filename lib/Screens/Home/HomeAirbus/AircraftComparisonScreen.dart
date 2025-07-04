@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../bloc/AircraftComparison/AircraftComparisonState.dart';
-import '../HomeScreen.dart';
 
 class AircraftComparisonScreen extends StatefulWidget {
   const AircraftComparisonScreen({super.key});
@@ -22,7 +23,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AircraftComparisonCubit>(); // Ensure Cubit is initialized
+    context.read<AircraftComparisonCubit>();
   }
 
   @override
@@ -107,9 +108,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                         isSelected: selectedBadges.contains(model.id),
                         onTap: () {
-                          context
+                          final shouldShowPopup = context
                               .read<AircraftComparisonCubit>()
                               .toggleSelection(model.id);
+                          if (shouldShowPopup) {
+                            showComparisonBottomSheet(context, screenWidth);
+                          }
                         },
                       ),
                     );
@@ -120,6 +124,105 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
           },
         ),
       ),
+    );
+  }
+
+  void showComparisonBottomSheet(BuildContext context, double screenWidth) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(
+            top: 25,
+            left: 10,
+            right: 10,
+            bottom: 30,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 0,
+                  left: 20,
+                  right: 30,
+                  bottom: 20,
+                ),
+                child: // Header
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.comparsion),
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Model Comparison',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SelectableAircraftCard(
+                imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
+                model: "A-321",
+                badge: "A321",
+                manufacturer: "Airbus",
+                airline: null,
+                isSelected: true,
+                isComeFromPopUp: true,
+              ),
+
+              SizedBox(height: 8),
+
+              SelectableAircraftCard(
+                imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
+                model: "A-321",
+                badge: "A321",
+                manufacturer: "Airbus",
+                airline: null,
+                isSelected: true,
+                isComeFromPopUp: true,
+              ),
+
+              SizedBox(height: 8),
+
+              // Button
+              SizedBox(
+                width: screenWidth * 0.85,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => ComparisonScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(63, 61, 81, 1),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                  ),
+                  child: const Text(
+                    "See Comparison",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

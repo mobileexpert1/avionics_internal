@@ -1,5 +1,3 @@
-// lib/bloc/filter/filter_state.dart
-
 import 'filter_model.dart';
 
 /// Represents the state of the Filter screen.

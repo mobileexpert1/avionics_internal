@@ -28,11 +28,11 @@ class AircraftComparisonCubit extends Cubit<AircraftComparisonState> {
     );
   }
 
-  void toggleSelection(String badge) {
+  bool toggleSelection(String badge) {
     if (selectedBadges.contains(badge)) {
       selectedBadges.remove(badge);
     } else {
-      if (selectedBadges.length >= 2) return;
+      if (selectedBadges.length >= 2) return false;
       selectedBadges.add(badge);
     }
 
@@ -42,6 +42,8 @@ class AircraftComparisonCubit extends Cubit<AircraftComparisonState> {
         selectedModelBadges: selectedBadges,
       ),
     );
+
+    return selectedBadges.length == 2;
   }
 
   void filterModels(String query) {

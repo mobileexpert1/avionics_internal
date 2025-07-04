@@ -32,7 +32,7 @@
     },
     {
       "name": "flutter_lints",
-      "version": "5.0.0",
+      "version": "6.0.0",
       "dependencies": [
         "lints"
       ]
@@ -67,7 +67,7 @@
     },
     {
       "name": "flutter_slidable",
-      "version": "3.1.2",
+      "version": "4.0.0",
       "dependencies": [
         "flutter"
       ]
@@ -81,10 +81,9 @@
     },
     {
       "name": "pinput",
-      "version": "3.0.1",
+      "version": "5.0.1",
       "dependencies": [
         "flutter",
-        "smart_auth",
         "universal_platform"
       ]
     },
@@ -167,14 +166,15 @@
     },
     {
       "name": "connectivity_plus",
-      "version": "5.0.2",
+      "version": "6.1.4",
       "dependencies": [
+        "collection",
         "connectivity_plus_platform_interface",
         "flutter",
         "flutter_web_plugins",
-        "js",
         "meta",
-        "nm"
+        "nm",
+        "web"
       ]
     },
     {
@@ -192,7 +192,7 @@
     },
     {
       "name": "flutter_svg",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "dependencies": [
         "flutter",
         "http",
@@ -203,7 +203,7 @@
     },
     {
       "name": "flutter_bloc",
-      "version": "8.1.6",
+      "version": "9.1.1",
       "dependencies": [
         "bloc",
         "flutter",
@@ -232,7 +232,7 @@
     },
     {
       "name": "lints",
-      "version": "5.1.1",
+      "version": "6.0.0",
       "dependencies": []
     },
     {
@@ -394,14 +394,6 @@
       "dependencies": []
     },
     {
-      "name": "smart_auth",
-      "version": "1.1.1",
-      "dependencies": [
-        "flutter",
-        "flutter_web_plugins"
-      ]
-    },
-    {
       "name": "web_socket",
       "version": "1.0.1",
       "dependencies": [
@@ -422,7 +414,7 @@
     },
     {
       "name": "synchronized",
-      "version": "3.3.1",
+      "version": "3.4.0",
       "dependencies": []
     },
     {
@@ -590,15 +582,8 @@
       ]
     },
     {
-      "name": "js",
-      "version": "0.6.7",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "connectivity_plus_platform_interface",
-      "version": "1.2.4",
+      "version": "2.0.1",
       "dependencies": [
         "flutter",
         "meta",
@@ -722,7 +707,7 @@
     },
     {
       "name": "bloc",
-      "version": "8.1.4",
+      "version": "9.0.0",
       "dependencies": [
         "meta"
       ]

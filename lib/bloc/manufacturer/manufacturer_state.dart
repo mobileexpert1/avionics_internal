@@ -2,7 +2,6 @@ import '../../Constants/ApiClass/ApiErrorModel.dart';
 import 'Manufacturer_detail_model.dart';
 import 'manufacturer_list_model.dart';
 
-
 class ManufacturerState {
   final List<ManufacturerListModel> manufacturers;
   final ManufacturerDetailResponse? manufacturerDetail;

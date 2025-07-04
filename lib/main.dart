@@ -26,7 +26,6 @@ import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 
-
 // Future<void> wipeDb() async {
 //   final path = join(await getDatabasesPath(), 'avionics.db');
 //   await deleteDatabase(path);

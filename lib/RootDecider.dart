@@ -2,7 +2,6 @@ import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'Constants/ApiClass/shared_prefs_helper.dart';
 import 'Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import 'Screens/Onboarding/Splash/startExploringScreen.dart';
 
 class RootDecider extends StatelessWidget {
   RootDecider({super.key});
@@ -13,7 +12,7 @@ class RootDecider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool?>(
-      future: _cachedLoginFuture, // Only runs once
+      future: _cachedLoginFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(

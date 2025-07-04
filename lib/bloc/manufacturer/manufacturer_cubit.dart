@@ -1,9 +1,7 @@
-import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
-import 'Manufacturer_detail_model.dart';
 import 'manufacturer_state.dart';
 import 'manufacturer_repository.dart';
 

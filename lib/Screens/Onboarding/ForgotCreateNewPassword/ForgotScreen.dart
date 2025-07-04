@@ -11,7 +11,6 @@ import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
 import '../../../bloc/forgotPassword/forgot_cubit.dart';
 import '../../../bloc/forgotPassword/forgot_state.dart';
-import '../Otp/OtpScreen.dart';
 
 class Forgotscreen extends StatefulWidget {
   @override

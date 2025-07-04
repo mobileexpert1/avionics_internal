@@ -1,5 +1,3 @@
-// lib/bloc/filter/filter_cubit.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'filter_model.dart';
 import 'filter_state.dart';

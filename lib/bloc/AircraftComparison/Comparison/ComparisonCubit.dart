@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'ComparisonState.dart';
+
 class ComparisonCubit extends Cubit<ComparisonState> {
   ComparisonCubit() : super(const ComparisonState(labels: [], a321Values: [], a322Values: []));
 
