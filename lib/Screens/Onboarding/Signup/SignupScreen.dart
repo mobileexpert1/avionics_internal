@@ -55,7 +55,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title: ConstantStrings.CreateAccount,
-                  leftButton: null,
+                  leftButton: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF151A6A)),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
