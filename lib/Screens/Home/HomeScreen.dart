@@ -37,9 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     homeCubit.fetchHomeData(context);
 
   }
-
-
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

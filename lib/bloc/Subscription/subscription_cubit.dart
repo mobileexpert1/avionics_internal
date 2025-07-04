@@ -81,6 +81,14 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           ),
         );
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign-up successfully!'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),

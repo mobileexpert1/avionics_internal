@@ -43,6 +43,15 @@ class AvtarCubit extends Cubit<AvtarState> {
           user_type: userType,
           auth_type: 'email',
         );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Avatar selected successfully! Verify your email.'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
       } else {
         await AvtarRepository().setAvtarForProfile(userType: userType);
       }

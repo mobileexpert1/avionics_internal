@@ -68,11 +68,25 @@ class LoginCubit extends Cubit<LoginState> {
         await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
         await SharedPrefsHelper.saveIsUserLogin(true);
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successfully!'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
           (route) => false,
         );
       } else if (result.isVerified == false) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('OTP sent successfully! Please verify your email.'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) =>

@@ -153,6 +153,7 @@ class SubscriptionScreen extends StatelessWidget {
                                 fontSize: 14,
                               ),
                             ),
+                            const SizedBox(height: 30),
                           ],
                         ),
                       ),
