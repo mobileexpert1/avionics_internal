@@ -1,5 +1,3 @@
-
-
 import 'package:avionics_internal/bloc/AllPlanes/AllPlanes_model.dart';
 
 class AllplanesState {

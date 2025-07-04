@@ -3,8 +3,6 @@ import 'package:avionics_internal/bloc/AllPlanes/AllPlanes_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'AllPlanes_model.dart';
 
-
-
 class AllplanesCubit extends Cubit<AllplanesState> {
   AllplanesCubit() : super(AllplanesState(AllPlanes: []));
 
@@ -24,7 +22,6 @@ class AllplanesCubit extends Cubit<AllplanesState> {
       AllplanesModel(name: 'A-220-300', code: 'A320', image: CommonUi.setPngImage(AssetsPath.aeroplaneComparison)),
       AllplanesModel(name: 'A-320-neo', code: 'A320', image: CommonUi.setPngImage(AssetsPath.aeroplaneComparison)),
     ];
-
     emit(state.copyWith(AllPlanes: allplanesModel, isLoading: false));
   }
 }

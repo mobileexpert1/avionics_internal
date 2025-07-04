@@ -1,5 +1,3 @@
-// lib/bloc/filter/filter_model.dart
-
 /// Represents a single selectable option within a filter category.
 class FilterOption {
   final String id;

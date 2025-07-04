@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../bloc/AircraftComparison/AircraftComparisonState.dart';
-import '../HomeScreen.dart';
 
 class AircraftComparisonScreen extends StatefulWidget {
   const AircraftComparisonScreen({super.key});
@@ -23,7 +23,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AircraftComparisonCubit>(); // Ensure Cubit is initialized
+    context.read<AircraftComparisonCubit>();
   }
 
   @override
@@ -108,10 +108,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         airline: null,
                         isSelected: selectedBadges.contains(model.id),
                         onTap: () {
-                          showComparisonBottomSheet(context, screenWidth);
-                          // context
-                          //     .read<AircraftComparisonCubit>()
-                          //     .toggleSelection(model.id);
+                          final shouldShowPopup = context
+                              .read<AircraftComparisonCubit>()
+                              .toggleSelection(model.id);
+                          if (shouldShowPopup) {
+                            showComparisonBottomSheet(context, screenWidth);
+                          }
                         },
                       ),
                     );
@@ -155,11 +157,8 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                 Row(
                   children: [
                     SvgPicture.asset(
-                      AssetsPath.comparsion,
-                      width: 20,
-                      height: 20,
-                      fit: BoxFit.contain,
-                      color: Colors.black,
+                      CommonUi.setSvgImage(AssetsPath.comparsion),
+                      fit: BoxFit.cover,
                     ),
                     const SizedBox(width: 8),
                     const Text(
@@ -201,7 +200,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
               SizedBox(
                 width: screenWidth * 0.85,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => ComparisonScreen()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(63, 61, 81, 1),
                     padding: const EdgeInsets.symmetric(vertical: 15),

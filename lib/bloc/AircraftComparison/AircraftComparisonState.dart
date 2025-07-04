@@ -13,9 +13,3 @@ class AircraftComparisonModelsUpdated extends AircraftComparisonState {
     required this.selectedModelBadges,
   });
 }
-
-
-
-
-
-

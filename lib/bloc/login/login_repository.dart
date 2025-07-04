@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/api_service.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Database/auth_storage.dart';
