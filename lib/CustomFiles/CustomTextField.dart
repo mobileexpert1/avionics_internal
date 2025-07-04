@@ -40,6 +40,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
       enabled: widget.enabled,
       decoration: InputDecoration(
         labelText: widget.label,
+        labelStyle: const TextStyle(
+          color: Colors.black, // Always keep label color black
+        ),
+        floatingLabelStyle: const TextStyle(
+          color: Colors.black, // Keep floating label black even on error
+        ),
         errorText: widget.errorText,
         errorMaxLines: 3,
         floatingLabelBehavior: FloatingLabelBehavior.always,

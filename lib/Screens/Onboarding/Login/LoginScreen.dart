@@ -130,14 +130,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             ConstantStrings.forgotPassword,
-                            style: TextStyle(color: AppColors.textColour),
+                            style: TextStyle(color: AppColors.textColour,fontWeight: FontWeight.w700),
                           ),
                         ),
                         const SizedBox(height: 20),
 
                         Text(
                           ConstantStrings.orContinue,
-                          style: TextStyle(color: AppColors.textColour),
+                          style: TextStyle(color: AppColors.textColour,fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 20),
 

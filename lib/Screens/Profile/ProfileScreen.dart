@@ -234,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _clearAllDataAndRedirectToSplashScreen(
     BuildContext context,
   ) async {
-    await SharedPrefsHelper.clearAll();
+    await SharedPrefsHelper.clearAll([], false);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginScreen()),
       (route) => false,

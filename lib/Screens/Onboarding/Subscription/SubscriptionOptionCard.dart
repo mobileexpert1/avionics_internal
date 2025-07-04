@@ -55,7 +55,7 @@ class SubscriptionOptionCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  "\$${item.price.toStringAsFixed(2)}",
+                  "${item.price.toStringAsFixed(2)} EURO",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 15,

@@ -68,8 +68,24 @@ class SharedPrefsHelper {
     return prefs.getString(_isAvtarForProfileKey) ?? 'student';
   }
 
-  static Future<void> clearAll() async {
+  static Future<void> clearAll(
+    List<String> keysToRemove,
+    bool isComeFromAllClear,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    if (isComeFromAllClear == true) {
+      await prefs.clear();
+    } else {
+      final keys = [
+        _emailKey,
+        _isUserLoginKey,
+        _isUserAccessTokenKey,
+        _isUserRefreshTokenKey,
+        _isAvtarForProfileKey,
+      ];
+      for (final key in keys) {
+        await prefs.remove(key);
+      }
+    }
   }
 }

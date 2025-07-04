@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -44,9 +43,7 @@ class SubscriptionScreen extends StatelessWidget {
                 body: BlocBuilder<SubscriptionCubit, SubscriptionState>(
                   builder: (context, state) {
                     if (state is! SubscriptionInitial) return SizedBox.shrink();
-
                     final selectedId = state.selectedId;
-                    final subscriptionList = state.subscriptionList;
 
                     return Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -122,37 +119,40 @@ class SubscriptionScreen extends StatelessWidget {
                               textColor: Colors.white,
                               title: SubscriptionTexts.goPremiumTitle,
                               icon: Wrap(),
-                              isEnabled: state is SubscriptionInitial,
+                              isEnabled: true,
                               onPressed: () async {
-                                if (state is SubscriptionInitial) {
-                                  final selected = context
-                                      .read<SubscriptionCubit>()
-                                      .selectedItem;
-                                  if (selected != null) {
-                                    print({
-                                      "duration": selected.duration,
-                                      "is_yearly": selected.isYearly,
-                                      "price": selected.price,
-                                      "trial": selected.trial,
-                                    });
-                                  }
-
-                                  context
-                                      .read<SubscriptionCubit>()
-                                      .submitSubscriptionApi(context);
+                                final selected = context
+                                    .read<SubscriptionCubit>()
+                                    .selectedItem;
+                                if (selected != null) {
+                                  print({
+                                    "duration": selected.duration,
+                                    "is_yearly": selected.isYearly,
+                                    "price": selected.price,
+                                    "trial": selected.trial,
+                                  });
                                 }
+                                context
+                                    .read<SubscriptionCubit>()
+                                    .submitSubscriptionApi(context);
                               },
                             ),
                             const SizedBox(height: 20),
 
-                            const Text(
-                              SubscriptionTexts.trialMessage,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color.fromRGBO(98, 98, 98, 1.0),
-                                fontSize: 14,
+                            if (context
+                                    .read<SubscriptionCubit>()
+                                    .selectedItem !=
+                                null)
+                              Text(
+                                'Free for ${context.read<SubscriptionCubit>().selectedItem!.trial} days then ${context.read<SubscriptionCubit>().selectedItem!.price} EURO per year.\nCancel anytime.',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Color.fromRGBO(98, 98, 98, 1.0),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
+
                             const SizedBox(height: 30),
                           ],
                         ),

@@ -85,7 +85,10 @@ class AvtarCubit extends Cubit<AvtarState> {
   }
 
   Future<void> loadAvatarFromPrefs(bool isComeFromSignup) async {
-    final userType = await SharedPrefsHelper.getAvtarUserType();
+    var userType = await SharedPrefsHelper.getAvtarUserType();
+    if (isComeFromSignup == true) {
+      userType = '';
+    }
     emit(
       state.copyWith(
         selectedUserType: userType,

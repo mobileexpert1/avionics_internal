@@ -4,12 +4,14 @@ class CustomTabBar extends StatefulWidget {
   final List<String> tabTitles;
   final Function(int) onTabSelected;
   final int initialIndex;
+  final bool isComeFromComparsionScreen;
 
   const CustomTabBar({
     Key? key,
     required this.tabTitles,
     required this.onTabSelected,
     this.initialIndex = 0,
+    this.isComeFromComparsionScreen = false,
   }) : super(key: key);
 
   @override
@@ -37,10 +39,12 @@ class _CustomTabBarState extends State<CustomTabBar> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Column(
       // Wrap with Column to add the bottom border
-      crossAxisAlignment: CrossAxisAlignment.start, // Align tabs to the left
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: screenWidth / 2, // Adjust for the desired partial width
+        SizedBox(
+          width:
+              screenWidth /
+              (widget.isComeFromComparsionScreen == false ? 2 : 1),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: List.generate(widget.tabTitles.length, (index) {
@@ -74,9 +78,17 @@ class _CustomTabBarState extends State<CustomTabBar> {
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         height: 2.0,
-                        width: isSelected ? 30.0 : 0.0,
+                        width: isSelected
+                            ? (widget.isComeFromComparsionScreen == false
+                                  ? 30.0
+                                  : 95)
+                            : 0.0,
                         // Adjust underline width
-                        margin: const EdgeInsets.only(left: 2.0),
+                        margin: EdgeInsets.only(
+                          left: widget.isComeFromComparsionScreen == false
+                              ? 2.0
+                              : 0,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           borderRadius: BorderRadius.circular(1.0),

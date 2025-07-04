@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:avionics_internal/AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
+import 'package:avionics_internal/Screens/Onboarding/Subscription/SubscriptionScreen.dart';
+import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -70,6 +73,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => GlossaryCubit(context)),
         BlocProvider(create: (_) => UnitSelectionCubit(context)),
         BlocProvider(create: (_) => AvtarCubit()),
+        BlocProvider(create: (_) => ComparisonCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

@@ -12,7 +12,7 @@ class Validators {
 
     final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$');
     if (!regex.hasMatch(value)) {
-      return 'Password must include uppercase, lowercase, and a special character';
+      return 'Password must include uppercase, lowercase, a special character, and be at least 8 characters long.';
     }
     return null;
   }

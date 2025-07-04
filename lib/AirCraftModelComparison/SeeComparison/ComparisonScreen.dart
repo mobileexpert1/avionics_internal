@@ -1,136 +1,166 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomAppBar.dart';
+import '../../CustomFiles/CustomTabBar.dart';
 import '../../bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../bloc/AircraftComparison/Comparison/ComparisonState.dart';
 
+class ComparisonScreen extends StatefulWidget {
+  final bool showTabs;
 
-class ComparisonScreen extends StatelessWidget {
-  const ComparisonScreen({super.key});
+  const ComparisonScreen({Key? key, this.showTabs = true}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ComparisonCubit()..loadTechnicalData(),
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            elevation: 0,
-            toolbarHeight: 100,
-            title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal:0,vertical: 2),
-              child: const Text(
-                'Comparison A321, A322',
-                style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.bold),
-              ),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child:  SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.filterIconCompare),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ],
-            bottom: TabBar(
-              indicatorColor: Colors.blue,
-              labelColor: Colors.black,
-              onTap: (index) {
-                final cubit = context.read<ComparisonCubit>();
-                if (index == 0) {
-                  cubit.loadTechnicalData();
-                } else {
-                  cubit.loadOperationalData();
-                }
-              },
-              tabs: const [
-                Tab(text: 'TECHNICAL DATA'),
-                Tab(text: 'OPERATIONAL DATA'),
-              ],
-            ),
-          ),
-          body: const TabBarView(
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              ComparisonDataTable(),
-              ComparisonDataTable(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  State<ComparisonScreen> createState() => _ComparisonScreenState();
 }
 
+class _ComparisonScreenState extends State<ComparisonScreen> {
+  int _currentTabIndex = 0;
 
-class ComparisonDataTable extends StatelessWidget {
-  const ComparisonDataTable({super.key});
+  @override
+  void initState() {
+    super.initState();
+    context.read<ComparisonCubit>().loadTechnicalData(); // Default tab
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ComparisonCubit, ComparisonState>(
-      builder: (context, state) {
-        if (state.labels.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Table(
-            border: TableBorder.all(color: Colors.grey.shade300),
-            columnWidths: const {
-              0: FlexColumnWidth(2.5),
-              1: FlexColumnWidth(1.5),
-              2: FlexColumnWidth(1.5),
-            },
-            children: [
-              TableRow(
-                decoration: BoxDecoration(color: Colors.grey.shade100),
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(''),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('A-321', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('A-322', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: "Comparison A321, A322",
+        centerTitle: false,
+        leftButton: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        rightButton: SvgPicture.asset(
+          CommonUi.setSvgImage(AssetsPath.filterIconCompare),
+          fit: BoxFit.fill,
+          width: 50,
+          height: 50,
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.showTabs)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: CustomTabBar(
+                tabTitles: const ['TECHNICAL DATA', 'OPERATIONAL DATA'],
+                initialIndex: _currentTabIndex,
+                isComeFromComparsionScreen: true,
+                onTabSelected: (index) {
+                  setState(() => _currentTabIndex = index);
+                  if (index == 0) {
+                    context.read<ComparisonCubit>().loadTechnicalData();
+                  } else {
+                    context.read<ComparisonCubit>().loadOperationalData();
+                  }
+                },
               ),
-              for (int i = 0; i < state.labels.length; i++)
-                TableRow(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(state.labels[i]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(state.a321Values[i]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(state.a322Values[i]),
-                    ),
-                  ],
-                ),
-            ],
+            ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: BlocBuilder<ComparisonCubit, ComparisonState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state.labels.isEmpty) {
+                  return const Center(child: Text("No data available"));
+                }
+
+                return SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  padding: const EdgeInsets.all(20),
+                  child: Table(
+                    columnWidths: const {
+                      0: FlexColumnWidth(3),
+                      1: FlexColumnWidth(2),
+                      2: FlexColumnWidth(2),
+                    },
+                    border: TableBorder.all(color: Colors.grey, width: 1),
+                    children: [
+                      // Header row
+                      TableRow(
+                        children: [
+                          // Parameter with no background
+                          const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Wrap(),
+                          ),
+                          // A321 with background
+                          Container(
+                            color: const Color(0xFFE4E6EA),
+                            padding: const EdgeInsets.all(10),
+                            child: const Center(
+                              child: Text(
+                                'A321',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          // A322 with background
+                          Container(
+                            color: const Color(0xFFE4E6EA),
+                            padding: const EdgeInsets.all(10),
+                            child: const Center(
+                              child: Text(
+                                'A322',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Data rows
+                      for (int i = 0; i < state.labels.length; i++)
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Text(
+                                state.labels[i],
+                                style: const TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Center(
+                                child: Text(
+                                  state.a321Values[i],
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Center(
+                                child: Text(
+                                  state.a322Values[i],
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
