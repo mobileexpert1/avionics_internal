@@ -25,7 +25,7 @@ abstract class AssetsPath {
   static const String upArrow = "upArrow";
   static const String downArrow = "downArrow";
   static const String Plane1 = "Plane1";
-  static const String ChatIcon = "ChatIcon";
+  static const String ChatIcon = "Chatbot";
   static const String SendIcon = "SendIcon";
   static const String AttachFileIcon = "AttachFileIcon";
   static const String filterIconCompare = "filterIconCompare";

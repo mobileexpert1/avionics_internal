@@ -50,7 +50,7 @@ class ConstantStrings {
   // ─────────────────────────────
   static const String appBarTitleForgotPwd = 'Forgot Password';
   static const String appBarTitleResetPwd = 'Reset Password';
-  static const String appBarTitleOTPScreen = 'Verify OTP';
+  static const String appBarTitleOTPScreen = 'OTP Verification';
   static const String sendEmailButton = 'Send Email Code';
   static const String createPasswordLabel = 'Create Password';
   static const String createNewPasswordLabel = 'Create New Password';
