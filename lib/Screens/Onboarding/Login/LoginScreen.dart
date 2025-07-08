@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () {
                             context.read<LoginCubit>()
-                                .signInWithGoogle();
+                                .signInWithGoogle(context);
                           },
                         ),
 
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () {
                             context.read<LoginCubit>()
-                                .signInWithFacebook();
+                                .signInWithFacebook(context);
                           },
                         ),
                         const SizedBox(height: 30),

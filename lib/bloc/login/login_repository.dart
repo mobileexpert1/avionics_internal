@@ -7,9 +7,8 @@ import '../../Database/generic_methods.dart';
 import 'login_response_model.dart';
 
 class LoginRepository {
-
   LoginRepository()
-      : _users = GenericMethods<UserDetails>(UserDetails.fromJson);
+    : _users = GenericMethods<UserDetails>(UserDetails.fromJson);
 
   final GenericMethods<UserDetails> _users;
 
@@ -34,13 +33,32 @@ class LoginRepository {
         await AuthStorage.save(response.userDetails!.id);
         await _users.insertAll([response.userDetails!]);
       }
+      return response;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 
-      final prefs = await SharedPreferences.getInstance();
-      if (response.accessToken != null) {
-        await prefs.setString('UserAccessTokenKey', response.accessToken!);
-      }
-      if (response.refreshToken != null) {
-        await prefs.setString('UserRefreshTokenKey', response.refreshToken!);
+  Future<LoginResponseModel> loginUserWithSocialPlatform({
+    required String provider,
+    required String token,
+  }) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlConstant.userService +
+          ApiServiceUrlConstant.signInSocial,
+    );
+
+    try {
+      final user = await ApiService.post(
+        url: url,
+        body: {"provider": provider, "token": token},
+      );
+      final response = LoginResponseModel.fromJson(user);
+
+      if (response.userDetails != null) {
+        await AuthStorage.save(response.userDetails!.id);
+        await _users.insertAll([response.userDetails!]);
       }
       return response;
     } catch (e) {
