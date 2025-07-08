@@ -7,16 +7,15 @@ import '../../Constants/constantImages.dart';
 import '../../Helpers/AircraftCard.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
-import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../bloc/home/home_cubit.dart';
 import '../../bloc/home/home_state.dart';
 import '../../bloc/manufacturer/manufacturer_cubit.dart';
 import 'AppBarFilter/FilterScreen.dart';
-import 'HomeAirbus/ChatBotScreen.dart';
+import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
-import 'HomeAirbus/AircraftComparisonScreen.dart';
+import 'HomeAirbus/AirCraftSection/AircraftComparisonScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
 import 'SavedFlights/SavedFlighScreen.dart';
 
@@ -29,14 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
 
-
   @override
   void initState() {
     super.initState();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
-
   }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -187,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               },
-                              isSvg: false,
+                              isSvg: (m.icon ?? '').contains(".svg"),
                               isNetwork: true,
                             ),
                           ),
@@ -285,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: f.model,
                               imagePath: (f.logo ?? ''),
                               onTap: () {},
-                              isSvg: false,
+                              isSvg: (f.logo ?? '').contains(".svg"),
                               isNetwork: true,
                             ),
                           ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../Constants/constantImages.dart';
-import '../../../bloc/ChatBot/ChatCubit.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../bloc/ChatBot/ChatCubit.dart';
+import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {
   const AskWilcoScreen({
@@ -146,7 +147,14 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         padding: const EdgeInsets.only(right: 12),
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ChatHistoryScreen(),
+              ),
+            );
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
@@ -176,7 +184,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             ),
           ),
         ),
-      ),
+      )
     ],
   );
 

@@ -45,9 +45,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         final detail = state.manufacturerDetail?.data;
         return detail == null
             ? const Scaffold(
-          backgroundColor: Colors.white,
-          body: Center(child: CircularProgressIndicator()),
-        )
+                backgroundColor: Colors.white,
+                body: Center(child: CircularProgressIndicator()),
+              )
             : Scaffold(
                 backgroundColor: Colors.white,
                 body: SingleChildScrollView(
@@ -311,11 +311,54 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                         top: screenHeight * 0.21,
                         left: screenWidth * 0.06,
                         child: ClipOval(
-                          child: Image.network(
-                            detail.general.logo,
+                          child: Container(
                             width: screenWidth * 0.22,
                             height: screenWidth * 0.22,
-                            fit: BoxFit.cover,
+                            color:
+                                Colors.grey.shade200, // Background circle color
+                            child: Builder(
+                              builder: (context) {
+                                final logoUrl =
+                                    '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                                debugPrint(logoUrl);
+
+                                final isSvg = detail.general.logo.contains(
+                                  ".svg",
+                                );
+                                final isAsset = detail.general.logo.contains(
+                                  "assets",
+                                );
+
+                                if (isAsset) {
+                                  return Image.asset(
+                                    detail.general.logo,
+                                    width: screenWidth * 0.22,
+                                    height: screenWidth * 0.22,
+                                    fit: BoxFit.cover,
+                                  );
+                                } else {
+                                  return isSvg
+                                      ? SvgPicture.network(
+                                          logoUrl,
+                                          fit: BoxFit.contain,
+                                          placeholderBuilder: (context) => Icon(
+                                            Icons.broken_image,
+                                            size: screenWidth * 0.22,
+                                          ),
+                                        )
+                                      : Image.network(
+                                          logoUrl,
+                                          width: screenWidth * 0.22,
+                                          height: screenWidth * 0.22,
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (_, __, ___) => Icon(
+                                            Icons.broken_image,
+                                            size: screenWidth * 0.22,
+                                          ),
+                                        );
+                                }
+                              },
+                            ),
                           ),
                         ),
                       ),

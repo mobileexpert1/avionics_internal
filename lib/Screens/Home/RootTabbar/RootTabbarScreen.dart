@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../Constants/constantImages.dart';
 import '../../Profile/ProfileScreen.dart';
-import '../HomeAirbus/AircraftComparisonScreen.dart';
+import '../HomeAirbus/AirCraftSection/AircraftComparisonScreen.dart';
 import '../HomeScreen.dart';
 import '../Manufacturer/ManufacturerListScreen.dart';
 

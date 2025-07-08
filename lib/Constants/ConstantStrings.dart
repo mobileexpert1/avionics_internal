@@ -100,6 +100,12 @@ class ConstantStrings {
 // ─────────────────────────────
   static const String OtpVerified = 'Your OTP verified successfully. Please reset your password within 5 minutes.';
 
+
+  // ─────────────────────────────
+  // Chat History
+  // ─────────────────────────────
+
+  static const String chatHistoryTitle = 'Chat History';
 }
 
 
@@ -166,6 +172,7 @@ class ApiServiceUrlConstant {
   static const String setAvtarWhileSignup = 'auth/avtar';
   static const String delete = 'user/';
   static const String getGlossary = 'user/glossary';
+  static const String chatHistorySession = 'ai-engine/wilco/session';
 }
 
 
