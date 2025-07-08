@@ -26,10 +26,7 @@ class AppListTileCard extends StatelessWidget {
     final fontSize = screenWidth * 0.038;
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: horizontalPadding,
-        vertical: 6,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 6),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -53,15 +50,9 @@ class AppListTileCard extends StatelessWidget {
           leading: _buildLeadingImage(iconSize),
           title: Text(
             title,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: fontSize,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: fontSize),
           ),
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            size: screenWidth * 0.040,
-          ),
+          trailing: Icon(Icons.arrow_forward_ios, size: screenWidth * 0.040),
           onTap: onTap,
         ),
       ),
@@ -70,19 +61,32 @@ class AppListTileCard extends StatelessWidget {
 
   Widget _buildLeadingImage(double size) {
     if (isSvg) {
-      return SvgPicture.asset(
-        imagePath,
-        height: size,
-        width: size,
-        fit: BoxFit.contain,
-      );
+      if (imagePath.contains("assets")) {
+        return SvgPicture.asset(
+          imagePath,
+          height: size,
+          width: size,
+          fit: BoxFit.contain,
+        );
+      } else {
+        return SizedBox(
+          height: size,
+          width: size,
+          child: SvgPicture.network(
+            imagePath,
+            fit: BoxFit.contain,
+            placeholderBuilder: (context) =>
+                Icon(Icons.broken_image, size: size),
+          ),
+        );
+      }
     } else if (isNetwork) {
       return Image.network(
         imagePath,
         height: size,
         width: size,
         fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => Icon(Icons.broken_image, size: size),
+        errorBuilder: (_, _, _) => Icon(Icons.broken_image, size: size),
       );
     } else {
       return Image.asset(

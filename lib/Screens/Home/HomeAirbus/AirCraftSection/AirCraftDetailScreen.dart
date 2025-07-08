@@ -3,10 +3,10 @@ import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../Constants/AppColors.dart';
-import '../../../Constants/ConstantStrings.dart';
-import '../../../Helpers/Custom_widget.dart';
-import '../../../bloc/manufacturer/manufacturer_state.dart';
+import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/Custom_widget.dart';
+import '../../../../bloc/manufacturer/manufacturer_state.dart';
 
 class AirCraftDetailScreen extends StatefulWidget {
   const AirCraftDetailScreen({super.key});

@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:avionics_internal/AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
-import 'package:avionics_internal/Screens/Onboarding/Subscription/SubscriptionScreen.dart';
+import 'package:avionics_internal/Screens/Home/HomeAirbus/ChatSection/ChatHistoryScreen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
+import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -18,7 +18,6 @@ import 'bloc/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Profile/Glossary/glossary_cubit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
-import 'package:avionics_internal/bloc/ChatBot/ChatCubit.dart';
 import 'package:avionics_internal/bloc/Filter/filter_cubit.dart';
 import 'package:avionics_internal/bloc/forgotPassword/forgot_cubit.dart';
 import 'package:avionics_internal/bloc/manufacturer/manufacturer_cubit.dart';
@@ -74,6 +73,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => UnitSelectionCubit(context)),
         BlocProvider(create: (_) => AvtarCubit()),
         BlocProvider(create: (_) => ComparisonCubit()),
+        BlocProvider(create: (_) => ChatHistoryCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

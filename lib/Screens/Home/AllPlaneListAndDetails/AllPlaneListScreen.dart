@@ -5,7 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/AllPlanes/AllPlanes_cubit.dart';
-import '../HomeAirbus/AirCraftDetailScreen.dart';
+import '../HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
   const AllPlanesListScreen({super.key});
