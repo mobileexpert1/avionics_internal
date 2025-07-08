@@ -89,8 +89,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                           );
                         }
 
-                        if (message['type'] == 'analizing') {
-                          return const _AnalizingIndicator();
+                        if (message['type'] == 'analyzing') {
+                          return const _AnalyzingIndicator();
                         }
 
                         final isUser = message['type'] == 'user';
@@ -121,7 +121,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                   },
                 ),
               ),
-
               Builder(builder: (innerCtx) => _chatInput(innerCtx)),
             ],
           ),
@@ -149,8 +148,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           borderRadius: BorderRadius.circular(30),
           onTap: () {},
           child: Container(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: const Color(0xFFF5F5F7),
               borderRadius: BorderRadius.circular(30),
@@ -224,8 +222,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     hintStyle: TextStyle(color: Colors.grey.shade500),
                     filled: true,
                     fillColor: const Color(0xFFF5F8F9),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: _vPad),
+                    contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: _vPad),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -259,14 +257,15 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   }
 }
 
+/* ───────────────────────── Typing indicator ───────────────────────── */
 
-class _AnalizingIndicator extends StatefulWidget {
-  const _AnalizingIndicator();
+class _AnalyzingIndicator extends StatefulWidget {
+  const _AnalyzingIndicator();
   @override
-  State<_AnalizingIndicator> createState() => _AnalizingIndicatorState();
+  State<_AnalyzingIndicator> createState() => _AnalyzingIndicatorState();
 }
 
-class _AnalizingIndicatorState extends State<_AnalizingIndicator>
+class _AnalyzingIndicatorState extends State<_AnalyzingIndicator>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl = AnimationController(
     duration: const Duration(milliseconds: 900),
@@ -275,7 +274,10 @@ class _AnalizingIndicatorState extends State<_AnalizingIndicator>
   late final Animation<int> _dots = StepTween(begin: 1, end: 3).animate(_ctrl);
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -293,9 +295,8 @@ class _AnalizingIndicatorState extends State<_AnalizingIndicator>
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'analizing$dots',                 // ← updated text
-              style:
-              const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
+              'analyzing$dots', // corrected text
+              style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
             ),
           ),
         );
@@ -303,6 +304,3 @@ class _AnalizingIndicatorState extends State<_AnalizingIndicator>
     );
   }
 }
-
-
-

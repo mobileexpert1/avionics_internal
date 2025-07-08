@@ -132,7 +132,7 @@ class SubscriptionTexts {
   // ─────────────────────────────
   static const String featureTrackAircrafts = 'Track the aircrafts';
   static const String featureComparePlanes = 'Compare planes';
-  static const String featureSaveFavorites = 'Save your Favorites Aircrafts';
+  static const String featureSaveFavorites = 'Save your favorite aircrafts';
 }
 
 class ApiBaseUrlConstant {

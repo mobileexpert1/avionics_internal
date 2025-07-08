@@ -51,6 +51,12 @@ abstract class AssetsPath {
 
   static const String explore = "explore";
 
+  static const String loginIcon = "loginIcon";
+  static const String errorIcon = "errorIcon";
+  static const String otpIcon = "otpIcon";
+  static const String logoutIcon = "logoutIcon";
+  static const String signinIcon = "signinIcon";
+
   // png
   static const String aeroplane = "aeroplane";
   static const String aeroplane2 = "aeroplane2";

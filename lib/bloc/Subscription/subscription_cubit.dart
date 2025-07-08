@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import 'subscription_repository.dart';
 import 'subscription_state.dart';
@@ -81,12 +83,10 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           ),
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sign-up successfully!'),
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
-          ),
+        AppSnackBar.custom(
+          context,
+          message: 'Sign-up Successfully',
+          svgAsset:CommonUi.setSvgImage(AssetsPath.signinIcon),
         );
 
         Navigator.push(

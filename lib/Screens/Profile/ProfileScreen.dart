@@ -1,5 +1,6 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 
+import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
@@ -199,6 +200,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Logout",
                       onTap: () {
+                        AppSnackBar.custom(
+                          context,
+                          message: 'Logout Successfully',
+                          svgAsset:  CommonUi.setSvgImage(AssetsPath.logoutIcon),
+                        );
                         _clearAllDataAndRedirectToSplashScreen(context);
                       },
                     ),

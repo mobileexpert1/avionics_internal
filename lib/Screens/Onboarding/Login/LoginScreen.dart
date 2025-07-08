@@ -150,9 +150,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                           ),
                           onPressed: () {
-                            // Google login
+                            context.read<LoginCubit>()
+                                .signInWithGoogle();
                           },
                         ),
+
                         const SizedBox(height: 12),
 
                         CustomSocialLoginButtons(
@@ -176,7 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                           ),
                           onPressed: () {
-                            // Facebook login
+                            context.read<LoginCubit>()
+                                .signInWithFacebook();
                           },
                         ),
                         const SizedBox(height: 30),

@@ -119,7 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
               Positioned(
-                bottom: size.height * 0.09,
+                bottom: size.height * 0.115,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -137,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
               Positioned(
-                bottom: size.height * 0.07,
+                bottom: size.height * 0.09,
                 left: size.width * 0.08,
                 right: size.width * 0.08,
                 child: Row(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:avionics_internal/AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -36,6 +37,11 @@ import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cub
 // }
 
 Future<void> main() async {
+  //firebase intialize
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     sqfliteFfiInit();

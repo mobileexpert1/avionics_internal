@@ -24,10 +24,10 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   void sendMessage(String text) {
     final next = List<Map<String, String>>.from(state)
-      ..removeWhere((m) => m['type'] == 'analizing');
+      ..removeWhere((m) => m['type'] == 'analyzing');
 
     next.add({'type': 'user', 'text': text});
-    next.add({'type': 'analizing', 'text': ''});
+    next.add({'type': 'analyzing', 'text': ''});
     emit(next);
     _repo.send(text);
   }
@@ -36,7 +36,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     final next = List<Map<String, String>>.from(state);
 
     if (msg.author == ChatAuthor.bot) {
-      next.removeWhere((m) => m['type'] == 'analizing');
+      next.removeWhere((m) => m['type'] == 'analyzing');
     }
 
     final mapped = {
@@ -45,7 +45,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     };
 
     final nonTypingLast = next.lastWhere(
-          (m) => m['type'] != 'analizing',
+          (m) => m['type'] != 'analyzing',
       orElse: () => {},
     );
     final isDuplicate = nonTypingLast.isNotEmpty &&
