@@ -125,8 +125,10 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (result.status != LoginStatus.success) return;
 
-      final accessToken = result.accessToken!.tokenString;
-      final credential = FacebookAuthProvider.credential(accessToken);
+      final accessToken = result.accessToken!;
+      final credential = FacebookAuthProvider.credential(
+        accessToken.tokenString,
+      );
       final userCredential = await _auth.signInWithCredential(credential);
 
       debugPrint('userCredential User: ${userCredential.user?.displayName}');
@@ -137,7 +139,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       final resultResponse = await LoginRepository()
           .loginUserWithSocialPlatform(
-            token: accessToken,
+            token: accessToken.tokenString,
             provider: 'facebook',
           );
 
@@ -174,14 +176,18 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  Future<void> _navigateAfterLogin(BuildContext context, LoginResponseModel result) async {
+  Future<void> _navigateAfterLogin(
+    BuildContext context,
+    LoginResponseModel result,
+  ) async {
     if (result.userDetails != null) {
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);
 
       // For Social Login Checks
-      if (result.userDetails?.userType == '' || result.userDetails?.userType == null) {
+      if (result.userDetails?.userType == '' ||
+          result.userDetails?.userType == null) {
         final signupData = {'email': state.email};
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -193,13 +199,12 @@ class LoginCubit extends Cubit<LoginState> {
           ),
           (route) => false,
         );
-      } else if (result.userDetails?.isActiveSubscription == null || result.userDetails?.isActiveSubscription == false) {
+      } else if (result.userDetails?.isActiveSubscription == null ||
+          result.userDetails?.isActiveSubscription == false) {
         final signupData = {'email': state.email};
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => SubscriptionScreen(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => SubscriptionScreen()));
       } else {
         AppSnackBar.custom(
           context,

@@ -67,6 +67,7 @@ abstract class AssetsPath {
   static const String chatIcon = "chatIcon";
   static const String CompareIcon = "CompareIcon";
   static const String ExploreIcon = "ExploreIcon";
+  static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
   static const String MapIcon = "MapIcon";
   static const String ProfileIcon = "ProfileIcon";
   static const String SavedIcon = "SavedIcon";

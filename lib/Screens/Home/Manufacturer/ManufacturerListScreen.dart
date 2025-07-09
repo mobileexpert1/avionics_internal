@@ -10,7 +10,6 @@ import '../../../bloc/manufacturer/manufacturer_state.dart';
 import '../HomeScreen.dart';
 import 'ManufacturerDetailScreen.dart';
 
-
 class ManufacturerScreen extends StatefulWidget {
   @override
   _ManufacturerScreenState createState() => _ManufacturerScreenState();
@@ -115,15 +114,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                             leading: item.icon != null
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(5),
-                                    child: Image.network(
-                                      item.icon!,
-                                      width: screenWidth * 0.1,
-                                      height: screenWidth * 0.1,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const Icon(Icons.broken_image),
-                                    ),
+                                    child: _buildLeadingImage(screenWidth * 0.1, screenWidth * 0.1, item.icon!, (item.icon ?? '').contains(".svg"), !(item.icon ?? '').contains(".svg")),
                                   )
                                 : const Icon(Icons.image_not_supported),
                             title: Text(
@@ -141,7 +132,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => ManufacturerDetailScreen(manufacturerDetailId: item.id),
+                                  builder: (_) => ManufacturerDetailScreen(
+                                    manufacturerDetailId: item.id,
+                                  ),
                                 ),
                               );
                             },
@@ -157,5 +150,51 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildLeadingImage(
+    double width,
+    double height,
+    String imagePath,
+    bool isLocalSvgAsest,
+    bool isNetwork,
+  ) {
+    if (isLocalSvgAsest) {
+      if (imagePath.contains("assets")) {
+        return SvgPicture.asset(
+          imagePath,
+          height: height,
+          width: width,
+          fit: BoxFit.contain,
+        );
+      } else {
+        return SizedBox(
+          height: height,
+          width: width,
+          child: SvgPicture.network(
+            imagePath,
+            fit: BoxFit.contain,
+            placeholderBuilder: (context) =>
+                Icon(Icons.broken_image, size: (width + height)),
+          ),
+        );
+      }
+    } else if (isNetwork) {
+      return Image.network(
+        imagePath,
+        height: height,
+        width: width,
+        fit: BoxFit.contain,
+        errorBuilder: (_, _, _) =>
+            Icon(Icons.broken_image, size: (width + height)),
+      );
+    } else {
+      return Image.asset(
+        imagePath,
+        height: height,
+        width: width,
+        fit: BoxFit.contain,
+      );
+    }
   }
 }
