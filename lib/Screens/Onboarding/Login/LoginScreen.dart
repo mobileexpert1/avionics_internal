@@ -17,8 +17,7 @@ import '../../../bloc/login/login_state.dart';
 import '../ForgotCreateNewPassword/ForgotScreen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key})
-    : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -53,9 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: CustomAppBar(
-                  title: ConstantStrings.loginButton,
-                ),
+                appBar: CustomAppBar(title: ConstantStrings.loginButton),
                 body: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
@@ -130,14 +127,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             ConstantStrings.forgotPassword,
-                            style: TextStyle(color: AppColors.textColour,fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              color: AppColors.textColour,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
 
                         Text(
                           ConstantStrings.orContinue,
-                          style: TextStyle(color: AppColors.textColour,fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                            color: AppColors.textColour,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 20),
 
@@ -150,8 +153,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                           ),
                           onPressed: () {
-                            context.read<LoginCubit>()
-                                .signInWithGoogle(context);
+                            context.read<LoginCubit>().signInWithGoogle(
+                              context,
+                            );
                           },
                         ),
 
@@ -178,8 +182,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                           ),
                           onPressed: () {
-                            context.read<LoginCubit>()
-                                .signInWithFacebook(context);
+                            context.read<LoginCubit>().signInWithFacebook(
+                              context,
+                            );
                           },
                         ),
                         const SizedBox(height: 30),

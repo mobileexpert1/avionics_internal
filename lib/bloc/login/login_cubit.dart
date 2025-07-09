@@ -97,7 +97,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
       final result = await LoginRepository().loginUserWithSocialPlatform(
-        token: userCredential.user!.uid,
+        token: googleAuth.idToken ?? '',
         provider: 'google',
       );
 
@@ -127,9 +127,29 @@ class LoginCubit extends Cubit<LoginState> {
       final credential = FacebookAuthProvider.credential(accessToken);
       final userCredential = await _auth.signInWithCredential(credential);
 
+      debugPrint('userCredential User: ${userCredential.user?.displayName}');
+      debugPrint('credential User: ${credential}');
+      debugPrint('accessToken: ${accessToken}');
+
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+
+      final resultResponse = await LoginRepository()
+          .loginUserWithSocialPlatform(
+            token: accessToken,
+            provider: 'facebook',
+          );
+
+      emit(state.copyWith(status: CommonApiStatus.success));
+      await _navigateAfterLogin(context, resultResponse);
       debugPrint('Facebook User: ${userCredential.user?.displayName}');
     } catch (e) {
-      debugPrint('Facebook login error: $e');
+      print(e.toString());
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -158,16 +178,38 @@ class LoginCubit extends Cubit<LoginState> {
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);
 
-      AppSnackBar.custom(
-        context,
-        message: 'Login Successfully',
-        svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
-      );
+      // For Social Login Checks
+      if (result.userType == null || result.userType == false) {
+        final signupData = {'email': state.email};
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) =>
+                AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
+          ),
+              (route) => false,
+        );
+      }else if (result.is_active_subscription == null || result.userType == false) {
+        final signupData = {'email': state.email};
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) =>
+                AvtarScreen(
+                    isComeFromSignupScreen: true, signupData: signupData),
+          ),
+              (route) => false,
+        );
+      }else {
+        AppSnackBar.custom(
+          context,
+          message: 'Login Successfully',
+          svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
+        );
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-        (route) => false,
-      );
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+              (route) => false,
+        );
+      }
     } else if (result.isVerified == false) {
       AppSnackBar.custom(
         context,
