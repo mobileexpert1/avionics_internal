@@ -212,14 +212,14 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: _iconSize,
-                height: _iconSize,
-                child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.AttachFileIcon),
-                ),
-              ),
-              const SizedBox(width: 8),
+              // SizedBox(
+              //   width: _iconSize,
+              //   height: _iconSize,
+              //   child: SvgPicture.asset(
+              //     CommonUi.setSvgImage(AssetsPath.AttachFileIcon),
+              //   ),
+              // ),
+              // const SizedBox(width: 8),
               Expanded(
                 child: TextField(
                   controller: _controller,
@@ -242,7 +242,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               IconButton(
                 padding: EdgeInsets.zero,
                 constraints:
-                BoxConstraints.tight(Size(_iconSize + 18, _iconSize + 18)),
+                BoxConstraints.tight(Size(_iconSize + 20, _iconSize + 20)),
                 icon: SvgPicture.asset(
                   CommonUi.setSvgImage(AssetsPath.SendIcon),
                   height: _iconSize,

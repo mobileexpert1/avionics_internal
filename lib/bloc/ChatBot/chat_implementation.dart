@@ -82,14 +82,10 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   void _onError(Object error) {
-    _pushSystem('⚠️ Connection error: $error');
   }
 
   void _onDone() {
     if (_closing) return;
-
-    _pushSystem('⚠️ Disconnected. Re‑joining…');
-
     _retries = (_retries + 1).clamp(1, 5);
     final delay = Duration(seconds: 2 << (_retries - 1));
 

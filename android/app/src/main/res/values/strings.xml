@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Facebook credentials -->
-    <string name="facebook_app_id">1349315743474565</string>
-    <string name="facebook_client_token">2eaf20c47867bde3eee985dd5ed975b4</string>
-    <string name="fb_login_protocol_scheme">fb1349315743474565</string>
+    <string name="facebook_app_id">2148381735668916</string>
+    <string name="facebook_client_token">82c4a1cc6f71281c70c7c3e20f80c317</string>
+    <string name="fb_login_protocol_scheme">fb2148381735668916</string>
 </resources>
