@@ -165,20 +165,44 @@ class LoginCubit extends Cubit<LoginState> {
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
-      ); // Access token and user details
+      );
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+
+      final String userToken = credential.identityToken ?? "";
+      final String givenName = credential.givenName ?? "A";
+      final String familyName = credential.familyName ?? "A";
+      final String email = credential.email ?? "";
+
       print('User Token: ${credential.identityToken}');
       print('User ID: ${credential.userIdentifier}');
       print('Email: ${credential.email}');
       print('Full Name: ${credential.givenName} ${credential.familyName}');
-      final String userToken = credential.identityToken ?? "";
-      final String givenName = credential.givenName ?? "";
-      final String familyName = credential.familyName ?? "";
-      final String email = credential.email ?? "";
+
+      final result = await LoginRepository().loginUserWithSocialPlatform(
+        token: userToken,
+        provider: 'apple',
+      );
+
       if (userToken == "") {
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: "Please try again, Login fail....",
+          ),
+        );
         return;
       }
+
+      emit(state.copyWith(status: CommonApiStatus.success));
+      await _navigateAfterLogin(context, result);
     } catch (e) {
       print(e.toString());
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
