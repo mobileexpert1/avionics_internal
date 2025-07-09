@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/constantImages.dart';
 import '../../Profile/ProfileScreen.dart';
-import '../HomeAirbus/AirCraftSection/AircraftComparisonScreen.dart';
+import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
 import '../HomeScreen.dart';
-import '../Manufacturer/ManufacturerListScreen.dart';
-
 
 class RootTabbarscreen extends StatefulWidget {
   @override
@@ -13,14 +13,32 @@ class RootTabbarscreen extends StatefulWidget {
 
 class _RootTabbarScreenState extends State<RootTabbarscreen> {
   int _selectedIndex = 0;
+  List<Widget> _pages = [];
+  bool _isLoading = true;
 
-  final List<Widget> _pages = [
-    HomeScreen(),
-    Center(child: Text('Map')),
-    Center(child: Text('Game')),
-    Center(child: Text('AskWILCO')),
-    ProfileScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadTokenAndInitPages();
+  }
+
+  Future<void> _loadTokenAndInitPages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('UserAccessTokenKey');
+
+    setState(() {
+      _pages = [
+        HomeScreen(),
+        Center(child: Text('Map')),
+        Center(child: Text('Game')),
+        token != null && token.isNotEmpty
+            ? AskWilcoScreen(accessToken: token,isComeFromTab: true)
+            : Center(child: Text("Token not found")),
+        ProfileScreen(),
+      ];
+      _isLoading = false;
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -31,57 +49,69 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.ExploreIcon),
-              width: 70,
-              height: 30,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _pages[_selectedIndex],
+      bottomNavigationBar: _isLoading
+          ? null
+          : BottomNavigationBar(
+              backgroundColor: Colors.white,
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              selectedItemColor: Colors.black,
+              unselectedItemColor: Colors.grey,
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Image.asset(
+                    CommonUi.setPngImage(
+                      _selectedIndex == 0
+                          ? AssetsPath.ExploreIcon
+                          : AssetsPath.ExploreUnSelectedIcon,
+                    ),
+                    width: 70,
+                    height: 30,
+                  ),
+                  label: 'Explore',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image.asset(
+                    CommonUi.setPngImage(AssetsPath.MapIcon),
+                    width: 70,
+                    height: 24,
+                    color: _selectedIndex == 1 ? Colors.black : Colors.grey,
+                  ),
+                  label: 'Map',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image.asset(
+                    CommonUi.setPngImage(AssetsPath.gameIcon),
+                    width: 70,
+                    height: 24,
+                    color: _selectedIndex == 2 ? Colors.black : Colors.grey,
+                  ),
+                  label: 'Game',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image.asset(
+                    CommonUi.setPngImage(AssetsPath.chatIcon),
+                    width: 70,
+                    height: 24,
+                    color: _selectedIndex == 3 ? Colors.black : Colors.grey,
+                  ),
+                  label: 'AskWILCO',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image.asset(
+                    CommonUi.setPngImage(AssetsPath.ProfileIcon),
+                    width: 70,
+                    height: 24,
+                    color: _selectedIndex == 4 ? Colors.black : Colors.grey,
+                  ),
+                  label: 'Profile',
+                ),
+              ],
             ),
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.MapIcon),
-              width: 70,
-              height: 24,
-            ),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.gameIcon),
-              width: 70,
-              height: 24,
-            ),
-            label: 'Game',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.chatIcon),
-              width: 70,
-              height: 24,
-            ),
-            label: 'AskWILCO',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              CommonUi.setPngImage(AssetsPath.ProfileIcon),
-              width: 70,
-              height: 24,
-            ),
-            label: 'Profile',
-          ),
-        ],
-      ),
     );
   }
 }

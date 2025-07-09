@@ -1,5 +1,7 @@
 // LoginScreen.dart
 
+import 'dart:io';
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Screens/Onboarding/Signup/SignupScreen.dart';
@@ -161,17 +163,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 12),
 
-                        CustomSocialLoginButtons(
-                          backgroundColor: Colors.black,
-                          textColor: Colors.white,
-                          title: ConstantStrings.loginWithApple,
-                          icon: SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.apple),
-                            fit: BoxFit.fill,
+                        if (!Platform.isAndroid) ...[
+                          CustomSocialLoginButtons(
+                            backgroundColor: Colors.black,
+                            textColor: Colors.white,
+                            title: ConstantStrings.loginWithApple,
+                            icon: SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.apple),
+                              fit: BoxFit.fill,
+                            ),
+                            onPressed: () {
+                              // Apple Sign In logic here
+                            },
                           ),
-                          onPressed: () {},
-                        ),
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
+                        ],
 
                         CustomSocialLoginButtons(
                           backgroundColor: AppColors.facebookButton,

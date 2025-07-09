@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
 import 'bloc/Profile/Avtar/avtar_cubit.dart';
@@ -35,12 +33,9 @@ import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cub
 // }
 
 Future<void> main() async {
-  //firebase intialize
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;

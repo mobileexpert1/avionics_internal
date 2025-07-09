@@ -10,9 +10,11 @@ class AskWilcoScreen extends StatefulWidget {
   const AskWilcoScreen({
     super.key,
     required this.accessToken,
+    required this.isComeFromTab,
   });
 
   final String accessToken;
+  final bool isComeFromTab;
 
   @override
   State<AskWilcoScreen> createState() => _AskWilcoScreenState();
@@ -133,10 +135,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   AppBar _buildAppBar() => AppBar(
     backgroundColor: Colors.white,
     elevation: 0,
-    leading: IconButton(
+    leading: (widget.isComeFromTab == true ? Wrap() :IconButton(
       icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF32377D)),
       onPressed: () => Navigator.pop(context),
-    ),
+    )),
     centerTitle: true,
     title: const Text(
       'Ask WILCO',

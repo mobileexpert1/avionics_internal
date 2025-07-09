@@ -11,6 +11,7 @@ import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
 import '../../../bloc/Profile/Avtar/avtar_state.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../Onboarding/Login/LoginScreen.dart';
 
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;
@@ -43,6 +44,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
     super.initState();
     context.read<AvtarCubit>().loadAvatarFromPrefs(
       widget.isComeFromSignupScreen,
+      widget.isComeFromSocialLogin,
     );
   }
 
@@ -54,7 +56,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
         title: ConstantStrings.avtarTitle,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => (widget.isComeFromSocialLogin == true ? Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (_) => LoginScreen(),
+            ),
+                (route) => false,
+          ) : Navigator.pop(context) )
         ),
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(
