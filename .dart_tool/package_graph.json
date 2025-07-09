@@ -23,6 +23,7 @@
         "pinput",
         "responsive_sizer",
         "shared_preferences",
+        "sign_in_with_apple",
         "smooth_page_indicator",
         "sqflite",
         "sqflite_common_ffi",
@@ -102,6 +103,16 @@
       "name": "cupertino_icons",
       "version": "1.0.8",
       "dependencies": []
+    },
+    {
+      "name": "sign_in_with_apple",
+      "version": "7.0.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "sign_in_with_apple_platform_interface",
+        "sign_in_with_apple_web"
+      ]
     },
     {
       "name": "firebase_auth",
@@ -439,6 +450,24 @@
       "name": "universal_platform",
       "version": "1.1.0",
       "dependencies": []
+    },
+    {
+      "name": "sign_in_with_apple_web",
+      "version": "3.0.0",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "sign_in_with_apple_platform_interface"
+      ]
+    },
+    {
+      "name": "sign_in_with_apple_platform_interface",
+      "version": "2.0.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
     },
     {
       "name": "firebase_core_platform_interface",

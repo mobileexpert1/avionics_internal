@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fit: BoxFit.fill,
                             ),
                             onPressed: () {
-                              // Apple Sign In logic here
+                              context.read<LoginCubit>().signInWithApple(context);
                             },
                           ),
                           const SizedBox(height: 12),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/constantImages.dart';
@@ -154,6 +155,30 @@ class LoginCubit extends Cubit<LoginState> {
           errorMessage: e.toString(),
         ),
       );
+    }
+  }
+
+  Future<void> signInWithApple(BuildContext context) async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      ); // Access token and user details
+      print('User Token: ${credential.identityToken}');
+      print('User ID: ${credential.userIdentifier}');
+      print('Email: ${credential.email}');
+      print('Full Name: ${credential.givenName} ${credential.familyName}');
+      final String userToken = credential.identityToken ?? "";
+      final String givenName = credential.givenName ?? "";
+      final String familyName = credential.familyName ?? "";
+      final String email = credential.email ?? "";
+      if (userToken == "") {
+        return;
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 

@@ -476,6 +476,24 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "sign_in_with_apple",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sign_in_with_apple-7.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "sign_in_with_apple_platform_interface",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sign_in_with_apple_platform_interface-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "sign_in_with_apple_web",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sign_in_with_apple_web-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///E:/Mobile/flutter_3.32/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
