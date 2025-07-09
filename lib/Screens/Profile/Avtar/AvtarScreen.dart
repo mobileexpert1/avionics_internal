@@ -165,15 +165,6 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         final selectedUserType =
                             context.read<AvtarCubit>().state.selectedUserType ??
                             '';
-                        // if (widget.isComeFromSocialLogin) {
-                        //   AvtarCubit().selectAvatar(
-                        //     selectedUserType,
-                        //     widget.isComeFromSignupScreen,
-                        //     widget.isComeFromSocialLogin,
-                        //     context,
-                        //     {},
-                        //   );
-                        // }
                         context.read<AvtarCubit>().selectAvatar(
                           selectedUserType,
                           widget.isComeFromSignupScreen,

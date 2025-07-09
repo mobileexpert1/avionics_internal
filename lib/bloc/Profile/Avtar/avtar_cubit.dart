@@ -78,15 +78,12 @@ class AvtarCubit extends Cubit<AvtarState> {
         if (isComeFromSocialLogin == true) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => SubscriptionScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => SubscriptionScreen()),
           );
         }
       }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,

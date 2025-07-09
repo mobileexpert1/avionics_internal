@@ -11,7 +11,9 @@ import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
+import '../../Database/auth_storage.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'login_state.dart';
 import '../../Constants/Validators.dart';
 
@@ -91,9 +93,6 @@ class LoginCubit extends Cubit<LoginState> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      // debugPrint('• accessToken  : ${ googleAuth.accessToken}');
-      // debugPrint('• id  : ${googleAuth.idToken}');
-
       final userCredential = await _auth.signInWithCredential(credential);
       if (userCredential.user == null) return;
 
@@ -196,14 +195,10 @@ class LoginCubit extends Cubit<LoginState> {
         );
       } else if (result.userDetails?.isActiveSubscription == null || result.userDetails?.isActiveSubscription == false) {
         final signupData = {'email': state.email};
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => AvtarScreen(
-              isComeFromSignupScreen: true,
-              signupData: signupData,
-            ),
+            builder: (_) => SubscriptionScreen(),
           ),
-          (route) => false,
         );
       } else {
         AppSnackBar.custom(

@@ -38,7 +38,7 @@ class SubscriptionRepository {
     try {
       final response = await ApiService.post(
         url: url,
-        body: {"subscription_id": subscription_id,"current_user_id": userId,},
+        body: {"subscription_id": subscription_id,"current_user_id": userId},
       );
 
       return SubscriptionItemModel.fromJson(response);
