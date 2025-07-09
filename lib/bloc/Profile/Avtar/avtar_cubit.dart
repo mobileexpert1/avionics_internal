@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
+import 'package:avionics_internal/Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/Avtar/avtar_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
+import '../../../Screens/Profile/ProfileSubsciption/ProfileSubsciptionScreen.dart';
 import '../../signup/signup_repository.dart';
 import 'avtar_state.dart';
 
@@ -18,11 +20,12 @@ class AvtarCubit extends Cubit<AvtarState> {
   }
 
   Future<void> selectAvatar(
-      String userType,
-      bool isComeFromSignup,
-      BuildContext context,
-      Map<String, String> signupData,
-      ) async {
+    String userType,
+    bool isComeFromSignup,
+    bool? isComeFromSocialLogin,
+    BuildContext context,
+    Map<String, String> signupData,
+  ) async {
     emit(
       state.copyWith(
         status: CommonApiStatus.submitting,
@@ -51,7 +54,6 @@ class AvtarCubit extends Cubit<AvtarState> {
             duration: Duration(seconds: 2),
           ),
         );
-
       } else {
         await AvtarRepository().setAvtarForProfile(userType: userType);
       }
@@ -73,14 +75,24 @@ class AvtarCubit extends Cubit<AvtarState> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Avatar updated successfully')),
         );
+        if (isComeFromSocialLogin == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SubscriptionScreen(),
+            ),
+          );
+        }
       }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
 
-      emit(state.copyWith(
-        status: CommonApiStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 

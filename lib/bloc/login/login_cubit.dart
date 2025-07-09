@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
 import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:avionics_internal/bloc/login/login_repository.dart';
+import 'package:avionics_internal/bloc/login/login_response_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,6 +91,8 @@ class LoginCubit extends Cubit<LoginState> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      // debugPrint('• accessToken  : ${ googleAuth.accessToken}');
+      // debugPrint('• id  : ${googleAuth.idToken}');
 
       final userCredential = await _auth.signInWithCredential(credential);
       if (userCredential.user == null) return;
@@ -97,7 +100,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
       final result = await LoginRepository().loginUserWithSocialPlatform(
-        token: googleAuth.idToken ?? '',
+        token: googleAuth.accessToken ?? '',
         provider: 'google',
       );
 
@@ -172,33 +175,37 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  Future<void> _navigateAfterLogin(BuildContext context, dynamic result) async {
+  Future<void> _navigateAfterLogin(BuildContext context, LoginResponseModel result) async {
     if (result.userDetails != null) {
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);
 
       // For Social Login Checks
-      if (result.userType == null || result.userType == false) {
+      if (result.userDetails?.userType == '' || result.userDetails?.userType == null) {
         final signupData = {'email': state.email};
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) =>
-                AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
+            builder: (_) => AvtarScreen(
+              isComeFromSignupScreen: false,
+              signupData: {},
+              isComeFromSocialLogin: true,
+            ),
           ),
-              (route) => false,
+          (route) => false,
         );
-      }else if (result.is_active_subscription == null || result.userType == false) {
+      } else if (result.userDetails?.isActiveSubscription == null || result.userDetails?.isActiveSubscription == false) {
         final signupData = {'email': state.email};
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) =>
-                AvtarScreen(
-                    isComeFromSignupScreen: true, signupData: signupData),
+            builder: (_) => AvtarScreen(
+              isComeFromSignupScreen: true,
+              signupData: signupData,
+            ),
           ),
-              (route) => false,
+          (route) => false,
         );
-      }else {
+      } else {
         AppSnackBar.custom(
           context,
           message: 'Login Successfully',
@@ -207,7 +214,7 @@ class LoginCubit extends Cubit<LoginState> {
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-              (route) => false,
+          (route) => false,
         );
       }
     } else if (result.isVerified == false) {

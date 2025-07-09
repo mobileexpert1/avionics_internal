@@ -15,11 +15,13 @@ import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;
   final Map<String, String> signupData;
+  final bool isComeFromSocialLogin;
 
   const AvtarScreen({
     Key? key,
     required this.isComeFromSignupScreen,
     required this.signupData,
+    this.isComeFromSocialLogin = false,
   }) : super(key: key);
 
   @override
@@ -28,12 +30,7 @@ class AvtarScreen extends StatefulWidget {
 
 class _AvtarScreenState extends State<AvtarScreen> {
   final List<String> titles = ['Pilot', 'ATCO', 'Student', 'Enthusiasts'];
-  final List<String> userTypes = [
-    'pilot',
-    'atco',
-    'student',
-    'enthusiast',
-  ];
+  final List<String> userTypes = ['pilot', 'atco', 'student', 'enthusiast'];
   final List<String> icons = [
     AssetsPath.avtarFirst,
     AssetsPath.avtarSecond,
@@ -84,12 +81,14 @@ class _AvtarScreenState extends State<AvtarScreen> {
               return GestureDetector(
                 onTap: () {
                   final cubit = context.read<AvtarCubit>();
-                  if (widget.isComeFromSignupScreen) {
+                  if (widget.isComeFromSignupScreen ||
+                      widget.isComeFromSocialLogin) {
                     cubit.selectAvatarTypeOnly(userType);
                   } else {
                     cubit.selectAvatar(
                       userType,
                       widget.isComeFromSignupScreen,
+                      widget.isComeFromSocialLogin,
                       context,
                       {},
                     );
@@ -143,7 +142,8 @@ class _AvtarScreenState extends State<AvtarScreen> {
           );
         },
       ),
-      bottomNavigationBar: widget.isComeFromSignupScreen
+      bottomNavigationBar:
+          (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
           ? SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -165,9 +165,19 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         final selectedUserType =
                             context.read<AvtarCubit>().state.selectedUserType ??
                             '';
+                        // if (widget.isComeFromSocialLogin) {
+                        //   AvtarCubit().selectAvatar(
+                        //     selectedUserType,
+                        //     widget.isComeFromSignupScreen,
+                        //     widget.isComeFromSocialLogin,
+                        //     context,
+                        //     {},
+                        //   );
+                        // }
                         context.read<AvtarCubit>().selectAvatar(
                           selectedUserType,
                           widget.isComeFromSignupScreen,
+                          widget.isComeFromSocialLogin,
                           context,
                           widget.signupData,
                         );
