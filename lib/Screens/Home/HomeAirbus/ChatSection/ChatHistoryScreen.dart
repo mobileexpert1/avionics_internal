@@ -5,6 +5,7 @@ import 'package:avionics_internal/bloc/ChatHistory/chat_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import 'ChatBotScreen.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
   const ChatHistoryScreen({Key? key}) : super(key: key);
@@ -19,6 +20,15 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     super.initState();
     BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
   }
+
+  // class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
+  // @override
+  // void initState() {
+  // super.initState();
+  // WidgetsBinding.instance.addPostFrameCallback((_) {
+  // BlocProvider.of<ChatHistoryCubit>(context).loadChatHistory(context, fromLocal: true);
+  // });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +51,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("No chat sessions yet."),
-                ],
+                children: [Text("No chat sessions yet.")],
               ),
             );
           }
@@ -65,13 +73,14 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                   ],
                 ),
                 child: ListTile(
-                  title: Text(item.title ?? '',style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                  )),
+                  title: Text(
+                    item.title ?? '',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
 
                   trailing: const Icon(Icons.arrow_forward_ios, size: 15),
                   onTap: () {
-                    // Optional: handle navigation
+
                   },
                 ),
               );

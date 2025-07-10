@@ -13,11 +13,29 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       ]) {
     _init(accessToken);
   }
+  //
+  // Future<void> _loadChatHistory() async {
+  //   final chats = await .getAll('chat_messages');
+  //
+  //   final mapped = chats.map((msg) {
+  //     return {
+  //       'type': msg.author == ChatAuthor.user ? 'user' : 'bot',
+  //       'text': msg.text,
+  //     };
+  //   }).toList();
+  //
+  //   final current = List<Map<String, String>>.from(state)
+  //     ..removeWhere((m) => m['type'] != 'button');
+  //
+  //   emit([...mapped, ...current]);
+  // }
+
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
 
   Future<void> _init(String token) async {
+    // await _loadChatHistory();
     await _repo.connect(accessToken: token);
     _sub = _repo.messages.listen(_onSocketMessage);
   }

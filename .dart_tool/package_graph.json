@@ -28,6 +28,7 @@
         "sqflite",
         "sqflite_common_ffi",
         "url_launcher",
+        "uuid",
         "web_socket_channel"
       ],
       "devDependencies": [
@@ -1093,6 +1094,26 @@
       "dependencies": [
         "meta"
       ]
+    },
+    {
+      "name": "uuid",
+      "version": "4.5.1",
+      "dependencies": [
+        "crypto",
+        "fixnum",
+        "meta",
+        "sprintf"
+      ]
+    },
+    {
+      "name": "sprintf",
+      "version": "7.0.0",
+      "dependencies": []
+    },
+    {
+      "name": "fixnum",
+      "version": "1.1.1",
+      "dependencies": []
     }
   ],
   "configVersion": 1

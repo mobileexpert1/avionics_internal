@@ -21,3 +21,26 @@ class ChatHistoryRepository {
     }
   }
 }
+
+// import '../../Database/generic_methods.dart';
+// import '../ChatBot/chat_model.dart';
+// import 'chat_history_model.dart';
+//
+// class ChatHistoryRepository {
+//   final _chatDb = GenericMethods<ChatMessage>(ChatMessage.fromMap);
+//
+//   Future<List<ChatHistoryModel>> fetchChatHistory() async {
+//     // Get all chat messages from the local DB
+//     final messages = await _chatDb.getAll('chat_messages');
+//
+//     // You can customize this: we are using each message's ID and first few words as title
+//     final history = messages.map((msg) {
+//       final preview = msg.text.length > 30
+//           ? '${msg.text.substring(0, 30)}...'
+//           : msg.text;
+//       return ChatHistoryModel(id: msg.id, title: preview);
+//     }).toList();
+//
+//     return history;
+//   }
+// }

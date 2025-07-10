@@ -4,12 +4,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
+import 'package:uuid/uuid.dart';
+
+import '../../Database/generic_methods.dart';
 import 'chat_model.dart';
 import 'chat_repository.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl();
+
   final _controller = StreamController<ChatMessage>.broadcast();
+  final _uuid = Uuid();
+
+  final _chatDb = GenericMethods<ChatMessage>(ChatMessage.fromMap);
+
   @override
   Stream<ChatMessage> get messages => _controller.stream;
 
@@ -18,18 +26,18 @@ class ChatRepositoryImpl implements ChatRepository {
 
   String? _sessionId;
   String? _accessToken;
-  bool    _closing = false;
-  int     _retries    = 0;
+  bool _closing = false;
+  int _retries = 0;
   String? _lastSystem;
 
   @override
   Future<void> connect({required String accessToken}) async {
-    _closing     = false;
+    _closing = false;
     _accessToken = accessToken;
-    _retries     = 0;
+    _retries = 0;
 
     final prefs = await SharedPreferences.getInstance();
-    _sessionId  = prefs.getString('wilco_session_id');
+    _sessionId = prefs.getString('wilco_session_id');
 
     return _openSocket();
   }
@@ -37,7 +45,16 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   void send(String text) {
     _channel?.sink.add(jsonEncode({'query': text}));
-    _controller.add(ChatMessage(author: ChatAuthor.user, text: text));
+
+    final msg = ChatMessage(
+      id: _uuid.v4(),
+      author: ChatAuthor.user,
+      text: text,
+      sessionId: _sessionId!,
+    );
+
+    _controller.add(msg);
+    _saveChatMessage(msg);
   }
 
   @override
@@ -50,8 +67,8 @@ class ChatRepositoryImpl implements ChatRepository {
 
   Future<void> _openSocket() async {
     final endpoint = _sessionId == null
-        ? 'ws://192.168.14.4:8010/ai-engine/wilco/new-session?token=$_accessToken'
-        : 'ws://192.168.14.4:8010/ai-engine/wilco/session/$_sessionId?token=$_accessToken';
+        ? 'wss://avionica.csdevhub.com/ai-engine/wilco/new-session?token=$_accessToken'
+        : 'wss://avionica.csdevhub.com/ai-engine/wilco/session/$_sessionId?token=$_accessToken';
 
     _channel = IOWebSocketChannel.connect(
       Uri.parse(endpoint),
@@ -61,7 +78,7 @@ class ChatRepositoryImpl implements ChatRepository {
     _socketSub = _channel!.stream.listen(
       _onData,
       onError: _onError,
-      onDone:  _onDone,
+      onDone: _onDone,
       cancelOnError: true,
     );
   }
@@ -77,11 +94,20 @@ class ChatRepositoryImpl implements ChatRepository {
 
     final answer = decoded['answer'] as String?;
     if (answer != null) {
-      _controller.add(ChatMessage(author: ChatAuthor.bot, text: answer));
+      final msg = ChatMessage(
+        id: _uuid.v4(),
+        author: ChatAuthor.bot,
+        text: answer,
+        sessionId: _sessionId!,
+      );
+
+      _controller.add(msg);
+      _saveChatMessage(msg);
     }
   }
 
   void _onError(Object error) {
+    // Optional: log error
   }
 
   void _onDone() {
@@ -98,7 +124,23 @@ class ChatRepositoryImpl implements ChatRepository {
     if (_controller.isClosed) return;
     if (_lastSystem == text) return;
     _lastSystem = text;
-    _controller.add(ChatMessage(author: ChatAuthor.bot, text: text));
+
+    final msg = ChatMessage(
+      id: _uuid.v4(),
+      author: ChatAuthor.bot,
+      text: text,
+      sessionId: _sessionId!,
+    );
+
+    _controller.add(msg);
+    _saveChatMessage(msg);
+  }
+
+  void _saveChatMessage(ChatMessage msg) async {
+    await _chatDb.insertAll([msg]);
+  }
+
+  Future<List<ChatMessage>> getMessagesForSession(String sessionId) async {
+    return await _chatDb.getBySession('chat_messages', sessionId);
   }
 }
-

@@ -89,4 +89,16 @@ class GenericMethods<T extends BaseModel> {
     }
     return false;
   }
+
+  Future<List<T>> getBySession(String table, String sessionId) async {
+    final uid = await AuthStorage.read();
+    if (uid == null) return [];
+
+    final rows = await _db.get(
+      table,
+      where: 'session_id = ? AND user_id = ?',
+      whereArgs: [sessionId, uid],
+    );
+    return rows.map(_fromMap).toList();
+  }
 }

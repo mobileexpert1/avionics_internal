@@ -1,23 +1,51 @@
-enum ChatAuthor { user, bot }
+import '../../Database/db_helper.dart';
 
-class ChatMessage {
-  const ChatMessage({
+enum ChatAuthor {
+  user,
+  bot,
+}
+
+class ChatMessage extends BaseModel {
+  ChatMessage({
+    required this.id,
     required this.author,
     required this.text,
-    this.isTyping = false,
+    required this.sessionId,
+    this.userId,
   });
 
-  final ChatAuthor author;
+  @override
+  final String id;
+  final ChatAuthor author; // Now using enum
   final String text;
-  final bool isTyping;
+  final String sessionId;
+  @override
+  String? userId;
 
   @override
-  bool operator ==(Object other) =>
-      other is ChatMessage &&
-          author == other.author &&
-          text.trim() == other.text.trim() &&
-          isTyping == other.isTyping;
+  String get table => 'chat_messages';
 
   @override
-  int get hashCode => Object.hash(author, text.trim(), isTyping);
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'author': author.name, // Save as 'user' or 'bot'
+    'text': text,
+    'user_id': userId,
+    'session_id': sessionId,
+  };
+
+  static ChatMessage fromMap(Map<String, dynamic> map) {
+    final authorStr = map['author'] as String;
+
+    return ChatMessage(
+      id: map['id'] as String,
+      author: ChatAuthor.values.firstWhere(
+            (e) => e.name == authorStr,
+        orElse: () => ChatAuthor.bot,
+      ),
+      text: map['text'] as String,
+      sessionId: map['session_id'] as String,
+      userId: map['user_id'] as String?,
+    );
+  }
 }
