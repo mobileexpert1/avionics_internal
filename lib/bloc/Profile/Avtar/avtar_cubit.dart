@@ -4,11 +4,9 @@ import 'package:avionics_internal/bloc/Profile/Avtar/avtar_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
-import '../../../Screens/Profile/ProfileSubsciption/ProfileSubsciptionScreen.dart';
 import '../../signup/signup_repository.dart';
 import 'avtar_state.dart';
 
@@ -78,7 +76,11 @@ class AvtarCubit extends Cubit<AvtarState> {
         if (isComeFromSocialLogin == true) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SubscriptionScreen()),
+            MaterialPageRoute(
+              builder: (context) => SubscriptionScreen(
+                isComeFromSocialLogin: isComeFromSocialLogin,
+              ),
+            ),
           );
         }
       }
@@ -93,7 +95,10 @@ class AvtarCubit extends Cubit<AvtarState> {
     }
   }
 
-  Future<void> loadAvatarFromPrefs(bool isComeFromSignup, bool isComeFromSocialLogin) async {
+  Future<void> loadAvatarFromPrefs(
+    bool isComeFromSignup,
+    bool isComeFromSocialLogin,
+  ) async {
     var userType = await SharedPrefsHelper.getAvtarUserType();
     if (isComeFromSignup == true || isComeFromSocialLogin == true) {
       userType = '';

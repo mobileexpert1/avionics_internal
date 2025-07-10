@@ -253,7 +253,7 @@ class LoginCubit extends Cubit<LoginState> {
         final signupData = {'email': state.email};
         Navigator.of(
           context,
-        ).push(MaterialPageRoute(builder: (_) => SubscriptionScreen()));
+        ).push(MaterialPageRoute(builder: (_) => SubscriptionScreen(isComeFromSocialLogin: true)));
       } else {
         AppSnackBar.custom(
           context,

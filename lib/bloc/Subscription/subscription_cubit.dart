@@ -55,7 +55,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     }
   }
 
-  Future<void> submitSubscriptionApi(BuildContext context) async {
+  Future<void> submitSubscriptionApi(BuildContext context,bool? isComeFromSocialLogin) async {
     final currentState = state;
     if (currentState is SubscriptionInitial) {
       final selectedFinalItem = currentState.subscriptionList.firstWhere(
@@ -85,7 +85,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
         AppSnackBar.custom(
           context,
-          message: 'Sign-up Successfully',
+          message: (isComeFromSocialLogin == true ? 'Login Successfully' : 'Sign-up Successfully'),
           svgAsset:CommonUi.setSvgImage(AssetsPath.signinIcon),
         );
 

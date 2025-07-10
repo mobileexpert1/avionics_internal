@@ -202,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         AppSnackBar.custom(
                           context,
-                          message: 'Logout Successfully',
+                          message: 'Logged out',
                           svgAsset:  CommonUi.setSvgImage(AssetsPath.logoutIcon),
                         );
                         _clearAllDataAndRedirectToSplashScreen(context);

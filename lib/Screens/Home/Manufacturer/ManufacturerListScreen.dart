@@ -109,12 +109,12 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(
                               horizontal: screenWidth * 0.05,
-                              vertical: screenHeight * 0.006,
+                              vertical: screenHeight * 0.012,
                             ),
                             leading: item.icon != null
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(5),
-                                    child: _buildLeadingImage(screenWidth * 0.1, screenWidth * 0.1, item.icon!, (item.icon ?? '').contains(".svg"), !(item.icon ?? '').contains(".svg")),
+                                    child: _buildLeadingImage(screenWidth * 0.15, screenWidth * 0.15, item.icon!, (item.icon ?? '').contains(".svg"), !(item.icon ?? '').contains(".svg")),
                                   )
                                 : const Icon(Icons.image_not_supported),
                             title: Text(

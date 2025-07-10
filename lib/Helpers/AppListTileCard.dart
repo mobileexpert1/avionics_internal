@@ -22,7 +22,7 @@ class AppListTileCard extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final horizontalPadding = screenWidth * 0.042;
-    final iconSize = screenWidth * 0.055;
+    final iconSize = screenWidth * 0.15;
     final fontSize = screenWidth * 0.038;
 
     return Padding(
