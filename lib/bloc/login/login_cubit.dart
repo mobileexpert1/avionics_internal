@@ -12,7 +12,6 @@ import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
-import '../../Database/auth_storage.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'login_state.dart';
@@ -118,6 +117,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> signInWithFacebook(BuildContext context) async {
+    await FacebookAuth.instance.logOut();
+
     try {
       final result = await FacebookAuth.instance.login(
         permissions: ['email', 'public_profile'],

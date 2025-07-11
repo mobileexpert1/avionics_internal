@@ -1,85 +1,42 @@
 {
   "project_info": {
-    "project_number": "142595232429",
-    "project_id": "fflowtestproject",
-    "storage_bucket": "fflowtestproject.firebasestorage.app"
+    "project_number": "951110180167",
+    "project_id": "avioflai-app-934cc",
+    "storage_bucket": "avioflai-app-934cc.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:142595232429:android:51fadc00aa82d7fb9fac24",
+        "mobilesdk_app_id": "1:951110180167:android:747cb971947acb26084062",
         "android_client_info": {
-          "package_name": "com.avionics.internal"
+          "package_name": "com.avioflai.aviation"
         }
       },
       "oauth_client": [
         {
-          "client_id": "142595232429-3u09iho7jlvlfenfob3t8956mtsf1hpq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCo3GxrpINjbXavMcLiRUB4_g5nrk2CLIc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "142595232429-3u09iho7jlvlfenfob3t8956mtsf1hpq.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "142595232429-3f2bk61is52nf9n2o336o5p7ovkeqlis.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.avionicsInternal"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:142595232429:android:400bc5cf2a6502839fac24",
-        "android_client_info": {
-          "package_name": "com.example.avionicsInternal"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "142595232429-a490v39mc08rqjelocjdnhqnvhlhua5g.apps.googleusercontent.com",
+          "client_id": "951110180167-p2udvptemg529c30mglkcvvtq4k9fmjb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.avionicsInternal",
+            "package_name": "com.avioflai.aviation",
             "certificate_hash": "857e7ef90bf8f896b8f34cac9ac3980b98e9d506"
           }
         },
         {
-          "client_id": "142595232429-3u09iho7jlvlfenfob3t8956mtsf1hpq.apps.googleusercontent.com",
+          "client_id": "951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCo3GxrpINjbXavMcLiRUB4_g5nrk2CLIc"
+          "current_key": "AIzaSyB2dlWvWP-wLhZHzTjsyIVSoDdvwgNawNc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "142595232429-3u09iho7jlvlfenfob3t8956mtsf1hpq.apps.googleusercontent.com",
+              "client_id": "951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "142595232429-3f2bk61is52nf9n2o336o5p7ovkeqlis.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.avionicsInternal"
-              }
             }
           ]
         }

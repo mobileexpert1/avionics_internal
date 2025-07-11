@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>142595232429-3f2bk61is52nf9n2o336o5p7ovkeqlis.apps.googleusercontent.com</string>
+	<string>951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.142595232429-3f2bk61is52nf9n2o336o5p7ovkeqlis</string>
+	<string>com.googleusercontent.apps.951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>142595232429-a490v39mc08rqjelocjdnhqnvhlhua5g.apps.googleusercontent.com</string>
+	<string>951110180167-p2udvptemg529c30mglkcvvtq4k9fmjb.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCW8Yfwq911Jphl-ky-h7CDUFWY0RG4kBY</string>
+	<string>AIzaSyCvCyWPkuK4Z6h5yg0YQAtz-6Hgoj-qTvI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>142595232429</string>
+	<string>951110180167</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.avionicsInternal</string>
+	<string>com.avioflai.aviation</string>
 	<key>PROJECT_ID</key>
-	<string>fflowtestproject</string>
+	<string>avioflai-app-934cc</string>
 	<key>STORAGE_BUCKET</key>
-	<string>fflowtestproject.firebasestorage.app</string>
+	<string>avioflai-app-934cc.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:142595232429:ios:f8fd9a70a3e5c4289fac24</string>
+	<string>1:951110180167:ios:a846f5aa45e2abdf084062</string>
 </dict>
 </plist>

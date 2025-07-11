@@ -1,4 +1,4 @@
-package com.example.avionicsInternal
+package com.avioflai.aviation
 
 import io.flutter.embedding.android.FlutterActivity
 

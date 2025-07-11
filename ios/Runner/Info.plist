@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.142595232429-3f2bk61is52nf9n2o336o5p7ovkeqlis</string>
+				<string>com.googleusercontent.apps.951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i</string>
 			</array>
 		</dict>
 	</array>
@@ -67,16 +67,16 @@
     <dict>
     <key>CFBundleURLSchemes</key>
     <array>
-    <string>fb2148381735668916</string>
+    <string>fb1831126584116154</string>
     </array>
     </dict>
     </array>
     <key>FacebookAppID</key>
-    <string>2148381735668916</string>
+    <string>1831126584116154</string>
     <key>FacebookClientToken</key>
-    <string>faa8315430051d3b1d567797a9449c6c</string>
+    <string>3fdf59b543830de9b8860238fc53987a</string>
     <key>FacebookDisplayName</key>
-    <string>AvioflAI-App</string>
+    <string>Avioflai-App</string>
 
     <key>CFBundleURLTypes</key>
     <array>
@@ -85,7 +85,7 @@
        <string>Editor</string>
        <key>CFBundleURLSchemes</key>
        <array>
-         <string>com.example.avionicsInternal</string>
+         <string>com.avioflai.aviation</string>
        </array>
      </dict>
     </array>

@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.avionicsInternal"
+    namespace = "com.avioflai.aviation"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     defaultConfig {
-        applicationId = "com.example.avionicsInternal"
+        applicationId = "com.avioflai.aviation"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
