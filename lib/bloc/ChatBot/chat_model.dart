@@ -18,7 +18,7 @@ class ChatMessage extends BaseModel {
   final String id;
   final ChatAuthor author; // Now using enum
   final String text;
-  final String sessionId;
+  String sessionId;
   @override
   String? userId;
 
@@ -48,4 +48,5 @@ class ChatMessage extends BaseModel {
       userId: map['user_id'] as String?,
     );
   }
+  static const String tableName = 'chat_messages';
 }

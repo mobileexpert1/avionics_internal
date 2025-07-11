@@ -325,7 +325,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => AskWilcoScreen(accessToken: token,isComeFromTab: false),
+                    builder: (_) => AskWilcoScreen(
+                      accessToken: token,
+                      isComeFromTab: true,
+                      sessionId: '',
+                      title: '',
+                    ),
                   ),
                 );
               } else {

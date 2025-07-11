@@ -32,7 +32,12 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
         Center(child: Text('Map')),
         Center(child: Text('Game')),
         token != null && token.isNotEmpty
-            ? AskWilcoScreen(accessToken: token,isComeFromTab: true)
+            ? AskWilcoScreen(
+                accessToken: token,
+                isComeFromTab: true,
+                title: '',
+                sessionId: '',
+              )
             : Center(child: Text("Token not found")),
         ProfileScreen(),
       ];

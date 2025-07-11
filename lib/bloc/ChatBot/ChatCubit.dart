@@ -4,38 +4,37 @@ import 'chat_implementation.dart';
 import 'chat_model.dart';
 
 class ChatCubit extends Cubit<List<Map<String, String>>> {
-  ChatCubit({required String accessToken})
+  ChatCubit({required String accessToken, required String existingSessionId,})
       : _repo = ChatRepositoryImpl(),
         super(const [
         {'type': 'bot', 'text': 'Hey there!'},
         {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
       ]) {
-    _init(accessToken);
+    _init(accessToken,existingSessionId );
   }
-  //
-  // Future<void> _loadChatHistory() async {
-  //   final chats = await .getAll('chat_messages');
-  //
-  //   final mapped = chats.map((msg) {
-  //     return {
-  //       'type': msg.author == ChatAuthor.user ? 'user' : 'bot',
-  //       'text': msg.text,
-  //     };
-  //   }).toList();
-  //
-  //   final current = List<Map<String, String>>.from(state)
-  //     ..removeWhere((m) => m['type'] != 'button');
-  //
-  //   emit([...mapped, ...current]);
-  // }
+
+
+  Future<void> _loadOldMessages(String sessionId) async {
+    final oldMessages = await _repo.getMessagesForSession(sessionId);
+    final history = oldMessages.map((msg) => {
+      'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+      'text': msg.text,
+    }).toList();
+
+    // Add a typing button as last element if needed
+    emit([
+      ...history,
+      {'type': 'button', 'text': ''},
+    ]);
+  }
 
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
 
-  Future<void> _init(String token) async {
-    // await _loadChatHistory();
-    await _repo.connect(accessToken: token);
+  Future<void> _init(String token, String sessionId) async {
+    await _loadOldMessages(sessionId);
+    await _repo.connect(accessToken: token, existingSessionId: sessionId);
     _sub = _repo.messages.listen(_onSocketMessage);
   }
 

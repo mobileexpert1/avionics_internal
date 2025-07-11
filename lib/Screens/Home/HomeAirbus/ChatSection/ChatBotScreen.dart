@@ -11,10 +11,14 @@ class AskWilcoScreen extends StatefulWidget {
     super.key,
     required this.accessToken,
     required this.isComeFromTab,
+    required this.sessionId,
+    required this.title,
   });
 
   final String accessToken;
   final bool isComeFromTab;
+  final String sessionId;
+  final String title;
 
   @override
   State<AskWilcoScreen> createState() => _AskWilcoScreenState();
@@ -47,7 +51,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return BlocProvider(
-      create: (_) => ChatCubit(accessToken: widget.accessToken),
+      create: (_) => ChatCubit(accessToken: widget.accessToken, existingSessionId: widget.sessionId),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: _buildAppBar(),
