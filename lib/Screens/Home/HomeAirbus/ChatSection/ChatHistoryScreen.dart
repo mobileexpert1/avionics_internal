@@ -4,7 +4,9 @@ import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
 import 'package:avionics_internal/bloc/ChatHistory/chat_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import 'ChatBotScreen.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
@@ -79,9 +81,21 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                   ),
 
                   trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                  onTap: () {
-
+                  onTap: () async {
+                    final token = await SharedPrefsHelper.getUserAccessToken() ?? '';
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AskWilcoScreen(
+                          accessToken: token,
+                          isComeFromTab: false,
+                          sessionId: item.id,
+                          title: item.title,
+                        ),
+                      ),
+                    );
                   },
+
                 ),
               );
             }).toList(),

@@ -60,7 +60,7 @@ class ConstantStrings {
   static const String oldPasswordLabel = 'Old Password';
   static const String newPasswordLabel = 'New Password';
   static const String resetPassword = ' Reset Password';
-  static const String Otptitle = 'Enter four digits otp';
+  static const String Otptitle = 'Enter the 4-digit OTP sent to your registered email.';
   static const String continueText = 'Continue';
   static const String goBack = 'Go Back';
 
