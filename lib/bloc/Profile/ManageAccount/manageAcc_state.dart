@@ -5,6 +5,7 @@ class ManageAccState extends Equatable {
   final String firstName;
   final String lastName;
   final String email;
+  final String authType;
 
   final String? firstNameError;
   final String? lastNameError;
@@ -21,6 +22,7 @@ class ManageAccState extends Equatable {
     this.firstName = '',
     this.lastName = '',
     this.email = '',
+    this.authType = '',
     this.firstNameError,
     this.lastNameError,
     this.emailError,
@@ -35,6 +37,7 @@ class ManageAccState extends Equatable {
     String? firstName,
     String? lastName,
     String? email,
+    String? authType,
     String? firstNameError,
     String? lastNameError,
     String? emailError,
@@ -48,6 +51,7 @@ class ManageAccState extends Equatable {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
+      authType: authType ?? this.authType,
       firstNameError: firstNameError ?? firstNameError,
       lastNameError: lastNameError ?? lastNameError,
       emailError: emailError ?? this.emailError,
@@ -64,6 +68,7 @@ class ManageAccState extends Equatable {
     firstName,
     lastName,
     email,
+    authType,
     firstNameError,
     lastNameError,
     emailError,

@@ -41,7 +41,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
               padding: EdgeInsets.only(bottom: screenHeight * 0.03),
               child: SearchBarWidget(
                 enableBackArrow: false,
-                enableFilter: true,
+                enableFilter: false,
                 enableCloseScreen: true,
                 controller: searchController,
                 onFilterTap: () {},

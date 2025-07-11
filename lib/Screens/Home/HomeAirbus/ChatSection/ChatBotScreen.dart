@@ -51,7 +51,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return BlocProvider(
-      create: (_) => ChatCubit(accessToken: widget.accessToken, existingSessionId: widget.sessionId),
+      create: (_) => ChatCubit(
+        accessToken: widget.accessToken,
+        existingSessionId: widget.sessionId,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: _buildAppBar(),
@@ -102,12 +105,15 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                         final isUser = message['type'] == 'user';
                         return Align(
-                          alignment:
-                          isUser ? Alignment.centerRight : Alignment.centerLeft,
+                          alignment: isUser
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
                           child: Container(
                             margin: const EdgeInsets.symmetric(vertical: 6),
                             padding: const EdgeInsets.all(12),
-                            constraints: BoxConstraints(maxWidth: screenWidth * 0.8),
+                            constraints: BoxConstraints(
+                              maxWidth: screenWidth * 0.8,
+                            ),
                             decoration: BoxDecoration(
                               color: isUser
                                   ? const Color(0xFF3F3D56)
@@ -139,10 +145,15 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   AppBar _buildAppBar() => AppBar(
     backgroundColor: Colors.white,
     elevation: 0,
-    leading: (widget.isComeFromTab == true ? Wrap() :IconButton(
-      icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF32377D)),
-      onPressed: () => Navigator.pop(context),
-    )),
+    leading: (widget.isComeFromTab == true
+        ? Wrap()
+        : IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Color(0xFF32377D),
+            ),
+            onPressed: () => Navigator.pop(context),
+          )),
     centerTitle: true,
     title: const Text(
       'Ask WILCO',
@@ -156,9 +167,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const ChatHistoryScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const ChatHistoryScreen()),
             );
           },
           child: Container(
@@ -190,16 +199,14 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             ),
           ),
         ),
-      )
+      ),
     ],
   );
 
   Widget _optionButton(String text) => OutlinedButton(
     style: OutlinedButton.styleFrom(
       side: const BorderSide(color: Colors.black),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
     onPressed: () => context.read<ChatCubit>().sendMessage(text),
@@ -228,8 +235,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     hintStyle: TextStyle(color: Colors.grey.shade500),
                     filled: true,
                     fillColor: const Color(0xFFF5F8F9),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: _vPad),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: _vPad,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -239,8 +248,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               ),
               IconButton(
                 padding: EdgeInsets.zero,
-                constraints:
-                BoxConstraints.tight(Size(_iconSize + 20, _iconSize + 20)),
+                constraints: BoxConstraints.tight(
+                  Size(_iconSize + 20, _iconSize + 20),
+                ),
                 icon: SvgPicture.asset(
                   CommonUi.setSvgImage(AssetsPath.SendIcon),
                   height: _iconSize,
@@ -267,6 +277,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
 class _AnalyzingIndicator extends StatefulWidget {
   const _AnalyzingIndicator();
+
   @override
   State<_AnalyzingIndicator> createState() => _AnalyzingIndicatorState();
 }

@@ -51,7 +51,7 @@ class FeedbackScreen extends StatelessWidget {
                             return IconButton(
                               icon: Icon(
                                 Icons.star,
-                                size: 51,
+                                size: 48,
                                 color: index < state.rating
                                     ? Colors.amber
                                     : Colors.grey[300],

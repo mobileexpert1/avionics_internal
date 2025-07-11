@@ -18,12 +18,14 @@ class ManageaccCubit extends Cubit<ManageAccState> {
     required String firstName,
     required String lastName,
     required String email,
+    required String authType,
   }) {
     emit(
       state.copyWith(
         firstName: firstName,
         lastName: lastName,
         email: email,
+        authType: authType,
         isButtonEnabled: firstName.isNotEmpty && lastName.isNotEmpty,
       ),
     );
@@ -73,6 +75,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        authType: user.authType,
       );
 
       await SharedPrefsHelper.setAvtarUserType(user.userType);

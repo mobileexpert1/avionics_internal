@@ -24,7 +24,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     // Add a typing button as last element if needed
     emit([
       ...history,
-      {'type': 'button', 'text': ''},
     ]);
   }
 

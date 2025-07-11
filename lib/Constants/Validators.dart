@@ -27,9 +27,15 @@ class Validators {
     return null;
   }
 
+  // String? validateName(String value) {
+  //   if (value.isEmpty) return 'This field is required';
+  //   if (!RegExp(r"^[a-zA-Z]+$").hasMatch(value)) return 'Only letters allowed';
+  //   return null;
+  // }
+
   String? validateName(String value) {
     if (value.isEmpty) return 'This field is required';
-    if (!RegExp(r"^[a-zA-Z]+$").hasMatch(value)) return 'Only letters allowed';
+    if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) return 'Only letters and numbers allowed';
     return null;
   }
 }
