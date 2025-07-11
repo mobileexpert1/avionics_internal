@@ -4,15 +4,17 @@ import 'chat_implementation.dart';
 import 'chat_model.dart';
 
 class ChatCubit extends Cubit<List<Map<String, String>>> {
-  ChatCubit({required String accessToken, required String existingSessionId,})
-      : _repo = ChatRepositoryImpl(),
+  ChatCubit({
+    required String accessToken,
+    required String existingSessionId,
+    required bool isNewSession,
+  })  : _repo = ChatRepositoryImpl(),
         super(const [
         {'type': 'bot', 'text': 'Hey there!'},
         {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
       ]) {
-    _init(accessToken,existingSessionId );
+    _init(accessToken, existingSessionId, isNewSession);
   }
-
 
   Future<void> _loadOldMessages(String sessionId) async {
     final oldMessages = await _repo.getMessagesForSession(sessionId);
@@ -24,7 +26,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     // Add a typing button as last element if needed
     emit([
       ...history,
-      {'type': 'button', 'text': ''},
     ]);
   }
 
@@ -32,8 +33,10 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
 
-  Future<void> _init(String token, String sessionId) async {
-    await _loadOldMessages(sessionId);
+  Future<void> _init(String token, String sessionId, bool isNewSession) async {
+    if (!isNewSession) {
+      await _loadOldMessages(sessionId);
+    }
     await _repo.connect(accessToken: token, existingSessionId: sessionId);
     _sub = _repo.messages.listen(_onSocketMessage);
   }

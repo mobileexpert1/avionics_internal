@@ -51,7 +51,11 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return BlocProvider(
-      create: (_) => ChatCubit(accessToken: widget.accessToken, existingSessionId: widget.sessionId),
+      create: (_) => ChatCubit(
+        accessToken: widget.accessToken,
+        isNewSession: widget.isComeFromTab,
+        existingSessionId: widget.sessionId,
+      ),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: _buildAppBar(),
@@ -139,7 +143,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   AppBar _buildAppBar() => AppBar(
     backgroundColor: Colors.white,
     elevation: 0,
-    leading: (widget.isComeFromTab == true ? Wrap() :IconButton(
+    leading: (widget.isComeFromTab == true
+        ? const SizedBox()
+        : IconButton(
       icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF32377D)),
       onPressed: () => Navigator.pop(context),
     )),

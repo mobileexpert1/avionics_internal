@@ -22,16 +22,6 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     super.initState();
     BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
   }
-
-  // class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  // @override
-  // void initState() {
-  // super.initState();
-  // WidgetsBinding.instance.addPostFrameCallback((_) {
-  // BlocProvider.of<ChatHistoryCubit>(context).loadChatHistory(context, fromLocal: true);
-  // });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
