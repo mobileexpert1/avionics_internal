@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
@@ -36,14 +37,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
 
-  // await wipeDb();
   await printDbPath();
   await DBHelper.database;
+
   runApp(const MyApp());
 }
 

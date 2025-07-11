@@ -9,7 +9,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         super(const [
         {'type': 'bot', 'text': 'Hey there!'},
         {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
-        {'type': 'button', 'text': ''},
       ]) {
     _init(accessToken);
   }

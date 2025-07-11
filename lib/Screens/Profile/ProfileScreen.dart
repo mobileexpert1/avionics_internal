@@ -1,10 +1,8 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
-
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
-import '../../bloc/Profile/Glossary/glossary_repository.dart';
 import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
@@ -17,7 +15,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../Constants/ConstantStrings.dart';
 import 'ManageAccount/ManageAccountScreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Onboarding/Splash/splash_screen.dart';
 import 'ContactSupportScreen/ContactSupportScreen.dart';
 import 'ProfileSubsciption/ProfileSubsciptionScreen.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
@@ -200,12 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Logout",
                       onTap: () {
-                        AppSnackBar.custom(
-                          context,
-                          message: 'Logged out',
-                          svgAsset:  CommonUi.setSvgImage(AssetsPath.logoutIcon),
-                        );
-                        _clearAllDataAndRedirectToSplashScreen(context);
+                        showDeleteConfirmation(context, true);
                       },
                     ),
                     SettingsListItem(
@@ -214,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Delete account",
                       onTap: () {
-                        showDeleteConfirmation(context);
+                        showDeleteConfirmation(context, false);
                       },
                     ),
                   ],
@@ -247,7 +239,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void showDeleteConfirmation(BuildContext bottomSheetContext) {
+  void showDeleteConfirmation(
+    BuildContext bottomSheetContext,
+    isComeFromLogout,
+  ) {
     showModalBottomSheet(
       context: bottomSheetContext,
       backgroundColor: Colors.transparent,
@@ -272,8 +267,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Builder(
               builder: (innerContext) {
                 return InfoBottomSheet(
+                  isComeFromLogout: isComeFromLogout,
                   onYes: () {
-                    innerContext.read<DeleteCubit>().delete(context);
+                    if (isComeFromLogout == true) {
+                      AppSnackBar.custom(
+                        context,
+                        message: 'Logged out',
+                        svgAsset: CommonUi.setSvgImage(AssetsPath.logoutIcon),
+                      );
+                      _clearAllDataAndRedirectToSplashScreen(context);
+                    } else {
+                      innerContext.read<DeleteCubit>().delete(context);
+                    }
                   },
                   onNo: () => Navigator.pop(innerContext),
                 );
@@ -289,8 +294,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 class InfoBottomSheet extends StatelessWidget {
   final VoidCallback onYes;
   final VoidCallback onNo;
+  final bool isComeFromLogout;
 
-  const InfoBottomSheet({super.key, required this.onYes, required this.onNo});
+  const InfoBottomSheet({
+    super.key,
+    required this.onYes,
+    required this.onNo,
+    required this.isComeFromLogout,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -303,10 +314,12 @@ class InfoBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            "Do you want to Delete account",
+          Text(
+            (isComeFromLogout == true
+                ? "Are you sure you want to logout"
+                : "Do you want to Delete account"),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 24),
           Row(
