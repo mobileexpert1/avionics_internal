@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Avionics Internal</string>
+	<string>avioflAI</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -30,11 +30,26 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i</string>
+				<string>1831126584116154</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1831126584116154</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAppID</key>
+	<string>1831126584116154</string>
+	<key>FacebookClientToken</key>
+	<string>3fdf59b543830de9b8860238fc53987a</string>
+	<key>FacebookDisplayName</key>
+	<string>Avioflai-App</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>
@@ -61,35 +76,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<key>CFBundleURLTypes</key>
-    <array>
-    <dict>
-    <key>CFBundleURLSchemes</key>
-    <array>
-    <string>fb1831126584116154</string>
-    </array>
-    </dict>
-    </array>
-    <key>FacebookAppID</key>
-    <string>1831126584116154</string>
-    <key>FacebookClientToken</key>
-    <string>3fdf59b543830de9b8860238fc53987a</string>
-    <key>FacebookDisplayName</key>
-    <string>Avioflai-App</string>
-
-    <key>CFBundleURLTypes</key>
-    <array>
-     <dict>
-       <key>CFBundleTypeRole</key>
-       <string>Editor</string>
-       <key>CFBundleURLSchemes</key>
-       <array>
-         <string>com.avioflai.aviation</string>
-       </array>
-     </dict>
-    </array>
-
-
 </dict>
 </plist>
