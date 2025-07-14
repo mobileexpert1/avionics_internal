@@ -57,10 +57,10 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithSocialPlatform(
-      BuildContext context,
-      String provider,
-      String token,
-      ) async {
+    BuildContext context,
+    String provider,
+    String token,
+  ) async {
     emit(
       state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
     );
@@ -139,9 +139,9 @@ class LoginCubit extends Cubit<LoginState> {
 
       final resultResponse = await LoginRepository()
           .loginUserWithSocialPlatform(
-        token: accessToken.tokenString,
-        provider: 'facebook',
-      );
+            token: accessToken.tokenString,
+            provider: 'facebook',
+          );
 
       emit(state.copyWith(status: CommonApiStatus.success));
       await _navigateAfterLogin(context, resultResponse);
@@ -225,9 +225,9 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> _navigateAfterLogin(
-      BuildContext context,
-      LoginResponseModel result,
-      ) async {
+    BuildContext context,
+    LoginResponseModel result,
+  ) async {
     if (result.userDetails != null) {
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
@@ -245,7 +245,7 @@ class LoginCubit extends Cubit<LoginState> {
               isComeFromSocialLogin: true,
             ),
           ),
-              (route) => false,
+          (route) => false,
         );
       } else if (result.userDetails?.isActiveSubscription == null ||
           result.userDetails?.isActiveSubscription == false) {
@@ -264,7 +264,7 @@ class LoginCubit extends Cubit<LoginState> {
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-              (route) => false,
+          (route) => false,
         );
       }
     } else if (result.isVerified == false) {
@@ -287,9 +287,8 @@ class LoginCubit extends Cubit<LoginState> {
           builder: (_) =>
               AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
         ),
-            (route) => false,
+        (route) => false,
       );
     }
   }
 }
-
