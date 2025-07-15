@@ -1,8 +1,9 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
 import 'bloc/Profile/Avtar/avtar_cubit.dart';
@@ -27,25 +28,56 @@ import 'package:avionics_internal/bloc/createNewPassword/createNewPassword_cubit
 import 'package:avionics_internal/bloc/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 
+import 'firebase_options.dart';
+
 // Future<void> wipeDb() async {
 //   final path = join(await getDatabasesPath(), 'avionics.db');
 //   await deleteDatabase(path);
 //   debugPrint('🗑️  Old database deleted at $path');
 // }
 
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
+//
+//   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+//
+//   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+//     sqfliteFfiInit();
+//     databaseFactory = databaseFactoryFfi;
+//   }
+//
+//   await printDbPath();
+//   await DBHelper.database;
+//
+//   runApp(const MyApp());
+// }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
+  );
 
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  // Only use ffi on desktop platforms
+  if (!kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux ||
+          defaultTargetPlatform == TargetPlatform.macOS)) {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactoryOrNull = databaseFactoryFfi;
   }
 
-  await printDbPath();
-  await DBHelper.database;
+  // Lock orientation
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Local DB only for non-web platforms
+  if (!kIsWeb) {
+    await printDbPath();
+    await DBHelper.database;
+  }
 
   runApp(const MyApp());
 }

@@ -3,6 +3,7 @@ import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:avionics_internal/bloc/login/login_repository.dart';
 import 'package:avionics_internal/bloc/login/login_response_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -81,32 +82,101 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
+  // Future<void> signInWithGoogle(BuildContext context) async {
+  //   try {
+  //     await GoogleSignIn().signOut();
+  //     await _auth.signOut();
+  //     final googleUser = await GoogleSignIn().signIn();
+  //     if (googleUser == null) return;
+  //
+  //     final googleAuth = await googleUser.authentication;
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //     final userCredential = await _auth.signInWithCredential(credential);
+  //     if (userCredential.user == null) return;
+  //
+  //     emit(state.copyWith(status: CommonApiStatus.submitting));
+  //
+  //     final result = await LoginRepository().loginUserWithSocialPlatform(
+  //       token: googleAuth.accessToken ?? '',
+  //       provider: 'google',
+  //     );
+  //
+  //     emit(state.copyWith(status: CommonApiStatus.success));
+  //     await _navigateAfterLogin(context, result);
+  //   } catch (e) {
+  //     print(e.toString());
+  //     emit(
+  //       state.copyWith(
+  //         status: CommonApiStatus.failure,
+  //         errorMessage: e.toString(),
+  //       ),
+  //     );
+  //   }
+  // }
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      await GoogleSignIn().signOut();
+      // 1. Choose the right GoogleSignIn instance
+      final googleSignIn = kIsWeb
+          ? GoogleSignIn(
+        clientId:
+        '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com',
+        scopes: const ['email', 'profile'],
+      )
+          : GoogleSignIn(scopes: const ['email', 'profile']);
+
+      // 2. Make sure any previous sessions are cleared
+      await googleSignIn.signOut();
       await _auth.signOut();
-      final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return;
 
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      final userCredential = await _auth.signInWithCredential(credential);
-      if (userCredential.user == null) return;
+      if (kIsWeb) {
+        /* ---------- Web sign‑in ---------- */
+        final userCred = await _auth.signInWithPopup(GoogleAuthProvider());
+        if (userCred.user == null) return;
 
-      emit(state.copyWith(status: CommonApiStatus.submitting));
+        emit(state.copyWith(status: CommonApiStatus.submitting));
 
-      final result = await LoginRepository().loginUserWithSocialPlatform(
-        token: googleAuth.accessToken ?? '',
-        provider: 'google',
-      );
+        // You get the OAuth access token from userCred.credential
+        final accessToken =
+            (userCred.credential as OAuthCredential).accessToken ?? '';
 
-      emit(state.copyWith(status: CommonApiStatus.success));
-      await _navigateAfterLogin(context, result);
-    } catch (e) {
-      print(e.toString());
+        final result = await LoginRepository().loginUserWithSocialPlatform(
+          token: accessToken,
+          provider: 'google',
+        );
+
+        emit(state.copyWith(status: CommonApiStatus.success));
+        await _navigateAfterLogin(context, result);
+
+      } else {
+        /* ---------- Mobile / desktop sign‑in ---------- */
+        final googleUser = await googleSignIn.signIn();
+        if (googleUser == null) return;
+
+        final googleAuth = await googleUser.authentication;
+
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        final userCred = await _auth.signInWithCredential(credential);
+        if (userCred.user == null) return;
+
+        emit(state.copyWith(status: CommonApiStatus.submitting));
+
+        final result = await LoginRepository().loginUserWithSocialPlatform(
+          token: googleAuth.accessToken ?? '',
+          provider: 'google',
+        );
+
+        emit(state.copyWith(status: CommonApiStatus.success));
+        await _navigateAfterLogin(context, result);
+      }
+    } catch (e, st) {
+      debugPrintStack(label: e.toString(), stackTrace: st);
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -115,6 +185,7 @@ class LoginCubit extends Cubit<LoginState> {
       );
     }
   }
+
 
   Future<void> signInWithFacebook(BuildContext context) async {
     try {
@@ -127,7 +198,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       final accessToken = result.accessToken!;
       final credential = FacebookAuthProvider.credential(
-        accessToken.tokenString,
+        accessToken.token,
       );
       final userCredential = await _auth.signInWithCredential(credential);
 
@@ -139,7 +210,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       final resultResponse = await LoginRepository()
           .loginUserWithSocialPlatform(
-            token: accessToken.tokenString,
+            token: accessToken.token,
             provider: 'facebook',
           );
 

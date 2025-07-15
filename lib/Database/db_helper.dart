@@ -3,24 +3,28 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 Future<void> printDbPath() async {
+  if (kIsWeb) {
+    debugPrint('Skipping DB path print on web.');
+    return;
+  }
   final dbDir = await getDatabasesPath();
   debugPrint('DB path ➜ ${join(dbDir, DBHelper._dbName)}');
 }
 
 class DBHelper {
-  /* ── constants ─────────────────────────────────── */
   static const _dbName = 'avionics.db';
-  static const _dbVersion = 2; // ← bump when schema changes
+  static const _dbVersion = 2;
 
-  /* ── singleton instance ────────────────────────── */
   static Database? _db;
 
   static Future<Database> get database async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite is not supported on web.');
+    }
     _db ??= await _initDb();
     return _db!;
   }
 
-  /* ── open / create / upgrade ───────────────────── */
   static Future<Database> _initDb() async {
     final path = join(await getDatabasesPath(), _dbName);
     debugPrint('Opening avionics DB at: $path');
@@ -40,7 +44,6 @@ class DBHelper {
 
   static Future<void> _onUpgrade(Database db, int oldV, int newV) async {
     if (oldV < 2) {
-      // add user_id column & index to every existing table
       for (final t in _tables) {
         await db.execute('ALTER TABLE $t ADD COLUMN user_id TEXT;');
         await db.execute(
@@ -50,7 +53,6 @@ class DBHelper {
     }
   }
 
-  /* ── schema helpers ────────────────────────────── */
   static Future<void> _createTables(Database db) async {
     await db.execute('''
       CREATE TABLE manufacturers (
@@ -60,7 +62,6 @@ class DBHelper {
         user_id TEXT
       );
     ''');
-
     await db.execute('''
       CREATE TABLE flights (
         id TEXT PRIMARY KEY,
@@ -73,7 +74,6 @@ class DBHelper {
         user_id TEXT
       );
     ''');
-
     await db.execute('''
       CREATE TABLE favourites (
         id TEXT PRIMARY KEY,
@@ -82,7 +82,6 @@ class DBHelper {
         user_id TEXT
       );
     ''');
-
     await db.execute('''
       CREATE TABLE user_details (
         id TEXT PRIMARY KEY,
@@ -99,7 +98,6 @@ class DBHelper {
         user_id TEXT
       );
     ''');
-
     await db.execute('''
       CREATE TABLE glossary (
         id TEXT PRIMARY KEY,
@@ -108,7 +106,6 @@ class DBHelper {
         user_id TEXT
       );
     ''');
-
     await db.execute('''
       CREATE TABLE unit_prefs (
         id TEXT PRIMARY KEY,
@@ -117,42 +114,40 @@ class DBHelper {
         user_id TEXT
       );
     ''');
-
     await db.execute('''
-  CREATE TABLE user_profile (
-    id TEXT PRIMARY KEY,
-    first_name TEXT,
-    last_name TEXT,
-    email TEXT,
-    phone_number TEXT,
-    user_type TEXT,
-    auth_type TEXT,
-    is_active INTEGER,
-    is_active_subscription INTEGER,
-    professional_role TEXT,
-    experience_level TEXT,
-    country_code TEXT,
-    profile_image TEXT,
-    gender TEXT,
-    dob TEXT,
-    address TEXT,
-    city TEXT,
-    state TEXT,
-    zip_code TEXT,
-    country TEXT,
-    user_id TEXT
-  );
-''');
-
+      CREATE TABLE user_profile (
+        id TEXT PRIMARY KEY,
+        first_name TEXT,
+        last_name TEXT,
+        email TEXT,
+        phone_number TEXT,
+        user_type TEXT,
+        auth_type TEXT,
+        is_active INTEGER,
+        is_active_subscription INTEGER,
+        professional_role TEXT,
+        experience_level TEXT,
+        country_code TEXT,
+        profile_image TEXT,
+        gender TEXT,
+        dob TEXT,
+        address TEXT,
+        city TEXT,
+        state TEXT,
+        zip_code TEXT,
+        country TEXT,
+        user_id TEXT
+      );
+    ''');
     await db.execute('''
-  CREATE TABLE chat_messages (
-    id TEXT PRIMARY KEY,
-    author TEXT,
-    text TEXT,
-    session_id TEXT,
-    user_id TEXT
-  );
-''');
+      CREATE TABLE chat_messages (
+        id TEXT PRIMARY KEY,
+        author TEXT,
+        text TEXT,
+        session_id TEXT,
+        user_id TEXT
+      );
+    ''');
   }
 
   static Future<void> _createUserIdIndices(Database db) async {
@@ -174,44 +169,57 @@ class DBHelper {
     'chat_messages',
   ];
 
-  /* ── CRUD convenience wrappers ─────────────────── */
+  /* ── CRUD methods ── */
+
   Future<int> insert(
-    String table,
-    Map<String, dynamic> values, {
-    ConflictAlgorithm algo = ConflictAlgorithm.abort,
-  }) async => (await database).insert(table, values, conflictAlgorithm: algo);
+      String table,
+      Map<String, dynamic> values, {
+        ConflictAlgorithm algo = ConflictAlgorithm.abort,
+      }) async {
+    if (kIsWeb) return 0;
+    return (await database).insert(table, values, conflictAlgorithm: algo);
+  }
 
   Future<List<Map<String, Object?>>> get(
-    String table, {
-    String? where,
-    List<Object?>? whereArgs,
-    String? orderBy,
-  }) async => (await database).query(
-    table,
-    where: where,
-    whereArgs: whereArgs,
-    orderBy: orderBy,
-  );
+      String table, {
+        String? where,
+        List<Object?>? whereArgs,
+        String? orderBy,
+      }) async {
+    if (kIsWeb) return [];
+    return (await database).query(
+      table,
+      where: where,
+      whereArgs: whereArgs,
+      orderBy: orderBy,
+    );
+  }
 
   Future<int> update(
-    String table,
-    Map<String, dynamic> values, {
-    required String where,
-    required List<Object?> whereArgs,
-  }) async => (await database).update(
-    table,
-    values,
-    where: where,
-    whereArgs: whereArgs,
-  );
+      String table,
+      Map<String, dynamic> values, {
+        required String where,
+        required List<Object?> whereArgs,
+      }) async {
+    if (kIsWeb) return 0;
+    return (await database).update(
+      table,
+      values,
+      where: where,
+      whereArgs: whereArgs,
+    );
+  }
 
   Future<int> delete(
-    String table, {
-    required String where,
-    required List<Object?> whereArgs,
-  }) async =>
-      (await database).delete(table, where: where, whereArgs: whereArgs);
+      String table, {
+        required String where,
+        required List<Object?> whereArgs,
+      }) async {
+    if (kIsWeb) return 0;
+    return (await database).delete(table, where: where, whereArgs: whereArgs);
+  }
 }
+
 
 /* ── BaseModel contract remains unchanged ────────── */
 abstract class BaseModel {
