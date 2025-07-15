@@ -1,44 +1,27 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 
-class ResponsiveLayout extends StatelessWidget {
-  final Widget mobile;
-  final Widget tablet;
-  final Widget web;
+class WebResponsiveStyle {
+  final double titleFontSize;
+  final double descFontSize;
+  final double imageHeight;
+  final double dotSize;
+  final double horizontalPadding;
 
-  const ResponsiveLayout({
-    Key? key,
-    required this.mobile,
-    required this.tablet,
-    required this.web,
-  }) : super(key: key);
+  WebResponsiveStyle._({
+    required this.titleFontSize,
+    required this.descFontSize,
+    required this.imageHeight,
+    required this.dotSize,
+    required this.horizontalPadding,
+  });
 
-  static bool isMobile(BuildContext context) =>
-      MediaQuery.of(context).size.width < 600;
-
-  static bool isTablet(BuildContext context) =>
-      MediaQuery.of(context).size.width >= 600 &&
-          MediaQuery.of(context).size.width < 700;
-
-  static bool isWeb(BuildContext context) =>
-      kIsWeb || MediaQuery.of(context).size.width >= 600;
-
-  static String currentPlatform() {
-    if (kIsWeb) return "Web";
-    if (Platform.isIOS) return "iOS";
-    if (Platform.isAndroid) return "Android";
-    return "Other";
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (isWeb(context)) {
-      return web;
-    } else if (isTablet(context)) {
-      return tablet;
-    } else {
-      return mobile;
-    }
+  factory WebResponsiveStyle.fromSize(Size size) {
+    return WebResponsiveStyle._(
+      titleFontSize: size.width * 0.025,
+      descFontSize: size.width * 0.015,
+      imageHeight: size.height * 0.4,
+      dotSize: 10,
+      horizontalPadding: size.width * 0.1,
+    );
   }
 }
