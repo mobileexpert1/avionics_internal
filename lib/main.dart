@@ -1,3 +1,5 @@
+import 'package:avionics_internal/Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import 'package:avionics_internal/bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
@@ -109,6 +111,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AvtarCubit()),
         BlocProvider(create: (_) => ComparisonCubit()),
         BlocProvider(create: (_) => ChatHistoryCubit()),
+        BlocProvider(create: (_) => AppleSubscriptionCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

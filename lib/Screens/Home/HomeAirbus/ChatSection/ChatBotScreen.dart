@@ -115,7 +115,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           ),
         ),
         body: BlocListener<ChatCubit, List<Map<String, String>>>(
-          listener: (_, __) => _scrollToBottom(),
+          listener: (_, _) => _scrollToBottom(),
           child: Column(
             children: [
               Expanded(
@@ -313,7 +313,7 @@ class _AnalyzingIndicatorState extends State<_AnalyzingIndicator>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _dots,
-      builder: (_, __) {
+      builder: (_, _) {
         final dots = '.' * _dots.value;
         return Align(
           alignment: Alignment.centerLeft,

@@ -1,0 +1,37 @@
+import 'package:in_app_purchase/in_app_purchase.dart';
+
+class AppleSubscriptionState {
+  final bool storeAvailable;
+  final bool loading;
+  final List<ProductDetails> products;
+  final ProductDetails? selectedProduct;
+  final bool purchased;
+  final String? error;
+
+  AppleSubscriptionState({
+    this.storeAvailable = false,
+    this.loading = false,
+    this.products = const [],
+    this.selectedProduct,
+    this.purchased = false,
+    this.error,
+  });
+
+  AppleSubscriptionState copyWith({
+    bool? storeAvailable,
+    bool? loading,
+    List<ProductDetails>? products,
+    ProductDetails? selectedProduct,
+    bool? purchased,
+    String? error,
+  }) {
+    return AppleSubscriptionState(
+      storeAvailable: storeAvailable ?? this.storeAvailable,
+      loading: loading ?? this.loading,
+      products: products ?? this.products,
+      selectedProduct: selectedProduct ?? this.selectedProduct,
+      purchased: purchased ?? this.purchased,
+      error: error,
+    );
+  }
+}
