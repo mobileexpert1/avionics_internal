@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Screens/Onboarding/Signup/SignupScreen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -162,8 +163,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
 
                         const SizedBox(height: 12),
-
-                        if (!Platform.isAndroid) ...[
+                        if (!kIsWeb &&
+                            (defaultTargetPlatform == TargetPlatform.iOS ||
+                                defaultTargetPlatform == TargetPlatform.macOS)) ...[
                           CustomSocialLoginButtons(
                             backgroundColor: Colors.black,
                             textColor: Colors.white,
@@ -173,9 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fit: BoxFit.fill,
                             ),
                             onPressed: () {
-                              context.read<LoginCubit>().signInWithApple(
-                                context,
-                              );
+                              context.read<LoginCubit>().signInWithApple(context);
                             },
                           ),
                           const SizedBox(height: 12),
