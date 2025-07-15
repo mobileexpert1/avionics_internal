@@ -45,7 +45,6 @@ class ManageAccountRepository {
       throw e.toString();
     }
     catch (e) {
-
       throw e.toString();
     }
   }

@@ -29,6 +29,7 @@ class ManufacturerRepository {
       }
       throw e.toString();
     } catch (e) {
+      // print('Error: $e');
       throw e.toString();
     }
   }

@@ -43,7 +43,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.0
   web_socket_channel:
   google_sign_in: ^6.3.0
-  flutter_facebook_auth:
+  flutter_facebook_auth: ^5.0.6
   firebase_core:
   cloud_firestore:
   sign_in_with_apple: ^7.0.1
@@ -119,3 +119,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+

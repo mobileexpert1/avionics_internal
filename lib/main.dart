@@ -36,32 +36,13 @@ import 'firebase_options.dart';
 //   debugPrint('🗑️  Old database deleted at $path');
 // }
 
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp();
-//
-//   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-//
-//   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-//     sqfliteFfiInit();
-//     databaseFactory = databaseFactoryFfi;
-//   }
-//
-//   await printDbPath();
-//   await DBHelper.database;
-//
-//   runApp(const MyApp());
-// }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   await Firebase.initializeApp(
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
 
-  // Only use ffi on desktop platforms
   if (!kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.windows ||
           defaultTargetPlatform == TargetPlatform.linux ||
@@ -70,10 +51,8 @@ Future<void> main() async {
     databaseFactoryOrNull = databaseFactoryFfi;
   }
 
-  // Lock orientation
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Local DB only for non-web platforms
   if (!kIsWeb) {
     await printDbPath();
     await DBHelper.database;
@@ -99,7 +78,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SavedFlightCubit()),
         BlocProvider(create: (_) => AllplanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
-        // BlocProvider(create: (_) => ChatCubit()),
+        //BlocProvider(create: (_) => ChatCubit()),
         BlocProvider(create: (_) => ProfileScreenCubit()),
         BlocProvider(create: (_) => ManageaccCubit()),
         BlocProvider(create: (_) => ChangePasswordCubit()),

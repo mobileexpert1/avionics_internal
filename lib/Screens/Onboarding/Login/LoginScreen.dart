@@ -190,9 +190,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                           ),
                           onPressed: () {
-                            context.read<LoginCubit>().signInWithFacebook(
-                              context,
-                            );
+                            // context.read<LoginCubit>().signInWithFacebook(
+                            //   context,
+                            // );
                           },
                         ),
                         const SizedBox(height: 30),
