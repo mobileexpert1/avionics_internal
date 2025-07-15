@@ -2,6 +2,7 @@ abstract class AssetsPath {
   /// svg Images
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl";
   static const String map = "map";
+  static const String deleteIcon = "deleteIcon";
   static const String compare = "compare";
   static const String filter = "filter";
   static const String apple = "Apple";

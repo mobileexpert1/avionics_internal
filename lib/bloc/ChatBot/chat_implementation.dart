@@ -40,8 +40,6 @@ class ChatRepositoryImpl implements ChatRepository {
     _retries = 0;
 
     final prefs = await SharedPreferences.getInstance();
-
-    // 👉 Determine sessionId: use passed one, else null (new session)
     _sessionId = existingSessionId;
 
     if (_sessionId != null && _sessionId!.isNotEmpty) {

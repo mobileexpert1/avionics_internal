@@ -21,6 +21,10 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       final manufacturers = await repository.getListOfManufacturers(
         query: query,
       );
+
+      manufacturers.sort((a, b) =>
+          a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+
       emit(state.copyWith(manufacturers: manufacturers, isLoading: false));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);

@@ -202,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.deleteAcc,
+                        AssetsPath.deleteIcon,
                       ),
                       title: "Delete account",
                       onTap: () {

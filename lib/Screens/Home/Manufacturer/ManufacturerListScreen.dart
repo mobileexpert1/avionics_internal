@@ -97,7 +97,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                     return ListView.builder(
                       itemCount: state.manufacturers.length,
                       itemBuilder: (context, index) {
-                        final item = state.manufacturers[index];
+                        final sortedManufacturers = [...state.manufacturers]
+                          ..sort((a, b) => a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+
+                        final item = sortedManufacturers[index];
 
                         return Card(
                           color: Colors.white,
