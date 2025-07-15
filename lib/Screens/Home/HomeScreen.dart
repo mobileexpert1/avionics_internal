@@ -327,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(
                     builder: (_) => AskWilcoScreen(
                       accessToken: token,
-                      isComeFromTab: true,
+                      isComeFromTab: false,
                       sessionId: '',
                       title: '',
                     ),

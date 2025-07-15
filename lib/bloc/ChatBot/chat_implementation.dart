@@ -31,7 +31,10 @@ class ChatRepositoryImpl implements ChatRepository {
   String? _lastSystem;
 
   @override
-  Future<void> connect({required String accessToken, String? existingSessionId}) async {
+  Future<void> connect({
+    required String accessToken,
+    String? existingSessionId,
+  }) async {
     _closing = false;
     _accessToken = accessToken;
     _retries = 0;

@@ -8,27 +8,33 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     required String accessToken,
     required String existingSessionId,
     required bool isNewSession,
-  })  : _repo = ChatRepositoryImpl(),
-        super(const [
-        {'type': 'bot', 'text': 'Hey there!'},
-        {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
-      ]) {
+  }) : _repo = ChatRepositoryImpl(),
+       super(const [
+         {'type': 'bot', 'text': 'Hey there!'},
+         {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+       ]) {
     _init(accessToken, existingSessionId, isNewSession);
   }
 
   Future<void> _loadOldMessages(String sessionId) async {
     final oldMessages = await _repo.getMessagesForSession(sessionId);
-    final history = oldMessages.map((msg) => {
-      'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
-      'text': msg.text,
-    }).toList();
 
-    // Add a typing button as last element if needed
-    emit([
-      ...history,
-    ]);
+    final history = oldMessages
+        .map(
+          (msg) => {
+            'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+            'text': msg.text,
+          },
+        )
+        .toList();
+
+    final introMessages = [
+      {'type': 'bot', 'text': 'Hey there!'},
+      {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+    ];
+
+    emit([...introMessages, ...history]);
   }
-
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
@@ -64,13 +70,13 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     };
 
     final nonTypingLast = next.lastWhere(
-          (m) => m['type'] != 'analyzing',
+      (m) => m['type'] != 'analyzing',
       orElse: () => {},
     );
-    final isDuplicate = nonTypingLast.isNotEmpty &&
+    final isDuplicate =
+        nonTypingLast.isNotEmpty &&
         nonTypingLast['type'] == mapped['type'] &&
-        (nonTypingLast['text'] ?? '').trim() ==
-            (mapped['text'] ?? '').trim();
+        (nonTypingLast['text'] ?? '').trim() == (mapped['text'] ?? '').trim();
 
     if (!isDuplicate) next.add(mapped);
 

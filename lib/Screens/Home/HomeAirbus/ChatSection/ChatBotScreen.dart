@@ -1,3 +1,4 @@
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,12 +54,66 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     return BlocProvider(
       create: (_) => ChatCubit(
         accessToken: widget.accessToken,
-        isNewSession: widget.isComeFromTab,
+        isNewSession: (widget.accessToken.isEmpty ? true : false),
         existingSessionId: widget.sessionId,
       ),
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: _buildAppBar(),
+        appBar: CustomAppBar(
+          title: 'Ask WILCO',
+          leftButton: widget.isComeFromTab == true
+              ? const SizedBox()
+              : IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Color(0xFF32377D),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+          rightButton: Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(30),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChatHistoryScreen()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F7),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.chatHistoryicon),
+                      height: 18,
+                      width: 18,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF3F3D56),
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'History',
+                      style: TextStyle(
+                        color: Color(0xFF3F3D56),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
         body: BlocListener<ChatCubit, List<Map<String, String>>>(
           listener: (_, __) => _scrollToBottom(),
           child: Column(
@@ -72,33 +127,38 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                       itemCount: messages.length + 1,
                       itemBuilder: (context, index) {
                         if (index == 0) {
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: CircleAvatar(
-                              radius: screenWidth * 0.1,
-                              backgroundColor: Colors.grey.shade200,
-                              child: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.ChatIcon),
-                                height: screenWidth * 0.1,
+                          return Column(
+                            children: [
+                              const SizedBox(height: 18),
+
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Container(
+                                    width: screenWidth * 0.25,
+                                    height: screenWidth * 0.25,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.transparent,
+                                    ),
+                                    child: ClipOval(
+                                      child: SvgPicture.asset(
+                                        CommonUi.setSvgImage(
+                                          AssetsPath.ChatIcon,
+                                        ),
+                                        width: screenWidth * 0.25,
+                                        height: screenWidth * 0.25,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           );
                         }
                         final message = messages[index - 1];
-                        if (message['type'] == 'button') {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
-                              children: [
-                                _optionButton('Take a Quiz'),
-                                _optionButton('Ask a Question'),
-                                _optionButton('Learn Aviation'),
-                              ],
-                            ),
-                          );
-                        }
 
                         if (message['type'] == 'analyzing') {
                           return const _AnalyzingIndicator();
@@ -110,15 +170,20 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                               ? Alignment.centerRight
                               : Alignment.centerLeft,
                           child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 6),
-                            padding: const EdgeInsets.all(12),
+                            margin: EdgeInsets.fromLTRB(
+                              isUser ? 0 : 24,
+                              isUser ? 8 : 7,
+                              isUser ? 10 : 0,
+                              isUser ? 8 : 7,
+                            ),
+                            padding: EdgeInsets.all(isUser ? 12 : 7),
                             constraints: BoxConstraints(
                               maxWidth: screenWidth * 0.8,
                             ),
                             decoration: BoxDecoration(
                               color: isUser
                                   ? const Color(0xFF3F3D56)
-                                  : Colors.grey.shade200,
+                                  : Colors.transparent,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
@@ -126,6 +191,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                               style: TextStyle(
                                 color: isUser ? Colors.white : Colors.black,
                                 fontSize: 14,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
@@ -143,136 +209,85 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     );
   }
 
-  AppBar _buildAppBar() => AppBar(
-    backgroundColor: Colors.white,
-    elevation: 0,
-    leading: (widget.isComeFromTab == true
-        ? const SizedBox()
-        : IconButton(
-      icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF32377D)),
-      onPressed: () => Navigator.pop(context),
-    )),
-    centerTitle: true,
-    title: const Text(
-      'Ask WILCO',
-      style: TextStyle(color: Color(0xFF3F3D56), fontWeight: FontWeight.w600),
-    ),
-    actions: [
-      Padding(
-        padding: const EdgeInsets.only(right: 12),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(30),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ChatHistoryScreen()),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F7),
-              borderRadius: BorderRadius.circular(30),
-            ),
+  Widget _chatInput(BuildContext context) {
+    const double iconSize = 22;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 15, 16, 5),
+            // More bottom space
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.chatHistoryicon),
-                  height: 18,
-                  width: 18,
-                  colorFilter: const ColorFilter.mode(
-                    Color(0xFF3F3D56),
-                    BlendMode.srcIn,
+                // Chat Input Field
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 13,
+                      vertical: 13,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F8F9),
+                      borderRadius: BorderRadius.circular(15), // More rounded
+                    ),
+                    child: TextField(
+                      controller: _controller,
+                      minLines: 1,
+                      maxLines: 5,
+                      style: const TextStyle(fontSize: 14),
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                        isCollapsed: true, // Tighten text area
+                        hintText: 'Type your message here…',
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 6),
-                const Text(
-                  'History',
-                  style: TextStyle(
-                    color: Color(0xFF3F3D56),
-                    fontWeight: FontWeight.w500,
+
+                const SizedBox(width: 10),
+
+                // Send Button
+                InkWell(
+                  onTap: () {
+                    final text = _controller.text.trim();
+                    if (text.isNotEmpty) {
+                      context.read<ChatCubit>().sendMessage(text);
+                      _controller.clear();
+                      _scrollToBottom();
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(22),
+                  child: Container(
+                    height: 44,
+                    width: 44,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF3F3D56),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(0),
+                    child: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.SendIcon),
+                      height: iconSize,
+                      width: iconSize,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
-      ),
-    ],
-  );
-
-  Widget _optionButton(String text) => OutlinedButton(
-    style: OutlinedButton.styleFrom(
-      side: const BorderSide(color: Colors.black),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    ),
-    onPressed: () => context.read<ChatCubit>().sendMessage(text),
-    child: Text(text, style: const TextStyle(color: Colors.black)),
-  );
-
-  Widget _chatInput(BuildContext context) {
-    const double _iconSize = 26;
-    const double _vPad = 10;
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: _iconSize + _vPad * 2),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  minLines: 1,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: 'Type your message here…',
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
-                    filled: true,
-                    fillColor: const Color(0xFFF5F8F9),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: _vPad,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              IconButton(
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints.tight(
-                  Size(_iconSize + 20, _iconSize + 20),
-                ),
-                icon: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.SendIcon),
-                  height: _iconSize,
-                  width: _iconSize,
-                ),
-                onPressed: () {
-                  final text = _controller.text.trim();
-                  if (text.isNotEmpty) {
-                    context.read<ChatCubit>().sendMessage(text);
-                    _controller.clear();
-                    _scrollToBottom();
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      ],
     );
   }
 }
 
 /* ───────────────────────── Typing indicator ───────────────────────── */
-
 class _AnalyzingIndicator extends StatefulWidget {
   const _AnalyzingIndicator();
 
@@ -303,14 +318,15 @@ class _AnalyzingIndicatorState extends State<_AnalyzingIndicator>
         return Align(
           alignment: Alignment.centerLeft,
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
+            margin: const EdgeInsets.fromLTRB(24, 6, 12, 6),
+            // ⬅️ More space on the left
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'analyzing$dots', // corrected text
+              'analyzing$dots',
               style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
             ),
           ),

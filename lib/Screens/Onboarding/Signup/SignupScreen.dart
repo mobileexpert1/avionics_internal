@@ -58,7 +58,12 @@ class _SignupScreenState extends State<SignupScreen> {
                   leftButton: IconButton(
                     icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF151A6A)),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => LoginScreen(),
+                        ),
+                            (route) => false,
+                      );
                     },
                   ),
                 ),

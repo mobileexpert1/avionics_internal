@@ -22,6 +22,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     super.initState();
     BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +73,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
                   trailing: const Icon(Icons.arrow_forward_ios, size: 15),
                   onTap: () async {
-                    final token = await SharedPrefsHelper.getUserAccessToken() ?? '';
+                    final token =
+                        await SharedPrefsHelper.getUserAccessToken() ?? '';
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -85,7 +87,6 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                       ),
                     );
                   },
-
                 ),
               );
             }).toList(),
