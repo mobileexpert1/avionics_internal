@@ -32,127 +32,262 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
     double titleFontSize = screenWidth * 0.05;
     double bodyFontSize = screenWidth * 0.035;
 
+    // return Scaffold(
+    //   backgroundColor: Colors.white,
+    //   body: SafeArea(
+    //     child: Column(
+    //       children: [
+    //         Padding(
+    //           padding: EdgeInsets.only(bottom: screenHeight * 0.03),
+    //           child: SearchBarWidget(
+    //             enableBackArrow: false,
+    //             enableFilter: false,
+    //             enableCloseScreen: true,
+    //             controller: searchController,
+    //             onFilterTap: () {},
+    //             onChanged: (value) {
+    //               context.read<ManufacturerCubit>().loadListOfManufacturers(
+    //                 context: context,
+    //                 query: value.trim(),
+    //               );
+    //             },
+    //           ),
+    //         ),
+    //
+    //         SizedBox(height: screenHeight * 0.02),
+    //
+    //         Padding(
+    //           padding: EdgeInsets.only(left: screenWidth * 0.06),
+    //           child: Align(
+    //             alignment: Alignment.centerLeft,
+    //             child: GestureDetector(
+    //               onTap: () => Navigator.pop(context),
+    //               child: AppTexts(
+    //                 text: "  Manufacturer",
+    //                 imageName: CommonUi.setSvgImage(AssetsPath.BackIcon),
+    //                 font: 'Roboto',
+    //                 side: 'left',
+    //                 color: Colors.black,
+    //                 weight: FontWeight.w400,
+    //                 fontSize: titleFontSize,
+    //                 imageSize: 15,
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //
+    //         SizedBox(height: screenHeight * 0.02),
+    //
+    //         /// Expanded scrollable list
+    //         Expanded(
+    //           child: Padding(
+    //             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+    //             child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
+    //               builder: (context, state) {
+    //                 if (state.isLoading) {
+    //                   return const Center(child: CircularProgressIndicator());
+    //                 }
+    //
+    //                 if (state.manufacturers.isEmpty) {
+    //                   return const Center(
+    //                     child: Text("No manufacturers available."),
+    //                   );
+    //                 }
+    //
+    //                 return ListView.builder(
+    //                   itemCount: state.manufacturers.length,
+    //                   itemBuilder: (context, index) {
+    //                     final sortedManufacturers = [...state.manufacturers]
+    //                       ..sort((a, b) => a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+    //
+    //                     final item = sortedManufacturers[index];
+    //
+    //                     return Card(
+    //                       color: Colors.white,
+    //                       margin: const EdgeInsets.symmetric(vertical: 8),
+    //                       elevation: 2,
+    //                       shape: RoundedRectangleBorder(
+    //                         borderRadius: BorderRadius.circular(5),
+    //                       ),
+    //                       child: ListTile(
+    //                         contentPadding: EdgeInsets.symmetric(
+    //                           horizontal: screenWidth * 0.05,
+    //                           vertical: screenHeight * 0.012,
+    //                         ),
+    //                         leading: item.icon != null
+    //                             ? ClipRRect(
+    //                                 borderRadius: BorderRadius.circular(5),
+    //                                 child: _buildLeadingImage(screenWidth * 0.15, screenWidth * 0.15, item.icon!, (item.icon ?? '').contains(".svg"), !(item.icon ?? '').contains(".svg")),
+    //                               )
+    //                             : const Icon(Icons.image_not_supported),
+    //                         title: Text(
+    //                           item.companyName,
+    //                           style: TextStyle(
+    //                             fontSize: bodyFontSize,
+    //                             fontWeight: FontWeight.w500,
+    //                           ),
+    //                         ),
+    //                         trailing: const Icon(
+    //                           Icons.arrow_forward_ios,
+    //                           size: 16,
+    //                         ),
+    //                         onTap: () {
+    //                           Navigator.push(
+    //                             context,
+    //                             MaterialPageRoute(
+    //                               builder: (_) => ManufacturerDetailScreen(
+    //                                 manufacturerDetailId: item.id,
+    //                               ),
+    //                             ),
+    //                           );
+    //                         },
+    //                       ),
+    //                     );
+    //                   },
+    //                 );
+    //               },
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: screenHeight * 0.03),
-              child: SearchBarWidget(
-                enableBackArrow: false,
-                enableFilter: false,
-                enableCloseScreen: true,
-                controller: searchController,
-                onFilterTap: () {},
-                onChanged: (value) {
-                  context.read<ManufacturerCubit>().loadListOfManufacturers(
-                    context: context,
-                    query: value.trim(),
-                  );
-                },
-              ),
-            ),
-
-            SizedBox(height: screenHeight * 0.02),
-
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.06),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: AppTexts(
-                    text: "  Manufacturer",
-                    imageName: CommonUi.setSvgImage(AssetsPath.BackIcon),
-                    font: 'Roboto',
-                    side: 'left',
-                    color: Colors.black,
-                    weight: FontWeight.w400,
-                    fontSize: titleFontSize,
-                    imageSize: 15,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800), // 💡 Adjust max width
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: screenHeight * 0.03),
+                  child: SearchBarWidget(
+                    enableBackArrow: false,
+                    enableFilter: false,
+                    enableCloseScreen: true,
+                    controller: searchController,
+                    onFilterTap: () {},
+                    onChanged: (value) {
+                      context.read<ManufacturerCubit>().loadListOfManufacturers(
+                        context: context,
+                        query: value.trim(),
+                      );
+                    },
                   ),
                 ),
-              ),
-            ),
 
-            SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.02),
 
-            /// Expanded scrollable list
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-                child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                Padding(
+                  padding: EdgeInsets.only(left: screenWidth * 0.06),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: AppTexts(
+                        text: "  Manufacturer",
+                        imageName: CommonUi.setSvgImage(AssetsPath.BackIcon),
+                        font: 'Roboto',
+                        side: 'left',
+                        color: Colors.black,
+                        weight: FontWeight.w400,
+                        fontSize: titleFontSize,
+                        imageSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
 
-                    if (state.manufacturers.isEmpty) {
-                      return const Center(
-                        child: Text("No manufacturers available."),
-                      );
-                    }
+                SizedBox(height: screenHeight * 0.02),
 
-                    return ListView.builder(
-                      itemCount: state.manufacturers.length,
-                      itemBuilder: (context, index) {
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                    child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
+                      builder: (context, state) {
+                        if (state.isLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+
+                        if (state.manufacturers.isEmpty) {
+                          return const Center(
+                            child: Text("No manufacturers available."),
+                          );
+                        }
+
                         final sortedManufacturers = [...state.manufacturers]
-                          ..sort((a, b) => a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+                          ..sort((a, b) => a.companyName
+                              .toLowerCase()
+                              .compareTo(b.companyName.toLowerCase()));
 
-                        final item = sortedManufacturers[index];
+                        return ListView.builder(
+                          itemCount: sortedManufacturers.length,
+                          itemBuilder: (context, index) {
+                            final item = sortedManufacturers[index];
 
-                        return Card(
-                          color: Colors.white,
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.05,
-                              vertical: screenHeight * 0.012,
-                            ),
-                            leading: item.icon != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: _buildLeadingImage(screenWidth * 0.15, screenWidth * 0.15, item.icon!, (item.icon ?? '').contains(".svg"), !(item.icon ?? '').contains(".svg")),
-                                  )
-                                : const Icon(Icons.image_not_supported),
-                            title: Text(
-                              item.companyName,
-                              style: TextStyle(
-                                fontSize: bodyFontSize,
-                                fontWeight: FontWeight.w500,
+                            return Card(
+                              color: Colors.white,
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
                               ),
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => ManufacturerDetailScreen(
-                                    manufacturerDetailId: item.id,
+                              child: ListTile(
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.05,
+                                  vertical: screenHeight * 0.012,
+                                ),
+                                leading: item.icon != null
+                                    ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: _buildLeadingImage(
+                                    screenWidth * 0.15,
+                                    screenWidth * 0.15,
+                                    item.icon!,
+                                    (item.icon ?? '').contains(".svg"),
+                                    !(item.icon ?? '').contains(".svg"),
+                                  ),
+                                )
+                                    : const Icon(Icons.image_not_supported),
+                                title: Text(
+                                  item.companyName,
+                                  style: TextStyle(
+                                    fontSize: bodyFontSize,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
+                                trailing: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 16,
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ManufacturerDetailScreen(
+                                        manufacturerDetailId: item.id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
+
   }
 
   Widget _buildLeadingImage(

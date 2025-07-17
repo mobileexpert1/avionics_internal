@@ -21,6 +21,7 @@
         "flutter_svg",
         "google_sign_in",
         "in_app_purchase",
+        "internet_connection_checker",
         "js",
         "path",
         "path_provider",
@@ -1195,6 +1196,11 @@
         "collection",
         "meta"
       ]
+    },
+    {
+      "name": "internet_connection_checker",
+      "version": "1.0.0+1",
+      "dependencies": []
     }
   ],
   "configVersion": 1

@@ -50,319 +50,340 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               )
             : Scaffold(
                 backgroundColor: Colors.white,
-                body: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      Column(
+                body: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 900,
+                    ), // Web max width
+                    child: SingleChildScrollView(
+                      child: Stack(
                         children: [
-                          _buildImageCoverScroller(
-                            screenHeight,
-                            detail.general.coverPhoto,
-                          ),
-
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  color: Colors.grey.shade100,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical: 8,
-                                  ), // Internal padding
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(height: 45),
-                                      Text(
-                                        detail.general.companyName,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        detail.general.description,
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                      const SizedBox(height: 20),
-                                    ],
-                                  ),
-                                ),
+                              _buildImageCoverScroller(
+                                screenHeight,
+                                detail.general.coverPhoto,
                               ),
-                              const SizedBox(height: 20),
 
-                              // All List Of Airplane
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const AllPlanesListScreen(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 0,
                                     ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 25,
-                                    vertical: 5,
-                                  ),
-
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        CommonUi.setSvgImage(AssetsPath.Plane1),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      const Expanded(
-                                        child: Text(
-                                          "List of All Planes",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ),
-                                      const Icon(Icons.chevron_right),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-
-                              const Divider(
-                                height: 0,
-                                thickness: 3,
-                                color: AppColors.sepratorColourAppBar,
-                              ),
-
-                              _buildSectionHeader(
-                                title: "GENERAL INFORMATION",
-                                isExpanded: showMoreGeneralInfo,
-                                onTap: () => setState(
-                                  () => showMoreGeneralInfo =
-                                      !showMoreGeneralInfo,
-                                ),
-                              ),
-
-                              showMoreGeneralInfo
-                                  ? Padding(
+                                    child: Container(
+                                      width: double.infinity,
+                                      color: Colors.grey.shade100,
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 25,
+                                        horizontal: 30,
+                                        vertical: 8,
+                                      ), // Internal padding
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 45),
+                                          Text(
+                                            detail.general.companyName,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            detail.general.description,
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          const SizedBox(height: 20),
+                                        ],
                                       ),
-                                      child: _buildGeneralInfo(detail.general),
-                                    )
-                                  : const SizedBox.shrink(),
-
-                              Divider(
-                                height: 0,
-                                color: AppColors.sepratorColourAppBar,
-                                thickness: 3,
-                              ),
-
-                              _buildSectionHeader(
-                                title: "ABOUT THE COMPANY",
-                                isExpanded: showMoreAboutInfo,
-                                onTap: () => setState(
-                                  () => showMoreAboutInfo = !showMoreAboutInfo,
-                                ),
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 25,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      detail.company.companyDescription,
-                                      style: const TextStyle(height: 1.5),
-                                      maxLines: showMoreAboutInfo ? null : 2,
-                                      // null = show full text
-                                      overflow: showMoreAboutInfo
-                                          ? TextOverflow.visible
-                                          : TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 15),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                  const SizedBox(height: 20),
 
-                              Divider(
-                                height: 0,
-                                color: AppColors.sepratorColourAppBar,
-                                thickness: 3,
-                              ),
-
-                              _buildSectionHeader(
-                                title: "HISTORY",
-                                isExpanded: showMoreHistory,
-                                onTap: () => setState(
-                                  () => showMoreHistory = !showMoreHistory,
-                                ),
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 25,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      detail.company.companyHistory,
-                                      style: const TextStyle(height: 1.5),
-                                      maxLines: showMoreHistory ? null : 2,
-                                      overflow: showMoreHistory
-                                          ? TextOverflow.visible
-                                          : TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 8),
-                                  ],
-                                ),
-                              ),
-
-                              // Image Scroller (only shown when expanded)
-                              _buildImageGalleryScroller(
-                                detail.general.gallery,
-                              ),
-
-                              Divider(
-                                height: 0,
-                                color: AppColors.sepratorColourAppBar,
-                                thickness: 3,
-                              ),
-
-                              _buildSectionHeader(
-                                title: "PRODUCTS",
-                                isExpanded: showMoreProducts,
-                                onTap: () => setState(
-                                  () => showMoreProducts = !showMoreProducts,
-                                ),
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 25,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: List.generate(
-                                    detail.product?.length ?? 0,
-                                    (index) {
-                                      final product = detail.product![index];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 12,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              product.series ?? '',
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              product.description ?? '',
-                                              style: const TextStyle(
-                                                height: 1.5,
-                                              ),
-                                              maxLines: showMoreProducts
-                                                  ? null
-                                                  : 2,
-                                              overflow: showMoreProducts
-                                                  ? TextOverflow.visible
-                                                  : TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 8),
-                                          ],
+                                  // All List Of Airplane
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const AllPlanesListScreen(),
                                         ),
                                       );
                                     },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                        vertical: 5,
+                                      ),
+
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            CommonUi.setSvgImage(
+                                              AssetsPath.Plane1,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          const Expanded(
+                                            child: Text(
+                                              "List of All Planes",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                          const Icon(Icons.chevron_right),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 50),
-                        ],
-                      ),
-                      Positioned(
-                        top: screenHeight * 0.06,
-                        left: screenWidth * 0.05,
-                        child: GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: screenHeight * 0.21,
-                        left: screenWidth * 0.06,
-                        child: ClipOval(
-                          child: Container(
-                            width: screenWidth * 0.22,
-                            height: screenWidth * 0.22,
-                            color:
-                                Colors.grey.shade200, // Background circle color
-                            child: Builder(
-                              builder: (context) {
-                                final logoUrl =
-                                    '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
-                                debugPrint(logoUrl);
+                                  const SizedBox(height: 10),
 
-                                final isSvg = detail.general.logo.contains(
-                                  ".svg",
-                                );
-                                final isAsset = detail.general.logo.contains(
-                                  "assets",
-                                );
+                                  const Divider(
+                                    height: 0,
+                                    thickness: 3,
+                                    color: AppColors.sepratorColourAppBar,
+                                  ),
 
-                                if (isAsset) {
-                                  return Image.asset(
-                                    detail.general.logo,
-                                    width: screenWidth * 0.22,
-                                    height: screenWidth * 0.22,
-                                    fit: BoxFit.cover,
-                                  );
-                                } else {
-                                  return isSvg
-                                      ? SvgPicture.network(
-                                          logoUrl,
-                                          fit: BoxFit.contain,
-                                          placeholderBuilder: (context) => Icon(
-                                            Icons.broken_image,
-                                            size: screenWidth * 0.22,
+                                  _buildSectionHeader(
+                                    title: "GENERAL INFORMATION",
+                                    isExpanded: showMoreGeneralInfo,
+                                    onTap: () => setState(
+                                      () => showMoreGeneralInfo =
+                                          !showMoreGeneralInfo,
+                                    ),
+                                  ),
+
+                                  showMoreGeneralInfo
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 25,
+                                          ),
+                                          child: _buildGeneralInfo(
+                                            detail.general,
                                           ),
                                         )
-                                      : Image.network(
-                                          logoUrl,
-                                          width: screenWidth * 0.22,
-                                          height: screenWidth * 0.22,
-                                          fit: BoxFit.contain,
-                                          errorBuilder: (_, __, ___) => Icon(
-                                            Icons.broken_image,
-                                            size: screenWidth * 0.22,
-                                          ),
-                                        );
-                                }
-                              },
+                                      : const SizedBox.shrink(),
+
+                                  Divider(
+                                    height: 0,
+                                    color: AppColors.sepratorColourAppBar,
+                                    thickness: 3,
+                                  ),
+
+                                  _buildSectionHeader(
+                                    title: "ABOUT THE COMPANY",
+                                    isExpanded: showMoreAboutInfo,
+                                    onTap: () => setState(
+                                      () => showMoreAboutInfo =
+                                          !showMoreAboutInfo,
+                                    ),
+                                  ),
+
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          detail.company.companyDescription,
+                                          style: const TextStyle(height: 1.5),
+                                          maxLines: showMoreAboutInfo
+                                              ? null
+                                              : 2,
+                                          // null = show full text
+                                          overflow: showMoreAboutInfo
+                                              ? TextOverflow.visible
+                                              : TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 15),
+                                      ],
+                                    ),
+                                  ),
+
+                                  Divider(
+                                    height: 0,
+                                    color: AppColors.sepratorColourAppBar,
+                                    thickness: 3,
+                                  ),
+
+                                  _buildSectionHeader(
+                                    title: "HISTORY",
+                                    isExpanded: showMoreHistory,
+                                    onTap: () => setState(
+                                      () => showMoreHistory = !showMoreHistory,
+                                    ),
+                                  ),
+
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          detail.company.companyHistory,
+                                          style: const TextStyle(height: 1.5),
+                                          maxLines: showMoreHistory ? null : 2,
+                                          overflow: showMoreHistory
+                                              ? TextOverflow.visible
+                                              : TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 8),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Image Scroller (only shown when expanded)
+                                  _buildImageGalleryScroller(
+                                    detail.general.gallery,
+                                  ),
+
+                                  Divider(
+                                    height: 0,
+                                    color: AppColors.sepratorColourAppBar,
+                                    thickness: 3,
+                                  ),
+
+                                  _buildSectionHeader(
+                                    title: "PRODUCTS",
+                                    isExpanded: showMoreProducts,
+                                    onTap: () => setState(
+                                      () =>
+                                          showMoreProducts = !showMoreProducts,
+                                    ),
+                                  ),
+
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: List.generate(
+                                        detail.product?.length ?? 0,
+                                        (index) {
+                                          final product =
+                                              detail.product![index];
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  product.series ?? '',
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  product.description ?? '',
+                                                  style: const TextStyle(
+                                                    height: 1.5,
+                                                  ),
+                                                  maxLines: showMoreProducts
+                                                      ? null
+                                                      : 2,
+                                                  overflow: showMoreProducts
+                                                      ? TextOverflow.visible
+                                                      : TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 8),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 50),
+                            ],
+                          ),
+                          Positioned(
+                            top: screenHeight * 0.06,
+                            left: screenWidth * 0.05,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: const Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        ),
+                          Positioned(
+                            top: screenHeight * 0.21,
+                            left: screenWidth * 0.06,
+                            child: ClipOval(
+                              child: Container(
+                                width: screenWidth * 0.22,
+                                height: screenWidth * 0.22,
+                                color: Colors
+                                    .grey
+                                    .shade200, // Background circle color
+                                child: Builder(
+                                  builder: (context) {
+                                    final logoUrl =
+                                        '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                                    debugPrint(logoUrl);
+
+                                    final isSvg = detail.general.logo.contains(
+                                      ".svg",
+                                    );
+                                    final isAsset = detail.general.logo
+                                        .contains("assets");
+
+                                    if (isAsset) {
+                                      return Image.asset(
+                                        detail.general.logo,
+                                        width: screenWidth * 0.22,
+                                        height: screenWidth * 0.22,
+                                        fit: BoxFit.cover,
+                                      );
+                                    } else {
+                                      return isSvg
+                                          ? SvgPicture.network(
+                                              logoUrl,
+                                              fit: BoxFit.contain,
+                                              placeholderBuilder: (context) =>
+                                                  Icon(
+                                                    Icons.broken_image,
+                                                    size: screenWidth * 0.22,
+                                                  ),
+                                            )
+                                          : Image.network(
+                                              logoUrl,
+                                              width: screenWidth * 0.22,
+                                              height: screenWidth * 0.22,
+                                              fit: BoxFit.contain,
+                                              errorBuilder: (_, __, ___) =>
+                                                  Icon(
+                                                    Icons.broken_image,
+                                                    size: screenWidth * 0.22,
+                                                  ),
+                                            );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               );

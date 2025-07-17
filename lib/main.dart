@@ -50,7 +50,7 @@ Future<void> main() async {
           defaultTargetPlatform == TargetPlatform.linux ||
           defaultTargetPlatform == TargetPlatform.macOS)) {
     sqfliteFfiInit();
-    databaseFactoryOrNull = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfi;
   }
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SavedFlightCubit()),
         BlocProvider(create: (_) => AllplanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
-        //BlocProvider(create: (_) => ChatCubit()),
+        // BlocProvider(create: (_) => ChatCubit()),
         BlocProvider(create: (_) => ProfileScreenCubit()),
         BlocProvider(create: (_) => ManageaccCubit()),
         BlocProvider(create: (_) => ChangePasswordCubit()),
@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
         builder: (context, orientation, screenType) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Avionica',
+            title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
             home: SplashScreen(),
           );
@@ -106,3 +106,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
