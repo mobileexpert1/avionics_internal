@@ -36,6 +36,7 @@ abstract class AssetsPath {
   static const String chatHistoryicon = "chatHistoryicon";
 
   static const String deleteAcc = "Delete";
+  static const String deleteAccSvg = "deleteIconsSvg";
   static const String contactAcc = "Contact";
   static const String reviewsAcc = "Reviews";
   static const String glossaryAcc = "Glossary";

@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -13,6 +14,7 @@ import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'login_state.dart';
 import '../../Constants/Validators.dart';
@@ -120,10 +122,10 @@ class LoginCubit extends Cubit<LoginState> {
       // 1. Choose the right GoogleSignIn instance
       final googleSignIn = kIsWeb
           ? GoogleSignIn(
-        clientId:
-        '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com',
-        scopes: const ['email', 'profile'],
-      )
+              clientId:
+                  '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com',
+              scopes: const ['email', 'profile'],
+            )
           : GoogleSignIn(scopes: const ['email', 'profile']);
 
       // 2. Make sure any previous sessions are cleared
@@ -148,7 +150,6 @@ class LoginCubit extends Cubit<LoginState> {
 
         emit(state.copyWith(status: CommonApiStatus.success));
         await _navigateAfterLogin(context, result);
-
       } else {
         /* ---------- Mobile / desktop sign‑in ---------- */
         final googleUser = await googleSignIn.signIn();
@@ -185,47 +186,46 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
+   Future<void> signInWithFacebook(BuildContext context) async {
+    try {
+      final result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+        loginBehavior: LoginBehavior.dialogOnly,
+      );
 
-  // Future<void> signInWithFacebook(BuildContext context) async {
-  //   try {
-  //     final result = await FacebookAuth.instance.login(
-  //       permissions: ['email', 'public_profile'],
-  //       loginBehavior: LoginBehavior.dialogOnly,
-  //     );
-  //
-  //     if (result.status != LoginStatus.success) return;
-  //
-  //     final accessToken = result.accessToken!;
-  //     final credential = FacebookAuthProvider.credential(
-  //       accessToken.token,
-  //     );
-  //     final userCredential = await _auth.signInWithCredential(credential);
-  //
-  //     debugPrint('userCredential User: ${userCredential.user?.displayName}');
-  //     debugPrint('credential User: ${credential}');
-  //     debugPrint('accessToken: ${accessToken}');
-  //
-  //     emit(state.copyWith(status: CommonApiStatus.submitting));
-  //
-  //     final resultResponse = await LoginRepository()
-  //         .loginUserWithSocialPlatform(
-  //           token: accessToken.token,
-  //           provider: 'facebook',
-  //         );
-  //
-  //     emit(state.copyWith(status: CommonApiStatus.success));
-  //     await _navigateAfterLogin(context, resultResponse);
-  //     debugPrint('Facebook User: ${userCredential.user?.displayName}');
-  //   } catch (e) {
-  //     print(e.toString());
-  //     emit(
-  //       state.copyWith(
-  //         status: CommonApiStatus.failure,
-  //         errorMessage: e.toString(),
-  //       ),
-  //     );
-  //   }
-  // }
+      if (result.status != LoginStatus.success) return;
+
+      final accessToken = result.accessToken!;
+      final credential = FacebookAuthProvider.credential(
+        accessToken.token,
+      );
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      debugPrint('userCredential User: ${userCredential.user?.displayName}');
+      debugPrint('credential User: ${credential}');
+      debugPrint('accessToken: ${accessToken}');
+
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+
+      final resultResponse = await LoginRepository()
+          .loginUserWithSocialPlatform(
+            token: accessToken.token,
+            provider: 'facebook',
+          );
+
+      emit(state.copyWith(status: CommonApiStatus.success));
+      await _navigateAfterLogin(context, resultResponse);
+      debugPrint('Facebook User: ${userCredential.user?.displayName}');
+    } catch (e) {
+      print(e.toString());
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
 
   Future<void> signInWithApple(BuildContext context) async {
     try {
@@ -322,7 +322,9 @@ class LoginCubit extends Cubit<LoginState> {
         final signupData = {'email': state.email};
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => SubscriptionScreen(isComeFromSocialLogin: true),
+            builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
+                ? AppleSubscriptionScreen()
+                : SubscriptionScreen(isComeFromSocialLogin: true)),
           ),
         );
       } else {
