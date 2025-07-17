@@ -8,6 +8,7 @@ class AppleSubscriptionState {
   final bool purchased;
   final String? error;
 
+
   AppleSubscriptionState({
     this.storeAvailable = false,
     this.loading = false,
@@ -24,6 +25,7 @@ class AppleSubscriptionState {
     ProductDetails? selectedProduct,
     bool? purchased,
     String? error,
+
   }) {
     return AppleSubscriptionState(
       storeAvailable: storeAvailable ?? this.storeAvailable,

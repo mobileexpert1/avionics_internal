@@ -59,8 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 body: Center(
                   child: ConstrainedBox(
                     constraints: kIsWeb
-                        ? const BoxConstraints(maxWidth: 450) // Web layout width capped
-                        : const BoxConstraints(),             // Mobile: no constraint
+                        ? const BoxConstraints(
+                        maxWidth: 450) // Web layout width capped
+                        : const BoxConstraints(), // Mobile: no constraint
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: SingleChildScrollView(
@@ -82,11 +83,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                   controller: emailController,
                                   errorText: state.emailError,
                                   onChanged: (val) =>
-                                      context.read<LoginCubit>().emailChanged(val),
+                                      context.read<LoginCubit>().emailChanged(
+                                          val),
                                 );
                               },
                             ),
                             const SizedBox(height: 15),
+                            CustomSocialLoginButtons(
+                              backgroundColor: AppColors.facebookButton,
+                              textColor: Colors.white,
+                              title: ConstantStrings.loginWithFacebook,
+                              icon: SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.facebook),
+                                fit: BoxFit.fill,
+                              ),
+                              onPressed: () {
+                                context.read<LoginCubit>().signInWithFacebook(
+                                  context,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 30),
 
                             BlocBuilder<LoginCubit, LoginState>(
                               buildWhen: (prev, curr) =>
@@ -98,7 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   obscureText: true,
                                   errorText: state.passwordError,
                                   onChanged: (val) =>
-                                      context.read<LoginCubit>().passwordChanged(val),
+                                      context
+                                          .read<LoginCubit>()
+                                          .passwordChanged(val),
                                 );
                               },
                             ),
@@ -115,9 +134,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   textColor: Colors.white,
                                   icon: const SizedBox(width: 0),
                                   isEnabled: isButtonEnabled,
-                                  onPressed: () => context
-                                      .read<LoginCubit>()
-                                      .validateAndLogin(context),
+                                  onPressed: () =>
+                                      context
+                                          .read<LoginCubit>()
+                                          .validateAndLogin(context),
                                 );
                               },
                             ),
@@ -160,14 +180,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
-                                context.read<LoginCubit>().signInWithGoogle(context);
+                                context.read<LoginCubit>().signInWithGoogle(
+                                    context);
                               },
                             ),
 
                             const SizedBox(height: 12),
                             if (!kIsWeb &&
                                 (defaultTargetPlatform == TargetPlatform.iOS ||
-                                    defaultTargetPlatform == TargetPlatform.macOS)) ...[
+                                    defaultTargetPlatform ==
+                                        TargetPlatform.macOS)) ...[
                               CustomSocialLoginButtons(
                                 backgroundColor: Colors.black,
                                 textColor: Colors.white,
@@ -177,7 +199,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fit: BoxFit.fill,
                                 ),
                                 onPressed: () {
-                                  context.read<LoginCubit>().signInWithApple(context);
+                                  context.read<LoginCubit>().signInWithApple(
+                                      context);
                                 },
                               ),
                               const SizedBox(height: 12),
