@@ -25,8 +25,12 @@ class AppleSubscriptionScreen extends StatelessWidget {
       create: (_) => AppleSubscriptionCubit(),
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
-            prev.error != curr.error && curr.error != null,
+        (prev.error != curr.error && curr.error != null) ||
+            (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
+          debugPrint('testing');
+
+
           if (state.error != null) {
             ScaffoldMessenger.of(
               context,

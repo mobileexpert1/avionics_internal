@@ -141,7 +141,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             return;
           }
           //await ReceiptHelper.downloadReceipt();
-          emit(state.copyWith(purchased: true, loading: false));
           break;
         case PurchaseStatus.error:
           emit(
