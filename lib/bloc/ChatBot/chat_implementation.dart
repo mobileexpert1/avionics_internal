@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -29,6 +30,54 @@ class ChatRepositoryImpl implements ChatRepository {
   bool _closing = false;
   int _retries = 0;
   String? _lastSystem;
+  String? _pendingUserMessage;
+  ChatMessage? _pendingUserMessageObject;
+  StreamSubscription<InternetConnectionStatus>? _internetStatusSub;
+  bool _wasOffline = false;
+
+
+  void startInternetMonitoring() {
+    _internetStatusSub = InternetConnectionChecker().onStatusChange.listen((status) {
+      if (status == InternetConnectionStatus.disconnected && !_wasOffline) {
+        _wasOffline = true;
+        _pushSystem("Internet is disconnected. Kindly check your connection.🚫");
+      } else if (status == InternetConnectionStatus.connected && _wasOffline) {
+        _wasOffline = false;
+
+        _pushSystem("reconnecting...");
+
+        Future.delayed(const Duration(seconds: 2), () {
+          _pushSystem("Connection established. you may now ask me for any queries..✅");
+        });
+      }
+    });
+  }
+
+
+  // @override
+  // Future<void> connect({
+  //   required String accessToken,
+  //   String? existingSessionId,
+  // }) async {
+  //   _closing = false;
+  //   _accessToken = accessToken;
+  //   _retries = 0;
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   _sessionId = existingSessionId ?? prefs.getString('wilco_session_id');
+  //
+  //   if (_sessionId != null && _sessionId!.isNotEmpty) {
+  //     final localMsgs = await getMessagesForSession(_sessionId!);
+  //     for (var msg in localMsgs) {
+  //       _controller.add(msg);
+  //     }
+  //   } else {
+  //     await prefs.remove('wilco_session_id');
+  //   }
+  //
+  //   await _openSocket();
+  //   startInternetMonitoring();
+  // }
 
   @override
   Future<void> connect({
@@ -40,20 +89,24 @@ class ChatRepositoryImpl implements ChatRepository {
     _retries = 0;
 
     final prefs = await SharedPreferences.getInstance();
-    _sessionId = existingSessionId;
+    _sessionId = existingSessionId ?? prefs.getString('wilco_session_id');
 
-    if (_sessionId != null && _sessionId!.isNotEmpty) {
+    final isNewSession = existingSessionId == null || existingSessionId.isEmpty;
+
+    // 🟢 Only load local messages if it's NOT a new session
+    if (!isNewSession && _sessionId != null && _sessionId!.isNotEmpty) {
       final localMsgs = await getMessagesForSession(_sessionId!);
       for (var msg in localMsgs) {
         _controller.add(msg);
       }
     } else {
-      // Clear any previous session if starting new
       await prefs.remove('wilco_session_id');
     }
 
     await _openSocket();
+    startInternetMonitoring();
   }
+
 
   Future<void> _openSocket() async {
     if (_accessToken == null || _accessToken!.isEmpty) {
@@ -79,6 +132,11 @@ class ChatRepositoryImpl implements ChatRepository {
       onDone: _onDone,
       cancelOnError: true,
     );
+    if (_pendingUserMessage != null) {
+      Future.delayed(const Duration(seconds: 1), () {
+        resendPendingMessageIfAny();
+      });
+    }
   }
 
   void _onData(dynamic data) async {
@@ -104,6 +162,8 @@ class ChatRepositoryImpl implements ChatRepository {
       );
       _controller.add(msg);
       _saveChatMessage(msg);
+      _pendingUserMessage = null;
+      _pendingUserMessageObject = null;
     } else {
       print('[WebSocket] No "answer" in response');
     }
@@ -138,14 +198,25 @@ class ChatRepositoryImpl implements ChatRepository {
       text: text,
       sessionId: _sessionId ?? '',
     );
+    _pendingUserMessage = text;
+    _pendingUserMessageObject = msg;
 
     _controller.add(msg);
     _saveChatMessage(msg);
   }
 
+  void resendPendingMessageIfAny() {
+    if (_pendingUserMessage != null) {
+      print('[WebSocket] Resending pending message: $_pendingUserMessage');
+      _channel?.sink.add(jsonEncode({'query': _pendingUserMessage}));
+    }
+  }
+
   void _pushSystem(String text) {
     if (_controller.isClosed || _lastSystem == text) return;
     _lastSystem = text;
+
+    final isAnalyzing = text.toLowerCase().contains("reconnecting");
 
     final msg = ChatMessage(
       id: _uuid.v4(),
@@ -155,7 +226,7 @@ class ChatRepositoryImpl implements ChatRepository {
     );
 
     _controller.add(msg);
-    _saveChatMessage(msg);
+    // _saveChatMessage(msg);
   }
 
   void _saveChatMessage(ChatMessage msg) async {
@@ -171,6 +242,7 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   Future<void> dispose() async {
     _closing = true;
+    await _internetStatusSub?.cancel();
     await _socketSub?.cancel();
     await _channel?.sink.close(status.normalClosure);
     await _controller.close();

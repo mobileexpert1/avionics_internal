@@ -29,11 +29,19 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   final _controller = TextEditingController();
   final _scrollCtrl = ScrollController();
 
+  final ValueNotifier<bool> _isConnected = ValueNotifier(true);
+
   @override
   void dispose() {
     _controller.dispose();
     _scrollCtrl.dispose();
     super.dispose();
+  }
+
+  void _listenToInternet(ChatCubit cubit) {
+    cubit.internetStream.listen((status) {
+      _isConnected.value = status;
+    });
   }
 
   void _scrollToBottom() {
@@ -52,11 +60,15 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return BlocProvider(
-      create: (_) => ChatCubit(
-        accessToken: widget.accessToken,
-        isNewSession: (widget.accessToken.isEmpty ? true : false),
-        existingSessionId: widget.sessionId,
-      ),
+      create: (_) {
+        final cubit = ChatCubit(
+          accessToken: widget.accessToken,
+          isNewSession: (widget.accessToken.isEmpty),
+          existingSessionId: widget.sessionId,
+        );
+        _listenToInternet(cubit);
+        return cubit;
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -68,7 +80,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     Icons.arrow_back_ios_new,
                     color: Color(0xFF32377D),
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  // onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
                 ),
           rightButton: Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -219,20 +234,16 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 15, 16, 5),
-            // More bottom space
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // Chat Input Field
+                // Text field
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 13,
-                      vertical: 13,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF5F8F9),
-                      borderRadius: BorderRadius.circular(15), // More rounded
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: TextField(
                       controller: _controller,
@@ -241,7 +252,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                       style: const TextStyle(fontSize: 14),
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
-                        isCollapsed: true, // Tighten text area
+                        isCollapsed: true,
                         hintText: 'Type your message here…',
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         border: InputBorder.none,
@@ -249,34 +260,43 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 10),
 
-                // Send Button
-                InkWell(
-                  onTap: () {
-                    final text = _controller.text.trim();
-                    if (text.isNotEmpty) {
-                      context.read<ChatCubit>().sendMessage(text);
-                      _controller.clear();
-                      _scrollToBottom();
-                    }
+                // Reactive send button
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isConnected,
+                  builder: (_, isConnected, __) {
+                    return InkWell(
+                      onTap: isConnected
+                          ? () {
+                        final text = _controller.text.trim();
+                        if (text.isNotEmpty) {
+                          context.read<ChatCubit>().sendMessage(text);
+                          _controller.clear();
+                          _scrollToBottom();
+                        }
+                      }
+                          : null,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        height: 44,
+                        width: 44,
+                        decoration: BoxDecoration(
+                          color: isConnected
+                              ? const Color(0xFF3F3D56) // enabled color
+                              : const Color(0xFF9E9E9E), // slightly lighter for disabled
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(0),
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.SendIcon),
+                          height: iconSize,
+                          width: iconSize,
+                          // keep icon same in both states
+                        ),
+                      ),
+                    );
                   },
-                  borderRadius: BorderRadius.circular(22),
-                  child: Container(
-                    height: 44,
-                    width: 44,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF3F3D56),
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(0),
-                    child: SvgPicture.asset(
-                      CommonUi.setSvgImage(AssetsPath.SendIcon),
-                      height: iconSize,
-                      width: iconSize,
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -326,7 +346,7 @@ class _AnalyzingIndicatorState extends State<_AnalyzingIndicator>
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              'analyzing$dots',
+              'Analyzing$dots',
               style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
             ),
           ),
