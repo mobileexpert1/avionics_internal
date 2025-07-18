@@ -88,21 +88,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 15),
-                            CustomSocialLoginButtons(
-                              backgroundColor: AppColors.facebookButton,
-                              textColor: Colors.white,
-                              title: ConstantStrings.loginWithFacebook,
-                              icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.facebook),
-                                fit: BoxFit.fill,
-                              ),
-                              onPressed: () {
-                                context.read<LoginCubit>().signInWithFacebook(
-                                  context,
-                                );
-                              },
-                            ),
                             const SizedBox(height: 30),
 
                             BlocBuilder<LoginCubit, LoginState>(
@@ -215,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
-                                // context.read<LoginCubit>().signInWithFacebook(context);
+                                context.read<LoginCubit>().signInWithFacebook(context);
                               },
                             ),
                             const SizedBox(height: 30),

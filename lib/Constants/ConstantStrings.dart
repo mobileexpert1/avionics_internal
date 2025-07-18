@@ -142,8 +142,8 @@ class SubscriptionTexts {
 }
 
 class ApiBaseUrlConstant {
-  // static const String baseUrl = 'https://avionica.csdevhub.com/';
-  static const String baseUrl = 'http://192.168.10.186:8010/';
+  static const String baseUrl = 'https://avionica.csdevhub.com/';
+  // static const String baseUrl = 'http://192.168.10.186:8010/';
 }
 
 class ApiFunctionUrlConstant {
@@ -162,7 +162,7 @@ class ApiServiceUrlConstant {
   static const String forgotPasswordVerify = 'auth/verify-forget-password';
   static const String resetPassword = 'auth/reset-password';
   static const String getSubscritionList = 'subscription/';
-  static const String postSubscrition = 'subscription/user';
+  static const String postSubscrition = 'subscription/verify';
 
   //Profile
   static const String getUnitselection = 'user/measurement';
