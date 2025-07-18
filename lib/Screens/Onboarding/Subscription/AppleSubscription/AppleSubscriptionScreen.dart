@@ -140,7 +140,6 @@ class AppleSubscriptionScreen extends StatelessWidget {
                               //   ),
                               //   (route) => false,
                               // );
-
                               context
                                   .read<AppleSubscriptionCubit>()
                                   .buySelected(context);

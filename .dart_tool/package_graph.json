@@ -121,6 +121,11 @@
       "dependencies": []
     },
     {
+      "name": "internet_connection_checker",
+      "version": "1.0.0+1",
+      "dependencies": []
+    },
+    {
       "name": "firebase_auth",
       "version": "5.6.2",
       "dependencies": [
@@ -1196,11 +1201,6 @@
         "collection",
         "meta"
       ]
-    },
-    {
-      "name": "internet_connection_checker",
-      "version": "1.0.0+1",
-      "dependencies": []
     }
   ],
   "configVersion": 1
