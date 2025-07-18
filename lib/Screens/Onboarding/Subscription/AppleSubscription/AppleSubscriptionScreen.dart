@@ -149,7 +149,6 @@ class AppleSubscriptionScreen extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 20),
-
                         if (selectedProduct != null)
                           Text(
                             "Free for 7 days then ${selectedProduct.price}.\nCancel anytime.",

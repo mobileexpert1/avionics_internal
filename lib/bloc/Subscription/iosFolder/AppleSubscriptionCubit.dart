@@ -8,6 +8,7 @@ import 'package:path/path.dart';
 
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import 'package:avionics_internal/bloc/Subscription/iosFolder/ReceiptHelper.dart';
 import 'AppleSubscriptionState.dart';
 
 class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
@@ -116,7 +117,11 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
           _iap.completePurchase(purchase);
+          print("Server verification data: ${purchase.verificationData.serverVerificationData}");
+          print("Local verification data: ${purchase.verificationData.localVerificationData}");
+          print("Source: ${purchase.verificationData.source}");
           emit(state.copyWith(purchased: true, loading: false));
+          ReceiptHelper.fetchAndShareReceipt();
           break;
         case PurchaseStatus.error:
           emit(

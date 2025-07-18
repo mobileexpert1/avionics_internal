@@ -95,7 +95,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
         );
       } catch (e) {
         SessionCommonTokenError.handleUnauthorizedError(context, e);
-
         emit(
           currentState.copyWith(
             isLoading: false,
@@ -114,7 +113,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       emit(currentState.copyWith(selectedId: selectedItem.id));
     }
   }
-
   SubscriptionItemModel? get selectedItem {
     final currentState = state;
     if (currentState is SubscriptionInitial) {

@@ -142,7 +142,9 @@ class SubscriptionTexts {
 }
 
 class ApiBaseUrlConstant {
-  static const String baseUrl = 'https://avionica.csdevhub.com/';
+ // static const String baseUrl = 'https://avionica.csdevhub.com/';
+  static const String baseUrl = 'http://192.168.10.186:8010/';
+
 }
 
 class ApiFunctionUrlConstant {
