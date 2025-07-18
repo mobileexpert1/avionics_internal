@@ -165,6 +165,7 @@ class ApiServiceUrlConstant {
   static const String resetPassword = 'auth/reset-password';
   static const String getSubscritionList = 'subscription/';
   static const String postSubscrition = 'subscription/user';
+  static const String verfiyPostSubscrition = 'subscription/verify';
 
   //Profile
   static const String getUnitselection = 'user/measurement';

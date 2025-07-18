@@ -1,0 +1,28 @@
+import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
+import 'package:avionics_internal/bloc/Subscription/subscription_list_model.dart';
+
+import '../../../Constants/ApiClass/api_service.dart';
+import '../../../Constants/ConstantStrings.dart';
+
+class AppleSubscriptionRepository {
+
+  Future<BaseDetailResponseModel> postSubscriptionApi({required token,required selectedSubscritionId}) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlConstant.userService +
+          ApiServiceUrlConstant.postSubscrition,
+    );
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {"platform": "ios",
+          "product_id":selectedSubscritionId,
+          "package_name": "",
+          "token":token},
+      );
+      return BaseDetailResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+}

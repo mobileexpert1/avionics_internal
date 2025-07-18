@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:avionics_internal/bloc/Subscription/iosFolder/AppleSubscriptionRepository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:path/path.dart';
 
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import 'package:avionics_internal/bloc/Subscription/iosFolder/ReceiptHelper.dart';
@@ -117,11 +121,26 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
           _iap.completePurchase(purchase);
-          print("Server verification data: ${purchase.verificationData.serverVerificationData}");
-          print("Local verification data: ${purchase.verificationData.localVerificationData}");
+          print(
+            "Server verification data: ${purchase.verificationData
+                .serverVerificationData}",
+          );
+          print(
+            "Local verification data: ${purchase.verificationData
+                .localVerificationData}",
+          );
           print("Source: ${purchase.verificationData.source}");
-          emit(state.copyWith(purchased: true, loading: false));
-          await ReceiptHelper.downloadReceipt();
+
+          try {
+            await AppleSubscriptionRepository().postSubscriptionApi(
+                token: purchase.verificationData
+                    .serverVerificationData, selectedSubscritionId: purchase.productID);
+            emit(state.copyWith(purchased: true, loading: false, status: CommonApiStatus.success));
+          } catch (e) {
+            emit(state.copyWith(loading: false, error: e.toString()));
+            return;
+          }
+          //await ReceiptHelper.downloadReceipt();
           break;
         case PurchaseStatus.error:
           emit(
@@ -140,7 +159,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             ),
           );
           break;
-
         default:
           break;
       }
