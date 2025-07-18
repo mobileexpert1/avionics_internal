@@ -107,7 +107,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     }
   }
 
-  void _onPurchaseUpdate(List<PurchaseDetails> purchases) {
+  void _onPurchaseUpdate(List<PurchaseDetails> purchases) async {
     for (final purchase in purchases) {
       print(
         "Purchase update: ${purchase.productID}, Status: ${purchase.status}",
@@ -121,7 +121,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
           print("Local verification data: ${purchase.verificationData.localVerificationData}");
           print("Source: ${purchase.verificationData.source}");
           emit(state.copyWith(purchased: true, loading: false));
-          ReceiptHelper.fetchAndShareReceipt();
+          await ReceiptHelper.downloadReceipt();
           break;
         case PurchaseStatus.error:
           emit(
