@@ -10,7 +10,7 @@ class AppleSubscriptionRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.postSubscrition,
+          ApiServiceUrlConstant.verfiyPostSubscrition,
     );
     try {
       final response = await ApiService.post(
