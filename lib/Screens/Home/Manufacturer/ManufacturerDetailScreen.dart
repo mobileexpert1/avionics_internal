@@ -359,9 +359,13 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                               logoUrl,
                                               fit: BoxFit.contain,
                                               placeholderBuilder: (context) =>
-                                                  Icon(
-                                                    Icons.broken_image,
-                                                    size: screenWidth * 0.22,
+                                                  SvgPicture.asset(
+                                                    CommonUi.setSvgImage(
+                                                      AssetsPath.manuFirstImage,
+                                                    ),
+                                                    height: 10,
+                                                    width: 10,
+                                                    fit: BoxFit.contain,
                                                   ),
                                             )
                                           : Image.network(
@@ -370,9 +374,13 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                               height: screenWidth * 0.22,
                                               fit: BoxFit.contain,
                                               errorBuilder: (_, __, ___) =>
-                                                  Icon(
-                                                    Icons.broken_image,
-                                                    size: screenWidth * 0.22,
+                                                  SvgPicture.asset(
+                                                    CommonUi.setSvgImage(
+                                                      AssetsPath.manuFirstImage,
+                                                    ),
+                                                    height: 10,
+                                                    width: 10,
+                                                    fit: BoxFit.contain,
                                                   ),
                                             );
                                     }

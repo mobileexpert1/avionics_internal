@@ -133,16 +133,16 @@ class AppleSubscriptionScreen extends StatelessWidget {
                           isEnabled: selectedProduct != null,
                           onPressed: () async {
                             if (selectedProduct != null) {
-                              // Navigator.pushAndRemoveUntil(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (_) => RootTabbarscreen(),
-                              //   ),
-                              //   (route) => false,
-                              // );
-                              context
-                                  .read<AppleSubscriptionCubit>()
-                                  .buySelected(context);
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RootTabbarscreen(),
+                                ),
+                                (route) => false,
+                              );
+                              // context
+                              //     .read<AppleSubscriptionCubit>()
+                              //     .buySelected(context);
                             }
                           },
                         ),
