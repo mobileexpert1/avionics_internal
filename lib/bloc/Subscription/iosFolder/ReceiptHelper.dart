@@ -8,20 +8,31 @@ class ReceiptHelper {
 
   /// Saves the App Store receipt file locally and returns the file path.
   static Future<String?> downloadReceipt({bool forceRefresh = false}) async {
+    print("🛠️ downloadReceipt() called");
+
     try {
       if (_cachedBase64Receipt == null || forceRefresh) {
+        print("Calling platform channel to get receipt...");
         final String base64Receipt = await _channel.invokeMethod('getReceiptData');
+        print("Receipt fetched, length: ${base64Receipt.length}");
         _cachedBase64Receipt = base64Receipt;
       }
 
       final file = await _writeToFile(_cachedBase64Receipt!);
-      print("✅ Receipt downloaded to: ${file.path}");
-      return file.path;
+
+      if (await file.exists()) {
+        print( "${file.path}");
+        return file.path;
+      } else {
+        print("File not saved.");
+        return null;
+      }
     } catch (e) {
-      print("❌ Failed to download receipt: $e");
+      print("Exception while downloading receipt: $e");
       return null;
     }
   }
+
 
   static Future<File> _writeToFile(String base64Content) async {
     final directory = await getApplicationDocumentsDirectory(); // better for persistent access

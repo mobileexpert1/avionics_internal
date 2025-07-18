@@ -115,13 +115,14 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
       switch (purchase.status) {
         case PurchaseStatus.purchased:
+
         case PurchaseStatus.restored:
           _iap.completePurchase(purchase);
           print("Server verification data: ${purchase.verificationData.serverVerificationData}");
           print("Local verification data: ${purchase.verificationData.localVerificationData}");
           print("Source: ${purchase.verificationData.source}");
           emit(state.copyWith(purchased: true, loading: false));
-          await ReceiptHelper.downloadReceipt();
+        //  await ReceiptHelper.downloadReceipt();
           break;
         case PurchaseStatus.error:
           emit(
