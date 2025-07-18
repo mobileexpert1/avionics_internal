@@ -1,11 +1,9 @@
-import 'package:avionics_internal/Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:avionics_internal/bloc/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
 import 'bloc/Profile/Avtar/avtar_cubit.dart';
@@ -50,7 +48,7 @@ Future<void> main() async {
           defaultTargetPlatform == TargetPlatform.linux ||
           defaultTargetPlatform == TargetPlatform.macOS)) {
     sqfliteFfiInit();
-    databaseFactoryOrNull = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfi;
   }
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -80,7 +78,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SavedFlightCubit()),
         BlocProvider(create: (_) => AllplanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
-        //BlocProvider(create: (_) => ChatCubit()),
         BlocProvider(create: (_) => ProfileScreenCubit()),
         BlocProvider(create: (_) => ManageaccCubit()),
         BlocProvider(create: (_) => ChangePasswordCubit()),
@@ -97,7 +94,7 @@ class MyApp extends StatelessWidget {
         builder: (context, orientation, screenType) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Avionica',
+            title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
             home: SplashScreen(),
           );
@@ -106,3 +103,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+

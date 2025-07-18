@@ -1,7 +1,14 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:path/path.dart';
 
+import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import 'package:avionics_internal/bloc/Subscription/iosFolder/ReceiptHelper.dart';
 import 'AppleSubscriptionState.dart';
 
 class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
@@ -39,12 +46,14 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       },
     );
 
+    emit(state.copyWith(loading: true));
     await _loadProducts();
   }
 
   /// Load available products from App Store
   Future<void> _loadProducts() async {
     try {
+      emit(state.copyWith(loading: true));
       final response = await _iap.queryProductDetails(_productIds);
 
       if (response.error != null) {
@@ -68,37 +77,70 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     emit(state.copyWith(selectedProduct: product));
   }
 
-  /// Initiate purchase
-  void buySelected() {
+  void buySelected(BuildContext context) async {
     final selected = state.selectedProduct;
     if (selected == null) {
-      emit(state.copyWith(error: "No subscription selected"));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("No subscription selected")));
       return;
     }
 
     final purchaseParam = PurchaseParam(productDetails: selected);
     print("Initiating purchase for: ${selected.id}");
-    _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    try {
+      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    } on PlatformException catch (e) {
+      final isCancelled = e.code == 'storekit2_purchase_cancelled';
+      final message = isCancelled
+          ? "Purchase cancelled by user."
+          : "Purchase failed: ${e.message}";
+      emit(state.copyWith(loading: false, error: message));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      emit(state.copyWith(loading: false, error: "Unexpected error: $e"));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Unexpected error: $e")));
+    }
   }
 
-  /// Handle purchase stream updates
-  void _onPurchaseUpdate(List<PurchaseDetails> purchases) {
+  void _onPurchaseUpdate(List<PurchaseDetails> purchases) async {
     for (final purchase in purchases) {
       print(
         "Purchase update: ${purchase.productID}, Status: ${purchase.status}",
       );
+
       switch (purchase.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
           _iap.completePurchase(purchase);
-          emit(state.copyWith(purchased: true));
+          print("Server verification data: ${purchase.verificationData.serverVerificationData}");
+          print("Local verification data: ${purchase.verificationData.localVerificationData}");
+          print("Source: ${purchase.verificationData.source}");
+          emit(state.copyWith(purchased: true, loading: false));
+          await ReceiptHelper.downloadReceipt();
           break;
         case PurchaseStatus.error:
-          emit(state.copyWith(error: purchase.error?.message));
+          emit(
+            state.copyWith(
+              loading: false,
+              error: purchase.error?.message ?? "Purchase failed.",
+            ),
+          );
           break;
+
         case PurchaseStatus.pending:
-          // You may optionally emit loading state here
+          emit(
+            state.copyWith(
+              loading: false,
+              error: "Purchase pending confirmation from the server.",
+            ),
+          );
           break;
+
         default:
           break;
       }

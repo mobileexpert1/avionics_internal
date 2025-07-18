@@ -2,11 +2,13 @@ import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:avionics_internal/Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/Profile/Avtar/avtar_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
+import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../../signup/signup_repository.dart';
 import 'avtar_state.dart';
 
@@ -77,9 +79,10 @@ class AvtarCubit extends Cubit<AvtarState> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SubscriptionScreen(
+              builder: (context) =>
+              (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen() : SubscriptionScreen(
                 isComeFromSocialLogin: isComeFromSocialLogin,
-              ),
+              )),
             ),
           );
         }

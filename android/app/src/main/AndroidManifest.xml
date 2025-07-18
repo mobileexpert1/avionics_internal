@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-sdk tools:overrideLibrary="com.google.firebase.auth"/>
     <application
-        android:label="avionics_internal"
+        android:label="avioflAI"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

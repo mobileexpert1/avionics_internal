@@ -1,111 +1,19 @@
-import 'package:avionics_internal/bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
-import 'package:avionics_internal/bloc/Subscription/iosFolder/AppleSubscriptionState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../CustomFiles/CustomBottomButton.dart';
+import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
+import '../../../../bloc/Subscription/iosFolder/AppleSubscriptionState.dart';
+import '../../../Home/RootTabbar/RootTabbarScreen.dart';
 
 class AppleSubscriptionScreen extends StatelessWidget {
   const AppleSubscriptionScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AppleSubscriptionCubit(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Start Subscription'),
-          centerTitle: true,
-        ),
-        body: BlocBuilder<AppleSubscriptionCubit, AppleSubscriptionState>(
-          builder: (context, state) {
-            if (state.error != null) {
-              return Center(child: Text(state.error!));
-            }
-
-            final products = state.products;
-
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  const Icon(Icons.airplanemode_active, size: 48),
-                  const Text(
-                    "avioflAI",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 24),
-                  const _FeatureRow(
-                    icon: Icons.star,
-                    text: "Save your Favorites Aircrafts",
-                  ),
-                  const _FeatureRow(
-                    icon: Icons.compare,
-                    text: "Compare planes",
-                  ),
-                  const _FeatureRow(
-                    icon: Icons.track_changes,
-                    text: "Track the aircrafts",
-                  ),
-                  const SizedBox(height: 24),
-                  ...products.map(
-                    (product) => _SubscriptionCard(
-                      product: product,
-                      selected: product == state.selectedProduct,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: state.selectedProduct != null
-                        ? () => context.read<AppleSubscriptionCubit>().buySelected()
-                        : null,
-                    child: const Text("Go Premium"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3F3D51),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size.fromHeight(48),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Free for 7 days then 80 EURO per year.\nCancel anytime.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _FeatureRow extends StatelessWidget {
-  final IconData icon;
-  final String text;
-
-  const _FeatureRow({required this.icon, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [Icon(icon, size: 20), const SizedBox(width: 8), Text(text)],
-      ),
-    );
-  }
-}
-
-class _SubscriptionCard extends StatelessWidget {
-  final ProductDetails product;
-  final bool selected;
-
-  const _SubscriptionCard({required this.product, required this.selected});
-
-  String getTrialInfo(String description) {
+  String getTrialText(String description) {
     if (description.toLowerCase().contains('7 days'))
       return "+ 7 days free trial";
     return "";
@@ -113,40 +21,247 @@ class _SubscriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final trial = getTrialInfo(product.description);
-    return GestureDetector(
-      onTap: () => context.read<AppleSubscriptionCubit>().selectPlan(product),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: selected ? Colors.deepPurple : Colors.grey.shade300,
-            width: 2,
+    return BlocProvider(
+      create: (_) => AppleSubscriptionCubit(),
+      child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
+        listenWhen: (prev, curr) =>
+            prev.error != curr.error && curr.error != null,
+        listener: (context, state) {
+          if (state.error != null) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.error!)));
+          }
+
+          if (state.purchased) {
+            AppSnackBar.custom(
+              context,
+              message: "Purchase Successfully",
+              svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
+            );
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+              (route) => false,
+            );
+          }
+        },
+        builder: (context, state) {
+          final selectedProduct = state.selectedProduct;
+          final products = state.products;
+
+          return Stack(
+            children: [
+              Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  leading: const SizedBox(),
+                  title: const Text(ConstantStrings.startSubscription),
+                  backgroundColor: Colors.white,
+                  centerTitle: true,
+                  surfaceTintColor: Colors.white,
+                  shape: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                  ),
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.logoMain),
+                          fit: BoxFit.fill,
+                        ),
+                        const SizedBox(height: 30),
+
+                        // Features
+                        _buildFeatureRow(
+                          iconWidget: SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.starIcon),
+                            height: 25,
+                            width: 25,
+                          ),
+                          text: "Save your Favorites Aircrafts",
+                        ),
+                        const Divider(color: Color(0xFFF6F6F6), height: 3),
+                        _buildFeatureRow(
+                          iconWidget: SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.trackIcon),
+                            height: 25,
+                            width: 25,
+                          ),
+                          text: "Compare planes",
+                        ),
+                        const Divider(color: Color(0xFFF6F6F6), height: 3),
+                        _buildFeatureRow(
+                          iconWidget: SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.trackIcon),
+                            height: 25,
+                            width: 25,
+                          ),
+                          text: "Track the aircrafts",
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Subscription Cards
+                        ...products.map(
+                          (product) => Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: _SubscriptionCard(
+                              product: product,
+                              isSelected: product == selectedProduct,
+                              trialText: getTrialText(product.description),
+                              onTap: () => context
+                                  .read<AppleSubscriptionCubit>()
+                                  .selectPlan(product),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        // Go Premium Button
+                        CustomBottomButton(
+                          backgroundColor: const Color(0xFF3F3D51),
+                          textColor: Colors.white,
+                          title: "Go Premium",
+                          icon: const SizedBox(),
+                          isEnabled: selectedProduct != null,
+                          onPressed: () async {
+                            if (selectedProduct != null) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => RootTabbarscreen(),
+                                ),
+                                (route) => false,
+                              );
+                              // context
+                              //     .read<AppleSubscriptionCubit>()
+                              //     .buySelected(context);
+                            }
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+                        if (selectedProduct != null)
+                          Text(
+                            "Free for 7 days then ${selectedProduct.price}.\nCancel anytime.",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Color(0xFF626262),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              if (state.loading)
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFeatureRow({required Widget iconWidget, required String text}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          iconWidget,
+          const SizedBox(width: 15),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: Color(0xFF626262), fontSize: 14),
+            ),
           ),
-          borderRadius: BorderRadius.circular(10),
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionCard extends StatelessWidget {
+  final ProductDetails product;
+  final bool isSelected;
+  final String trialText;
+  final VoidCallback onTap;
+
+  const _SubscriptionCard({
+    required this.product,
+    required this.isSelected,
+    required this.trialText,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color: isSelected ? Colors.black : Colors.grey.shade300,
+            width: 1.2,
+          ),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+            // Left side
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.title,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                   ),
-                  if (trial.isNotEmpty)
-                    Text(trial, style: const TextStyle(color: Colors.grey)),
-                ],
-              ),
+                ),
+                if (trialText.isNotEmpty)
+                  Text(
+                    trialText,
+                    style: const TextStyle(color: Colors.black87, fontSize: 12),
+                  ),
+              ],
             ),
-            Text(product.price, style: const TextStyle(fontSize: 16)),
-            if (selected)
-              const Padding(
-                padding: EdgeInsets.only(left: 8.0),
-                child: Icon(Icons.check_circle, color: Colors.deepPurple),
-              ),
+
+            // Right side
+            Row(
+              children: [
+                Text(
+                  product.price,
+                  style: const TextStyle(color: Colors.black, fontSize: 13),
+                ),
+                const SizedBox(width: 10),
+                if (isSelected)
+                  SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.tickIcon),
+                    fit: BoxFit.fill,
+                  ),
+              ],
+            ),
           ],
         ),
       ),

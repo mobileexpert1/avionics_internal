@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import 'manageAcc_repository.dart';
 import 'manageAcc_state.dart';
 
@@ -96,6 +98,11 @@ class ManageaccCubit extends Cubit<ManageAccState> {
       );
 
       emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
+      AppSnackBar.custom(
+        context,
+        message: "Your profile has been successfully updated",
+        svgAsset: CommonUi.setSvgImage(AssetsPath.successIcon),
+      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));

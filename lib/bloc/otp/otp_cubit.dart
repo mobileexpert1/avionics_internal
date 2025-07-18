@@ -1,5 +1,7 @@
 import 'package:avionics_internal/Screens/Onboarding/ForgotCreateNewPassword/CreateNewPasswordScreen.dart';
+import 'package:avionics_internal/Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'package:avionics_internal/bloc/otp/otp_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -38,7 +40,7 @@ class OtpCubit extends Cubit<OtpState> {
         context,
         MaterialPageRoute(
           builder: (_) => (isFromSignup == true)
-              ? SubscriptionScreen()
+              ? (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen() : SubscriptionScreen())
               : CreateNewPasswordScreen(email: email),
         ),
       );

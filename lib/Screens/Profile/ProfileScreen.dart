@@ -202,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.deleteIcon,
+                        AssetsPath.deleteAccSvg,
                       ),
                       title: "Delete account",
                       onTap: () {
@@ -316,8 +316,8 @@ class InfoBottomSheet extends StatelessWidget {
         children: [
           Text(
             (isComeFromLogout == true
-                ? "Are you sure you want to logout"
-                : "Do you want to Delete account"),
+                ? "Are you sure you want to logout ?"
+                : "Do you want to Delete account ?"),
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
           ),

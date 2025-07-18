@@ -21,6 +21,7 @@
         "flutter_svg",
         "google_sign_in",
         "in_app_purchase",
+        "internet_connection_checker",
         "js",
         "path",
         "path_provider",
@@ -120,8 +121,13 @@
       "dependencies": []
     },
     {
+      "name": "internet_connection_checker",
+      "version": "1.0.0+1",
+      "dependencies": []
+    },
+    {
       "name": "firebase_auth",
-      "version": "4.20.0",
+      "version": "5.6.2",
       "dependencies": [
         "firebase_auth_platform_interface",
         "firebase_auth_web",
@@ -169,7 +175,7 @@
     },
     {
       "name": "cloud_firestore",
-      "version": "4.17.5",
+      "version": "5.6.11",
       "dependencies": [
         "cloud_firestore_platform_interface",
         "cloud_firestore_web",
@@ -182,7 +188,7 @@
     },
     {
       "name": "firebase_core",
-      "version": "2.32.0",
+      "version": "3.15.1",
       "dependencies": [
         "firebase_core_platform_interface",
         "firebase_core_web",
@@ -533,7 +539,7 @@
     },
     {
       "name": "firebase_core_platform_interface",
-      "version": "5.4.2",
+      "version": "6.0.0",
       "dependencies": [
         "collection",
         "flutter",
@@ -544,7 +550,7 @@
     },
     {
       "name": "firebase_auth_web",
-      "version": "5.12.0",
+      "version": "5.15.2",
       "dependencies": [
         "firebase_auth_platform_interface",
         "firebase_core",
@@ -558,7 +564,7 @@
     },
     {
       "name": "firebase_auth_platform_interface",
-      "version": "7.3.0",
+      "version": "7.7.2",
       "dependencies": [
         "_flutterfire_internals",
         "collection",
@@ -624,7 +630,7 @@
     },
     {
       "name": "cloud_firestore_web",
-      "version": "3.12.5",
+      "version": "4.4.11",
       "dependencies": [
         "_flutterfire_internals",
         "cloud_firestore_platform_interface",
@@ -637,7 +643,7 @@
     },
     {
       "name": "cloud_firestore_platform_interface",
-      "version": "6.2.5",
+      "version": "6.6.11",
       "dependencies": [
         "_flutterfire_internals",
         "collection",
@@ -649,7 +655,7 @@
     },
     {
       "name": "firebase_core_web",
-      "version": "2.17.5",
+      "version": "2.24.1",
       "dependencies": [
         "firebase_core_platform_interface",
         "flutter",
@@ -731,7 +737,7 @@
     },
     {
       "name": "web",
-      "version": "0.5.1",
+      "version": "1.1.1",
       "dependencies": []
     },
     {
@@ -750,12 +756,13 @@
     },
     {
       "name": "sqlite3",
-      "version": "2.4.5",
+      "version": "2.7.6",
       "dependencies": [
         "collection",
         "ffi",
         "meta",
         "path",
+        "typed_data",
         "web"
       ]
     },
@@ -1043,7 +1050,7 @@
     },
     {
       "name": "_flutterfire_internals",
-      "version": "1.3.35",
+      "version": "1.3.58",
       "dependencies": [
         "collection",
         "firebase_core",

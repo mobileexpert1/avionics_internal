@@ -24,14 +24,18 @@ class AppSnackBar {
         ),
         content: Row(
           children: [
-            SvgPicture.asset(
+            svgAsset == ""
+                ? const Wrap()
+                : SvgPicture.asset(
               svgAsset,
               width: 24,
               height: 24,
               fit: BoxFit.contain,
               colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: svgAsset == ""
+                ?  0
+                : 12),
             Expanded(
               child: Text(
                 message,
