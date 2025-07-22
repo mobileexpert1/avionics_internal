@@ -1,3 +1,4 @@
+import 'package:avionics_internal/bloc/FlightMap/flight_Map_Cubit.dart';
 import 'package:avionics_internal/bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ComparisonCubit()),
         BlocProvider(create: (_) => ChatHistoryCubit()),
         BlocProvider(create: (_) => AppleSubscriptionCubit()),
+        BlocProvider(create: (_) => FlightMapCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

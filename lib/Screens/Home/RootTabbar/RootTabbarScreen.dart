@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/constantImages.dart';
+import '../../MapSection/FlightMapscreen.dart';
 import '../../Profile/ProfileScreen.dart';
 import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
 import '../HomeScreen.dart';
@@ -29,7 +30,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
     setState(() {
       _pages = [
         HomeScreen(),
-        Center(child: Text('Map')),
+        FlightMapScreen(),
         Center(child: Text('Game')),
         token != null && token.isNotEmpty
             ? AskWilcoScreen(

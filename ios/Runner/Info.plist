@@ -67,5 +67,13 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Need Permission to access network</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to your location to show your position on the map</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to your location to show your position on the map</string>
+	<key>io.flutter.embedded_views_preview</key>
+    <true/>
 </dict>
 </plist>
