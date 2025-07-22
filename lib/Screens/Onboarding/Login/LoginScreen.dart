@@ -15,8 +15,8 @@ import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomSocialLoginButtons.dart';
 import '../../../CustomFiles/CustomTextField.dart';
-import '../../../bloc/login/login_cubit.dart';
-import '../../../bloc/login/login_state.dart';
+import '../../../bloc/Onboarding/login/login_cubit.dart';
+import '../../../bloc/Onboarding/login/login_state.dart';
 import '../ForgotCreateNewPassword/ForgotScreen.dart';
 
 class LoginScreen extends StatefulWidget {

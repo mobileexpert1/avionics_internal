@@ -9,8 +9,8 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
-import '../../../bloc/forgotPassword/forgot_cubit.dart';
-import '../../../bloc/forgotPassword/forgot_state.dart';
+import '../../../bloc/Onboarding/forgotPassword/forgot_cubit.dart';
+import '../../../bloc/Onboarding/forgotPassword/forgot_state.dart';
 
 class Forgotscreen extends StatefulWidget {
   @override

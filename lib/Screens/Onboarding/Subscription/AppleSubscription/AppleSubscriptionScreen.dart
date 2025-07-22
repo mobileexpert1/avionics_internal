@@ -7,8 +7,8 @@ import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../../bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
-import '../../../../bloc/Subscription/iosFolder/AppleSubscriptionState.dart';
+import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
+import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionState.dart';
 import '../../../Home/RootTabbar/RootTabbarScreen.dart';
 
 class AppleSubscriptionScreen extends StatefulWidget {

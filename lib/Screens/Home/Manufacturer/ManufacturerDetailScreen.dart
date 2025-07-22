@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Helpers/Custom_widget.dart';
-import '../../../bloc/manufacturer/Manufacturer_detail_model.dart';
-import '../../../bloc/manufacturer/manufacturer_cubit.dart';
-import '../../../bloc/manufacturer/manufacturer_state.dart';
-import '../AllPlaneListAndDetails/AllPlaneListScreen.dart';
+import '../../../bloc/home/manufacturer/Manufacturer_detail_model.dart';
+import '../../../bloc/home/manufacturer/manufacturer_cubit.dart';
+import '../../../bloc/home/manufacturer/manufacturer_state.dart';
+import '../HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
 class ManufacturerDetailScreen extends StatefulWidget {
   final String manufacturerDetailId;

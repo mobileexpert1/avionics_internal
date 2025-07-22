@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../Constants/constantImages.dart';
-import '../../../bloc/Subscription/subscription_cubit.dart';
-import '../../../bloc/Subscription/subscription_list_model.dart';
-import '../../../bloc/Subscription/subscription_state.dart';
+import '../../../bloc/Onboarding/Subscription/subscription_cubit.dart';
+import '../../../bloc/Onboarding/Subscription/subscription_list_model.dart';
 
 class SubscriptionOptionCard extends StatelessWidget {
   final SubscriptionItemModel item;

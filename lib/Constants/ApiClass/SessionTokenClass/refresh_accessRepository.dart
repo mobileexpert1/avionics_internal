@@ -5,7 +5,7 @@ import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../../../bloc/login/login_response_model.dart';
+import '../../../bloc/Onboarding/login/login_response_model.dart';
 
 class RefreshAccessTokenRepository {
   Future<LoginResponseModel> getAndUpdateTheRefreshToken({

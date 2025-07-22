@@ -5,8 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/SearchBarWidget.dart';
-import '../../../bloc/manufacturer/manufacturer_cubit.dart';
-import '../../../bloc/manufacturer/manufacturer_state.dart';
+import '../../../bloc/home/manufacturer/manufacturer_cubit.dart';
+import '../../../bloc/home/manufacturer/manufacturer_state.dart';
 import '../HomeScreen.dart';
 import 'ManufacturerDetailScreen.dart';
 

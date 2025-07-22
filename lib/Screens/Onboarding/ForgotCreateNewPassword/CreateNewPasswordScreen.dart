@@ -9,8 +9,8 @@ import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
-import '../../../bloc/createNewPassword/createNewPassword_cubit.dart';
-import '../../../bloc/createNewPassword/createNewPassword_state.dart';
+import '../../../bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
+import '../../../bloc/Profile/createNewPassword/createNewPassword_state.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
   final String email;

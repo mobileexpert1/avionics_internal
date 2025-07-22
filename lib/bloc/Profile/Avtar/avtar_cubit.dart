@@ -9,7 +9,7 @@ import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
 import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
-import '../../signup/signup_repository.dart';
+import '../../Onboarding/signup/signup_repository.dart';
 import 'avtar_state.dart';
 
 class AvtarCubit extends Cubit<AvtarState> {

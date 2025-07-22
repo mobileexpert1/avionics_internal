@@ -5,8 +5,8 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
-import '../../../bloc/Subscription/subscription_cubit.dart';
-import '../../../bloc/Subscription/subscription_state.dart';
+import '../../../bloc/Onboarding/Subscription/subscription_cubit.dart';
+import '../../../bloc/Onboarding/Subscription/subscription_state.dart';
 import 'SubscriptionOptionCard.dart';
 
 

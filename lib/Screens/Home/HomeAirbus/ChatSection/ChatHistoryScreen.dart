@@ -1,12 +1,12 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'package:avionics_internal/bloc/ChatHistory/chat_history_cubit.dart';
-import 'package:avionics_internal/bloc/ChatHistory/chat_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../../bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
+import '../../../../bloc/home/chatSection/ChatHistory/chat_history_state.dart';
 import 'ChatBotScreen.dart';
 
 class ChatHistoryScreen extends StatefulWidget {

@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../bloc/FlightMap/flight_Map_Cubit.dart';
-import '../../bloc/FlightMap/flight_map_state.dart';
+import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_state.dart';
 
 class FlightMapScreen extends StatefulWidget {
   const FlightMapScreen({Key? key}) : super(key: key);
@@ -47,6 +47,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           return FlutterMap(
             options: MapOptions(center: currentLatLng, zoom: 15),
             children: [
+              TileLayer(
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: const ['a', 'b', 'c'],
+                userAgentPackageName: 'com.example.yourapp',
+              ),
               MarkerLayer(
                 markers: [
                   Marker(

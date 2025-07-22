@@ -2,9 +2,8 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../Constants/constantImages.dart';
-import '../../../../bloc/ChatBot/ChatCubit.dart';
+import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {

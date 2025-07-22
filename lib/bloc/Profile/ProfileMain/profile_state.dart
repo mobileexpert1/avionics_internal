@@ -1,7 +1,6 @@
-// settings_state.dart
-
 // Make SavedFlightState extend Equatable for proper state comparison
-import '../../SavedFlighDetails/savedFlight_model.dart';
+
+import '../../home/SavedFlighDetails/savedFlight_model.dart';
 
 class ProfileScreenState  {
   final List<SavedFlightAndProfileSectionModel> savedflight;

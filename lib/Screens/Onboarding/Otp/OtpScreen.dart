@@ -8,8 +8,8 @@ import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
-import '../../../bloc/otp/otp_cubit.dart';
-import '../../../bloc/otp/otp_state.dart';
+import '../../../bloc/Onboarding/otp/otp_cubit.dart';
+import '../../../bloc/Onboarding/otp/otp_state.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
