@@ -1,9 +1,11 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
+import 'package:flutter/foundation.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
+import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
 import 'Glossary/GlossaryScreen.dart';
@@ -83,10 +85,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leadingIconColor: Colors.blue,
                       title: "Subscription",
                       onTap: () {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => ProfileSubscriptionScreen(),
+                        //   ),
+                        // );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileSubscriptionScreen(),
+                            builder: (context) =>
+                            (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen(isComeFromSignup: false) : ProfileSubscriptionScreen()),
                           ),
                         );
                       },
