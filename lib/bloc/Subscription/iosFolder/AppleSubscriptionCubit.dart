@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:path/path.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
@@ -54,6 +55,42 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     await _loadProducts();
   }
 
+  Future<void> restorePastPurchases() async {
+    emit(state.copyWith(loading: true));
+    try {
+      // Restore purchases (this replaces restoreTransactions)
+      await InAppPurchase.instance.restorePurchases();
+      _subscription = InAppPurchase.instance.purchaseStream.listen(
+        (List<PurchaseDetails> purchaseDetailsList) {
+          for (final purchase in purchaseDetailsList) {
+            if (purchase.status == PurchaseStatus.restored ||
+                purchase.status == PurchaseStatus.purchased) {
+              emit(
+                state.copyWith(
+                  purchased: true,
+                  loading: false,
+                  activeProductId: purchase.productID,
+                ),
+              );
+              return;
+            }
+          }
+        },
+        onError: (error) {
+          emit(state.copyWith(loading: false, error: 'Restore error: $error'));
+        },
+        onDone: () => _subscription?.cancel(),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          loading: false,
+          error: 'Failed to restore purchases: $e',
+        ),
+      );
+    }
+  }
+
   /// Load available products from App Store
   Future<void> _loadProducts() async {
     try {
@@ -99,12 +136,10 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       final message = isCancelled
           ? "Purchase cancelled by user."
           : "Purchase failed: ${e.message}";
-      emit(state.copyWith(loading: false, error: message));
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
-      emit(state.copyWith(loading: false, error: "Unexpected error: $e"));
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Unexpected error: $e")));
@@ -119,23 +154,27 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
       switch (purchase.status) {
         case PurchaseStatus.purchased:
-
         case PurchaseStatus.restored:
           _iap.completePurchase(purchase);
           print(
-            "Server verification data: ${purchase.verificationData
-                .serverVerificationData}",
+            "Server verification data: ${purchase.verificationData.serverVerificationData}",
           );
           print(
-            "Local verification data: ${purchase.verificationData
-                .localVerificationData}",
+            "Local verification data: ${purchase.verificationData.localVerificationData}",
           );
           print("Source: ${purchase.verificationData.source}");
           try {
             await AppleSubscriptionRepository().postSubscriptionApi(
-                token: purchase.verificationData
-                    .serverVerificationData, selectedSubscritionId: purchase.productID);
-            emit(state.copyWith(purchased: true, loading: false, status: CommonApiStatus.success));
+              token: purchase.verificationData.serverVerificationData,
+              selectedSubscritionId: purchase.productID,
+            );
+            emit(
+              state.copyWith(
+                purchased: true,
+                loading: false,
+                status: CommonApiStatus.success,
+              ),
+            );
           } catch (e) {
             emit(state.copyWith(loading: false, error: e.toString()));
             return;
@@ -150,7 +189,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             ),
           );
           break;
-
         case PurchaseStatus.pending:
           emit(
             state.copyWith(

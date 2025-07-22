@@ -4,19 +4,38 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../bloc/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import '../../../../bloc/Subscription/iosFolder/AppleSubscriptionState.dart';
 import '../../../Home/RootTabbar/RootTabbarScreen.dart';
 
-class AppleSubscriptionScreen extends StatelessWidget {
-  const AppleSubscriptionScreen({super.key});
+class AppleSubscriptionScreen extends StatefulWidget {
+  final bool? isComeFromSignup;
 
+  const AppleSubscriptionScreen({super.key, this.isComeFromSignup});
+
+  @override
+  _AppleSubscriptionScreenState createState() =>
+      _AppleSubscriptionScreenState();
+}
+
+class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   String getTrialText(String description) {
     if (description.toLowerCase().contains('7 days'))
       return "+ 7 days free trial";
     return "";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isComeFromSignup == false) {
+      Future.delayed(Duration.zero, () {
+        context.read<AppleSubscriptionCubit>().restorePastPurchases();
+      });
+    }
   }
 
   @override
@@ -25,12 +44,9 @@ class AppleSubscriptionScreen extends StatelessWidget {
       create: (_) => AppleSubscriptionCubit(),
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
-        (prev.error != curr.error && curr.error != null) ||
+            (prev.error != curr.error && curr.error != null) ||
             (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
-          debugPrint('testing');
-
-
           if (state.error != null) {
             ScaffoldMessenger.of(
               context,
@@ -44,11 +60,17 @@ class AppleSubscriptionScreen extends StatelessWidget {
               svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
             );
 
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-              (route) => false,
-            );
+            (widget.isComeFromSignup == false ||
+                    widget.isComeFromSignup == null)
+                ? () {
+                    Navigator.of(context).pop();
+                  }()
+                : Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+                    (route) => false,
+                  );
+            ;
           }
         },
         builder: (context, state) {
@@ -59,16 +81,27 @@ class AppleSubscriptionScreen extends StatelessWidget {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: AppBar(
-                  leading: const SizedBox(),
-                  title: const Text(ConstantStrings.startSubscription),
-                  backgroundColor: Colors.white,
-                  centerTitle: true,
-                  surfaceTintColor: Colors.white,
-                  shape: Border(
-                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-                  ),
+                appBar: CustomAppBar(
+                  title:
+                      ((widget.isComeFromSignup == false ||
+                          widget.isComeFromSignup == null)
+                      ? SubscriptionTexts.currentSubTitle
+                      : ConstantStrings.startSubscription),
+                  leftButton:
+                      ((widget.isComeFromSignup == false ||
+                          widget.isComeFromSignup == null)
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      : Wrap()),
                 ),
+
                 body: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SingleChildScrollView(
@@ -117,7 +150,9 @@ class AppleSubscriptionScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 15),
                             child: _SubscriptionCard(
                               product: product,
-                              isSelected: product == selectedProduct,
+                              isSelected:
+                                  product == selectedProduct ||
+                                  product.id == state.activeProductId,
                               trialText: getTrialText(product.description),
                               onTap: () => context
                                   .read<AppleSubscriptionCubit>()
@@ -127,31 +162,66 @@ class AppleSubscriptionScreen extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 40),
+                        ...[
+                          if (widget.isComeFromSignup == false ||
+                              widget.isComeFromSignup == null) ...[
+                            CustomBottomButton(
+                              backgroundColor: const Color.fromRGBO(
+                                63,
+                                61,
+                                81,
+                                1.0,
+                              ),
+                              textColor: Colors.white,
+                              title: SubscriptionTexts.changeSubPlanTitle,
+                              icon: const SizedBox(),
+                              isEnabled: selectedProduct != null,
+                              onPressed: () {
+                                if (selectedProduct != null) {
+                                  context
+                                      .read<AppleSubscriptionCubit>()
+                                      .buySelected(context);
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            CustomBottomButton(
+                              backgroundColor: const Color.fromRGBO(
+                                30,
+                                128,
+                                242,
+                                1.0,
+                              ),
+                              textColor: Colors.white,
+                              title: SubscriptionTexts.restoreSubTitle,
+                              icon: const SizedBox(),
+                              isEnabled: true,
+                              onPressed: () {
+                                context
+                                    .read<AppleSubscriptionCubit>()
+                                    .restorePastPurchases();
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                          ] else ...[
+                            CustomBottomButton(
+                              backgroundColor: const Color(0xFF3F3D51),
+                              textColor: Colors.white,
+                              title: "Go Premium",
+                              icon: const SizedBox(),
+                              isEnabled: selectedProduct != null,
+                              onPressed: () async {
+                                if (selectedProduct != null) {
+                                  context
+                                      .read<AppleSubscriptionCubit>()
+                                      .buySelected(context);
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ],
 
-                        // Go Premium Button
-                        CustomBottomButton(
-                          backgroundColor: const Color(0xFF3F3D51),
-                          textColor: Colors.white,
-                          title: "Go Premium",
-                          icon: const SizedBox(),
-                          isEnabled: selectedProduct != null,
-                          onPressed: () async {
-                            if (selectedProduct != null) {
-                              // Navigator.pushAndRemoveUntil(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (_) => RootTabbarscreen(),
-                              //   ),
-                              //   (route) => false,
-                              // );
-                              context
-                                  .read<AppleSubscriptionCubit>()
-                                  .buySelected(context);
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
                         if (selectedProduct != null)
                           Text(
                             "Free for 7 days then ${selectedProduct.price}.\nCancel anytime.",
