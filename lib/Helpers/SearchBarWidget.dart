@@ -9,6 +9,8 @@ class SearchBarWidget extends StatelessWidget {
   final bool enableBackArrow;
   final bool enableCloseScreen;
   final Function(String)? onChanged;
+  final bool? isComeFromMapSection;
+
 
   const SearchBarWidget({
     Key? key,
@@ -18,6 +20,7 @@ class SearchBarWidget extends StatelessWidget {
     required this.enableBackArrow,
     required this.enableCloseScreen,
     this.onChanged,
+    this.isComeFromMapSection,
   }) : super(key: key);
 
   @override
@@ -53,36 +56,53 @@ class SearchBarWidget extends StatelessWidget {
                     ),
                   if (enableBackArrow) const SizedBox(width: 15),
                   Expanded(
-                    child: TextField(
-                      controller: controller,
-                      onChanged: onChanged,
-                      decoration: InputDecoration(
-                        hintText: "Try 'Airbus 320'",
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.search),
-                            width: 18,
-                            height: 18,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: (isComeFromMapSection == true
+                            ? Colors.white
+                            : Colors.transparent), // Light grey background
+                        borderRadius: BorderRadius.circular(5), // Optional: add rounded corners
+                      ),
+                      child: TextField(
+                        controller: controller,
+                        onChanged: onChanged,
+                        decoration: InputDecoration(
+                          hintText: (isComeFromMapSection == true
+                              ? "Search Avionica"
+                              : "Try 'Airbus 320") ,
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.search),
+                              width: 18,
+                              height: 18,
+                            ),
                           ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                        ),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFFE1E4EA),
-                            width: 1.5,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10,
                           ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFFE1E4EA),
-                            width: 1.5,
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: (isComeFromMapSection == true
+                                  ? Colors.transparent
+                                  : Color(0xFFE1E4EA)),
+                              width: 1.5,
+                            ),
                           ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: (isComeFromMapSection == true
+                                  ? Colors.transparent
+                                  : Color(0xFFE1E4EA)),
+                              width: 1.5,
+                            ),
+                          ),
+                          filled: true, // Required to apply fillColor if using directly
+                          fillColor: Colors.transparent, // Set to transparent because we're using Container color
                         ),
                       ),
-                    ),
+                    )
+                    ,
                   ),
                   const SizedBox(width: 12),
                   if (enableFilter)
@@ -111,10 +131,10 @@ class SearchBarWidget extends StatelessWidget {
     return Container(
       height: 1.5,
       decoration: BoxDecoration(
-        color: const Color(0xFFDDDDDD),
+        color: (isComeFromMapSection == true ? Colors.transparent : Color(0xFFDDDDDD)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: (isComeFromMapSection == true ? Colors.transparent : Colors.grey.withOpacity(0.5)),
             spreadRadius: 0,
             blurRadius: 4,
             offset: Offset(0, 2),

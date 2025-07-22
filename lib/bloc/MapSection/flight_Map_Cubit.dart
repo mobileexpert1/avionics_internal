@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -7,7 +8,7 @@ import 'flight_map_state.dart';
 class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
 
-  Future<void> getCurrentLocation() async {
+  Future<void> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
 
     try {
@@ -27,23 +28,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          emit(
-            state.copyWith(
-              status: CommonApiStatus.failure,
-              errorMessage: 'Location permissions are denied',
-              isLoading: false,
-            ),
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')),
           );
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        emit(
-          state.copyWith(
-            status: CommonApiStatus.failure,
-            errorMessage: 'Location permissions are permanently denied',
-            isLoading: false,
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location permissions are permanently denied'),
           ),
         );
         return;
@@ -62,6 +57,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         ),
       );
     } on PlatformException catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Platform error: ${e.message}')));
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -70,6 +68,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         ),
       );
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Platform error: ${e.toString()}')),
+      );
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -84,4 +85,3 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(FlightMapState());
   }
 }
-
