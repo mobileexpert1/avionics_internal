@@ -10,6 +10,7 @@
         "cloud_firestore",
         "connectivity_plus",
         "cupertino_icons",
+        "drag_and_drop_lists",
         "equatable",
         "firebase",
         "firebase_auth",
@@ -1200,6 +1201,13 @@
       "dependencies": [
         "collection",
         "meta"
+      ]
+    },
+    {
+      "name": "drag_and_drop_lists",
+      "version": "0.4.2",
+      "dependencies": [
+        "flutter"
       ]
     }
   ],

@@ -35,49 +35,28 @@ class ChatRepositoryImpl implements ChatRepository {
   StreamSubscription<InternetConnectionStatus>? _internetStatusSub;
   bool _wasOffline = false;
 
-
   void startInternetMonitoring() {
-    _internetStatusSub = InternetConnectionChecker().onStatusChange.listen((status) {
+    _internetStatusSub = InternetConnectionChecker().onStatusChange.listen((
+      status,
+    ) {
       if (status == InternetConnectionStatus.disconnected && !_wasOffline) {
         _wasOffline = true;
-        _pushSystem("Internet is disconnected. Kindly check your connection.🚫");
+        _pushSystem(
+          "Internet is disconnected. Kindly check your connection.🚫",
+        );
       } else if (status == InternetConnectionStatus.connected && _wasOffline) {
         _wasOffline = false;
 
         _pushSystem("reconnecting...");
 
         Future.delayed(const Duration(seconds: 2), () {
-          _pushSystem("Connection established. you may now ask me for any queries..✅");
+          _pushSystem(
+            "Connection established. you may now ask me for any queries..✅",
+          );
         });
       }
     });
   }
-
-
-  // @override
-  // Future<void> connect({
-  //   required String accessToken,
-  //   String? existingSessionId,
-  // }) async {
-  //   _closing = false;
-  //   _accessToken = accessToken;
-  //   _retries = 0;
-  //
-  //   final prefs = await SharedPreferences.getInstance();
-  //   _sessionId = existingSessionId ?? prefs.getString('wilco_session_id');
-  //
-  //   if (_sessionId != null && _sessionId!.isNotEmpty) {
-  //     final localMsgs = await getMessagesForSession(_sessionId!);
-  //     for (var msg in localMsgs) {
-  //       _controller.add(msg);
-  //     }
-  //   } else {
-  //     await prefs.remove('wilco_session_id');
-  //   }
-  //
-  //   await _openSocket();
-  //   startInternetMonitoring();
-  // }
 
   @override
   Future<void> connect({
@@ -106,7 +85,6 @@ class ChatRepositoryImpl implements ChatRepository {
     await _openSocket();
     startInternetMonitoring();
   }
-
 
   Future<void> _openSocket() async {
     if (_accessToken == null || _accessToken!.isEmpty) {
@@ -145,11 +123,21 @@ class ChatRepositoryImpl implements ChatRepository {
     final decoded = jsonDecode(data as String);
     print('[WebSocket] Decoded: $decoded');
 
+    if (decoded['error'] != null) {
+      final errorMsg = decoded['error'] as String;
+      _pushSystem("Internal Server Error: $errorMsg ❌");
+      return;
+    }
     // Save session ID only once for a new session
     if ((_sessionId ?? '').isEmpty && decoded['session_id'] != null) {
       _sessionId = decoded['session_id'] as String;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('wilco_session_id', _sessionId!);
+
+      if (_pendingUserMessage != null) {
+        send(_pendingUserMessage!);
+        _pendingUserMessage = null;
+      }
     }
 
     final answer = decoded['answer'] as String?;
@@ -171,6 +159,19 @@ class ChatRepositoryImpl implements ChatRepository {
 
   void _onError(Object error) {
     print('[WebSocket] Error: $error');
+
+    final errorString = error.toString();
+    final isServerError =
+        errorString.contains('500') ||
+        errorString.contains('504') ||
+        errorString.contains('Internal Server Error') ||
+        errorString.contains('Gateway Timeout');
+
+    if (isServerError) {
+      _pushSystem("Internal Server Error. Please try again later. ❌");
+    } else {
+      _pushSystem("Unexpected error occurred. Please try again. ⚠️");
+    }
   }
 
   void _onDone() {
@@ -192,6 +193,11 @@ class ChatRepositoryImpl implements ChatRepository {
     print('[WebSocket] Sending: $text');
     _channel?.sink.add(jsonEncode({'query': text}));
 
+    if ((_sessionId ?? '').isEmpty) {
+      _pendingUserMessage = text;
+      return;
+    }
+
     final msg = ChatMessage(
       id: _uuid.v4(),
       author: ChatAuthor.user,
@@ -200,7 +206,6 @@ class ChatRepositoryImpl implements ChatRepository {
     );
     _pendingUserMessage = text;
     _pendingUserMessageObject = msg;
-
     _controller.add(msg);
     _saveChatMessage(msg);
   }
