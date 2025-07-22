@@ -186,7 +186,7 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-   Future<void> signInWithFacebook(BuildContext context) async {
+  Future<void> signInWithFacebook(BuildContext context) async {
     try {
       final result = await FacebookAuth.instance.login(
         permissions: ['email', 'public_profile'],
@@ -196,9 +196,7 @@ class LoginCubit extends Cubit<LoginState> {
       if (result.status != LoginStatus.success) return;
 
       final accessToken = result.accessToken!;
-      final credential = FacebookAuthProvider.credential(
-        accessToken.token,
-      );
+      final credential = FacebookAuthProvider.credential(accessToken.token);
       final userCredential = await _auth.signInWithCredential(credential);
 
       debugPrint('userCredential User: ${userCredential.user?.displayName}');
