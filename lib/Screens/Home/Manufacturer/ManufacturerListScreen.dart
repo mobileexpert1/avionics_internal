@@ -173,15 +173,14 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       ),
     );
   }
-
   Widget _buildLeadingImage(
     double width,
     double height,
     String imagePath,
-    bool isLocalSvgAsest,
+    bool isLocalSvgAsset,
     bool isNetwork,
   ) {
-    if (isLocalSvgAsest) {
+    if (isLocalSvgAsset) {
       if (imagePath.contains("assets")) {
         return SvgPicture.asset(
           imagePath,
@@ -190,20 +189,12 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
           fit: BoxFit.contain,
         );
       } else {
-        return SizedBox(
+        return SvgPicture.network(
+          imagePath,
           height: height,
           width: width,
-          child: SvgPicture.network(
-            CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-            fit: BoxFit.contain,
-            placeholderBuilder: (context) =>
-                SvgPicture.asset(
-                  imagePath,
-                  height: 35,
-                  width: 35,
-                  fit: BoxFit.contain,
-                ),
-          ),
+          fit: BoxFit.contain,
+          placeholderBuilder: (context) => const SizedBox.shrink(),
         );
       }
     } else if (isNetwork) {
@@ -212,12 +203,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         height: height,
         width: width,
         fit: BoxFit.contain,
-        errorBuilder: (_, _, _) => SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-          height: 35,
-          width: 35,
-          fit: BoxFit.contain,
-        ),
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
       );
     } else {
       return Image.asset(
@@ -225,6 +211,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         height: height,
         width: width,
         fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
       );
     }
   }
