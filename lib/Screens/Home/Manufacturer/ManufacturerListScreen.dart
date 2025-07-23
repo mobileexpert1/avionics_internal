@@ -257,27 +257,33 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
     );
   }
   Widget _buildLeadingImage(
-    double width,
-    double height,
-    String imagePath,
-    bool isLocalSvgAsset,
-    bool isNetwork,
-  ) {
+      double width,
+      double height,
+      String imagePath,
+      bool isLocalSvgAsset,
+      bool isNetwork,
+      ) {
     if (isLocalSvgAsset) {
       if (imagePath.contains("assets")) {
-        return SvgPicture.asset(
-          imagePath,
-          height: height,
+        return SizedBox(
           width: width,
-          fit: BoxFit.contain,
+          height: height,
+          child: SvgPicture.asset(
+            imagePath,
+            fit: BoxFit.contain,
+            alignment: Alignment.center,
+          ),
         );
       } else {
-        return SvgPicture.network(
-          imagePath,
-          height: height,
+        return SizedBox(
           width: width,
-          fit: BoxFit.contain,
-          placeholderBuilder: (context) => const SizedBox.shrink(),
+          height: height,
+          child: SvgPicture.network(
+            imagePath,
+            fit: BoxFit.contain,
+            alignment: Alignment.center,
+            placeholderBuilder: (context) => const SizedBox.shrink(),
+          ),
         );
       }
     } else if (isNetwork) {
@@ -298,4 +304,5 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       );
     }
   }
+
 }
