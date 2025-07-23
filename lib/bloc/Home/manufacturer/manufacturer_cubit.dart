@@ -13,24 +13,102 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       super(ManufacturerState(manufacturers: []));
 
   Future<void> loadListOfManufacturers({
+  //   String? query,
+  //   required BuildContex, required bool isLoadMoret context,
+  // }) async {
+  //   emit(state.copyWith(isLoading: true));
+  //   try {
+  //     final manufacturers = await repository.getListOfManufacturers(
+  //       query: query,
+  //     );
+  //
+  //     manufacturers.sort((a, b) =>
+  //         a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+  //
+  //     emit(state.copyWith(manufacturers: manufacturers, isLoading: false));
+  //   } catch (e) {
+  //     SessionCommonTokenError.handleUnauthorizedError(context, e);
+  //     emit(state.copyWith(manufacturers: [], isLoading: false));
+  //   }
     String? query,
     required BuildContext context,
+    int page = 1,
+    bool isLoadMore = false,
   }) async {
-    emit(state.copyWith(isLoading: true));
+    if (isLoadMore) {
+      emit(state.copyWith(isFetchingMore: true));
+    } else {
+      emit(state.copyWith(isLoading: true, currentPage: 1));
+    }
+
     try {
-      final manufacturers = await repository.getListOfManufacturers(
+      final paginated = await repository.getListOfManufacturers(
         query: query,
+        page: page,
       );
 
-      manufacturers.sort((a, b) =>
-          a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+      final updatedList = isLoadMore
+          ? [...state.manufacturers, ...paginated.results]
+          : paginated.results;
 
-      emit(state.copyWith(manufacturers: manufacturers, isLoading: false));
+      updatedList.sort((a, b) => a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+
+      emit(state.copyWith(
+        manufacturers: updatedList,
+        currentPage: paginated.currentPage,
+        hasNextPage: paginated.hasNext,
+        isLoading: false,
+        isFetchingMore: false,
+      ));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(manufacturers: [], isLoading: false));
+      emit(state.copyWith(
+        isLoading: false,
+        isFetchingMore: false,
+      ));
     }
-  }
+   }
+
+  // Future<void> loadListOfManufacturers({
+  //   String? query,
+  //   required BuildContext context,
+  //   int page = 1,
+  //   bool isLoadMore = false,
+  // }) async {
+  //   if (isLoadMore) {
+  //     emit(state.copyWith(isFetchingMore: true));
+  //   } else {
+  //     emit(state.copyWith(isLoading: true, currentPage: 1));
+  //   }
+  //
+  //   try {
+  //     final paginated = await repository.getListOfManufacturers(
+  //       query: query,
+  //       page: page,
+  //     );
+  //
+  //     final updatedList = isLoadMore
+  //         ? [...state.manufacturers, ...paginated.results]
+  //         : paginated.results;
+  //
+  //     updatedList.sort((a, b) => a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+  //
+  //     emit(state.copyWith(
+  //       manufacturers: updatedList,
+  //       currentPage: paginated.currentPage,
+  //       hasNextPage: paginated.hasNext,
+  //       isLoading: false,
+  //       isFetchingMore: false,
+  //     ));
+  //   } catch (e) {
+  //     SessionCommonTokenError.handleUnauthorizedError(context, e);
+  //     emit(state.copyWith(
+  //       isLoading: false,
+  //       isFetchingMore: false,
+  //     ));
+  //   }
+  // }
+
 
   Future<void> getParticularAirbusDetail({
     required String query,

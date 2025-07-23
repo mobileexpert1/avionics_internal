@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Database/generic_methods.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
+import '../../../CustomFiles/Custom_Pagination.dart';
 import 'Manufacturer_detail_model.dart';
 import 'manufacturer_list_model.dart';
 
@@ -9,30 +10,72 @@ class ManufacturerRepository {
       : _manufacturer = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap);
   final GenericMethods<ManufacturerListModel> _manufacturer;
 
-  Future<List<ManufacturerListModel>> getListOfManufacturers({String? query}) async {
+  // Future<List<ManufacturerListModel>> getListOfManufacturers({String? query}) async {
+  //   if (!await GenericMethods.hasInternet()) {
+  //     return _getLocalData();
+  //   }
+  //   final uri = Uri.parse(ApiBaseUrlConstant.baseUrl +
+  //       ApiFunctionUrlAirplaneConstant.airplaneService +
+  //       ApiServiceUrlAirplaneConstant.getListManufacturer +
+  //       (query != null && query.isNotEmpty ? '?q=$query' : ''),);
+  //   try {
+  //     final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+  //     final manufacturers = (jsonData['results'] as List<dynamic>? ?? []).map((
+  //         e) => ManufacturerListModel.fromJson(e)).toList();
+  //     await _manufacturer.insertAll(manufacturers);
+  //     return manufacturers;
+  //   } on HttpStatusException catch (e) {
+  //     if (e.statusCode == 400 || e.statusCode == 404) {
+  //       return _getLocalData();
+  //     }
+  //     throw e.toString();
+  //   } catch (e) {
+  //     // print('Error: $e');
+  //     throw e.toString();
+  //   }
+  // }
+
+  Future<PaginatedList<ManufacturerListModel>> getListOfManufacturers({
+    String? query,
+    int page = 1,
+  }) async {
     if (!await GenericMethods.hasInternet()) {
-      return _getLocalData();
+      return PaginatedList<ManufacturerListModel>(
+        results: await _getLocalData(),
+        count: 0,
+        totalPages: 1,
+        currentPage: 1,
+        hasNext: false,
+        hasPrevious: false,
+      );
     }
-    final uri = Uri.parse(ApiBaseUrlConstant.baseUrl +
-        ApiFunctionUrlAirplaneConstant.airplaneService +
-        ApiServiceUrlAirplaneConstant.getListManufacturer +
-        (query != null && query.isNotEmpty ? '?q=$query' : ''),);
+
+    final uri = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlAirplaneConstant.airplaneService +
+          ApiServiceUrlAirplaneConstant.getListManufacturer +
+          "?page=$page" +
+          (query != null && query.isNotEmpty ? '&q=$query' : ''),
+    );
+
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-      final manufacturers = (jsonData['data'] as List<dynamic>? ?? []).map((
-          e) => ManufacturerListModel.fromJson(e)).toList();
-      await _manufacturer.insertAll(manufacturers);
-      return manufacturers;
-    } on HttpStatusException catch (e) {
-      if (e.statusCode == 400 || e.statusCode == 404) {
-        return _getLocalData();
+      final paginated = PaginatedList.fromJson(
+        json: jsonData,
+        fromJson: (e) => ManufacturerListModel.fromJson(e),
+        currentPage: page,
+      );
+
+      if (page == 1) {
+        await _manufacturer.insertAll(paginated.results);
       }
-      throw e.toString();
+
+      return paginated;
     } catch (e) {
-      // print('Error: $e');
       throw e.toString();
     }
   }
+
 
   Future<List<ManufacturerListModel>> _getLocalData() async {
     return _manufacturer.getAll('manufacturers');
