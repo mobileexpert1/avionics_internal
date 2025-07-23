@@ -54,11 +54,13 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
           }
 
           if (state.purchased) {
-            AppSnackBar.custom(
-              context,
-              message: "Purchase Successfully",
-              svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
-            );
+            if (state.restorePurchased == false) {
+              AppSnackBar.custom(
+                context,
+                message: "Purchase Successfully",
+                svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
+              );
+            }
 
             (widget.isComeFromSignup == false ||
                     widget.isComeFromSignup == null)
@@ -70,7 +72,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                     MaterialPageRoute(builder: (_) => RootTabbarscreen()),
                     (route) => false,
                   );
-            ;
           }
         },
         builder: (context, state) {

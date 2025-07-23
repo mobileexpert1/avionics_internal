@@ -11,6 +11,7 @@ class AppleSubscriptionState {
   final String? error;
   final CommonApiStatus status;
   final String? activeProductId;
+  final bool restorePurchased;
 
 
   AppleSubscriptionState({
@@ -21,7 +22,8 @@ class AppleSubscriptionState {
     this.purchased = false,
     this.error,
     this.status = CommonApiStatus.initial,
-    this.activeProductId
+    this.activeProductId,
+    this.restorePurchased = false,
   });
 
   AppleSubscriptionState copyWith({
@@ -30,6 +32,7 @@ class AppleSubscriptionState {
     List<ProductDetails>? products,
     ProductDetails? selectedProduct,
     bool? purchased,
+    bool? restorePurchased,
     String? error,
     CommonApiStatus? status,
     String? activeProductId,
@@ -40,6 +43,7 @@ class AppleSubscriptionState {
       products: products ?? this.products,
       selectedProduct: selectedProduct ?? this.selectedProduct,
       purchased: purchased ?? this.purchased,
+      restorePurchased: restorePurchased ?? this.restorePurchased,
       error: error,
       status: status ?? CommonApiStatus.initial,
       activeProductId: activeProductId,

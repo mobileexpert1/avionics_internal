@@ -62,6 +62,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
                 purchase.status == PurchaseStatus.purchased) {
               emit(
                 state.copyWith(
+                  restorePurchased: true,
                   purchased: true,
                   loading: false,
                   activeProductId: purchase.productID,
