@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Helpers/Custom_widget.dart';
+import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../bloc/home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/home/manufacturer/manufacturer_state.dart';
@@ -105,15 +106,28 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
                                   // All List Of Airplane
                                   GestureDetector(
+                                    // onTap: () {
+                                    //   Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (_) =>
+                                    //           const AllPlanesListScreen(),
+                                    //     ),
+                                    //   );
+                                    // },
+
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) =>
-                                              const AllPlanesListScreen(),
+                                          builder: (_) => BlocProvider(
+                                            create: (_) => AllplanesCubit(),
+                                            child: const AllPlanesListScreen(),
+                                          ),
                                         ),
                                       );
                                     },
+
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 25,
