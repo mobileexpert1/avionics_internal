@@ -28,6 +28,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
+          emit(state.copyWith(status: CommonApiStatus.failure, isLoading: false));
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Location permissions are denied')),
           );
@@ -36,6 +37,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       }
 
       if (permission == LocationPermission.deniedForever) {
+        emit(state.copyWith(status: CommonApiStatus.failure, isLoading: false));
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Location permissions are permanently denied'),

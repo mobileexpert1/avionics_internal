@@ -4,8 +4,12 @@ import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 
 class AppleSubscriptionRepository {
-
-  Future<BaseDetailResponseModel> postSubscriptionApi({required token,required selectedSubscritionId}) async {
+  Future<BaseDetailResponseModel> postSubscriptionApi({
+    required token,
+    required selectedSubscritionId,
+    required platform,
+    required packageName,
+  }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -14,10 +18,12 @@ class AppleSubscriptionRepository {
     try {
       final response = await ApiService.post(
         url: url,
-        body: {"platform": "ios",
-          "product_id":selectedSubscritionId,
-          "package_name": "",
-          "token":token},
+        body: {
+          "platform": platform,
+          "product_id": selectedSubscritionId,
+          "package_name": packageName,
+          "token": token,
+        },
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {

@@ -40,7 +40,7 @@ class OtpCubit extends Cubit<OtpState> {
         context,
         MaterialPageRoute(
           builder: (_) => (isFromSignup == true)
-              ? (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen() : SubscriptionScreen())
+              ? (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen(isComeFromSignup: true) : SubscriptionScreen())
               : CreateNewPasswordScreen(email: email),
         ),
       );

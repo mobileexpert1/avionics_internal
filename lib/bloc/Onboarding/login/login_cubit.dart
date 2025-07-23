@@ -287,7 +287,7 @@ class LoginCubit extends Cubit<LoginState> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
-                ? AppleSubscriptionScreen()
+                ? AppleSubscriptionScreen(isComeFromSignup: true)
                 : SubscriptionScreen(isComeFromSocialLogin: true)),
           ),
         );

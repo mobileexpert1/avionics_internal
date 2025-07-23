@@ -9,11 +9,11 @@ import '../../../bloc/Onboarding/Subscription/subscription_cubit.dart';
 import '../../../bloc/Onboarding/Subscription/subscription_state.dart';
 import 'SubscriptionOptionCard.dart';
 
-
 class SubscriptionScreen extends StatefulWidget {
   final bool? isComeFromSocialLogin;
 
-  const SubscriptionScreen({Key? key, this.isComeFromSocialLogin}) : super(key: key);
+  const SubscriptionScreen({Key? key, this.isComeFromSocialLogin})
+    : super(key: key);
 
   @override
   _SubscriptionScreenState createState() => _SubscriptionScreenState();
@@ -142,7 +142,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 }
                                 context
                                     .read<SubscriptionCubit>()
-                                    .submitSubscriptionApi(context,widget.isComeFromSocialLogin);
+                                    .submitSubscriptionApi(
+                                      context,
+                                      widget.isComeFromSocialLogin,
+                                    );
                               },
                             ),
                             const SizedBox(height: 20),

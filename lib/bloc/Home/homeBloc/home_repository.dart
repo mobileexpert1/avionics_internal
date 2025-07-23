@@ -16,9 +16,6 @@ class HomeRepository {
   final GenericMethods<Favourite> _favorites;
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
-    // if (!await GenericMethods.hasInternet()) {
-    //   return _getLocalData();
-    // }
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
@@ -38,14 +35,12 @@ class HomeRepository {
       await _favorites.insertAll(homeData.favourites);
 
       return homeData;
-    }
-    on HttpStatusException catch (e) {
+    } on HttpStatusException catch (e) {
       if (e.statusCode == 400 || e.statusCode == 404) {
         return _getLocalData();
       }
       throw e.toString();
-    }
-    catch (e) {
+    } catch (e) {
       throw e.toString();
     }
   }
@@ -55,12 +50,15 @@ class HomeRepository {
     final favourites = await _favorites.getAll('favourites');
 
     return HomeResponse(
+      detail: '',
+      isActiveSubscription: false,
       manufacturers: manufacturers,
       favourites: favourites,
       flights: const [],
     );
   }
 }
+
 
 // import 'dart:convert';
 // import 'package:flutter/foundation.dart';

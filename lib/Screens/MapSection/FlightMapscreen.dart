@@ -40,7 +40,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
         if (state.status == CommonApiStatus.failure) {
           return Center(
-            child: Text(state.errorMessage ?? 'Failed to get location'),
+            child: Text(state.errorMessage ?? 'Failed to get current location'),
           );
         }
 

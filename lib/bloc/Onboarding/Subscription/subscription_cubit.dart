@@ -6,6 +6,7 @@ import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import 'iosFolder/AppleSubscriptionRepository.dart';
 import 'subscription_repository.dart';
 import 'subscription_state.dart';
 
@@ -55,7 +56,10 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     }
   }
 
-  Future<void> submitSubscriptionApi(BuildContext context,bool? isComeFromSocialLogin) async {
+  Future<void> submitSubscriptionApi(
+    BuildContext context,
+    bool? isComeFromSocialLogin,
+  ) async {
     final currentState = state;
     if (currentState is SubscriptionInitial) {
       final selectedFinalItem = currentState.subscriptionList.firstWhere(
@@ -71,9 +75,17 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       );
 
       try {
-        await SubscriptionRepository().postSubscriptionApi(
-          subscription_id: selectedFinalItem.id,
+        await AppleSubscriptionRepository().postSubscriptionApi(
+          token: "0ZSI6MTc1",
+          selectedSubscritionId:
+              "premium_subscription_yearly_iOS_Seven_Free_Days",
+          platform: "android",
+          packageName: "xyz",
         );
+
+        // await SubscriptionRepository().postSubscriptionApi(
+        //   subscription_id: selectedFinalItem.id,
+        // );
 
         emit(
           currentState.copyWith(
@@ -85,8 +97,10 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
         AppSnackBar.custom(
           context,
-          message: (isComeFromSocialLogin == true ? 'Login Successfully' : 'Sign-up Successfully'),
-          svgAsset:CommonUi.setSvgImage(AssetsPath.signinIcon),
+          message: (isComeFromSocialLogin == true
+              ? 'Login Successfully'
+              : 'Sign-up Successfully'),
+          svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
         );
 
         Navigator.push(
@@ -113,6 +127,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       emit(currentState.copyWith(selectedId: selectedItem.id));
     }
   }
+
   SubscriptionItemModel? get selectedItem {
     final currentState = state;
     if (currentState is SubscriptionInitial) {

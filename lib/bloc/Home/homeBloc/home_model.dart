@@ -2,17 +2,23 @@ import '../../../Database/db_helper.dart';
 import '../manufacturer/manufacturer_list_model.dart';
 
 class HomeResponse {
+  final String detail;
+  final bool isActiveSubscription;
   final List<ManufacturerListModel> manufacturers;
   final List<Flight> flights;
   final List<Favourite> favourites;
 
   HomeResponse({
+    required this.detail,
+    required this.isActiveSubscription,
     required this.manufacturers,
     required this.flights,
     required this.favourites,
   });
 
   factory HomeResponse.fromJson(Map<String, dynamic> json) => HomeResponse(
+    detail: json['detail'] ?? '',
+    isActiveSubscription: json['is_active_subscription'] ?? false,
     manufacturers: (json['manufacturer'] as List<dynamic>? ?? [])
         .map((e) => ManufacturerListModel.fromJson(e))
         .toList(),

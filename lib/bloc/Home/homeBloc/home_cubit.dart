@@ -1,6 +1,9 @@
 import 'package:avionics_internal/Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'home_state.dart';
 import 'home_repository.dart';
 
@@ -18,11 +21,24 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final data = await repository.getHomeData();
 
+      if (data.isActiveSubscription == false) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
+                ? AppleSubscriptionScreen(isComeFromSignup: true)
+                : SubscriptionScreen(isComeFromSocialLogin: true)),
+          ),
+        );
+        return;
+      }
+
       emit(
         HomeLoaded(
           manufacturers: data.manufacturers,
           flights: data.flights,
           favourites: data.favourites,
+          detail: data.detail,
+          isActiveSubscription: data.isActiveSubscription,
           selectedIndex: _selectedIndex,
         ),
       );
@@ -43,6 +59,8 @@ class HomeCubit extends Cubit<HomeState> {
           flights: currentState.flights,
           favourites: currentState.favourites,
           selectedIndex: index,
+          isActiveSubscription: currentState.isActiveSubscription,
+          detail: currentState.detail,
         ),
       );
     } else {

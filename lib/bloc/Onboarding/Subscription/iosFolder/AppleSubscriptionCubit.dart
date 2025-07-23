@@ -162,6 +162,8 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             await AppleSubscriptionRepository().postSubscriptionApi(
               token: purchase.verificationData.serverVerificationData,
               selectedSubscritionId: purchase.productID,
+              platform: "ios",
+              packageName: "",
             );
             emit(
               state.copyWith(
