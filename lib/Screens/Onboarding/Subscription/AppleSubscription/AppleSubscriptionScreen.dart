@@ -54,25 +54,23 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
           }
 
           if (state.purchased) {
-            if (state.restorePurchased == false) {
               AppSnackBar.custom(
                 context,
-                message: "Purchase Successfully",
+                message: (widget.isComeFromSignup == true ? "Purchase Successfully" : "Restore Subscription Successfully"),
                 svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
               );
-            }
 
-            (widget.isComeFromSignup == false ||
-                    widget.isComeFromSignup == null)
-                ? () {
-                    Navigator.of(context).pop();
-                  }()
-                : Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                    (route) => false,
-                  );
-          }
+              (widget.isComeFromSignup == false ||
+                      widget.isComeFromSignup == null)
+                  ? () {
+                      //Navigator.of(context).pop();
+                    }()
+                  : Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+                      (route) => false,
+                    );
+            }
         },
         builder: (context, state) {
           final selectedProduct = state.selectedProduct;
@@ -225,7 +223,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 
                         if (selectedProduct != null)
                           Text(
-                            "Free for 7 days then ${selectedProduct.price}.\nCancel anytime.",
+                            "Free for 7 days then ${selectedProduct.price}\nCancel anytime.",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Color(0xFF626262),

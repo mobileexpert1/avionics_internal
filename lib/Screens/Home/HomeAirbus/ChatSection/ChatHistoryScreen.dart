@@ -61,7 +61,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: Offset(0, 40),
                     ),
                   ],
                 ),
@@ -71,7 +71,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
 
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 15),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 15.0),
                   onTap: () async {
                     final token =
                         await SharedPrefsHelper.getUserAccessToken() ?? '';

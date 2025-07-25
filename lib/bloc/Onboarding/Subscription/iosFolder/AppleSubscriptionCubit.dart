@@ -53,30 +53,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   Future<void> restorePastPurchases() async {
     emit(state.copyWith(loading: true));
     try {
-      // Restore purchases (this replaces restoreTransactions)
       await InAppPurchase.instance.restorePurchases();
-      _subscription = InAppPurchase.instance.purchaseStream.listen(
-        (List<PurchaseDetails> purchaseDetailsList) {
-          for (final purchase in purchaseDetailsList) {
-            if (purchase.status == PurchaseStatus.restored ||
-                purchase.status == PurchaseStatus.purchased) {
-              emit(
-                state.copyWith(
-                  restorePurchased: true,
-                  purchased: true,
-                  loading: false,
-                  activeProductId: purchase.productID,
-                ),
-              );
-              return;
-            }
-          }
-        },
-        onError: (error) {
-          emit(state.copyWith(loading: false, error: 'Restore error: $error'));
-        },
-        onDone: () => _subscription?.cancel(),
-      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -151,34 +128,38 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       switch (purchase.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
-          _iap.completePurchase(purchase);
-          print(
-            "Server verification data: ${purchase.verificationData.serverVerificationData}",
-          );
-          print(
-            "Local verification data: ${purchase.verificationData.localVerificationData}",
-          );
-          print("Source: ${purchase.verificationData.source}");
           try {
+            _iap.completePurchase(purchase);
+
+            print(
+              "Server verification data: ${purchase.verificationData.serverVerificationData}",
+            );
+            print(
+              "Local verification data: ${purchase.verificationData.localVerificationData}",
+            );
+            print("Source: ${purchase.verificationData.source}");
+
+            // Call API regardless of flow
             await AppleSubscriptionRepository().postSubscriptionApi(
               token: purchase.verificationData.serverVerificationData,
               selectedSubscritionId: purchase.productID,
               platform: "ios",
               packageName: "",
             );
+
             emit(
               state.copyWith(
                 purchased: true,
                 loading: false,
                 status: CommonApiStatus.success,
+                activeProductId: purchase.productID,
               ),
             );
           } catch (e) {
             emit(state.copyWith(loading: false, error: e.toString()));
-            return;
           }
-          //await ReceiptHelper.downloadReceipt();
           break;
+
         case PurchaseStatus.error:
           emit(
             state.copyWith(
@@ -187,6 +168,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             ),
           );
           break;
+
         case PurchaseStatus.pending:
           emit(
             state.copyWith(
@@ -195,6 +177,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             ),
           );
           break;
+
         default:
           break;
       }

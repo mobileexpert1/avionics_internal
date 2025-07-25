@@ -20,7 +20,7 @@ import StoreKit  // 👈 Needed for receipt access
       binaryMessenger: controller.binaryMessenger
     )
 
-    // Handle method calls from Flutter
+    // Handle method calls from Flutte r
     receiptChannel.setMethodCallHandler { call, result in
       if call.method == "getReceiptData" {
         guard let receiptURL = Bundle.main.appStoreReceiptURL,
