@@ -1,8 +1,10 @@
+import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
+import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
@@ -20,7 +22,6 @@ import 'bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
 import 'bloc/home/homeBloc/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'Screens/Onboarding/Splash/splash_screen.dart';
 import 'bloc/Profile/Glossary/glossary_cubit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
@@ -90,6 +91,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChatHistoryCubit()),
         BlocProvider(create: (_) => AppleSubscriptionCubit()),
         BlocProvider(create: (_) => FlightMapCubit()),
+        BlocProvider(create: (_) => GamesCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(
@@ -98,7 +100,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: GamesScreen(),
           );
         },
       ),
