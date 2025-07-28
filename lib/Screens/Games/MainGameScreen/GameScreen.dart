@@ -1,3 +1,4 @@
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Helpers/Games/GameCard.dart';
@@ -9,10 +10,19 @@ class GamesScreen extends StatelessWidget {
 
   int getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    if (width >= 1400) return 6;
     if (width >= 1200) return 5;
     if (width >= 900) return 4;
     if (width >= 600) return 3;
     return 2;
+  }
+
+  double getAspectRatio(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width >= 1200) return 1.1;
+    if (width >= 900) return 1.0;
+    if (width >= 600) return 0.95;
+    return 0.85; // tighter for phones
   }
 
   @override
@@ -20,24 +30,24 @@ class GamesScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => GamesCubit()..loadGames(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Games'),
-          centerTitle: true,
-        ),
+        appBar: CustomAppBar(title: 'Games'),
         backgroundColor: const Color(0xFF35314B),
         body: BlocBuilder<GamesCubit, GamesState>(
           builder: (context, state) {
             if (state is GamesLoaded) {
+              final crossAxisCount = getCrossAxisCount(context);
+              final aspectRatio = getAspectRatio(context);
+
               return Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
                 child: GridView.builder(
+                  itemCount: state.games.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: getCrossAxisCount(context),
+                    crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.8,
+                    childAspectRatio: aspectRatio,
                   ),
-                  itemCount: state.games.length,
                   itemBuilder: (context, index) {
                     return GameCard(item: state.games[index]);
                   },

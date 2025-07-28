@@ -13,7 +13,7 @@ class GamesCubit extends Cubit<GamesState> {
     final games = [
       GameItem(
         title: "Quiz",
-        subtitle: "Test your aviation knowledge with time question",
+        subtitle: "Test your aviation\n knowledge with time\n question",
         icon: AssetsPath.quiz,
       ),
       GameItem(
@@ -28,7 +28,7 @@ class GamesCubit extends Cubit<GamesState> {
       ),
       GameItem(
         title: "Calculations",
-        subtitle: "Test your aviation knowledge with time question",
+        subtitle: "Test your aviation\n knowledge with time\n question",
         icon: AssetsPath.calculations,
       ),
     ];

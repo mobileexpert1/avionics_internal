@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +32,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
       _pages = [
         HomeScreen(),
         FlightMapScreen(),
-        Center(child: Text('Game')),
+        GamesScreen(),
         token != null && token.isNotEmpty
             ? AskWilcoScreen(
                 accessToken: token,

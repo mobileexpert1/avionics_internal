@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
+import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -100,7 +101,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: GamesScreen(),
+            home: SplashScreen(),
           );
         },
       ),
