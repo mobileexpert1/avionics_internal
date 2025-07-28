@@ -146,6 +146,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
               platform: "ios",
               packageName: "",
             );
+            
 
             emit(
               state.copyWith(
