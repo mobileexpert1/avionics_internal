@@ -5,6 +5,8 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_st
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'QuizQuestionScreen.dart';
+
 class QuizLockScreen extends StatelessWidget {
   const QuizLockScreen({super.key});
 
@@ -41,6 +43,11 @@ class QuizLockScreen extends StatelessWidget {
                     onTap: () {
                       if (!game.isLocked) {
                         // Navigate or play game
+                        // Navigate or play game
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const QuizQuestionScreen()),
+                        );
                         print('Playing ${game.title}');
                       }
                     },

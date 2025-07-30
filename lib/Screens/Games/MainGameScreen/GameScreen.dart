@@ -2,6 +2,7 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/CalculationSection/CalculationScreen.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/OneWordSection/OneWordScreen.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Helpers/Games/GameCard.dart';
@@ -46,7 +47,7 @@ class GamesScreen extends StatelessWidget {
                       onTap: () {
                         switch (game.id) {
                           case 'quiz':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => QuizQuestionScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => QuizDetailScreen()));
                             break;
                           case 'calculation':
                             Navigator.push(context, MaterialPageRoute(builder: (_) =>  CalculationDetailScreen()));

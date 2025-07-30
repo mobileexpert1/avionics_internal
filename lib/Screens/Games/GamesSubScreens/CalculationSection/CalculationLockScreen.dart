@@ -43,10 +43,10 @@ class CalculationLockScreen extends StatelessWidget {
                     onTap: () {
                       if (!game.isLocked) {
                         // Navigate or play game
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const QuizQuestionScreen()),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (_) => const QuizQuestionScreen()),
+                        // );
                         print('Playing ${game.title}');
                       }
                     },
