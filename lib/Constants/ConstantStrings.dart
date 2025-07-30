@@ -107,13 +107,13 @@ class ConstantStrings {
 
   static const String chatHistoryTitle = 'Chat History';
 
-
-
   // ─────────────────────────────
   // Quiz
   // ─────────────────────────────
 
   static const String aviationQuizTitle = 'Aviation Quiz';
+  static const String backToGame = 'Back to games';
+  static const String startGame = 'Start Game';
 }
 
 

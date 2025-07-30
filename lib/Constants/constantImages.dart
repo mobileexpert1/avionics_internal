@@ -37,6 +37,12 @@ abstract class AssetsPath {
   static const String chatHistoryicon = "chatHistoryicon";
   static const String manuFirstImage = "ManuFirstImage";
   static const String carFollowImage = "CarFollowIcon";
+  static const String LockIcon = "LockIcon";
+  static const String resultIcon = "resultIcon";
+  static const String Tik = "TickIcon";
+  static const String Trophy = "Trophy";
+  static const String TrophySecond = "TrophySecond";
+  static const String clock = "clock";
 
   static const String deleteAcc = "Delete";
   static const String deleteAccSvg = "deleteIconsSvg";
@@ -95,6 +101,8 @@ abstract class AssetsPath {
   static const String HistoryImg = "HistoryImg";
   static const String airCraftDetailImage = "airCraftDetailImage";
   static const String infoIcon = "infoIcon";
+  static const String CarImg = "CarImg";
+
 }
 
 class CommonUi {
