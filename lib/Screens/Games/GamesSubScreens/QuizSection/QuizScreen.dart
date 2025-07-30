@@ -141,14 +141,25 @@ class QuizQuestionCard extends StatelessWidget {
 
                     Color backgroundColor = Colors.white;
                     Color borderColor = Colors.grey.shade300;
+                    Icon? trailingIcon;
 
                     if (selectedOption != null) {
                       if (isCorrect) {
                         backgroundColor = Colors.green.shade100;
                         borderColor = Colors.green;
+                        trailingIcon = const Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                          size: 20,
+                        );
                       } else if (isSelected && !isCorrect) {
                         backgroundColor = Colors.red.shade100;
                         borderColor = Colors.red;
+                        trailingIcon = const Icon(
+                          Icons.cancel,
+                          color: Colors.red,
+                          size: 20,
+                        );
                       }
                     } else if (isSelected) {
                       backgroundColor = Colors.pink.shade100;
@@ -173,17 +184,26 @@ class QuizQuestionCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: borderColor),
                           ),
-                          child: Text(
-                            "$letter. ${options[index]}",
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "$letter. ${options[index]}",
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              if (trailingIcon != null) trailingIcon,
+                            ],
                           ),
                         ),
                       ),
                     );
                   }),
+
                   const SizedBox(height: 10),
 
                   if (selectedOption != null)
@@ -193,12 +213,12 @@ class QuizQuestionCard extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           height: 48,
-                          child:   Image.asset(
-                        CommonUi.setPngImage(AssetsPath.carFollowImage),
-                        width: 46,
-                        height: 46,
-                        fit: BoxFit.cover,
-                      ),
+                          child: Image.asset(
+                            CommonUi.setPngImage(AssetsPath.carFollowImage),
+                            width: 46,
+                            height: 46,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),

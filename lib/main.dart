@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: QuizScreen(),
           );
         },
       ),
