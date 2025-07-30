@@ -36,7 +36,7 @@ abstract class AssetsPath {
   static const String Quiz = "Quiz";
   static const String chatHistoryicon = "chatHistoryicon";
   static const String manuFirstImage = "ManuFirstImage";
-
+  static const String carFollowImage = "CarFollowIcon";
 
   static const String deleteAcc = "Delete";
   static const String deleteAccSvg = "deleteIconsSvg";

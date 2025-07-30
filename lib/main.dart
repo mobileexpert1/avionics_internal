@@ -1,11 +1,14 @@
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
+import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
+import 'Screens/Games/GamesSubScreens/QuizSection/QuizScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
+import 'bloc/Games/SubGameSection/Quiz_Section/quiz_question_model.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
@@ -93,6 +96,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AppleSubscriptionCubit()),
         BlocProvider(create: (_) => FlightMapCubit()),
         BlocProvider(create: (_) => GamesCubit()),
+        BlocProvider(create: (_) => QuizCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(
@@ -108,5 +112,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

@@ -106,6 +106,14 @@ class ConstantStrings {
   // ─────────────────────────────
 
   static const String chatHistoryTitle = 'Chat History';
+
+
+
+  // ─────────────────────────────
+  // Quiz
+  // ─────────────────────────────
+
+  static const String aviationQuizTitle = 'Aviation Quiz';
 }
 
 
