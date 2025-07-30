@@ -1,10 +1,11 @@
-import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
+import 'Screens/Games/GamesSubScreens/OneWordSection/OneWordScreen.dart';
+import 'Screens/Games/MainGameScreen/GameScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';

@@ -5,8 +5,13 @@ import '../../bloc/Games/MainGameSection/game_model.dart';
 
 class GameCard extends StatelessWidget {
   final GameItem item;
+  final VoidCallback onTap;
 
-  const GameCard({super.key, required this.item});
+  const GameCard({
+    super.key,
+    required this.item,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,43 +23,47 @@ class GameCard extends StatelessWidget {
         final subtitleFont = isLarge ? 13.0 : 11.0;
         final padding = isLarge ? 20.0 : 12.0;
 
-        return Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Padding(
-            padding: EdgeInsets.all(padding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  CommonUi.setSvgImage(item.icon),
-                  height: iconSize,
-                  width: iconSize,
-                  color: Colors.blue,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  item.title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: titleFont,
+        return InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            child: Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    CommonUi.setSvgImage(item.icon),
+                    height: iconSize,
+                    width: iconSize,
+                    color: Colors.blue,
                   ),
-                ),
-                const SizedBox(height: 6),
-                Flexible(
-                  child: Text(
-                    item.subtitle,
+                  const SizedBox(height: 10),
+                  Text(
+                    item.title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: subtitleFont,
-                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                      fontSize: titleFont,
                     ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 6),
+                  Flexible(
+                    child: Text(
+                      item.subtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: subtitleFont,
+                        color: Colors.black54,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

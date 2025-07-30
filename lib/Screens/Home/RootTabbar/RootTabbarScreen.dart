@@ -97,7 +97,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
                     height: 24,
                     color: _selectedIndex == 2 ? Colors.black : Colors.grey,
                   ),
-                  label: 'Game',
+                  label: 'Games',
                 ),
                 BottomNavigationBarItem(
                   icon: Image.asset(
