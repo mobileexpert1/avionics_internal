@@ -6,9 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
-import 'Screens/Games/GamesSubScreens/QuizSection/QuizScreen.dart';
+import 'Screens/Games/GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
-import 'bloc/Games/SubGameSection/Quiz_Section/quiz_question_model.dart';
+import 'bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: QuizScreen(),
+            home: SplashScreen(),
           );
         },
       ),

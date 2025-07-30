@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Calculation_Section/calculation_cubit.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Calculation_Section/calculation_state.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +43,10 @@ class CalculationLockScreen extends StatelessWidget {
                     onTap: () {
                       if (!game.isLocked) {
                         // Navigate or play game
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const QuizQuestionScreen()),
+                        );
                         print('Playing ${game.title}');
                       }
                     },

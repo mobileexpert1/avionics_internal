@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,13 +12,13 @@ import '../../../../bloc/Games/SubGameSection/Quiz_Section/quiz_state.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 
-class QuizScreen extends StatelessWidget {
-  const QuizScreen({super.key});
+class QuizQuestionScreen extends StatelessWidget {
+  const QuizQuestionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuizCubit(),
+      create: (_) => QuizQuestionCubit(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -26,13 +28,13 @@ class QuizScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        body: BlocBuilder<QuizCubit, QuizState>(
+        body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
           builder: (context, state) {
             if (state.questions.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final quizCubit = context.read<QuizCubit>();
+            final quizCubit = context.read<QuizQuestionCubit>();
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
