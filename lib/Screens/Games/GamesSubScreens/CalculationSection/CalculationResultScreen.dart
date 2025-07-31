@@ -10,10 +10,14 @@ class CalculationResultScreen extends StatefulWidget {
     super.key,
     required this.totalQuestion,
     required this.correctedAnswer,
+    required this.score,
+    required this.winAchieved,
   });
 
   final int totalQuestion;
   final int correctedAnswer;
+  final int score;
+  final bool winAchieved;
 
   @override
   _CalculationResultScreenState createState() =>
@@ -26,16 +30,13 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
     return BlocProvider(
       create: (_) => GameResultCubit()
         ..setResult(
-          title: "Game Completed!",
-          score: 20,
+          title: "Game Complete!",
+          score: widget.correctedAnswer,
           total: widget.totalQuestion,
-          totalPoints: 53,
-          correctPoints: widget.correctedAnswer,
-          bonusPoints: [
-            "+10 points for speed bonus",
-            "+3 points for perfectly correct answers",
-          ],
-          badgeText: "Conversion Cadet Badge Earned",
+          totalPoints: widget.score,
+          correctPoints: widget.score,
+          bonusPoints: const ["+2 points for time bonus"],
+          badgeText: "Weather Navigator Badge Earned",
         ),
       child: Scaffold(
         backgroundColor: Colors.white,

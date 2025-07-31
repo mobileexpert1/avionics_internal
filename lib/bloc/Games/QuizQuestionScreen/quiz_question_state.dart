@@ -9,16 +9,22 @@ class QuizQuestionState {
   final bool isTimerEnded;
   final int correctAnswers;
   final int wrongAnswers;
+  final int score;
+  final List<int> timePerQuestion;
+  final bool winAchieved;
 
   const QuizQuestionState({
     required this.questions,
     this.currentIndex = 0,
     this.selectedIndex,
     this.showAnswer = false,
-    this.timer = 20,
+    this.timer = 40, // ⏱ Default timer is 40 seconds
     this.isTimerEnded = false,
     this.correctAnswers = 0,
     this.wrongAnswers = 0,
+    this.score = 0,
+    required this.timePerQuestion,
+    this.winAchieved = false,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -32,6 +38,9 @@ class QuizQuestionState {
     bool? isTimerEnded,
     int? correctAnswers,
     int? wrongAnswers,
+    int? score,
+    List<int>? timePerQuestion,
+    bool? winAchieved,
   }) {
     return QuizQuestionState(
       questions: questions ?? this.questions,
@@ -42,8 +51,14 @@ class QuizQuestionState {
       isTimerEnded: isTimerEnded ?? this.isTimerEnded,
       correctAnswers: correctAnswers ?? this.correctAnswers,
       wrongAnswers: wrongAnswers ?? this.wrongAnswers,
+      score: score ?? this.score,
+      timePerQuestion: timePerQuestion ?? this.timePerQuestion,
+      winAchieved: winAchieved ?? this.winAchieved,
     );
   }
 
-  factory QuizQuestionState.initial() => const QuizQuestionState(questions: []);
+  factory QuizQuestionState.initial() => const QuizQuestionState(
+    questions: [],
+    timePerQuestion: [],
+  );
 }

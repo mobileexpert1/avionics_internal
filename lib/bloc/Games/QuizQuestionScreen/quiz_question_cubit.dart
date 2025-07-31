@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
-import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
 import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
@@ -22,22 +20,22 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         questions = [
           QuizQuestion(
             question:
-                "The boundary that separates the troposphere from the stratosphere is called the __.",
-            options: ['Mesopause', 'Stratopause', 'Tropopause', 'Thermopause'],
-            correctIndex: 2,
-            hint:
-                "The transition boundary between the troposphere and the layer above is called the tropopause.",
+            "What is the primary layer of the atmosphere where commercial aircraft usually fly?",
+            options: ['Stratosphere', 'Troposphere', 'Mesosphere', 'Thermosphere'],
+            correctIndex: 0,
+            hint: "The stratosphere is where most commercial jets cruise.",
           ),
           QuizQuestion(
-            question: "Which layer contains most weather events?",
-            options: [
-              'Stratosphere',
-              'Troposphere',
-              'Mesosphere',
-              'Thermosphere',
-            ],
-            correctIndex: 1,
-            hint: "Weather happens mostly in the troposphere.",
+            question: "What is the approximate altitude range of the troposphere?",
+            options: ['0 to 12 km', '12 to 50 km', '50 to 80 km', 'Above 80 km'],
+            correctIndex: 0,
+            hint: "The troposphere extends from the surface up to about 12 km.",
+          ),
+          QuizQuestion(
+            question: "Which weather phenomenon mostly occurs in the troposphere?",
+            options: ['Aurora Borealis', 'Solar flares', 'Rain and thunderstorms', 'Meteors'],
+            correctIndex: 2,
+            hint: "Rain, storms, and clouds all occur in the troposphere.",
           ),
         ];
         break;
@@ -45,16 +43,25 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       case 2:
         questions = [
           QuizQuestion(
-            question: "What is the coldest layer of the atmosphere?",
-            options: ['Stratosphere', 'Mesosphere', 'Exosphere', 'Troposphere'],
-            correctIndex: 1,
-            hint: "Temperatures drop to the lowest in the mesosphere.",
+            question:
+            "The boundary that separates the troposphere from the stratosphere is called the __",
+            options: ['Mesopause', 'Stratopause', 'Tropopause', 'Thermopause'],
+            correctIndex: 2,
+            hint: "The tropopause separates the troposphere from the stratosphere.",
           ),
           QuizQuestion(
-            question: "Which gas is most abundant in the atmosphere?",
-            options: ['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Argon'],
+            question:
+            "The increase in temperature in the stratosphere is primarily due to the absorption of _______ radiation by ozone.",
+            options: ['Gamma', 'Infrared', 'Ultraviolet', 'Microwave'],
+            correctIndex: 2,
+            hint: "Ozone absorbs UV radiation, warming the stratosphere.",
+          ),
+          QuizQuestion(
+            question:
+            "Most meteorites burn up in the _______, leaving visible trails in the night sky.",
+            options: ['Troposphere', 'Mesosphere', 'Stratosphere', 'Thermosphere'],
             correctIndex: 1,
-            hint: "Nitrogen makes up about 78% of Earth's atmosphere.",
+            hint: "Meteors burn up in the mesosphere due to friction.",
           ),
         ];
         break;
@@ -62,43 +69,22 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       case 3:
         questions = [
           QuizQuestion(
-            question: "Which layer contains the ozone layer?",
-            options: ['Stratosphere', 'Troposphere', 'Mesosphere', 'Exosphere'],
-            correctIndex: 0,
-            hint: "The ozone layer lies within the stratosphere.",
+            question: "What is 35,000 feet converted to kilometers (approx)?",
+            options: ['12.2 km', '10.7 Km', '9.5 km', '8.2 km'],
+            correctIndex: 1,
+            hint: "35,000 ft ≈ 10.7 km",
           ),
           QuizQuestion(
-            question: "Which layer is farthest from Earth?",
-            options: ['Mesosphere', 'Troposphere', 'Stratosphere', 'Exosphere'],
+            question: "If a jet is flying at 480 knots, what is its speed in Mach at sea level?",
+            options: ['Mach 0.85', 'Mach 0.72', 'Mach 0.69', 'Mach 0.73'],
             correctIndex: 3,
-            hint: "The exosphere is the outermost layer of Earth's atmosphere.",
-          ),
-        ];
-        break;
-
-      case 4:
-        questions = [
-          QuizQuestion(
-            question: "Which layer contains the auroras?",
-            options: [
-              'Troposphere',
-              'Thermosphere',
-              'Mesosphere',
-              'Stratosphere',
-            ],
-            correctIndex: 1,
-            hint: "Auroras occur in the thermosphere due to solar activity.",
+            hint: "Approximation at sea level = Mach 0.73",
           ),
           QuizQuestion(
-            question: "At what layer do meteors usually burn up?",
-            options: [
-              'Troposphere',
-              'Mesosphere',
-              'Stratosphere',
-              'Thermosphere',
-            ],
+            question: "How many nautical miles are there in a 1,000 km flight path?",
+            options: ['500 NM', '540 NM', '600 NM', '620 NM'],
             correctIndex: 1,
-            hint: "Meteors usually burn up in the mesosphere.",
+            hint: "1,000 km ≈ 540 NM (1 NM = 1.852 km)",
           ),
         ];
         break;
@@ -113,13 +99,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   void startTimer() {
     _timer?.cancel();
-    emit(state.copyWith(timer: 20, isTimerEnded: false));
+    emit(state.copyWith(timer: 40));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (state.timer <= 1) {
-        timer.cancel();
-        emit(state.copyWith(timer: 0, isTimerEnded: true, showAnswer: true));
-      } else {
+      if (state.timer > 0) {
         emit(state.copyWith(timer: state.timer - 1));
+      } else {
+        _timer?.cancel();
+        emit(state.copyWith(showAnswer: true));
       }
     });
   }
@@ -128,15 +114,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     if (state.showAnswer) return;
 
     final isCorrect = index == state.currentQuestion.correctIndex;
+    int timeBonus = state.timer >= 20 ? 1 : 0;
+    int newScore = state.score;
+
+    if (isCorrect) {
+      newScore += 2 + timeBonus;
+    }
 
     emit(
       state.copyWith(
         selectedIndex: index,
         showAnswer: true,
-        correctAnswers: isCorrect
-            ? state.correctAnswers + 1
-            : state.correctAnswers,
+        correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
         wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
+        score: newScore,
       ),
     );
 
@@ -144,29 +135,39 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   void nextQuestion(BuildContext context) {
-    if (state.currentIndex < state.questions.length - 1) {
+    final isLast = state.currentIndex == state.questions.length - 1;
+
+    if (!isLast) {
       emit(
         state.copyWith(
           currentIndex: state.currentIndex + 1,
           selectedIndex: null,
           showAnswer: false,
-          timer: 20,
+          timer: 40,
           isTimerEnded: false,
         ),
       );
       startTimer();
     } else {
       _timer?.cancel();
+
+      final allCorrectBonus = (state.correctAnswers == state.questions.length) ? 3 : 0;
+      final finalScore = state.score + allCorrectBonus;
+
+      final percent = (state.correctAnswers / state.questions.length) * 100;
+      final winAchieved = percent >= 80;
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => CalculationResultScreen(
             correctedAnswer: state.correctAnswers,
             totalQuestion: state.questions.length,
+            score: finalScore,
+            winAchieved: winAchieved,
           ),
         ),
       );
-      // End of quiz logic here
     }
   }
 
