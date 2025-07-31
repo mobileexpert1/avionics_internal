@@ -22,19 +22,8 @@ class CalculationDetailScreen extends StatelessWidget {
           questions: 10,
           questionType: 'aviation fill-in-the-blanks',
           moduleType: 'Topic wise modules',
-          iconWidget: Container(
-            width: 100.0,
-            height: 100.0,
-            decoration: const BoxDecoration(
-              color: Color(0xFF1E80F2),
-              shape: BoxShape.circle,
-            ),
-            child: ClipOval(
-              child: SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.calculations),
-                fit: BoxFit.cover,
-              ),
-            ),
+          iconWidget: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.calculationDetail),
           ),
           isTopicWise: true,
         ),

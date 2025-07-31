@@ -49,7 +49,7 @@ class GameDetailCard extends StatelessWidget {
                 buildInfo(CommonUi.setSvgImage(AssetsPath.Tik), '+3 points for all correct answers'),
                 buildInfo(CommonUi.setSvgImage(AssetsPath.clock), '+1 point if answered under 20s'),
                 buildInfo(CommonUi.setSvgImage(AssetsPath.Trophy), 'Score 80% or more = 1 win'),
-                buildInfo(CommonUi.setPngImage(AssetsPath.CarImg), 'Need a route to the right answer? Follow Me!'),
+                buildInfo(CommonUi.setPngImage(AssetsPath.carFollowImage), 'Need a route to the right answer? Follow Me!'),
                 const SizedBox(height: 24),
                 CustomBottomButton(
                   title: ConstantStrings.startGame,
@@ -68,40 +68,46 @@ class GameDetailCard extends StatelessWidget {
   }
 
 
-  Widget buildInfo(String svgAsset, String text) {
+  // Widget buildInfo(String svgAsset, String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 6),
+  //     child: Row(
+  //       children: [
+  //         SvgPicture.asset(svgAsset, width: 20, height: 20),
+  //         const SizedBox(width: 15),
+  //         Expanded(child: Text(text, style: const TextStyle(fontSize: 15))),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget buildInfo(String assetPath, String text) {
+    final String path = assetPath.toLowerCase();
+    final bool isSvg = path.endsWith('.svg');
+    final bool isPngOrJpg = path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg');
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          SvgPicture.asset(svgAsset, width: 20, height: 20),
-          const SizedBox(width: 15),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 15))),
+          if (isSvg)
+            SvgPicture.asset(assetPath, width: 20, height: 20)
+          else if (isPngOrJpg)
+            Image.asset(assetPath, width: 22, height: 22)
+          else
+            const SizedBox(width: 20, height: 20), // fallback widget if unknown
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  // Widget buildInfo(String assetPath, String text) {
-  //   final bool isSvg = assetPath.toLowerCase().endsWith('.svg');
-  //
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 6),
-  //     child: Row(
-  //       children: [
-  //         isSvg
-  //             ? SvgPicture.asset(assetPath, width: 20, height: 20)
-  //             : Image.asset(assetPath, width: 20, height: 20),
-  //         const SizedBox(width: 12),
-  //         Expanded(
-  //           child: Text(
-  //             text,
-  //             style: const TextStyle(fontSize: 14),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
 
 }

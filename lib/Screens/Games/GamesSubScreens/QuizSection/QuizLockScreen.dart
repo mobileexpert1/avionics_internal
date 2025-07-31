@@ -31,8 +31,9 @@ class QuizLockScreen extends StatelessWidget {
                 itemCount: state.games.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 0.93,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 0,
+                  childAspectRatio: 0.8,
                 ),
                 itemBuilder: (context, index) {
                   final game = state.games[index];
