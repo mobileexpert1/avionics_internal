@@ -5,9 +5,22 @@ import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_state.dart';
 
-class CalculationResultScreen extends StatelessWidget {
-  const CalculationResultScreen({super.key});
+class CalculationResultScreen extends StatefulWidget {
+  const CalculationResultScreen({
+    super.key,
+    required this.totalQuestion,
+    required this.correctedAnswer,
+  });
 
+  final int totalQuestion;
+  final int correctedAnswer;
+
+  @override
+  _CalculationResultScreenState createState() =>
+      _CalculationResultScreenState();
+}
+
+class _CalculationResultScreenState extends State<CalculationResultScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -15,10 +28,13 @@ class CalculationResultScreen extends StatelessWidget {
         ..setResult(
           title: "Game Completed!",
           score: 20,
-          total: 20,
+          total: widget.totalQuestion,
           totalPoints: 53,
-          correctPoints: 40,
-          bonusPoints: ["+10 points for speed bonus","+3 points for perfectly correct answers"],
+          correctPoints: widget.correctedAnswer,
+          bonusPoints: [
+            "+10 points for speed bonus",
+            "+3 points for perfectly correct answers",
+          ],
           badgeText: "Conversion Cadet Badge Earned",
         ),
       child: Scaffold(
@@ -27,7 +43,8 @@ class CalculationResultScreen extends StatelessWidget {
           title: "Result",
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () =>
+                Navigator.of(context).popUntil((route) => route.isFirst),
           ),
         ),
         body: Padding(
@@ -42,7 +59,8 @@ class CalculationResultScreen extends StatelessWidget {
                 correctPoints: state.correctPoints,
                 bonusPoints: state.bonusPoints,
                 badgeText: state.badgeText,
-                onBackTap: () => Navigator.pop(context),
+                onBackTap: () =>
+                    Navigator.of(context).popUntil((route) => route.isFirst),
               );
             },
           ),

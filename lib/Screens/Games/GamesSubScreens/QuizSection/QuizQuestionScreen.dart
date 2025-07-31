@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
 import 'package:flutter/material.dart';
@@ -12,17 +14,29 @@ import '../../../../bloc/Games/SubGameSection/Quiz_Section/quiz_state.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 
-class QuizQuestionScreen extends StatelessWidget {
-  const QuizQuestionScreen({super.key});
+class QuizQuestionScreen extends StatefulWidget {
+  const QuizQuestionScreen({
+    super.key,
+    required this.sectionId,
+    required this.sectionTitle,
+  });
 
+  final int sectionId;
+  final String sectionTitle;
+
+  @override
+  _QuizQuestionScreenState createState() => _QuizQuestionScreenState();
+}
+
+class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuizQuestionCubit(),
+      create: (_) => QuizQuestionCubit(widget.sectionId),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: ConstantStrings.aviationQuizTitle,
+          title: widget.sectionTitle,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.pop(context),
@@ -53,11 +67,15 @@ class QuizQuestionScreen extends StatelessWidget {
                       onOptionSelected: (index) {
                         quizCubit.selectOption(index);
                       },
-                      onNext: (state.selectedIndex != null || state.showAnswer)
-                          ? () {
-                              quizCubit.nextQuestion();
-                            }
-                          : null, // Only enable if answered or reveal is triggered
+                      onNext: () {
+                        print(
+                          "Correct: ${state.correctAnswers}, Wrong: ${state.wrongAnswers}",
+                        );
+
+                        if (state.selectedIndex != null || state.showAnswer) {
+                          quizCubit.nextQuestion(context);
+                        }
+                      }, // Only enable if answered or reveal is triggered
                     ),
                     const SizedBox(height: 20),
                   ],

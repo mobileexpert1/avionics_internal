@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/LockedGameCard.dart';
+import '../QuizSection/QuizQuestionScreen.dart';
 
 class OneWordTopicScreen extends StatelessWidget {
   const OneWordTopicScreen({super.key});
@@ -41,11 +42,12 @@ class OneWordTopicScreen extends StatelessWidget {
                   builder: (context, state) {
                     return GridView.builder(
                       itemCount: state.games.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: 0.93,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 0.93,
+                          ),
                       itemBuilder: (context, index) {
                         final game = state.games[index];
                         return LockGameCard(
@@ -69,6 +71,10 @@ class OneWordTopicScreen extends StatelessWidget {
                           onTap: () {
                             if (!game.isLocked) {
                               print('Playing ${game.title}');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => QuizQuestionScreen(sectionId: 2,sectionTitle: game.title)),
+                              );
                             }
                           },
                           onInfoTap: () {
@@ -85,7 +91,6 @@ class OneWordTopicScreen extends StatelessWidget {
             ],
           ),
         ),
-
       ),
     );
   }

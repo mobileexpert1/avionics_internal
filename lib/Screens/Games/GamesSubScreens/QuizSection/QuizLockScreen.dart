@@ -46,7 +46,7 @@ class QuizLockScreen extends StatelessWidget {
                         // Navigate or play game
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const QuizQuestionScreen()),
+                          MaterialPageRoute(builder: (_) => QuizQuestionScreen(sectionId: 1,sectionTitle: game.title)),
                         );
                         print('Playing ${game.title}');
                       }

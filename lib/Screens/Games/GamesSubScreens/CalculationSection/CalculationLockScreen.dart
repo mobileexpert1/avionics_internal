@@ -39,14 +39,19 @@ class CalculationLockScreen extends StatelessWidget {
                   return LockGameCard(
                     title: game.title,
                     isLocked: game.isLocked,
-                    infoMessage: '''This is your entry gate into aviation math Grab your mental calculator and convert like a true aviation whiz-Feet to kilometres,knots to Mach.''',
+                    infoMessage:
+                        '''This is your entry gate into aviation math Grab your mental calculator and convert like a true aviation whiz-Feet to kilometres,knots to Mach.''',
                     onTap: () {
                       if (!game.isLocked) {
-                        // Navigate or play game
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (_) => const QuizQuestionScreen()),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => QuizQuestionScreen(
+                              sectionId: 3,
+                              sectionTitle: game.title,
+                            ),
+                          ),
+                        );
                         print('Playing ${game.title}');
                       }
                     },

@@ -38,18 +38,53 @@ class GameDetailCard extends StatelessWidget {
                 const SizedBox(height: 14),
                 game.iconWidget,
                 const SizedBox(height: 14),
-                Text(game.title, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Color(0xFF3E3C55))),
+                Text(
+                  game.title,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF3E3C55),
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(game.description, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                Text(
+                  game.description,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                ),
                 const SizedBox(height: 16),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.clock), '40 seconds per question'),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.Trophy), '${game.questions} ${game.questionType}'),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.Tik), game.moduleType),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.Tik), '+2 points for correct answers'),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.Tik), '+3 points for all correct answers'),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.clock), '+1 point if answered under 20s'),
-                buildInfo(CommonUi.setSvgImage(AssetsPath.Trophy), 'Score 80% or more = 1 win'),
-                buildInfo(CommonUi.setPngImage(AssetsPath.CarImg), 'Need a route to the right answer? Follow Me!'),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.clock),
+                  '40 seconds per question',
+                ),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.Trophy),
+                  '${game.questions} ${game.questionType}',
+                ),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.Tik),
+                  game.moduleType,
+                ),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.Tik),
+                  '+2 points for correct answers',
+                ),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.Tik),
+                  '+3 points for all correct answers',
+                ),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.clock),
+                  '+1 point if answered under 20s',
+                ),
+                buildInfo(
+                  CommonUi.setSvgImage(AssetsPath.Trophy),
+                  'Score 80% or more = 1 win',
+                ),
+                buildInfo(
+                  CommonUi.setPngImage(AssetsPath.CarImg),
+                  'Need a route to the right answer? Follow Me!',
+                ),
                 const SizedBox(height: 24),
                 CustomBottomButton(
                   title: ConstantStrings.startGame,
@@ -67,7 +102,6 @@ class GameDetailCard extends StatelessWidget {
     );
   }
 
-
   Widget buildInfo(String svgAsset, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -80,28 +114,4 @@ class GameDetailCard extends StatelessWidget {
       ),
     );
   }
-
-  // Widget buildInfo(String assetPath, String text) {
-  //   final bool isSvg = assetPath.toLowerCase().endsWith('.svg');
-  //
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 6),
-  //     child: Row(
-  //       children: [
-  //         isSvg
-  //             ? SvgPicture.asset(assetPath, width: 20, height: 20)
-  //             : Image.asset(assetPath, width: 20, height: 20),
-  //         const SizedBox(width: 12),
-  //         Expanded(
-  //           child: Text(
-  //             text,
-  //             style: const TextStyle(fontSize: 14),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-
 }

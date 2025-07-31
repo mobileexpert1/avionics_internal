@@ -7,6 +7,8 @@ class QuizQuestionState {
   final bool showAnswer;
   final int timer;
   final bool isTimerEnded;
+  final int correctAnswers;
+  final int wrongAnswers;
 
   const QuizQuestionState({
     required this.questions,
@@ -15,6 +17,8 @@ class QuizQuestionState {
     this.showAnswer = false,
     this.timer = 20,
     this.isTimerEnded = false,
+    this.correctAnswers = 0,
+    this.wrongAnswers = 0,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -26,6 +30,8 @@ class QuizQuestionState {
     bool? showAnswer,
     int? timer,
     bool? isTimerEnded,
+    int? correctAnswers,
+    int? wrongAnswers,
   }) {
     return QuizQuestionState(
       questions: questions ?? this.questions,
@@ -34,6 +40,8 @@ class QuizQuestionState {
       showAnswer: showAnswer ?? this.showAnswer,
       timer: timer ?? this.timer,
       isTimerEnded: isTimerEnded ?? this.isTimerEnded,
+      correctAnswers: correctAnswers ?? this.correctAnswers,
+      wrongAnswers: wrongAnswers ?? this.wrongAnswers,
     );
   }
 
