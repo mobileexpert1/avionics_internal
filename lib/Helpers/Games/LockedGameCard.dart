@@ -56,27 +56,50 @@ class _LockGameCardState extends State<LockGameCard> {
                   ),
                 ),
                 const SizedBox(height: 46),
+                // ElevatedButton(
+                //   onPressed: widget.isLocked ? null : widget.onTap,
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: widget.isLocked
+                //         ? Colors.grey.shade300
+                //         : const Color(0xFF3F3D56),
+                //     padding: const EdgeInsets.symmetric(
+                //       vertical: 0,
+                //       horizontal: 16,
+                //     ),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //   ),
+                //   child: Text(
+                //     'Play game',
+                //     style: TextStyle(
+                //       color: widget.isLocked ? Colors.grey : Colors.white,
+                //     ),
+                //   ),
+                // ),
                 ElevatedButton(
                   onPressed: widget.isLocked ? null : widget.onTap,
                   style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(120, 40), // Ensures proper width & height
                     backgroundColor: widget.isLocked
                         ? Colors.grey.shade300
                         : const Color(0xFF3F3D56),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 0,
-                      horizontal: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: Text(
                     'Play game',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
+                      fontSize: 14,
                       color: widget.isLocked ? Colors.grey : Colors.white,
                     ),
                   ),
                 ),
+
               ],
             ),
           ),

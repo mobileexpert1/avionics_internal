@@ -24,12 +24,6 @@ class GamesCubit extends Cubit<GamesState> {
         icon: AssetsPath.oneWord,
       ),
       GameItem(
-        id: "black_box",
-        title: "Black Box",
-        subtitle: "Emergency scenarios\n and decision making",
-        icon: AssetsPath.blackBox,
-      ),
-      GameItem(
         id: "calculation",
         title: "Calculations",
         subtitle: "Test your aviation\n knowledge with time\n question",

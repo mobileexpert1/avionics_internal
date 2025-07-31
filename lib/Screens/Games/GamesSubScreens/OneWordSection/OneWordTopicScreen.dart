@@ -42,12 +42,12 @@ class OneWordTopicScreen extends StatelessWidget {
                   builder: (context, state) {
                     return GridView.builder(
                       itemCount: state.games.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            childAspectRatio: 0.93,
-                          ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 0,
+                        childAspectRatio: 0.8,
+                      ),
                       itemBuilder: (context, index) {
                         final game = state.games[index];
                         return LockGameCard(

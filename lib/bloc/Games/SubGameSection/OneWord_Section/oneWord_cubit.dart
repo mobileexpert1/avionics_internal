@@ -5,10 +5,10 @@ import '../Quiz_Section/quiz_model.dart';
 class OnewordCubit extends Cubit<OnewordState> {
   OnewordCubit()
       : super(OnewordState(games: [
-    quizItem(title: 'Aircraft & Principles of Flight', isLocked: false),
-    quizItem(title: 'Equipment & Systems', isLocked: false),
-    quizItem(title: 'Airspace & Procedures', isLocked: false),
-    quizItem(title: 'Meteorology & Environment', isLocked: false),
+    quizItem(title: 'Aircraft & Principles \nof Flight', isLocked: false),
+    quizItem(title: 'Equipment & \nSystems', isLocked: false),
+    quizItem(title: 'Airspace & \nProcedures', isLocked: false),
+    quizItem(title: 'Meteorology & \nEnvironment', isLocked: false),
     quizItem(title: 'Regulations, Human Factors & Safety', isLocked: false),
     quizItem(title: 'Aviation Trivia & History', isLocked: false),
   ]));

@@ -43,6 +43,12 @@ abstract class AssetsPath {
   static const String Trophy = "Trophy";
   static const String TrophySecond = "TrophySecond";
   static const String clock = "clock";
+  static const String quizDetail = "quizICon2";
+  static const String onewordDetail = "oneWordICon2";
+  static const String calculationDetail = "calculationIcon2";
+
+
+
 
   static const String deleteAcc = "Delete";
   static const String deleteAccSvg = "deleteIconsSvg";
