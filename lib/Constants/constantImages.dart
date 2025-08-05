@@ -47,9 +47,6 @@ abstract class AssetsPath {
   static const String onewordDetail = "oneWordICon2";
   static const String calculationDetail = "calculationIcon2";
 
-
-
-
   static const String deleteAcc = "Delete";
   static const String deleteAccSvg = "deleteIconsSvg";
   static const String contactAcc = "Contact";

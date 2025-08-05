@@ -123,62 +123,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               b.companyName.toLowerCase(),
                             ),
                           );
-
-                        // return ListView.builder(
-                        //   controller: _scrollController,
-                        //   itemCount: sortedManufacturers.length,
-                        //   itemBuilder: (context, index) {
-                        //     final item = sortedManufacturers[index];
-                        //
-                        //     return Card(
-                        //       color: Colors.white,
-                        //       margin: const EdgeInsets.symmetric(vertical: 8),
-                        //       elevation: 2,
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(5),
-                        //       ),
-                        //       child: ListTile(
-                        //         contentPadding: EdgeInsets.symmetric(
-                        //           horizontal: screenWidth * 0.05,
-                        //           vertical: screenHeight * 0.012,
-                        //         ),
-                        //         leading: item.icon != null
-                        //             ? ClipRRect(
-                        //                 borderRadius: BorderRadius.circular(5),
-                        //                 child: _buildLeadingImage(
-                        //                   screenWidth * 0.15,
-                        //                   screenWidth * 0.15,
-                        //                   item.icon!,
-                        //                   (item.icon ?? '').contains(".svg"),
-                        //                   !(item.icon ?? '').contains(".svg"),
-                        //                 ),
-                        //               )
-                        //             : const Icon(Icons.image_not_supported),
-                        //         title: Text(
-                        //           item.companyName,
-                        //           style: TextStyle(
-                        //             fontSize: bodyFontSize,
-                        //             fontWeight: FontWeight.w500,
-                        //           ),
-                        //         ),
-                        //         trailing: const Icon(
-                        //           Icons.arrow_forward_ios,
-                        //           size: 16,
-                        //         ),
-                        //         onTap: () {
-                        //           Navigator.push(
-                        //             context,
-                        //             MaterialPageRoute(
-                        //               builder: (_) => ManufacturerDetailScreen(
-                        //                 manufacturerDetailId: item.id,
-                        //               ),
-                        //             ),
-                        //           );
-                        //         },
-                        //       ),
-                        //     );
-                        //   },
-                        // );
                         return ListView.builder(
                           controller: _scrollController,
                           itemCount: sortedManufacturers.length + (state.isFetchingMore ? 1 : 0),
@@ -256,6 +200,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       ),
     );
   }
+
+
   Widget _buildLeadingImage(
       double width,
       double height,
@@ -304,5 +250,4 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       );
     }
   }
-
 }

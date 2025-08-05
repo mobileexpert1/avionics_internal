@@ -4,6 +4,7 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/Calculation_Section/
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/LockedGameCard.dart';
 
@@ -17,7 +18,7 @@ class CalculationLockScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'Calculations',
+          title: ConstantStrings.calculationsTitle,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
@@ -49,7 +50,7 @@ class CalculationLockScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (_) => QuizQuestionScreen(
                               sectionId: 3,
-                              sectionTitle: game.title,
+                              sectionTitle: ConstantStrings.calculationsTitle,
                             ),
                           ),
                         );

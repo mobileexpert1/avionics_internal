@@ -1,14 +1,12 @@
-import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
+import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
-import 'Screens/Games/GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
-import 'bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
@@ -19,7 +17,6 @@ import 'bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
 import 'bloc/home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'bloc/home/AircraftComparison/Comparison/ComparisonCubit.dart';
-import 'bloc/home/AllPlanesBloc/AllPlanes_cubit.dart';
 import 'bloc/home/Filter/filter_cubit.dart';
 import 'bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import 'bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
@@ -82,7 +79,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ManufacturerCubit()),
         BlocProvider(create: (_) => FilterCubit()),
         BlocProvider(create: (_) => SavedFlightCubit()),
-        BlocProvider(create: (_) => AllplanesCubit()),
+        BlocProvider(create: (_) => AllPlanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
         BlocProvider(create: (_) => ProfileScreenCubit()),
         BlocProvider(create: (_) => ManageaccCubit()),

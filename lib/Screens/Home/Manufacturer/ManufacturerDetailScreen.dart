@@ -106,28 +106,16 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
                                   // All List Of Airplane
                                   GestureDetector(
-                                    // onTap: () {
-                                    //   Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //       builder: (_) =>
-                                    //           const AllPlanesListScreen(),
-                                    //     ),
-                                    //   );
-                                    // },
-
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
-                                            create: (_) => AllplanesCubit(),
-                                            child: const AllPlanesListScreen(),
-                                          ),
+                                          builder: (_) =>
+                                             // AllPlanesListScreen(selectedAirbusId:detail.id),
+                                          AllPlanesListScreen(selectedAirbusId:"8bfc6014-2146-43fa-8ff2-863382276df8"),
                                         ),
                                       );
                                     },
-
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 25,
