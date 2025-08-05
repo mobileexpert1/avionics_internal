@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../Constants/AppColors.dart';
-import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Helpers/Custom_widget.dart';
-import '../../../../bloc/home/manufacturer/manufacturer_cubit.dart';
-import '../../../../bloc/home/manufacturer/manufacturer_state.dart';
+import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
+import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
+import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
 
 class AirCraftDetailScreen extends StatefulWidget {
-  const AirCraftDetailScreen({super.key});
+  final String aircraftId;
+  final String airCraftName;
+  const AirCraftDetailScreen({super.key, required this.aircraftId, required this.airCraftName});
 
   @override
   State<AirCraftDetailScreen> createState() => _AirCraftDetailScreenState();
@@ -26,18 +28,24 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   bool showLandingSection = true;
   bool showCertificationSection = true;
 
-  List<String> coverImages = ["", "", "", ""];
+  // List<String> coverImages = ["", "", "", ""];
   List<String> galleryImages = ["", "", "", ""];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AirCraftDetailCubit>().fetchAircraftDetailById(widget.aircraftId);
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return BlocBuilder<ManufacturerCubit, ManufacturerState>(
+    return BlocBuilder<AirCraftDetailCubit, AirCraftDetailState>(
       builder: (context, state) {
         return Scaffold(
           appBar: CustomAppBar(
-            title: 'A-320-200',
+            title: widget.airCraftName,
             centerTitle: false,
             leftButton: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
@@ -56,79 +64,58 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                     _buildTopHeadingDetails(screenHeight),
 
                     //------------------------------------------------------------------------------------------------------------------------
-                    _buildExpandableSection(
-                      title: "IDENTIFICATION & CLASSIFICATION",
-                      isExpanded: showIdentification,
-                      onToggle: () => setState(
-                        () => showIdentification = !showIdentification,
+                      _buildExpandableSection(
+                        title: "IDENTIFICATION & CLASSIFICATION",
+                        isExpanded: showIdentification,
+                        onToggle: () => setState(
+                              () => showIdentification = !showIdentification,
+                        ),
+                        content: _buildTechnicalData(state.airCraftDetails?.data),
                       ),
-                      content: _buildTechnicalData(),
-                    ),
 
-                    _buildExpandableSection(
-                      title: "POWERPLANT & PROPULSION",
-                      isExpanded: showPowerSection,
-                      onToggle: () =>
-                          setState(() => showPowerSection = !showPowerSection),
-                      content: _buildPowerPlantData(),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "DIMENSIONS",
-                      isExpanded: showDimensionSection,
-                      onToggle: () => setState(
-                        () => showDimensionSection = !showDimensionSection,
-                      ),
-                      content: _buildDimenionsData(),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "WEIGHTS",
-                      isExpanded: showWeightsSection,
-                      onToggle: () => setState(
-                        () => showWeightsSection = !showWeightsSection,
-                      ),
-                      content: _buildWeightsData(),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
-                      isExpanded: showPerformanceSection,
-                      onToggle: () => setState(
-                        () => showPerformanceSection = !showPerformanceSection,
-                      ),
-                      content: _builPerfomanceOrderedBYsData(),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "OPERATIONAL LIMITATIONS",
-                      isExpanded: showOperationalSection,
-                      onToggle: () => setState(
-                        () => showOperationalSection = !showOperationalSection,
-                      ),
-                      content: _builOperationLimitationsData(),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "LANDING GEAR",
-                      isExpanded: showLandingSection,
-                      onToggle: () => setState(
-                        () => showLandingSection = !showLandingSection,
-                      ),
-                      content: _builLandingGearData(),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "CERTIFICATION & ENVIRONMENTAL",
-                      isExpanded: showCertificationSection,
-                      onToggle: () => setState(
-                        () => showCertificationSection =
-                            !showCertificationSection,
-                      ),
-                      content: _builCertificationData(),
-                    ),
-
-                    //------------------------------------------------------------------------------------------------------------------------
+                      // _buildExpandableSection(
+                      //   title: "POWERPLANT & PROPULSION",
+                      //   isExpanded: showPowerSection,
+                      //   onToggle: () => setState(() => showPowerSection = !showPowerSection),
+                      //   content: _buildPowerPlantData(state.airCraftDetails!),
+                      // ),
+                      // _buildExpandableSection(
+                      //   title: "DIMENSIONS",
+                      //   isExpanded: showDimensionSection,
+                      //   onToggle: () => setState(() => showDimensionSection = !showDimensionSection),
+                      //   content: _buildDimenionsData(state.airCraftDetails!),
+                      // ),
+                      // _buildExpandableSection(
+                      //   title: "WEIGHTS",
+                      //   isExpanded: showWeightsSection,
+                      //   onToggle: () => setState(() => showWeightsSection = !showWeightsSection),
+                      //   content: _buildWeightsData(state.airCraftDetails!),
+                      // ),
+                      // _buildExpandableSection(
+                      //   title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
+                      //   isExpanded: showPerformanceSection,
+                      //   onToggle: () => setState(() => showPerformanceSection = !showPerformanceSection),
+                      //   content: _builPerfomanceOrderedBYsData(state.airCraftDetails!),
+                      // ),
+                      // _buildExpandableSection(
+                      //   title: "OPERATIONAL LIMITATIONS",
+                      //   isExpanded: showOperationalSection,
+                      //   onToggle: () => setState(() => showOperationalSection = !showOperationalSection),
+                      //   content: _builOperationLimitationsData(state.airCraftDetails!),
+                      // ),
+                      // _buildExpandableSection(
+                      //   title: "LANDING GEAR",
+                      //   isExpanded: showLandingSection,
+                      //   onToggle: () => setState(() => showLandingSection = !showLandingSection),
+                      //   content: _builLandingGearData(state.airCraftDetails!),
+                      // ),
+                      // _buildExpandableSection(
+                      //   title: "CERTIFICATION & ENVIRONMENTAL",
+                      //   isExpanded: showCertificationSection,
+                      //   onToggle: () => setState(() => showCertificationSection = !showCertificationSection),
+                      //   content: _builCertificationData(state.airCraftDetails!),
+                      // ),
+                                  //------------------------------------------------------------------------------------------------------------------------
                     // _buildImageGalleryScroller(galleryImages),
                     SizedBox(height: 50),
                   ],
@@ -141,10 +128,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-  Widget _buildImageCoverScroller(
-    double screenHeight,
-    List<String> coverImages,
-  ) {
+  Widget _buildImageCoverScroller(double screenHeight, List<String> coverImages) {
     return SizedBox(
       height: screenHeight * 0.18,
       child: ListView.builder(
@@ -152,18 +136,31 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         itemCount: coverImages.length,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          return ClipRRect(
-            child: Image.network(
-              coverImages[index],
-              width: MediaQuery.of(context).size.width,
-              height: screenHeight * 0.18,
-              fit: BoxFit.cover,
+          final imageUrl = coverImages[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.network(
+                imageUrl,
+                width: 300,
+                height: screenHeight * 0.18,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  width: 300,
+                  height: screenHeight * 0.18,
+                  color: Colors.grey.shade300,
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.broken_image),
+                ),
+              ),
             ),
           );
         },
       ),
     );
   }
+
 
   Widget _buildExpandableSection({
     required String title,
@@ -194,6 +191,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   }
 
   Widget _buildTopHeadingDetails(screenHeight) {
+    final aircraftData = context.read<AirCraftDetailCubit>().state.airCraftDetails?.data;
+    final imageUrls = aircraftData?.images.map((img) => img.url).toList() ?? [];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Container(
@@ -234,7 +233,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               ],
             ),
             const SizedBox(height: 15),
-            _buildImageCoverScroller(screenHeight, coverImages),
+            _buildImageCoverScroller(screenHeight, imageUrls),
             const SizedBox(height: 15),
             Text(
               "The Airbus A320 family are short to medium range narrow body low-wing monoplanes with two"
@@ -271,8 +270,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       title.toUpperCase(),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 12, 
-                        color: Color(0xFF3F3D56)
+                        fontSize: 12,
+                        color: Color(0xFF3F3D56),
                       ),
                     ),
                   ),
@@ -369,23 +368,26 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
       ),
     );
   }
+  Widget _buildTechnicalData(AirCraftDetailModel? detail) {
+    if (detail == null) return const Text('No data available');
 
-  Widget _buildTechnicalData() {
+    final identification = detail.identification;
+
     return _buildFieldRows([
-      ['ICAO Type Code', 'A320'],
-      ['Aircraft Manufacturer', 'Airbus'],
-      ['Aircraft Model (Full name)', 'Airbus A320'],
-      ['Aircraft Role', 'Regional Jet'],
-      ['Aircraft Type', 'Airplane'],
-      ['Wake Turbulence Category', 'Medium'],
-      ['Civilian / Military / Dual Use', 'Civilian'],
-      ['Country of Origin', 'France'],
-      ['Date of Maiden Flight', 'February 22, 1987'],
-      ['Year of Introduction', '1988'],
-      ['Production Status', 'In service'],
-      ['Avionics System Name', 'Honeywell'],
-      ['Number of Crew', '2'],
-      ['Number of Passengers', '140–240'],
+      ['ICAO Type Code', identification.icaoTypeCode ?? 'N/A'],
+      ['Aircraft Manufacturer', identification.manufacturer ?? 'N/A'],
+      ['Aircraft Model (Full name)', identification.aircraftModel ?? 'N/A'],
+      ['Aircraft Role', identification.aircraftRole ?? 'N/A'],
+      ['Aircraft Type', identification.aircraftType ?? 'N/A'],
+      ['Wake Turbulence Category', identification.wakeTurbulenceCategory ?? 'N/A'],
+      ['Civilian / Military / Dual Use', identification.civilianMilitaryOrDualUse ?? 'N/A'],
+      ['Country of Origin', identification.countryOfOrigin ?? 'N/A'],
+      ['Date of Maiden Flight', identification.dateOfMaidenFlight ?? 'N/A'],
+      ['Year of Introduction', identification.yearOfIntroduction ?? 'N/A'],
+      ['Production Status', identification.productionStatus ?? 'N/A'],
+      ['Avionics System Name', identification.avionicsSystem ?? 'N/A'],
+      ['Number of Crew', identification.numberOfCrew?.toString() ?? 'N/A'],
+      ['Number of Passengers', identification.numberOfPassengers ?? 'N/A'],
     ]);
   }
 

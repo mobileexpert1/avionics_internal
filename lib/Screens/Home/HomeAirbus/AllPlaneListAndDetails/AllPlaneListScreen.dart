@@ -119,7 +119,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                     children: [
                                       CustomSlidableAction(
                                         onPressed: (_) {
-                                          context.read<AllPlanesCubit>().toggleFavorite(model.id,context);
+                                          context
+                                              .read<AllPlanesCubit>()
+                                              .toggleFavorite(
+                                                model.id,
+                                                context,
+                                              );
                                           debugPrint("Tapped delete");
                                         },
                                         backgroundColor: Colors.transparent,
@@ -206,7 +211,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                AirCraftDetailScreen(),
+                                                AirCraftDetailScreen(
+                                                  aircraftId: model.id,
+                                                  airCraftName: model.model,
+                                                  // aircraftId: model.id,
+                                                  // aircraftName: model.model,
+                                                ),
                                           ),
                                         );
                                       },

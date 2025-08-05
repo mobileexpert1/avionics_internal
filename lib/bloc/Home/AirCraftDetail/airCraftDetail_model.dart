@@ -1,27 +1,59 @@
-import 'dart:convert';
+class AirCraftDetailResponse {
+  final String? detail;
+  final AirCraftDetailModel? data;
 
-AirCraftDetailModel airCraftDetailModelFromJson(String str) => AirCraftDetailModel.fromJson(json.decode(str));
+  AirCraftDetailResponse({required this.detail, required this.data});
 
-String airCraftDetailModelToJson(AirCraftDetailModel data) => json.encode(data.toJson());
+  factory AirCraftDetailResponse.fromJson(Map<String, dynamic> json) {
+    return AirCraftDetailResponse(
+      detail: json['detail'],
+      data: AirCraftDetailModel.fromJson(json['results']),
+    );
+  }
+}
 
 class AirCraftDetailModel {
-  String detail;
-  Results results;
+  final String id;
+  final List<ImageModel> images;
+  final IdentificationClassification identification;
+  final PowerplantPropulsion powerplant;
+  final Dimensions dimensions;
+  final Weights weights;
+  final Performance performance;
+  final OperationalLimitations operationalLimitations;
+  final LandingGear landingGear;
+  final CertificationEnvironmental certification;
 
   AirCraftDetailModel({
-    required this.detail,
-    required this.results,
+    required this.id,
+    required this.images,
+    required this.identification,
+    required this.powerplant,
+    required this.dimensions,
+    required this.weights,
+    required this.performance,
+    required this.operationalLimitations,
+    required this.landingGear,
+    required this.certification,
   });
 
-  factory AirCraftDetailModel.fromJson(Map<String, dynamic> json) => AirCraftDetailModel(
-    detail: json["detail"],
-    results: Results.fromJson(json["results"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "detail": detail,
-    "results": results.toJson(),
-  };
+  factory AirCraftDetailModel.fromJson(Map<String, dynamic> json) {
+    final result = json['results'];
+    return AirCraftDetailModel(
+      id: result['id'],
+      images: (result['Images'] as List)
+          .map((e) => ImageModel.fromJson(e))
+          .toList(),
+      identification: IdentificationClassification.fromJson(result['IdentificationClassification']),
+      powerplant: PowerplantPropulsion.fromJson(result['PowerplantPropulsion']),
+      dimensions: Dimensions.fromJson(result['Dimensions']),
+      weights: Weights.fromJson(result['Weights']),
+      performance: Performance.fromJson(result['Performance']),
+      operationalLimitations: OperationalLimitations.fromJson(result['OperationalLimitations']),
+      landingGear: LandingGear.fromJson(result['LandingGear']),
+      certification: CertificationEnvironmental.fromJson(result['CertificationEnvironmental']),
+    );
+  }
 }
 
 class Results {
@@ -55,14 +87,22 @@ class Results {
     id: json["id"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
-    identificationClassification: IdentificationClassification.fromJson(json["IdentificationClassification"]),
-    powerplantPropulsion: PowerplantPropulsion.fromJson(json["PowerplantPropulsion"]),
+    identificationClassification: IdentificationClassification.fromJson(
+      json["IdentificationClassification"],
+    ),
+    powerplantPropulsion: PowerplantPropulsion.fromJson(
+      json["PowerplantPropulsion"],
+    ),
     dimensions: Dimensions.fromJson(json["Dimensions"]),
     weights: Weights.fromJson(json["Weights"]),
     performance: Performance.fromJson(json["Performance"]),
-    operationalLimitations: OperationalLimitations.fromJson(json["OperationalLimitations"]),
+    operationalLimitations: OperationalLimitations.fromJson(
+      json["OperationalLimitations"],
+    ),
     landingGear: LandingGear.fromJson(json["LandingGear"]),
-    certificationEnvironmental: CertificationEnvironmental.fromJson(json["CertificationEnvironmental"]),
+    certificationEnvironmental: CertificationEnvironmental.fromJson(
+      json["CertificationEnvironmental"],
+    ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,14 +137,15 @@ class CertificationEnvironmental {
     required this.emissionsCategory,
   });
 
-  factory CertificationEnvironmental.fromJson(Map<String, dynamic> json) => CertificationEnvironmental(
-    certificationBasis: json["Certification_Basis"],
-    easaTcdsNumber: json["EASA_TCDS_Number"],
-    faaTcdsNumber: json["FAA_TCDS_Number"],
-    specialConditions: json["Special_Conditions"],
-    noiseCompliance: json["Noise_Compliance"],
-    emissionsCategory: json["Emissions_Category"],
-  );
+  factory CertificationEnvironmental.fromJson(Map<String, dynamic> json) =>
+      CertificationEnvironmental(
+        certificationBasis: json["Certification_Basis"],
+        easaTcdsNumber: json["EASA_TCDS_Number"],
+        faaTcdsNumber: json["FAA_TCDS_Number"],
+        specialConditions: json["Special_Conditions"],
+        noiseCompliance: json["Noise_Compliance"],
+        emissionsCategory: json["Emissions_Category"],
+      );
 
   Map<String, dynamic> toJson() => {
     "Certification_Basis": certificationBasis,
@@ -177,12 +218,12 @@ class IdentificationClassification {
   String wakeTurbulenceCategory;
   String civilianMilitaryOrDualUse;
   String countryOfOrigin;
-  DateTime dateOfMaidenFlight;
+  String dateOfMaidenFlight;
   String yearOfIntroduction;
   String productionStatus;
   String avionicsSystem;
   String numberOfCrew;
-  NumberOfPassengers numberOfPassengers;
+  String numberOfPassengers;
 
   IdentificationClassification({
     required this.icaoTypeCode,
@@ -201,22 +242,23 @@ class IdentificationClassification {
     required this.numberOfPassengers,
   });
 
-  factory IdentificationClassification.fromJson(Map<String, dynamic> json) => IdentificationClassification(
-    icaoTypeCode: json["ICAO_Type_Code"],
-    manufacturer: json["Manufacturer"],
-    aircraftModel: json["Aircraft_Model"],
-    aircraftRole: json["Aircraft_Role"],
-    aircraftType: json["Aircraft_Type"],
-    wakeTurbulenceCategory: json["Wake_Turbulence_Category"],
-    civilianMilitaryOrDualUse: json["Civilian_Military_or_Dual_Use"],
-    countryOfOrigin: json["Country_of_Origin"],
-    dateOfMaidenFlight: DateTime.parse(json["Date_of_Maiden_Flight"]),
-    yearOfIntroduction: json["Year_of_Introduction"],
-    productionStatus: json["Production_Status"],
-    avionicsSystem: json["Avionics_System"],
-    numberOfCrew: json["Number_of_Crew"],
-    numberOfPassengers: NumberOfPassengers.fromJson(json["Number_of_Passengers"]),
-  );
+  factory IdentificationClassification.fromJson(Map<String, dynamic> json) =>
+      IdentificationClassification(
+        icaoTypeCode: json["ICAO_Type_Code"],
+        manufacturer: json["Manufacturer"],
+        aircraftModel: json["Aircraft_Model"],
+        aircraftRole: json["Aircraft_Role"],
+        aircraftType: json["Aircraft_Type"],
+        wakeTurbulenceCategory: json["Wake_Turbulence_Category"],
+        civilianMilitaryOrDualUse: json["Civilian_Military_or_Dual_Use"],
+        countryOfOrigin: json["Country_of_Origin"],
+        dateOfMaidenFlight: json["Date_of_Maiden_Flight"],
+        yearOfIntroduction: json["Year_of_Introduction"],
+        productionStatus: json["Production_Status"],
+        avionicsSystem: json["Avionics_System"],
+        numberOfCrew: json["Number_of_Crew"],
+        numberOfPassengers: json["Number_of_Passengers"],
+      );
 
   Map<String, dynamic> toJson() => {
     "ICAO_Type_Code": icaoTypeCode,
@@ -227,12 +269,13 @@ class IdentificationClassification {
     "Wake_Turbulence_Category": wakeTurbulenceCategory,
     "Civilian_Military_or_Dual_Use": civilianMilitaryOrDualUse,
     "Country_of_Origin": countryOfOrigin,
-    "Date_of_Maiden_Flight": "${dateOfMaidenFlight.year.toString().padLeft(4, '0')}-${dateOfMaidenFlight.month.toString().padLeft(2, '0')}-${dateOfMaidenFlight.day.toString().padLeft(2, '0')}",
+    "Date_of_Maiden_Flight":dateOfMaidenFlight,
+        // "${dateOfMaidenFlight.year.toString().padLeft(4, '0')}-${dateOfMaidenFlight.month.toString().padLeft(2, '0')}-${dateOfMaidenFlight.day.toString().padLeft(2, '0')}",
     "Year_of_Introduction": yearOfIntroduction,
     "Production_Status": productionStatus,
     "Avionics_System": avionicsSystem,
     "Number_of_Crew": numberOfCrew,
-    "Number_of_Passengers": numberOfPassengers.toJson(),
+    "Number_of_Passengers": numberOfPassengers,
   };
 }
 
@@ -240,20 +283,12 @@ class NumberOfPassengers {
   String typical;
   String maximum;
 
-  NumberOfPassengers({
-    required this.typical,
-    required this.maximum,
-  });
+  NumberOfPassengers({required this.typical, required this.maximum});
 
-  factory NumberOfPassengers.fromJson(Map<String, dynamic> json) => NumberOfPassengers(
-    typical: json["Typical"],
-    maximum: json["Maximum"],
-  );
+  factory NumberOfPassengers.fromJson(Map<String, dynamic> json) =>
+      NumberOfPassengers(typical: json["Typical"], maximum: json["Maximum"]);
 
-  Map<String, dynamic> toJson() => {
-    "Typical": typical,
-    "Maximum": maximum,
-  };
+  Map<String, dynamic> toJson() => {"Typical": typical, "Maximum": maximum};
 }
 
 class LandingGear {
@@ -305,16 +340,19 @@ class OperationalLimitations {
     required this.autolandCapability,
   });
 
-  factory OperationalLimitations.fromJson(Map<String, dynamic> json) => OperationalLimitations(
-    runwaySlopeLimitPercent: json["Runway_Slope_Limit_percent"],
-    maxCrosswindNormalLawKts: json["Max_Crosswind_Normal_Law_kts"],
-    maxCrosswindDegradedLawKts: json["Max_Crosswind_Degraded_Law_kts"],
-    maxTailwindLandingKts: json["Max_Tailwind_Landing_kts"],
-    maxTailwindTakeoffKts: json["Max_Tailwind_Takeoff_kts"],
-    fieldElevationLimitFt: json["Field_Elevation_Limit_ft"],
-    maxRunwayAltitudeFt: json["Max_Runway_Altitude_ft"],
-    autolandCapability: AutolandCapability.fromJson(json["Autoland_Capability"]),
-  );
+  factory OperationalLimitations.fromJson(Map<String, dynamic> json) =>
+      OperationalLimitations(
+        runwaySlopeLimitPercent: json["Runway_Slope_Limit_percent"],
+        maxCrosswindNormalLawKts: json["Max_Crosswind_Normal_Law_kts"],
+        maxCrosswindDegradedLawKts: json["Max_Crosswind_Degraded_Law_kts"],
+        maxTailwindLandingKts: json["Max_Tailwind_Landing_kts"],
+        maxTailwindTakeoffKts: json["Max_Tailwind_Takeoff_kts"],
+        fieldElevationLimitFt: json["Field_Elevation_Limit_ft"],
+        maxRunwayAltitudeFt: json["Max_Runway_Altitude_ft"],
+        autolandCapability: AutolandCapability.fromJson(
+          json["Autoland_Capability"],
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
     "Runway_Slope_Limit_percent": runwaySlopeLimitPercent,
@@ -337,10 +375,11 @@ class AutolandCapability {
     required this.certifiedAutolandLevel,
   });
 
-  factory AutolandCapability.fromJson(Map<String, dynamic> json) => AutolandCapability(
-    supportedCategories: json["Supported_Categories"],
-    certifiedAutolandLevel: json["Certified_Autoland_Level"],
-  );
+  factory AutolandCapability.fromJson(Map<String, dynamic> json) =>
+      AutolandCapability(
+        supportedCategories: json["Supported_Categories"],
+        certifiedAutolandLevel: json["Certified_Autoland_Level"],
+      );
 
   Map<String, dynamic> toJson() => {
     "Supported_Categories": supportedCategories,
@@ -485,12 +524,13 @@ class PowerplantPropulsion {
     required this.fuel,
   });
 
-  factory PowerplantPropulsion.fromJson(Map<String, dynamic> json) => PowerplantPropulsion(
-    numberOfEngines: json["Number_of_Engines"],
-    engine: Engine.fromJson(json["Engine"]),
-    apuType: json["APU_Type"],
-    fuel: Fuel.fromJson(json["Fuel"]),
-  );
+  factory PowerplantPropulsion.fromJson(Map<String, dynamic> json) =>
+      PowerplantPropulsion(
+        numberOfEngines: json["Number_of_Engines"],
+        engine: Engine.fromJson(json["Engine"]),
+        apuType: json["APU_Type"],
+        fuel: Fuel.fromJson(json["Fuel"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "Number_of_Engines": numberOfEngines,
@@ -583,7 +623,9 @@ class Weights {
     maximumTakeoffWeightKg: json["Maximum_Takeoff_Weight_kg"],
     maximumPayloadKg: json["Maximum_Payload_kg"],
     maximumLandingWeightKg: json["Maximum_Landing_Weight_kg"],
-    baggageOrCargoVolume: BaggageOrCargoVolume.fromJson(json["Baggage_or_Cargo_Volume"]),
+    baggageOrCargoVolume: BaggageOrCargoVolume.fromJson(
+      json["Baggage_or_Cargo_Volume"],
+    ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -600,18 +642,42 @@ class BaggageOrCargoVolume {
   int minimumM3;
   int maximumM3;
 
-  BaggageOrCargoVolume({
-    required this.minimumM3,
-    required this.maximumM3,
-  });
+  BaggageOrCargoVolume({required this.minimumM3, required this.maximumM3});
 
-  factory BaggageOrCargoVolume.fromJson(Map<String, dynamic> json) => BaggageOrCargoVolume(
-    minimumM3: json["Minimum_m3"],
-    maximumM3: json["Maximum_m3"],
-  );
+  factory BaggageOrCargoVolume.fromJson(Map<String, dynamic> json) =>
+      BaggageOrCargoVolume(
+        minimumM3: json["Minimum_m3"],
+        maximumM3: json["Maximum_m3"],
+      );
 
   Map<String, dynamic> toJson() => {
     "Minimum_m3": minimumM3,
     "Maximum_m3": maximumM3,
   };
 }
+
+class ImageModel {
+  String url;
+  String cc;
+  bool isDefault;
+
+  ImageModel({
+    required this.url,
+    required this.cc,
+    required this.isDefault,
+  });
+
+  factory ImageModel.fromJson(Map<String, dynamic> json) => ImageModel(
+    url: json["url"],
+    cc: json["cc"],
+    isDefault: json["is_default"]?.toString().toLowerCase() == "true",
+  );
+
+  Map<String, dynamic> toJson() => {
+    "url": url,
+    "cc": cc,
+    "is_default": isDefault.toString(),
+  };
+}
+
+
