@@ -60,9 +60,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                 Padding(
                   padding: EdgeInsets.only(bottom: screenHeight * 0.03),
                   child: SearchBarWidget(
-                    enableBackArrow: false,
+                    enableBackArrow: true,
                     enableFilter: false,
-                    enableCloseScreen: true,
+                    enableCloseScreen: false,
                     controller: searchController,
                     onFilterTap: () {},
                     onChanged: (value) {
@@ -83,12 +83,12 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: AppTexts(
-                        text: "  Manufacturer",
-                        imageName: CommonUi.setSvgImage(AssetsPath.BackIcon),
+                        text: "Manufacturer",
+                        imageName:null,
                         font: 'Roboto',
                         side: 'left',
-                        color: Colors.black,
-                        weight: FontWeight.w400,
+                        color: Color(0xFF3F3D56),
+                        weight: FontWeight.w600,
                         fontSize: titleFontSize,
                         imageSize: 15,
                       ),
@@ -124,61 +124,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                             ),
                           );
 
-                        // return ListView.builder(
-                        //   controller: _scrollController,
-                        //   itemCount: sortedManufacturers.length,
-                        //   itemBuilder: (context, index) {
-                        //     final item = sortedManufacturers[index];
-                        //
-                        //     return Card(
-                        //       color: Colors.white,
-                        //       margin: const EdgeInsets.symmetric(vertical: 8),
-                        //       elevation: 2,
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(5),
-                        //       ),
-                        //       child: ListTile(
-                        //         contentPadding: EdgeInsets.symmetric(
-                        //           horizontal: screenWidth * 0.05,
-                        //           vertical: screenHeight * 0.012,
-                        //         ),
-                        //         leading: item.icon != null
-                        //             ? ClipRRect(
-                        //                 borderRadius: BorderRadius.circular(5),
-                        //                 child: _buildLeadingImage(
-                        //                   screenWidth * 0.15,
-                        //                   screenWidth * 0.15,
-                        //                   item.icon!,
-                        //                   (item.icon ?? '').contains(".svg"),
-                        //                   !(item.icon ?? '').contains(".svg"),
-                        //                 ),
-                        //               )
-                        //             : const Icon(Icons.image_not_supported),
-                        //         title: Text(
-                        //           item.companyName,
-                        //           style: TextStyle(
-                        //             fontSize: bodyFontSize,
-                        //             fontWeight: FontWeight.w500,
-                        //           ),
-                        //         ),
-                        //         trailing: const Icon(
-                        //           Icons.arrow_forward_ios,
-                        //           size: 16,
-                        //         ),
-                        //         onTap: () {
-                        //           Navigator.push(
-                        //             context,
-                        //             MaterialPageRoute(
-                        //               builder: (_) => ManufacturerDetailScreen(
-                        //                 manufacturerDetailId: item.id,
-                        //               ),
-                        //             ),
-                        //           );
-                        //         },
-                        //       ),
-                        //     );
-                        //   },
-                        // );
                         return ListView.builder(
                           controller: _scrollController,
                           itemCount: sortedManufacturers.length + (state.isFetchingMore ? 1 : 0),
@@ -215,6 +160,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     style: TextStyle(
                                       fontSize: bodyFontSize,
                                       fontWeight: FontWeight.w500,
+                                      color: Color(0xFF3F3D56)
                                     ),
                                   ),
                                   trailing: const Icon(

@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -146,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => AircraftComparisonScreen(),
+                          builder: (_) => SelectModelCompareScreen(),
                         ),
                       ),
                       isSvg: true,

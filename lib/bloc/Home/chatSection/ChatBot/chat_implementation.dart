@@ -169,7 +169,7 @@ class ChatRepositoryImpl implements ChatRepository {
     if (isServerError) {
       _pushSystem("Internal Server Error. Please try again later. ❌");
     } else {
-      _pushSystem("Unexpected error occurred. Please try again. ⚠️");
+      _pushSystem("Unexpected error occurred. Please try again later. ⚠️");
     }
   }
 

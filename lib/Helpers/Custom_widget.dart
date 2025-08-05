@@ -31,7 +31,7 @@ Widget customField({
               child: Text(
                 text,
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Color(0xFF3F3D56),
                   fontSize: fontSize ?? 13,
                   fontWeight: FontWeight.w500,
                 ),

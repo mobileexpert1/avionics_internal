@@ -38,7 +38,7 @@ class GameCard extends StatelessWidget {
                     CommonUi.setSvgImage(item.icon),
                     height: iconSize,
                     width: iconSize,
-                    color: Colors.blue,
+                    // color: Colors.blue,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -47,6 +47,7 @@ class GameCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: titleFont,
+                      color: Color(0xFF3F3D56)
                     ),
                   ),
                   const SizedBox(height: 6),

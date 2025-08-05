@@ -3,7 +3,7 @@ import 'AircraftComparisonState.dart';
 import 'AircraftModel.dart';
 
 class AircraftComparisonCubit extends Cubit<AircraftComparisonState> {
-  List<AircraftModel> allModels = [
+  final List<AircraftModel> allModels = [
     AircraftModel(name: 'A-737-800', id: 'A731', manufacturer: 'Boeing'),
     AircraftModel(name: 'A-321', id: 'A322', manufacturer: 'Airbus'),
     AircraftModel(name: 'A-322', id: 'A323', manufacturer: 'Airbus'),
@@ -17,49 +17,32 @@ class AircraftComparisonCubit extends Cubit<AircraftComparisonState> {
     AircraftModel(name: 'DHC-8-400', id: 'DH12', manufacturer: 'DH Canada'),
   ];
 
-  Set<String> selectedBadges = {};
+  AircraftComparisonCubit() : super(AircraftComparisonInitial());
 
-  AircraftComparisonCubit() : super(AircraftComparisonInitial()) {
-    emit(
-      AircraftComparisonModelsUpdated(
-        models: allModels,
-        selectedModelBadges: selectedBadges,
-      ),
-    );
-  }
-
-  bool toggleSelection(String badge) {
-    if (selectedBadges.contains(badge)) {
-      selectedBadges.remove(badge);
-    } else {
-      if (selectedBadges.length >= 2) return false;
-      selectedBadges.add(badge);
-    }
-
-    emit(
-      AircraftComparisonModelsUpdated(
-        models: allModels,
-        selectedModelBadges: selectedBadges,
-      ),
-    );
-
-    return selectedBadges.length == 2;
-  }
-
-  void filterModels(String query) {
-    final filtered = allModels
-        .where(
-          (model) =>
-              model.name.toLowerCase().contains(query.toLowerCase()) ||
-              model.id.toLowerCase().contains(query.toLowerCase()) ||
-              model.manufacturer.toLowerCase().contains(query.toLowerCase()),
-        )
-        .toList();
+  void loadModels({String? excludeName1, String? excludeName2}) {
+    final filtered = allModels.where((model) {
+      return model.name != excludeName1 && model.name != excludeName2;
+    }).toList();
 
     emit(
       AircraftComparisonModelsUpdated(
         models: filtered,
-        selectedModelBadges: selectedBadges,
+        selectedModelBadges: {}, // Can be ignored in this context
+      ),
+    );
+  }
+
+  void filterModels(String query) {
+    final filtered = allModels.where((model) {
+      return model.name.toLowerCase().contains(query.toLowerCase()) ||
+          model.id.toLowerCase().contains(query.toLowerCase()) ||
+          model.manufacturer.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    emit(
+      AircraftComparisonModelsUpdated(
+        models: filtered,
+        selectedModelBadges: {},
       ),
     );
   }

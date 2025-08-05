@@ -114,6 +114,7 @@ class ConstantStrings {
   static const String aviationQuizTitle = 'Aviation Quiz';
   static const String backToGame = 'Back to games';
   static const String startGame = 'Start Game';
+  static const String compare = 'Compare';
 }
 
 
@@ -189,6 +190,7 @@ class ApiServiceUrlConstant {
 
 class ApiFunctionUrlAirplaneConstant {
   static const String airplaneService = 'airplane-service/';
+  static const String airCraftDetail  = 'aircraft/details/';
 }
 
 

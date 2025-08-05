@@ -57,7 +57,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
                     //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Identification & Classification",
+                      title: "IDENTIFICATION & CLASSIFICATION",
                       isExpanded: showIdentification,
                       onToggle: () => setState(
                         () => showIdentification = !showIdentification,
@@ -65,18 +65,16 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       content: _buildTechnicalData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Powerplant & Propulsion",
+                      title: "POWERPLANT & PROPULSION",
                       isExpanded: showPowerSection,
                       onToggle: () =>
                           setState(() => showPowerSection = !showPowerSection),
                       content: _buildPowerPlantData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Dimensions",
+                      title: "DIMENSIONS",
                       isExpanded: showDimensionSection,
                       onToggle: () => setState(
                         () => showDimensionSection = !showDimensionSection,
@@ -84,9 +82,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       content: _buildDimenionsData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Weights",
+                      title: "WEIGHTS",
                       isExpanded: showWeightsSection,
                       onToggle: () => setState(
                         () => showWeightsSection = !showWeightsSection,
@@ -94,9 +91,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       content: _buildWeightsData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Performance (Ordered by flight sequence)",
+                      title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
                       isExpanded: showPerformanceSection,
                       onToggle: () => setState(
                         () => showPerformanceSection = !showPerformanceSection,
@@ -104,9 +100,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       content: _builPerfomanceOrderedBYsData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Operational Limitations",
+                      title: "OPERATIONAL LIMITATIONS",
                       isExpanded: showOperationalSection,
                       onToggle: () => setState(
                         () => showOperationalSection = !showOperationalSection,
@@ -114,9 +109,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       content: _builOperationLimitationsData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Landing Gear",
+                      title: "LANDING GEAR",
                       isExpanded: showLandingSection,
                       onToggle: () => setState(
                         () => showLandingSection = !showLandingSection,
@@ -124,9 +118,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       content: _builLandingGearData(),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
-                      title: "Certification & Environmental",
+                      title: "CERTIFICATION & ENVIRONMENTAL",
                       isExpanded: showCertificationSection,
                       onToggle: () => setState(
                         () => showCertificationSection =
@@ -136,7 +129,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                     ),
 
                     //------------------------------------------------------------------------------------------------------------------------
-                    _buildImageGalleryScroller(galleryImages),
+                    // _buildImageGalleryScroller(galleryImages),
                     SizedBox(height: 50),
                   ],
                 ),
@@ -245,9 +238,9 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
             const SizedBox(height: 15),
             Text(
               "The Airbus A320 family are short to medium range narrow body low-wing monoplanes with two"
-                  " underwing mounted engines, conventional empennage, single vertical stabilizer and rudder. "
-                  "The name/ICAO Code A320 only refers to the original mid-sized aircraft, "
-                  "but it is often informally used to indicate any of the A320 family: A318, A319, A320 and A321.",
+              " underwing mounted engines, conventional empennage, single vertical stabilizer and rudder. "
+              "The name/ICAO Code A320 only refers to the original mid-sized aircraft, "
+              "but it is often informally used to indicate any of the A320 family: A318, A319, A320 and A321.",
             ),
           ],
         ),
@@ -273,7 +266,17 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(child: Text(title)),
+                  Flexible(
+                    child: Text(
+                      title.toUpperCase(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12, 
+                        color: Color(0xFF3F3D56)
+                      ),
+                    ),
+                  ),
+
                   Row(
                     children: [
                       Text(
@@ -403,7 +406,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
   Widget _buildDimenionsData() {
     return _buildFieldRows([
-      ['Wingspan', '35.80 m'],
+      ['Wingspan/Rotor', '35.80 m'],
       ['Length', '37.57 m'],
       ['Height', '11.76 m'],
       ['Wing Area', '122.6 m²'],

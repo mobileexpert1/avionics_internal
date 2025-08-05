@@ -1,9 +1,24 @@
+import 'airCraftDetail_model.dart';
 
+abstract class AirCartState {}
 
-abstract class AirCraftDetailState {}
+class AirCartInitial extends AirCartState {}
 
-class AirCraftDetailInitial extends AirCraftDetailState {}
-
-class TechnicalDataVisible extends AirCraftDetailState {}
-
-class TechnicalDataHidden extends AirCraftDetailState {}
+class AirCartLoading extends AirCartState {}
+class AirCartLoaded extends AirCartState {
+  final Performance performance;
+  final String detail;
+  AirCartLoaded({
+    required this.performance,
+    required this.detail,
+  });
+}
+class AirCartError extends AirCartState {
+  final String message;
+  AirCartError(this.message);
+}
+class AirCartTabChanged extends AirCartState {
+  final int index;
+  AirCartTabChanged(this.index);
+}
+ 

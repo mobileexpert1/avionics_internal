@@ -10,8 +10,15 @@ import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.d
 
 class ComparisonScreen extends StatefulWidget {
   final bool showTabs;
+  final String model1;
+  final String model2;
 
-  const ComparisonScreen({Key? key, this.showTabs = true}) : super(key: key);
+  const ComparisonScreen({
+    Key? key,
+    this.showTabs = true,
+    required this.model1,
+    required this.model2,
+  }) : super(key: key);
 
   @override
   State<ComparisonScreen> createState() => _ComparisonScreenState();
@@ -23,15 +30,18 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ComparisonCubit>().loadTechnicalData(); // Default tab
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ComparisonCubit>().loadTechnicalData();
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: "Comparison A321, A322",
+        title: "Comparison ${widget.model1}, ${widget.model2}",
         centerTitle: false,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),

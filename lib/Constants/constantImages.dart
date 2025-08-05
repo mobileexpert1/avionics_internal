@@ -46,6 +46,8 @@ abstract class AssetsPath {
   static const String quizDetail = "quizICon2";
   static const String onewordDetail = "oneWordICon2";
   static const String calculationDetail = "calculationIcon2";
+  static const String compare1 = "compare1";
+  static const String backgroundImageComapre = "backgroundImageComapre";
 
 
 
