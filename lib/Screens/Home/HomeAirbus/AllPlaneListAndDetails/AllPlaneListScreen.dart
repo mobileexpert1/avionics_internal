@@ -148,11 +148,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                       leading: _buildLeadingImage(
                                         screenWidth * 0.15,
                                         screenWidth * 0.15,
-                                        model.image.url!,
-                                        (model.image.url ?? '').contains(
+                                        model.image!,
+                                        (model.image ?? '').contains(
                                           ".svg",
                                         ),
-                                        !(model.image.url ?? '').contains(
+                                        !(model.image ?? '').contains(
                                           ".svg",
                                         ),
                                       ),

@@ -5,7 +5,7 @@ class AircraftListModel extends BaseModel {
   final String id;
   final String model;
   final bool isFavorite;
-  final AircraftImage image;
+  final String image;
 
   AircraftListModel({
     required this.id,
@@ -19,7 +19,7 @@ class AircraftListModel extends BaseModel {
       id: json['id'] ?? '',
       model: json['Aircraft_Model'] ?? '',
       isFavorite: json['IsFavorite'] ?? false,
-      image: AircraftImage.fromJson(json['Images'] ?? {}),
+      image: json['Image'] ?? '',
     );
   }
 
@@ -28,11 +28,7 @@ class AircraftListModel extends BaseModel {
       id: map['id'] as String,
       model: map['model'] as String,
       isFavorite: map['isFavorite'] == 1,
-      image: AircraftImage(
-        url: map['imageUrl'] ?? '',
-        cc: map['imageCc'] ?? '',
-        isDefault: map['imageIsDefault'] == 'True',
-      ),
+      image: map['Image'] as String,
     );
   }
 
@@ -42,9 +38,7 @@ class AircraftListModel extends BaseModel {
       'id': id,
       'model': model,
       'isFavorite': isFavorite ? 1 : 0,
-      'imageUrl': image.url,
-      'imageCc': image.cc,
-      'imageIsDefault': image.isDefault.toString(),
+      'Image': image,
     };
   }
 
@@ -53,38 +47,10 @@ class AircraftListModel extends BaseModel {
       'id': id,
       'Aircraft_Model': model,
       'IsFavorite': isFavorite,
-      'Images': image.toJson(),
+      'Image': image,
     };
   }
 
   @override
   String get table => 'allAircraftsList';
-}
-
-class AircraftImage {
-  final String url;
-  final String cc;
-  final bool isDefault;
-
-  AircraftImage({
-    required this.url,
-    required this.cc,
-    required this.isDefault,
-  });
-
-  factory AircraftImage.fromJson(Map<String, dynamic> json) {
-    return AircraftImage(
-      url: json['url'] ?? '',
-      cc: json['cc'] ?? '',
-      isDefault: json['is_default']?.toString().toLowerCase() == 'true',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'url': url,
-      'cc': cc,
-      'is_default': isDefault.toString(),
-    };
-  }
 }
