@@ -69,7 +69,7 @@ class SearchBarWidget extends StatelessWidget {
                         decoration: InputDecoration(
                           hintText: (isComeFromMapSection == true
                               ? "Search Avionica"
-                              : "Try 'Airbus 320") ,
+                              : "") ,
                           prefixIcon: Padding(
                             padding: const EdgeInsets.all(12),
                             child: SvgPicture.asset(

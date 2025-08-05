@@ -70,7 +70,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  void toggleFavorite(String id,BuildContext context) {
+  void toggleFavorite(String id, BuildContext context) {
     final updatedList = state.listoFAircraftModels.map((model) {
       if (model.id == id) {
         return AircraftListModel(
@@ -78,6 +78,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
           model: model.model,
           isFavorite: !model.isFavorite,
           image: model.image,
+          ICAOCode: model.ICAOCode,
         );
       }
       return model;
