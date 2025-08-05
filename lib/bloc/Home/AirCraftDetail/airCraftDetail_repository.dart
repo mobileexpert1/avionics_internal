@@ -5,7 +5,7 @@ import '../../../Constants/ConstantStrings.dart';
 import 'airCraftDetail_model.dart';
 
 class AirCraftRepository {
-  static Future<AirCraftDetailModel> getAirCraftData(
+  Future<AirCraftDetailResponse> getAirCraftData(
       String airCraftId, {
         VoidCallback? onUnauthorized,
       }) async {
@@ -20,10 +20,12 @@ class AirCraftRepository {
         url: uri,
         onUnauthorized: onUnauthorized,
       );
+
       final Map<String, dynamic> json = response is String
           ? jsonDecode(response) as Map<String, dynamic>
           : response as Map<String, dynamic>;
-      return AirCraftDetailModel.fromJson(json);
+
+      return AirCraftDetailResponse.fromJson(json);
     } on HttpStatusException catch (e) {
       if (e.statusCode == 400 || e.statusCode == 404) {}
       throw e.toString();

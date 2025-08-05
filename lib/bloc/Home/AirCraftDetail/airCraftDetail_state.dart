@@ -1,24 +1,33 @@
 import 'airCraftDetail_model.dart';
 
-abstract class AirCartState {}
+class AirCraftDetailState {
+  final AirCraftDetailResponse? airCraftDetails;
+  final bool isLoading;
+  final bool isSuccess;
+  final bool isError;
+  final String? errorMessage;
 
-class AirCartInitial extends AirCartState {}
-
-class AirCartLoading extends AirCartState {}
-class AirCartLoaded extends AirCartState {
-  final Performance performance;
-  final String detail;
-  AirCartLoaded({
-    required this.performance,
-    required this.detail,
+  const AirCraftDetailState({
+    this.airCraftDetails,
+    this.isLoading = false,
+    this.isSuccess = false,
+    this.isError = false,
+    this.errorMessage,
   });
+
+  AirCraftDetailState copyWith({
+    AirCraftDetailResponse? airCraftDetails,
+    bool? isLoading,
+    bool? isSuccess,
+    bool? isError,
+    String? errorMessage,
+  }) {
+    return AirCraftDetailState(
+      airCraftDetails: airCraftDetails ?? this.airCraftDetails,
+      isLoading: isLoading ?? this.isLoading,
+      isSuccess: isSuccess ?? this.isSuccess,
+      isError: isError ?? this.isError,
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
 }
-class AirCartError extends AirCartState {
-  final String message;
-  AirCartError(this.message);
-}
-class AirCartTabChanged extends AirCartState {
-  final int index;
-  AirCartTabChanged(this.index);
-}
- 
