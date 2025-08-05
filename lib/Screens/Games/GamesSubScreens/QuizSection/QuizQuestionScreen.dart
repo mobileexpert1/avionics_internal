@@ -5,14 +5,17 @@ import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/CustomToast/CustomToast.dart';
 import '../../../../bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/Quiz_Section/quiz_state.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'dart:ui' as dart_ui;
 
 class QuizQuestionScreen extends StatefulWidget {
   const QuizQuestionScreen({
@@ -27,6 +30,8 @@ class QuizQuestionScreen extends StatefulWidget {
   @override
   _QuizQuestionScreenState createState() => _QuizQuestionScreenState();
 }
+
+final GlobalKey _iconKey = GlobalKey();
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   @override
@@ -57,6 +62,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                   children: [
                     const SizedBox(height: 24),
                     QuizQuestionCard(
+                      hintText: state.currentQuestion.hint,
                       question: state.currentQuestion.question,
                       options: state.currentQuestion.options,
                       selectedOption: state.selectedIndex,
@@ -71,11 +77,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                         print(
                           "Correct: ${state.correctAnswers}, Wrong: ${state.wrongAnswers}",
                         );
-
                         if (state.selectedIndex != null || state.showAnswer) {
                           quizCubit.nextQuestion(context);
                         }
-                      }, // Only enable if answered or reveal is triggered
+                      },
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -90,9 +95,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 }
 
 class QuizQuestionCard extends StatelessWidget {
+  final String hintText;
   final String question;
   final List<String> options;
-  final int? selectedOption; // <-- Make this nullable
+  final int? selectedOption;
   final int correctOption;
 
   final int currentQuestion;
@@ -102,6 +108,7 @@ class QuizQuestionCard extends StatelessWidget {
   final VoidCallback? onNext;
 
   const QuizQuestionCard({
+    required this.hintText,
     required this.question,
     required this.options,
     required this.correctOption,
@@ -116,7 +123,7 @@ class QuizQuestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10), // margin 20
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -138,7 +145,7 @@ class QuizQuestionCard extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade300, width: 1),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x14000000), // Light transparent black
+                    color: Color(0x14000000),
                     blurRadius: 8,
                     offset: Offset(0, 4),
                   ),
@@ -233,11 +240,23 @@ class QuizQuestionCard extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           height: 48,
-                          child: Image.asset(
-                            CommonUi.setPngImage(AssetsPath.carFollowImage),
-                            width: 46,
-                            height: 46,
-                            fit: BoxFit.cover,
+                          child: GestureDetector(
+                            key: _iconKey,
+                            onTap: () {
+                              print("fdgf");
+                              showPopupBelowIcon(
+                                context,
+                                _iconKey,
+                                ArrowDirection.right,
+                                hintText,
+                              );
+                            },
+                            child: Image.asset(
+                              CommonUi.setPngImage(AssetsPath.carFollowImage),
+                              width: 46,
+                              height: 46,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -264,6 +283,102 @@ class QuizQuestionCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void showPopupBelowIcon(
+    BuildContext context,
+    GlobalKey key,
+    ArrowDirection direction,
+    String hintText,
+  ) {
+    final RenderBox renderBox =
+        key.currentContext!.findRenderObject() as RenderBox;
+    final dart_ui.Size size = renderBox.size;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double popupWidth = 250;
+    final double horizontalPadding = 20;
+
+    double leftPosition;
+    if (direction == ArrowDirection.right) {
+      leftPosition =
+          offset.dx +
+          size.width +
+          MediaQuery.of(context).padding.right +
+          (defaultTargetPlatform == TargetPlatform.iOS ? 30 : 20);
+      if (leftPosition + popupWidth > screenWidth) {
+        leftPosition = screenWidth - popupWidth - horizontalPadding;
+      }
+    } else {
+      leftPosition = offset.dx - popupWidth - 8;
+      if (leftPosition < horizontalPadding) {
+        leftPosition = horizontalPadding;
+      }
+    }
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (context) {
+        return Stack(
+          children: [
+            Positioned(
+              left: leftPosition,
+              top:
+                  offset.dy +
+                  size.height / 2 -
+                  (MediaQuery.of(context).viewInsets.bottom +
+                      (defaultTargetPlatform == TargetPlatform.iOS ? 100 : 80)),
+              child: Material(
+                color: Colors.transparent,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    // Tooltip Container
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      constraints: const BoxConstraints(maxWidth: 250),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        hintText,
+                        style: TextStyle(fontSize: 14, color: Colors.black87),
+                      ),
+                    ),
+
+                    // Arrow
+                    Positioned(
+                      left: direction == ArrowDirection.right ? -10 : null,
+                      right: direction == ArrowDirection.left ? -10 : null,
+                      child: CustomPaint(
+                        size: const dart_ui.Size(20, 20),
+                        painter: TrianglePainter(
+                          color: Colors.white,
+                          direction: direction == ArrowDirection.right
+                              ? ArrowDirection.left
+                              : ArrowDirection.right,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

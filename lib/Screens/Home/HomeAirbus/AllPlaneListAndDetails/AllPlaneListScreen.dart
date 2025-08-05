@@ -1,15 +1,19 @@
+import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
-import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import '../AirCraftSection/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
-  const AllPlanesListScreen({super.key});
+  final String selectedAirbusId;
+
+  const AllPlanesListScreen({super.key, required this.selectedAirbusId});
 
   @override
   State<AllPlanesListScreen> createState() => _AllPlanesScreenState();
@@ -21,7 +25,10 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AllplanesCubit>().loadAirbusModels();
+    context.read<AllPlanesCubit>().loadListOAllAirbusModels(
+      selectedAirbusId: widget.selectedAirbusId,
+      context: context,
+    );
   }
 
   @override
@@ -60,13 +67,13 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: BlocBuilder<AllplanesCubit, AllplanesState>(
+                  child: BlocBuilder<AllPlanesCubit, AllPlanesState>(
                     builder: (context, state) {
                       if (state.isLoading) {
                         return const Center(child: CircularProgressIndicator());
                       }
 
-                      if (state.AllPlanes.isEmpty) {
+                      if (state.listoFAircraftModels.isEmpty) {
                         return const Center(
                           child: Text(
                             'No models available',
@@ -77,9 +84,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
 
                       return ListView.builder(
                         padding: EdgeInsets.zero,
-                        itemCount: state.AllPlanes.length,
+                        itemCount: state.listoFAircraftModels.length,
                         itemBuilder: (context, index) {
-                          final model = state.AllPlanes[index];
+                          final model = state.listoFAircraftModels[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 10,
@@ -95,21 +102,24 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                     ),
                                     alignment: Alignment.centerRight,
                                     padding: const EdgeInsets.only(right: 13),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.bookmark,
-                                      color: Colors.black,
+                                      color: (model.isFavorite == true
+                                          ? Colors.black
+                                          : Colors.white),
                                       size: 25,
                                     ),
                                   ),
                                 ),
                                 Slidable(
-                                  key: ValueKey(model.code),
+                                  key: ValueKey(model.id),
                                   endActionPane: ActionPane(
                                     motion: const BehindMotion(),
                                     extentRatio: 0.15,
                                     children: [
                                       CustomSlidableAction(
                                         onPressed: (_) {
+                                          context.read<AllPlanesCubit>().toggleFavorite(model.id,context);
                                           debugPrint("Tapped delete");
                                         },
                                         backgroundColor: Colors.transparent,
@@ -131,36 +141,45 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                       ],
                                     ),
                                     child: ListTile(
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                      ),
-                                      leading: Image.asset(
-                                        model.image,
-                                        width: 90,
-                                        height: 60,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (_, __, ___) => Icon(Icons.broken_image),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                          ),
+                                      leading: _buildLeadingImage(
+                                        screenWidth * 0.15,
+                                        screenWidth * 0.15,
+                                        model.image.url!,
+                                        (model.image.url ?? '').contains(
+                                          ".svg",
+                                        ),
+                                        !(model.image.url ?? '').contains(
+                                          ".svg",
+                                        ),
                                       ),
                                       title: Row(
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              model.name,
+                                              model.model,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth > 600 ? 18 : 16,
+                                                fontSize: screenWidth > 600
+                                                    ? 18
+                                                    : 16,
                                               ),
                                             ),
                                           ),
-                                          if ((model.code).isNotEmpty)
+                                          if ((model.model).isNotEmpty)
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 6,
-                                                vertical: 2,
-                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius: BorderRadius.circular(4),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
                                                 boxShadow: const [
                                                   BoxShadow(
                                                     color: Colors.grey,
@@ -169,7 +188,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                 ],
                                               ),
                                               child: Text(
-                                                model.code,
+                                                model.model,
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
@@ -186,7 +205,8 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => AirCraftDetailScreen(),
+                                            builder: (context) =>
+                                                AirCraftDetailScreen(),
                                           ),
                                         );
                                       },
@@ -208,5 +228,68 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
       ),
     );
   }
+}
 
+Widget _buildLeadingImage(
+  double width,
+  double height,
+  String imagePath,
+  bool isLocalSvgAsset,
+  bool isNetwork,
+) {
+  if (isLocalSvgAsset) {
+    if (imagePath.contains("assets")) {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: SvgPicture.asset(
+          imagePath,
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: SvgPicture.network(
+          imagePath,
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+          placeholderBuilder: (context) => SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+            height: height,
+            width: width,
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    }
+  } else if (isNetwork) {
+    return Image.network(
+      imagePath,
+      height: height,
+      width: width,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+        CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+        height: height,
+        width: width,
+        fit: BoxFit.contain,
+      ),
+    );
+  } else {
+    return Image.asset(
+      imagePath,
+      height: height,
+      width: width,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+        CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+        height: height,
+        width: width,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
 }

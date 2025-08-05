@@ -122,13 +122,10 @@ class GameResultCard extends StatelessWidget {
           Text(badgeText!, style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 1),
           TextButton(
-            onPressed: () {
-            },
+            onPressed: () {},
             style: TextButton.styleFrom(
               foregroundColor: Colors.black,
-              textStyle: const TextStyle(
-                decoration: TextDecoration.underline,
-              ),
+              textStyle: const TextStyle(decoration: TextDecoration.underline),
             ),
             child: const Text("See in profile"),
           ),

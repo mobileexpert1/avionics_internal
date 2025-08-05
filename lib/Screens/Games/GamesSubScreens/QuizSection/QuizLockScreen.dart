@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Helpers/Games/LockedGameCard.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
@@ -40,14 +41,12 @@ class QuizLockScreen extends StatelessWidget {
                   return LockGameCard(
                     title: game.title,
                     isLocked: game.isLocked,
-                    infoMessage: '''The sky’s quiet lounge above the clouds,where ozone gets to work.''',
+                    infoMessage: 'The sky’s quiet lounge above the clouds,where ozone gets to work.',
                     onTap: () {
                       if (!game.isLocked) {
-                        // Navigate or play game
-                        // Navigate or play game
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => QuizQuestionScreen(sectionId: 1,sectionTitle: game.title)),
+                          MaterialPageRoute(builder: (_) => QuizQuestionScreen(sectionId: 1,sectionTitle: ConstantStrings.aviationQuizTitle)),
                         );
                         print('Playing ${game.title}');
                       }

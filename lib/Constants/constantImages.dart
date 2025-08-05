@@ -49,9 +49,6 @@ abstract class AssetsPath {
   static const String compare1 = "compare1";
   static const String backgroundImageComapre = "backgroundImageComapre";
 
-
-
-
   static const String deleteAcc = "Delete";
   static const String deleteAccSvg = "deleteIconsSvg";
   static const String contactAcc = "Contact";
