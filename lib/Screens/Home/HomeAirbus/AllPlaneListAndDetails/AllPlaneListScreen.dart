@@ -190,7 +190,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                 ],
                                               ),
                                               child: Text(
-                                                model.iCAOTypeCode,
+                                                model.ICAOCode,
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
