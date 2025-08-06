@@ -161,21 +161,25 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                           textColor: Colors.white,
                           icon: const SizedBox(width: 0),
                           isEnabled: isButtonEnabled,
-                          onPressed: () {
-                            if (!isButtonEnabled) return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) => ComparisonCubit(),
-                                  child: ComparisonScreen(
-                                    model1: model1!,
-                                    model2: model2!,
+                            onPressed: () {
+                              if (!isButtonEnabled) return;
+
+                              final comparisonCubit = ComparisonCubit(); // ✅ create instance first
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                    value: comparisonCubit,
+                                    child: ComparisonScreen(
+                                      model1: model1!,
+                                      model2: model2!,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            }
+
                         ),
                       ],
                     ),

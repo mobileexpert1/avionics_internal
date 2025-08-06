@@ -55,7 +55,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                   context.read<AircraftComparisonCubit>().filterModels(
                     searchController.text,
                   );
-                },
+                }, searchTitle: 'Search...',
               ),
             ],
           ),

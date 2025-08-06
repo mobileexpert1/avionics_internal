@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     );
-                  },
+                  }, searchTitle: 'Search...',
                 ),
                 SizedBox(height: screenWidth * 0.04),
               ],

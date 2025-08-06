@@ -71,6 +71,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                         query: value.trim(),
                       );
                     },
+                    searchTitle: 'Search Manufacturer...',
                   ),
                 ),
 
@@ -84,7 +85,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                       onTap: () => Navigator.pop(context),
                       child: AppTexts(
                         text: "Manufacturer",
-                        imageName:null,
+                        imageName: null,
                         font: 'Roboto',
                         side: 'left',
                         color: Color(0xFF3F3D56),
@@ -126,7 +127,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
 
                         return ListView.builder(
                           controller: _scrollController,
-                          itemCount: sortedManufacturers.length + (state.isFetchingMore ? 1 : 0),
+                          itemCount:
+                              sortedManufacturers.length +
+                              (state.isFetchingMore ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index < sortedManufacturers.length) {
                               final item = sortedManufacturers[index];
@@ -145,22 +148,24 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                   ),
                                   leading: item.icon != null
                                       ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: _buildLeadingImage(
-                                      screenWidth * 0.15,
-                                      screenWidth * 0.15,
-                                      item.icon!,
-                                      (item.icon ?? '').contains(".svg"),
-                                      !(item.icon ?? '').contains(".svg"),
-                                    ),
-                                  )
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                          child: _buildLeadingImage(
+                                            screenWidth * 0.15,
+                                            screenWidth * 0.15,
+                                            item.icon!,
+                                            (item.icon ?? '').contains(".svg"),
+                                            !(item.icon ?? '').contains(".svg"),
+                                          ),
+                                        )
                                       : const Icon(Icons.image_not_supported),
                                   title: Text(
                                     item.companyName,
                                     style: TextStyle(
                                       fontSize: bodyFontSize,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF3F3D56)
+                                      color: Color(0xFF3F3D56),
                                     ),
                                   ),
                                   trailing: const Icon(
@@ -171,9 +176,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => ManufacturerDetailScreen(
-                                          manufacturerDetailId: item.id,
-                                        ),
+                                        builder: (_) =>
+                                            ManufacturerDetailScreen(
+                                              manufacturerDetailId: item.id,
+                                            ),
                                       ),
                                     );
                                   },
@@ -190,7 +196,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                             }
                           },
                         );
-
                       },
                     ),
                   ),
@@ -202,13 +207,14 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       ),
     );
   }
+
   Widget _buildLeadingImage(
-      double width,
-      double height,
-      String imagePath,
-      bool isLocalSvgAsset,
-      bool isNetwork,
-      ) {
+    double width,
+    double height,
+    String imagePath,
+    bool isLocalSvgAsset,
+    bool isNetwork,
+  ) {
     if (isLocalSvgAsset) {
       if (imagePath.contains("assets")) {
         return SizedBox(
@@ -250,5 +256,4 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       );
     }
   }
-
 }

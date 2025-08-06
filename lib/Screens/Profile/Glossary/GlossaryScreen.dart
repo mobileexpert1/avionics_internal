@@ -27,7 +27,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
 
   void _onSearchChanged() {
     final query = _searchController.text.trim();
-    context.read<GlossaryCubit>().loadGlossary(query: query,context: context);
+    context.read<GlossaryCubit>().loadGlossary(query: query, context: context);
   }
 
   @override
@@ -50,12 +50,16 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
       body: Column(
         children: [
           SearchBarWidget(
+            searchTitle: 'Search Glossary...',
             enableBackArrow: false,
             enableFilter: false,
             enableCloseScreen: false,
             controller: _searchController,
             onChanged: (value) {
-              context.read<GlossaryCubit>().loadGlossary(query: value.trim(),context: context);
+              context.read<GlossaryCubit>().loadGlossary(
+                query: value.trim(),
+                context: context,
+              );
             },
           ),
           const SizedBox(height: 10),
@@ -72,10 +76,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                   return const Center(
                     child: Text(
                       'No glossary terms found.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
                     ),
                   );
                 }
@@ -93,7 +94,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                         Container(
                           color: const Color(0xFFD2E6FC),
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           child: Text(
                             letter,
                             style: const TextStyle(
@@ -109,8 +113,14 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                           return Column(
                             children: [
                               ExpansionTile(
-                                tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-                                childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                                tilePadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                childrenPadding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 12,
+                                ),
                                 title: Text(
                                   item.title,
                                   style: const TextStyle(
@@ -127,7 +137,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                 children: [
                                   Text(
                                     item.description,
-                                    style: const TextStyle(color: Colors.grey, height: 1.4),
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      height: 1.4,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -147,11 +160,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 );
               },
             ),
-          )
-
+          ),
         ],
       ),
     );
   }
 }
-
