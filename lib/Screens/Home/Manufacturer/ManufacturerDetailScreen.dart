@@ -1,21 +1,24 @@
-import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Constants/constantImages.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../Constants/ConstantStrings.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../Helpers/Custom_widget.dart';
-import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
-import '../../../bloc/home/manufacturer/Manufacturer_detail_model.dart';
-import '../../../bloc/home/manufacturer/manufacturer_cubit.dart';
-import '../../../bloc/home/manufacturer/manufacturer_state.dart';
+import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
+import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
+import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
 import '../HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
 class ManufacturerDetailScreen extends StatefulWidget {
   final String manufacturerDetailId;
 
-  const ManufacturerDetailScreen({Key? key, required this.manufacturerDetailId})
-    : super(key: key);
+  const ManufacturerDetailScreen({
+    super.key,
+    required this.manufacturerDetailId,
+  });
 
   @override
   State<ManufacturerDetailScreen> createState() => _AirbusScreenState();
@@ -26,6 +29,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreAboutInfo = false;
   bool showMoreHistory = false;
   bool showMoreProducts = false;
+  bool showInterestingFacts = false;
 
   @override
   void initState() {
@@ -168,7 +172,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                           ),
                                         )
                                       : const SizedBox.shrink(),
-
                                   Divider(
                                     height: 0,
                                     color: AppColors.sepratorColourAppBar,
@@ -243,11 +246,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                     ),
                                   ),
 
-                                  // Image Scroller (only shown when expanded)
-                                  _buildImageGalleryScroller(
-                                    detail.general.gallery,
-                                  ),
-
                                   Divider(
                                     height: 0,
                                     color: AppColors.sepratorColourAppBar,
@@ -271,10 +269,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: List.generate(
-                                        detail.product?.length ?? 0,
+                                        detail.product.length,
                                         (index) {
-                                          final product =
-                                              detail.product![index];
+                                          final product = detail.product[index];
                                           return Padding(
                                             padding: const EdgeInsets.only(
                                               bottom: 12,
@@ -284,14 +281,14 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  product.series ?? '',
+                                                  product.series,
                                                   style: const TextStyle(
                                                     fontSize: 15,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 4),
                                                 Text(
-                                                  product.description ?? '',
+                                                  product.description,
                                                   style: const TextStyle(
                                                     height: 1.5,
                                                   ),
@@ -310,6 +307,52 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       ),
                                     ),
                                   ),
+
+                                  _buildSectionHeader(
+                                    title: "INTERESTING FACTS",
+                                    isExpanded: showInterestingFacts,
+                                    onTap: () => setState(
+                                      () => showInterestingFacts =
+                                          !showInterestingFacts,
+                                    ),
+                                  ),
+
+                                  if (showInterestingFacts)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: List.generate(
+                                          detail.interestingFacts?.length ?? 0,
+                                          (index) {
+                                            final fact =
+                                                detail.interestingFacts?[index];
+
+                                            return Container(
+                                              margin: const EdgeInsets.only(
+                                                bottom: 12,
+                                              ),
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                "• $fact",
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  height: 1.4,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                               const SizedBox(height: 50),
@@ -375,7 +418,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                               width: screenWidth * 0.22,
                                               height: screenWidth * 0.22,
                                               fit: BoxFit.contain,
-                                              errorBuilder: (_, __, ___) =>
+                                              errorBuilder: (_, _, _) =>
                                                   SvgPicture.asset(
                                                     CommonUi.setSvgImage(
                                                       AssetsPath.manuFirstImage,
@@ -413,30 +456,16 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               ),
             ),
             const SizedBox(width: 12),
+
             Expanded(
-              child: customField(label: 'CEO', text: generalDetails.ceo ?? ''),
+              child: customField(
+                label: 'Founding Date',
+                text: generalDetails.foundingDate,
+              ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: customField(
-                label: 'Founding Date',
-                text: generalDetails.foundingDate ?? '',
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: customField(
-                label: 'Last year revenue',
-                text: generalDetails.lastYearRevenue ?? '',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
       ],
     );
   }
@@ -492,51 +521,64 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
     );
   }
 
-  Widget _buildImageCoverScroller(
-    double screenHeight,
-    List<String> coverImages,
-  ) {
+  Widget _buildImageCoverScroller(double screenHeight, CoverPhoto coverImages) {
     return SizedBox(
       height: screenHeight * 0.26,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: coverImages.length,
+        itemCount: 1,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          return ClipRRect(
-            child: Image.network(
-              coverImages[index],
-              width: MediaQuery.of(context).size.width,
-              height: screenHeight * 0.26,
-              fit: BoxFit.cover,
-            ),
+          return Stack(
+            children: [
+              ClipRRect(
+                child: Image.network(
+                  coverImages.url,
+                  width: MediaQuery.of(context).size.width,
+                  height: screenHeight * 0.26,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                right: 8,
+                bottom: 8,
+                child: GestureDetector(
+                  onTap: () async {
+                    final uri = Uri.tryParse(coverImages.wiki ?? "");
+                    if (uri != null && await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Could not open URL.')),
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      coverImages.author,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildImageGalleryScroller(List<String> galleryImages) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15, left: 25, right: 25),
-      child: SizedBox(
-        height: 120,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: galleryImages.length,
-          itemBuilder: (context, index) => Container(
-            margin: EdgeInsets.all(2),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                galleryImages[index],
-                width: 300,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

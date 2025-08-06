@@ -17,12 +17,14 @@ class ManufacturerData {
   final General general;
   final Company company;
   final List<Product> product;
+  final List<String>? interestingFacts;
 
   ManufacturerData({
     required this.id,
     required this.general,
     required this.company,
     required this.product,
+    this.interestingFacts,
   });
 
   factory ManufacturerData.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,9 @@ class ManufacturerData {
       product: (json['product'] as List<dynamic>)
           .map((e) => Product.fromJson(e))
           .toList(),
+      interestingFacts: (json['interesting_facts'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 }
@@ -40,23 +45,17 @@ class ManufacturerData {
 class General {
   final String companyName;
   final String? headquarter;
-  final String ceo;
   final String foundingDate;
-  final String lastYearRevenue;
   final String logo;
   final String description;
-  final List<String> gallery;
-  final List<String> coverPhoto;
+  final CoverPhoto coverPhoto;
 
   General({
     required this.companyName,
     this.headquarter,
-    required this.ceo,
     required this.foundingDate,
-    required this.lastYearRevenue,
     required this.logo,
     required this.description,
-    required this.gallery,
     required this.coverPhoto,
   });
 
@@ -64,13 +63,33 @@ class General {
     return General(
       companyName: json['company_name'],
       headquarter: json['headquarter'],
-      ceo: json['ceo'],
       foundingDate: json['founding_date'],
-      lastYearRevenue: json['last_year_revenue'],
       logo: json['logo'],
       description: json['description'],
-      gallery: List<String>.from(json['gallery']),
-      coverPhoto: List<String>.from(json['cover_photo']),
+      coverPhoto: CoverPhoto.fromJson(json['cover_photo'])
+    );
+  }
+}
+
+class CoverPhoto {
+  final String url;
+  final String license;
+  final String author;
+  final String? wiki;
+
+  CoverPhoto({
+    required this.url,
+    required this.license,
+    required this.author,
+    this.wiki,
+  });
+
+  factory CoverPhoto.fromJson(Map<String, dynamic> json) {
+    return CoverPhoto(
+      url: json['url'],
+      license: json['license'],
+      author: json['author'],
+      wiki: json['wiki'],
     );
   }
 }
@@ -96,6 +115,9 @@ class Product {
   Product({required this.series, required this.description});
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(series: json['series'], description: json['description']);
+    return Product(
+      series: json['series'],
+      description: json['description'],
+    );
   }
 }

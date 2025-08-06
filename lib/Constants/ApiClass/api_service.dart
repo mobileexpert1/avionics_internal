@@ -175,7 +175,9 @@ class ApiService {
       print('Response Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
-      final jsonResponse = jsonDecode(response.body);
+      final decodedBody = utf8.decode(response.bodyBytes);
+      print('Response Body: $decodedBody');
+      final jsonResponse = jsonDecode(decodedBody);
 
       switch (response.statusCode) {
         case 200:

@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -8,6 +9,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
+import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
@@ -29,8 +31,6 @@ import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
-
-import 'bloc/home/manufacturer/manufacturer_cubit.dart';
 import 'firebase_options.dart';
 
 // Future<void> wipeDb() async {

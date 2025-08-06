@@ -29,7 +29,7 @@ class AllPlanesReposistory {
     }
 
     final uri = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}&max_page_size=10",
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",
     );
 
     try {

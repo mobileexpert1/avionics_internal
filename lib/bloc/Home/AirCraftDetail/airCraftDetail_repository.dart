@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
+
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import 'airCraftDetail_model.dart';
@@ -25,8 +27,12 @@ class AirCraftRepository {
           ? jsonDecode(response) as Map<String, dynamic>
           : response as Map<String, dynamic>;
 
-      return AirCraftDetailResponse.fromJson(json);
-    } on HttpStatusException catch (e) {
+      final aircraft = AirCraftDetailResponse.fromJson(json);
+      debugPrint("Parsed Successfully");
+      return aircraft;
+    } on HttpStatusException catch (e,stacktrace) {
+      debugPrint("Parsing error: $e");
+      debugPrint("Stacktrace: $stacktrace");
       if (e.statusCode == 400 || e.statusCode == 404) {}
       throw e.toString();
     } catch (e) {

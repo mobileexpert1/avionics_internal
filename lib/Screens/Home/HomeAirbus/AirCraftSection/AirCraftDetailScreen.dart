@@ -1,6 +1,7 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/AppColors.dart';
 import '../../../../Helpers/Custom_widget.dart';
@@ -10,8 +11,8 @@ import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
 
 class AirCraftDetailScreen extends StatefulWidget {
   final String aircraftId;
-  final String airCraftName;
-  const AirCraftDetailScreen({super.key, required this.aircraftId, required this.airCraftName});
+
+  const AirCraftDetailScreen({super.key, required this.aircraftId});
 
   @override
   State<AirCraftDetailScreen> createState() => _AirCraftDetailScreenState();
@@ -28,13 +29,13 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   bool showLandingSection = true;
   bool showCertificationSection = true;
 
-  // List<String> coverImages = ["", "", "", ""];
-  List<String> galleryImages = ["", "", "", ""];
-
   @override
   void initState() {
     super.initState();
-    context.read<AirCraftDetailCubit>().fetchAircraftDetailById(widget.aircraftId);
+    context.read<AirCraftDetailCubit>().fetchAircraftDetailById(
+      widget.aircraftId,
+      context,
+    );
   }
 
   @override
@@ -43,9 +44,14 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
     return BlocBuilder<AirCraftDetailCubit, AirCraftDetailState>(
       builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
         return Scaffold(
           appBar: CustomAppBar(
-            title: widget.airCraftName,
+            title:
+                state.airCraftDetails?.results.identification.aircraftModel ??
+                "",
             centerTitle: false,
             leftButton: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
@@ -64,59 +70,101 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                     _buildTopHeadingDetails(screenHeight),
 
                     //------------------------------------------------------------------------------------------------------------------------
-                      _buildExpandableSection(
-                        title: "IDENTIFICATION & CLASSIFICATION",
-                        isExpanded: showIdentification,
-                        onToggle: () => setState(
-                              () => showIdentification = !showIdentification,
-                        ),
-                        content: _buildTechnicalData(state.airCraftDetails?.data),
+                    _buildExpandableSection(
+                      title: "IDENTIFICATION & CLASSIFICATION",
+                      isExpanded: showIdentification,
+                      onToggle: () => setState(
+                        () => showIdentification = !showIdentification,
                       ),
+                      content: _buildTechnicalData(
+                        state.airCraftDetails?.results.identification,
+                      ),
+                    ),
 
-                      // _buildExpandableSection(
-                      //   title: "POWERPLANT & PROPULSION",
-                      //   isExpanded: showPowerSection,
-                      //   onToggle: () => setState(() => showPowerSection = !showPowerSection),
-                      //   content: _buildPowerPlantData(state.airCraftDetails!),
-                      // ),
-                      // _buildExpandableSection(
-                      //   title: "DIMENSIONS",
-                      //   isExpanded: showDimensionSection,
-                      //   onToggle: () => setState(() => showDimensionSection = !showDimensionSection),
-                      //   content: _buildDimenionsData(state.airCraftDetails!),
-                      // ),
-                      // _buildExpandableSection(
-                      //   title: "WEIGHTS",
-                      //   isExpanded: showWeightsSection,
-                      //   onToggle: () => setState(() => showWeightsSection = !showWeightsSection),
-                      //   content: _buildWeightsData(state.airCraftDetails!),
-                      // ),
-                      // _buildExpandableSection(
-                      //   title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
-                      //   isExpanded: showPerformanceSection,
-                      //   onToggle: () => setState(() => showPerformanceSection = !showPerformanceSection),
-                      //   content: _builPerfomanceOrderedBYsData(state.airCraftDetails!),
-                      // ),
-                      // _buildExpandableSection(
-                      //   title: "OPERATIONAL LIMITATIONS",
-                      //   isExpanded: showOperationalSection,
-                      //   onToggle: () => setState(() => showOperationalSection = !showOperationalSection),
-                      //   content: _builOperationLimitationsData(state.airCraftDetails!),
-                      // ),
-                      // _buildExpandableSection(
-                      //   title: "LANDING GEAR",
-                      //   isExpanded: showLandingSection,
-                      //   onToggle: () => setState(() => showLandingSection = !showLandingSection),
-                      //   content: _builLandingGearData(state.airCraftDetails!),
-                      // ),
-                      // _buildExpandableSection(
-                      //   title: "CERTIFICATION & ENVIRONMENTAL",
-                      //   isExpanded: showCertificationSection,
-                      //   onToggle: () => setState(() => showCertificationSection = !showCertificationSection),
-                      //   content: _builCertificationData(state.airCraftDetails!),
-                      // ),
-                                  //------------------------------------------------------------------------------------------------------------------------
-                    // _buildImageGalleryScroller(galleryImages),
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "POWERPLANT & PROPULSION",
+                      isExpanded: showPowerSection,
+                      onToggle: () =>
+                          setState(() => showPowerSection = !showPowerSection),
+                      content: _buildPowerPlantData(
+                        state.airCraftDetails?.results.powerplant,
+                      ),
+                    ),
+
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "DIMENSIONS",
+                      isExpanded: showDimensionSection,
+                      onToggle: () => setState(
+                        () => showDimensionSection = !showDimensionSection,
+                      ),
+                      content: _buildDimenionsData(
+                        state.airCraftDetails?.results.dimensions,
+                      ),
+                    ),
+
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "WEIGHTS",
+                      isExpanded: showWeightsSection,
+                      onToggle: () => setState(
+                        () => showWeightsSection = !showWeightsSection,
+                      ),
+                      content: _buildWeightsData(
+                        state.airCraftDetails?.results.weights,
+                      ),
+                    ),
+
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
+                      isExpanded: showPerformanceSection,
+                      onToggle: () => setState(
+                        () => showPerformanceSection = !showPerformanceSection,
+                      ),
+                      content: _builPerfomanceOrderedBYsData(
+                        state.airCraftDetails?.results.performance,
+                      ),
+                    ),
+
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "OPERATIONAL LIMITATIONS",
+                      isExpanded: showOperationalSection,
+                      onToggle: () => setState(
+                        () => showOperationalSection = !showOperationalSection,
+                      ),
+                      content: _builOperationLimitationsData(
+                        state.airCraftDetails?.results.operationalLimitations,
+                      ),
+                    ),
+
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "LANDING GEAR",
+                      isExpanded: showLandingSection,
+                      onToggle: () => setState(
+                        () => showLandingSection = !showLandingSection,
+                      ),
+                      content: _builLandingGearData(
+                        state.airCraftDetails?.results.landingGear,
+                      ),
+                    ),
+
+                    //------------------------------------------------------------------------------------------------------------------------
+                    _buildExpandableSection(
+                      title: "CERTIFICATION & ENVIRONMENTAL",
+                      isExpanded: showCertificationSection,
+                      onToggle: () => setState(
+                        () => showCertificationSection =
+                            !showCertificationSection,
+                      ),
+                      content: _builCertificationData(
+                        state.airCraftDetails?.results.certification,
+                      ),
+                    ),
+                    // ------------------------------------------------------------------------------------------------------------------------
                     SizedBox(height: 50),
                   ],
                 ),
@@ -128,7 +176,10 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-  Widget _buildImageCoverScroller(double screenHeight, List<String> coverImages) {
+  Widget _buildImageCoverScroller(
+    double screenHeight,
+    List<AircraftImage> coverImages,
+  ) {
     return SizedBox(
       height: screenHeight * 0.18,
       child: ListView.builder(
@@ -141,18 +192,63 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
             padding: const EdgeInsets.only(right: 10),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: Image.network(
-                imageUrl,
-                width: 300,
-                height: screenHeight * 0.18,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 300,
-                  height: screenHeight * 0.18,
-                  color: Colors.grey.shade300,
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.broken_image),
-                ),
+              child: Stack(
+                children: [
+                  Image.network(
+                    imageUrl.url,
+                    width: 300,
+                    height: screenHeight * 0.18,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 300,
+                      height: screenHeight * 0.18,
+                      color: Colors.grey.shade300,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.broken_image),
+                    ),
+                  ),
+
+                  if (imageUrl.cc != "")
+                    Positioned(
+                      left: 8,
+                      bottom: 8,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final uri = Uri.tryParse(imageUrl.source);
+                          if (uri != null && await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not open URL.'),
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            imageUrl.cc,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           );
@@ -161,90 +257,216 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-
-  Widget _buildExpandableSection({
-    required String title,
-    required bool isExpanded,
-    required VoidCallback onToggle,
-    required Widget content,
-  }) {
-    return Column(
-      children: [
-        _buildSectionHeader(
-          title: title,
-          isExpanded: isExpanded,
-          onTap: onToggle,
-        ),
-        isExpanded
-            ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: content,
-              )
-            : const SizedBox.shrink(),
-        const Divider(
-          height: 0,
-          color: AppColors.sepratorColourAppBar,
-          thickness: 3,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTopHeadingDetails(screenHeight) {
-    final aircraftData = context.read<AirCraftDetailCubit>().state.airCraftDetails?.data;
-    final imageUrls = aircraftData?.images.map((img) => img.url).toList() ?? [];
+  Widget _buildTopHeadingDetails(double screenHeight) {
+    final aircraftData = context
+        .read<AirCraftDetailCubit>()
+        .state
+        .airCraftDetails
+        ?.results;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Container(
         width: double.infinity,
         color: Colors.grey.shade100,
         padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
+          horizontal: 15,
+          vertical: 15,
         ), // Internal padding
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: customField(
-                    label: 'ICAO type /APC',
-                    text: "L2J/C",
-                    isDarkDivider: true,
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: customField(
-                    label: 'Manufacturer',
-                    text: "Airbus",
-                    isDarkDivider: true,
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: customField(
-                    label: 'WTC',
-                    text: "M",
-                    isDarkDivider: true,
-                  ),
-                ),
-              ],
-            ),
+            //const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: customField(
+            //         label: 'ICAO type /APC',
+            //         text: aircraftData?.identification.icaoTypeCode ?? "",
+            //         isDarkDivider: true,
+            //       ),
+            //     ),
+            //     const SizedBox(width: 15),
+            //     Expanded(
+            //       child: customField(
+            //         label: 'Manufacturer',
+            //         text: aircraftData?.identification.manufacturer ?? "",
+            //         isDarkDivider: true,
+            //       ),
+            //     ),
+            //     const SizedBox(width: 15),
+            //     Expanded(
+            //       child: customField(
+            //         label: 'WTC',
+            //         text:
+            //             aircraftData?.identification.wakeTurbulenceCategory ??
+            //             "",
+            //         isDarkDivider: true,
+            //       ),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 15),
-            _buildImageCoverScroller(screenHeight, imageUrls),
+            _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
             const SizedBox(height: 15),
-            Text(
-              "The Airbus A320 family are short to medium range narrow body low-wing monoplanes with two"
-              " underwing mounted engines, conventional empennage, single vertical stabilizer and rudder. "
-              "The name/ICAO Code A320 only refers to the original mid-sized aircraft, "
-              "but it is often informally used to indicate any of the A320 family: A318, A319, A320 and A321.",
-            ),
+            //Text(aircraftData?.identification.avionicsSystem ?? ""),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildTechnicalData(IdentificationClassification? detail) {
+    if (detail == null) return const Text('No data available');
+    final identification = detail;
+    return _buildFieldRows([
+      ['ICAO Type Code', identification.icaoTypeCode],
+      ['Aircraft Manufacturer', identification.manufacturer],
+      ['Aircraft Model', identification.aircraftModel],
+      ['Aircraft Role', identification.aircraftRole],
+      ['Aircraft Type', identification.aircraftType],
+      ['Wake Turbulence Category', identification.wakeTurbulenceCategory],
+      [
+        'Civilian / Military / Dual Use',
+        identification.civilianMilitaryOrDualUse,
+      ],
+      ['Country of Origin', identification.countryOfOrigin],
+      ['Date of Maiden Flight', identification.dateOfMaidenFlight],
+      ['Year of Introduction', identification.yearOfIntroduction],
+      ['Production Status', identification.productionStatus],
+      ['Avionics System Name', identification.avionicsSystem],
+      ['Number of Crew', identification.numberOfCrew],
+      [
+        'Number of Passengers (Typical)',
+        identification.numberOfPassengers.typical,
+      ],
+      [
+        'Number of Passengers (Maximum)',
+        identification.numberOfPassengers.maximum,
+      ],
+    ]);
+  }
+
+  Widget _buildPowerPlantData(PowerplantPropulsion? detail) {
+    if (detail == null) return const Text('No data available');
+    final powerPlantDetails = detail;
+    return _buildFieldRows([
+      ['Number of Engines', powerPlantDetails.numberOfEngines.toString()],
+      ['Fuel Consumption', powerPlantDetails.fuel.burnRate],
+      ['Manufacturer', powerPlantDetails.engine.manufacturer],
+      ['Model', powerPlantDetails.engine.model],
+      ['Engine Type', powerPlantDetails.engine.engineType],
+      ['Thrust Per Engine (kN)', powerPlantDetails.engine.thrust],
+      ['Physical Engine Code', powerPlantDetails.engine.physicalEngineCode],
+      ['APU Type', powerPlantDetails.apuType],
+      ['Fuel Type', powerPlantDetails.fuel.fuelType],
+      ['Fuel Additives', powerPlantDetails.fuel.fuelAdditives],
+      ['Fuel Capacity', powerPlantDetails.fuel.capacity],
+    ]);
+  }
+
+  Widget _buildDimenionsData(Dimensions? detail) {
+    if (detail == null) return const Text('No data available');
+    final dimensionDetails = detail;
+    return _buildFieldRows([
+      ['Wingspan (m)', dimensionDetails.wingspanM],
+      ['Cabin Width (m)', dimensionDetails.cabinWidthM],
+      ['Length (m)', dimensionDetails.lengthM],
+      ['Wingtip Configuration', dimensionDetails.wingtipConfiguration],
+      ['Height (m)', dimensionDetails.heightM],
+      ['Wing Area (m2)', dimensionDetails.wingAreaM2],
+      ['Door Height (m)', dimensionDetails.doorHeightM],
+    ]);
+  }
+
+  Widget _buildWeightsData(Weights? detail) {
+    if (detail == null) return const Text('No data available');
+    final weightsDetails = detail;
+    return _buildFieldRows([
+      ['Operating Empty Weight (kg)', weightsDetails.emptyWeight],
+      ['Maximum Zero Fuel Weight (kg)', weightsDetails.zeroFuelWeight],
+      ['Maximum Takeoff Weight (kg)', weightsDetails.takeoffWeight],
+      ['Max Payload (kg)', weightsDetails.payload],
+      ['Maximum Landing Weight (kg)', weightsDetails.landingWeight],
+      ['Maximum Baggage or Cargo Volume (m3)', weightsDetails.baggage.maximum],
+      ['Minimum Baggage or Cargo Volume (m3)', weightsDetails.baggage.minimum],
+    ]);
+  }
+
+  Widget _builPerfomanceOrderedBYsData(Performance? detail) {
+    if (detail == null) return const Text('No data available');
+    final performanceDetails = detail;
+    return _buildFieldRows([
+      ['Takeoff Speed (kts)', performanceDetails.takeoffSpeedKts],
+      ['Takeoff Distance (m)', performanceDetails.takeoffDistanceM],
+      ['Initial Rate of Climb (fpm)', performanceDetails.climbInitialFpm],
+      ['Average Rate of Climb (fpm)', performanceDetails.climbAvgFpm],
+      ['Maximum Rate of Climb (fpm)', performanceDetails.climbMaxFpm],
+      ['Service Ceiling (ft)', performanceDetails.serviceCeiling],
+      ['Max Certified Altitude (ft)', performanceDetails.maxCertifiedAltitude],
+      ['Cruise Speed (kt)', performanceDetails.cruiseSpeedKt],
+      ['Cruise(Mach)', performanceDetails.cruiseMach],
+      ['Maximum Speed', performanceDetails.maxCruiseSpeed],
+      ['VMO (kts)', performanceDetails.vmoKts],
+      ['MMO (Mach)', performanceDetails.mmoMach],
+
+      [
+        'Range (NM / km)',
+        "${performanceDetails.range.normalRangeNm} NM / ${performanceDetails.range.normalRangeKm} Km",
+      ],
+      ['Ferry Range (if applicable)', performanceDetails.range.ferryRangeNm],
+      ['Initial Rate of Descent', performanceDetails.descentInitialFpm],
+      ['Average Rate of Descent', performanceDetails.descentAvgFpm],
+      ['Minimum Clean Speed', performanceDetails.minCleanSpeed.toString()],
+      ['Approach Speed (kts)', performanceDetails.approachSpeed],
+      ['Approach Category', performanceDetails.approachCategory],
+      ['Landing Speed (kts)', performanceDetails.landingSpeed],
+      ['Landing Distance', performanceDetails.landingDistance],
+      ['Runway Length Required', performanceDetails.runwayRequired],
+      ['Stall Speed', performanceDetails.stallSpeed],
+    ]);
+  }
+
+  Widget _builOperationLimitationsData(OperationalLimitations? detail) {
+    if (detail == null) return const Text('No data available');
+    final operationalDetails = detail;
+    return _buildFieldRows([
+      ['Runway Slope Limit percent', operationalDetails.runwaySlopeLimit],
+      ['Max Crosswind Normal Law (kts)', operationalDetails.maxCrosswindNormal],
+      [
+        'Maximum Crosswind (Degraded Law)',
+        operationalDetails.maxCrosswindDegraded,
+      ],
+      ['Max Tailwind Landing (kts)', operationalDetails.maxTailwindLanding],
+      ['Max Tailwind Takeoff (kts)', operationalDetails.maxTailwindTakeoff],
+      ['Field Elevation Limit (ft)', operationalDetails.fieldElevationLimit],
+      ['Maximum Runway Altitude (ft)', operationalDetails.maxRunwayAltitude],
+      ['Tailwind Limit (Flaps ≤10°)', operationalDetails.maxTailwindTakeoff],
+      ['Supported Categories', operationalDetails.autoland.supportedCategories],
+      ['Certified Autoland Level', operationalDetails.autoland.certifiedLevel],
+    ]);
+  }
+
+  Widget _builLandingGearData(LandingGear? detail) {
+    if (detail == null) return const Text('No data available');
+    final landingDetails = detail;
+    return _buildFieldRows([
+      ['Landing Gear Configuration', landingDetails.type],
+      ['Number of Wheels', landingDetails.numberOfWheels],
+      ['Tyre Size (inches)', landingDetails.tyreSize],
+      ['Tyre Pressure (psi)', landingDetails.tyrePressure],
+    ]);
+  }
+
+  Widget _builCertificationData(CertificationEnvironmental? detail) {
+    if (detail == null) return const Text('No data available');
+    final certificationDetails = detail;
+    return _buildFieldRows([
+      ['Certification Basis', certificationDetails.certificationBasis],
+      ['Special Conditions', certificationDetails.specialConditions],
+      ['Noise Compliance', certificationDetails.noiseCompliance],
+      ['Emissions Category', certificationDetails.emissionsCategory],
+      ['EASA TCDS Number', certificationDetails.easa],
+      ['FAA TCDS Number', certificationDetails.faa],
+    ]);
   }
 
   Widget _buildSectionHeader({
@@ -307,6 +529,34 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
+  Widget _buildExpandableSection({
+    required String title,
+    required bool isExpanded,
+    required VoidCallback onToggle,
+    required Widget content,
+  }) {
+    return Column(
+      children: [
+        _buildSectionHeader(
+          title: title,
+          isExpanded: isExpanded,
+          onTap: onToggle,
+        ),
+        isExpanded
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: content,
+              )
+            : const SizedBox.shrink(),
+        const Divider(
+          height: 0,
+          color: AppColors.sepratorColourAppBar,
+          thickness: 3,
+        ),
+      ],
+    );
+  }
+
   Widget _buildFieldRows(List<List<String>> fields) {
     return Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
@@ -331,164 +581,5 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         );
       }),
     );
-  }
-
-  Widget _buildImageGalleryScroller(List<String>? galleryImages) {
-    if (galleryImages == null || galleryImages.isEmpty) return const SizedBox();
-    return Container(
-      height: 150,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200, // Background color of the list
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: galleryImages.length,
-        itemBuilder: (context, index) => Container(
-          margin: EdgeInsets.only(
-            right: index == galleryImages.length - 1 ? 0 : 10,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: Image.network(
-              galleryImages[index],
-              width: 300,
-              height: 120,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 300,
-                height: 120,
-                color: Colors.grey.shade300,
-                alignment: Alignment.center,
-                child: const Icon(Icons.broken_image, color: Colors.grey),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-  Widget _buildTechnicalData(AirCraftDetailModel? detail) {
-    if (detail == null) return const Text('No data available');
-
-    final identification = detail.identification;
-
-    return _buildFieldRows([
-      ['ICAO Type Code', identification.icaoTypeCode ?? 'N/A'],
-      ['Aircraft Manufacturer', identification.manufacturer ?? 'N/A'],
-      ['Aircraft Model (Full name)', identification.aircraftModel ?? 'N/A'],
-      ['Aircraft Role', identification.aircraftRole ?? 'N/A'],
-      ['Aircraft Type', identification.aircraftType ?? 'N/A'],
-      ['Wake Turbulence Category', identification.wakeTurbulenceCategory ?? 'N/A'],
-      ['Civilian / Military / Dual Use', identification.civilianMilitaryOrDualUse ?? 'N/A'],
-      ['Country of Origin', identification.countryOfOrigin ?? 'N/A'],
-      ['Date of Maiden Flight', identification.dateOfMaidenFlight ?? 'N/A'],
-      ['Year of Introduction', identification.yearOfIntroduction ?? 'N/A'],
-      ['Production Status', identification.productionStatus ?? 'N/A'],
-      ['Avionics System Name', identification.avionicsSystem ?? 'N/A'],
-      ['Number of Crew', identification.numberOfCrew?.toString() ?? 'N/A'],
-      ['Number of Passengers', identification.numberOfPassengers ?? 'N/A'],
-    ]);
-  }
-
-  Widget _buildPowerPlantData() {
-    return _buildFieldRows([
-      ['Number of Engines', '2'],
-      ['Engine Manufacturer & Model', 'A320ceo'],
-      ['Engine Type', 'Turbofan'],
-      ['Engine Thrust (per engine)', 'CFM56-5B'],
-      ['Physical Engine Code', 'CFM56-5B4/P'],
-      ['APU Type', 'Honeywell 131-9A'],
-      ['Fuel Type', 'Jet A'],
-      ['Fuel Additives', 'None required'],
-      ['Fuel Capacity', 'A320ceo: ~24,000 liters'],
-      ['Fuel Consumption', '2,500–2,700 kg/hr'],
-    ]);
-  }
-
-  Widget _buildDimenionsData() {
-    return _buildFieldRows([
-      ['Wingspan/Rotor', '35.80 m'],
-      ['Length', '37.57 m'],
-      ['Height', '11.76 m'],
-      ['Wing Area', '122.6 m²'],
-      ['Cabin Width', '3.70 m'],
-      ['Door Height', '1.20–1.50 m'],
-      ['Wingtip Configuration', 'Wingtip Fences'],
-      ['Fuel Additives', 'None required'],
-      ['Fuel Capacity', 'A320ceo: ~24,000 liters'],
-    ]);
-  }
-
-  Widget _buildWeightsData() {
-    return _buildFieldRows([
-      ['Operating Empty Weight', '~42,600 kg'],
-      ['Maximum Zero Fuel Weight', '~61,000 kg'],
-      ['Maximum Takeoff Weight', '~78,000 kg'],
-      ['Max Payload', '~19,000 kg'],
-      ['Maximum Landing Weight', '~66,000 kg'],
-      ['Baggage Volume', '~37.4 m³'],
-    ]);
-  }
-
-  Widget _builPerfomanceOrderedBYsData() {
-    return _buildFieldRows([
-      ['Takeoff Speed', '~140–155 knots'],
-      ['Takeoff Distance', '~2,090 m'],
-      ['Initial Rate of Climb', '~2,000–3,000 fpm'],
-      ['Average Rate of Climb', '~1,500–2,500 fpm'],
-      ['Maximum Rate of Climb', 'Up to ~3,500 fpm'],
-      ['Service Ceiling', '39,000 ft (FL390)'],
-      ['Max Certified Altitude', '39,000 ft (FL390)'],
-      ['Cruise Speed', 'Mach 0.78'],
-      ['Maximum Speed', 'Mach 0.82'],
-      ['Range (NM / km)', '~3,300 NM (6,112 km)'],
-      ['Ferry Range (if applicable)', '~3,750 NM'],
-      ['Initial Rate of Descent', '~1,500–2,000 fpm'],
-      ['Average Rate of Descent', '~1,500 fpm'],
-      ['Minimum Clean Speed', '~210 knots'],
-      ['Minimum Clean Speed', '~210 knots'],
-      ['Approach Speed (Vapp', '~130–140 knots'],
-      ['Approach Category', 'CAT C'],
-      ['Landing Speed (Vref)', '~125–135 knots'],
-      ['Landing Distance', '~1,500 m'],
-      ['Runway Length Required', '~2,000 m'],
-      ['Stall Speed', '~173 knots'],
-    ]);
-  }
-
-  Widget _builOperationLimitationsData() {
-    return _buildFieldRows([
-      ['Runway Slope Limit (%)', '±2%'],
-      ['Maximum Crosswind (Normal Law)', '38 knots'],
-      ['Maximum Crosswind (Degraded Law)', '33 knots'],
-      ['Maximum Tailwind (General)', '15 knots'],
-      ['Tailwind Limit (Flaps ≤10°)', 'Not applicable'],
-      ['Field Elevation Limit', '8,000 ft'],
-      ['Tailwind Limit (Flaps ≤10°)', 'Not applicable'],
-      ['Field Elevation Limit', '8,000 ft'],
-      ['Maximum Runway Altitude', '9,200 ft'],
-      ['Category for Autoland', 'CAT I'],
-    ]);
-  }
-
-  Widget _builLandingGearData() {
-    return _buildFieldRows([
-      ['Landing Gear Configuration', 'Tricycle'],
-      ['Number of Wheels', '6 total'],
-      ['Tyre Size', '46×16.0 R20'],
-      ['Tyre Pressure', '~200 psi (13.8 bar)'],
-    ]);
-  }
-
-  Widget _builCertificationData() {
-    return _buildFieldRows([
-      ['Certification Basis', 'EASA CS-25'],
-      ['EASA TCDS Number', 'EASA.A.064'],
-      ['FAA TCDS Number', 'A28NM'],
-      ['Special Conditions', 'ETOPS 180 certified'],
-      ['Noise Compliance', 'ICAO Annex 16'],
-      ['Emissions Category', 'ICAO CAEP/6'],
-    ]);
   }
 }

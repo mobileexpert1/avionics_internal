@@ -6,12 +6,16 @@ class AircraftListModel extends BaseModel {
   final String model;
   final bool isFavorite;
   final String image;
+  final String iCAOTypeCode;
+
+
 
   AircraftListModel({
     required this.id,
     required this.model,
     required this.isFavorite,
     required this.image,
+    required this.iCAOTypeCode,
   });
 
   factory AircraftListModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,7 @@ class AircraftListModel extends BaseModel {
       model: json['Aircraft_Model'] ?? '',
       isFavorite: json['IsFavorite'] ?? false,
       image: json['Image'] ?? '',
+      iCAOTypeCode: json['ICAO_Type_Code'] ?? '',
     );
   }
 
@@ -29,6 +34,7 @@ class AircraftListModel extends BaseModel {
       model: map['model'] as String,
       isFavorite: map['isFavorite'] == 1,
       image: map['Image'] as String,
+      iCAOTypeCode: map['ICAO_Type_Code'] as String,
     );
   }
 
@@ -39,6 +45,7 @@ class AircraftListModel extends BaseModel {
       'model': model,
       'isFavorite': isFavorite ? 1 : 0,
       'Image': image,
+      'ICAO_Type_Code': iCAOTypeCode,
     };
   }
 
@@ -48,6 +55,7 @@ class AircraftListModel extends BaseModel {
       'Aircraft_Model': model,
       'IsFavorite': isFavorite,
       'Image': image,
+      'ICAO_Type_Code': iCAOTypeCode,
     };
   }
 

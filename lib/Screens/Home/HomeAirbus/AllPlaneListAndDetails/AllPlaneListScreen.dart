@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
+import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../AirCraftSection/AirCraftDetailScreen.dart';
 
@@ -154,12 +155,8 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         screenWidth * 0.15,
                                         screenWidth * 0.15,
                                         model.image!,
-                                        (model.image ?? '').contains(
-                                          ".svg",
-                                        ),
-                                        !(model.image ?? '').contains(
-                                          ".svg",
-                                        ),
+                                        (model.image ?? '').contains(".svg"),
+                                        !(model.image ?? '').contains(".svg"),
                                       ),
                                       title: Row(
                                         children: [
@@ -193,7 +190,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                 ],
                                               ),
                                               child: Text(
-                                                model.model,
+                                                model.iCAOTypeCode,
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
@@ -207,18 +204,27 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         size: 15,
                                       ),
                                       onTap: () {
+                                        print("model.id: ${model.id}");
+
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                AirCraftDetailScreen(
-                                                  aircraftId: model.id,
-                                                  airCraftName: model.model,
-                                                  // aircraftId: model.id,
-                                                  // aircraftName: model.model,
-                                                ),
+                                            builder: (_) => BlocProvider(
+                                              create: (_) => AirCraftDetailCubit(),
+                                              child: AirCraftDetailScreen(aircraftId: model.id),
+                                            ),
                                           ),
                                         );
+
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) =>
+                                        //         AirCraftDetailScreen(
+                                        //           aircraftId: model.id,
+                                        //         ),
+                                        //   ),
+                                        // );
                                       },
                                     ),
                                   ),
