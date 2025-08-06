@@ -30,146 +30,152 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ComparisonCubit>().loadTechnicalData();
+
+    // Delay to ensure context is valid and the provider is available
+    Future.microtask(() {
+      final cubit = BlocProvider.of<ComparisonCubit>(context);
+      cubit.loadTechnicalData();
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: "Comparison ${widget.model1}, ${widget.model2}",
-        centerTitle: false,
-        leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+    return BlocProvider(
+      create: (_) => ComparisonCubit()..loadTechnicalData(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          title: "Comparison ${widget.model1}, ${widget.model2}",
+          centerTitle: false,
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          rightButton: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.filterIconCompare),
+            fit: BoxFit.fill,
+            width: 50,
+            height: 50,
+          ),
         ),
-        rightButton: SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.filterIconCompare),
-          fit: BoxFit.fill,
-          width: 50,
-          height: 50,
-        ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.showTabs)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: CustomTabBar(
-                tabTitles: const ['TECHNICAL DATA', 'OPERATIONAL DATA'],
-                initialIndex: _currentTabIndex,
-                isComeFromComparsionScreen: true,
-                onTabSelected: (index) {
-                  setState(() => _currentTabIndex = index);
-                  if (index == 0) {
-                    context.read<ComparisonCubit>().loadTechnicalData();
-                  } else {
-                    context.read<ComparisonCubit>().loadOperationalData();
-                  }
-                },
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.showTabs)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: CustomTabBar(
+                  tabTitles: const ['TECHNICAL DATA', 'OPERATIONAL DATA'],
+                  initialIndex: _currentTabIndex,
+                  isComeFromComparsionScreen: true,
+                  onTabSelected: (index) {
+                    setState(() => _currentTabIndex = index);
+                    if (index == 0) {
+                      context.read<ComparisonCubit>().loadTechnicalData();
+                    } else {
+                      context.read<ComparisonCubit>().loadOperationalData();
+                    }
+                  },
+                ),
               ),
-            ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: BlocBuilder<ComparisonCubit, ComparisonState>(
-              builder: (context, state) {
-                if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+            const SizedBox(height: 10),
+            Expanded(
+              child: BlocBuilder<ComparisonCubit, ComparisonState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                if (state.labels.isEmpty) {
-                  return const Center(child: Text("No data available"));
-                }
+                  if (state.labels.isEmpty) {
+                    return const Center(child: Text("No data available"));
+                  }
 
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  padding: const EdgeInsets.all(20),
-                  child: Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(3),
-                      1: FlexColumnWidth(2),
-                      2: FlexColumnWidth(2),
-                    },
-                    border: TableBorder.all(color: Colors.grey, width: 1),
-                    children: [
-                      // Header row
-                      TableRow(
-                        children: [
-                          // Parameter with no background
-                          const Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Wrap(),
-                          ),
-                          // A321 with background
-                          Container(
-                            color: const Color(0xFFE4E6EA),
-                            padding: const EdgeInsets.all(10),
-                            child: const Center(
-                              child: Text(
-                                'A321',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          // A322 with background
-                          Container(
-                            color: const Color(0xFFE4E6EA),
-                            padding: const EdgeInsets.all(10),
-                            child: const Center(
-                              child: Text(
-                                'A322',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Data rows
-                      for (int i = 0; i < state.labels.length; i++)
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    padding: const EdgeInsets.all(20),
+                    child: Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(3),
+                        1: FlexColumnWidth(2),
+                        2: FlexColumnWidth(2),
+                      },
+                      border: TableBorder.all(color: Colors.grey, width: 1),
+                      children: [
+                        // Header row
                         TableRow(
                           children: [
-                            Padding(
+                            // Parameter with no background
+                            const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Wrap(),
+                            ),
+                            // A321 with background
+                            Container(
+                              color: const Color(0xFFE4E6EA),
                               padding: const EdgeInsets.all(10),
-                              child: Text(
-                                state.labels[i],
-                                style: const TextStyle(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w500,
+                              child: const Center(
+                                child: Text(
+                                  'A321',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
-                            Padding(
+                            // A322 with background
+                            Container(
+                              color: const Color(0xFFE4E6EA),
                               padding: const EdgeInsets.all(10),
-                              child: Center(
+                              child: const Center(
                                 child: Text(
-                                  state.a321Values[i],
-                                  style: const TextStyle(fontSize: 13),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Center(
-                                child: Text(
-                                  state.a322Values[i],
-                                  style: const TextStyle(fontSize: 13),
+                                  'A322',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                    ],
-                  ),
-                );
-              },
+                        // Data rows
+                        for (int i = 0; i < state.labels.length; i++)
+                          TableRow(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  state.labels[i],
+                                  style: const TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Center(
+                                  child: Text(
+                                    state.a321Values[i],
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Center(
+                                  child: Text(
+                                    state.a322Values[i],
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

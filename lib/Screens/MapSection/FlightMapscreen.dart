@@ -108,6 +108,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       },
                     );
                   },
+                  searchTitle: 'Search...',
                 ),
               ),
             ],

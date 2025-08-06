@@ -12,8 +12,13 @@ import '../AirCraftSection/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
   final String selectedAirbusId;
+  final String manufacturerName;
 
-  const AllPlanesListScreen({super.key, required this.selectedAirbusId});
+  const AllPlanesListScreen({
+    super.key,
+    required this.selectedAirbusId,
+    required this.manufacturerName,
+  });
 
   @override
   State<AllPlanesListScreen> createState() => _AllPlanesScreenState();
@@ -49,6 +54,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                   enableFilter: false,
                   enableCloseScreen: false,
                   controller: searchController,
+                  searchTitle: 'Search ${widget.manufacturerName} Models',
                 ),
                 const SizedBox(height: 10),
                 Padding(
@@ -56,7 +62,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'ALL AIRBUS MODELS',
+                      'All ${widget.manufacturerName} Models',
                       style: TextStyle(
                         fontSize: screenWidth > 600 ? 18 : 13,
                         fontWeight: FontWeight.bold,
@@ -154,12 +160,8 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         screenWidth * 0.15,
                                         screenWidth * 0.15,
                                         model.image!,
-                                        (model.image ?? '').contains(
-                                          ".svg",
-                                        ),
-                                        !(model.image ?? '').contains(
-                                          ".svg",
-                                        ),
+                                        (model.image ?? '').contains(".svg"),
+                                        !(model.image ?? '').contains(".svg"),
                                       ),
                                       title: Row(
                                         children: [

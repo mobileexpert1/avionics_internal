@@ -10,7 +10,7 @@ class SearchBarWidget extends StatelessWidget {
   final bool enableCloseScreen;
   final Function(String)? onChanged;
   final bool? isComeFromMapSection;
-
+  final String searchTitle;
 
   const SearchBarWidget({
     Key? key,
@@ -21,6 +21,7 @@ class SearchBarWidget extends StatelessWidget {
     required this.enableCloseScreen,
     this.onChanged,
     this.isComeFromMapSection,
+    required this.searchTitle,
   }) : super(key: key);
 
   @override
@@ -61,15 +62,15 @@ class SearchBarWidget extends StatelessWidget {
                         color: (isComeFromMapSection == true
                             ? Colors.white
                             : Colors.transparent), // Light grey background
-                        borderRadius: BorderRadius.circular(5), // Optional: add rounded corners
+                        borderRadius: BorderRadius.circular(
+                          5,
+                        ), // Optional: add rounded corners
                       ),
                       child: TextField(
                         controller: controller,
                         onChanged: onChanged,
                         decoration: InputDecoration(
-                          hintText: (isComeFromMapSection == true
-                              ? "Search Avionica"
-                              : "") ,
+                          hintText: searchTitle,
                           prefixIcon: Padding(
                             padding: const EdgeInsets.all(12),
                             child: SvgPicture.asset(
@@ -97,12 +98,13 @@ class SearchBarWidget extends StatelessWidget {
                               width: 1.5,
                             ),
                           ),
-                          filled: true, // Required to apply fillColor if using directly
-                          fillColor: Colors.transparent, // Set to transparent because we're using Container color
+                          filled:
+                              true, // Required to apply fillColor if using directly
+                          fillColor: Colors
+                              .transparent, // Set to transparent because we're using Container color
                         ),
                       ),
-                    )
-                    ,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   if (enableFilter)
@@ -131,10 +133,14 @@ class SearchBarWidget extends StatelessWidget {
     return Container(
       height: 1.5,
       decoration: BoxDecoration(
-        color: (isComeFromMapSection == true ? Colors.transparent : Color(0xFFDDDDDD)),
+        color: (isComeFromMapSection == true
+            ? Colors.transparent
+            : Color(0xFFDDDDDD)),
         boxShadow: [
           BoxShadow(
-            color: (isComeFromMapSection == true ? Colors.transparent : Colors.grey.withOpacity(0.5)),
+            color: (isComeFromMapSection == true
+                ? Colors.transparent
+                : Colors.grey.withOpacity(0.5)),
             spreadRadius: 0,
             blurRadius: 4,
             offset: Offset(0, 2),

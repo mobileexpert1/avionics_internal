@@ -111,7 +111,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => AllPlanesListScreen(
-                                            selectedAirbusId: detail.id,
+                                            selectedAirbusId: detail.id, manufacturerName: detail.general.companyName,
                                           ),
                                         ),
                                       );
