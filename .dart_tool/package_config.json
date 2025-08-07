@@ -675,9 +675,9 @@
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqflite_common-2.5.5",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqflite_common-2.5.6",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.8"
     },
     {
       "name": "sqflite_common_ffi",
@@ -699,7 +699,7 @@
     },
     {
       "name": "sqlite3",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-2.7.7",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-2.8.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },

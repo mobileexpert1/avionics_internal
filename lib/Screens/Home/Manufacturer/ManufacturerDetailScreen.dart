@@ -115,7 +115,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => AllPlanesListScreen(
-                                            selectedAirbusId: detail.id, manufacturerName: detail.general.companyName,
+                                            selectedAirbusId: detail.id,
+                                            manufacturerName:
+                                                detail.general.companyName,
                                           ),
                                         ),
                                       );
@@ -529,53 +531,76 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         itemCount: 1,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
+          Widget image = ClipRRect(
+            child: Image.network(
+              coverImages.url,
+              width: MediaQuery.of(context).size.width,
+              height: screenHeight * 0.26,
+              fit: BoxFit.cover,
+            ),
+          );
+
+          // Make image clickable if cc is not null
+          if (coverImages.wiki?.isNotEmpty ?? false) {
+            image = GestureDetector(
+              onTap: () async {
+                final uri = Uri.tryParse(coverImages.wiki!);
+                if (uri != null && await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Could not open URL.')),
+                  );
+                }
+              },
+              child: image,
+            );
+          }
+
           return Stack(
             children: [
-              ClipRRect(
-                child: Image.network(
-                  coverImages.url,
-                  width: MediaQuery.of(context).size.width,
-                  height: screenHeight * 0.26,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                right: 8,
-                bottom: 8,
-                child: GestureDetector(
-                  onTap: () async {
-                    final uri = Uri.tryParse(coverImages.wiki ?? "");
-                    if (uri != null && await canLaunchUrl(uri)) {
-                      await launchUrl(
-                        uri,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Could not open URL.')),
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      coverImages.author,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+              image,
+              if (coverImages.wiki?.isNotEmpty ?? false)
+                Positioned(
+                  right: 8,
+                  bottom: 8,
+                  child: GestureDetector(
+                    onTap: () async {
+                      final uri = Uri.tryParse(coverImages.wiki!);
+                      if (uri != null && await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Could not open URL.')),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      constraints: const BoxConstraints(maxWidth: 250),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '© ${coverImages.author}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           );
         },

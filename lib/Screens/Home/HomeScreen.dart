@@ -177,11 +177,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: m.companyName,
                               imagePath: (m.icon ?? ''),
                               onTap: () {
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ManufacturerDetailScreen(
-                                      manufacturerDetailId: m.id,
+                                    builder: (_) => BlocProvider(
+                                      create: (_) => ManufacturerCubit(),
+                                      child: ManufacturerDetailScreen(
+                                        manufacturerDetailId: m.id,
+                                      )
                                     ),
                                   ),
                                 );
@@ -288,6 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               isNetwork: true,
                             ),
                           ),
+
                       Center(
                         child: TextButton(
                           onPressed: () => Navigator.push(

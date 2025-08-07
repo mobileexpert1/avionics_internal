@@ -158,26 +158,28 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             horizontal: 10,
                                           ),
                                       leading: _buildLeadingImage(
-                                        screenWidth * 0.15,
-                                        screenWidth * 0.15,
+                                        screenWidth * 0.18,
+                                        screenWidth * 0.1,
                                         model.image!,
                                         (model.image ?? '').contains(".svg"),
                                         !(model.image ?? '').contains(".svg"),
                                       ),
-                                      title: Row(
+                                      title: Wrap(
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        spacing: 8,
+                                        runSpacing: 4,
                                         children: [
-                                          Expanded(
-                                            child: Text(
-                                              model.model,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth > 600
-                                                    ? 18
-                                                    : 16,
-                                              ),
+                                          Text(
+                                            model.model,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: screenWidth > 600
+                                                  ? 18
+                                                  : 16,
                                             ),
                                           ),
-                                          if ((model.model).isNotEmpty)
+                                          if (model.ICAOCode.isNotEmpty)
                                             Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -205,6 +207,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             ),
                                         ],
                                       ),
+
                                       trailing: const Icon(
                                         Icons.arrow_forward_ios,
                                         size: 15,
@@ -216,8 +219,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) => BlocProvider(
-                                              create: (_) => AirCraftDetailCubit(),
-                                              child: AirCraftDetailScreen(aircraftId: model.id),
+                                              create: (_) =>
+                                                  AirCraftDetailCubit(),
+                                              child: AirCraftDetailScreen(
+                                                aircraftId: model.id,
+                                              ),
                                             ),
                                           ),
                                         );
@@ -260,23 +266,23 @@ Widget _buildLeadingImage(
   bool isNetwork,
 ) {
   if (isLocalSvgAsset) {
-    if (imagePath.contains("assets")) {
-      return SizedBox(
-        width: width,
-        height: height,
-        child: SvgPicture.asset(
-          imagePath,
-          fit: BoxFit.contain,
-          alignment: Alignment.center,
-        ),
-      );
-    } else {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: SvgPicture.asset(
+        imagePath,
+        fit: BoxFit.contain,
+        alignment: Alignment.center,
+      ),
+    );
+  } else if (isNetwork) {
+    if (imagePath.contains(".svg")) {
       return SizedBox(
         width: width,
         height: height,
         child: SvgPicture.network(
           imagePath,
-          fit: BoxFit.contain,
+          fit: BoxFit.fill,
           alignment: Alignment.center,
           placeholderBuilder: (context) => SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.manuFirstImage),
@@ -286,20 +292,20 @@ Widget _buildLeadingImage(
           ),
         ),
       );
-    }
-  } else if (isNetwork) {
-    return Image.network(
-      imagePath,
-      height: height,
-      width: width,
-      fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+    } else {
+      return Image.network(
+        imagePath,
         height: height,
         width: width,
-        fit: BoxFit.contain,
-      ),
-    );
+        fit: BoxFit.fill,
+        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+          height: height,
+          width: width,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
   } else {
     return Image.asset(
       imagePath,
