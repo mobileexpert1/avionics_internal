@@ -431,9 +431,9 @@ sqflite_android
 file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_android-2.4.1/
 file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_android-2.4.1/lib/
 sqflite_common
-3.7
-file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.5/
-file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.5/lib/
+3.8
+file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.6/
+file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.6/lib/
 sqflite_common_ffi
 3.7
 file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common_ffi-2.3.6/
@@ -448,8 +448,8 @@ file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_platfor
 file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_platform_interface-2.4.0/lib/
 sqlite3
 3.5
-file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqlite3-2.7.7/
-file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqlite3-2.7.7/lib/
+file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqlite3-2.8.0/
+file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/sqlite3-2.8.0/lib/
 stack_trace
 3.4
 file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/stack_trace-1.12.1/

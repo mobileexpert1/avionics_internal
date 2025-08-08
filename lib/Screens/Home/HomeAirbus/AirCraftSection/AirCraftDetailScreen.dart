@@ -413,15 +413,15 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         "${performanceDetails.range.normalRangeNm} NM / ${performanceDetails.range.normalRangeKm} Km",
       ],
       ['Ferry Range (if applicable)', performanceDetails.range.ferryRangeNm],
-      ['Initial Rate of Descent', performanceDetails.descentInitialFpm],
-      ['Average Rate of Descent', performanceDetails.descentAvgFpm],
-      ['Minimum Clean Speed', performanceDetails.minCleanSpeed.toString()],
+      ['Initial Rate of Descent (fpm)', performanceDetails.descentInitialFpm],
+      ['Average Rate of Descent (fpm)', performanceDetails.descentAvgFpm],
+      ['Minimum Clean Speed (kts)', performanceDetails.minCleanSpeed.toString()],
       ['Approach Speed (kts)', performanceDetails.approachSpeed],
       ['Approach Category', performanceDetails.approachCategory],
       ['Landing Speed (kts)', performanceDetails.landingSpeed],
-      ['Landing Distance', performanceDetails.landingDistance],
-      ['Runway Length Required', performanceDetails.runwayRequired],
-      ['Stall Speed', performanceDetails.stallSpeed],
+      ['Landing Distance (m)', performanceDetails.landingDistance],
+      ['Runway Length Required (m)', performanceDetails.runwayRequired],
+      ['Stall Speed (kts)', performanceDetails.stallSpeed],
     ]);
   }
 

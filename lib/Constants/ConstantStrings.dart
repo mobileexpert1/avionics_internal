@@ -201,4 +201,5 @@ class ApiServiceUrlAirplaneConstant {
   static const String getListManufacturer = 'manufacturer/';
   static const String getListAirbus = 'aircraft/';
   static const String favUnFavPlane = 'aircraft/favorite';
+  static const compareAircraft = "aircraft/comparison";
 }

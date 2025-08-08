@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppText.dart';
-import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../Helpers/SelectableAircraftCard.dart';
-import '../../../../bloc/home/AircraftComparison/AircraftComparisonCubit.dart';
-import '../../../../bloc/home/AircraftComparison/AircraftComparisonState.dart';
-
+import '../../../../Helpers/SearchBarWidget.dart';
+import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
+import '../../../../bloc/Home/AircraftComparison/AircraftComparisonState.dart';
 
 class AircraftComparisonScreen extends StatefulWidget {
   final String? selectedModel1;
   final String? selectedModel2;
+
   const AircraftComparisonScreen({
     super.key,
     this.selectedModel1,
@@ -18,8 +20,7 @@ class AircraftComparisonScreen extends StatefulWidget {
   });
 
   @override
-  State<AircraftComparisonScreen> createState() =>
-      _AircraftComparisonScreenState();
+  State<AircraftComparisonScreen> createState() => _AircraftComparisonScreenState();
 }
 
 class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
@@ -28,9 +29,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AircraftComparisonCubit>().loadModels(
-      excludeName1: widget.selectedModel1,
-      excludeName2: widget.selectedModel2,
+  }
+
+  void _onSearch(String value) {
+    context.read<AircraftComparisonCubit>().loadAircraftModels(
+      context: context,
+      query: value,
     );
   }
 
@@ -38,188 +42,189 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(110),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SearchBarWidget(
-                enableBackArrow: true,
-                enableFilter: true,
-                enableCloseScreen: false,
-                controller: searchController,
-                onFilterTap: () {
-                  context.read<AircraftComparisonCubit>().filterModels(
-                    searchController.text,
-                  );
-                }, searchTitle: 'Search...',
-              ),
-            ],
-          ),
-        ),
-      ),
+    return BlocProvider(
+      create: (_) => AircraftComparisonCubit()..loadAircraftModels(context: context),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: BlocBuilder<AircraftComparisonCubit, AircraftState>(
+            builder: (context, state) {
+              final models = state.aircraftList.where((model) {
+                final selected1 = widget.selectedModel1;
+                final selected2 = widget.selectedModel2;
+                final currentId = model.id;
+                return currentId != selected1 && currentId != selected2;
+              }).toList();
+              if (state.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-      body: SafeArea(
-        child:BlocBuilder<AircraftComparisonCubit, AircraftComparisonState>(
-          builder: (context, state) {
-            List models = [];
-            if (state is AircraftComparisonModelsUpdated) {
-              models = state.models;
-            }
-
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.only(bottom: screenWidth * 0.05),
-              child: Column(
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: screenWidth * 0.06),
+                  SizedBox(height: screenWidth * 0.0),
+
+                  /// 🔍 Search Bar
                   Padding(
-                    padding: EdgeInsets.only(left: screenWidth * 0.06),
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: AppTexts(
-                        text: "Select Model for Comparison",
-                        imageName: null,
-                        font: 'Roboto',
-                        side: 'left',
-                        color: Color(0xFF3F3D56),
-                        weight: FontWeight.w600,
-                        fontSize: screenWidth * 0.04,
-                        imageSize: screenWidth * 0.04,
-                      ),
+                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                    child: SearchBarWidget(
+                      enableBackArrow: true,
+                      enableFilter: false,
+                      enableCloseScreen: false,
+                      controller: searchController,
+                      onChanged: _onSearch,
+                      onFilterTap: () {
+                        context.read<AircraftComparisonCubit>().loadAircraftModels(
+                          context: context,
+                          query: searchController.text,
+                        );
+                      },
+                      searchTitle: 'Search Models',
                     ),
                   ),
-                  SizedBox(height: screenWidth * 0.06),
 
-                  ...models.map((model) {
-                    return Padding(
-                      key: ValueKey(model.id),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.025,
-                        vertical: screenWidth * 0.017,
+                  SizedBox(height: screenWidth * 0.04),
+
+                  /// 🧾 Title
+                  Padding(
+                    padding: EdgeInsets.only(left: screenWidth * 0.06),
+                    child: AppTexts(
+                      text: "Select Model for Comparison",
+                      imageName: null,
+                      font: 'Roboto',
+                      side: 'left',
+                      color: const Color(0xFF3F3D56),
+                      weight: FontWeight.w600,
+                      fontSize: screenWidth * 0.04,
+                      imageSize: screenWidth * 0.04,
+                    ),
+                  ),
+
+                  SizedBox(height: screenWidth * 0.03),
+
+                  /// 🛩 Aircraft List
+                  Expanded(
+                    child: models.isEmpty
+                        ? const Center(
+                      child: Text(
+                        'No Compare models available',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
-                      child: SimpleAircraftCard(
-                        imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
-                        model: model.name,
-                        badge: model.id,
-                        manufacturer: model.manufacturer,
-                        airline: null,
-                        onTap: () {
-                          Navigator.pop(context, model.name);
-                        },
+                    )
+                        : ListView.builder(
+                      padding: EdgeInsets.only(
+                        bottom: screenWidth * 0.05,
+                        left: screenWidth * 0.025,
+                        right: screenWidth * 0.025,
                       ),
-                    );
-                  }).toList(),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: models.length,
+                      itemBuilder: (context, index) {
+                        final model = models[index];
+                        return Padding(
+                          key: ValueKey(model.id),
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenWidth * 0.017,
+                          ),
+                          child: SimpleAircraftCard(
+                            imagePath: _buildLeadingImage(
+                              screenWidth * 0.15,
+                              screenWidth * 0.15,
+                              model.image ?? '',
+                              (model.image ?? '').contains(".svg"),
+                              !(model.image ?? '').contains(".svg"),
+                            ),
+                            model: model.aircraftModel,
+                            badge: model.icaoTypeCode,
+                            manufacturer: model.manufacturer?.companyName,
+                            airline: null,
+                            airlineImagePath: _buildLeadingImage(
+                              screenWidth * 0.05,
+                              screenWidth * 0.05,
+                              model.manufacturer?.logo ?? '',
+                              (model.manufacturer?.logo ?? '').contains(".svg"),
+                              !(model.manufacturer?.logo ?? '').contains(".svg"),
+                            ),
+                            onTap: () {
+                              Navigator.pop(context, model);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ],
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
-
       ),
     );
   }
 
-  // void showComparisonBottomSheet(BuildContext context, double screenWidth) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     backgroundColor: Colors.white,
-  //     builder: (context) {
-  //       return Padding(
-  //         padding: const EdgeInsets.only(
-  //           top: 25,
-  //           left: 10,
-  //           right: 10,
-  //           bottom: 30,
-  //         ),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Padding(
-  //               padding: const EdgeInsets.only(
-  //                 top: 0,
-  //                 left: 20,
-  //                 right: 30,
-  //                 bottom: 20,
-  //               ),
-  //               child: // Header
-  //               Row(
-  //                 children: [
-  //                   SvgPicture.asset(
-  //                     CommonUi.setSvgImage(AssetsPath.comparsion),
-  //                     fit: BoxFit.cover,
-  //                   ),
-  //                   const SizedBox(width: 8),
-  //                   const Text(
-  //                     'Model Comparison',
-  //                     style: TextStyle(
-  //                       fontWeight: FontWeight.w700,
-  //                       fontSize: 17,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //
-  //             SelectableAircraftCard(
-  //               imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
-  //               model: "A-321",
-  //               badge: "A321",
-  //               manufacturer: "Airbus",
-  //               airline: null,
-  //               isSelected: true,
-  //               isComeFromPopUp: true,
-  //             ),
-  //
-  //             SizedBox(height: 8),
-  //
-  //             SelectableAircraftCard(
-  //               imagePath: CommonUi.setPngImage(AssetsPath.aeroplaneComparison),
-  //               model: "A-321",
-  //               badge: "A321",
-  //               manufacturer: "Airbus",
-  //               airline: null,
-  //               isSelected: true,
-  //               isComeFromPopUp: true,
-  //             ),
-  //
-  //             SizedBox(height: 8),
-  //
-  //             // Button
-  //             SizedBox(
-  //               width: screenWidth * 0.85,
-  //               child: ElevatedButton(
-  //                 onPressed: () {
-  //                   Navigator.pushReplacement(
-  //                     context,
-  //                     MaterialPageRoute(builder: (_) => ComparisonScreen()),
-  //                   );
-  //                 },
-  //                 style: ElevatedButton.styleFrom(
-  //                   backgroundColor: const Color.fromRGBO(63, 61, 81, 1),
-  //                   padding: const EdgeInsets.symmetric(vertical: 15),
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(7),
-  //                   ),
-  //                 ),
-  //                 child: const Text(
-  //                   "See Comparison",
-  //                   style: TextStyle(fontSize: 16, color: Colors.white),
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+  /// ⬇️ Image Rendering Helper
+  Widget _buildLeadingImage(
+      double width,
+      double height,
+      String imagePath,
+      bool isLocalSvgAsset,
+      bool isNetwork,
+      ) {
+    if (isLocalSvgAsset) {
+      return SizedBox(
+        width: width,
+        height: height,
+        child: SvgPicture.asset(
+          imagePath,
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+        ),
+      );
+    } else if (isNetwork) {
+      if (imagePath.contains(".svg")) {
+        return SizedBox(
+          width: width,
+          height: height,
+          child: SvgPicture.network(
+            imagePath,
+            fit: BoxFit.fill,
+            alignment: Alignment.center,
+            placeholderBuilder: (context) => SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+              height: height,
+              width: width,
+              fit: BoxFit.contain,
+            ),
+          ),
+        );
+      } else {
+        return Image.network(
+          imagePath,
+          height: height,
+          width: width,
+          fit: BoxFit.fill,
+          errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+            height: height,
+            width: width,
+            fit: BoxFit.contain,
+          ),
+        );
+      }
+    } else {
+      return Image.asset(
+        imagePath,
+        height: height,
+        width: width,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+          height: height,
+          width: width,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+  }
+
 }

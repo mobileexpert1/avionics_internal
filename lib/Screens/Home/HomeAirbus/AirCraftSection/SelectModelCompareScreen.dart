@@ -1,11 +1,13 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
+import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'package:avionics_internal/bloc/home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
 import 'AircraftComparisonScreen.dart';
 
@@ -21,24 +23,22 @@ class SelectModelCompareScreen extends StatefulWidget {
 }
 
 class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
-  String? model1;
-  String? model2;
+  AircraftModel? model1;
+  AircraftModel? model2;
   bool get isButtonEnabled => model1 != null && model2 != null;
 
   @override
   void initState() {
     super.initState();
-    model1 = widget.model1;
-    model2 = widget.model2;
   }
 
   void _navigateAndSelectModel(int modelNumber) async {
-    final result = await Navigator.push<String>(
+    final result = await Navigator.push<AircraftModel>(
       context,
       MaterialPageRoute(
         builder: (_) => AircraftComparisonScreen(
-          selectedModel1: modelNumber == 1 ? model2 : model1,
-          selectedModel2: modelNumber == 1 ? null : model1,
+          selectedModel1: modelNumber == 1 ? model2?.id : model1?.id,
+          selectedModel2: modelNumber == 1 ? null : model1?.id,
         ),
       ),
     );
@@ -53,6 +53,7 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -164,21 +165,29 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                             onPressed: () {
                               if (!isButtonEnabled) return;
 
-                              final comparisonCubit = ComparisonCubit(); // ✅ create instance first
+                              final comparisonCubit = ComparisonCubit();
 
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                    value: comparisonCubit,
+                                  builder: (_) => BlocProvider(
+                                    create: (_) => comparisonCubit
+                                      ..fetchComparison(
+                                        context: context,
+                                        aircraft1Id: model1!.id,
+                                        aircraft2Id: model2!.id,
+                                      ),
                                     child: ComparisonScreen(
-                                      model1: model1!,
-                                      model2: model2!,
+                                      model1: model1!.id,
+                                      model2: model2!.id,
+                                      model1Name: model1!.aircraftModel,
+                                      model2Name: model2!.aircraftModel,
                                     ),
                                   ),
                                 ),
                               );
                             }
+
 
                         ),
                       ],
@@ -194,12 +203,12 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
     );
   }
 
-  Widget _buildRadioOption(String text, String? value, VoidCallback onTap) {
+  Widget _buildRadioOption(String text, AircraftModel? value, VoidCallback onTap) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.radio_button_unchecked, color: Colors.blue),
       title: Text(
-        value ?? text,
+        value?.aircraftModel ?? text,
         style: const TextStyle(fontSize: 14),
       ),
       onTap: onTap,
