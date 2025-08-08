@@ -49,10 +49,6 @@ class _FilterScreenState extends State<FilterScreen> {
               );
               return TextButton(
                 onPressed: () {
-                  // This button visually indicates applied filters.
-                  // The actual "apply" logic would typically happen when the screen is popped
-                  // or a dedicated "Apply" button is pressed (which we don't have here,
-                  // but could be added in the bottom section instead of "Reset Filter").
                 },
                 child: Row(
                   children: [

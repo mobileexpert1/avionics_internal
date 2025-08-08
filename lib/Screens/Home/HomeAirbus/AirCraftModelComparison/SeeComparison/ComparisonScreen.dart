@@ -8,6 +8,7 @@ import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../CustomFiles/CustomTabBar.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
+import '../../../AppBarFilter/FilterScreen.dart';
 
 class ComparisonScreen extends StatefulWidget {
   final bool showTabs;
@@ -62,12 +63,38 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
             onPressed: () => Navigator.pop(context),
           ),
-          rightButton: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.filterIconCompare),
-            fit: BoxFit.fill,
-            width: 50,
-            height: 50,
+          rightButton: GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                backgroundColor: Colors.transparent,
+                builder: (context) {
+                  return FractionallySizedBox(
+                    heightFactor: 0.9,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                      child: FilterScreen(),
+                    ),
+                  );
+                },
+              );
+            },
+            child: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.filterIconCompare),
+              fit: BoxFit.fill,
+              width: 50,
+              height: 50,
+            ),
           ),
+
         ),
         body: BlocBuilder<ComparisonCubit, ComparisonState>(
           builder: (context, state) {
@@ -226,17 +253,36 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           children: [
                             const Padding(
                               padding: EdgeInsets.all(10),
-                              child: Text("Parameter"),
+                              child: Text(""),
                             ),
                             Container(
-                              color: const Color(0xFFE4E6EA),
+                              color: const Color(0xFFEBF5FF),
                               padding: const EdgeInsets.all(10),
-                              child: Center(child: Text(widget.model1Name)),
+                              child: Center(
+                                child: Text(
+                                  widget.model1Name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF3F3D56),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+
                             ),
                             Container(
-                              color: const Color(0xFFE4E6EA),
+                              color: const Color(0xFFEBF5FF),
                               padding: const EdgeInsets.all(10),
-                              child: Center(child: Text(widget.model2Name)),
+                              child: Center(
+                                child: Text(
+                                  widget.model2Name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF3F3D56),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
