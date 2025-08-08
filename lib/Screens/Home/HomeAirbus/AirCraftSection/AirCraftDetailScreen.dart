@@ -45,7 +45,12 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     return BlocBuilder<AirCraftDetailCubit, AirCraftDetailState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (state.airCraftDetails == null) {
+          return const Scaffold(body: Center(child: Text("No data available")));
         }
         return Scaffold(
           appBar: CustomAppBar(
@@ -187,68 +192,80 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         itemCount: coverImages.length,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          final imageUrl = coverImages[index];
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: Stack(
-                children: [
-                  Image.network(
-                    imageUrl.url,
-                    width: 300,
-                    height: screenHeight * 0.18,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 300,
-                      height: screenHeight * 0.18,
-                      color: Colors.grey.shade300,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.broken_image),
-                    ),
-                  ),
+          final image = coverImages[index];
+          final isSingleImage = coverImages.length == 1;
+          final imageWidth = isSingleImage
+              ? MediaQuery.of(context).size.width - 30
+              : 300.0; // or 300.toDouble();
+          final imagePadding = isSingleImage
+              ? const EdgeInsets.symmetric(horizontal: 0)
+              : const EdgeInsets.only(right: 10);
 
-                  if (imageUrl.cc != "")
-                    Positioned(
-                      left: 8,
-                      bottom: 8,
-                      child: GestureDetector(
-                        onTap: () async {
-                          final uri = Uri.tryParse(imageUrl.source);
-                          if (uri != null && await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not open URL.'),
-                              ),
-                            );
-                          }
-                        },
+          final hasCopyright = (image.cc ?? "").isNotEmpty;
+
+          return Padding(
+            padding: imagePadding,
+            child: GestureDetector(
+              onTap: hasCopyright
+                  ? () async {
+                      final uri = Uri.tryParse(image.source ?? '');
+                      if (uri != null && await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Could not open URL.')),
+                        );
+                      }
+                    }
+                  : null,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Stack(
+                  children: [
+                    Image.network(
+                      image.url ?? '',
+                      width: imageWidth,
+                      height: screenHeight * 0.18,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: imageWidth,
+                        height: screenHeight * 0.18,
+                        color: Colors.grey.shade300,
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.broken_image),
+                      ),
+                    ),
+                    if (hasCopyright)
+                      Positioned(
+                        left: 8,
+                        bottom: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 4,
                           ),
+                          constraints: const BoxConstraints(maxWidth: 250),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.6),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            imageUrl.cc,
-                            style: TextStyle(
+                            '© ${image.cc ?? ''}',
+                            style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -274,39 +291,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         ), // Internal padding
         child: Column(
           children: [
-            //const SizedBox(height: 20),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: customField(
-            //         label: 'ICAO type /APC',
-            //         text: aircraftData?.identification.icaoTypeCode ?? "",
-            //         isDarkDivider: true,
-            //       ),
-            //     ),
-            //     const SizedBox(width: 15),
-            //     Expanded(
-            //       child: customField(
-            //         label: 'Manufacturer',
-            //         text: aircraftData?.identification.manufacturer ?? "",
-            //         isDarkDivider: true,
-            //       ),
-            //     ),
-            //     const SizedBox(width: 15),
-            //     Expanded(
-            //       child: customField(
-            //         label: 'WTC',
-            //         text:
-            //             aircraftData?.identification.wakeTurbulenceCategory ??
-            //             "",
-            //         isDarkDivider: true,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            const SizedBox(height: 15),
             _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
-            const SizedBox(height: 15),
             //Text(aircraftData?.identification.avionicsSystem ?? ""),
           ],
         ),

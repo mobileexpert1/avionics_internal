@@ -78,7 +78,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
           model: model.model,
           isFavorite: !model.isFavorite,
           image: model.image,
-          ICAOCode: model.ICAOCode,
+          ICAOCode: model.ICAOCode, iCAOTypeCode: model.ICAOCode,
         );
       }
       return model;

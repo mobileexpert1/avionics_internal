@@ -162,6 +162,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       () => showMoreGeneralInfo =
                                           !showMoreGeneralInfo,
                                     ),
+                                    isShowMoreLessOption:
+                                        detail.general.description.length > 100,
                                   ),
 
                                   showMoreGeneralInfo
@@ -187,6 +189,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       () => showMoreAboutInfo =
                                           !showMoreAboutInfo,
                                     ),
+                                    isShowMoreLessOption:
+                                        detail
+                                            .company
+                                            .companyDescription
+                                            .length >
+                                        100,
                                   ),
 
                                   Padding(
@@ -225,6 +233,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                     onTap: () => setState(
                                       () => showMoreHistory = !showMoreHistory,
                                     ),
+                                    isShowMoreLessOption:
+                                        detail.company.companyHistory.length >
+                                        100,
                                   ),
 
                                   Padding(
@@ -261,6 +272,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       () =>
                                           showMoreProducts = !showMoreProducts,
                                     ),
+                                    isShowMoreLessOption:
+                                        detail.product.length > 2,
                                   ),
 
                                   Padding(
@@ -317,6 +330,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       () => showInterestingFacts =
                                           !showInterestingFacts,
                                     ),
+                                    isShowMoreLessOption:
+                                        (detail.interestingFacts?.length ?? 0) >
+                                        2,
                                   ),
 
                                   if (showInterestingFacts)
@@ -476,6 +492,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
     required String title,
     required bool isExpanded,
     required VoidCallback onTap,
+    required bool isShowMoreLessOption,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,26 +502,30 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: GestureDetector(
-            onTap: onTap,
+            onTap: isShowMoreLessOption == true ? onTap : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(child: Text(title)),
-                  Row(
-                    children: [
-                      Text(
-                        isExpanded ? "Show Less" : "Show More",
-                        style: const TextStyle(fontSize: 13),
+                  if (isShowMoreLessOption)
+                    GestureDetector(
+                      onTap: onTap,
+                      child: Row(
+                        children: [
+                          Text(
+                            isExpanded ? "Show Less" : "Show More",
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                          Icon(
+                            isExpanded
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                          ),
+                        ],
                       ),
-                      Icon(
-                        isExpanded
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                      ),
-                    ],
-                  ),
+                    ),
                 ],
               ),
             ),
@@ -524,63 +545,76 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   }
 
   Widget _buildImageCoverScroller(double screenHeight, CoverPhoto coverImages) {
+    final image = ClipRRect(
+      child: Image.network(
+        coverImages.url,
+        width: MediaQuery.of(context).size.width,
+        height: screenHeight * 0.26,
+        fit: BoxFit.cover,
+      ),
+    );
+
+    final imageWidget = (coverImages.wiki?.isNotEmpty ?? false)
+        ? GestureDetector(
+            onTap: () async {
+              final uri = Uri.tryParse(coverImages.wiki!);
+              if (uri != null && await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Could not open URL.')),
+                );
+              }
+            },
+            child: image,
+          )
+        : image;
+
     return SizedBox(
       height: screenHeight * 0.26,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 1,
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Stack(
-            children: [
-              ClipRRect(
-                child: Image.network(
-                  coverImages.url,
-                  width: MediaQuery.of(context).size.width,
-                  height: screenHeight * 0.26,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                right: 8,
-                bottom: 8,
-                child: GestureDetector(
-                  onTap: () async {
-                    final uri = Uri.tryParse(coverImages.wiki ?? "");
-                    if (uri != null && await canLaunchUrl(uri)) {
-                      await launchUrl(
-                        uri,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Could not open URL.')),
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          imageWidget,
+          if (coverImages.wiki?.isNotEmpty ?? false)
+            Positioned(
+              right: 8,
+              bottom: 8,
+              child: GestureDetector(
+                onTap: () async {
+                  final uri = Uri.tryParse(coverImages.wiki!);
+                  if (uri != null && await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Could not open URL.')),
+                    );
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  constraints: const BoxConstraints(maxWidth: 250),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '© ${coverImages.author}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      coverImages.author,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
                   ),
                 ),
               ),
-            ],
-          );
-        },
+            ),
+        ],
       ),
     );
   }
