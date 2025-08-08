@@ -45,7 +45,7 @@ class SimpleAircraftCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: SizedBox(
               width: 100,
-              height: 40,
+              height: 55,
               child: imagePath,
             ),
           ),
@@ -68,30 +68,32 @@ class SimpleAircraftCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4),
             child: Row(
               children: [
-                Text(
-                  manufacturer!,
-                  style: const TextStyle(fontSize: 13),
-                ),
-                if (airline != null && airlineImagePath != null) ...[
-                  const SizedBox(width: 10),
+                if (airlineImagePath != null) ...[
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(2),
                     child: SizedBox(
-                      width: 100,
-                      height: 40,
+                      width: 20,
+                      height: 20,
                       child: airlineImagePath,
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      airline!,
-                      style: const TextStyle(fontSize: 13),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+                  const SizedBox(width: 10),
 
+                  Text(
+                    manufacturer!,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  if (airline != null) ...[
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        airline!,
+                        style: const TextStyle(fontSize: 13),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ]
+                ],
               ],
             ),
           ),
@@ -124,4 +126,3 @@ class SimpleAircraftCard extends StatelessWidget {
     );
   }
 }
-
