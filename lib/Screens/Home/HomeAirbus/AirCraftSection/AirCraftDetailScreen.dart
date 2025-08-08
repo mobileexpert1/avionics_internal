@@ -192,15 +192,23 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         itemCount: coverImages.length,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          final imageUrl = coverImages[index];
-          final hasCopyright = imageUrl.cc != "";
+          final image = coverImages[index];
+          final isSingleImage = coverImages.length == 1;
+          final imageWidth = isSingleImage
+              ? MediaQuery.of(context).size.width - 30
+              : 300.0; // or 300.toDouble();
+          final imagePadding = isSingleImage
+              ? const EdgeInsets.symmetric(horizontal: 0)
+              : const EdgeInsets.only(right: 10);
+
+          final hasCopyright = (image.cc ?? "").isNotEmpty;
 
           return Padding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: imagePadding,
             child: GestureDetector(
               onTap: hasCopyright
                   ? () async {
-                      final uri = Uri.tryParse(imageUrl.source);
+                      final uri = Uri.tryParse(image.source ?? '');
                       if (uri != null && await canLaunchUrl(uri)) {
                         await launchUrl(
                           uri,
@@ -218,12 +226,12 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 child: Stack(
                   children: [
                     Image.network(
-                      imageUrl.url,
-                      width: 300,
+                      image.url ?? '',
+                      width: imageWidth,
                       height: screenHeight * 0.18,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        width: 300,
+                        width: imageWidth,
                         height: screenHeight * 0.18,
                         color: Colors.grey.shade300,
                         alignment: Alignment.center,
@@ -245,7 +253,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            '© ${imageUrl.cc}',
+                            '© ${image.cc ?? ''}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
