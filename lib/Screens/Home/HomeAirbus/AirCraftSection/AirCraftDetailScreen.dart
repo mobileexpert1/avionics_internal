@@ -256,7 +256,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                             '© ${image.cc ?? ''}',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 8,
                               fontWeight: FontWeight.w500,
                             ),
                             softWrap: true,
