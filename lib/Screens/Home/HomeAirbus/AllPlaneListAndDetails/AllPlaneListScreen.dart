@@ -26,15 +26,31 @@ class AllPlanesListScreen extends StatefulWidget {
 }
 
 class _AllPlanesScreenState extends State<AllPlanesListScreen> {
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     context.read<AllPlanesCubit>().loadListOAllAirbusModels(
       selectedAirbusId: widget.selectedAirbusId,
       context: context,
     );
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      final cubit = context.read<AllPlanesCubit>();
+      if (cubit.state.hasNextPage && !cubit.state.isFetchingMore) {
+        cubit.loadListOAllAirbusModels(
+          context: context,
+          page: cubit.state.currentPage + 1,
+          isLoadMore: true, selectedAirbusId: widget.selectedAirbusId,
+        );
+      }
+    }
   }
 
   @override
@@ -90,6 +106,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                       }
 
                       return ListView.builder(
+                        controller: _scrollController,
                         padding: EdgeInsets.zero,
                         itemCount: state.listoFAircraftModels.length,
                         itemBuilder: (context, index) {

@@ -284,14 +284,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(2)
                           .map(
                             (f) => AppListTileCard(
-                              title: f.model,
-                              imagePath: (f.logo ?? ''),
-                              onTap: () {},
-                              isSvg: (f.logo ?? '').contains(".svg"),
-                              isNetwork: true,
-                            ),
-                          ),
-
+                          title: f.aircraftModel,
+                          imagePath: (f.image ?? ''),
+                          onTap: () {},
+                          isSvg: (f.image ?? '').contains(".svg"),
+                          isNetwork: true,
+                        ),
+                      ),
                       Center(
                         child: TextButton(
                           onPressed: () => Navigator.push(

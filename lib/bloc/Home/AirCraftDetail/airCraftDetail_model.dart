@@ -82,11 +82,34 @@ class AircraftImage {
 
   factory AircraftImage.fromJson(Map<String, dynamic> json) {
     return AircraftImage(
-      url: json['url'],
-      source: json['source'],
-      cc: json['cc'],
-      isDefault: json['is_default'],
+      url: json['url'] ?? '',
+      source: json['source'] ?? '',
+      cc: json['cc'] ?? '',
+      isDefault: json['is_default'] ?? false,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'source': source,
+      'cc': cc,
+      'is_default': isDefault,
+    };
+  }
+
+  /// Create list from JSON and auto-sort by isDefault
+  static List<AircraftImage> fromJsonList(List<dynamic> jsonList) {
+    List<AircraftImage> images = jsonList
+        .map((item) => AircraftImage.fromJson(item))
+        .toList();
+
+    images.sort((a, b) {
+      if (a.isDefault == b.isDefault) return 0;
+      return a.isDefault ? -1 : 1;
+    });
+
+    return images;
   }
 }
 
@@ -335,7 +358,7 @@ class Performance {
   final Range range;
   final String descentInitialFpm;
   final String descentAvgFpm;
-  final int minCleanSpeed;
+  final String minCleanSpeed;
   final String approachSpeed;
   final String approachCategory;
   final String landingSpeed;

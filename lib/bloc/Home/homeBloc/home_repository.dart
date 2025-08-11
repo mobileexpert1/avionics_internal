@@ -32,7 +32,7 @@ class HomeRepository {
       final homeData = HomeResponse.fromJson(json);
 
       await _manufacturers.insertAll(homeData.manufacturers);
-      await _favorites.insertAll(homeData.favourites);
+     // await _favorites.insertAll(homeData.favourites);
 
       return homeData;
     } on HttpStatusException catch (e) {
@@ -47,13 +47,13 @@ class HomeRepository {
 
   Future<HomeResponse> _getLocalData() async {
     final manufacturers = await _manufacturers.getAll('manufacturers');
-    final favourites = await _favorites.getAll('favourites');
+    //final favourites = await _favorites.getAll('favourites');
 
     return HomeResponse(
       detail: '',
       isActiveSubscription: false,
       manufacturers: manufacturers,
-      favourites: favourites,
+      favourites: [],
       flights: const [],
     );
   }
