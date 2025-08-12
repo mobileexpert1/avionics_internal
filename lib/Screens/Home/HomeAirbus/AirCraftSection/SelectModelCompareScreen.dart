@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
+import 'package:avionics_internal/bloc/Home/Filter/filter_cubit.dart';
 import 'package:avionics_internal/bloc/home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
+import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import '../AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
 import 'AircraftComparisonScreen.dart';
 
@@ -170,13 +172,20 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => BlocProvider(
-                                    create: (_) => comparisonCubit
-                                      ..fetchComparison(
-                                        context: context,
-                                        aircraft1Id: model1!.id,
-                                        aircraft2Id: model2!.id,
+                                  builder: (_) => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                        create: (_) => ComparisonCubit()
+                                          ..fetchComparison(
+                                            context: context,
+                                            aircraft1Id: model1!.id,
+                                            aircraft2Id: model2!.id,
+                                          ),
                                       ),
+                                      BlocProvider(
+                                        create: (_) => ComparisonFilterCubit1()..loadFiltersFromComparison1(),
+                                      ),
+                                    ],
                                     child: ComparisonScreen(
                                       model1: model1!.id,
                                       model2: model2!.id,
@@ -187,8 +196,6 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                                 ),
                               );
                             }
-
-
                         ),
                       ],
                     ),

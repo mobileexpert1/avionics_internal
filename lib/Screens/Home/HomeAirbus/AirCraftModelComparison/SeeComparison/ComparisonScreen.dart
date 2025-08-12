@@ -1,14 +1,16 @@
+import 'package:avionics_internal/bloc/Home/AircraftComparison/Comparison/Filtter/filtter_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../CustomFiles/CustomTabBar.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
-import '../../../AppBarFilter/FilterScreen.dart';
+import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
+import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_screen.dart';
+import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
 
 class ComparisonScreen extends StatefulWidget {
   final bool showTabs;
@@ -47,13 +49,20 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ComparisonCubit()
-        ..fetchComparison(
-          context: context,
-          aircraft1Id: widget.model1,
-          aircraft2Id: widget.model2,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ComparisonCubit()
+            ..fetchComparison(
+              context: context,
+              aircraft1Id: widget.model1,
+              aircraft2Id: widget.model2,
+            ),
         ),
+        BlocProvider(
+          create: (_) => ComparisonFilterCubit1(),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -64,28 +73,29 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             onPressed: () => Navigator.pop(context),
           ),
           rightButton: GestureDetector(
-            onTap: () {
-              showModalBottomSheet(
+            onTap: () async {
+              final selectedFilters = await showModalBottomSheet<List<FilterCategory1>>(
                 context: context,
                 isScrollControlled: true,
                 shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-                backgroundColor: Colors.transparent,
                 builder: (context) {
-                  return FractionallySizedBox(
-                    heightFactor: 0.9,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
+                  return BlocProvider.value(
+                    value: context.read<ComparisonFilterCubit1>(),
+                    child: FractionallySizedBox(
+                      heightFactor: 0.9,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                        child: FilterScreen1(),
                       ),
-                      child: FilterScreen(),
                     ),
                   );
                 },
               );
+              if (selectedFilters != null) {
+                context.read<ComparisonFilterCubit1>().updateSelectedFilters(selectedFilters);
+              }
             },
             child: SvgPicture.asset(
               CommonUi.setSvgImage(AssetsPath.filterIconCompare),
@@ -98,216 +108,455 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         ),
         body: BlocBuilder<ComparisonCubit, ComparisonState>(
           builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            return BlocBuilder<ComparisonFilterCubit1, FilterState1>(
+              builder: (context, filterState) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            final model = state.comparisonModel;
+                final model = state.comparisonModel;
 
-            if (model == null) {
-              return const Center(child: Text("No data available"));
-            }
 
-            List<String> labels = [];
-            List<String> a1Values = [];
-            List<String> a2Values = [];
+                if (!context.read<ComparisonFilterCubit1>().state.isApplied &&
+                    context
+                        .read<ComparisonFilterCubit1>()
+                        .state
+                        .filterCategories
+                        .isEmpty &&
+                    model != null) {
+                  context
+                      .read<ComparisonFilterCubit1>()
+                      .loadFiltersFromComparison1();
+                }
 
-            if (_currentTabIndex == 0) {
-              labels = [
-                "ICAO Type Code",
-                "Wake Turbulence",
-                "Avionics",
-                "No. of Engines",
-                "Engine Model",
-                "Engine Type",
-              ];
-              a1Values = [
-                model.aircraft1.general.icaoTypeCode,
-                model.aircraft1.general.wakeTurbulenceCategory,
-                model.aircraft1.general.avionicsSystemNameFamily,
-                model.aircraft1.general.noOfEngines.toString(),
-                model.aircraft1.general.engineManufacturerAndModel,
-                model.aircraft1.general.engineType,
-              ];
-              a2Values = [
-                model.aircraft2.general.icaoTypeCode,
-                model.aircraft2.general.wakeTurbulenceCategory,
-                model.aircraft2.general.avionicsSystemNameFamily,
-                model.aircraft2.general.noOfEngines.toString(),
-                model.aircraft2.general.engineManufacturerAndModel,
-                model.aircraft2.general.engineType,
-              ];
-            } else if (_currentTabIndex == 1) {
-              labels = [
-                "Wingspan (m)",
-                "Wingspan (ft)",
-                "Length (m)",
-                "Length (ft)",
-                "Height (m)",
-                "Height (ft)",
-              ];
-              a1Values = [
-                model.aircraft1.technicalData.wingspan.meters,
-                model.aircraft1.technicalData.wingspan.feet,
-                model.aircraft1.technicalData.length.meters,
-                model.aircraft1.technicalData.length.feet,
-                model.aircraft1.technicalData.height.meters,
-                model.aircraft1.technicalData.height.feet,
-              ];
-              a2Values = [
-                model.aircraft2.technicalData.wingspan.meters,
-                model.aircraft2.technicalData.wingspan.feet,
-                model.aircraft2.technicalData.length.meters,
-                model.aircraft2.technicalData.length.feet,
-                model.aircraft2.technicalData.height.meters,
-                model.aircraft2.technicalData.height.feet,
-              ];
-            } else {
-              labels = [
-                "Takeoff Speed (kts)",
-                "Service Ceiling (ft)",
-                "Max Altitude (ft)",
-                "Cruise Speed (kts)",
-                "Cruise Mach",
-                "Ferry Range (NM)",
-                "Normal Range (NM)",
-                "Normal Range (km)",
-                "Initial Rate of Descent (fpm)",
-                "Average Rate of Descent (fpm)",
-                "Min Clean Speed (kts)",
-                "Approach Speed (kts)",
-                "Landing Speed (kts)",
-                "Landing Distance (m)",
-                "Runway Required (m)",
-                "Stall Speed",
-              ];
-              a1Values = [
-                model.aircraft1.operationalData.takeoffSpeedKts,
-                model.aircraft1.operationalData.serviceCeilingFtFl,
-                model.aircraft1.operationalData.maxCertifiedAltitudeFtFl,
-                model.aircraft1.operationalData.cruiseSpeed.cruiseKt,
-                model.aircraft1.operationalData.cruiseSpeed.cruiseMach,
-                model.aircraft1.operationalData.range.ferryRangeNm,
-                model.aircraft1.operationalData.range.normalRangeNm,
-                model.aircraft1.operationalData.range.normalRangeKm,
-                model.aircraft1.operationalData.initialRateOfDescentFpm,
-                model.aircraft1.operationalData.averageRateOfDescentFpm,
-                model.aircraft1.operationalData.minimumCleanSpeedKts,
-                model.aircraft1.operationalData.approachSpeedKts,
-                model.aircraft1.operationalData.landingSpeedKts,
-                model.aircraft1.operationalData.landingDistanceM,
-                model.aircraft1.operationalData.runwayLengthRequiredM,
-                model.aircraft1.operationalData.stallSpeedIfAvailable,
-              ];
-              a2Values = [
-                model.aircraft2.operationalData.takeoffSpeedKts,
-                model.aircraft2.operationalData.serviceCeilingFtFl,
-                model.aircraft2.operationalData.maxCertifiedAltitudeFtFl,
-                model.aircraft2.operationalData.cruiseSpeed.cruiseKt,
-                model.aircraft2.operationalData.cruiseSpeed.cruiseMach,
-                model.aircraft2.operationalData.range.ferryRangeNm,
-                model.aircraft2.operationalData.range.normalRangeNm,
-                model.aircraft2.operationalData.range.normalRangeKm,
-                model.aircraft2.operationalData.initialRateOfDescentFpm,
-                model.aircraft2.operationalData.averageRateOfDescentFpm,
-                model.aircraft2.operationalData.minimumCleanSpeedKts,
-                model.aircraft2.operationalData.approachSpeedKts,
-                model.aircraft2.operationalData.landingSpeedKts,
-                model.aircraft2.operationalData.landingDistanceM,
-                model.aircraft2.operationalData.runwayLengthRequiredM,
-                model.aircraft2.operationalData.stallSpeedIfAvailable,
-              ];
-            }
+                if (model == null) {
+                  return const Center(child: Text("No data available"));
+                }
 
-            return Column(
-              children: [
-                if (widget.showTabs)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: CustomTabBar(
-                      tabTitles: const [
-                        'GENERAL',
-                        'TECHNICAL DATA',
-                        'OPERATIONAL DATA',
-                      ],
-                      initialIndex: _currentTabIndex,
-                      isComeFromComparsionScreen: true,
-                      onTabSelected: (index) {
-                        setState(() => _currentTabIndex = index);
-                      },
-                    ),
-                  ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
-                    child: Table(
-                      columnWidths: const {
-                        0: FlexColumnWidth(3),
-                        1: FlexColumnWidth(2),
-                        2: FlexColumnWidth(2),
-                      },
-                      border: TableBorder.all(color: Colors.grey, width: 1),
-                      children: [
-                        TableRow(
+                final filterState = context
+                    .watch<ComparisonFilterCubit1>()
+                    .state;
+                final activeCategoryId = _currentTabIndex == 0
+                    ? 'general'
+                    : _currentTabIndex == 1
+                    ? 'technical_data'
+                    : 'operational_data';
+
+                if (filterState.filterCategories.isEmpty && model != null) {
+                  context.read<ComparisonFilterCubit1>().loadFiltersFromComparison1();
+                }
+
+                final activeCategory = filterState.filterCategories.firstWhere(
+                  (cat) => cat.id == activeCategoryId,
+                  orElse: () => FilterCategory1(id: '', name: '', options: []),
+                );
+
+               // final selectedOptions = activeCategory.options.where((o) => o.isSelected).toList();
+                final selectedOptions = activeCategory.options;
+                List<String> labels = [];
+                List<String> a1Values = [];
+                List<String> a2Values = [];
+
+                for (var option in selectedOptions) {
+
+                  labels.add(option.name);
+
+                  switch (option.id) {
+                    // GENERAL
+                    case 'icao_type_code':
+                      a1Values.add(
+                        model.aircraft1.general.icaoTypeCode ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.general.icaoTypeCode ?? 'N/A',
+                      );
+                      break;
+                    case 'wake_turbulence':
+                      a1Values.add(
+                        model.aircraft1.general.wakeTurbulenceCategory ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.general.wakeTurbulenceCategory ?? 'N/A',
+                      );
+                      break;
+                    case 'avionics':
+                      a1Values.add(
+                        model.aircraft1.general.avionicsSystemNameFamily ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.general.avionicsSystemNameFamily ??
+                            'N/A',
+                      );
+                      break;
+                    case 'no_of_engines':
+                      a1Values.add(
+                        model.aircraft1.general.noOfEngines?.toString() ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.general.noOfEngines?.toString() ??
+                            'N/A',
+                      );
+                      break;
+                    case 'engine_model':
+                      a1Values.add(
+                        model.aircraft1.general.engineManufacturerAndModel ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.general.engineManufacturerAndModel ??
+                            'N/A',
+                      );
+                      break;
+                    case 'engine_type':
+                      a1Values.add(model.aircraft1.general.engineType ?? 'N/A');
+                      a2Values.add(model.aircraft2.general.engineType ?? 'N/A');
+                      break;
+
+                    // TECHNICAL DATA
+                    case 'wingspan_m':
+                      a1Values.add(
+                        model.aircraft1.technicalData.wingspan.meters ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.technicalData.wingspan.meters ?? 'N/A',
+                      );
+                      break;
+                    // case 'wingspan_ft':
+                    //   a1Values.add(
+                    //     model.aircraft1.technicalData.wingspan.feet ?? 'N/A',
+                    //   );
+                    //   a2Values.add(
+                    //     model.aircraft2.technicalData.wingspan.feet ?? 'N/A',
+                    //   );
+                    //   break;
+                    case 'length_m':
+                      a1Values.add(
+                        model.aircraft1.technicalData.length.meters ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.technicalData.length.meters ?? 'N/A',
+                      );
+                      break;
+                    // case 'length_ft':
+                    //   a1Values.add(
+                    //     model.aircraft1.technicalData.length.feet ?? 'N/A',
+                    //   );
+                    //   a2Values.add(
+                    //     model.aircraft2.technicalData.length.feet ?? 'N/A',
+                    //   );
+                    //   break;
+                    case 'height_m':
+                      a1Values.add(
+                        model.aircraft1.technicalData.height.meters ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.technicalData.height.meters ?? 'N/A',
+                      );
+                      break;
+                    case 'max_Payload':
+                      a1Values.add(
+                        model.aircraft1.technicalData.maxPayload ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.technicalData.maxPayload?? 'N/A',
+                      );
+                      break;
+
+                    case 'mtow':
+                      a1Values.add(
+                        model.aircraft1.technicalData.mtow ?? 'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.technicalData.mtow?? 'N/A',
+                      );
+                      break;
+
+                    // OPERATIONAL DATA
+                    case 'takeoff_speed_kts':
+                      a1Values.add(
+                        model.aircraft1.operationalData.takeoffSpeedKts ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.takeoffSpeedKts ??
+                            'N/A',
+                      );
+                      break;
+                    case 'service_ceiling_ft':
+                      a1Values.add(
+                        model.aircraft1.operationalData.serviceCeilingFtFl ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.serviceCeilingFtFl ??
+                            'N/A',
+                      );
+                      break;
+                    case 'max_altitude_ft':
+                      a1Values.add(
+                        model
+                                .aircraft1
+                                .operationalData
+                                .maxCertifiedAltitudeFtFl ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model
+                                .aircraft2
+                                .operationalData
+                                .maxCertifiedAltitudeFtFl ??
+                            'N/A',
+                      );
+                      break;
+                    case 'cruise_speed_kts':
+                      a1Values.add(
+                        model.aircraft1.operationalData.cruiseSpeed.cruiseKt ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.cruiseSpeed.cruiseKt ??
+                            'N/A',
+                      );
+                      break;
+                    case 'cruise_mach':
+                      a1Values.add(
+                        model
+                                .aircraft1
+                                .operationalData
+                                .cruiseSpeed
+                                .cruiseMach ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model
+                                .aircraft2
+                                .operationalData
+                                .cruiseSpeed
+                                .cruiseMach ??
+                            'N/A',
+                      );
+                      break;
+                    case 'ferry_range_nm':
+                      a1Values.add(
+                        model.aircraft1.operationalData.range.ferryRangeNm ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.range.ferryRangeNm ??
+                            'N/A',
+                      );
+                      break;
+                    case 'normal_range_nm':
+                      a1Values.add(
+                        model.aircraft1.operationalData.range.normalRangeNm ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.range.normalRangeNm ??
+                            'N/A',
+                      );
+                      break;
+                    case 'normal_range_km':
+                      a1Values.add(
+                        model.aircraft1.operationalData.range.normalRangeKm ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.range.normalRangeKm ??
+                            'N/A',
+                      );
+                      break;
+                    case 'initial_rate_of_descent_fpm':
+                      a1Values.add(
+                        model
+                                .aircraft1
+                                .operationalData
+                                .initialRateOfDescentFpm ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model
+                                .aircraft2
+                                .operationalData
+                                .initialRateOfDescentFpm ??
+                            'N/A',
+                      );
+                      break;
+                    case 'average_rate_of_descent_fpm':
+                      a1Values.add(
+                        model
+                                .aircraft1
+                                .operationalData
+                                .averageRateOfDescentFpm ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model
+                                .aircraft2
+                                .operationalData
+                                .averageRateOfDescentFpm ??
+                            'N/A',
+                      );
+                      break;
+                    case 'min_clean_speed_kts':
+                      a1Values.add(
+                        model.aircraft1.operationalData.minimumCleanSpeedKts ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.minimumCleanSpeedKts ??
+                            'N/A',
+                      );
+                      break;
+                    case 'approach_speed_kts':
+                      a1Values.add(
+                        model.aircraft1.operationalData.approachSpeedKts ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.approachSpeedKts ??
+                            'N/A',
+                      );
+                      break;
+                    case 'landing_speed_kts':
+                      a1Values.add(
+                        model.aircraft1.operationalData.landingSpeedKts ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.landingSpeedKts ??
+                            'N/A',
+                      );
+                      break;
+                    case 'landing_distance_m':
+                      a1Values.add(
+                        model.aircraft1.operationalData.landingDistanceM ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.landingDistanceM ??
+                            'N/A',
+                      );
+                      break;
+                    case 'runway_required_m':
+                      a1Values.add(
+                        model.aircraft1.operationalData.runwayLengthRequiredM ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.runwayLengthRequiredM ??
+                            'N/A',
+                      );
+                      break;
+                    case 'stall_speed':
+                      a1Values.add(
+                        model.aircraft1.operationalData.stallSpeedIfAvailable ??
+                            'N/A',
+                      );
+                      a2Values.add(
+                        model.aircraft2.operationalData.stallSpeedIfAvailable ??
+                            'N/A',
+                      );
+                      break;
+
+                    default:
+                      a1Values.add('N/A');
+                      a2Values.add('N/A');
+                  }
+                }
+
+                return Column(
+                  children: [
+                    if (widget.showTabs)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: CustomTabBar(
+                          tabTitles: const [
+                            'GENERAL',
+                            'TECHNICAL DATA',
+                            'OPERATIONAL DATA',
+                          ],
+                          initialIndex: _currentTabIndex,
+                          isComeFromComparsionScreen: true,
+                          onTabSelected: (index) {
+                            setState(() => _currentTabIndex = index);
+                          },
+                        ),
+                      ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(20),
+                        child: Table(
+                          columnWidths: const {
+                            0: FlexColumnWidth(3),
+                            1: FlexColumnWidth(2),
+                            2: FlexColumnWidth(2),
+                          },
+                          border: TableBorder.all(color: Colors.grey, width: 1),
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Text(""),
-                            ),
-                            Container(
-                              color: const Color(0xFFEBF5FF),
-                              padding: const EdgeInsets.all(10),
-                              child: Center(
-                                child: Text(
-                                  widget.model1Name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF3F3D56),
-                                    fontSize: 16,
+                            TableRow(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(""),
+                                ),
+                                Container(
+                                  color: const Color(0xFFEBF5FF),
+                                  padding: const EdgeInsets.all(10),
+                                  child: Center(
+                                    child: Text(
+                                      widget.model1Name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF3F3D56),
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-
-                            ),
-                            Container(
-                              color: const Color(0xFFEBF5FF),
-                              padding: const EdgeInsets.all(10),
-                              child: Center(
-                                child: Text(
-                                  widget.model2Name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF3F3D56),
-                                    fontSize: 16,
+                                Container(
+                                  color: const Color(0xFFEBF5FF),
+                                  padding: const EdgeInsets.all(10),
+                                  child: Center(
+                                    child: Text(
+                                      widget.model2Name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF3F3D56),
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
+                            for (int i = 0; i < labels.length; i++)
+                              TableRow(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(labels[i]),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(a1Values[i]),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Text(a2Values[i]),
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
-                        for (int i = 0; i < labels.length; i++)
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text(labels[i]),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text(a1Values[i]),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text(a2Values[i]),
-                              ),
-                            ],
-                          ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             );
           },
         ),
