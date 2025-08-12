@@ -37,14 +37,53 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuizQuestionCubit(widget.sectionId),
+      create: (_) => QuizQuestionCubit(widget.sectionId, context),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: widget.sectionTitle,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () async {
+              final shouldExit = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Exit Quiz?"),
+                  backgroundColor: Colors.white,
+                  // Set your desired background color here
+                  content: Text(
+                    "Are you sure you want to exit? Your progress will be lost.",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: ButtonStyle(
+                        foregroundColor: WidgetStateProperty.all<Color>(
+                          Colors.black,
+                        ), // Text color
+                      ),
+                      child: Text("Cancel"),
+                    ),
+
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                          Colors.blue,
+                        ), // Background color
+                        foregroundColor: WidgetStateProperty.all<Color>(
+                          AppColors.sepratorColourAppBar,
+                        ), // Text color
+                      ),
+                      child: Text("Yes, Exit"),
+                    ),
+                  ],
+                ),
+              );
+              if (shouldExit ?? false) {
+                Navigator.pop(context);
+              }
+            },
           ),
         ),
         body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
@@ -52,7 +91,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
             if (state.questions.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
-
             final quizCubit = context.read<QuizQuestionCubit>();
 
             return Padding(
@@ -67,18 +105,21 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       options: state.currentQuestion.options,
                       selectedOption: state.selectedIndex,
                       correctOption: state.currentQuestion.correctIndex,
+                      isShowAnswers: state.showAnswer,
                       currentQuestion: state.currentIndex + 1,
                       totalQuestions: state.questions.length,
                       secondsRemaining: state.timer,
                       onOptionSelected: (index) {
-                        quizCubit.selectOption(index);
+                        if (state.timer.toInt() != 0) {
+                          quizCubit.selectOption(index);
+                        }
                       },
                       onNext: () {
-                        print(
-                          "Correct: ${state.correctAnswers}, Wrong: ${state.wrongAnswers}",
-                        );
-                        if (state.selectedIndex != null || state.showAnswer) {
+                        if (state.isTimerEnded == true) {
                           quizCubit.nextQuestion(context);
+                        } else if (state.selectedIndex != null ||
+                            state.showAnswer) {
+                          quizCubit.submitQuestion(context);
                         }
                       },
                     ),
@@ -100,6 +141,7 @@ class QuizQuestionCard extends StatelessWidget {
   final List<String> options;
   final int? selectedOption;
   final int correctOption;
+  final bool isShowAnswers;
 
   final int currentQuestion;
   final int totalQuestions;
@@ -112,6 +154,7 @@ class QuizQuestionCard extends StatelessWidget {
     required this.question,
     required this.options,
     required this.correctOption,
+    required this.isShowAnswers,
     required this.currentQuestion,
     required this.totalQuestions,
     required this.secondsRemaining,
@@ -171,7 +214,7 @@ class QuizQuestionCard extends StatelessWidget {
                     Icon? trailingIcon;
 
                     if (selectedOption != null) {
-                      if (isCorrect) {
+                      if (isCorrect && isShowAnswers) {
                         backgroundColor = Colors.green.shade100;
                         borderColor = Colors.green;
                         trailingIcon = const Icon(
@@ -179,7 +222,7 @@ class QuizQuestionCard extends StatelessWidget {
                           color: Colors.green,
                           size: 20,
                         );
-                      } else if (isSelected && !isCorrect) {
+                      } else if (isSelected && !isCorrect && isShowAnswers) {
                         backgroundColor = Colors.red.shade100;
                         borderColor = Colors.red;
                         trailingIcon = const Icon(
@@ -187,10 +230,10 @@ class QuizQuestionCard extends StatelessWidget {
                           color: Colors.red,
                           size: 20,
                         );
+                      } else if (isSelected) {
+                        backgroundColor = Colors.grey.shade300;
+                        borderColor = Colors.white;
                       }
-                    } else if (isSelected) {
-                      backgroundColor = Colors.pink.shade100;
-                      borderColor = Colors.pink;
                     }
 
                     String letter = String.fromCharCode(65 + index);
@@ -233,7 +276,7 @@ class QuizQuestionCard extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  if (selectedOption != null)
+                  if (isShowAnswers == true)
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Align(
@@ -243,7 +286,6 @@ class QuizQuestionCard extends StatelessWidget {
                           child: GestureDetector(
                             key: _iconKey,
                             onTap: () {
-                              print("fdgf");
                               showPopupBelowIcon(
                                 context,
                                 _iconKey,
@@ -268,7 +310,9 @@ class QuizQuestionCard extends StatelessWidget {
                     width: double.infinity,
                     height: 48,
                     child: CustomBottomButton(
-                      title: ConstantStrings.next,
+                      title: isShowAnswers == false
+                          ? ConstantStrings.submitTitle
+                          : ConstantStrings.next,
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
