@@ -9,6 +9,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
+import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
@@ -94,6 +95,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => FlightMapCubit()),
         BlocProvider(create: (_) => GamesCubit()),
         BlocProvider(create: (_) => QuizCubit()),
+        BlocProvider(create: (_) => ComparisonFilterCubit1()),
       ],
       //Responsive test case
       child: ResponsiveSizer(

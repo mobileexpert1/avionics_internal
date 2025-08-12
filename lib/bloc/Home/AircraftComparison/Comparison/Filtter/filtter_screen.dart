@@ -2,20 +2,20 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../bloc/home/Filter/filter_cubit.dart';
-import '../../../bloc/home/Filter/filter_model.dart';
-import '../../../bloc/home/Filter/filter_state.dart';
+import 'filtter_cubit.dart';
+import 'filtter_model.dart';
+import 'filtter_state.dart';
 
-class FilterScreen extends StatefulWidget {
+class FilterScreen1 extends StatefulWidget {
   @override
   _FilterScreenState createState() => _FilterScreenState();
 }
 
-class _FilterScreenState extends State<FilterScreen> {
+class _FilterScreenState extends State<FilterScreen1> {
   @override
   void initState() {
     super.initState();
-    context.read<FilterCubit>().loadFilters();
+    context.read<ComparisonFilterCubit1>().loadFiltersFromComparison1();
   }
 
   @override
@@ -35,19 +35,23 @@ class _FilterScreenState extends State<FilterScreen> {
         title: const Text("Filter", style: TextStyle(color: Colors.black)),
         centerTitle: true,
         actions: [
-          BlocBuilder<FilterCubit, FilterState>(
+          BlocBuilder<ComparisonFilterCubit1, FilterState1>(
             builder: (context, state) {
               // Calculate the number of applied filters
               final selectedCount = state.filterCategories.fold<int>(
                 0,
-                (previousValue, category) =>
-                    previousValue +
+                    (previousValue, category) =>
+                previousValue +
                     category.options
                         .where((option) => option.isSelected)
                         .length,
               );
               return TextButton(
                 onPressed: () {
+                  final cubit = context.read<ComparisonFilterCubit1>();
+                  final filters = cubit.state.filterCategories;
+                  cubit.updateSelectedFilters(filters, isApplied: true);
+                  Navigator.of(context).pop(filters);
                 },
                 child: Row(
                   children: [
@@ -68,11 +72,12 @@ class _FilterScreenState extends State<FilterScreen> {
                   ],
                 ),
               );
+
             },
           ),
         ],
       ),
-      body: BlocBuilder<FilterCubit, FilterState>(
+      body: BlocBuilder<ComparisonFilterCubit1, FilterState1>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -90,12 +95,12 @@ class _FilterScreenState extends State<FilterScreen> {
                     const int visibleOptionCountWhenCollapsed = 0;
 
                     // Get the list of options to display based on expansion state
-                    final List<FilterOption> optionsToDisplay =
-                        category.isExpanded
+                    final List<FilterOption1> optionsToDisplay =
+                    category.isExpanded
                         ? category.options
                         : category.options
-                              .take(visibleOptionCountWhenCollapsed)
-                              .toList();
+                        .take(visibleOptionCountWhenCollapsed)
+                        .toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +121,7 @@ class _FilterScreenState extends State<FilterScreen> {
                               TextButton(
                                 onPressed: () {
                                   context
-                                      .read<FilterCubit>()
+                                      .read<ComparisonFilterCubit1>()
                                       .toggleCategoryExpansion(category.id);
                                 },
                                 child: Row(
@@ -148,35 +153,25 @@ class _FilterScreenState extends State<FilterScreen> {
 
                         if (category.isExpanded)
                           ...optionsToDisplay.map((option) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
+                            return CheckboxListTile(
+                              dense: true,
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              value: option.isSelected,
+                              title: Text(
+                                option.name,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Color.fromRGBO(63, 81, 86, 1.0),
+                                ),
                               ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      option.name,
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        color: Color.fromRGBO(63, 81, 86, 1.0),
-                                      ),
-                                    ),
-                                  ),
-                                  Checkbox(
-                                    value: option.isSelected,
-                                    onChanged: (bool? value) {
-                                      context
-                                          .read<FilterCubit>()
-                                          .toggleFilterOption(
-                                            category.id,
-                                            option.id,
-                                          );
-                                    },
-                                    activeColor: Colors.blue,
-                                  ),
-                                ],
-                              ),
+                              onChanged: (bool? newValue) {
+                                context.read<ComparisonFilterCubit1>().toggleOption(
+                                  categoryId: category.id,
+                                  optionId: option.id,
+                                  isSelected: newValue ?? false,
+                                );
+                              },
+                              activeColor: Colors.blue,
                             );
                           })
                         else if (optionsToDisplay
@@ -200,12 +195,10 @@ class _FilterScreenState extends State<FilterScreen> {
                                   Checkbox(
                                     value: option.isSelected,
                                     onChanged: (bool? value) {
-                                      context
-                                          .read<FilterCubit>()
-                                          .toggleFilterOption(
-                                            category.id,
-                                            option.id,
-                                          );
+                                      context.read<ComparisonFilterCubit1>().toggleFilterOption(
+                                        category.id,
+                                        option.id,
+                                      );
                                     },
                                     activeColor: Colors.blue,
                                   ),
@@ -227,7 +220,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.read<FilterCubit>().resetFilters();
+                    context.read<ComparisonFilterCubit1>().resetFilters();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -251,3 +244,4 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 }
+

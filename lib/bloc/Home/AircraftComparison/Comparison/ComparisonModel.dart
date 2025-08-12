@@ -74,11 +74,15 @@ class TechnicalData {
   final DimensionData wingspan;
   final DimensionData length;
   final DimensionData height;
+  final String mtow;
+  final String maxPayload;
 
   TechnicalData({
     required this.wingspan,
     required this.length,
     required this.height,
+    required this.mtow,
+    required this.maxPayload,
   });
 
   factory TechnicalData.fromJson(Map<String, dynamic> json) {
@@ -86,6 +90,8 @@ class TechnicalData {
       wingspan: DimensionData.fromJson(json['wingspan_m_and_ft']),
       length: DimensionData.fromJson(json['length']),
       height: DimensionData.fromJson(json['height']),
+      mtow: json['mtow'] ?? '',
+      maxPayload: json['max_payload'] ?? '',
     );
   }
 }
@@ -101,12 +107,11 @@ class DimensionData {
 
   factory DimensionData.fromJson(Map<String, dynamic> json) {
     return DimensionData(
-      meters: json.values.first, // assumes "_m" is first key
-      feet: json.values.last,    // assumes "_ft" is second key
+      meters: json.values.first.toString(),
+      feet: json.values.last.toString(),
     );
   }
 }
-
 
 
 class OperationalData {
@@ -194,4 +199,14 @@ class Range {
       normalRangeKm: json['Normal_Range_km'],
     );
   }
+}
+
+
+
+class ComparisonFilterItem {
+  final String key;
+  final String value;
+  bool isSelected;
+
+  ComparisonFilterItem({required this.key, required this.value, this.isSelected = false});
 }
