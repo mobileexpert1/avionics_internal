@@ -22,6 +22,14 @@ class QuizQuestionState {
   final int bonusPoints;
   final int timeTaken;
 
+  final List<QuizQuestion> altitudeQuestions;
+  final List<QuizQuestion> weightQuestions;
+  final List<QuizQuestion> distanceQuestions;
+  final List<QuizQuestion> fuelQuestions;
+  final List<QuizQuestion> pressureQuestions;
+  final List<QuizQuestion> speedQuestions;
+  final List<QuizQuestion> temperatureQuestions;
+
   const QuizQuestionState({
     required this.questions,
     this.currentIndex = 0,
@@ -42,6 +50,13 @@ class QuizQuestionState {
     this.pointsEarned = 0,
     this.bonusPoints = 0,
     this.timeTaken = 0,
+    required this.altitudeQuestions,
+    required this.weightQuestions,
+    required this.distanceQuestions,
+    required this.fuelQuestions,
+    required this.pressureQuestions,
+    required this.speedQuestions,
+    required this.temperatureQuestions,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -66,6 +81,13 @@ class QuizQuestionState {
     int? pointsEarned,
     int? bonusPoints,
     int? timeTaken,
+    List<QuizQuestion>? altitudeQuestions,
+    List<QuizQuestion>? weightQuestions,
+    List<QuizQuestion>? distanceQuestions,
+    List<QuizQuestion>? fuelQuestions,
+    List<QuizQuestion>? pressureQuestions,
+    List<QuizQuestion>? speedQuestions,
+    List<QuizQuestion>? temperatureQuestions,
 
   }) {
     return QuizQuestionState(
@@ -88,6 +110,13 @@ class QuizQuestionState {
       pointsEarned: pointsEarned ?? this.pointsEarned,
       bonusPoints: bonusPoints ?? this.bonusPoints,
       timeTaken: timeTaken ?? this.timeTaken,
+      altitudeQuestions: altitudeQuestions ?? this.altitudeQuestions,
+      weightQuestions: weightQuestions ?? this.weightQuestions,
+      distanceQuestions: distanceQuestions ?? this.distanceQuestions,
+      fuelQuestions: fuelQuestions ?? this.fuelQuestions,
+      pressureQuestions: pressureQuestions ?? this.pressureQuestions,
+      speedQuestions: speedQuestions ?? this.speedQuestions,
+      temperatureQuestions: temperatureQuestions ?? this.temperatureQuestions,
     );
   }
 
@@ -98,5 +127,12 @@ class QuizQuestionState {
     pointsEarned: 0,
     bonusPoints: 0,
     timeTaken: 0,
+    altitudeQuestions: [],
+    weightQuestions: [],
+    distanceQuestions: [],
+    fuelQuestions: [],
+    pressureQuestions: [],
+    speedQuestions: [],
+    temperatureQuestions: [],
   );
 }

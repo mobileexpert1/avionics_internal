@@ -4,6 +4,7 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_state.dart';
+import '../../MainGameScreen/GameScreen.dart';
 
 class CalculationResultScreen extends StatefulWidget {
   const CalculationResultScreen({
@@ -22,8 +23,7 @@ class CalculationResultScreen extends StatefulWidget {
   final int bonusPoints;
 
   @override
-  _CalculationResultScreenState createState() =>
-      _CalculationResultScreenState();
+  _CalculationResultScreenState createState() => _CalculationResultScreenState();
 }
 
 class _CalculationResultScreenState extends State<CalculationResultScreen> {
@@ -36,15 +36,12 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           score: widget.correctedAnswer,
           total: widget.totalQuestion,
           totalPoints: widget.score,
-          correctPoints: (widget.correctedAnswer * 2),
+          correctPoints: widget.correctedAnswer * 2,
           bonusPoints: [
-            (widget.bonusPoints == 0 ? '' : '+ ${widget.bonusPoints} points for time bonus'),
-
-            (widget.winAchieved == false
-                ? ''
-                : '+3 points for perfectly correct answers'),
+            if (widget.bonusPoints > 0)
+              '+${widget.bonusPoints} point${widget.bonusPoints == 1 ? '' : 's'} for time bonus',
           ],
-          badgeText: "Weather Navigator Badge Earned",
+          badgeText: widget.winAchieved ? 'Aviation Master Badge Earned' : null,
         ),
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -52,8 +49,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           title: "Result",
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () =>
-                Navigator.of(context).popUntil((route) => route.isFirst),
+            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
           ),
         ),
         body: Padding(
@@ -68,8 +64,10 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
                 correctPoints: state.correctPoints,
                 bonusPoints: state.bonusPoints,
                 badgeText: state.badgeText,
-                onBackTap: () =>
-                    Navigator.of(context).popUntil((route) => route.isFirst),
+                onBackTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GamesScreen()),
+                ),
               );
             },
           ),
