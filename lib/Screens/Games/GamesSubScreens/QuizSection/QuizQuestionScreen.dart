@@ -525,8 +525,7 @@ void showPopupBelowIcon(
         top:
             offset.dy +
             size.height / 2 -
-            (MediaQuery.of(context).viewInsets.bottom +
-                (defaultTargetPlatform == TargetPlatform.iOS ? 50 : 80)),
+            (MediaQuery.of(context).viewInsets.bottom + 50),
         child: Material(
           color: Colors.transparent,
           child: Stack(
