@@ -20,11 +20,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final calculationData = await QuizQuestionRepository().getCalculationData();
+      final calculationData = await QuizQuestionRepository()
+          .getCalculationData();
 
       if (calculationData == null) {
-        emit(state.copyWith(
-            isLoading: false, errorMessage: 'No internet or no data'));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'No internet or no data',
+          ),
+        );
         return;
       }
 
@@ -41,16 +46,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         ...result.temperatureConversionsImpact,
       ];
 
-      final questions = allCategoryQuestions.map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      )).toList();
+      final questions = allCategoryQuestions
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
+          .toList();
 
       final initialResults = List<QuestionResult>.generate(
         questions.length,
-            (_) => QuestionResult(
+        (_) => QuestionResult(
           userAnswerIndex: null,
           correctPoint: 0,
           bonusPoint: 0,
@@ -58,21 +67,23 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         ),
       );
 
-      emit(state.copyWith(
-        isLoading: false,
-        questions: questions,
-        currentIndex: 0,
-        selectedIndex: null,
-        showAnswer: false,
-        timer: 40,
-        score: 0,
-        correctAnswers: 0,
-        wrongAnswers: 0,
-        pointsEarned: 0,
-        bonusPoints: 0,
-        timeTaken: 0,
-        questionResults: initialResults,
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          questions: questions,
+          currentIndex: 0,
+          selectedIndex: null,
+          showAnswer: false,
+          timer: 40,
+          score: 0,
+          correctAnswers: 0,
+          wrongAnswers: 0,
+          pointsEarned: 0,
+          bonusPoints: 0,
+          timeTaken: 0,
+          questionResults: initialResults,
+        ),
+      );
 
       print('Emitted total questions count: ${questions.length}');
       startTimer(context);
@@ -80,8 +91,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
-
-
 
   int answerToIndex(Answer answer) {
     // Map enum Answer {A, B, C, D} to index 0..3
@@ -102,16 +111,27 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     emit(state.copyWith(timer: 40));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.timer > 0) {
-        emit(state.copyWith(timer: state.timer - 1));
+        emit(
+          state.copyWith(
+            timer: state.timer - 1,
+            selectedIndex: state.selectedIndex,
+          ),
+        );
+        print(state.selectedIndex);
       } else {
         _timer?.cancel();
-        if (state.selectedIndex == null) {
-          emit(state.copyWith(
-            showAnswer: true,
-            isTimerEnded: true,
-            selectedIndex: state.questions[state.currentIndex].correctIndex,
-          ));
-        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Times Up')));
+        Future.delayed(Duration(seconds: 2), () {
+          emit(
+            state.copyWith(
+              showAnswer: true,
+              isTimerEnded: true,
+              selectedIndex: state.currentQuestion.correctIndex,
+            ),
+          );
+        });
       }
     });
   }
@@ -120,49 +140,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     emit(state.copyWith(selectedIndex: index, showAnswer: false));
   }
 
-  // void submitQuestion(BuildContext context) {
-  //   _timer?.cancel();
-  //   final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
-  //   int timeBonus = isCorrect == true ? (state.timer >= 20 ? 1 : 0) : 0;
-  //   int newScore = state.score;
-  //
-  //   if (isCorrect) {
-  //     newScore += 2 + timeBonus;
-  //   }
-  //
-  //   emit(
-  //     state.copyWith(
-  //       selectedIndex: state.selectedIndex,
-  //       showAnswer: true,
-  //       correctAnswers: isCorrect
-  //           ? state.correctAnswers + 1
-  //           : state.correctAnswers,
-  //       wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-  //       score: newScore,
-  //       isTimerEnded: true,
-  //     ),
-  //   );
-  // }
-
   void submitQuestion(BuildContext context) {
     _timer?.cancel();
-
     final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
-
+    int timeBonus = isCorrect == true ? (state.timer >= 20 ? 1 : 0) : 0;
+    int newScore = state.score;
+    final timeSpentThisQuestion = 40 - state.timer;
     int pointsThisQuestion = 0;
     int bonusPointsThisQuestion = 0;
 
     if (isCorrect) {
-      pointsThisQuestion = 2;
-      if (state.timer > 20) {
-        bonusPointsThisQuestion = 1;
-      }
+      newScore += 2 + timeBonus;
     }
 
-    final timeSpentThisQuestion = 40 - state.timer;
-
     final updatedResults = List<QuestionResult>.from(state.questionResults);
-
     updatedResults[state.currentIndex] = QuestionResult(
       userAnswerIndex: state.selectedIndex,
       correctPoint: pointsThisQuestion,
@@ -173,84 +164,42 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     // Update global accumulators if needed or keep as is
     final newPointsEarned = state.pointsEarned + pointsThisQuestion;
     final newBonusPoints = state.bonusPoints + bonusPointsThisQuestion;
-    final newScore = state.score + pointsThisQuestion + bonusPointsThisQuestion;
     final newTimeTaken = state.timeTaken + timeSpentThisQuestion;
 
-    emit(state.copyWith(
-      questionResults: updatedResults,
-      selectedIndex: state.selectedIndex,
-      showAnswer: true,
-      correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
-      wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-      score: newScore,
-      pointsEarned: newPointsEarned,
-      bonusPoints: newBonusPoints,
-      timeTaken: newTimeTaken,
-      isTimerEnded: true,
-    ));
+    emit(
+      state.copyWith(
+        questionResults: updatedResults,
+        selectedIndex: state.selectedIndex,
+        showAnswer: true,
+        correctAnswers: isCorrect
+            ? state.correctAnswers + 1
+            : state.correctAnswers,
+        wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
+        score: newScore,
+        pointsEarned: newPointsEarned,
+        bonusPoints: newBonusPoints,
+        timeTaken: newTimeTaken,
+        isTimerEnded: true,
+      ),
+    );
+
+    emit(
+      state.copyWith(
+        selectedIndex: state.selectedIndex,
+        showAnswer: true,
+        correctAnswers: isCorrect
+            ? state.correctAnswers + 1
+            : state.correctAnswers,
+        wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
+        score: newScore,
+        isTimerEnded: true,
+        totalBonusPoints: state.totalBonusPoints + timeBonus,
+      ),
+    );
   }
-
-
-  // void nextQuestion(BuildContext context) {
-  //   final isLast = state.currentIndex == state.questions.length - 1;
-  //
-  //   if (!isLast) {
-  //     emit(
-  //       state.copyWith(
-  //         currentIndex: state.currentIndex + 1,
-  //         selectedIndex: null,
-  //         showAnswer: false,
-  //         timer: 40,
-  //         isTimerEnded: false,
-  //       ),
-  //     );
-  //     startTimer(context);
-  //   } else {
-  //     _timer?.cancel();
-  //
-  //     final allCorrectBonus = (state.correctAnswers == state.questions.length)
-  //         ? 3
-  //         : 0;
-  //     final finalScore = state.score + allCorrectBonus;
-  //
-  //     final percent = (state.correctAnswers / state.questions.length) * 100;
-  //     final winAchieved = percent >= 80;
-  //
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => CalculationResultScreen(
-  //           correctedAnswer: state.correctAnswers,
-  //           totalQuestion: state.questions.length,
-  //           score: finalScore,
-  //           winAchieved: winAchieved,
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
 
   void nextQuestion(BuildContext context) {
     final isLast = state.currentIndex == state.questions.length - 1;
-
-    String formatTime(int seconds) {
-      if (seconds < 60) {
-        return "${seconds}s";
-      } else {
-        final minutes = seconds ~/ 60;
-        final remainingSeconds = seconds % 60;
-        if (remainingSeconds == 0) {
-          return "${minutes}m";
-        } else {
-          return "${minutes}m ${remainingSeconds}s";
-        }
-      }
-    }
-
-    String indexToLetter(int? index) {
-      if (index == null) return "";
-      return String.fromCharCode(65 + index); // 65 = 'A'
-    }
 
     if (!isLast) {
       emit(
@@ -264,22 +213,47 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       );
       startTimer(context);
     } else {
+      emit(state.copyWith());
+
       _timer?.cancel();
+
+      String formatTime(int seconds) {
+        if (seconds < 60) {
+          return "${seconds}s";
+        } else {
+          final minutes = seconds ~/ 60;
+          final remainingSeconds = seconds % 60;
+          if (remainingSeconds == 0) {
+            return "${minutes}m";
+          } else {
+            return "${minutes}m ${remainingSeconds}s";
+          }
+        }
+      }
+
+      String indexToLetter(int? index) {
+        if (index == null) return "";
+        return String.fromCharCode(65 + index); // 65 = 'A'
+      }
 
       // Build detailed question results
       final List<Map<String, dynamic>> categoryQuestions = [];
       for (int i = 0; i < state.questions.length; i++) {
         categoryQuestions.add({
           "question": state.questions[i].question,
-          "options": List.generate(state.questions[i].options.length, (optIndex) {
+          "options": List.generate(state.questions[i].options.length, (
+            optIndex,
+          ) {
             return {
               "label": String.fromCharCode(65 + optIndex), // A, B, C, D
-              "value": state.questions[i].options[optIndex]
+              "value": state.questions[i].options[optIndex],
             };
           }),
           "answer": indexToLetter(state.questions[i].correctIndex),
           "explanation": state.questions[i].hint,
-          "user_answered": indexToLetter(state.questionResults[i].userAnswerIndex),
+          "user_answered": indexToLetter(
+            state.questionResults[i].userAnswerIndex,
+          ),
           "correct_point": state.questionResults[i].correctPoint,
           "bonus_point": state.questionResults[i].bonusPoint,
           "time_taken": state.questionResults[i].timeTakenSeconds,
@@ -287,8 +261,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
 
       // Final totals
-      final allCorrectBonus =
-      (state.correctAnswers == state.questions.length) ? 3 : 0;
+      final allCorrectBonus = (state.correctAnswers == state.questions.length)
+          ? 3
+          : 0;
       final finalScore = state.score + allCorrectBonus;
 
       // Build payload
@@ -321,14 +296,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             totalQuestion: state.questions.length,
             score: finalScore,
             winAchieved: winAchieved,
+            bonusPoints: state.totalBonusPoints,
           ),
         ),
       );
     }
   }
-
-
-
 
   @override
   Future<void> close() {

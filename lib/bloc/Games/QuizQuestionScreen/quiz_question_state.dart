@@ -20,7 +20,7 @@ class QuizQuestionState {
   final int pointsEarned;
   final int bonusPoints;
   final int timeTaken;
-
+  final int totalBonusPoints;
 
   const QuizQuestionState({
     required this.questions,
@@ -41,6 +41,7 @@ class QuizQuestionState {
     this.pointsEarned = 0,
     this.bonusPoints = 0,
     this.timeTaken = 0,
+    this.totalBonusPoints = 0,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -64,6 +65,8 @@ class QuizQuestionState {
     int? pointsEarned,
     int? bonusPoints,
     int? timeTaken,
+    int? totalBonusPoints,
+
   }) {
     return QuizQuestionState(
       questions: questions ?? this.questions,
@@ -84,6 +87,7 @@ class QuizQuestionState {
       pointsEarned: pointsEarned ?? this.pointsEarned,
       bonusPoints: bonusPoints ?? this.bonusPoints,
       timeTaken: timeTaken ?? this.timeTaken,
+      totalBonusPoints: totalBonusPoints ?? this.totalBonusPoints,
     );
   }
 
