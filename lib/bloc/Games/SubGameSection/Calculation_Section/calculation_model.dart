@@ -39,64 +39,64 @@ class Result {
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     altitudeConversionsMixedCalculations:
         List<AltitudeConversionsMixedCalculation>.from(
-          json["Altitude Conversions & Mixed Calculations"].map(
+          json["altitude_conversions_mixed_calculations"].map(
             (x) => AltitudeConversionsMixedCalculation.fromJson(x),
           ),
         ),
     weightBalanceConversions: List<AltitudeConversionsMixedCalculation>.from(
-      json["Weight & Balance Conversions"].map(
+      json["weight_balance_conversions"].map(
         (x) => AltitudeConversionsMixedCalculation.fromJson(x),
       ),
     ),
     distanceRangeConversions: List<AltitudeConversionsMixedCalculation>.from(
-      json["Distance & Range Conversions"].map(
+      json["distance_range_conversions"].map(
         (x) => AltitudeConversionsMixedCalculation.fromJson(x),
       ),
     ),
     fuelVolumeFlowConversions: List<AltitudeConversionsMixedCalculation>.from(
-      json["Fuel Volume & Flow Conversions"].map(
+      json["fuel_volume_flow_conversions"].map(
         (x) => AltitudeConversionsMixedCalculation.fromJson(x),
       ),
     ),
     pressureWeatherDataConversions:
         List<AltitudeConversionsMixedCalculation>.from(
-          json["Pressure & Weather Data Conversions"].map(
+          json["pressure_weather_data_conversions"].map(
             (x) => AltitudeConversionsMixedCalculation.fromJson(x),
           ),
         ),
     speedTimeCalculations: List<AltitudeConversionsMixedCalculation>.from(
-      json["Speed & Time Calculations"].map(
+      json["speed_time_calculations"].map(
         (x) => AltitudeConversionsMixedCalculation.fromJson(x),
       ),
     ),
     temperatureConversionsImpact:
         List<AltitudeConversionsMixedCalculation>.from(
-          json["Temperature Conversions & Impact"].map(
+          json["temperature_conversions_impact"].map(
             (x) => AltitudeConversionsMixedCalculation.fromJson(x),
           ),
         ),
   );
 
   Map<String, dynamic> toJson() => {
-    "Altitude Conversions & Mixed Calculations": List<dynamic>.from(
+    "altitude_conversions_mixed_calculations": List<dynamic>.from(
       altitudeConversionsMixedCalculations.map((x) => x.toJson()),
     ),
-    "Weight & Balance Conversions": List<dynamic>.from(
+    "weight_balance_conversions": List<dynamic>.from(
       weightBalanceConversions.map((x) => x.toJson()),
     ),
-    "Distance & Range Conversions": List<dynamic>.from(
+    "distance_range_conversions": List<dynamic>.from(
       distanceRangeConversions.map((x) => x.toJson()),
     ),
-    "Fuel Volume & Flow Conversions": List<dynamic>.from(
+    "fuel_volume_flow_conversions": List<dynamic>.from(
       fuelVolumeFlowConversions.map((x) => x.toJson()),
     ),
-    "Pressure & Weather Data Conversions": List<dynamic>.from(
+    "pressure_weather_data_conversions": List<dynamic>.from(
       pressureWeatherDataConversions.map((x) => x.toJson()),
     ),
-    "Speed & Time Calculations": List<dynamic>.from(
+    "speed_time_calculations": List<dynamic>.from(
       speedTimeCalculations.map((x) => x.toJson()),
     ),
-    "Temperature Conversions & Impact": List<dynamic>.from(
+    "temperature_conversions_impact": List<dynamic>.from(
       temperatureConversionsImpact.map((x) => x.toJson()),
     ),
   };
