@@ -117,9 +117,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             selectedIndex: state.selectedIndex,
           ),
         );
-        print(state.selectedIndex);
       } else {
-        _timer?.cancel();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Times Up')));
@@ -129,6 +127,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
               showAnswer: true,
               isTimerEnded: true,
               selectedIndex: state.currentQuestion.correctIndex,
+              // Why i got the correct Answer 0 i have set the value of 2 you can check on the above question model
             ),
           );
         });
@@ -142,18 +141,23 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   void submitQuestion(BuildContext context) {
     _timer?.cancel();
+
     final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
     int timeBonus = isCorrect == true ? (state.timer >= 20 ? 1 : 0) : 0;
-    int newScore = state.score;
-    final timeSpentThisQuestion = 40 - state.timer;
+
     int pointsThisQuestion = 0;
     int bonusPointsThisQuestion = 0;
 
     if (isCorrect) {
-      newScore += 2 + timeBonus;
+      pointsThisQuestion = 2;
+      if (state.timer > 20) {
+        bonusPointsThisQuestion = 1;
+      }
     }
 
+    final timeSpentThisQuestion = 40 - state.timer;
     final updatedResults = List<QuestionResult>.from(state.questionResults);
+
     updatedResults[state.currentIndex] = QuestionResult(
       userAnswerIndex: state.selectedIndex,
       correctPoint: pointsThisQuestion,
@@ -164,6 +168,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     // Update global accumulators if needed or keep as is
     final newPointsEarned = state.pointsEarned + pointsThisQuestion;
     final newBonusPoints = state.bonusPoints + bonusPointsThisQuestion;
+    final newScoreA = state.score + pointsThisQuestion + bonusPointsThisQuestion;
     final newTimeTaken = state.timeTaken + timeSpentThisQuestion;
 
     emit(
@@ -175,23 +180,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             ? state.correctAnswers + 1
             : state.correctAnswers,
         wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-        score: newScore,
+        score: newScoreA,
         pointsEarned: newPointsEarned,
         bonusPoints: newBonusPoints,
         timeTaken: newTimeTaken,
-        isTimerEnded: true,
-      ),
-    );
-
-    emit(
-      state.copyWith(
-        selectedIndex: state.selectedIndex,
-        showAnswer: true,
-        correctAnswers: isCorrect
-            ? state.correctAnswers + 1
-            : state.correctAnswers,
-        wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-        score: newScore,
         isTimerEnded: true,
         totalBonusPoints: state.totalBonusPoints + timeBonus,
       ),
@@ -213,8 +205,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       );
       startTimer(context);
     } else {
-      emit(state.copyWith());
-
       _timer?.cancel();
 
       String formatTime(int seconds) {
@@ -288,18 +278,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       final percent = (state.correctAnswers / state.questions.length) * 100;
       final winAchieved = percent >= 80;
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CalculationResultScreen(
-            correctedAnswer: state.correctAnswers,
-            totalQuestion: state.questions.length,
-            score: finalScore,
-            winAchieved: winAchieved,
-            bonusPoints: state.totalBonusPoints,
+      Future.delayed(const Duration(milliseconds: 100), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CalculationResultScreen(
+              correctedAnswer: state.correctAnswers,
+              totalQuestion: state.questions.length,
+              score: finalScore,
+              winAchieved: winAchieved,
+              bonusPoints: 0,
+            ),
           ),
-        ),
-      );
+        );
+      });
     }
   }
 

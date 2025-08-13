@@ -44,6 +44,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
                 ? ''
                 : '+3 points for perfectly correct answers'),
           ],
+          badgeText: "Weather Navigator Badge Earned",
         ),
       child: Scaffold(
         backgroundColor: Colors.white,

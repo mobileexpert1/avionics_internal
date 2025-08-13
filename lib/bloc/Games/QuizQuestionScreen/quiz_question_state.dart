@@ -13,6 +13,7 @@ class QuizQuestionState {
   final int score;
   final List<int> timePerQuestion;
   final bool winAchieved;
+  final int totalBonusPoints;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
@@ -20,7 +21,6 @@ class QuizQuestionState {
   final int pointsEarned;
   final int bonusPoints;
   final int timeTaken;
-  final int totalBonusPoints;
 
   const QuizQuestionState({
     required this.questions,
@@ -34,6 +34,7 @@ class QuizQuestionState {
     this.score = 0,
     required this.timePerQuestion,
     this.winAchieved = false,
+    this.totalBonusPoints = 0,
     this.isLoading = false,
     this.isSuccess = false,
     this.errorMessage,
@@ -41,7 +42,6 @@ class QuizQuestionState {
     this.pointsEarned = 0,
     this.bonusPoints = 0,
     this.timeTaken = 0,
-    this.totalBonusPoints = 0,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -58,6 +58,7 @@ class QuizQuestionState {
     int? score,
     List<int>? timePerQuestion,
     bool? winAchieved,
+    int? totalBonusPoints,
     bool? isLoading,
     bool? isSuccess,
     String? errorMessage,
@@ -65,7 +66,6 @@ class QuizQuestionState {
     int? pointsEarned,
     int? bonusPoints,
     int? timeTaken,
-    int? totalBonusPoints,
 
   }) {
     return QuizQuestionState(
@@ -80,6 +80,7 @@ class QuizQuestionState {
       score: score ?? this.score,
       timePerQuestion: timePerQuestion ?? this.timePerQuestion,
       winAchieved: winAchieved ?? this.winAchieved,
+      totalBonusPoints: totalBonusPoints ?? this.totalBonusPoints,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -87,7 +88,6 @@ class QuizQuestionState {
       pointsEarned: pointsEarned ?? this.pointsEarned,
       bonusPoints: bonusPoints ?? this.bonusPoints,
       timeTaken: timeTaken ?? this.timeTaken,
-      totalBonusPoints: totalBonusPoints ?? this.totalBonusPoints,
     );
   }
 
