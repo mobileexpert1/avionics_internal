@@ -167,17 +167,25 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       secondsRemaining: state.timer,
                       onOptionSelected: (index) {
                         if (state.timer.toInt() != 0) {
-                          quizCubit.selectOption(index);
+                          if (state.showAnswer == false) {
+                            quizCubit.selectOption(index);
+                          }
                         }
                       },
                       onNext: () {
                         if (state.isTimerEnded == true) {
                           _popupOverlayEntry?.remove();
                           _popupOverlayEntry = null;
-                          setState(() {
+                          if (state.currentIndex ==
+                              state.questions.length - 1) {
                             _popupShown = false;
                             isNeedToShowOrNot = false;
-                          });
+                          } else {
+                            setState(() {
+                              _popupShown = false;
+                              isNeedToShowOrNot = false;
+                            });
+                          }
                           quizCubit.nextQuestion(context);
                         } else if (state.selectedIndex != null ||
                             state.showAnswer) {
