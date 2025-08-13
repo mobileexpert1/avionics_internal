@@ -1,4 +1,5 @@
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
 
 class QuizQuestionState {
   final List<QuizQuestion> questions;
@@ -13,6 +14,13 @@ class QuizQuestionState {
   final List<int> timePerQuestion;
   final bool winAchieved;
   final int totalBonusPoints;
+  final bool isLoading;
+  final bool isSuccess;
+  final String? errorMessage;
+  final List<QuestionResult> questionResults;
+  final int pointsEarned;
+  final int bonusPoints;
+  final int timeTaken;
 
   const QuizQuestionState({
     required this.questions,
@@ -27,6 +35,13 @@ class QuizQuestionState {
     required this.timePerQuestion,
     this.winAchieved = false,
     this.totalBonusPoints = 0,
+    this.isLoading = false,
+    this.isSuccess = false,
+    this.errorMessage,
+    required this.questionResults,
+    this.pointsEarned = 0,
+    this.bonusPoints = 0,
+    this.timeTaken = 0,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -44,6 +59,13 @@ class QuizQuestionState {
     List<int>? timePerQuestion,
     bool? winAchieved,
     int? totalBonusPoints,
+    bool? isLoading,
+    bool? isSuccess,
+    String? errorMessage,
+    List<QuestionResult>? questionResults,
+    int? pointsEarned,
+    int? bonusPoints,
+    int? timeTaken,
   }) {
     return QuizQuestionState(
       questions: questions ?? this.questions,
@@ -58,11 +80,22 @@ class QuizQuestionState {
       timePerQuestion: timePerQuestion ?? this.timePerQuestion,
       winAchieved: winAchieved ?? this.winAchieved,
       totalBonusPoints: totalBonusPoints ?? this.totalBonusPoints,
+      isLoading: isLoading ?? this.isLoading,
+      isSuccess: isSuccess ?? this.isSuccess,
+      errorMessage: errorMessage ?? this.errorMessage,
+      questionResults: questionResults ?? this.questionResults,
+      pointsEarned: pointsEarned ?? this.pointsEarned,
+      bonusPoints: bonusPoints ?? this.bonusPoints,
+      timeTaken: timeTaken ?? this.timeTaken,
     );
   }
 
   factory QuizQuestionState.initial() => const QuizQuestionState(
     questions: [],
     timePerQuestion: [],
+    questionResults: [],
+    pointsEarned: 0,
+    bonusPoints: 0,
+    timeTaken: 0,
   );
 }

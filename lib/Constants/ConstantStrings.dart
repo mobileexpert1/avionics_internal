@@ -203,3 +203,13 @@ class ApiServiceUrlAirplaneConstant {
   static const String favUnFavPlane = 'aircraft/favorite';
   static const compareAircraft = "aircraft/comparison";
 }
+
+class ApiFunctionUrlGamesConstant {
+  static const calculationService = "/ai-engine/games/";
+}
+
+
+class ApiServiceUrlGamesConstant {
+  static const takeMeasureCalculation = "calculation/take-measure";
+  static const submitCalculationResults = "calculation/submit-results";
+}

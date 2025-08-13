@@ -56,27 +56,6 @@ class _LockGameCardState extends State<LockGameCard> {
                   ),
                 ),
                 const SizedBox(height: 46),
-                // ElevatedButton(
-                //   onPressed: widget.isLocked ? null : widget.onTap,
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: widget.isLocked
-                //         ? Colors.grey.shade300
-                //         : const Color(0xFF3F3D56),
-                //     padding: const EdgeInsets.symmetric(
-                //       vertical: 0,
-                //       horizontal: 16,
-                //     ),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //   ),
-                //   child: Text(
-                //     'Play game',
-                //     style: TextStyle(
-                //       color: widget.isLocked ? Colors.grey : Colors.white,
-                //     ),
-                //   ),
-                // ),
                 ElevatedButton(
                   onPressed: widget.isLocked ? null : widget.onTap,
                   style: ElevatedButton.styleFrom(

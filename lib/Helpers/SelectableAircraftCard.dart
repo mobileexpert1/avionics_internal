@@ -7,7 +7,7 @@ class SimpleAircraftCard extends StatelessWidget {
   final String badge;
   final String? manufacturer;
   final String? airline;
-  final Widget? airlineImagePath;
+  final Widget airlineImagePath;
   final VoidCallback? onTap;
 
   const SimpleAircraftCard({
@@ -17,7 +17,7 @@ class SimpleAircraftCard extends StatelessWidget {
     required this.badge,
      this.manufacturer,
     this.airline,
-    this.airlineImagePath,
+    required this.airlineImagePath,
     this.onTap,
   }) : super(key: key);
 

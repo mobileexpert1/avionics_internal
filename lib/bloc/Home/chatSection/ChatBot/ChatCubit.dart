@@ -107,7 +107,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   })  : _repo = ChatRepositoryImpl(),
         super(const [
         {'type': 'bot', 'text': 'Hey there!'},
-        {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+        {'type': 'bot', 'text': 'I’m your AskWILCO, How can I help you?'},
       ]) {
     _init(accessToken, existingSessionId, isNewSession);
     _startInternetListener();

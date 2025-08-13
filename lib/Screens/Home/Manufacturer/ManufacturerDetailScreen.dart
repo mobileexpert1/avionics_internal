@@ -96,11 +96,11 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            detail.general.description,
-                                            style: TextStyle(fontSize: 14),
-                                          ),
+                                          // const SizedBox(height: 4),
+                                          // Text(
+                                          //   detail.general.description,
+                                          //   style: TextStyle(fontSize: 14),
+                                          // ),
                                           const SizedBox(height: 20),
                                         ],
                                       ),
