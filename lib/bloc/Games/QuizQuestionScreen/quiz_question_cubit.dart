@@ -118,6 +118,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           ),
         );
       } else {
+        _timer?.cancel();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Times Up')));
