@@ -210,6 +210,7 @@ class ApiFunctionUrlGamesConstant {
 
 
 class ApiServiceUrlGamesConstant {
+  static const getLockScreen = "calculation/";
   static const takeMeasureCalculation = "calculation/take-measure";
-  static const submitCalculationResults = "calculation/submit-results";
+  static const submitCalculationResults = "calculation/take-measure/answer-submit";
 }
