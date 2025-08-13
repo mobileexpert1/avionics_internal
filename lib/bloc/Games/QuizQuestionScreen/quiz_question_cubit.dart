@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
 import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
+import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Timer? _timer;
@@ -13,138 +16,101 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     loadQuestions(sectionId, context);
   }
 
-  void loadQuestions(int sectionId, BuildContext context) {
-    List<QuizQuestion> questions;
+  Future<void> loadQuestions(int sectionId, BuildContext context) async {
+    try {
+      emit(state.copyWith(isLoading: true));
 
-    switch (sectionId) {
-      case 1:
-        questions = [
-          QuizQuestion(
-            question:
-                "What is the primary layer of the atmosphere where commercial aircraft usually fly?",
-            options: [
-              'Stratosphere',
-              'Troposphere',
-              'Mesosphere',
-              'Thermosphere',
-            ],
-            correctIndex: 0,
-            hint: "The stratosphere is where most commercial jets cruise.",
-          ),
-          QuizQuestion(
-            question:
-                "What is the approximate altitude range of the troposphere?",
-            options: [
-              '0 to 12 km',
-              '12 to 50 km',
-              '50 to 80 km',
-              'Above 80 km',
-            ],
-            correctIndex: 0,
-            hint: "The troposphere extends from the surface up to about 12 km.",
-          ),
-          QuizQuestion(
-            question:
-                "Which weather phenomenon mostly occurs in the troposphere?",
-            options: [
-              'Aurora Borealis',
-              'Solar flares',
-              'Rain and thunderstorms',
-              'Meteors',
-            ],
-            correctIndex: 2,
-            hint: "Rain, storms, and clouds all occur in the troposphere.",
-          ),
-        ];
-        break;
+      final calculationData = await QuizQuestionRepository().getCalculationData();
 
-      case 2:
-        questions = [
-          QuizQuestion(
-            question:
-                "The boundary that separates the troposphere from the stratosphere is called the __",
-            options: ['Mesopause', 'Stratopause', 'Tropopause', 'Thermopause'],
-            correctIndex: 2,
-            hint:
-                "The tropopause separates the troposphere from the stratosphere.",
-          ),
-          QuizQuestion(
-            question:
-                "The increase in temperature in the stratosphere is primarily due to the absorption of _______ radiation by ozone.",
-            options: ['Gamma', 'Infrared', 'Ultraviolet', 'Microwave'],
-            correctIndex: 2,
-            hint: "Ozone absorbs UV radiation, warming the stratosphere.",
-          ),
-          QuizQuestion(
-            question:
-                "Most meteorites burn up in the _______, leaving visible trails in the night sky.",
-            options: [
-              'Troposphere',
-              'Mesosphere',
-              'Stratosphere',
-              'Thermosphere',
-            ],
-            correctIndex: 1,
-            hint: "Meteors burn up in the mesosphere due to friction.",
-          ),
-        ];
-        break;
+      if (calculationData == null) {
+        emit(state.copyWith(
+            isLoading: false, errorMessage: 'No internet or no data'));
+        return;
+      }
 
-      case 3:
-        questions = [
-          QuizQuestion(
-            question: "What is 35,000 feet converted to kilometers (approx)?",
-            options: ['12.2 km', '10.7 Km', '9.5 km', '8.2 km'],
-            correctIndex: 1,
-            hint: "35,000 ft ≈ 10.7 km",
-          ),
-          QuizQuestion(
-            question:
-                "If a jet is flying at 480 knots, what is its speed in Mach at sea level?",
-            options: ['Mach 0.85', 'Mach 0.72', 'Mach 0.69', 'Mach 0.73'],
-            correctIndex: 3,
-            hint: "Approximation at sea level = Mach 0.73",
-          ),
-          QuizQuestion(
-            question:
-                "How many nautical miles are there in a 1,000 km flight path?",
-            options: ['500 NM', '540 NM', '600 NM', '620 NM'],
-            correctIndex: 1,
-            hint: "1,000 km ≈ 540 NM (1 NM = 1.852 km)",
-          ),
-        ];
-        break;
+      final result = calculationData.result;
 
-      default:
-        questions = [];
+      // Combine all categories into one big list
+      final allCategoryQuestions = [
+        ...result.altitudeConversionsMixedCalculations,
+        ...result.weightBalanceConversions,
+        ...result.distanceRangeConversions,
+        ...result.fuelVolumeFlowConversions,
+        ...result.pressureWeatherDataConversions,
+        ...result.speedTimeCalculations,
+        ...result.temperatureConversionsImpact,
+      ];
+
+      final questions = allCategoryQuestions.map((q) => QuizQuestion(
+        question: q.question,
+        options: q.options.map((o) => o.value).toList(),
+        correctIndex: answerToIndex(q.answer),
+        hint: q.explanation,
+      )).toList();
+
+      final initialResults = List<QuestionResult>.generate(
+        questions.length,
+            (_) => QuestionResult(
+          userAnswerIndex: null,
+          correctPoint: 0,
+          bonusPoint: 0,
+          timeTakenSeconds: 0,
+        ),
+      );
+
+      emit(state.copyWith(
+        isLoading: false,
+        questions: questions,
+        currentIndex: 0,
+        selectedIndex: null,
+        showAnswer: false,
+        timer: 40,
+        score: 0,
+        correctAnswers: 0,
+        wrongAnswers: 0,
+        pointsEarned: 0,
+        bonusPoints: 0,
+        timeTaken: 0,
+        questionResults: initialResults,
+      ));
+
+      print('Emitted total questions count: ${questions.length}');
+      startTimer(context);
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
+  }
 
-    emit(state.copyWith(questions: questions));
-    startTimer(context);
+
+
+  int answerToIndex(Answer answer) {
+    // Map enum Answer {A, B, C, D} to index 0..3
+    switch (answer) {
+      case Answer.A:
+        return 0;
+      case Answer.B:
+        return 1;
+      case Answer.C:
+        return 2;
+      case Answer.D:
+        return 3;
+    }
   }
 
   void startTimer(BuildContext context) {
     _timer?.cancel();
-    emit(state.copyWith(timer: 10));
+    emit(state.copyWith(timer: 40));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.timer > 0) {
-        emit(state.copyWith(timer: state.timer - 1,selectedIndex: state.selectedIndex));
+        emit(state.copyWith(timer: state.timer - 1));
       } else {
         _timer?.cancel();
         if (state.selectedIndex == null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Times Up')));
-
-          Future.delayed(Duration(seconds: 2), () {
-            emit(
-              state.copyWith(
-                showAnswer: true,
-                isTimerEnded: true,
-                selectedIndex: state.correctAnswers,
-              ),
-            );
-          });
+          emit(state.copyWith(
+            showAnswer: true,
+            isTimerEnded: true,
+            selectedIndex: state.questions[state.currentIndex].correctIndex,
+          ));
         }
       }
     });
@@ -154,32 +120,137 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     emit(state.copyWith(selectedIndex: index, showAnswer: false));
   }
 
+  // void submitQuestion(BuildContext context) {
+  //   _timer?.cancel();
+  //   final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
+  //   int timeBonus = isCorrect == true ? (state.timer >= 20 ? 1 : 0) : 0;
+  //   int newScore = state.score;
+  //
+  //   if (isCorrect) {
+  //     newScore += 2 + timeBonus;
+  //   }
+  //
+  //   emit(
+  //     state.copyWith(
+  //       selectedIndex: state.selectedIndex,
+  //       showAnswer: true,
+  //       correctAnswers: isCorrect
+  //           ? state.correctAnswers + 1
+  //           : state.correctAnswers,
+  //       wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
+  //       score: newScore,
+  //       isTimerEnded: true,
+  //     ),
+  //   );
+  // }
+
   void submitQuestion(BuildContext context) {
     _timer?.cancel();
+
     final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
-    int timeBonus = isCorrect == true ? (state.timer >= 20 ? 1 : 0) : 0;
-    int newScore = state.score;
+
+    int pointsThisQuestion = 0;
+    int bonusPointsThisQuestion = 0;
 
     if (isCorrect) {
-      newScore += 2 + timeBonus;
+      pointsThisQuestion = 2;
+      if (state.timer > 20) {
+        bonusPointsThisQuestion = 1;
+      }
     }
 
-    emit(
-      state.copyWith(
-        selectedIndex: state.selectedIndex,
-        showAnswer: true,
-        correctAnswers: isCorrect
-            ? state.correctAnswers + 1
-            : state.correctAnswers,
-        wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-        score: newScore,
-        isTimerEnded: true,
-      ),
+    final timeSpentThisQuestion = 40 - state.timer;
+
+    final updatedResults = List<QuestionResult>.from(state.questionResults);
+
+    updatedResults[state.currentIndex] = QuestionResult(
+      userAnswerIndex: state.selectedIndex,
+      correctPoint: pointsThisQuestion,
+      bonusPoint: bonusPointsThisQuestion,
+      timeTakenSeconds: timeSpentThisQuestion,
     );
+
+    // Update global accumulators if needed or keep as is
+    final newPointsEarned = state.pointsEarned + pointsThisQuestion;
+    final newBonusPoints = state.bonusPoints + bonusPointsThisQuestion;
+    final newScore = state.score + pointsThisQuestion + bonusPointsThisQuestion;
+    final newTimeTaken = state.timeTaken + timeSpentThisQuestion;
+
+    emit(state.copyWith(
+      questionResults: updatedResults,
+      selectedIndex: state.selectedIndex,
+      showAnswer: true,
+      correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
+      wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
+      score: newScore,
+      pointsEarned: newPointsEarned,
+      bonusPoints: newBonusPoints,
+      timeTaken: newTimeTaken,
+      isTimerEnded: true,
+    ));
   }
+
+
+  // void nextQuestion(BuildContext context) {
+  //   final isLast = state.currentIndex == state.questions.length - 1;
+  //
+  //   if (!isLast) {
+  //     emit(
+  //       state.copyWith(
+  //         currentIndex: state.currentIndex + 1,
+  //         selectedIndex: null,
+  //         showAnswer: false,
+  //         timer: 40,
+  //         isTimerEnded: false,
+  //       ),
+  //     );
+  //     startTimer(context);
+  //   } else {
+  //     _timer?.cancel();
+  //
+  //     final allCorrectBonus = (state.correctAnswers == state.questions.length)
+  //         ? 3
+  //         : 0;
+  //     final finalScore = state.score + allCorrectBonus;
+  //
+  //     final percent = (state.correctAnswers / state.questions.length) * 100;
+  //     final winAchieved = percent >= 80;
+  //
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => CalculationResultScreen(
+  //           correctedAnswer: state.correctAnswers,
+  //           totalQuestion: state.questions.length,
+  //           score: finalScore,
+  //           winAchieved: winAchieved,
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 
   void nextQuestion(BuildContext context) {
     final isLast = state.currentIndex == state.questions.length - 1;
+
+    String formatTime(int seconds) {
+      if (seconds < 60) {
+        return "${seconds}s";
+      } else {
+        final minutes = seconds ~/ 60;
+        final remainingSeconds = seconds % 60;
+        if (remainingSeconds == 0) {
+          return "${minutes}m";
+        } else {
+          return "${minutes}m ${remainingSeconds}s";
+        }
+      }
+    }
+
+    String indexToLetter(int? index) {
+      if (index == null) return "";
+      return String.fromCharCode(65 + index); // 65 = 'A'
+    }
 
     if (!isLast) {
       emit(
@@ -195,10 +266,49 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     } else {
       _timer?.cancel();
 
-      final allCorrectBonus = (state.correctAnswers == state.questions.length)
-          ? 3
-          : 0;
+      // Build detailed question results
+      final List<Map<String, dynamic>> categoryQuestions = [];
+      for (int i = 0; i < state.questions.length; i++) {
+        categoryQuestions.add({
+          "question": state.questions[i].question,
+          "options": List.generate(state.questions[i].options.length, (optIndex) {
+            return {
+              "label": String.fromCharCode(65 + optIndex), // A, B, C, D
+              "value": state.questions[i].options[optIndex]
+            };
+          }),
+          "answer": indexToLetter(state.questions[i].correctIndex),
+          "explanation": state.questions[i].hint,
+          "user_answered": indexToLetter(state.questionResults[i].userAnswerIndex),
+          "correct_point": state.questionResults[i].correctPoint,
+          "bonus_point": state.questionResults[i].bonusPoint,
+          "time_taken": state.questionResults[i].timeTakenSeconds,
+        });
+      }
+
+      // Final totals
+      final allCorrectBonus =
+      (state.correctAnswers == state.questions.length) ? 3 : 0;
       final finalScore = state.score + allCorrectBonus;
+
+      // Build payload
+      final payload = {
+        "total_questions": state.questions.length,
+        "correct_answers": state.correctAnswers,
+        "total_correct_points": state.pointsEarned,
+        "total_earned_points": finalScore,
+        "additional_points": state.bonusPoints,
+        "total_time": formatTime(state.timeTaken),
+        "Altitude Conversions & Mixed Calculations": categoryQuestions,
+        "Weight & Balance Conversions": categoryQuestions,
+        "Distance/Range Conversions": categoryQuestions,
+        "Fuel Volume/Flow Conversions": categoryQuestions,
+        "Pressure & Weather Data Conversions": categoryQuestions,
+        "Speed/Time Calculations": categoryQuestions,
+        "Temperature Conversions & Impact": categoryQuestions,
+      };
+
+      print("Final Payload: $payload");
 
       final percent = (state.correctAnswers / state.questions.length) * 100;
       final winAchieved = percent >= 80;
@@ -216,6 +326,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       );
     }
   }
+
+
+
 
   @override
   Future<void> close() {

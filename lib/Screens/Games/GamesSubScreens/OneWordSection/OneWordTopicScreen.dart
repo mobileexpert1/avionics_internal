@@ -42,12 +42,13 @@ class OneWordTopicScreen extends StatelessWidget {
                   builder: (context, state) {
                     return GridView.builder(
                       itemCount: state.games.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 0,
-                        childAspectRatio: 0.8,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 0,
+                            childAspectRatio: 0.8,
+                          ),
                       itemBuilder: (context, index) {
                         final game = state.games[index];
                         return LockGameCard(
@@ -73,7 +74,12 @@ class OneWordTopicScreen extends StatelessWidget {
                               print('Playing ${game.title}');
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (_) => QuizQuestionScreen(sectionId: 2,sectionTitle: game.title)),
+                                MaterialPageRoute(
+                                  builder: (_) => QuizQuestionScreen(
+                                    sectionId: 2,
+                                    sectionTitle: game.title,
+                                  ),
+                                ),
                               );
                             }
                           },
