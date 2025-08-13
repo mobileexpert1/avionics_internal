@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../Constants/AppColors.dart';
 import '../../Constants/ConstantStrings.dart';
-import '../../Screens/Games/MainGameScreen/GameScreen.dart';
 
 class GameResultCard extends StatelessWidget {
   final String title;
@@ -92,20 +91,27 @@ class GameResultCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 13),
               const Text("Keep learning and Keep playing"),
-              const SizedBox(height: 9),
-              Text(
-                "$correctPoints points for correct answers",
-                style: const TextStyle(fontSize: 14),
-              ),
+              const SizedBox(height: 13),
+              correctPoints != 0
+                  ? Text(
+                      "$correctPoints points for correct answers",
+                      style: const TextStyle(fontSize: 15),
+                    )
+                  : const SizedBox.shrink(),
+              const SizedBox(height: 5),
               ...bonusPoints.map(
-                (b) => Text(
-                  b,
-                  style: const TextStyle(fontSize: 14, color: Colors.orange),
+                (b) => Padding(
+                  padding: const EdgeInsets.only(bottom: 6.0),
+                  // space below each item
+                  child: Text(
+                    b,
+                    style: const TextStyle(fontSize: 15, color: Colors.orange),
+                  ),
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 13),
               CustomBottomButton(
                 title: ConstantStrings.backToGame,
                 backgroundColor: AppColors.customBottomEnabledColour,

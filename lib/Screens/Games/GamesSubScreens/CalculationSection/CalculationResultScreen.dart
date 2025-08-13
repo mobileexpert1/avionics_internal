@@ -12,12 +12,14 @@ class CalculationResultScreen extends StatefulWidget {
     required this.correctedAnswer,
     required this.score,
     required this.winAchieved,
+    required this.bonusPoints,
   });
 
   final int totalQuestion;
   final int correctedAnswer;
   final int score;
   final bool winAchieved;
+  final int bonusPoints;
 
   @override
   _CalculationResultScreenState createState() =>
@@ -34,8 +36,14 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           score: widget.correctedAnswer,
           total: widget.totalQuestion,
           totalPoints: widget.score,
-          correctPoints: widget.score,
-          bonusPoints: const ["+2 points for time bonus"],
+          correctPoints: (widget.correctedAnswer * 2),
+          bonusPoints: [
+            (widget.bonusPoints == 0 ? '' : '+ ${widget.bonusPoints} points for time bonus'),
+
+            (widget.winAchieved == false
+                ? ''
+                : '+3 points for perfectly correct answers'),
+          ],
           badgeText: "Weather Navigator Badge Earned",
         ),
       child: Scaffold(

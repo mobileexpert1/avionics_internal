@@ -28,7 +28,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
               'Mesosphere',
               'Thermosphere',
             ],
-            correctIndex: 0,
+            correctIndex: 1,
             hint: "The stratosphere is where most commercial jets cruise.",
           ),
           QuizQuestion(
@@ -125,27 +125,31 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   void startTimer(BuildContext context) {
     _timer?.cancel();
-    emit(state.copyWith(timer: 10));
+    emit(state.copyWith(timer: 2));
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.timer > 0) {
-        emit(state.copyWith(timer: state.timer - 1,selectedIndex: state.selectedIndex));
+        emit(
+          state.copyWith(
+            timer: state.timer - 1,
+            selectedIndex: state.selectedIndex,
+          ),
+        );
+        print(state.selectedIndex);
       } else {
         _timer?.cancel();
-        if (state.selectedIndex == null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Times Up')));
-
-          Future.delayed(Duration(seconds: 2), () {
-            emit(
-              state.copyWith(
-                showAnswer: true,
-                isTimerEnded: true,
-                selectedIndex: state.correctAnswers,
-              ),
-            );
-          });
-        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Times Up')));
+        Future.delayed(Duration(seconds: 2), () {
+          emit(
+            state.copyWith(
+              showAnswer: true,
+              isTimerEnded: true,
+              selectedIndex: state.currentQuestion.correctIndex,
+              // Why i got the correct Answer 0 i have set the value of 2 you can check on the above question model
+            ),
+          );
+        });
       }
     });
   }
@@ -174,6 +178,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
         score: newScore,
         isTimerEnded: true,
+        totalBonusPoints: state.totalBonusPoints + timeBonus,
       ),
     );
   }
@@ -193,6 +198,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       );
       startTimer(context);
     } else {
+      emit(
+        state.copyWith(),
+      );
+
       _timer?.cancel();
 
       final allCorrectBonus = (state.correctAnswers == state.questions.length)
@@ -203,17 +212,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       final percent = (state.correctAnswers / state.questions.length) * 100;
       final winAchieved = percent >= 80;
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CalculationResultScreen(
-            correctedAnswer: state.correctAnswers,
-            totalQuestion: state.questions.length,
-            score: finalScore,
-            winAchieved: winAchieved,
+      Future.delayed(const Duration(milliseconds: 100), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CalculationResultScreen(
+              correctedAnswer: state.correctAnswers,
+              totalQuestion: state.questions.length,
+              score: finalScore,
+              winAchieved: winAchieved,
+              bonusPoints: state.totalBonusPoints,
+            ),
           ),
-        ),
-      );
+        );
+      });
     }
   }
 

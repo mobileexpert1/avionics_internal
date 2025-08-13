@@ -12,6 +12,7 @@ class QuizQuestionState {
   final int score;
   final List<int> timePerQuestion;
   final bool winAchieved;
+  final int totalBonusPoints;
 
   const QuizQuestionState({
     required this.questions,
@@ -25,6 +26,7 @@ class QuizQuestionState {
     this.score = 0,
     required this.timePerQuestion,
     this.winAchieved = false,
+    this.totalBonusPoints = 0,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -41,6 +43,7 @@ class QuizQuestionState {
     int? score,
     List<int>? timePerQuestion,
     bool? winAchieved,
+    int? totalBonusPoints,
   }) {
     return QuizQuestionState(
       questions: questions ?? this.questions,
@@ -54,6 +57,7 @@ class QuizQuestionState {
       score: score ?? this.score,
       timePerQuestion: timePerQuestion ?? this.timePerQuestion,
       winAchieved: winAchieved ?? this.winAchieved,
+      totalBonusPoints: totalBonusPoints ?? this.totalBonusPoints,
     );
   }
 
