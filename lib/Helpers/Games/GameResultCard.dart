@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../Constants/AppColors.dart';
 import '../../Constants/ConstantStrings.dart';
+import '../../Screens/Games/MainGameScreen/GameScreen.dart';
 
 class GameResultCard extends StatelessWidget {
   final String title;
@@ -14,7 +15,7 @@ class GameResultCard extends StatelessWidget {
   final int correctPoints;
   final List<String> bonusPoints;
   final String? badgeText;
-  final VoidCallback? onBackTap;
+  // final VoidCallback? onBackTap;
 
   const GameResultCard({
     super.key,
@@ -25,7 +26,7 @@ class GameResultCard extends StatelessWidget {
     required this.correctPoints,
     required this.bonusPoints,
     this.badgeText,
-    this.onBackTap,
+    // this.onBackTap,
   });
 
   @override
@@ -117,7 +118,7 @@ class GameResultCard extends StatelessWidget {
                 backgroundColor: AppColors.customBottomEnabledColour,
                 textColor: Colors.white,
                 icon: const SizedBox(width: 0),
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
               ),
               const SizedBox(height: 12),
             ],
