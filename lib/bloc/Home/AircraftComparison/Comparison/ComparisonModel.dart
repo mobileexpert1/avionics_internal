@@ -76,6 +76,7 @@ class TechnicalData {
   final DimensionData height;
   final String mtow;
   final String maxPayload;
+  final String mlw;
 
   TechnicalData({
     required this.wingspan,
@@ -83,6 +84,7 @@ class TechnicalData {
     required this.height,
     required this.mtow,
     required this.maxPayload,
+    required this.mlw,
   });
 
   factory TechnicalData.fromJson(Map<String, dynamic> json) {
@@ -90,8 +92,9 @@ class TechnicalData {
       wingspan: DimensionData.fromJson(json['wingspan_m_and_ft']),
       length: DimensionData.fromJson(json['length']),
       height: DimensionData.fromJson(json['height']),
-      mtow: json['mtow'] ?? '',
-      maxPayload: json['max_payload'] ?? '',
+      mtow: json['mtow_kg'] ?? '',
+      maxPayload: json['max_payload_kg'] ?? '',
+      mlw: json['mlw_kg'] ?? '',
     );
   }
 }

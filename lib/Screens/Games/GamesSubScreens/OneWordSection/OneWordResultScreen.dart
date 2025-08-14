@@ -42,7 +42,7 @@ class OneWordResultScreen extends StatelessWidget {
                 correctPoints: state.correctPoints,
                 bonusPoints: state.bonusPoints,
                 badgeText: state.badgeText,
-                onBackTap: () => Navigator.pop(context),
+                // onBackTap: () => Navigator.pop(context),
               );
             },
           ),

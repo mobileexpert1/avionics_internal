@@ -5,12 +5,12 @@ import '../Quiz_Section/quiz_model.dart';
 class OnewordCubit extends Cubit<OnewordState> {
   OnewordCubit()
       : super(OnewordState(games: [
-    quizItem(title: 'Aircraft & Principles \nof Flight', isLocked: false),
-    quizItem(title: 'Equipment & \nSystems', isLocked: false),
-    quizItem(title: 'Airspace & \nProcedures', isLocked: false),
-    quizItem(title: 'Meteorology & \nEnvironment', isLocked: false),
-    quizItem(title: 'Regulations, Human Factors & Safety', isLocked: false),
-    quizItem(title: 'Aviation Trivia & History', isLocked: false),
+    quizItem(title: 'Aircraft & Principles \nof Flight', isLocked: false, gameNumber: 1),
+    quizItem(title: 'Equipment & \nSystems', isLocked: false, gameNumber: 2),
+    quizItem(title: 'Airspace & \nProcedures', isLocked: false, gameNumber: 3),
+    quizItem(title: 'Meteorology & \nEnvironment', isLocked: false, gameNumber: 4),
+    quizItem(title: 'Regulations, Human Factors & Safety', isLocked: false, gameNumber: 5),
+    quizItem(title: 'Aviation Trivia & History', isLocked: false, gameNumber: 6),
   ]));
 
   void unlockGame(int index) {

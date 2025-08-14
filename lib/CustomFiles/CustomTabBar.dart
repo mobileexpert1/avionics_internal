@@ -101,7 +101,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
             }),
           ),
         ),
-        const Divider(height: 1, thickness: 1, color: Colors.grey),
+        const Divider(height: 0, thickness: 1, color: Colors.grey),
         // Bottom border
       ],
     );

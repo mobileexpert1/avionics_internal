@@ -1,22 +1,3 @@
-// import 'package:avionics_internal/bloc/Games/SubGameSection/Calculation_Section/calculation_state.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import '../Quiz_Section/quiz_model.dart';
-//
-// class CalculationCubit extends Cubit<CalculationState> {
-//   CalculationCubit()
-//       : super(CalculationState(games: [
-//     quizItem(title: 'Take a measure', isLocked: false),
-//     quizItem(title: 'Flight Math', isLocked: true),
-//     quizItem(title: 'Green is new', isLocked: true),
-//     quizItem(title: 'Exosphere', isLocked: true),
-//   ]));
-//
-//   void unlockGame(int index) {
-//     final updatedGames = List<quizItem>.from(state.games);
-//     updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
-//     emit(state.copyWith(games: updatedGames));
-//   }
-// }
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'calculation_repository.dart';
 import 'calculation_state.dart';
@@ -39,22 +20,27 @@ class CalculationCubit extends Cubit<CalculationState> {
         return;
       }
 
+      // Create gameList with indices aligned to game_no_assign (1-based indexing)
       final gameList = [
         quizItem(
           title: 'Take a Measure',
           isLocked: !(lockData.isEnableTakeMeasure ?? false),
+          gameNumber: 1, // Maps to take_measure
         ),
         quizItem(
           title: 'Flight Math',
           isLocked: !(lockData.isEnableFlightMath ?? false),
+          gameNumber: 2, // Maps to flight_math
         ),
         quizItem(
           title: 'Green is New Blue',
           isLocked: !(lockData.isEnableGreeNewBlue ?? false),
+          gameNumber: 3, // Maps to gree_new_blue
         ),
         quizItem(
           title: 'Mind the Separation',
           isLocked: !(lockData.isEnableMindSeparation ?? false),
+          gameNumber: 4, // Maps to mind_separation
         ),
       ];
 
@@ -71,6 +57,7 @@ class CalculationCubit extends Cubit<CalculationState> {
       ));
     }
   }
+
 
   void unlockGame(int index) {
     final updatedGames = List<quizItem>.from(state.games);

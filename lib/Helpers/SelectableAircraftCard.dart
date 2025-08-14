@@ -1,5 +1,5 @@
-import '../Constants/constantImages.dart';
 import 'package:flutter/material.dart';
+import '../Constants/constantImages.dart';
 
 class SimpleAircraftCard extends StatelessWidget {
   final Widget imagePath;
@@ -15,7 +15,7 @@ class SimpleAircraftCard extends StatelessWidget {
     required this.imagePath,
     required this.model,
     required this.badge,
-     this.manufacturer,
+    this.manufacturer,
     this.airline,
     required this.airlineImagePath,
     this.onTap,
@@ -58,7 +58,7 @@ class SimpleAircraftCard extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
-                  color: Color(0xFF3F3D56)
+                  color: Color(0xFF3F3D56),
                 ),
               ),
               _buildBadge(badge),
@@ -68,31 +68,32 @@ class SimpleAircraftCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4),
             child: Row(
               children: [
-                if (airlineImagePath != null) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(2),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: airlineImagePath,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: SizedBox(
+                    width: 24, // Increased size for better visibility
+                    height: 24,
+                    child: airlineImagePath,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (manufacturer != null)
+                  Expanded(
+                    child: Text(
+                      manufacturer!,
+                      style: const TextStyle(fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 10),
-
-                  Text(
-                    manufacturer!,
-                    style: const TextStyle(fontSize: 13),
-                  ),
-                  if (airline != null) ...[
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        airline!,
-                        style: const TextStyle(fontSize: 13),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                if (airline != null) ...[
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      airline!,
+                      style: const TextStyle(fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ]
+                  ),
                 ],
               ],
             ),

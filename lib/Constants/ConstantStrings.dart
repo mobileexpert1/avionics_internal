@@ -205,12 +205,15 @@ class ApiServiceUrlAirplaneConstant {
 }
 
 class ApiFunctionUrlGamesConstant {
-  static const calculationService = "/ai-engine/games/";
+  static const calculationService = "/ai-engine/games/calculation/";
 }
 
 
 class ApiServiceUrlGamesConstant {
-  static const getLockScreen = "calculation/";
-  static const takeMeasureCalculation = "calculation/take-measure";
-  static const submitCalculationResults = "calculation/take-measure/answer-submit";
+  // static const getLockScreen = "calculation/";
+  // static const getQuestions = "calculation/";
+  // static const submitCalculationResults = "calculation/take-measure/answer-submit";
+
+  static String getQuestions(int gameNumber) => "$gameNumber";
+  static String submitCalculationResults(int gameNumber) => "$gameNumber/answer-submit";
 }
