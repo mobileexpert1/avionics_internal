@@ -113,7 +113,7 @@ class _LockGameCardState extends State<LockGameCard> {
             child: const Icon(
               Icons.info_outline_rounded,
               size: 18,
-              color: Colors.grey,
+              color: Colors.black,
             ),
           ),
         ),

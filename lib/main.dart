@@ -1,4 +1,3 @@
-import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';

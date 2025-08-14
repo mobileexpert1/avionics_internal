@@ -114,16 +114,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
         body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
           builder: (context, state) {
             final quizCubit = context.read<QuizQuestionCubit>();
-
-            print(isNeedToShowOrNot);
-            print(state.isTimerEnded);
-            print(_popupShown);
-
             if (state.questions.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             } else if (state.isTimerEnded && !_popupShown) {
               final isLast = state.currentIndex == state.questions.length - 1;
-              print("32312312");
               _popupShown = true; // prevent multiple triggers
               Future.delayed(const Duration(milliseconds: 10), () {
                 setState(() {
@@ -277,6 +271,7 @@ class QuizQuestionCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+
                   const SizedBox(height: 20),
                   ...List.generate(options.length, (index) {
                     final isSelected = index == selectedOption;
@@ -554,9 +549,15 @@ void showPopupBelowIcon(
               ),
 
               // Arrow
+
               Positioned(
-                left: direction == ArrowDirection.right ? -10 : null,
-                right: direction == ArrowDirection.left ? -10 : null,
+                left:
+                direction ==
+                    ArrowDirection.right ? -10 : null,
+
+                right:
+                direction ==
+                    ArrowDirection.left ? -10 : null,
                 child: CustomPaint(
                   size: const dart_ui.Size(20, 20),
                   painter: TrianglePainter(

@@ -91,16 +91,15 @@ class GameResultCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 13),
+              const SizedBox(height: 10),
               const Text("Keep learning and Keep playing"),
-              const SizedBox(height: 13),
+              const SizedBox(height: 5),
               correctPoints != 0
                   ? Text(
                       "$correctPoints points for correct answers",
                       style: const TextStyle(fontSize: 15),
                     )
                   : const SizedBox.shrink(),
-              const SizedBox(height: 5),
               ...bonusPoints.map(
                 (b) => Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),
@@ -108,16 +107,19 @@ class GameResultCard extends StatelessWidget {
                   child: Text(
                     b,
                     style: const TextStyle(fontSize: 15, color: Colors.orange),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              const SizedBox(height: 13),
+              const SizedBox(height: 15),
               CustomBottomButton(
                 title: ConstantStrings.backToGame,
                 backgroundColor: AppColors.customBottomEnabledColour,
                 textColor: Colors.white,
                 icon: const SizedBox(width: 0),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
               ),
               const SizedBox(height: 12),
             ],

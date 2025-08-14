@@ -482,30 +482,39 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     }
   }
 
+  DateTime? _startTime;
+  final int _totalDuration = 40;
+
   void startTimer(BuildContext context) {
-    _timer?.cancel();
+    _startTime = DateTime.now();
     emit(state.copyWith(timer: 40));
+    _timer?.cancel();
+    print("Timer Start");
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (state.timer > 0) {
+      final elapsed = DateTime.now().difference(_startTime!).inSeconds;
+      final remaining = _totalDuration - elapsed;
+
+      if (remaining > 0) {
         emit(
           state.copyWith(
-            timer: state.timer - 1,
+            timer: remaining,
             selectedIndex: state.selectedIndex,
           ),
         );
+        print("Pending time $remaining");
       } else {
+        print("Time out");
         _timer?.cancel();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Times Up')));
-        Future.delayed(Duration(seconds: 2), () {
-          emit(
-            state.copyWith(
-              showAnswer: true,
-              isTimerEnded: true,
-              selectedIndex: state.currentQuestion.correctIndex,
-            ),
-          );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Times Up')),
+        );
+
+        Future.delayed(const Duration(seconds: 2), () {
+          emit(state.copyWith(
+            showAnswer: true,
+            isTimerEnded: true,
+            selectedIndex: state.currentQuestion.correctIndex,
+          ));
         });
       }
     });
@@ -583,7 +592,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
 
       // Build category-specific question results
-      final buildCategoryQuestions = (List<QuizQuestion> questions, int startIndex) {
+      buildCategoryQuestions(List<QuizQuestion> questions, int startIndex) {
         return questions.asMap().entries.map((entry) {
           final i = entry.key;
           final q = entry.value;
@@ -604,7 +613,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             "time_taken": formatTime(state.questionResults[resultIndex].timeTakenSeconds),
           };
         }).toList();
-      };
+      }
 
       // Calculate starting indices for each category
       int currentIndex = 0;
