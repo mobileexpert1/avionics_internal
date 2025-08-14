@@ -39,14 +39,10 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           correctPoints: widget.correctedAnswer * 2,
           bonusPoints: [
             if (widget.bonusPoints > 0)
-              '+${widget.bonusPoints} point${widget.bonusPoints == 1 ? '' : 's'} for speed bonus',
-            (widget.winAchieved == false
-                ? ''
-                : '+3 points for perfectly correct \nanswers'),
+              '+${widget.bonusPoints} point${widget.bonusPoints == 1 ? '' : 's'} for time bonus',
           ],
           badgeText: widget.winAchieved ? 'Aviation Master Badge Earned' : null,
         ),
-
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -57,7 +53,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(16.0),
           child: BlocBuilder<GameResultCubit, GameResultState>(
             builder: (context, state) {
               return GameResultCard(
