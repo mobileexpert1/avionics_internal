@@ -205,7 +205,7 @@ class ApiServiceUrlAirplaneConstant {
 }
 
 class ApiFunctionUrlGamesConstant {
-  static const calculationService = "/ai-engine/games/calculation/";
+  static const calculationService = "ai-engine/games/calculation/";
 }
 
 

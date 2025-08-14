@@ -65,7 +65,7 @@ class Result {
           ),
         ),
     speedTimeCalculations: List<AltitudeConversionsMixedCalculation>.from(
-      json["speed_conversions"].map(
+      json["speed_calculations"].map(
         (x) => AltitudeConversionsMixedCalculation.fromJson(x),
       ),
     ),
@@ -93,7 +93,7 @@ class Result {
     "pressure_conversions": List<dynamic>.from(
       pressureWeatherDataConversions.map((x) => x.toJson()),
     ),
-    "speed_conversions": List<dynamic>.from(
+    "speed_calculations": List<dynamic>.from(
       speedTimeCalculations.map((x) => x.toJson()),
     ),
     "temperature_conversions": List<dynamic>.from(
