@@ -169,14 +169,14 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   void startTimer(BuildContext context) {
     _startTime = DateTime.now();
-    emit(state.copyWith(timer: 40));
+    emit(state.copyWith(timer: _totalDuration));
     _timer?.cancel();
     print("Timer Start");
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final elapsed = DateTime.now().difference(_startTime!).inSeconds;
       final remaining = _totalDuration - elapsed;
 
-      if (remaining > 0) {
+      if (remaining >= 0) {
         emit(
           state.copyWith(
             timer: remaining,
