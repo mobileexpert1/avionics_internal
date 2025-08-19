@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Database/generic_methods.dart';
@@ -15,7 +17,7 @@ class QuizQuestionRepository {
   };
 
   /// Fetch calculation game data from API for a specific game number
-  Future<CalculationGameModel?> getCalculationData(int gameNumber) async {
+  Future<CalculationGameModel?> getCalculationData(int gameNumber,int actionNumber) async {
     if (!await GenericMethods.hasInternet()) {
       return null;
     }
@@ -29,7 +31,7 @@ class QuizQuestionRepository {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlGamesConstant.calculationService}"
-      "${ApiServiceUrlGamesConstant.getQuestions(gameNumber)}",
+      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber,actionNumber)}",
     );
 
     try {
@@ -41,6 +43,31 @@ class QuizQuestionRepository {
     }
   }
 
+  Future<CalculationGameModel?> fetchAdditionalQuestions(int gameNumber, int actionNumber) async {
+    if (!await GenericMethods.hasInternet()) {
+      return null;
+    }
+
+    // Validate gameNumber
+    if (!gameNoAssign.containsKey(gameNumber)) {
+      throw "Invalid game number: $gameNumber";
+    }
+
+    final gameName = gameNoAssign[gameNumber];
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlGamesConstant.calculationService}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+    );
+
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      return CalculationGameModel.fromJson(jsonData);
+    } catch (e) {
+      debugPrint("Background fetch failed for action $actionNumber: $e");
+      return null;
+    }
+  }
   /// Submit calculation result to API
   Future<SubmitCalculationResultResponse> submitCalculationResult(
     Map<String, dynamic> payload,

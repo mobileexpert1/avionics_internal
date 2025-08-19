@@ -11,7 +11,7 @@ class CalculationLockRepository {
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlGamesConstant.calculationService}",
+          "${ApiFunctionUrlGamesConstant.calculation}",
     );
 
     try {
