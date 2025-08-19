@@ -48,7 +48,7 @@ class _LockGameCardState extends State<LockGameCard> {
                   widget.title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: widget.isLocked
                         ? Colors.grey
@@ -85,14 +85,14 @@ class _LockGameCardState extends State<LockGameCard> {
         ),
         if (widget.isLocked)
           Positioned(
-            top: 60,
+            top: 50,
             left: 0,
             right: 5,
             child: Center(
               child: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.LockIcon),
-                height: 50,
-                width: 50,
+                height: 40,
+                width: 40,
                 color: const Color(0xFF1E80F2),
               ),
             ),
