@@ -203,17 +203,30 @@ class ApiServiceUrlAirplaneConstant {
   static const String favUnFavPlane = 'aircraft/favorite';
   static const compareAircraft = "aircraft/comparison";
 }
+//
+// class ApiFunctionUrlGamesConstant {
+// //   static const calculationService = "ai-engine/games/calculation/";
+// // }
+// //
+// //
+// // class ApiServiceUrlGamesConstant {
+// //   // static const getLockScreen = "calculation/";
+// //   // static const getQuestions = "calculation/";
+// //   // static const submitCalculationResults = "calculation/take-measure/answer-submit";
+// //
+// //   static String getQuestions(int gameNumber) => "$gameNumber";
+// //   static String submitCalculationResults(int gameNumber) => "$gameNumber/answer-submit";
+// // }
 
 class ApiFunctionUrlGamesConstant {
-  static const calculationService = "ai-engine/games/calculation/";
+  static const calculationService = "ai-engine/games/calculation/limited-question/";
+  static const calculation = "ai-engine/games/calculation/";
 }
 
-
 class ApiServiceUrlGamesConstant {
-  // static const getLockScreen = "calculation/";
-  // static const getQuestions = "calculation/";
-  // static const submitCalculationResults = "calculation/take-measure/answer-submit";
+  static String getLimitedQuestions(int gameNumber, int actionNumber) =>
+      "?game_no=$gameNumber&action_no=$actionNumber";
 
-  static String getQuestions(int gameNumber) => "$gameNumber";
-  static String submitCalculationResults(int gameNumber) => "$gameNumber/answer-submit";
+  static String submitCalculationResults(int gameNumber) =>
+      "$gameNumber/answer-submit";
 }

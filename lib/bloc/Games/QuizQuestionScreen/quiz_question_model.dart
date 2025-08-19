@@ -10,4 +10,21 @@ class QuizQuestion {
     required this.correctIndex,
     required this.hint,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is QuizQuestion &&
+              runtimeType == other.runtimeType &&
+              question == other.question &&
+              options.toString() == other.options.toString() &&
+              correctIndex == other.correctIndex &&
+              hint == other.hint;
+
+  @override
+  int get hashCode =>
+      question.hashCode ^
+      options.toString().hashCode ^
+      correctIndex.hashCode ^
+      (hint?.hashCode ?? 0);
 }
