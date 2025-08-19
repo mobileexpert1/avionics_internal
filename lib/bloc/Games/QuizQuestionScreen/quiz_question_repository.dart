@@ -34,6 +34,7 @@ class QuizQuestionRepository {
 
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      print("Fetched Data From Server$jsonData");
       return CalculationGameModel.fromJson(jsonData);
     } catch (e) {
       throw "Failed to fetch data for $gameName: $e";

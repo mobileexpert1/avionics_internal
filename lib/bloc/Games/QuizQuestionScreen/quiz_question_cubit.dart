@@ -13,7 +13,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Timer? _timer;
 
   QuizQuestionCubit(int sectionId, BuildContext context)
-      : super(QuizQuestionState.initial()) {
+    : super(QuizQuestionState.initial()) {
     loadQuestions(sectionId, context);
   }
 
@@ -21,7 +21,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final calculationData = await QuizQuestionRepository().getCalculationData(sectionId);
+      final calculationData = await QuizQuestionRepository().getCalculationData(
+        sectionId,
+      );
 
       if (calculationData == null) {
         emit(
@@ -37,66 +39,80 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       // Map questions to their respective categories
       final altitudeQuestions = result.altitudeConversionsMixedCalculations
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       final weightQuestions = result.weightBalanceConversions
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       final distanceQuestions = result.distanceRangeConversions
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       final fuelQuestions = result.fuelVolumeFlowConversions
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       final pressureQuestions = result.pressureWeatherDataConversions
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       final speedQuestions = result.speedTimeCalculations
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       final temperatureQuestions = result.temperatureConversionsImpact
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: answerToIndex(q.answer),
-        hint: q.explanation,
-      ))
+          .map(
+            (q) => QuizQuestion(
+              question: q.question,
+              options: q.options.map((o) => o.value).toList(),
+              correctIndex: answerToIndex(q.answer),
+              hint: q.explanation,
+            ),
+          )
           .toList();
 
       // Combine all questions for quiz progression
@@ -112,7 +128,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       final initialResults = List<QuestionResult>.generate(
         allQuestions.length,
-            (_) => QuestionResult(
+        (_) => QuestionResult(
           userAnswerIndex: null,
           correctPoint: 0,
           bonusPoint: 0,
@@ -178,31 +194,31 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       if (remaining >= 0) {
         emit(
-          state.copyWith(
-            timer: remaining,
-            selectedIndex: state.selectedIndex,
-          ),
+          state.copyWith(timer: remaining, selectedIndex: state.selectedIndex),
         );
         print("Pending time $remaining");
       } else {
         print("Time out");
         _timer?.cancel();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Times Up')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Times Up')));
 
         Future.delayed(const Duration(seconds: 2), () {
-          emit(state.copyWith(
-            showAnswer: true,
-            isTimerEnded: true,
-            selectedIndex: state.currentQuestion.correctIndex,
-          ));
+          emit(
+            state.copyWith(
+              showAnswer: true,
+              isTimerEnded: true,
+              selectedIndex: state.currentQuestion.correctIndex,
+            ),
+          );
         });
       }
     });
   }
 
   void selectOption(int index) {
+    print("Selected Index $index");
     emit(state.copyWith(selectedIndex: index, showAnswer: false));
   }
 
@@ -235,7 +251,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         questionResults: updatedResults,
         selectedIndex: state.selectedIndex,
         showAnswer: true,
-        correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
+        correctAnswers: isCorrect
+            ? state.correctAnswers + 1
+            : state.correctAnswers,
         wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
         score: newScore,
         pointsEarned: newPointsEarned,
@@ -289,32 +307,59 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             }),
             "answer": indexToLetter(q.correctIndex),
             "explanation": q.hint,
-            "user_answered": indexToLetter(state.questionResults[resultIndex].userAnswerIndex),
+            "user_answered": indexToLetter(
+              state.questionResults[resultIndex].userAnswerIndex,
+            ),
             "correct_point": state.questionResults[resultIndex].correctPoint,
             "bonus_point": state.questionResults[resultIndex].bonusPoint,
-            "time_taken": formatTime(state.questionResults[resultIndex].timeTakenSeconds),
+            "time_taken": formatTime(
+              state.questionResults[resultIndex].timeTakenSeconds,
+            ),
           };
         }).toList();
       }
 
       // Calculate starting indices for each category
       int currentIndex = 0;
-      final altitudeQuestions = buildCategoryQuestions(state.altitudeQuestions, currentIndex);
+      final altitudeQuestions = buildCategoryQuestions(
+        state.altitudeQuestions,
+        currentIndex,
+      );
       currentIndex += state.altitudeQuestions.length;
-      final weightQuestions = buildCategoryQuestions(state.weightQuestions, currentIndex);
+      final weightQuestions = buildCategoryQuestions(
+        state.weightQuestions,
+        currentIndex,
+      );
       currentIndex += state.weightQuestions.length;
-      final distanceQuestions = buildCategoryQuestions(state.distanceQuestions, currentIndex);
+      final distanceQuestions = buildCategoryQuestions(
+        state.distanceQuestions,
+        currentIndex,
+      );
       currentIndex += state.distanceQuestions.length;
-      final fuelQuestions = buildCategoryQuestions(state.fuelQuestions, currentIndex);
+      final fuelQuestions = buildCategoryQuestions(
+        state.fuelQuestions,
+        currentIndex,
+      );
       currentIndex += state.fuelQuestions.length;
-      final pressureQuestions = buildCategoryQuestions(state.pressureQuestions, currentIndex);
+      final pressureQuestions = buildCategoryQuestions(
+        state.pressureQuestions,
+        currentIndex,
+      );
       currentIndex += state.pressureQuestions.length;
-      final speedQuestions = buildCategoryQuestions(state.speedQuestions, currentIndex);
+      final speedQuestions = buildCategoryQuestions(
+        state.speedQuestions,
+        currentIndex,
+      );
       currentIndex += state.speedQuestions.length;
-      final temperatureQuestions = buildCategoryQuestions(state.temperatureQuestions, currentIndex);
+      final temperatureQuestions = buildCategoryQuestions(
+        state.temperatureQuestions,
+        currentIndex,
+      );
 
       // Final totals
-      final allCorrectBonus = (state.correctAnswers == state.questions.length) ? 3 : 0;
+      final allCorrectBonus = (state.correctAnswers == state.questions.length)
+          ? 3
+          : 0;
       final finalScore = state.score + allCorrectBonus;
 
       // Build payload
@@ -340,11 +385,17 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         const int chunkSize = 800;
         final jsonStr = jsonEncode(data);
         for (var i = 0; i < jsonStr.length; i += chunkSize) {
-          debugPrint(jsonStr.substring(i, i + chunkSize > jsonStr.length ? jsonStr.length : i + chunkSize));
+          debugPrint(
+            jsonStr.substring(
+              i,
+              i + chunkSize > jsonStr.length ? jsonStr.length : i + chunkSize,
+            ),
+          );
         }
       }
+
       //
-       debugPrintFull(payload);
+      debugPrintFull(payload);
       // print("Final Payload: $payload");
 
       try {
