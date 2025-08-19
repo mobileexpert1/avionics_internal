@@ -384,6 +384,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
 import 'package:flutter/material.dart';
@@ -420,10 +421,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         return;
       }
 
-      // Map initial questions by category
+      // Map initial questions by category name
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
       for (var category in calculationData.categoryTypes) {
-        categorizedQuestions[category.type] = category.questions
+        categorizedQuestions[category.name] = category.questions
             .map((q) => QuizQuestion(
           question: q.question,
           options: q.options.map((o) => o.value).toList(),
@@ -459,7 +460,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       // Update state with initial questions, game metadata, and start timer
       emit(
         state.copyWith(
-          isLoading: false, // Keep loading until 20 questions or background fetches complete
+          isLoading: false,
           questions: allQuestions,
           currentIndex: 0,
           selectedIndex: null,
@@ -474,9 +475,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           questionResults: initialResults,
           timePerQuestion: List<int>.filled(maxQuestions, 0),
           categorizedQuestions: categorizedQuestions,
-          game: calculationData.game ?? '', // From API response
-          level: calculationData.level ?? '', // From API response
-          difficulty: calculationData.difficulty ?? '', // From API response
+          game: calculationData.game ?? '',
+          level: calculationData.level ?? '',
+          difficulty: calculationData.difficulty ?? '',
+          categoryTypes: calculationData.categoryTypes, // Store categoryTypes
         ),
       );
 
@@ -497,7 +499,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> _fetchAndAppendBackgroundQuestions(int sectionId, BuildContext context) async {
     for (int actionNumber = 2; actionNumber <= 3; actionNumber++) {
       if (state.questions.length >= maxQuestions) {
-        break; // Stop if we have 20 questions
+        break;
       }
       final additionalData = await _repository.fetchAdditionalQuestions(sectionId, actionNumber);
       if (additionalData != null) {
@@ -511,7 +513,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   Future<void> appendQuestions(CalculationGameModel additionalData) async {
     if (state.questions.length >= maxQuestions) {
-      return; // No need to append if already at max
+      return;
     }
 
     // Combine new questions, capped at remaining capacity
@@ -529,7 +531,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     // Append to existing questions
     final updatedQuestions = [...state.questions, ...newQuestions].take(maxQuestions).toList();
 
-    // Map new questions by category, only including appended questions
+    // Map new questions by category name
     final Map<String, List<QuizQuestion>> newCategorizedQuestions = {};
     for (var category in additionalData.categoryTypes) {
       final categoryQuestions = category.questions
@@ -539,18 +541,18 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         correctIndex: q.options.indexWhere((o) => o.label == q.answer),
         hint: q.explanation,
       ))
-          .where((q) => newQuestions.contains(q)) // Only include appended questions
+          .where((q) => newQuestions.contains(q))
           .toList();
       if (categoryQuestions.isNotEmpty) {
-        newCategorizedQuestions[category.type] = categoryQuestions;
+        newCategorizedQuestions[category.name] = categoryQuestions; // Use name as key
       }
     }
 
     // Merge with existing categorized questions
     final updatedCategorizedQuestions = Map<String, List<QuizQuestion>>.from(state.categorizedQuestions);
-    newCategorizedQuestions.forEach((type, newQuestions) {
+    newCategorizedQuestions.forEach((name, newQuestions) {
       updatedCategorizedQuestions.update(
-        type,
+        name,
             (existing) => [...existing, ...newQuestions].take(maxQuestions).toList(),
         ifAbsent: () => newQuestions.take(maxQuestions).toList(),
       );
@@ -562,7 +564,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         state.copyWith(
           questions: updatedQuestions,
           categorizedQuestions: updatedCategorizedQuestions,
-          isLoading: updatedQuestions.length < maxQuestions, // Keep loading if fewer than 20
+          categoryTypes: [...state.categoryTypes, ...additionalData.categoryTypes], // Append categoryTypes
+          isLoading: updatedQuestions.length < maxQuestions,
         ),
       );
     }
@@ -619,7 +622,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     int pointsThisQuestion = isCorrect ? 2 : 0;
     int bonusPointsThisQuestion = timeBonus;
 
-    final timeSpentThisQuestion = 40 - state.timer;
+    final timeSpentThisQuestion = max(1, 40 - state.timer); // Ensure minimum 1s
     final updatedResults = List<QuestionResult>.from(state.questionResults);
     final updatedTimePerQuestion = List<int>.from(state.timePerQuestion);
 
@@ -678,26 +681,21 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         return String.fromCharCode(65 + index);
       }
 
+      // Map category names to numeric type IDs if not provided
+      final categoryTypeMap = <String, String>{};
+      state.categoryTypes.asMap().forEach((index, category) {
+        categoryTypeMap[category.name] = category.type.isNotEmpty ? category.type : "${index + 1}";
+      });
+
       final categories = state.categorizedQuestions.entries.map((entry) {
-        final categoryName = entry.key; // Key is category.name (e.g., "speed_conversions")
+        final categoryName = entry.key; // category.name
         final questions = entry.value.where((q) => state.questions.contains(q)).toList();
-        // Find the corresponding categoryType to get the type field
-        final categoryType = state.categoryTypes
-            .firstWhere(
-              (cat) => cat.name == categoryName,
-          orElse: () => CategoryType(
-            type: categoryName, // Fallback to name if type not found
-            name: categoryName,
-            questions: [],
-          ),
-        )
-            .name;
+        final categoryType = categoryTypeMap[categoryName] ?? categoryName; // Use numeric type or fallback
         return {
           "category_type": categoryType,
-          "category_name": categoryName.toString(),
+          "category_name": formatCategoryName(categoryName), // Format for display
           "questions": questions.map((q) {
             final resultIndex = state.questions.indexOf(q);
-            // Fallback for invalid index
             final result = resultIndex != -1
                 ? state.questionResults[resultIndex]
                 : QuestionResult(
@@ -750,13 +748,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
 
       debugPrintFull(payload);
-
-      // try {
-      //   await _repository.submitCalculationResult(payload);
-      // } catch (e) {
-      //   print("Submit API failed: $e");
-      // }
-
+      try {
+        await QuizQuestionRepository().submitCalculationResult(payload);
+      } catch (e) {
+        print("Submit API failed: $e");
+      }
       // Navigate to result screen
       final percent = (state.correctAnswers / maxQuestions) * 100;
       final winAchieved = percent >= 80;
@@ -788,6 +784,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         const SnackBar(content: Text('No more questions available')),
       );
     }
+  }
+
+  String formatCategoryName(String name) {
+    return name
+        .split('_')
+        .map((word) => word[0].toLowerCase() + word.substring(1))
+        .join(' ');
   }
 
   @override

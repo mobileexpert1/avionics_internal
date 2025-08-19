@@ -228,5 +228,5 @@ class ApiServiceUrlGamesConstant {
       "?game_no=$gameNumber&action_no=$actionNumber";
 
   static String submitCalculationResults(int gameNumber) =>
-      "$gameNumber/answer-submit";
+      "$gameNumber";
 }
