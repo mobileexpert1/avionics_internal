@@ -735,7 +735,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                           isNeedToShowOrNot: isNeedToShowOrNot,
                           isShowAnswers: state.showAnswer,
                           currentQuestion: state.currentIndex + 1,
-                          totalQuestions: 20, // Static total of 20 questions
+                          totalQuestions: 20,
                           secondsRemaining: state.timer,
                           onOptionSelected: (index) {
                             if (state.timer.toInt() != 0 && !state.showAnswer) {

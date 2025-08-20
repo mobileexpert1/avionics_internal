@@ -409,7 +409,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final calculationData = await _repository.getCalculationData(sectionId, 1);
+      final calculationData = await _repository.getCalculationData(sectionId, 3);
 
       if (calculationData == null) {
         emit(
@@ -497,7 +497,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   Future<void> _fetchAndAppendBackgroundQuestions(int sectionId, BuildContext context) async {
-    for (int actionNumber = 2; actionNumber <= 3; actionNumber++) {
+    for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
       if (state.questions.length >= maxQuestions) {
         break;
       }
@@ -565,7 +565,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           questions: updatedQuestions,
           categorizedQuestions: updatedCategorizedQuestions,
           categoryTypes: [...state.categoryTypes, ...additionalData.categoryTypes], // Append categoryTypes
-          isLoading: updatedQuestions.length < maxQuestions,
+          isLoading:false,
         ),
       );
     }
@@ -578,7 +578,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     _startTime = DateTime.now();
     emit(state.copyWith(timer: _totalDuration));
     _timer?.cancel();
-    print("Timer Start");
+    // print("Timer Start");
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final elapsed = DateTime.now().difference(_startTime!).inSeconds;
       final remaining = _totalDuration - elapsed;
@@ -592,7 +592,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         );
         print("Pending time $remaining");
       } else {
-        print("Time out");
+        // print("Time out");
         _timer?.cancel();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Times Up')),
@@ -737,17 +737,17 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "difficulty": state.difficulty,
         "categories": categories,
       };
-
-      void debugPrintFull(dynamic data) {
-        const int chunkSize = 800;
-        final jsonStr = jsonEncode(data);
-        for (var i = 0; i < jsonStr.length; i += chunkSize) {
-          debugPrint(jsonStr.substring(
-              i, i + chunkSize > jsonStr.length ? jsonStr.length : i + chunkSize));
-        }
-      }
-
-      debugPrintFull(payload);
+      //
+      // void debugPrintFull(dynamic data) {
+      //   const int chunkSize = 800;
+      //   final jsonStr = jsonEncode(data);
+      //   for (var i = 0; i < jsonStr.length; i += chunkSize) {
+      //     debugPrint(jsonStr.substring(
+      //         i, i + chunkSize > jsonStr.length ? jsonStr.length : i + chunkSize));
+      //   }
+      // }
+      //
+      // debugPrintFull(payload);
       try {
         await QuizQuestionRepository().submitCalculationResult(payload);
       } catch (e) {
