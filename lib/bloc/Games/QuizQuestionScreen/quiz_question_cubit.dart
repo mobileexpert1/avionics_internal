@@ -379,9 +379,6 @@
 //   }
 // }
 
-
-
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -399,17 +396,35 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   final QuizQuestionRepository _repository;
   static const int maxQuestions = 20;
 
-  QuizQuestionCubit(int sectionId, BuildContext context, {QuizQuestionRepository? repository})
-      : _repository = repository ?? QuizQuestionRepository(),
-        super(QuizQuestionState.initial()) {
+  QuizQuestionCubit(
+    int sectionId,
+    BuildContext context, {
+    QuizQuestionRepository? repository,
+  }) : _repository = repository ?? QuizQuestionRepository(),
+       super(QuizQuestionState.initial()) {
     loadQuestions(sectionId, context);
   }
+
+  QuizQuestion _mapQuestion(dynamic q) {
+    return QuizQuestion(
+      question: q.question,
+      options: q.options.map((o) => o.value).toList().cast<String>(),
+      correctIndex: q.options.indexWhere((o) => o.label == q.answer),
+      hint: q.explanation,
+    );
+  }
+
+  // Local buffer for silent background questions SD
+  List<QuizQuestion> _bufferedQuestions = [];
 
   Future<void> loadQuestions(int sectionId, BuildContext context) async {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final calculationData = await _repository.getCalculationData(sectionId, 3);
+      final calculationData = await _repository.getCalculationData(
+        sectionId,
+        3,
+      );
 
       if (calculationData == null) {
         emit(
@@ -425,31 +440,23 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
       for (var category in calculationData.categoryTypes) {
         categorizedQuestions[category.name] = category.questions
-            .map((q) => QuizQuestion(
-          question: q.question,
-          options: q.options.map((o) => o.value).toList(),
-          correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-          hint: q.explanation,
-        ))
-            .toList();
+            .map(_mapQuestion)
+            .toList()
+            .cast<QuizQuestion>();
       }
 
-      // Combine initial questions for quiz progression, capped at maxQuestions
+      // Initial questions capped at maxQuestions
       final allQuestions = calculationData.categoryTypes
           .expand((category) => category.questions)
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-        hint: q.explanation,
-      ))
+          .map(_mapQuestion)
           .take(maxQuestions)
-          .toList();
+          .toList()
+          .cast<QuizQuestion>();
 
-      // Initialize results and timePerQuestion for maxQuestions
+      // Initialize results
       final initialResults = List<QuestionResult>.generate(
         maxQuestions,
-            (index) => QuestionResult(
+        (index) => QuestionResult(
           userAnswerIndex: null,
           correctPoint: 0,
           bonusPoint: 0,
@@ -457,7 +464,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         ),
       );
 
-      // Update state with initial questions, game metadata, and start timer
+      // First emit (UI show)
       emit(
         state.copyWith(
           isLoading: false,
@@ -478,97 +485,69 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           game: calculationData.game ?? '',
           level: calculationData.level ?? '',
           difficulty: calculationData.difficulty ?? '',
-          categoryTypes: calculationData.categoryTypes, // Store categoryTypes
+          categoryTypes: calculationData.categoryTypes,
         ),
       );
 
-      // Start the timer to allow immediate quiz interaction
+      // Start timer
       startTimer(context);
 
-      // Start background fetches if fewer than 20 questions
+      // Fetch silently in background if needed
       if (allQuestions.length < maxQuestions) {
-        _fetchAndAppendBackgroundQuestions(sectionId, context);
-      } else {
-        emit(state.copyWith(isLoading: false));
+        _fetchAndBufferBackgroundQuestions(sectionId);
       }
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
-  Future<void> _fetchAndAppendBackgroundQuestions(int sectionId, BuildContext context) async {
+  Future<void> _fetchAndBufferBackgroundQuestions(int sectionId) async {
     for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
-      if (state.questions.length >= maxQuestions) {
+      if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
         break;
       }
-      final additionalData = await _repository.fetchAdditionalQuestions(sectionId, actionNumber);
+      final additionalData = await _repository.fetchAdditionalQuestions(
+        sectionId,
+        actionNumber,
+      );
       if (additionalData != null) {
-        await appendQuestions(additionalData);
+        await appendQuestionsSilently(additionalData);
       }
     }
-
-    // Stop loading after all background fetches complete or 20 questions reached
-    emit(state.copyWith(isLoading: false));
   }
 
-  Future<void> appendQuestions(CalculationGameModel additionalData) async {
-    if (state.questions.length >= maxQuestions) {
+  Future<void> appendQuestionsSilently(
+    CalculationGameModel additionalData,
+  ) async {
+    if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
       return;
     }
 
-    // Combine new questions, capped at remaining capacity
     final newQuestions = additionalData.categoryTypes
         .expand((category) => category.questions)
-        .map((q) => QuizQuestion(
-      question: q.question,
-      options: q.options.map((o) => o.value).toList(),
-      correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-      hint: q.explanation,
-    ))
-        .take(maxQuestions - state.questions.length)
-        .toList();
+        .map(_mapQuestion)
+        .take(
+          maxQuestions - (state.questions.length + _bufferedQuestions.length),
+        )
+        .toList()
+        .cast<QuizQuestion>();
 
-    // Append to existing questions
-    final updatedQuestions = [...state.questions, ...newQuestions].take(maxQuestions).toList();
-
-    // Map new questions by category name
-    final Map<String, List<QuizQuestion>> newCategorizedQuestions = {};
-    for (var category in additionalData.categoryTypes) {
-      final categoryQuestions = category.questions
-          .map((q) => QuizQuestion(
-        question: q.question,
-        options: q.options.map((o) => o.value).toList(),
-        correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-        hint: q.explanation,
-      ))
-          .where((q) => newQuestions.contains(q))
-          .toList();
-      if (categoryQuestions.isNotEmpty) {
-        newCategorizedQuestions[category.name] = categoryQuestions; // Use name as key
-      }
-    }
-
-    // Merge with existing categorized questions
-    final updatedCategorizedQuestions = Map<String, List<QuizQuestion>>.from(state.categorizedQuestions);
-    newCategorizedQuestions.forEach((name, newQuestions) {
-      updatedCategorizedQuestions.update(
-        name,
-            (existing) => [...existing, ...newQuestions].take(maxQuestions).toList(),
-        ifAbsent: () => newQuestions.take(maxQuestions).toList(),
-      );
-    });
-
-    // Update state only if new questions were added
     if (newQuestions.isNotEmpty) {
-      emit(
-        state.copyWith(
-          questions: updatedQuestions,
-          categorizedQuestions: updatedCategorizedQuestions,
-          categoryTypes: [...state.categoryTypes, ...additionalData.categoryTypes], // Append categoryTypes
-          isLoading:false,
-        ),
-      );
+      _bufferedQuestions.addAll(newQuestions);
     }
+  }
+
+  void revealBufferedQuestions() {
+    if (_bufferedQuestions.isEmpty) return;
+
+    final updatedQuestions = [
+      ...state.questions,
+      ..._bufferedQuestions,
+    ].take(maxQuestions).toList();
+
+    _bufferedQuestions.clear();
+
+    emit(state.copyWith(questions: updatedQuestions, isLoading: false));
   }
 
   DateTime? _startTime;
@@ -585,25 +564,25 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       if (remaining >= 0) {
         emit(
-          state.copyWith(
-            timer: remaining,
-            selectedIndex: state.selectedIndex,
-          ),
+          state.copyWith(timer: remaining, selectedIndex: state.selectedIndex),
         );
         print("Pending time $remaining");
       } else {
         // print("Time out");
         _timer?.cancel();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Times Up')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Times Up')));
 
         Future.delayed(const Duration(seconds: 2), () {
-          emit(state.copyWith(
-            showAnswer: true,
-            isTimerEnded: true,
-            selectedIndex: state.currentQuestion.correctIndex,
-          ));
+          emit(
+            state.copyWith(
+              showAnswer: true,
+              isTimerEnded: true,
+              timeTaken: 0,
+              selectedIndex: state.currentQuestion.correctIndex,
+            ),
+          );
         });
       }
     });
@@ -645,7 +624,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         timePerQuestion: updatedTimePerQuestion,
         selectedIndex: state.selectedIndex,
         showAnswer: true,
-        correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
+        correctAnswers: isCorrect
+            ? state.correctAnswers + 1
+            : state.correctAnswers,
         wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
         score: newScore,
         pointsEarned: newPointsEarned,
@@ -670,6 +651,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         ),
       );
       startTimer(context);
+
+      print(state.currentIndex);
+      if (state.currentIndex == 9 || state.currentIndex == 13) {
+        revealBufferedQuestions();
+      }
     }
     // Last question → submit + navigate
     else if (state.currentIndex == maxQuestions - 1) {
@@ -684,32 +670,42 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       // Map category names to numeric type IDs if not provided
       final categoryTypeMap = <String, String>{};
       state.categoryTypes.asMap().forEach((index, category) {
-        categoryTypeMap[category.name] = category.type.isNotEmpty ? category.type : "${index + 1}";
+        categoryTypeMap[category.name] = category.type.isNotEmpty
+            ? category.type
+            : "${index + 1}";
       });
 
       final categories = state.categorizedQuestions.entries.map((entry) {
         final categoryName = entry.key; // category.name
-        final questions = entry.value.where((q) => state.questions.contains(q)).toList();
-        final categoryType = categoryTypeMap[categoryName] ?? categoryName; // Use numeric type or fallback
+        final questions = entry.value
+            .where((q) => state.questions.contains(q))
+            .toList();
+        final categoryType =
+            categoryTypeMap[categoryName] ??
+            categoryName; // Use numeric type or fallback
         return {
           "category_type": categoryType,
-          "category_name": formatCategoryName(categoryName), // Format for display
+          "category_name": formatCategoryName(categoryName),
+          // Format for display
           "questions": questions.map((q) {
             final resultIndex = state.questions.indexOf(q);
             final result = resultIndex != -1
                 ? state.questionResults[resultIndex]
                 : QuestionResult(
-              userAnswerIndex: null,
-              correctPoint: 0,
-              bonusPoint: 0,
-              timeTakenSeconds: 0,
-            );
+                    userAnswerIndex: null,
+                    correctPoint: 0,
+                    bonusPoint: 0,
+                    timeTakenSeconds: 0,
+                  );
             return {
               "question": q.question,
-              "options": List.generate(q.options.length, (optIndex) => {
-                "label": String.fromCharCode(65 + optIndex),
-                "value": q.options[optIndex],
-              }),
+              "options": List.generate(
+                q.options.length,
+                (optIndex) => {
+                  "label": String.fromCharCode(65 + optIndex),
+                  "value": q.options[optIndex],
+                },
+              ),
               "answer": indexToLetter(q.correctIndex),
               "explanation": q.hint,
               "user_answered": indexToLetter(result.userAnswerIndex),
@@ -775,7 +771,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     // If loading more
     else if (state.isLoading) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please wait, more questions are loading...')),
+        const SnackBar(
+          content: Text('Please wait, more questions are loading...'),
+        ),
       );
     }
     // If fewer than maxQuestions

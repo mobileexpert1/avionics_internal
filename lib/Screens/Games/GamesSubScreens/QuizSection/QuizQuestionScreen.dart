@@ -727,6 +727,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       children: [
                         const SizedBox(height: 24),
                         QuizQuestionCard(
+                          timeTaken: state.timeTaken,
                           hintText: state.currentQuestion.hint,
                           question: state.currentQuestion.question,
                           options: state.currentQuestion.options,
@@ -781,6 +782,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 }
 
 class QuizQuestionCard extends StatelessWidget {
+  final int timeTaken;
   final String hintText;
   final String question;
   final List<String> options;
@@ -795,6 +797,7 @@ class QuizQuestionCard extends StatelessWidget {
   final VoidCallback? onNext;
 
   const QuizQuestionCard({
+    required this.timeTaken,
     required this.hintText,
     required this.question,
     required this.options,
@@ -859,8 +862,8 @@ class QuizQuestionCard extends StatelessWidget {
 
                     if (selectedOption != null) {
                       if (isCorrect && isShowAnswers) {
-                        backgroundColor = Colors.green.shade100;
-                        borderColor = Colors.green;
+                        backgroundColor = timeTaken ==  0 ? AppColors.customColourOfTimeExpired : Colors.green.shade100;
+                        borderColor = timeTaken ==  0 ? Colors.blue : Colors.green;
                         trailingIcon = const Icon(
                           Icons.check_circle,
                           color: Colors.green,
