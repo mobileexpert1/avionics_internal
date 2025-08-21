@@ -43,9 +43,9 @@ class CalculationLockScreen extends StatelessWidget {
                 itemCount: state.games.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 12,
+                  crossAxisSpacing: 22,
                   mainAxisSpacing: 0,
-                  childAspectRatio: 0.8,
+                  childAspectRatio: 0.9,
                 ),
                 itemBuilder: (context, index) {
                   final game = state.games[index];

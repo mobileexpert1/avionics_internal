@@ -380,7 +380,6 @@
 // }
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
@@ -484,9 +483,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           questionResults: initialResults,
           timePerQuestion: List<int>.filled(maxQuestions, 0),
           categorizedQuestions: categorizedQuestions,
-          game: calculationData.game ?? '',
-          level: calculationData.level ?? '',
-          difficulty: calculationData.difficulty ?? '',
+          game: calculationData.game,
+          level: calculationData.level,
+          difficulty: calculationData.difficulty,
           categoryTypes: calculationData.categoryTypes,
         ),
       );
@@ -558,8 +557,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     if (isNoMoreQuestionArrived == true ) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('New question fetched from server. Moving to the next question… Get ready!')));
-      Future.delayed(const Duration(seconds: 7), () {
+      ).showSnackBar(const SnackBar(content: Text('All set! Taking you to the next question...')));
+      Future.delayed(const Duration(seconds: 4), () {
         isNoMoreQuestionArrived = false;
         nextQuestion(context);
       });
@@ -796,7 +795,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     else {
       isNoMoreQuestionArrived = true;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No more questions are available at the moment. Please wait for the upcoming ones. Once a new question arrives, it will automatically move to the next question.')),
+        const SnackBar(content: Text('Please hold on while we load the next set of questions…')),
       );
     }
   }
