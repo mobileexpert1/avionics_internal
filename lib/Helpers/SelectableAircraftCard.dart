@@ -71,8 +71,8 @@ class SimpleAircraftCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(2),
                   child: SizedBox(
-                    width: 24, // Increased size for better visibility
-                    height: 24,
+                    width: 30, // Increased size for better visibility
+                    height: 10,
                     child: airlineImagePath,
                   ),
                 ),

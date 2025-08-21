@@ -163,6 +163,71 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   }
 
   /// ⬇️ Image Rendering Helper
+  // Widget _buildLeadingImage(
+  //     double width,
+  //     double height,
+  //     String imagePath,
+  //     bool isLocalSvgAsset,
+  //     bool isNetwork,
+  //     ) {
+  //   if (isLocalSvgAsset) {
+  //     return SizedBox(
+  //       width: width,
+  //       height: height,
+  //       child: SvgPicture.asset(
+  //         imagePath,
+  //         fit: BoxFit.contain,
+  //         alignment: Alignment.center,
+  //       ),
+  //     );
+  //   } else if (isNetwork) {
+  //     if (imagePath.contains(".svg")) {
+  //       return SizedBox(
+  //         width: width,
+  //         height: height,
+  //         child: SvgPicture.network(
+  //           imagePath,
+  //           fit: BoxFit.fill,
+  //           alignment: Alignment.center,
+  //           placeholderBuilder: (context) => SvgPicture.asset(
+  //             CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+  //             height: height,
+  //             width: width,
+  //             fit: BoxFit.contain,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       return Image.network(
+  //         imagePath,
+  //         height: height,
+  //         width: width,
+  //         fit: BoxFit.fill,
+  //         errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+  //           CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+  //           height: height,
+  //           width: width,
+  //           fit: BoxFit.contain,
+  //         ),
+  //       );
+  //     }
+  //   } else {
+  //     return Image.asset(
+  //       imagePath,
+  //       height: height,
+  //       width: width,
+  //       fit: BoxFit.contain,
+  //       errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+  //         CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+  //         height: height,
+  //         width: width,
+  //         fit: BoxFit.contain,
+  //       ),
+  //     );
+  //   }
+  // }
+
+
   Widget _buildLeadingImage(
       double width,
       double height,
@@ -171,17 +236,17 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
       bool isNetwork,
       ) {
     if (isLocalSvgAsset) {
-      return SizedBox(
-        width: width,
-        height: height,
-        child: SvgPicture.asset(
-          imagePath,
-          fit: BoxFit.contain,
-          alignment: Alignment.center,
-        ),
-      );
-    } else if (isNetwork) {
-      if (imagePath.contains(".svg")) {
+      if (imagePath.contains("assets")) {
+       return SizedBox(
+         width: width,
+         height: height,
+         child: SvgPicture.asset(
+           imagePath,
+           fit: BoxFit.contain,
+           alignment: Alignment.center,
+         ),
+       );
+      } else {
         return SizedBox(
           width: width,
           height: height,
@@ -197,20 +262,20 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
             ),
           ),
         );
-      } else {
-        return Image.network(
-          imagePath,
+      }
+    } else if (isNetwork) {
+      return Image.network(
+        imagePath,
+        height: height,
+        width: width,
+        fit: BoxFit.fill,
+        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
           height: height,
           width: width,
-          fit: BoxFit.fill,
-          errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-            height: height,
-            width: width,
-            fit: BoxFit.contain,
-          ),
-        );
-      }
+          fit: BoxFit.contain,
+        ),
+      );
     } else {
       return Image.asset(
         imagePath,
