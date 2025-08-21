@@ -556,8 +556,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     emit(state.copyWith(questions: updatedQuestions, isLoading: false));
 
     if (isNoMoreQuestionArrived == true ) {
-      isNoMoreQuestionArrived = false;
-      nextQuestion(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('New question fetched from server. Moving to the next question… Get ready!')));
+      Future.delayed(const Duration(seconds: 7), () {
+        isNoMoreQuestionArrived = false;
+        nextQuestion(context);
+      });
     }
   }
 

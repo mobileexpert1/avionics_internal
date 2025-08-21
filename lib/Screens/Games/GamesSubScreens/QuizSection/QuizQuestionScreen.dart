@@ -696,6 +696,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               });
             }
 
+            if (state.selectedIndex == null && state.showAnswer == false && state.isTimerEnded == false) {
+              isNeedToShowOrNot = false;
+            }
+
             return Stack(
               children: [
                 Padding(
