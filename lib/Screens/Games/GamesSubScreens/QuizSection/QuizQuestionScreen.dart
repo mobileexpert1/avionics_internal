@@ -588,22 +588,18 @@
 //
 //
 
-
 import 'dart:async';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Constants/constantImages.dart';
-import '../../../../Helpers/CustomToast/CustomToast.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'dart:ui' as dart_ui;
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../CustomFiles/CustomAppBar.dart';
 
-OverlayEntry? _popupOverlayEntry;
+final GlobalKey _iconKey = GlobalKey();
 
 class QuizQuestionScreen extends StatefulWidget {
   const QuizQuestionScreen({
@@ -619,16 +615,12 @@ class QuizQuestionScreen extends StatefulWidget {
   _QuizQuestionScreenState createState() => _QuizQuestionScreenState();
 }
 
-final GlobalKey _iconKey = GlobalKey();
-
 bool isNeedToShowOrNot = false;
-bool _popupShown = false;
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   @override
   void initState() {
     super.initState();
-    _popupShown = false;
     isNeedToShowOrNot = false;
   }
 
@@ -663,8 +655,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        _popupOverlayEntry?.remove();
-                        _popupOverlayEntry = null;
                         setState(() {
                           isNeedToShowOrNot = false;
                         });
@@ -692,28 +682,16 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
         body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
           builder: (context, state) {
             final quizCubit = context.read<QuizQuestionCubit>();
+
             if (state.questions.isEmpty && state.isLoading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state.isTimerEnded && !_popupShown) {
-              _popupShown = true; // Prevent multiple triggers
-              Future.delayed(const Duration(milliseconds: 10), () {
+            }
+
+            // Timer khatam hote hi hint show
+            if (state.isTimerEnded && !isNeedToShowOrNot) {
+              Future.delayed(const Duration(milliseconds: 50), () {
                 setState(() {
                   isNeedToShowOrNot = true;
-                });
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Future.delayed(const Duration(milliseconds: 30), () {
-                    showPopupBelowIcon(
-                      context,
-                      _iconKey,
-                      ArrowDirection.right,
-                      isNeedToShowOrNot,
-                      state.currentQuestion.hint,
-                      onDismissed: () {
-                        _popupShown = false; // Reset for next question
-                        quizCubit.nextQuestion(context);
-                      },
-                    );
-                  });
                 });
               });
             }
@@ -745,19 +723,12 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                           },
                           onNext: () {
                             if (state.isTimerEnded) {
-                              _popupOverlayEntry?.remove();
-                              _popupOverlayEntry = null;
-                              if (state.currentIndex == 19) { // Static max questions - 1
-                                _popupShown = false;
+                              setState(() {
                                 isNeedToShowOrNot = false;
-                              } else {
-                                setState(() {
-                                  _popupShown = false;
-                                  isNeedToShowOrNot = false;
-                                });
-                              }
+                              });
                               quizCubit.nextQuestion(context);
-                            } else if (state.selectedIndex != null || state.showAnswer) {
+                            } else if (state.selectedIndex != null ||
+                                state.showAnswer) {
                               quizCubit.submitQuestion(context);
                             }
                           },
@@ -862,8 +833,12 @@ class QuizQuestionCard extends StatelessWidget {
 
                     if (selectedOption != null) {
                       if (isCorrect && isShowAnswers) {
-                        backgroundColor = timeTaken ==  0 ? AppColors.customColourOfTimeExpired : Colors.green.shade100;
-                        borderColor = timeTaken ==  0 ? Colors.blue : Colors.green;
+                        backgroundColor = timeTaken == 0
+                            ? AppColors.customColourOfTimeExpired
+                            : Colors.green.shade100;
+                        borderColor = timeTaken == 0
+                            ? Colors.blue
+                            : Colors.green;
                         trailingIcon = const Icon(
                           Icons.check_circle,
                           color: Colors.green,
@@ -921,24 +896,53 @@ class QuizQuestionCard extends StatelessWidget {
                     );
                   }),
                   const SizedBox(height: 10),
+
                   if (isNeedToShowOrNot)
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: SizedBox(
-                          height: 48,
-                          child: GestureDetector(
-                            key: _iconKey,
-                            onTap: () {},
-                            child: Image.asset(
-                              CommonUi.setPngImage(AssetsPath.carFollowImage),
-                              width: 46,
-                              height: 46,
-                              fit: BoxFit.cover,
+                      padding: const EdgeInsets.only(left: 8.0, top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 48,
+                            width: 48,
+                            child: GestureDetector(
+                              key: _iconKey,
+                              onTap: () {},
+                              child: Image.asset(
+                                CommonUi.setPngImage(AssetsPath.carFollowImage),
+                                width: 46,
+                                height: 46,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              constraints: const BoxConstraints(maxWidth: 250),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 8,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                hintText,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -1042,99 +1046,4 @@ class QuizProgressCard extends StatelessWidget {
       ),
     );
   }
-}
-
-void showPopupBelowIcon(
-    BuildContext context,
-    GlobalKey key,
-    ArrowDirection direction,
-    bool isNeedToShowOrNot,
-    String hintText, {
-      VoidCallback? onDismissed,
-    }) {
-  if (!isNeedToShowOrNot) return;
-  if (key.currentContext == null) return;
-
-  final render = key.currentContext!.findRenderObject();
-  if (render == null || render is! RenderBox) return;
-  final renderBox = render as RenderBox;
-
-  final dart_ui.Size size = renderBox.size;
-  final Offset offset = renderBox.localToGlobal(Offset.zero);
-
-  final double screenWidth = MediaQuery.of(context).size.width;
-  final double popupWidth = 250;
-  final double horizontalPadding = 20;
-
-  double leftPosition;
-  if (direction == ArrowDirection.right) {
-    leftPosition =
-        offset.dx +
-            size.width +
-            MediaQuery.of(context).padding.right +
-            (defaultTargetPlatform == TargetPlatform.iOS ? 30 : 20);
-    if (leftPosition + popupWidth > screenWidth) {
-      leftPosition = screenWidth - popupWidth - horizontalPadding;
-    }
-  } else {
-    leftPosition = offset.dx - popupWidth - 8;
-    if (leftPosition < horizontalPadding) {
-      leftPosition = horizontalPadding;
-    }
-  }
-
-  // Remove existing popup if any
-  _popupOverlayEntry?.remove();
-
-  _popupOverlayEntry = OverlayEntry(
-    builder: (context) {
-      return Positioned(
-        left: leftPosition,
-        top: offset.dy + size.height / 2 - (MediaQuery.of(context).viewInsets.bottom + 50),
-        child: Material(
-          color: Colors.transparent,
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                constraints: const BoxConstraints(maxWidth: 250),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  hintText,
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-              ),
-              Positioned(
-                left: direction == ArrowDirection.right ? -10 : null,
-                right: direction == ArrowDirection.left ? -10 : null,
-                child: CustomPaint(
-                  size: const dart_ui.Size(20, 20),
-                  painter: TrianglePainter(
-                    color: Colors.white,
-                    direction: direction == ArrowDirection.right
-                        ? ArrowDirection.left
-                        : ArrowDirection.right,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-
-  Overlay.of(context).insert(_popupOverlayEntry!);
 }

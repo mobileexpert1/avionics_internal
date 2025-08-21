@@ -396,6 +396,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   final QuizQuestionRepository _repository;
   static const int maxQuestions = 20;
 
+ bool isNoMoreQuestionArrived = false;
+
   QuizQuestionCubit(
     int sectionId,
     BuildContext context, {
@@ -494,14 +496,14 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       // Fetch silently in background if needed
       if (allQuestions.length < maxQuestions) {
-        _fetchAndBufferBackgroundQuestions(sectionId);
+        _fetchAndBufferBackgroundQuestions(sectionId,context);
       }
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 
-  Future<void> _fetchAndBufferBackgroundQuestions(int sectionId) async {
+  Future<void> _fetchAndBufferBackgroundQuestions(int sectionId,BuildContext context) async {
     for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
       if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
         break;
@@ -511,13 +513,14 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         actionNumber,
       );
       if (additionalData != null) {
-        await appendQuestionsSilently(additionalData);
+        await appendQuestionsSilently(additionalData,context);
       }
     }
   }
 
   Future<void> appendQuestionsSilently(
     CalculationGameModel additionalData,
+      BuildContext context
   ) async {
     if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
       return;
@@ -534,10 +537,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
     if (newQuestions.isNotEmpty) {
       _bufferedQuestions.addAll(newQuestions);
+      if (isNoMoreQuestionArrived == true ) {
+        revealBufferedQuestions(context);
+      }
     }
   }
 
-  void revealBufferedQuestions() {
+  void revealBufferedQuestions(BuildContext context) {
     if (_bufferedQuestions.isEmpty) return;
 
     final updatedQuestions = [
@@ -548,6 +554,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     _bufferedQuestions.clear();
 
     emit(state.copyWith(questions: updatedQuestions, isLoading: false));
+
+    if (isNoMoreQuestionArrived == true ) {
+      isNoMoreQuestionArrived = false;
+      nextQuestion(context);
+    }
   }
 
   DateTime? _startTime;
@@ -654,7 +665,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       print(state.currentIndex);
       if (state.currentIndex == 9 || state.currentIndex == 13) {
-        revealBufferedQuestions();
+        revealBufferedQuestions(context);
       }
     }
     // Last question → submit + navigate
@@ -778,8 +789,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     }
     // If fewer than maxQuestions
     else {
+      isNoMoreQuestionArrived = true;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No more questions available')),
+        const SnackBar(content: Text('No more questions are available at the moment. Please wait for the upcoming ones. Once a new question arrives, it will automatically move to the next question.')),
       );
     }
   }
