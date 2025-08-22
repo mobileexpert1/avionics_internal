@@ -300,8 +300,7 @@ class _FilterScreenState extends State<FilterScreen1> {
               );
               return TextButton(
                 onPressed: () {
-                  final filters = state.filterCategories;
-                  Navigator.of(context).pop(filters);
+                  Navigator.of(context).pop(state.filterCategories);
                 },
                 child: Row(
                   children: [

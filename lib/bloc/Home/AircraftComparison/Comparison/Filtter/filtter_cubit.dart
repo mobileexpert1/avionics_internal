@@ -334,7 +334,12 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
     );
   }
 
-  void updateSelectedFilters(List<FilterCategory1> updatedFilters, {bool isApplied = false}) {
+  void updateSelectedFilters(
+    List<FilterCategory1> updatedFilters, {
+    bool isApplied = false,
+  }) {
+    print("Previous:- $state.filterCategories");
+    print("Previous:- $updatedFilters");
     emit(
       FilterState1(
         filterCategories: updatedFilters.map((f) => f.copyWith()).toList(),

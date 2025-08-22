@@ -166,23 +166,12 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                           isEnabled: isButtonEnabled,
                             onPressed: () {
                               if (!isButtonEnabled) return;
-
-                              final comparisonCubit = ComparisonCubit();
-
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => MultiBlocProvider(
-                                    providers: [
-                                      BlocProvider(
-                                        create: (_) => ComparisonCubit()
-                                          ..fetchComparison(
-                                            context: context,
-                                            aircraft1Id: model1!.id,
-                                            aircraft2Id: model2!.id,
-                                          ),
-                                      ),
-                                    ],
+                                  builder: (_) => BlocProvider(
+                                    create: (_) =>
+                                        ComparisonFilterCubit1(),
                                     child: ComparisonScreen(
                                       model1: model1!.id,
                                       model2: model2!.id,
