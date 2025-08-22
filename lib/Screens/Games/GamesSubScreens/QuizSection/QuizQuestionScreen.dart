@@ -606,10 +606,12 @@ class QuizQuestionScreen extends StatefulWidget {
     super.key,
     required this.sectionId,
     required this.sectionTitle,
+    required this.gameId,
   });
 
   final int sectionId;
   final String sectionTitle;
+  final String gameId;
 
   @override
   _QuizQuestionScreenState createState() => _QuizQuestionScreenState();
@@ -627,7 +629,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuizQuestionCubit(widget.sectionId, context),
+      create: (_) => QuizQuestionCubit(widget.sectionId, context, gameId: widget.gameId),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -686,7 +688,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
             if (state.questions.isEmpty && state.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-
             if (state.isTimerEnded && !isNeedToShowOrNot) {
               Future.delayed(const Duration(milliseconds: 50), () {
                 setState(() {

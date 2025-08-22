@@ -61,7 +61,7 @@ class CalculationLockScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (_) => QuizQuestionScreen(
                               sectionId:game.gameNumber,
-                              sectionTitle: ConstantStrings.calculationsTitle,
+                              sectionTitle: ConstantStrings.calculationsTitle, gameId: "calculation",
                             ),
                           ),
                         );

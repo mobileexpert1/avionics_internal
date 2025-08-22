@@ -396,21 +396,38 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   static const int maxQuestions = 20;
 
  bool isNoMoreQuestionArrived = false;
+  final String gameId;
 
   QuizQuestionCubit(
     int sectionId,
     BuildContext context, {
-    QuizQuestionRepository? repository,
+        required this.gameId,
+        QuizQuestionRepository? repository,
+
   }) : _repository = repository ?? QuizQuestionRepository(),
        super(QuizQuestionState.initial()) {
     loadQuestions(sectionId, context);
   }
 
-  QuizQuestion _mapQuestion(dynamic q) {
+  // QuizQuestion _mapQuestion(dynamic q) {
+  //   return QuizQuestion(
+  //     question: q.question,
+  //     options: q.options.map((o) => o.value).toList().cast<String>(),
+  //     correctIndex: q.options.indexWhere((o) => o.label == q.answer),
+  //     hint: q.explanation,
+  //   );
+  // }
+
+  QuizQuestion _mapQuestion(Question q) {
+    final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
+    print('Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex');
+    if (correctIndex == -1) {
+      print('Warning: No matching answer for question "${q.question}", answer: ${q.answer}');
+    }
     return QuizQuestion(
       question: q.question,
-      options: q.options.map((o) => o.value).toList().cast<String>(),
-      correctIndex: q.options.indexWhere((o) => o.label == q.answer),
+      options: q.options.map((o) => o.value).toList(),
+      correctIndex: correctIndex,
       hint: q.explanation,
     );
   }
@@ -421,43 +438,61 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> loadQuestions(int sectionId, BuildContext context) async {
     try {
       emit(state.copyWith(isLoading: true));
+      CalculationGameModel? gameData;
 
-      final calculationData = await _repository.getCalculationData(
-        sectionId,
-        3,
-      );
+      if (gameId == "calculation") {
+        gameData = await _repository.getCalculationData(sectionId, 3);
+      } else if (gameId == "one_word") {
+        gameData = await _repository.getOneWordData(sectionId, 3);
+      } else {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Invalid gameId: $gameId',
+        ));
+        return;
+      }
 
-      if (calculationData == null) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: 'No internet or no data',
-          ),
-        );
+      print('Raw gameData: $gameData');
+
+      if (gameData == null || gameData.categoryTypes.isEmpty) {
+        print('No categories found in gameData');
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'No questions available from API',
+        ));
         return;
       }
 
       // Map initial questions by category name
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
-      for (var category in calculationData.categoryTypes) {
-        categorizedQuestions[category.name] = category.questions
-            .map(_mapQuestion)
-            .toList()
-            .cast<QuizQuestion>();
+      for (var category in gameData.categoryTypes) {
+        var questions = category.questions.map(_mapQuestion).toList();
+        print('Category: ${category.name}, Questions: Queens ${questions.length}');
+        categorizedQuestions[category.name] = questions;
       }
 
       // Initial questions capped at maxQuestions
-      final allQuestions = calculationData.categoryTypes
+      final allQuestions = gameData.categoryTypes
           .expand((category) => category.questions)
           .map(_mapQuestion)
           .take(maxQuestions)
-          .toList()
-          .cast<QuizQuestion>();
+          .toList();
+
+      print('Total questions mapped: ${allQuestions.length}');
+
+      if (allQuestions.isEmpty) {
+        print('No questions mapped from categories');
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'No questions could be mapped from API response',
+        ));
+        return;
+      }
 
       // Initialize results
       final initialResults = List<QuestionResult>.generate(
         maxQuestions,
-        (index) => QuestionResult(
+            (index) => QuestionResult(
           userAnswerIndex: null,
           correctPoint: 0,
           bonusPoint: 0,
@@ -483,39 +518,86 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           questionResults: initialResults,
           timePerQuestion: List<int>.filled(maxQuestions, 0),
           categorizedQuestions: categorizedQuestions,
-          game: calculationData.game,
-          level: calculationData.level,
-          difficulty: calculationData.difficulty,
-          categoryTypes: calculationData.categoryTypes,
+          game: gameData.game,
+          level: gameData.level,
+          difficulty: gameData.difficulty,
+          categoryTypes: gameData.categoryTypes,
         ),
       );
+
+      print('State updated: questions=${state.questions.length}, currentIndex=${state.currentIndex}');
 
       // Start timer
       startTimer(context);
 
       // Fetch silently in background if needed
       if (allQuestions.length < maxQuestions) {
-        _fetchAndBufferBackgroundQuestions(sectionId,context);
+        _fetchAndBufferBackgroundQuestions(sectionId, context);
       }
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    } catch (e, stackTrace) {
+      print('Error loading questions: $e, StackTrace: $stackTrace');
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to load questions: $e',
+      ));
     }
   }
 
-  Future<void> _fetchAndBufferBackgroundQuestions(int sectionId,BuildContext context) async {
+  //
+  // Future<void> _fetchAndBufferBackgroundQuestions(int sectionId,BuildContext context) async {
+  //   for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
+  //     if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
+  //       break;
+  //     }
+  //     final additionalData = await _repository.fetchAdditionalQuestions(
+  //       sectionId,
+  //       actionNumber,
+  //     );
+  //     if (additionalData != null) {
+  //       await appendQuestionsSilently(additionalData,context);
+  //     }
+  //   }
+  // }
+
+
+  Future<void> _fetchAndBufferBackgroundQuestions(int sectionId, BuildContext context) async {
+    print('Fetching background questions for sectionId: $sectionId');
     for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
       if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
+        print('Max questions reached: ${state.questions.length + _bufferedQuestions.length}');
         break;
       }
-      final additionalData = await _repository.fetchAdditionalQuestions(
-        sectionId,
-        actionNumber,
-      );
-      if (additionalData != null) {
-        await appendQuestionsSilently(additionalData,context);
+      CalculationGameModel? additionalData;
+      if (gameId == "calculation") {
+        additionalData = await _repository.fetchAdditionalQuestions(sectionId, actionNumber);
+      } else if (gameId == "one_word") {
+        additionalData = await _repository.fetchOneWordQuestions(sectionId, actionNumber);
+      } else {
+        print('Invalid gameId for background fetch: $gameId');
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'Invalid gameId for background fetch: $gameId',
+        ));
+        return;
+      }
+      print('Additional data for action $actionNumber: $additionalData');
+      if (additionalData != null && additionalData.categoryTypes.isNotEmpty) {
+        await appendQuestionsSilently(additionalData, context);
+      } else {
+        print('No additional questions for action $actionNumber');
       }
     }
+    if (state.questions.length + _bufferedQuestions.length == 0) {
+      print('No questions after background fetch');
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'No questions available after background fetch.',
+      ));
+    }
   }
+
+
+
 
   Future<void> appendQuestionsSilently(
     CalculationGameModel additionalData,
@@ -760,7 +842,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       //
       // debugPrintFull(payload);
       try {
-        await QuizQuestionRepository().submitCalculationResult(payload);
+        await QuizQuestionRepository().submitResult(payload, gameId);
       } catch (e) {
         print("Submit API failed: $e");
       }

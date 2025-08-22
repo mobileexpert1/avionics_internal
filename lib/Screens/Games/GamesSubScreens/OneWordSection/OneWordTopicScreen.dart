@@ -12,7 +12,7 @@ class OneWordTopicScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => OnewordCubit(),
+      create: (_) => OnewordCubit()..loadOneWordTopics(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -38,7 +38,7 @@ class OneWordTopicScreen extends StatelessWidget {
               ),
               const SizedBox(height: 14),
               Expanded(
-                child: BlocBuilder<OnewordCubit, OnewordState>(
+                child: BlocBuilder<OnewordCubit, OneWordTopicState>(
                   builder: (context, state) {
                     return GridView.builder(
                       itemCount: state.games.length,
@@ -76,8 +76,8 @@ class OneWordTopicScreen extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => QuizQuestionScreen(
-                                    sectionId: 2,
-                                    sectionTitle: game.title,
+                                    sectionId: game.gameNumber,
+                                    sectionTitle: game.title, gameId: "one_word",
                                   ),
                                 ),
                               );

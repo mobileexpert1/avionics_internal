@@ -41,12 +41,19 @@ class QuizLockScreen extends StatelessWidget {
                   return LockGameCard(
                     title: game.title,
                     isLocked: game.isLocked,
-                    infoMessage: 'The sky’s quiet lounge above the clouds,where ozone gets to work.',
+                    infoMessage:
+                        'The sky’s quiet lounge above the clouds,where ozone gets to work.',
                     onTap: () {
                       if (!game.isLocked) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => QuizQuestionScreen(sectionId: 1,sectionTitle: ConstantStrings.aviationQuizTitle)),
+                          MaterialPageRoute(
+                            builder: (_) => QuizQuestionScreen(
+                              sectionId: 1,
+                              sectionTitle: ConstantStrings.aviationQuizTitle,
+                              gameId: "quiz",
+                            ),
+                          ),
                         );
                         print('Playing ${game.title}');
                       }
