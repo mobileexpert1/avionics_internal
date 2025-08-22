@@ -687,7 +687,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            // Timer khatam hote hi hint show
             if (state.isTimerEnded && !isNeedToShowOrNot) {
               Future.delayed(const Duration(milliseconds: 50), () {
                 setState(() {

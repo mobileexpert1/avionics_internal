@@ -254,15 +254,25 @@ import 'filtter_model.dart';
 import 'filtter_state.dart';
 
 class FilterScreen1 extends StatefulWidget {
+  final bool isAlreadyProcessing;
+  final FilterState1? modelResponse;
+
+  const FilterScreen1({
+    super.key,
+    required this.isAlreadyProcessing,
+    this.modelResponse,
+  });
+
   @override
   _FilterScreenState createState() => _FilterScreenState();
 }
+
 
 class _FilterScreenState extends State<FilterScreen1> {
   @override
   void initState() {
     super.initState();
-    context.read<ComparisonFilterCubit1>().loadFiltersFromComparison1();
+    context.read<ComparisonFilterCubit1>().loadFiltersFromComparison1(widget.isAlreadyProcessing,widget.modelResponse);
   }
 
   @override
@@ -290,10 +300,7 @@ class _FilterScreenState extends State<FilterScreen1> {
               );
               return TextButton(
                 onPressed: () {
-                  final cubit = context.read<ComparisonFilterCubit1>();
-                  final filters = cubit.state.filterCategories;
-                  cubit.updateSelectedFilters(filters, isApplied: true);
-                  print('Filters Applied: ${filters.map((cat) => "${cat.name}: ${cat.options.map((opt) => "${opt.name}: ${opt.isSelected}").join(", ")}").join("\n")}');
+                  final filters = state.filterCategories;
                   Navigator.of(context).pop(filters);
                 },
                 child: Row(

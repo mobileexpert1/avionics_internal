@@ -182,9 +182,6 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                                             aircraft2Id: model2!.id,
                                           ),
                                       ),
-                                      BlocProvider(
-                                        create: (_) => ComparisonFilterCubit1()..loadFiltersFromComparison1(),
-                                      ),
                                     ],
                                     child: ComparisonScreen(
                                       model1: model1!.id,

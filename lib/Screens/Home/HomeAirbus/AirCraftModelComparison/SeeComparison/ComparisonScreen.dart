@@ -35,18 +35,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   int _currentTabIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      context.read<ComparisonCubit>().fetchComparison(
-        context: context,
-        aircraft1Id: widget.model1,
-        aircraft2Id: widget.model2,
-      );
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -73,6 +61,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           ),
           rightButton: GestureDetector(
             onTap: () async {
+              final currentState = context.read<ComparisonFilterCubit1>().state;
+
               final selectedFilters = await showModalBottomSheet<List<FilterCategory1>>(
                 context: context,
                 isScrollControlled: true,
@@ -86,7 +76,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                       heightFactor: 0.9,
                       child: ClipRRect(
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                        child: FilterScreen1(),
+                        child: FilterScreen1(isAlreadyProcessing: currentState.isApplied,modelResponse: currentState)
                       ),
                     ),
                   );
@@ -116,8 +106,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
                 final model = state.comparisonModel;
 
+                final currentState = context.read<ComparisonFilterCubit1>().state;
                 if (!filterState.isApplied && filterState.filterCategories.isEmpty && model != null) {
-                  context.read<ComparisonFilterCubit1>().loadFiltersFromComparison1();
+                  context.read<ComparisonFilterCubit1>().loadFiltersFromComparison1(currentState.isApplied,currentState);
                 }
 
                 if (model == null) {

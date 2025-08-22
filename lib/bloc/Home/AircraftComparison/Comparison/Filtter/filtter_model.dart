@@ -1,29 +1,39 @@
-class FilterOption1 {
+import 'package:equatable/equatable.dart';
+
+class FilterOption1 extends Equatable {
   final String id;
   final String name;
-  bool isSelected;
+  final bool isSelected;
 
-  FilterOption1({
+  const FilterOption1({
     required this.id,
     required this.name,
     this.isSelected = true,
   });
-  FilterOption1 copyWith({String? id, String? name, bool? isSelected}) {
+
+  FilterOption1 copyWith({
+    String? id,
+    String? name,
+    bool? isSelected,
+  }) {
     return FilterOption1(
       id: id ?? this.id,
       name: name ?? this.name,
       isSelected: isSelected ?? this.isSelected,
     );
   }
+
+  @override
+  List<Object?> get props => [id, name, isSelected];
 }
 
-class FilterCategory1 {
+class FilterCategory1 extends Equatable {
   final String id;
   final String name;
   final List<FilterOption1> options;
-  bool isExpanded;
+  final bool isExpanded;
 
-  FilterCategory1({
+  const FilterCategory1({
     required this.id,
     required this.name,
     required this.options,
@@ -43,4 +53,7 @@ class FilterCategory1 {
       isExpanded: isExpanded ?? this.isExpanded,
     );
   }
+
+  @override
+  List<Object?> get props => [id, name, options, isExpanded];
 }
