@@ -47,13 +47,13 @@ class GamesScreen extends StatelessWidget {
                       onTap: () {
                         switch (game.id) {
                           case 'quiz':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => QuizDetailScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => QuizDetailScreen(gameId: game.id)));
                             break;
                           case 'calculation':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) =>  CalculationDetailScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) =>  CalculationDetailScreen(gameId:game.id)));
                             break;
                           case 'one_word':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => OneWordDetailScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => OneWordDetailScreen(gameId: game.id)));
                             break;
                           // case 'black_box':
                           //   Navigator.push(context, MaterialPageRoute(builder: (_) =>  BlackBoxScreen()));

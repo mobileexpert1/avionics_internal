@@ -12,6 +12,10 @@ import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
 
 class CalculationDetailScreen extends StatelessWidget {
+  final String gameId;
+
+  const CalculationDetailScreen({super.key, required this.gameId});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

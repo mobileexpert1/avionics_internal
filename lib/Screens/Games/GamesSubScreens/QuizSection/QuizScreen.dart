@@ -13,6 +13,9 @@ import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
 
 class QuizDetailScreen extends StatelessWidget {
+  final String gameId;
+
+  const QuizDetailScreen({super.key, required this.gameId});
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

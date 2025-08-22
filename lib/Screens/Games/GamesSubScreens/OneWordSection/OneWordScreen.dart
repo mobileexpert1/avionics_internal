@@ -12,6 +12,9 @@ import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
 
 class OneWordDetailScreen extends StatelessWidget {
+  final String gameId;
+
+  const OneWordDetailScreen({super.key, required this.gameId});
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
