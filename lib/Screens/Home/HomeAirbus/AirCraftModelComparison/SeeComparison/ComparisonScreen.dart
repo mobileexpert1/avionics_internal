@@ -141,28 +141,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 orElse: () => FilterCategory1(id: '', name: '', options: []),
               );
 
-              // Debug the full filter state and active category options
-              print(
-                'Filter State Categories: ${filterState.filterCategories.map((cat) => "${cat.name}: ${cat.options.map((o) => "${o.name}: ${o.isSelected}").join(", ")}").join("\n")}',
-              );
-              print(
-                'All Options in ${activeCategory.name}: ${activeCategory.options.map((o) => "${o.name}: ${o.isSelected}").join(", ")}',
-              );
-
               // Filter selected options with detailed debugging
               final allOptions = activeCategory.options;
-              print(
-                'Before Filtering: ${allOptions.map((o) => "${o.name}: ${o.isSelected}").join(", ")}',
-              );
+
               final selectedOptions = allOptions
                   .where((o) => o.isSelected)
                   .toList();
-              print(
-                'After Filtering: ${selectedOptions.map((o) => "${o.name}: ${o.isSelected}").join(", ")}',
-              );
-              print(
-                'Active Category: ${activeCategory.name}, Selected Options: ${selectedOptions.map((o) => o.name).toList()}',
-              );
 
               List<String> labels = [];
               List<String> a1Values = [];
@@ -423,6 +407,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 }
               }
 
+              
               return Column(
                 children: [
                   if (widget.showTabs)

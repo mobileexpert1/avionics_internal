@@ -34,13 +34,34 @@ class _CustomTabBarState extends State<CustomTabBar> {
     widget.onTabSelected(index);
   }
 
+  /// Measure text width dynamically
+  double _textWidth(String text, TextStyle style) {
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return tp.width;
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final selectedStyle = const TextStyle(
+      fontSize: 10.0,
+      fontWeight: FontWeight.w500,
+      color: Colors.black,
+    );
+    final unselectedStyle = const TextStyle(
+      fontSize: 10.0,
+      fontWeight: FontWeight.w500,
+      color: Colors.grey,
+    );
+
     return Column(
-      // Wrap with Column to add the bottom border
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 20),
         SizedBox(
           width:
               screenWidth /
@@ -49,49 +70,33 @@ class _CustomTabBarState extends State<CustomTabBar> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: List.generate(widget.tabTitles.length, (index) {
               final bool isSelected = _selectedIndex == index;
+              final style = isSelected ? selectedStyle : unselectedStyle;
+
+              final textWidth = _textWidth(widget.tabTitles[index], style);
+
               return GestureDetector(
                 onTap: () => _handleTabTap(index),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10.0,
-                    vertical: 1.0,
+                    vertical: 0.0,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    // Align text and underline
                     children: [
-                      const Divider(
-                        height: 20,
-                        thickness: 1,
-                        color: Colors.grey,
-                      ),
-                      Text(
-                        widget.tabTitles.elementAt(index),
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w500, // Medium weight
-                          color: isSelected ? Colors.black : Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 6.0),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        height: 2.0,
-                        width: isSelected
-                            ? (widget.isComeFromComparsionScreen == false
-                                  ? 30.0
-                                  : 95)
-                            : 0.0,
-                        // Adjust underline width
-                        margin: EdgeInsets.only(
-                          left: widget.isComeFromComparsionScreen == false
-                              ? 2.0
-                              : 0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(1.0),
+                      Text(widget.tabTitles[index], style: style),
+                      const SizedBox(height: 7.0),
+                      Align(
+                        alignment: Alignment.center,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          height: 2,
+                          width: isSelected ? textWidth + 5 : 0.0,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(1.0),
+                          ),
                         ),
                       ),
                     ],
@@ -102,7 +107,6 @@ class _CustomTabBarState extends State<CustomTabBar> {
           ),
         ),
         const Divider(height: 0, thickness: 1, color: Colors.grey),
-        // Bottom border
       ],
     );
   }

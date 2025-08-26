@@ -1,13 +1,11 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
-import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
-import 'package:avionics_internal/bloc/Home/Filter/filter_cubit.dart';
-import 'package:avionics_internal/bloc/home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import '../AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
@@ -27,6 +25,7 @@ class SelectModelCompareScreen extends StatefulWidget {
 class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
   AircraftModel? model1;
   AircraftModel? model2;
+
   bool get isButtonEnabled => model1 != null && model2 != null;
 
   @override
@@ -38,9 +37,12 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
     final result = await Navigator.push<AircraftModel>(
       context,
       MaterialPageRoute(
-        builder: (_) => AircraftComparisonScreen(
-          selectedModel1: modelNumber == 1 ? model2?.id : model1?.id,
-          selectedModel2: modelNumber == 1 ? null : model1?.id,
+        builder: (_) => BlocProvider(
+          create: (_) => AircraftComparisonCubit(),
+          child: AircraftComparisonScreen(
+            selectedModel1: modelNumber == 1 ? model2?.id : model1?.id,
+            selectedModel2: modelNumber == 1 ? null : model1?.id,
+          ),
         ),
       ),
     );
@@ -55,7 +57,6 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +90,10 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                         Row(
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                              icon: const Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.white,
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -164,24 +168,23 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                           textColor: Colors.white,
                           icon: const SizedBox(width: 0),
                           isEnabled: isButtonEnabled,
-                            onPressed: () {
-                              if (!isButtonEnabled) return;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider(
-                                    create: (_) =>
-                                        ComparisonFilterCubit1(),
-                                    child: ComparisonScreen(
-                                      model1: model1!.id,
-                                      model2: model2!.id,
-                                      model1Name: model1!.aircraftModel,
-                                      model2Name: model2!.aircraftModel,
-                                    ),
+                          onPressed: () {
+                            if (!isButtonEnabled) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider(
+                                  create: (_) => ComparisonFilterCubit1(),
+                                  child: ComparisonScreen(
+                                    model1: model1!.id,
+                                    model2: model2!.id,
+                                    model1Name: model1!.aircraftModel,
+                                    model2Name: model2!.aircraftModel,
                                   ),
                                 ),
-                              );
-                            }
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -196,7 +199,11 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
     );
   }
 
-  Widget _buildRadioOption(String text, AircraftModel? value, VoidCallback onTap) {
+  Widget _buildRadioOption(
+    String text,
+    AircraftModel? value,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.radio_button_unchecked, color: Colors.blue),
@@ -207,19 +214,18 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       onTap: onTap,
       trailing: value != null
           ? IconButton(
-        icon: const Icon(Icons.close_rounded, color: Colors.grey),
-        onPressed: () {
-          setState(() {
-            if (text.contains("1")) {
-              model1 = null;
-            } else if (text.contains("2")) {
-              model2 = null;
-            }
-          });
-        },
-      )
+              icon: const Icon(Icons.close_rounded, color: Colors.grey),
+              onPressed: () {
+                setState(() {
+                  if (text.contains("1")) {
+                    model1 = null;
+                  } else if (text.contains("2")) {
+                    model2 = null;
+                  }
+                });
+              },
+            )
           : null,
     );
   }
-
 }

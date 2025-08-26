@@ -10,18 +10,20 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
   Future<void> loadAircraftModels({
     required BuildContext context,
     String? query,
-    int page = 1,
+    int? page,
     bool isLoadMore = false,
   }) async {
+    final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
+
     if (isLoadMore) {
       emit(state.copyWith(isFetchingMore: true));
     } else {
-      emit(state.copyWith(isLoading: true, currentPage: 1));
+      emit(state.copyWith(isLoading: true, currentPage: 1, aircraftList: []));
     }
 
     try {
       final paginated = await AircraftRepository().getCompareList(
-        page: page,
+        page: nextPage,
         query: query,
       );
 
@@ -30,7 +32,9 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
           : paginated.results;
 
       updatedList.sort(
-            (a, b) => a.aircraftModel.toLowerCase().compareTo(b.aircraftModel.toLowerCase()),
+            (a, b) => a.aircraftModel.toLowerCase().compareTo(
+          b.aircraftModel.toLowerCase(),
+        ),
       );
 
       emit(
@@ -48,4 +52,3 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
     }
   }
 }
-

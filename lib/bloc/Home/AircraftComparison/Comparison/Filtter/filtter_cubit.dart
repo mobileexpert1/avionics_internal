@@ -334,6 +334,32 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
     );
   }
 
+  void toggleSelectAll(bool selectAll) {
+    final updatedCategories = state.filterCategories.map((category) {
+      final updatedOptions = category.options
+          .map((option) => option.copyWith(isSelected: selectAll))
+          .toList();
+      return category.copyWith(options: updatedOptions);
+    }).toList();
+
+    emit(state.copyWith(filterCategories: updatedCategories));
+  }
+
+  // filtter_cubit.dart
+  void selectAllOptions(String categoryId, bool isSelected) {
+    final updatedCategories = state.filterCategories.map((category) {
+      if (category.id == categoryId) {
+        final updatedOptions = category.options
+            .map((option) => option.copyWith(isSelected: isSelected))
+            .toList();
+        return category.copyWith(options: updatedOptions);
+      }
+      return category;
+    }).toList();
+
+    emit(state.copyWith(filterCategories: updatedCategories));
+  }
+
   void updateSelectedFilters(
     List<FilterCategory1> updatedFilters, {
     bool isApplied = false,

@@ -43,9 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<HomeCubit>(create: (_) => homeCubit),
-        BlocProvider<AircraftComparisonCubit>(
-          create: (_) => AircraftComparisonCubit(),
-        ),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
