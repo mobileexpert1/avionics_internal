@@ -26,21 +26,22 @@ class CalculationCubit extends Cubit<CalculationState> {
           title: 'Take a Measure',
           isLocked: !(lockData.isEnableTakeMeasure ?? false),
           gameNumber: 1, // Maps to take_measure
+            info: [],
         ),
         quizItem(
           title: 'Flight Math',
           isLocked: !(lockData.isEnableFlightMath ?? false),
-          gameNumber: 2, // Maps to flight_math
+          gameNumber: 2, info: [], // Maps to flight_math
         ),
         quizItem(
           title: 'Green is New Blue',
           isLocked: !(lockData.isEnableGreeNewBlue ?? false),
-          gameNumber: 3, // Maps to gree_new_blue
+          gameNumber: 3, info: [], // Maps to gree_new_blue
         ),
         quizItem(
           title: 'Mind the Separation',
           isLocked: !(lockData.isEnableMindSeparation ?? false),
-          gameNumber: 4, // Maps to mind_separation
+          gameNumber: 4, info: [], // Maps to mind_separation
         ),
       ];
 

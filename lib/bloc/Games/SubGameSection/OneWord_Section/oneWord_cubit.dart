@@ -18,6 +18,7 @@ class OnewordCubit extends Cubit<OneWordTopicState> {
             title: oneWord.name,
             isLocked: false,
             gameNumber: oneWord.gameNumber,
+            info: oneWord.info ?? [],
           );
         }).toList();
 

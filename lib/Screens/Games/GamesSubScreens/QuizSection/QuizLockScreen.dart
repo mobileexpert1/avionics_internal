@@ -6,6 +6,7 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_st
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
 import 'QuizQuestionScreen.dart';
 
 class QuizLockScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class QuizLockScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuizCubit(),
+      create: (_) => QuizCubit()..loadQuizTopics(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -26,7 +27,7 @@ class QuizLockScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: BlocBuilder<QuizCubit, QuizState>(
+          child: BlocBuilder<QuizCubit, OneWordTopicState>(
             builder: (context, state) {
               return GridView.builder(
                 itemCount: state.games.length,
@@ -41,8 +42,9 @@ class QuizLockScreen extends StatelessWidget {
                   return LockGameCard(
                     title: game.title,
                     isLocked: game.isLocked,
-                    infoMessage:
-                        'The sky’s quiet lounge above the clouds,where ozone gets to work.',
+                    infoMessage: game.info.isNotEmpty ? game.info.first : "No info available",
+                    // infoMessage:
+                    //     'The sky’s quiet lounge above the clouds,where ozone gets to work.',
                     onTap: () {
                       if (!game.isLocked) {
                         Navigator.push(

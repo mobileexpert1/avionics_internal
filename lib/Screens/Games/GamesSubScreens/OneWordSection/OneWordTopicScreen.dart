@@ -54,21 +54,24 @@ class OneWordTopicScreen extends StatelessWidget {
                         return LockGameCard(
                           title: game.title,
                           isLocked: false,
-                          infoMessage: '''
-• Structure and behaviour of the
-   atmosphere
-• METAR and TAF decoding
-• Wind, pressure systems,
-   temperature gradients
-• Fronts,clouds,thunderstorms,
-   turbulence
-• Icing conditions, visibility, fog
-• Weather radar and satellite
-   interpretation
-• Environmental awareness:
-   noise abatement,emissions,
-   contrail formation
-''',
+                          //                           infoMessage: '''
+                          // • Structure and behaviour of the
+                          //    atmosphere
+                          // • METAR and TAF decoding
+                          // • Wind, pressure systems,
+                          //    temperature gradients
+                          // • Fronts,clouds,thunderstorms,
+                          //    turbulence
+                          // • Icing conditions, visibility, fog
+                          // • Weather radar and satellite
+                          //    interpretation
+                          // • Environmental awareness:
+                          //    noise abatement,emissions,
+                          //    contrail formation
+                          // ''',
+                          infoMessage: game.info.isNotEmpty
+                              ? game.info.first
+                              : "No info available",
                           onTap: () {
                             if (!game.isLocked) {
                               print('Playing ${game.title}');
@@ -77,7 +80,8 @@ class OneWordTopicScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (_) => QuizQuestionScreen(
                                     sectionId: game.gameNumber,
-                                    sectionTitle: game.title, gameId: "one_word",
+                                    sectionTitle: game.title,
+                                    gameId: "one_word",
                                   ),
                                 ),
                               );
