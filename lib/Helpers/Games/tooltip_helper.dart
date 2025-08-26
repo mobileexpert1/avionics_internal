@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'InfoClick.dart'; // Contains InfoTooltip + TrianglePainter
+import 'InfoClick.dart';
+
+OverlayEntry? _activeTooltip;
 
 void showInfoTooltip({
   required BuildContext context,
@@ -7,6 +9,9 @@ void showInfoTooltip({
   required String message,
   TooltipPosition position = TooltipPosition.below,
 }) {
+  _activeTooltip?.remove();
+  _activeTooltip = null;
+
   final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
   if (renderBox == null) return;
 
@@ -15,7 +20,7 @@ void showInfoTooltip({
   final screenSize = MediaQuery.of(context).size;
 
   const tooltipWidth = 260.0;
-  const tooltipHeight = 70.0; // Approx height of tooltip box
+  const tooltipHeight = 80.0; /// Approx height of tooltip box
 
   double left = offset.dx;
   double top = offset.dy;
@@ -56,10 +61,16 @@ void showInfoTooltip({
   );
 
   overlay.insert(overlayEntry);
+  _activeTooltip = overlayEntry;
 
+  // Auto-hide after 3 seconds
   Future.delayed(const Duration(seconds: 3), () {
-    overlayEntry.remove();
+    if (_activeTooltip == overlayEntry) {
+      _activeTooltip?.remove();
+      _activeTooltip = null;
+    }
   });
 }
+
 
 enum TooltipPosition { above, below, left, right }

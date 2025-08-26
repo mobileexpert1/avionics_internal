@@ -380,6 +380,7 @@
 // }
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
@@ -444,6 +445,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         gameData = await _repository.getCalculationData(sectionId, 3);
       } else if (gameId == "one_word") {
         gameData = await _repository.getOneWordData(sectionId, 3);
+      }
+      else if (gameId == "quiz") {
+        gameData = await _repository.getQuizData(sectionId, 3);
       } else {
         emit(state.copyWith(
           isLoading: false,
@@ -572,6 +576,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         additionalData = await _repository.fetchAdditionalQuestions(sectionId, actionNumber);
       } else if (gameId == "one_word") {
         additionalData = await _repository.fetchOneWordQuestions(sectionId, actionNumber);
+      }
+      else if (gameId == "quiz") {
+        additionalData = await _repository.fetchQuizQuestions(sectionId, actionNumber);
       } else {
         print('Invalid gameId for background fetch: $gameId');
         emit(state.copyWith(
@@ -830,7 +837,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "difficulty": state.difficulty,
         "categories": categories,
       };
-      //
+      // //
       // void debugPrintFull(dynamic data) {
       //   const int chunkSize = 800;
       //   final jsonStr = jsonEncode(data);

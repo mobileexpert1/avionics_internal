@@ -1,16 +1,38 @@
-import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_model.dart';
-import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
+import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_repository.dart';
+import '../Quiz_Section/quiz_model.dart';
 
-class QuizCubit extends Cubit<QuizState> {
-  QuizCubit()
-      : super(QuizState(games: [
-    quizItem(title: 'Stratosphere', isLocked: false, gameNumber: 1),
-    quizItem(title: 'Mesosphere', isLocked: true, gameNumber: 2),
-    quizItem(title: 'Thermosphere', isLocked: true, gameNumber: 3),
-    quizItem(title: 'Exosphere', isLocked: true, gameNumber: 4),
-    quizItem(title: 'Troposphere', isLocked: true, gameNumber: 5),
-  ]));
+class QuizCubit extends Cubit<OneWordTopicState> {
+  QuizCubit() : super(OneWordTopicState());
+
+  Future<void> loadQuizTopics() async {
+    try {
+      emit(state.copyWith(isLoading: true));
+
+      final response = await OneWordTopicRepository().getQuizTopic();
+
+      if (response != null) {
+        final List<quizItem> gameList = response.data.map((oneWord) {
+          return quizItem(
+            title: oneWord.name,
+            isLocked: false,
+            gameNumber: oneWord.gameNumber,
+            info: oneWord.info ?? [],
+          );
+        }).toList();
+
+        emit(state.copyWith(
+          games: gameList,
+          isLoading: false,
+        ));
+      } else {
+        emit(state.copyWith(isLoading: false));
+      }
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
 
   void unlockGame(int index) {
     final updatedGames = List<quizItem>.from(state.games);

@@ -28,8 +28,19 @@ class AllPlanesReposistory {
       );
     }
 
-    final uri = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",
+    // final uri = Uri.parse(
+    //   "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",
+    // );
+
+    final queryParams = {
+      'page': page.toString(),
+      if (query != null && query.isNotEmpty) 'search': query, // 👈 change 'search' to correct one
+    };
+
+    final uri = Uri.https(
+      ApiBaseUrlConstant.baseUrl.replaceFirst(RegExp(r'https?://'), ''),
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId",
+      queryParams,
     );
 
     try {

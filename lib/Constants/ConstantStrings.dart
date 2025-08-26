@@ -211,6 +211,10 @@ class ApiFunctionUrlGamesConstant {
   static const oneWordQuestions = "ai-engine/games/one-word/questions/";
   static const calculationSubmit = "ai-engine/games/calculation/";
   static const oneWordSubmit = "ai-engine/games/one-word/";
+  static const quiz = "ai-engine/games/quiz/";
+  static const quizQuestions = "ai-engine/games/quiz/questions/";
+
+
 }
 
 class ApiServiceUrlGamesConstant {
@@ -222,4 +226,7 @@ class ApiServiceUrlGamesConstant {
 
   static String submitOneWordResults(int gameNumber) =>
       "${ApiFunctionUrlGamesConstant.oneWordSubmit}$gameNumber/submit/";
+
+  static String submitQuizResults(int gameNumber) =>
+      "${ApiFunctionUrlGamesConstant.quiz}$gameNumber/submit/";
 }
