@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'calculation_repository.dart';
+import '../OneWord_Section/oneWord_repository.dart';
 import 'calculation_state.dart';
 import '../Quiz_Section/quiz_model.dart';
 
@@ -7,63 +7,44 @@ class CalculationCubit extends Cubit<CalculationState> {
   CalculationCubit() : super(const CalculationState());
 
   Future<void> loadCalculationLocks() async {
-    emit(state.copyWith(isLoading: true));
-
     try {
-      final lockData = await CalculationLockRepository().getCalculationLock();
+      emit(state.copyWith(isLoading: true));
 
-      if (lockData == null) {
+      final response = await OneWordTopicRepository().getCalculationTopic();
+
+      if (response != null) {
+        final List<quizItem> gameList = response.data.map((oneWord) {
+          return quizItem(
+            title: oneWord.name,
+            isLocked: !(oneWord.isEnable ?? false),
+            gameNumber: oneWord.gameNumber,
+            info: oneWord.info ?? [],
+          );
+        }).toList();
+
+        emit(state.copyWith(
+          games: gameList,
+          isLoading: false,
+        ));
+      } else {
         emit(state.copyWith(
           isLoading: false,
-          errorMessage: "No internet or failed to fetch data",
+          errorMessage: 'Failed to load calculation games.',
         ));
-        return;
       }
-
-      // Create gameList with indices aligned to game_no_assign (1-based indexing)
-      final gameList = [
-        quizItem(
-          title: 'Take a Measure',
-          isLocked: !(lockData.isEnableTakeMeasure ?? false),
-          gameNumber: 1, // Maps to take_measure
-            info: [],
-        ),
-        quizItem(
-          title: 'Flight Math',
-          isLocked: !(lockData.isEnableFlightMath ?? false),
-          gameNumber: 2, info: [], // Maps to flight_math
-        ),
-        quizItem(
-          title: 'Green is New Blue',
-          isLocked: !(lockData.isEnableGreeNewBlue ?? false),
-          gameNumber: 3, info: [], // Maps to gree_new_blue
-        ),
-        quizItem(
-          title: 'Mind the Separation',
-          isLocked: !(lockData.isEnableMindSeparation ?? false),
-          gameNumber: 4, info: [], // Maps to mind_separation
-        ),
-      ];
-
-      emit(state.copyWith(
-        games: gameList,
-        calculationLock: lockData,
-        isLoading: false,
-        isSuccess: true,
-      ));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: 'An error occurred while loading games. Please try again later.',
       ));
     }
   }
 
-
   void unlockGame(int index) {
     final updatedGames = List<quizItem>.from(state.games);
-    updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
-    emit(state.copyWith(games: updatedGames));
+    if (index >= 0 && index < updatedGames.length) {
+      updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
+      emit(state.copyWith(games: updatedGames));
+    }
   }
 }
-

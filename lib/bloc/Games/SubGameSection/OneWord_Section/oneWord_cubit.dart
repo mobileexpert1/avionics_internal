@@ -16,7 +16,7 @@ class OnewordCubit extends Cubit<OneWordTopicState> {
         final List<quizItem> gameList = response.data.map((oneWord) {
           return quizItem(
             title: oneWord.name,
-            isLocked: false,
+            isLocked: !(oneWord.isEnable ?? false),
             gameNumber: oneWord.gameNumber,
             info: oneWord.info ?? [],
           );
@@ -36,7 +36,9 @@ class OnewordCubit extends Cubit<OneWordTopicState> {
 
   void unlockGame(int index) {
     final updatedGames = List<quizItem>.from(state.games);
-    updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
-    emit(state.copyWith(games: updatedGames));
+    if (index >= 0 && index < updatedGames.length) {
+      updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
+      emit(state.copyWith(games: updatedGames));
+    }
   }
 }

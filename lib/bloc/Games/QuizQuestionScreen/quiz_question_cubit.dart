@@ -445,8 +445,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         gameData = await _repository.getCalculationData(sectionId, 3);
       } else if (gameId == "one_word") {
         gameData = await _repository.getOneWordData(sectionId, 3);
-      }
-      else if (gameId == "quiz") {
+      } else if (gameId == "quiz") {
         gameData = await _repository.getQuizData(sectionId, 3);
       } else {
         emit(state.copyWith(

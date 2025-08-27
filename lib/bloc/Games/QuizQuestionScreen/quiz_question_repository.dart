@@ -170,7 +170,7 @@ class QuizQuestionRepository {
     } else if (gameId == "one_word") {
       submitUrl = "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitOneWordResults(gameNumber)}";
     }
-    else if (gameId == "one_word") {
+    else if (gameId == "quiz") {
       submitUrl = "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitQuizResults(gameNumber)}";
     } else {
       throw Exception('Invalid gameId: $gameId');

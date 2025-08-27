@@ -29,6 +29,17 @@ class QuizLockScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: BlocBuilder<QuizCubit, OneWordTopicState>(
             builder: (context, state) {
+              if (state.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state.errorMessage != null) {
+                return Center(child: Text(state.errorMessage!)); // Error
+              }
+
+              if (state.games.isEmpty) {
+                return const Center(child: Text("No games available."));
+              }
               return GridView.builder(
                 itemCount: state.games.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -42,7 +53,7 @@ class QuizLockScreen extends StatelessWidget {
                   return LockGameCard(
                     title: game.title,
                     isLocked: game.isLocked,
-                    infoMessage: game.info.isNotEmpty ? game.info.first : "No info available",
+                    infoMessage: game.info,
                     // infoMessage:
                     //     'The sky’s quiet lounge above the clouds,where ozone gets to work.',
                     onTap: () {
