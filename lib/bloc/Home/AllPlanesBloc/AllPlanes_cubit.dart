@@ -16,10 +16,12 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     int page = 1,
     bool isLoadMore = false,
   }) async {
-    if (isLoadMore) {
-      emit(state.copyWith(isFetchingMore: true));
-    } else {
-      emit(state.copyWith(isLoading: true, currentPage: 1));
+    if (query == "" || query == null) {
+      if (isLoadMore) {
+        emit(state.copyWith(isFetchingMore: true));
+      } else {
+        emit(state.copyWith(isLoading: true, currentPage: 1));
+      }
     }
 
     try {

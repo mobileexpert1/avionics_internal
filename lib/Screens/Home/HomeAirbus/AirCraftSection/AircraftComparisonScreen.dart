@@ -92,14 +92,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                       enableCloseScreen: false,
                       controller: searchController,
                       onChanged: _onSearch,
-                      onFilterTap: () {
-                        _cubit.loadAircraftModels(
-                          context: context,
-                          query: searchController.text,
-                          page: 1,
-                          isLoadMore: false,
-                        );
-                      },
                       searchTitle: 'Search Models',
                     ),
                   ),

@@ -41,16 +41,27 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 300) {
+        _scrollController.position.maxScrollExtent - 100) {
       final cubit = context.read<AllPlanesCubit>();
       if (cubit.state.hasNextPage && !cubit.state.isFetchingMore) {
         cubit.loadListOAllAirbusModels(
           context: context,
           page: cubit.state.currentPage + 1,
-          isLoadMore: true, selectedAirbusId: widget.selectedAirbusId,
+          isLoadMore: true,
+          selectedAirbusId: widget.selectedAirbusId,
         );
       }
     }
+  }
+
+  void _onSearch(String value) {
+    final cubit = context.read<AllPlanesCubit>();
+    cubit.loadListOAllAirbusModels(
+      context: context,
+      query: value,
+      page: 1,
+      selectedAirbusId: widget.selectedAirbusId,
+    );
   }
 
   @override
@@ -71,6 +82,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                   enableFilter: false,
                   enableCloseScreen: false,
                   controller: searchController,
+                  onChanged: _onSearch,
                   searchTitle: 'Search ${widget.manufacturerName} Models',
                 ),
                 const SizedBox(height: 10),
@@ -177,9 +189,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                       leading: _buildLeadingImage(
                                         screenWidth * 0.18,
                                         screenWidth * 0.1,
-                                        model.image!,
-                                        (model.image ?? '').contains(".svg"),
-                                        !(model.image ?? '').contains(".svg"),
+                                        model.image,
+                                        (model.image).contains(".svg"),
+                                        !(model.image).contains(".svg"),
                                       ),
                                       title: Wrap(
                                         crossAxisAlignment:
@@ -230,8 +242,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         size: 15,
                                       ),
                                       onTap: () {
-                                        print("model.id: ${model.id}");
-
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(

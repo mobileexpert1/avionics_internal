@@ -28,19 +28,13 @@ class AllPlanesReposistory {
       );
     }
 
-    // final uri = Uri.parse(
-    //   "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",
-    // );
-
-    final queryParams = {
-      'page': page.toString(),
-      if (query != null && query.isNotEmpty) 'search': query, // 👈 change 'search' to correct one
-    };
-
-    final uri = Uri.https(
-      ApiBaseUrlConstant.baseUrl.replaceFirst(RegExp(r'https?://'), ''),
-      "${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}$selectedAirbusId",
-      queryParams,
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+          "${ApiServiceUrlAirplaneConstant.getListAirbus}"
+          "$selectedAirbusId"
+          "?page=$page"
+          "${query != null && query.isNotEmpty ? '&q=$query' : ''}&max_page_size=10",
     );
 
     try {
@@ -50,11 +44,6 @@ class AllPlanesReposistory {
         fromJson: (e) => AircraftListModel.fromJson(e),
         currentPage: page,
       );
-
-      // if (page == 1) {
-      //   await _manufacturer.insertAll(paginated.results);
-      // }
-
       return paginated;
     } catch (e) {
       throw e.toString();

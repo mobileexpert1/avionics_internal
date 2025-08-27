@@ -158,107 +158,103 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 switch (option.id) {
                   // GENERAL
                   case 'icao_type_code':
-                    a1Values.add(model.aircraft1.general.icaoTypeCode ?? 'N/A');
-                    a2Values.add(model.aircraft2.general.icaoTypeCode ?? 'N/A');
+                    a1Values.add(model.aircraft1.general.icaoTypeCode);
+                    a2Values.add(model.aircraft2.general.icaoTypeCode);
                     break;
                   case 'wake_turbulence':
                     a1Values.add(
-                      model.aircraft1.general.wakeTurbulenceCategory ?? 'N/A',
+                      model.aircraft1.general.wakeTurbulenceCategory,
                     );
                     a2Values.add(
-                      model.aircraft2.general.wakeTurbulenceCategory ?? 'N/A',
+                      model.aircraft2.general.wakeTurbulenceCategory,
                     );
                     break;
                   case 'avionics':
                     a1Values.add(
-                      model.aircraft1.general.avionicsSystemNameFamily ?? 'N/A',
+                      model.aircraft1.general.avionicsSystemNameFamily,
                     );
                     a2Values.add(
-                      model.aircraft2.general.avionicsSystemNameFamily ?? 'N/A',
+                      model.aircraft2.general.avionicsSystemNameFamily,
                     );
                     break;
                   case 'no_of_engines':
                     a1Values.add(
-                      model.aircraft1.general.noOfEngines?.toString() ?? 'N/A',
+                      model.aircraft1.general.noOfEngines.toString(),
                     );
                     a2Values.add(
-                      model.aircraft2.general.noOfEngines?.toString() ?? 'N/A',
+                      model.aircraft2.general.noOfEngines.toString(),
                     );
                     break;
                   case 'engine_model':
                     a1Values.add(
-                      model.aircraft1.general.engineManufacturerAndModel ??
-                          'N/A',
+                      model.aircraft1.general.engineManufacturerAndModel,
                     );
                     a2Values.add(
-                      model.aircraft2.general.engineManufacturerAndModel ??
-                          'N/A',
+                      model.aircraft2.general.engineManufacturerAndModel,
                     );
                     break;
                   case 'engine_type':
-                    a1Values.add(model.aircraft1.general.engineType ?? 'N/A');
-                    a2Values.add(model.aircraft2.general.engineType ?? 'N/A');
+                    a1Values.add(model.aircraft1.general.engineType);
+                    a2Values.add(model.aircraft2.general.engineType);
                     break;
 
                   // TECHNICAL DATA
                   case 'wingspan_m':
                     a1Values.add(
-                      model.aircraft1.technicalData.wingspan.meters ?? 'N/A',
+                      model.aircraft1.technicalData.wingspan.meters,
                     );
                     a2Values.add(
-                      model.aircraft2.technicalData.wingspan.meters ?? 'N/A',
+                      model.aircraft2.technicalData.wingspan.meters,
                     );
                     break;
                   case 'length_m':
                     a1Values.add(
-                      model.aircraft1.technicalData.length.meters ?? 'N/A',
+                      model.aircraft1.technicalData.length.meters,
                     );
                     a2Values.add(
-                      model.aircraft2.technicalData.length.meters ?? 'N/A',
+                      model.aircraft2.technicalData.length.meters,
                     );
                     break;
                   case 'height_m':
                     a1Values.add(
-                      model.aircraft1.technicalData.height.meters ?? 'N/A',
+                      model.aircraft1.technicalData.height.meters,
                     );
                     a2Values.add(
-                      model.aircraft2.technicalData.height.meters ?? 'N/A',
+                      model.aircraft2.technicalData.height.meters,
                     );
                     break;
                   case 'max_Payload':
                     a1Values.add(
-                      model.aircraft1.technicalData.maxPayload ?? 'N/A',
+                      model.aircraft1.technicalData.maxPayload,
                     );
                     a2Values.add(
-                      model.aircraft2.technicalData.maxPayload ?? 'N/A',
+                      model.aircraft2.technicalData.maxPayload,
                     );
                     break;
                   case 'mtow':
-                    a1Values.add(model.aircraft1.technicalData.mtow ?? 'N/A');
-                    a2Values.add(model.aircraft2.technicalData.mtow ?? 'N/A');
+                    a1Values.add(model.aircraft1.technicalData.mtow);
+                    a2Values.add(model.aircraft2.technicalData.mtow);
                     break;
                   case 'mlw':
-                    a1Values.add(model.aircraft1.technicalData.mlw ?? 'N/A');
-                    a2Values.add(model.aircraft2.technicalData.mlw ?? 'N/A');
+                    a1Values.add(model.aircraft1.technicalData.mlw);
+                    a2Values.add(model.aircraft2.technicalData.mlw);
                     break;
 
                   // OPERATIONAL DATA
                   case 'takeoff_speed_kts':
                     a1Values.add(
-                      model.aircraft1.operationalData.takeoffSpeedKts ?? 'N/A',
+                      model.aircraft1.operationalData.takeoffSpeedKts,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.takeoffSpeedKts ?? 'N/A',
+                      model.aircraft2.operationalData.takeoffSpeedKts,
                     );
                     break;
                   case 'service_ceiling_ft':
                     a1Values.add(
-                      model.aircraft1.operationalData.serviceCeilingFtFl ??
-                          'N/A',
+                      model.aircraft1.operationalData.serviceCeilingFtFl,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.serviceCeilingFtFl ??
-                          'N/A',
+                      model.aircraft2.operationalData.serviceCeilingFtFl,
                     );
                     break;
                   case 'max_altitude_ft':
@@ -266,139 +262,117 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                       model
                               .aircraft1
                               .operationalData
-                              .maxCertifiedAltitudeFtFl ??
-                          'N/A',
+                              .maxCertifiedAltitudeFtFl,
                     );
                     a2Values.add(
                       model
                               .aircraft2
                               .operationalData
-                              .maxCertifiedAltitudeFtFl ??
-                          'N/A',
+                              .maxCertifiedAltitudeFtFl,
                     );
                     break;
                   case 'cruise_speed_kts':
                     a1Values.add(
-                      model.aircraft1.operationalData.cruiseSpeed.cruiseKt ??
-                          'N/A',
+                      model.aircraft1.operationalData.cruiseSpeed.cruiseKt,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.cruiseSpeed.cruiseKt ??
-                          'N/A',
+                      model.aircraft2.operationalData.cruiseSpeed.cruiseKt,
                     );
                     break;
                   case 'cruise_mach':
                     a1Values.add(
-                      model.aircraft1.operationalData.cruiseSpeed.cruiseMach ??
-                          'N/A',
+                      model.aircraft1.operationalData.cruiseSpeed.cruiseMach,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.cruiseSpeed.cruiseMach ??
-                          'N/A',
+                      model.aircraft2.operationalData.cruiseSpeed.cruiseMach
                     );
                     break;
                   case 'ferry_range_nm':
                     a1Values.add(
-                      model.aircraft1.operationalData.range.ferryRangeNm ??
-                          'N/A',
+                      model.aircraft1.operationalData.range.ferryRangeNm,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.range.ferryRangeNm ??
-                          'N/A',
+                      model.aircraft2.operationalData.range.ferryRangeNm,
                     );
                     break;
                   case 'normal_range_nm':
                     a1Values.add(
-                      model.aircraft1.operationalData.range.normalRangeNm ??
-                          'N/A',
+                      model.aircraft1.operationalData.range.normalRangeNm,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.range.normalRangeNm ??
-                          'N/A',
+                      model.aircraft2.operationalData.range.normalRangeNm,
                     );
                     break;
                   case 'normal_range_km':
                     a1Values.add(
-                      model.aircraft1.operationalData.range.normalRangeKm ??
-                          'N/A',
+                      model.aircraft1.operationalData.range.normalRangeKm,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.range.normalRangeKm ??
-                          'N/A',
+                      model.aircraft2.operationalData.range.normalRangeKm,
                     );
                     break;
                   case 'initial_rate_of_descent_fpm':
                     a1Values.add(
-                      model.aircraft1.operationalData.initialRateOfDescentFpm ??
-                          'N/A',
+                      model.aircraft1.operationalData.initialRateOfDescentFpm,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.initialRateOfDescentFpm ??
-                          'N/A',
+                      model.aircraft2.operationalData.initialRateOfDescentFpm,
                     );
                     break;
                   case 'average_rate_of_descent_fpm':
                     a1Values.add(
-                      model.aircraft1.operationalData.averageRateOfDescentFpm ??
-                          'N/A',
+                      model.aircraft1.operationalData.averageRateOfDescentFpm,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.averageRateOfDescentFpm ??
-                          'N/A',
+                      model.aircraft2.operationalData.averageRateOfDescentFpm,
                     );
                     break;
                   case 'min_clean_speed_kts':
                     a1Values.add(
-                      model.aircraft1.operationalData.minimumCleanSpeedKts ??
-                          'N/A',
+                      model.aircraft1.operationalData.minimumCleanSpeedKts,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.minimumCleanSpeedKts ??
-                          'N/A',
+                      model.aircraft2.operationalData.minimumCleanSpeedKts,
                     );
                     break;
                   case 'approach_speed_kts':
                     a1Values.add(
-                      model.aircraft1.operationalData.approachSpeedKts ?? 'N/A',
+                      model.aircraft1.operationalData.approachSpeedKts,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.approachSpeedKts ?? 'N/A',
+                      model.aircraft2.operationalData.approachSpeedKts,
                     );
                     break;
                   case 'landing_speed_kts':
                     a1Values.add(
-                      model.aircraft1.operationalData.landingSpeedKts ?? 'N/A',
+                      model.aircraft1.operationalData.landingSpeedKts,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.landingSpeedKts ?? 'N/A',
+                      model.aircraft2.operationalData.landingSpeedKts,
                     );
                     break;
                   case 'landing_distance_m':
                     a1Values.add(
-                      model.aircraft1.operationalData.landingDistanceM ?? 'N/A',
+                      model.aircraft1.operationalData.landingDistanceM,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.landingDistanceM ?? 'N/A',
+                      model.aircraft2.operationalData.landingDistanceM,
                     );
                     break;
                   case 'runway_required_m':
                     a1Values.add(
-                      model.aircraft1.operationalData.runwayLengthRequiredM ??
-                          'N/A',
+                      model.aircraft1.operationalData.runwayLengthRequiredM,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.runwayLengthRequiredM ??
-                          'N/A',
+                      model.aircraft2.operationalData.runwayLengthRequiredM,
                     );
                     break;
                   case 'stall_speed':
                     a1Values.add(
-                      model.aircraft1.operationalData.stallSpeedIfAvailable ??
-                          'N/A',
+                      model.aircraft1.operationalData.stallSpeedIfAvailable,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.stallSpeedIfAvailable ??
-                          'N/A',
+                      model.aircraft2.operationalData.stallSpeedIfAvailable,
                     );
                     break;
                   default:
@@ -483,6 +457,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                     ),
                                   ],
                                 ),
+
                                 for (int i = 0; i < labels.length; i++)
                                   TableRow(
                                     children: [

@@ -15,10 +15,12 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
   }) async {
     final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
 
-    if (isLoadMore) {
-      emit(state.copyWith(isFetchingMore: true));
-    } else {
-      emit(state.copyWith(isLoading: true, currentPage: 1, aircraftList: []));
+    if (query == "" || query == null) {
+      if (isLoadMore) {
+        emit(state.copyWith(isFetchingMore: true));
+      } else {
+        emit(state.copyWith(isLoading: true, currentPage: 1, aircraftList: []));
+      }
     }
 
     try {
@@ -32,7 +34,7 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
           : paginated.results;
 
       updatedList.sort(
-            (a, b) => a.aircraftModel.toLowerCase().compareTo(
+        (a, b) => a.aircraftModel.toLowerCase().compareTo(
           b.aircraftModel.toLowerCase(),
         ),
       );
