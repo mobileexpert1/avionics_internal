@@ -47,4 +47,27 @@ class OneWordTopicRepository {
       throw Exception(e.toString());
     }
   }
+
+
+  Future<OneWordTopicModel?> getCalculationTopic() async {
+    if (!await GenericMethods.hasInternet()) {
+      return null;
+    }
+
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlGamesConstant.calculation}",
+    );
+
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+
+      if (jsonData.containsKey('data')) {
+        return OneWordTopicModel.fromJson(jsonData);
+      }
+      return null;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

@@ -43,17 +43,16 @@ class CalculationLockScreen extends StatelessWidget {
                 itemCount: state.games.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 22,
+                  crossAxisSpacing: 12,
                   mainAxisSpacing: 0,
-                  childAspectRatio: 0.9,
+                  childAspectRatio: 0.8,
                 ),
                 itemBuilder: (context, index) {
                   final game = state.games[index];
                   return LockGameCard(
                     title: game.title,
                     isLocked: game.isLocked,
-                    infoMessage:
-                    '''This is your entry gate into aviation math. Grab your mental calculator and convert like a true aviation whiz — Feet to kilometres, knots to Mach.''',
+                    infoMessage: game.info,
                     onTap: () {
                       if (!game.isLocked) {
                         Navigator.push(

@@ -6,7 +6,7 @@ OverlayEntry? _activeTooltip;
 void showInfoTooltip({
   required BuildContext context,
   required GlobalKey key,
-  required String message,
+  required List<String> message,
   TooltipPosition position = TooltipPosition.below,
 }) {
   _activeTooltip?.remove();
@@ -55,7 +55,7 @@ void showInfoTooltip({
       top: top,
       child: Material(
         color: Colors.transparent,
-        child: InfoTooltip(message: message),
+        child: InfoTooltip(message: message.join('\n')),
       ),
     ),
   );

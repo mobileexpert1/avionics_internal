@@ -40,6 +40,17 @@ class OneWordTopicScreen extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<OnewordCubit, OneWordTopicState>(
                   builder: (context, state) {
+                    if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (state.errorMessage != null) {
+                      return Center(child: Text(state.errorMessage!)); // Error
+                    }
+
+                    if (state.games.isEmpty) {
+                      return const Center(child: Text("No games available."));
+                    }
                     return GridView.builder(
                       itemCount: state.games.length,
                       gridDelegate:
@@ -54,24 +65,7 @@ class OneWordTopicScreen extends StatelessWidget {
                         return LockGameCard(
                           title: game.title,
                           isLocked: false,
-                          //                           infoMessage: '''
-                          // • Structure and behaviour of the
-                          //    atmosphere
-                          // • METAR and TAF decoding
-                          // • Wind, pressure systems,
-                          //    temperature gradients
-                          // • Fronts,clouds,thunderstorms,
-                          //    turbulence
-                          // • Icing conditions, visibility, fog
-                          // • Weather radar and satellite
-                          //    interpretation
-                          // • Environmental awareness:
-                          //    noise abatement,emissions,
-                          //    contrail formation
-                          // ''',
-                          infoMessage: game.info.isNotEmpty
-                              ? game.info.first
-                              : "No info available",
+                          infoMessage: game.info,
                           onTap: () {
                             if (!game.isLocked) {
                               print('Playing ${game.title}');
