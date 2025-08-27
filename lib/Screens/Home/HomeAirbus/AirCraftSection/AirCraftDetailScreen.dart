@@ -400,7 +400,10 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
       ['Ferry Range (if applicable)', performanceDetails.range.ferryRangeNm],
       ['Initial Rate of Descent (fpm)', performanceDetails.descentInitialFpm],
       ['Average Rate of Descent (fpm)', performanceDetails.descentAvgFpm],
-      ['Minimum Clean Speed (kts)', performanceDetails.minCleanSpeed.toString()],
+      [
+        'Minimum Clean Speed (kts)',
+        performanceDetails.minCleanSpeed.toString(),
+      ],
       ['Approach Speed (kts)', performanceDetails.approachSpeed],
       ['Approach Category', performanceDetails.approachCategory],
       ['Landing Speed (kts)', performanceDetails.landingSpeed],
