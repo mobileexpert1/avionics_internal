@@ -7,6 +7,7 @@
       "name": "avionics_internal",
       "version": "1.0.0+1",
       "dependencies": [
+        "cached_network_image",
         "cloud_firestore",
         "connectivity_plus",
         "cupertino_icons",
@@ -16,6 +17,7 @@
         "firebase_core",
         "flutter",
         "flutter_bloc",
+        "flutter_cache_manager",
         "flutter_facebook_auth",
         "flutter_map",
         "flutter_slidable",
@@ -1340,6 +1342,62 @@
       "dependencies": [
         "meta"
       ]
+    },
+    {
+      "name": "cached_network_image",
+      "version": "3.3.1",
+      "dependencies": [
+        "cached_network_image_platform_interface",
+        "cached_network_image_web",
+        "flutter",
+        "flutter_cache_manager",
+        "octo_image"
+      ]
+    },
+    {
+      "name": "octo_image",
+      "version": "2.1.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "flutter_cache_manager",
+      "version": "3.3.1",
+      "dependencies": [
+        "clock",
+        "collection",
+        "file",
+        "flutter",
+        "http",
+        "path",
+        "path_provider",
+        "rxdart",
+        "sqflite",
+        "uuid"
+      ]
+    },
+    {
+      "name": "cached_network_image_platform_interface",
+      "version": "4.0.0",
+      "dependencies": [
+        "flutter",
+        "flutter_cache_manager"
+      ]
+    },
+    {
+      "name": "cached_network_image_web",
+      "version": "1.2.0",
+      "dependencies": [
+        "cached_network_image_platform_interface",
+        "flutter",
+        "flutter_cache_manager"
+      ]
+    },
+    {
+      "name": "rxdart",
+      "version": "0.27.7",
+      "dependencies": []
     }
   ],
   "configVersion": 1

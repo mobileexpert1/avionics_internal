@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../Helpers/AppText.dart';
+import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/home/manufacturer/manufacturer_state.dart';
@@ -148,10 +149,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                           borderRadius: BorderRadius.circular(
                                             5,
                                           ),
-                                          child: _buildLeadingImage(
-                                            screenWidth * 0.15,
-                                            screenWidth * 0.15,
-                                            item.icon!,
+                                          child: CachedAnyImage(
+                                            imagePath: item.icon ?? "",
+                                            width: screenWidth * 0.15,
+                                            height: screenWidth * 0.15,
                                           ),
                                         )
                                       : const Icon(Icons.image_not_supported),
@@ -200,51 +201,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-Widget _buildLeadingImage(double width, double height, String imagePath) {
-  if (imagePath.endsWith(".svg")) {
-    if (imagePath.startsWith("assets/")) {
-      return SizedBox(
-        width: width,
-        height: height,
-        child: SvgPicture.asset(
-          imagePath,
-          width: width,
-          height: height,
-          fit: BoxFit.contain,
-        ),
-      );
-    } else {
-      return SizedBox(
-        width: width,
-        height: height,
-        child: SvgPicture.network(
-          imagePath,
-          width: width,
-          height: height,
-          fit: BoxFit.contain,
-          placeholderBuilder: (_) => const SizedBox.shrink(),
-        ),
-      );
-    }
-  } else if (imagePath.startsWith("http")) {
-    return Image.network(
-      imagePath,
-      width: width,
-      height: height,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-    );
-  } else {
-    return Image.asset(
-      imagePath,
-      width: width,
-      height: height,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
     );
   }
 }
