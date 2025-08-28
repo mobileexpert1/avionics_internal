@@ -1,5 +1,6 @@
 // import 'dart:async';
 // import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:internet_connection_checker/internet_connection_checker.dart';
 // import 'chat_implementation.dart';
 // import 'chat_model.dart';
 //
@@ -8,12 +9,33 @@
 //     required String accessToken,
 //     required String existingSessionId,
 //     required bool isNewSession,
-//   }) : _repo = ChatRepositoryImpl(),
-//        super(const [
-//          {'type': 'bot', 'text': 'Hey there!'},
-//          {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
-//        ]) {
+//   })  : _repo = ChatRepositoryImpl(),
+//         super(const [
+//         {'type': 'bot', 'text': 'Hey there!'},
+//         {'type': 'bot', 'text': 'I’m your AskWILCO, How can I help you?'},
+//       ]) {
 //     _init(accessToken, existingSessionId, isNewSession);
+//     _startInternetListener();
+//   }
+//
+//   final ChatRepositoryImpl _repo;
+//   StreamSubscription? _sub;
+//   StreamSubscription<InternetConnectionStatus>? _internetSub;
+//   final _internetStatusController = StreamController<bool>.broadcast();
+//   String? _pendingMessage;
+//   bool _isConnected = true;
+//
+//   /// Expose current connection status and stream
+//   bool get isConnected => _isConnected;
+//   Stream<bool> get internetStream => _internetStatusController.stream;
+//
+//   Future<void> _init(String token, String sessionId, bool isNewSession) async {
+//     if (sessionId.isNotEmpty) {
+//       await _loadOldMessages(sessionId);
+//     }
+//
+//     await _repo.connect(accessToken: token, existingSessionId: sessionId);
+//     _sub = _repo.messages.listen(_onSocketMessage);
 //   }
 //
 //   Future<void> _loadOldMessages(String sessionId) async {
@@ -22,10 +44,10 @@
 //     final history = oldMessages
 //         .map(
 //           (msg) => {
-//             'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
-//             'text': msg.text,
-//           },
-//         )
+//         'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+//         'text': msg.text,
+//       },
+//     )
 //         .toList();
 //
 //     final introMessages = [
@@ -36,20 +58,9 @@
 //     emit([...introMessages, ...history]);
 //   }
 //
-//   final ChatRepositoryImpl _repo;
-//   StreamSubscription? _sub;
-//   String? _pendingMessage;
-//
-//   Future<void> _init(String token, String sessionId, bool isNewSession) async {
-//     if (!isNewSession) {
-//       await _loadOldMessages(sessionId);
-//     }
-//     await _repo.connect(accessToken: token, existingSessionId: sessionId);
-//     _sub = _repo.messages.listen(_onSocketMessage);
-//   }
-//
-//
 //   void sendMessage(String text) {
+//     if (!_isConnected) return;
+//
 //     final next = List<Map<String, String>>.from(state)
 //       ..removeWhere((m) => m['type'] == 'analyzing');
 //
@@ -72,26 +83,41 @@
 //     };
 //
 //     final nonTypingLast = next.lastWhere(
-//       (m) => m['type'] != 'analyzing',
+//           (m) => m['type'] != 'analyzing',
 //       orElse: () => {},
 //     );
 //     final isDuplicate =
 //         nonTypingLast.isNotEmpty &&
-//         nonTypingLast['type'] == mapped['type'] &&
-//         (nonTypingLast['text'] ?? '').trim() == (mapped['text'] ?? '').trim();
+//             nonTypingLast['type'] == mapped['type'] &&
+//             (nonTypingLast['text'] ?? '').trim() == (mapped['text'] ?? '').trim();
 //
 //     if (!isDuplicate) next.add(mapped);
 //
 //     emit(next);
 //   }
 //
+//   void _startInternetListener() {
+//     _internetSub = InternetConnectionChecker().onStatusChange.listen((status) {
+//       final connected = status == InternetConnectionStatus.connected;
+//       if (connected != _isConnected) {
+//         _isConnected = connected;
+//         _internetStatusController.add(_isConnected);
+//       }
+//     });
+//   }
+//
 //   @override
 //   Future<void> close() async {
 //     await _sub?.cancel();
+//     await _internetSub?.cancel();
+//     await _internetStatusController.close();
 //     await _repo.dispose();
 //     return super.close();
 //   }
 // }
+//
+
+
 
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -105,9 +131,9 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     required String existingSessionId,
     required bool isNewSession,
   })  : _repo = ChatRepositoryImpl(),
-        super(const [
+        super([
         {'type': 'bot', 'text': 'Hey there!'},
-        {'type': 'bot', 'text': 'I’m your AskWILCO, How can I help you?'},
+        {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
       ]) {
     _init(accessToken, existingSessionId, isNewSession);
     _startInternetListener();
@@ -124,10 +150,9 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   Stream<bool> get internetStream => _internetStatusController.stream;
 
   Future<void> _init(String token, String sessionId, bool isNewSession) async {
-    if (sessionId.isNotEmpty) {
+    if (!isNewSession && sessionId.isNotEmpty) {
       await _loadOldMessages(sessionId);
     }
-
     await _repo.connect(accessToken: token, existingSessionId: sessionId);
     _sub = _repo.messages.listen(_onSocketMessage);
   }
@@ -144,12 +169,20 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     )
         .toList();
 
-    final introMessages = [
-      {'type': 'bot', 'text': 'Hey there!'},
-      {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
-    ];
+    // Combine intro messages with history, avoiding duplicates
+    final currentState = List<Map<String, String>>.from(state);
+    final updatedState = [...currentState, ...history];
 
-    emit([...introMessages, ...history]);
+    // Remove any potential duplicates based on text and type
+    // final uniqueMessages = <Map<String, String>>[];
+    // for (var msg in updatedState) {
+    //   if (!uniqueMessages.any((m) =>
+    //   m['type'] == msg['type'] && m['text']?.trim() == msg['text']?.trim())) {
+    //     uniqueMessages.add(msg);
+    //   }
+    // }
+
+    emit(updatedState);
   }
 
   void sendMessage(String text) {
@@ -209,4 +242,3 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     return super.close();
   }
 }
-
