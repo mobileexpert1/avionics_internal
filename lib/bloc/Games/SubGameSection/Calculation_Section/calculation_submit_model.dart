@@ -1,6 +1,23 @@
+// class SubmitCalculationResultResponse {
+//   final String detail;
+//   final SubmitCalculationResultData data;
+//
+//   SubmitCalculationResultResponse({
+//     required this.detail,
+//     required this.data,
+//   });
+//
+//   factory SubmitCalculationResultResponse.fromJson(Map<String, dynamic> json) {
+//     return SubmitCalculationResultResponse(
+//       detail: json['detail'] ?? '',
+//       data: SubmitCalculationResultData.fromJson(json['data'] ?? {}),
+//     );
+//   }
+// }
+
 class SubmitCalculationResultResponse {
   final String detail;
-  final SubmitCalculationResultData data;
+  final Map<String, dynamic> data;
 
   SubmitCalculationResultResponse({
     required this.detail,
@@ -9,10 +26,15 @@ class SubmitCalculationResultResponse {
 
   factory SubmitCalculationResultResponse.fromJson(Map<String, dynamic> json) {
     return SubmitCalculationResultResponse(
-      detail: json['detail'] ?? '',
-      data: SubmitCalculationResultData.fromJson(json['data'] ?? {}),
+      detail: json['detail'] ?? 'No detail provided',
+      data: json['data'] is Map<String, dynamic> ? json['data'] : {},
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'detail': detail,
+    'data': data,
+  };
 }
 
 class SubmitCalculationResultData {

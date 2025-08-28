@@ -380,7 +380,6 @@
 // }
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
@@ -851,6 +850,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         await QuizQuestionRepository().submitResult(payload, gameId);
       } catch (e) {
         print("Submit API failed: $e");
+        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
       }
       // Navigate to result screen
       final percent = (state.correctAnswers / maxQuestions) * 100;
