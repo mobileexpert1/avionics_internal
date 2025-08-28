@@ -153,6 +153,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                             imagePath: item.icon ?? "",
                                             width: screenWidth * 0.15,
                                             height: screenWidth * 0.15,
+                                            contentImage: BoxFit.contain,
                                           ),
                                         )
                                       : const Icon(Icons.image_not_supported),

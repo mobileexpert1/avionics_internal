@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -186,12 +187,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                           const EdgeInsets.symmetric(
                                             horizontal: 10,
                                           ),
-                                      leading: _buildLeadingImage(
-                                        screenWidth * 0.18,
-                                        screenWidth * 0.1,
-                                        model.image,
-                                        (model.image).contains(".svg"),
-                                        !(model.image).contains(".svg"),
+                                      leading: CachedAnyImage(
+                                        imagePath: model.image ?? "",
+                                        width: screenWidth * 0.18,
+                                        height: screenWidth * 0.1,
+                                        contentImage: BoxFit.fill,
                                       ),
                                       title: Wrap(
                                         crossAxisAlignment:

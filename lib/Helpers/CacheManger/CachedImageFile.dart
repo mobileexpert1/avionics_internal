@@ -14,12 +14,14 @@ class CachedAnyImage extends StatelessWidget {
   final String imagePath;
   final double width;
   final double height;
+  final BoxFit contentImage;
 
   const CachedAnyImage({
     super.key,
     required this.imagePath,
     required this.width,
     required this.height,
+    required this.contentImage,
   });
 
   bool get _isNetwork => imagePath.startsWith("http");
@@ -50,7 +52,7 @@ class CachedAnyImage extends StatelessWidget {
             return _fixedBox(
               SvgPicture.file(
                 snapshot.data!,
-                fit: BoxFit.contain,
+                fit: contentImage,
               ),
             );
           },
@@ -60,7 +62,7 @@ class CachedAnyImage extends StatelessWidget {
           CachedNetworkImage(
             cacheManager: CustomCacheManager.instance,
             imageUrl: imagePath,
-            fit: BoxFit.contain,
+            fit: contentImage,
             placeholder: (context, url) => _loader(),
             errorWidget: (context, url, error) => _errorIcon(),
           ),
@@ -73,14 +75,14 @@ class CachedAnyImage extends StatelessWidget {
       return _fixedBox(
         SvgPicture.asset(
           imagePath,
-          fit: BoxFit.contain,
+          fit: contentImage,
         ),
       );
     } else {
       return _fixedBox(
         Image.asset(
           imagePath,
-          fit: BoxFit.contain,
+          fit: contentImage,
           errorBuilder: (context, error, stackTrace) => _errorIcon(),
         ),
       );

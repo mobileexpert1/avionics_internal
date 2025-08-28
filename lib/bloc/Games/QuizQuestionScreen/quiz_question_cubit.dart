@@ -395,17 +395,21 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   final QuizQuestionRepository _repository;
   static const int maxQuestions = 20;
 
- bool isNoMoreQuestionArrived = false;
+  bool isNoMoreQuestionArrived = false;
   final String gameId;
+   int _totalDuration = 40;
+  DateTime? _startTime;
 
   QuizQuestionCubit(
-    int sectionId,
-    BuildContext context, {
+      int sectionId,
+      BuildContext context, {
         required this.gameId,
         QuizQuestionRepository? repository,
+      }) : _repository = repository ?? QuizQuestionRepository(),
+        super(QuizQuestionState.initial()) {
+    const gameDurations = {"quiz": 120, "calculation": 40, "one_word": 90};
 
-  }) : _repository = repository ?? QuizQuestionRepository(),
-       super(QuizQuestionState.initial()) {
+    _totalDuration = gameDurations[gameId] ?? 40;
     loadQuestions(sectionId, context);
   }
 
@@ -420,9 +424,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   QuizQuestion _mapQuestion(Question q) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
-    print('Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex');
+    print(
+      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex',
+    );
     if (correctIndex == -1) {
-      print('Warning: No matching answer for question "${q.question}", answer: ${q.answer}');
+      print(
+        'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
+      );
     }
     return QuizQuestion(
       question: q.question,
@@ -447,10 +455,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       } else if (gameId == "quiz") {
         gameData = await _repository.getQuizData(sectionId, 3);
       } else {
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: 'Invalid gameId: $gameId',
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Invalid gameId: $gameId',
+          ),
+        );
         return;
       }
 
@@ -458,10 +468,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       if (gameData == null || gameData.categoryTypes.isEmpty) {
         print('No categories found in gameData');
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: 'No questions available from API',
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'No questions available from API',
+          ),
+        );
         return;
       }
 
@@ -469,7 +481,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
       for (var category in gameData.categoryTypes) {
         var questions = category.questions.map(_mapQuestion).toList();
-        print('Category: ${category.name}, Questions: Queens ${questions.length}');
+        print(
+          'Category: ${category.name}, Questions: Queens ${questions.length}',
+        );
         categorizedQuestions[category.name] = questions;
       }
 
@@ -484,10 +498,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       if (allQuestions.isEmpty) {
         print('No questions mapped from categories');
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: 'No questions could be mapped from API response',
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'No questions could be mapped from API response',
+          ),
+        );
         return;
       }
 
@@ -510,7 +526,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           currentIndex: 0,
           selectedIndex: null,
           showAnswer: false,
-          timer: 40,
+          timer: _totalDuration,
           score: 0,
           correctAnswers: 0,
           wrongAnswers: 0,
@@ -527,7 +543,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         ),
       );
 
-      print('State updated: questions=${state.questions.length}, currentIndex=${state.currentIndex}');
+      print(
+        'State updated: questions=${state.questions.length}, currentIndex=${state.currentIndex}',
+      );
 
       // Start timer
       startTimer(context);
@@ -538,10 +556,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
     } catch (e, stackTrace) {
       print('Error loading questions: $e, StackTrace: $stackTrace');
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to load questions: $e',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to load questions: $e',
+        ),
+      );
     }
   }
 
@@ -561,28 +581,42 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   //   }
   // }
 
-
-  Future<void> _fetchAndBufferBackgroundQuestions(int sectionId, BuildContext context) async {
+  Future<void> _fetchAndBufferBackgroundQuestions(
+      int sectionId,
+      BuildContext context,
+      ) async {
     print('Fetching background questions for sectionId: $sectionId');
     for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
       if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
-        print('Max questions reached: ${state.questions.length + _bufferedQuestions.length}');
+        print(
+          'Max questions reached: ${state.questions.length + _bufferedQuestions.length}',
+        );
         break;
       }
       CalculationGameModel? additionalData;
       if (gameId == "calculation") {
-        additionalData = await _repository.fetchAdditionalQuestions(sectionId, actionNumber);
+        additionalData = await _repository.fetchAdditionalQuestions(
+          sectionId,
+          actionNumber,
+        );
       } else if (gameId == "one_word") {
-        additionalData = await _repository.fetchOneWordQuestions(sectionId, actionNumber);
-      }
-      else if (gameId == "quiz") {
-        additionalData = await _repository.fetchQuizQuestions(sectionId, actionNumber);
+        additionalData = await _repository.fetchOneWordQuestions(
+          sectionId,
+          actionNumber,
+        );
+      } else if (gameId == "quiz") {
+        additionalData = await _repository.fetchQuizQuestions(
+          sectionId,
+          actionNumber,
+        );
       } else {
         print('Invalid gameId for background fetch: $gameId');
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: 'Invalid gameId for background fetch: $gameId',
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Invalid gameId for background fetch: $gameId',
+          ),
+        );
         return;
       }
       print('Additional data for action $actionNumber: $additionalData');
@@ -594,20 +628,19 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     }
     if (state.questions.length + _bufferedQuestions.length == 0) {
       print('No questions after background fetch');
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'No questions available after background fetch.',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'No questions available after background fetch.',
+        ),
+      );
     }
   }
 
-
-
-
   Future<void> appendQuestionsSilently(
-    CalculationGameModel additionalData,
-      BuildContext context
-  ) async {
+      CalculationGameModel additionalData,
+      BuildContext context,
+      ) async {
     if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
       return;
     }
@@ -616,14 +649,14 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         .expand((category) => category.questions)
         .map(_mapQuestion)
         .take(
-          maxQuestions - (state.questions.length + _bufferedQuestions.length),
-        )
+      maxQuestions - (state.questions.length + _bufferedQuestions.length),
+    )
         .toList()
         .cast<QuizQuestion>();
 
     if (newQuestions.isNotEmpty) {
       _bufferedQuestions.addAll(newQuestions);
-      if (isNoMoreQuestionArrived == true ) {
+      if (isNoMoreQuestionArrived == true) {
         revealBufferedQuestions(context);
       }
     }
@@ -641,19 +674,18 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
     emit(state.copyWith(questions: updatedQuestions, isLoading: false));
 
-    if (isNoMoreQuestionArrived == true ) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('All set! Taking you to the next question...')));
+    if (isNoMoreQuestionArrived == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All set! Taking you to the next question...'),
+        ),
+      );
       Future.delayed(const Duration(seconds: 4), () {
         isNoMoreQuestionArrived = false;
         nextQuestion(context);
       });
     }
   }
-
-  DateTime? _startTime;
-  final int _totalDuration = 40;
 
   void startTimer(BuildContext context) {
     _startTime = DateTime.now();
@@ -703,7 +735,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     int pointsThisQuestion = isCorrect ? 2 : 0;
     int bonusPointsThisQuestion = timeBonus;
 
-    final timeSpentThisQuestion = max(1, 40 - state.timer); // Ensure minimum 1s
+    final timeSpentThisQuestion = max(1, _totalDuration - state.timer); // Ensure minimum 1s
     final updatedResults = List<QuestionResult>.from(state.questionResults);
     final updatedTimePerQuestion = List<int>.from(state.timePerQuestion);
 
@@ -748,7 +780,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           currentIndex: state.currentIndex + 1,
           selectedIndex: null,
           showAnswer: false,
-          timer: 40,
+          timer: _totalDuration,
           isTimerEnded: false,
         ),
       );
@@ -756,6 +788,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       print(state.currentIndex);
       if (state.currentIndex == 9 || state.currentIndex == 13) {
+
+        if (gameId == "quiz") {
+          switch (state.currentIndex) {
+            case 10:
+              _totalDuration = 90;
+              break;
+            case 14:
+              _totalDuration = 40;
+              break;
+          }
+        }
+        print("Updating the time for quiz section $_totalDuration");
+        _timer?.cancel();
+        startTimer(context);
         revealBufferedQuestions(context);
       }
     }
@@ -784,7 +830,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             .toList();
         final categoryType =
             categoryTypeMap[categoryName] ??
-            categoryName; // Use numeric type or fallback
+                categoryName; // Use numeric type or fallback
         return {
           "category_type": categoryType,
           "category_name": formatCategoryName(categoryName),
@@ -794,16 +840,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             final result = resultIndex != -1
                 ? state.questionResults[resultIndex]
                 : QuestionResult(
-                    userAnswerIndex: null,
-                    correctPoint: 0,
-                    bonusPoint: 0,
-                    timeTakenSeconds: 0,
-                  );
+              userAnswerIndex: null,
+              correctPoint: 0,
+              bonusPoint: 0,
+              timeTakenSeconds: 0,
+            );
             return {
               "question": q.question,
               "options": List.generate(
                 q.options.length,
-                (optIndex) => {
+                    (optIndex) => {
                   "label": String.fromCharCode(65 + optIndex),
                   "value": q.options[optIndex],
                 },
@@ -882,7 +928,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     else {
       isNoMoreQuestionArrived = true;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please hold on while we load the next set of questions…')),
+        const SnackBar(
+          content: Text(
+            'Please hold on while we load the next set of questions…',
+          ),
+        ),
       );
     }
   }
