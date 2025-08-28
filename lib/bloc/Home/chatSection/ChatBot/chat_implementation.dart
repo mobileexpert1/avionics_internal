@@ -109,11 +109,12 @@ class ChatRepositoryImpl implements ChatRepository {
       onDone: _onDone,
       cancelOnError: true,
     );
-    if (_pendingUserMessage != null) {
-      Future.delayed(const Duration(seconds: 1), () {
-        resendPendingMessageIfAny();
-      });
-    }
+
+    // if (_pendingUserMessage != null) {
+    //   Future.delayed(const Duration(seconds: 1), () {
+    //     resendPendingMessageIfAny();
+    //   });
+    // }
   }
 
   void _onData(dynamic data) async {
@@ -133,8 +134,11 @@ class ChatRepositoryImpl implements ChatRepository {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('wilco_session_id', _sessionId!);
 
-      if (_pendingUserMessage != null) {
-        send(_pendingUserMessage!);
+      if (_pendingUserMessageObject != null) {
+        _pendingUserMessageObject!.sessionId = _sessionId!;
+        await _chatDb.update(
+          _pendingUserMessageObject!,
+        ); // Update the saved message
         _pendingUserMessage = null;
       }
     }
@@ -160,13 +164,13 @@ class ChatRepositoryImpl implements ChatRepository {
     print('[WebSocket] Error: $error');
 
     final errorString = error.toString();
-    final isServerError =
-        errorString.contains('500') ||
+    if (errorString.contains('502')) {
+      _pushSystem("Server gateway issue detected. Please try again later. ❌");
+    } else if (errorString.contains('500') ||
         errorString.contains('504') ||
         errorString.contains('Internal Server Error') ||
-        errorString.contains('Gateway Timeout');
-
-    if (isServerError) {
+        errorString.contains('Gateway Timeout') ||
+        errorString.contains('403')) {
       _pushSystem("Internal Server Error. Please try again later. ❌");
     } else {
       _pushSystem("Unexpected error occurred. Please try again later. ⚠️");
@@ -203,10 +207,14 @@ class ChatRepositoryImpl implements ChatRepository {
       text: text,
       sessionId: _sessionId ?? '',
     );
-    _pendingUserMessage = text;
+    _pendingUserMessage = null;
     _pendingUserMessageObject = msg;
     _controller.add(msg);
     _saveChatMessage(msg);
+
+    if (_sessionId != null && _sessionId!.isNotEmpty) {
+      _pendingUserMessage = null; // Clear if session is already established
+    }
   }
 
   void resendPendingMessageIfAny() {
@@ -230,7 +238,7 @@ class ChatRepositoryImpl implements ChatRepository {
     );
 
     _controller.add(msg);
-    // _saveChatMessage(msg);
+    _saveChatMessage(msg);
   }
 
   void _saveChatMessage(ChatMessage msg) async {

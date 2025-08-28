@@ -20,7 +20,7 @@ void showInfoTooltip({
   final screenSize = MediaQuery.of(context).size;
 
   const tooltipWidth = 260.0;
-  const tooltipHeight = 80.0; /// Approx height of tooltip box
+  const tooltipHeight = 80.0;
 
   double left = offset.dx;
   double top = offset.dy;
