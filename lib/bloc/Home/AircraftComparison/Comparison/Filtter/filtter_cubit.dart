@@ -167,7 +167,7 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
   ) {
     if (isAlreadyProcessing == true) {
       if (model != null) {
-        emit(model!);
+        emit(model);
       }
     } else {
       final generalOptions = [

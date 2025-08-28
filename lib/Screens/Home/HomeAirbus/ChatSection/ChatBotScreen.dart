@@ -304,8 +304,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   //   );
   // }
   Widget _chatInput(BuildContext context) {
-    const double iconSize = 22;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

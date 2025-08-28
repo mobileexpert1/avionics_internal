@@ -29,10 +29,7 @@ class ProfileSubscriptionScreen extends StatelessWidget {
         body: BlocBuilder<SubscriptionCubit, SubscriptionState>(
           builder: (context, state) {
             if (state is! SubscriptionInitial) return SizedBox.shrink();
-
             final selectedOption = state.selectedId;
-            final subscriptionList = state.subscriptionList;
-
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
@@ -106,28 +103,6 @@ class ProfileSubscriptionScreen extends StatelessWidget {
             );
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildFeatureRow({required Widget iconWidget, required String text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          iconWidget,
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Color.fromRGBO(98, 98, 98, 1.0),
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

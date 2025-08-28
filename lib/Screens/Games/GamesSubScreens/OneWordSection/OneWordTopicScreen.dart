@@ -68,7 +68,6 @@ class OneWordTopicScreen extends StatelessWidget {
                           infoMessage: game.info,
                           onTap: () {
                             if (!game.isLocked) {
-                              print('Playing ${game.title}');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

@@ -117,7 +117,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   StreamSubscription? _sub;
   StreamSubscription<InternetConnectionStatus>? _internetSub;
   final _internetStatusController = StreamController<bool>.broadcast();
-  String? _pendingMessage;
   bool _isConnected = true;
 
   /// Expose current connection status and stream

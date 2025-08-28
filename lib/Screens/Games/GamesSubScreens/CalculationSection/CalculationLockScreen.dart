@@ -64,7 +64,6 @@ class CalculationLockScreen extends StatelessWidget {
                             ),
                           ),
                         );
-                        print('Playing ${game.title}');
                       }
                     },
                     onInfoTap: () {

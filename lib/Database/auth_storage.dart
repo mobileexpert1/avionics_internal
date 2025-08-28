@@ -36,7 +36,6 @@ class AuthStorage {
   }
 
   static const _emailKey = 'current_user_email';
-  static const _nameKey  = 'current_user_name';
 
   static Future<void> saveUserEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();

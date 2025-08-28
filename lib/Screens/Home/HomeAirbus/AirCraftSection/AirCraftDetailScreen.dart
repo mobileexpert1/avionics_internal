@@ -201,14 +201,14 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               ? const EdgeInsets.symmetric(horizontal: 0)
               : const EdgeInsets.only(right: 10);
 
-          final hasCopyright = (image.cc ?? "").isNotEmpty;
+          final hasCopyright = (image.cc).isNotEmpty;
 
           return Padding(
             padding: imagePadding,
             child: GestureDetector(
               onTap: hasCopyright
                   ? () async {
-                      final uri = Uri.tryParse(image.source ?? '');
+                      final uri = Uri.tryParse(image.source);
                       if (uri != null && await canLaunchUrl(uri)) {
                         await launchUrl(
                           uri,
@@ -226,7 +226,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 child: Stack(
                   children: [
                     Image.network(
-                      image.url ?? '',
+                      image.url,
                       width: imageWidth,
                       height: screenHeight * 0.18,
                       fit: BoxFit.cover,
@@ -253,7 +253,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            '© ${image.cc ?? ''}',
+                            '© ${image.cc}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 8,

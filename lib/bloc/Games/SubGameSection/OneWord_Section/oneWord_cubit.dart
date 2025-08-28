@@ -16,9 +16,9 @@ class OnewordCubit extends Cubit<OneWordTopicState> {
         final List<quizItem> gameList = response.data.map((oneWord) {
           return quizItem(
             title: oneWord.name,
-            isLocked: !(oneWord.isEnable ?? false),
+            isLocked: !(oneWord.isEnable),
             gameNumber: oneWord.gameNumber,
-            info: oneWord.info ?? [],
+            info: oneWord.info,
           );
         }).toList();
 

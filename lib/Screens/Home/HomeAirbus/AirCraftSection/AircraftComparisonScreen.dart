@@ -168,9 +168,9 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                   imagePath: _buildLeadingImage(
                                     screenWidth * 0.15,
                                     screenWidth * 0.15,
-                                    model.image ?? '',
-                                    (model.image ?? '').contains(".svg"),
-                                    !(model.image ?? '').contains(".svg"),
+                                    model.image,
+                                    (model.image).contains(".svg"),
+                                    !(model.image).contains(".svg"),
                                   ),
                                   model: model.aircraftModel,
                                   badge: model.icaoTypeCode,

@@ -1,13 +1,10 @@
-import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../Constants/ConstantStrings.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/home/manufacturer/manufacturer_state.dart';
-import '../HomeScreen.dart';
 import 'ManufacturerDetailScreen.dart';
 
 class ManufacturerScreen extends StatefulWidget {
@@ -155,8 +152,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                             screenWidth * 0.15,
                                             screenWidth * 0.15,
                                             item.icon!,
-                                            (item.icon ?? '').contains(".svg"),
-                                            !(item.icon ?? '').contains(".svg"),
                                           ),
                                         )
                                       : const Icon(Icons.image_not_supported),
@@ -207,53 +202,49 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       ),
     );
   }
+}
 
-  Widget _buildLeadingImage(
-    double width,
-    double height,
-    String imagePath,
-    bool isLocalSvgAsset,
-    bool isNetwork,
-  ) {
-    if (isLocalSvgAsset) {
-      if (imagePath.contains("assets")) {
-        return SizedBox(
-          width: width,
-          height: height,
-          child: SvgPicture.asset(
-            imagePath,
-            fit: BoxFit.contain,
-            alignment: Alignment.center,
-          ),
-        );
-      } else {
-        return SizedBox(
-          width: width,
-          height: height,
-          child: SvgPicture.network(
-            imagePath,
-            fit: BoxFit.contain,
-            alignment: Alignment.center,
-            placeholderBuilder: (context) => const SizedBox.shrink(),
-          ),
-        );
-      }
-    } else if (isNetwork) {
-      return Image.network(
-        imagePath,
-        height: height,
+Widget _buildLeadingImage(double width, double height, String imagePath) {
+  if (imagePath.endsWith(".svg")) {
+    if (imagePath.startsWith("assets/")) {
+      return SizedBox(
         width: width,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        height: height,
+        child: SvgPicture.asset(
+          imagePath,
+          width: width,
+          height: height,
+          fit: BoxFit.contain,
+        ),
       );
     } else {
-      return Image.asset(
-        imagePath,
-        height: height,
+      return SizedBox(
         width: width,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        height: height,
+        child: SvgPicture.network(
+          imagePath,
+          width: width,
+          height: height,
+          fit: BoxFit.contain,
+          placeholderBuilder: (_) => const SizedBox.shrink(),
+        ),
       );
     }
+  } else if (imagePath.startsWith("http")) {
+    return Image.network(
+      imagePath,
+      width: width,
+      height: height,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+    );
+  } else {
+    return Image.asset(
+      imagePath,
+      width: width,
+      height: height,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+    );
   }
 }

@@ -5,7 +5,6 @@ import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Database/generic_methods.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 import '../SubGameSection/Calculation_Section/calculation_submit_model.dart';
-import 'QuestionResult.dart';
 
 class QuizQuestionRepository {
   // Mapping of game numbers to game names

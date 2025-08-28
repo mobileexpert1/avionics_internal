@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/constantImages.dart';
 import '../../MapSection/FlightMapscreen.dart';

@@ -117,7 +117,6 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                   setState(() {
                     _currentTabIndex = index;
                   });
-                  print('Tab selected: ${_tabTitles[index]}');
                 },
               ),
             ),

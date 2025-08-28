@@ -10,7 +10,6 @@ import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
 import '../../../bloc/Profile/Avtar/avtar_state.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Onboarding/Login/LoginScreen.dart';
 
 class AvtarScreen extends StatefulWidget {

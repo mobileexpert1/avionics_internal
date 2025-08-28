@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 
 class AircraftCard {

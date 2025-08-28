@@ -25,7 +25,6 @@ class ProfileScreenState  {
     );
   }
 
-  @override
   List<Object?> get props => [
     savedflight,
     isLoading,

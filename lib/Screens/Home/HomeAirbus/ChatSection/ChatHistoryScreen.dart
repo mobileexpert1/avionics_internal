@@ -2,7 +2,6 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
@@ -67,7 +66,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                 ),
                 child: ListTile(
                   title: Text(
-                    item.title ?? '',
+                    item.title,
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
 

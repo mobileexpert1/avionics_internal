@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class AirCraftDetailResponse {
   final String detail;
   final AircraftResult results;

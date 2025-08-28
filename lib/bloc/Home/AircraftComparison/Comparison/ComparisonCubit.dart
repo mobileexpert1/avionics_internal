@@ -59,11 +59,3 @@ class ComparisonCubit extends Cubit<ComparisonState> {
     }
   }
 }
-
-void _selectAllFilters(Map<String, List<ComparisonFilterItem>> filters) {
-  for (final entry in filters.entries) {
-    for (final item in entry.value) {
-      item.isSelected = true;
-    }
-  }
-}

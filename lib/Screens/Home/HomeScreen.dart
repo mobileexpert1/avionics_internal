@@ -9,7 +9,6 @@ import '../../Helpers/AircraftCard.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
 import '../../Helpers/SearchBarWidget.dart';
-import '../../bloc/home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
@@ -282,9 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           .map(
                             (f) => AppListTileCard(
                           title: f.aircraftModel,
-                          imagePath: (f.image ?? ''),
+                          imagePath: (f.image),
                           onTap: () {},
-                          isSvg: (f.image ?? '').contains(".svg"),
+                          isSvg: (f.image).contains(".svg"),
                           isNetwork: true,
                         ),
                       ),

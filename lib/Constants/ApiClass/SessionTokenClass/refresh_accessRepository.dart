@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
 import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Constants/ApiClass/api_service.dart';

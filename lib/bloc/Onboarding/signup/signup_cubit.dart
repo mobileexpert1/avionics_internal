@@ -151,8 +151,6 @@ class SignupCubit extends Cubit<SignupState> {
         'auth_type': '',
       };
 
-      print(signupData);
-
       Navigator.push(
         context,
         MaterialPageRoute(

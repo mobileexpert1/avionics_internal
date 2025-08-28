@@ -4,7 +4,6 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_state.dart';
-import '../../MainGameScreen/GameScreen.dart';
 
 class CalculationResultScreen extends StatefulWidget {
   const CalculationResultScreen({

@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../Constants/AppColors.dart';
 import '../../Constants/ConstantStrings.dart';
-import '../../Screens/Games/MainGameScreen/GameScreen.dart';
 
 class GameResultCard extends StatelessWidget {
   final String title;

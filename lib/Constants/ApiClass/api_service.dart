@@ -173,8 +173,6 @@ class ApiService {
       }
 
       print('Response Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-
       final decodedBody = utf8.decode(response.bodyBytes);
       print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);
