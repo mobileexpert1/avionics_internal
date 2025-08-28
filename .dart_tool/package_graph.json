@@ -82,6 +82,33 @@
       ]
     },
     {
+      "name": "flutter_cache_manager",
+      "version": "3.3.1",
+      "dependencies": [
+        "clock",
+        "collection",
+        "file",
+        "flutter",
+        "http",
+        "path",
+        "path_provider",
+        "rxdart",
+        "sqflite",
+        "uuid"
+      ]
+    },
+    {
+      "name": "cached_network_image",
+      "version": "3.3.1",
+      "dependencies": [
+        "cached_network_image_platform_interface",
+        "cached_network_image_web",
+        "flutter",
+        "flutter_cache_manager",
+        "octo_image"
+      ]
+    },
+    {
       "name": "geolocator",
       "version": "11.1.0",
       "dependencies": [
@@ -546,6 +573,52 @@
       ]
     },
     {
+      "name": "rxdart",
+      "version": "0.27.7",
+      "dependencies": []
+    },
+    {
+      "name": "http",
+      "version": "0.13.6",
+      "dependencies": [
+        "async",
+        "http_parser",
+        "meta"
+      ]
+    },
+    {
+      "name": "file",
+      "version": "7.0.1",
+      "dependencies": [
+        "meta",
+        "path"
+      ]
+    },
+    {
+      "name": "octo_image",
+      "version": "2.1.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "cached_network_image_web",
+      "version": "1.2.0",
+      "dependencies": [
+        "cached_network_image_platform_interface",
+        "flutter",
+        "flutter_cache_manager"
+      ]
+    },
+    {
+      "name": "cached_network_image_platform_interface",
+      "version": "4.0.0",
+      "dependencies": [
+        "flutter",
+        "flutter_cache_manager"
+      ]
+    },
+    {
       "name": "geolocator_windows",
       "version": "0.2.5",
       "dependencies": [
@@ -618,15 +691,6 @@
       "version": "1.0.1",
       "dependencies": [
         "collection"
-      ]
-    },
-    {
-      "name": "http",
-      "version": "0.13.6",
-      "dependencies": [
-        "async",
-        "http_parser",
-        "meta"
       ]
     },
     {
@@ -1243,14 +1307,6 @@
       ]
     },
     {
-      "name": "file",
-      "version": "7.0.1",
-      "dependencies": [
-        "meta",
-        "path"
-      ]
-    },
-    {
       "name": "xml",
       "version": "6.5.0",
       "dependencies": [
@@ -1342,62 +1398,6 @@
       "dependencies": [
         "meta"
       ]
-    },
-    {
-      "name": "cached_network_image",
-      "version": "3.3.1",
-      "dependencies": [
-        "cached_network_image_platform_interface",
-        "cached_network_image_web",
-        "flutter",
-        "flutter_cache_manager",
-        "octo_image"
-      ]
-    },
-    {
-      "name": "octo_image",
-      "version": "2.1.0",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
-      "name": "flutter_cache_manager",
-      "version": "3.3.1",
-      "dependencies": [
-        "clock",
-        "collection",
-        "file",
-        "flutter",
-        "http",
-        "path",
-        "path_provider",
-        "rxdart",
-        "sqflite",
-        "uuid"
-      ]
-    },
-    {
-      "name": "cached_network_image_platform_interface",
-      "version": "4.0.0",
-      "dependencies": [
-        "flutter",
-        "flutter_cache_manager"
-      ]
-    },
-    {
-      "name": "cached_network_image_web",
-      "version": "1.2.0",
-      "dependencies": [
-        "cached_network_image_platform_interface",
-        "flutter",
-        "flutter_cache_manager"
-      ]
-    },
-    {
-      "name": "rxdart",
-      "version": "0.27.7",
-      "dependencies": []
     }
   ],
   "configVersion": 1

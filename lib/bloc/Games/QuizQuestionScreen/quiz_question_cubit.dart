@@ -407,7 +407,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         QuizQuestionRepository? repository,
       }) : _repository = repository ?? QuizQuestionRepository(),
         super(QuizQuestionState.initial()) {
-    const gameDurations = {"quiz": 120, "calculation": 40, "one_word": 90};
+    const gameDurations = {"quiz": 120, "calculation": 40, "one_word": 40};
 
     _totalDuration = gameDurations[gameId] ?? 40;
     loadQuestions(sectionId, context);
@@ -787,21 +787,20 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       startTimer(context);
 
       print(state.currentIndex);
-      if (state.currentIndex == 9 || state.currentIndex == 13) {
-
-        if (gameId == "quiz") {
-          switch (state.currentIndex) {
-            case 10:
-              _totalDuration = 90;
-              break;
-            case 14:
-              _totalDuration = 40;
-              break;
-          }
+      if (gameId == "quiz") {
+        switch (state.currentIndex) {
+          case 10:
+            _totalDuration = 90;
+            break;
+          case 15:
+            _totalDuration = 40;
+            break;
         }
-        print("Updating the time for quiz section $_totalDuration");
         _timer?.cancel();
         startTimer(context);
+      }
+      print("Updating the time for quiz section $_totalDuration");
+      if (state.currentIndex == 9 || state.currentIndex == 13) {
         revealBufferedQuestions(context);
       }
     }

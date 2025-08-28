@@ -67,7 +67,7 @@ class OneWordTopicScreen extends StatelessWidget {
                           isLocked: false,
                           infoMessage: game.info,
                           onTap: () {
-                            if (!game.isLocked) {
+                            //if (!game.isLocked) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -78,7 +78,7 @@ class OneWordTopicScreen extends StatelessWidget {
                                   ),
                                 ),
                               );
-                            }
+                           // }
                           },
                           onInfoTap: () {
                             if (game.isLocked) {
