@@ -895,6 +895,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         await QuizQuestionRepository().submitResult(payload, gameId);
       } catch (e) {
         print("Submit API failed: $e");
+        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
       }
       // Navigate to result screen
       final percent = (state.correctAnswers / maxQuestions) * 100;
