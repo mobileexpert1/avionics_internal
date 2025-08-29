@@ -61,6 +61,7 @@ class QuizQuestionRepository {
 
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      print("Response JsonData =:${jsonData} $actionNumber");
       return CalculationGameModel.fromJson(jsonData);
     } catch (e) {
       debugPrint("Background fetch failed for action $actionNumber: $e");

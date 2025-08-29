@@ -1023,16 +1023,20 @@ class QuizProgressCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.access_time, color: Colors.blue),
                   const SizedBox(width: 4),
-                  Text(
-                    '${secondsRemaining}s',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                  SizedBox(
+                    width: 40,
+                    child: Text(
+                      '${secondsRemaining}s',
+                      textAlign: TextAlign.left, // text alignment
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
           const SizedBox(height: 18),
