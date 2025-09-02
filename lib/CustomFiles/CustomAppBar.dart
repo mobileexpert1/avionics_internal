@@ -7,6 +7,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? rightButton;
   final bool? centerTitle;
   final double? titleSpacing;
+  final bool? isHideTopGradient;
 
   const CustomAppBar({
     super.key,
@@ -15,6 +16,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.rightButton,
     this.centerTitle,
     this.titleSpacing,
+    this.isHideTopGradient,
+
   });
 
   @override
@@ -22,16 +25,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black12, // subtle shadow color
-            offset: Offset(0, 2), // move down
+            color: isHideTopGradient ==  true ? Colors.white : Colors.black12,
+            offset: const Offset(0, 2), // move down
             blurRadius: 4, // soften the shadow
           ),
         ],
-        border: const Border(
+        border: Border(
           bottom: BorderSide(
-            color: AppColors.sepratorColourAppBar,
+            color: isHideTopGradient ==  true ? Colors.white : AppColors.sepratorColourAppBar,
             width: 1.0,
           ),
         ),
@@ -48,19 +51,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: centerTitle ?? true,
         titleSpacing: centerTitle == true ? titleSpacing : 0,
         leading: leftButton != null
-            ? Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: leftButton!,
+            ? Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: leftButton!,
+          ),
         )
             : null,
+        leadingWidth: 100,
+
         actions: rightButton != null
             ? [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: rightButton!,
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: rightButton!,
+            ),
           ),
         ]
             : null,
+
       ),
     );
   }

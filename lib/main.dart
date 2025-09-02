@@ -12,6 +12,7 @@ import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
+import 'bloc/MapSection/FilterforMap/filter_Map_Cubit.dart';
 import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => GamesCubit()),
         BlocProvider(create: (_) => QuizCubit()),
         BlocProvider(create: (_) => ComparisonFilterCubit1()),
+        BlocProvider(create: (_) => FilterMapCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(
