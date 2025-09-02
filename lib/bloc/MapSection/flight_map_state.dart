@@ -1,39 +1,87 @@
-import 'package:geolocator/geolocator.dart';
+// import 'package:geolocator/geolocator.dart';
+// import '../../Constants/ApiClass/ApiErrorModel.dart';
+//
+// class FlightMapState {
+//   final Position? position;
+//   final bool isLoading;
+//   final bool isSuccess;
+//   final String? apiError;
+//   final CommonApiStatus status;
+//   final String? errorMessage;
+//
+//   FlightMapState({
+//     this.position,
+//     this.isLoading = false,
+//     this.isSuccess = false,
+//     this.apiError,
+//     this.status = CommonApiStatus.initial,
+//     this.errorMessage,
+//   });
+//
+//   FlightMapState copyWith({
+//     Position? position,
+//     bool? isLoading,
+//     bool? isSuccess,
+//     String? apiError,
+//     CommonApiStatus? status,
+//     String? errorMessage,
+//   }) {
+//     return FlightMapState(
+//       position: position ?? this.position,
+//       isLoading: isLoading ?? this.isLoading,
+//       isSuccess: isSuccess ?? this.isSuccess,
+//       apiError: apiError ?? this.apiError,
+//       status: status ?? this.status,
+//       errorMessage: errorMessage ?? this.errorMessage,
+//     );
+//   }
+// }
+//
+import 'package:equatable/equatable.dart';
+import 'package:latlong2/latlong.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import 'flight_map_model.dart';
 
-class FlightMapState {
-  final Position? position;
+class FlightMapState extends Equatable {
   final bool isLoading;
-  final bool isSuccess;
-  final String? apiError;
   final CommonApiStatus status;
   final String? errorMessage;
+  final LatLng? position;
+  final List<FlightModel> flights;
 
-  FlightMapState({
-    this.position,
-    this.isLoading = false,
-    this.isSuccess = false,
-    this.apiError,
-    this.status = CommonApiStatus.initial,
+  const FlightMapState({
+    required this.isLoading,
+    required this.status,
     this.errorMessage,
+    this.position,
+    this.flights = const [],
   });
 
-  FlightMapState copyWith({
-    Position? position,
-    bool? isLoading,
-    bool? isSuccess,
-    String? apiError,
-    CommonApiStatus? status,
-    String? errorMessage,
-  }) {
-    return FlightMapState(
-      position: position ?? this.position,
-      isLoading: isLoading ?? this.isLoading,
-      isSuccess: isSuccess ?? this.isSuccess,
-      apiError: apiError ?? this.apiError,
-      status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
+  factory FlightMapState.initial() {
+    return const FlightMapState(
+      isLoading: false,
+      status: CommonApiStatus.initial,
+      flights: [],
     );
   }
+
+  FlightMapState copyWith({
+    bool? isLoading,
+    CommonApiStatus? status,
+    String? errorMessage,
+    LatLng? position,
+    List<FlightModel>? flights,
+  }) {
+    return FlightMapState(
+      isLoading: isLoading ?? this.isLoading,
+      status: status ?? this.status,
+      errorMessage: errorMessage ?? this.errorMessage,
+      position: position ?? this.position,
+      flights: flights ?? this.flights,
+    );
+  }
+
+  @override
+  List<Object?> get props => [isLoading, status, errorMessage, position, flights];
 }
 
