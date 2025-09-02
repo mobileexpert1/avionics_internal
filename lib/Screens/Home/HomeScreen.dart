@@ -12,7 +12,7 @@ import '../../Helpers/SearchBarWidget.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
-import 'AppBarFilter/FilterScreen.dart';
+import 'AppBarFilterAndMapFilter/FilterScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';

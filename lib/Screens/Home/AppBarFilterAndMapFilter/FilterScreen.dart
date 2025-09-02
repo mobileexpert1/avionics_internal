@@ -40,8 +40,8 @@ class _FilterScreenState extends State<FilterScreen> {
               // Calculate the number of applied filters
               final selectedCount = state.filterCategories.fold<int>(
                 0,
-                (previousValue, category) =>
-                    previousValue +
+                    (previousValue, category) =>
+                previousValue +
                     category.options
                         .where((option) => option.isSelected)
                         .length,
@@ -91,11 +91,11 @@ class _FilterScreenState extends State<FilterScreen> {
 
                     // Get the list of options to display based on expansion state
                     final List<FilterOption> optionsToDisplay =
-                        category.isExpanded
+                    category.isExpanded
                         ? category.options
                         : category.options
-                              .take(visibleOptionCountWhenCollapsed)
-                              .toList();
+                        .take(visibleOptionCountWhenCollapsed)
+                        .toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,9 +169,9 @@ class _FilterScreenState extends State<FilterScreen> {
                                       context
                                           .read<FilterCubit>()
                                           .toggleFilterOption(
-                                            category.id,
-                                            option.id,
-                                          );
+                                        category.id,
+                                        option.id,
+                                      );
                                     },
                                     activeColor: Colors.blue,
                                   ),
@@ -203,9 +203,9 @@ class _FilterScreenState extends State<FilterScreen> {
                                       context
                                           .read<FilterCubit>()
                                           .toggleFilterOption(
-                                            category.id,
-                                            option.id,
-                                          );
+                                        category.id,
+                                        option.id,
+                                      );
                                     },
                                     activeColor: Colors.blue,
                                   ),
@@ -251,3 +251,4 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 }
+

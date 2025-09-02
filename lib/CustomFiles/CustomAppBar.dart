@@ -17,7 +17,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle,
     this.titleSpacing,
     this.isHideTopGradient,
-
   });
 
   @override

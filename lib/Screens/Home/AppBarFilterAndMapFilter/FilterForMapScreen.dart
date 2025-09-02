@@ -1,12 +1,19 @@
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../Constants/constantImages.dart';
-import '../../../bloc/MapSection/FilterforMap/filter_Map_Cubit.dart';
-import '../../../bloc/MapSection/FilterforMap/filter_Map_State.dart';
 
-class FilterforMapScreen extends StatelessWidget {
+import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
+import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
+
+class FilterForMapScreen extends StatefulWidget {
+  @override
+  _filterMapScreenState createState() => _filterMapScreenState();
+}
+
+class _filterMapScreenState extends State<FilterForMapScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -22,7 +29,7 @@ class FilterforMapScreen extends StatelessWidget {
                 child: Text(
                   "Filter",
                   style: const TextStyle(
-                    fontSize: 17,
+                    fontSize: 19,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -115,7 +122,7 @@ class _FilterContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   SegmentedControl(
                     options: const ['Standard', 'Satellite', 'Hybrid'],
                     selectedValue: cubit.getMapTypeName(),
@@ -160,7 +167,7 @@ class _FilterContent extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 50),
 
             /// Reset Button
             ElevatedButton(
@@ -171,7 +178,7 @@ class _FilterContent extends StatelessWidget {
                 side: const BorderSide(color: Colors.black),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(3),
                 ),
               ),
               child: const Text("Reset Filter", style: TextStyle(fontSize: 16)),
@@ -205,7 +212,7 @@ class ExpandableSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w400)),
             InkWell(
               onTap: onToggle,
               child: Row(
@@ -334,3 +341,4 @@ class SegmentedControl extends StatelessWidget {
     );
   }
 }
+

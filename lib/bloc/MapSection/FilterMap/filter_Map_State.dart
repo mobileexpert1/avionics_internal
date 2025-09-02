@@ -59,3 +59,4 @@ class FilterMapState extends Equatable {
     categories,
   ];
 }
+
