@@ -194,6 +194,18 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "firebase_crashlytics",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_crashlytics-4.3.10",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_crashlytics_platform_interface",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_crashlytics_platform_interface-3.8.10",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "fixnum",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/fixnum-1.1.1",
       "packageUri": "lib/",
