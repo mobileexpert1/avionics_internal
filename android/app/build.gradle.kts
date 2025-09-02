@@ -2,7 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
-    //id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -42,5 +43,12 @@ flutter {
     source = "../.."
 }
 
+
+dependencies {
+    implementation("com.google.firebase:firebase-crashlytics:18.6.2")
+    implementation("com.google.firebase:firebase-analytics:21.6.2")
+}
+
+
 // ✅ Add this at the very bottom:
-apply(plugin = "com.google.gms.google-services")
+//apply(plugin = "com.google.gms.google-services")

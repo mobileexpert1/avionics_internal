@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Screens/Onboarding/Signup/SignupScreen.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -196,6 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
+                                 FirebaseCrashlytics.instance.crash();
                                  context.read<LoginCubit>().signInWithFacebook(context);
                               },
                             ),
