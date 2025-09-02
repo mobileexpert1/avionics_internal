@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -21,7 +22,9 @@ class ReceiptHelper {
       final file = await _writeToFile(_cachedBase64Receipt!);
 
       if (await file.exists()) {
-        print( "${file.path}");
+        if (kDebugMode) {
+          print(file.path);
+        }
         return file.path;
       } else {
         print("File not saved.");

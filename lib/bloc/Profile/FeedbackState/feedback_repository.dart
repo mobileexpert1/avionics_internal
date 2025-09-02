@@ -12,7 +12,7 @@ class FeedbackRepository {
     );
 
     try {
-      final response = await ApiService.post(
+      await ApiService.post(
         url: url,
         body: feedback.toJson(),
       );

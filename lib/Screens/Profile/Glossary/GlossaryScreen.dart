@@ -153,7 +153,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                               ),
                             ],
                           );
-                        }).toList(),
+                        }),
                       ],
                     );
                   },

@@ -2,10 +2,7 @@ import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_svg/svg.dart';
-
 import '../../../../Constants/AppColors.dart';
-import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
@@ -188,7 +185,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             horizontal: 10,
                                           ),
                                       leading: CachedAnyImage(
-                                        imagePath: model.image ?? "",
+                                        imagePath: model.image,
                                         width: screenWidth * 0.18,
                                         height: screenWidth * 0.1,
                                         contentImage: BoxFit.fill,
@@ -280,70 +277,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-Widget _buildLeadingImage(
-  double width,
-  double height,
-  String imagePath,
-  bool isLocalSvgAsset,
-  bool isNetwork,
-) {
-  if (isLocalSvgAsset) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: SvgPicture.asset(
-        imagePath,
-        fit: BoxFit.contain,
-        alignment: Alignment.center,
-      ),
-    );
-  } else if (isNetwork) {
-    if (imagePath.contains(".svg")) {
-      return SizedBox(
-        width: width,
-        height: height,
-        child: SvgPicture.network(
-          imagePath,
-          fit: BoxFit.fill,
-          alignment: Alignment.center,
-          placeholderBuilder: (context) => SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-            height: height,
-            width: width,
-            fit: BoxFit.contain,
-          ),
-        ),
-      );
-    } else {
-      return Image.network(
-        imagePath,
-        height: height,
-        width: width,
-        fit: BoxFit.fill,
-        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-          height: height,
-          width: width,
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-  } else {
-    return Image.asset(
-      imagePath,
-      height: height,
-      width: width,
-      fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-        height: height,
-        width: width,
-        fit: BoxFit.contain,
       ),
     );
   }

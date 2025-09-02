@@ -166,8 +166,8 @@ class LoginCubit extends Cubit<LoginState> {
       final userCredential = await _auth.signInWithCredential(credential);
 
       debugPrint('userCredential User: ${userCredential.user?.displayName}');
-      debugPrint('credential User: ${credential}');
-      debugPrint('accessToken: ${accessToken}');
+      debugPrint('credential User: $credential');
+      debugPrint('accessToken: $accessToken');
 
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
@@ -202,9 +202,6 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
       final String userToken = credential.identityToken ?? "";
-      final String givenName = credential.givenName ?? "A";
-      final String familyName = credential.familyName ?? "A";
-      final String email = credential.email ?? "";
 
       print('User Token: ${credential.identityToken}');
       print('User ID: ${credential.userIdentifier}');
@@ -270,7 +267,6 @@ class LoginCubit extends Cubit<LoginState> {
       // For Social Login Checks
       if (result.userDetails?.userType == '' ||
           result.userDetails?.userType == null) {
-        final signupData = {'email': state.email};
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => AvtarScreen(
@@ -283,7 +279,6 @@ class LoginCubit extends Cubit<LoginState> {
         );
       } else if (result.userDetails?.isActiveSubscription == null ||
           result.userDetails?.isActiveSubscription == false) {
-        final signupData = {'email': state.email};
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS

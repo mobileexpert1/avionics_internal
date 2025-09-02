@@ -348,7 +348,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     );
                     return ValueListenableBuilder<bool>(
                       valueListenable: _isConnected,
-                      builder: (_, isConnected, __) {
+                      builder: (_, isConnected, _) {
                         return InkWell(
                           onTap: !isConnected
                               ? null

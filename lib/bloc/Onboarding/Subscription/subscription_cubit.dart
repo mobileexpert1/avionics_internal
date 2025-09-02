@@ -62,10 +62,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   ) async {
     final currentState = state;
     if (currentState is SubscriptionInitial) {
-      final selectedFinalItem = currentState.subscriptionList.firstWhere(
-        (item) => item.id == currentState.selectedId,
-      );
-
       emit(
         currentState.copyWith(
           isLoading: true,

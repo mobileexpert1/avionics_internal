@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
-import 'ComparisonModel.dart';
 import 'ComparisonState.dart';
 
 

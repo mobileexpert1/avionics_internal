@@ -8,7 +8,6 @@ import 'ApiErrorModel.dart';
 import 'SessionTokenClass/refresh_accessRepository.dart';
 
 class ApiService {
-
   static final Map<String, String> defaultHeaders = {
     'Content-Type': 'application/json',
   };

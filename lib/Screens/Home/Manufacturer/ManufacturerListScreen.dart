@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';

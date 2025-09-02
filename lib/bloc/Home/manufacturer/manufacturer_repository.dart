@@ -51,11 +51,7 @@ class ManufacturerRepository {
     }
 
     final uri = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiServiceUrlAirplaneConstant.getListManufacturer +
-          "?page=$page" +
-          (query != null && query.isNotEmpty ? '&q=$query' : ''),
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListManufacturer}?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",
     );
 
     try {

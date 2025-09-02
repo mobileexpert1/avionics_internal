@@ -32,7 +32,7 @@ class ChatHistoryRepository {
         String title;
         if (firstUserMessage != null && lastBotResponse != null) {
           // Combine first user message with last bot response, truncated to 50 characters
-          title = '${firstUserMessage} - ${lastBotResponse}'.substring(0, min(50, '${firstUserMessage} - ${lastBotResponse}'.length));
+          title = '$firstUserMessage - $lastBotResponse'.substring(0, min(50, '$firstUserMessage - $lastBotResponse'.length));
         } else if (firstUserMessage != null) {
           // Use first user message if no bot response yet
           title = firstUserMessage.substring(0, min(50, firstUserMessage.length));

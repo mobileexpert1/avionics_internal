@@ -9,11 +9,9 @@ import '../../../../Constants/ConstantStrings.dart';
 
 class HomeRepository {
   HomeRepository()
-      : _manufacturers = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap),
-        _favorites = GenericMethods<Favourite>(Favourite.fromMap);
+      : _manufacturers = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap);
 
   final GenericMethods<ManufacturerListModel> _manufacturers;
-  final GenericMethods<Favourite> _favorites;
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
     final uri = Uri.parse(

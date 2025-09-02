@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppText.dart';
+import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SelectableAircraftCard.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -165,27 +166,21 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                   vertical: screenWidth * 0.017,
                                 ),
                                 child: SimpleAircraftCard(
-                                  imagePath: _buildLeadingImage(
-                                    screenWidth * 0.15,
-                                    screenWidth * 0.15,
-                                    model.image,
-                                    (model.image).contains(".svg"),
-                                    !(model.image).contains(".svg"),
+                                  imagePath: CachedAnyImage(
+                                    imagePath: model.image ?? "",
+                                    width: screenWidth * 0.15,
+                                    height: screenWidth * 0.15,
+                                    contentImage: BoxFit.fill,
                                   ),
                                   model: model.aircraftModel,
                                   badge: model.icaoTypeCode,
                                   manufacturer: model.manufacturer?.companyName,
                                   airline: null,
-                                  airlineImagePath: _buildLeadingImage(
-                                    screenWidth * 0.05,
-                                    screenWidth * 0.05,
-                                    model.manufacturer?.logo ?? '',
-                                    (model.manufacturer?.logo ?? '').contains(
-                                      ".svg",
-                                    ),
-                                    !(model.manufacturer?.logo ?? '').contains(
-                                      ".svg",
-                                    ),
+                                  airlineImagePath: CachedAnyImage(
+                                    imagePath: model.manufacturer?.logo ?? "",
+                                    width: screenWidth * 0.05,
+                                    height: screenWidth * 0.05,
+                                    contentImage: BoxFit.fill,
                                   ),
                                   onTap: () {
                                     Navigator.pop(context, model);
@@ -202,69 +197,5 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildLeadingImage(
-    double width,
-    double height,
-    String imagePath,
-    bool isLocalSvgAsset,
-    bool isNetwork,
-  ) {
-    if (isLocalSvgAsset) {
-      if (imagePath.contains("assets")) {
-        return SizedBox(
-          width: width,
-          height: height,
-          child: SvgPicture.asset(
-            imagePath,
-            fit: BoxFit.contain,
-            alignment: Alignment.center,
-          ),
-        );
-      } else {
-        return SizedBox(
-          width: width,
-          height: height,
-          child: SvgPicture.network(
-            imagePath,
-            fit: BoxFit.fill,
-            alignment: Alignment.center,
-            placeholderBuilder: (context) => SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-              height: height,
-              width: width,
-              fit: BoxFit.contain,
-            ),
-          ),
-        );
-      }
-    } else if (isNetwork) {
-      return Image.network(
-        imagePath,
-        height: height,
-        width: width,
-        fit: BoxFit.fill,
-        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-          height: height,
-          width: width,
-          fit: BoxFit.contain,
-        ),
-      );
-    } else {
-      return Image.asset(
-        imagePath,
-        height: height,
-        width: width,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-          height: height,
-          width: width,
-          fit: BoxFit.contain,
-        ),
-      );
-    }
   }
 }

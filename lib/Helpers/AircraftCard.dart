@@ -62,7 +62,7 @@ class AircraftCard {
                 width: imageWidth,
                 height: imageHeight,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     Icon(Icons.broken_image, size: imageHeight),
               ),
             ),
@@ -93,7 +93,7 @@ class AircraftCard {
                 manufacturerImagePath,
                 width: iconSize,
                 height: iconSize,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _,_) =>
                     Icon(Icons.error, size: iconSize),
               )
                   : Image.asset(

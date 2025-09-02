@@ -54,15 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // USER Section
+
                 SettingsListGroup(
-                  showTopDivider: false,
                   headerTitle: "USER",
-                  headerTextStyle: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black,
-                    letterSpacing: 0.5,
-                  ),
                   items: [
                     SettingsListItem(
                       title: "Manage Your Account",
@@ -85,12 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leadingIconColor: Colors.blue,
                       title: "Subscription",
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ProfileSubscriptionScreen(),
-                        //   ),
-                        // );
                         Navigator.push(
                           context,
                           MaterialPageRoute(

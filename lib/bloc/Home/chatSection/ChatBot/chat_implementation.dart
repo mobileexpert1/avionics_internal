@@ -297,8 +297,6 @@ class ChatRepositoryImpl implements ChatRepository {
     if (_controller.isClosed || _lastSystem == text) return;
     _lastSystem = text;
 
-    final isAnalyzing = text.toLowerCase().contains("reconnecting");
-
     final msg = ChatMessage(
       id: _uuid.v4(),
       author: ChatAuthor.bot,

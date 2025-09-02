@@ -110,13 +110,11 @@ class SearchBarWidget extends StatelessWidget {
                   if (enableFilter)
                     GestureDetector(
                       onTap: onFilterTap,
-                      child: Container(
-                        child: SvgPicture.asset(
+                      child:  SvgPicture.asset(
                           CommonUi.setSvgImage(AssetsPath.sliders),
                           width: 60,
                           height: 60,
                         ),
-                      ),
                     ),
                 ],
               ),
