@@ -65,7 +65,7 @@ dependencies:
   geolocator: ^11.0.0
   cached_network_image: ^3.2.3
   flutter_cache_manager: ^3.3.0
-
+  google_maps_flutter:
 dev_dependencies:
   flutter_test:
     sdk: flutter
