@@ -9,6 +9,7 @@ import '../../Helpers/SearchBarWidget.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
+import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 
 class FlightMapScreen extends StatefulWidget {
   const FlightMapScreen({Key? key}) : super(key: key);
@@ -21,7 +22,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _showFlightCard = false;
   GoogleMapController? _mapController;
-  FlightModel? _selectedFlight;
+
+  final DraggableScrollableController _sheetController =
+  DraggableScrollableController();
 
   @override
   void initState() {
@@ -40,14 +43,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   void _toggleFlightCard({FlightModel? flight}) {
     setState(() {
-      _selectedFlight = flight;
       _showFlightCard = !_showFlightCard;
     });
   }
 
   void _hideFlightCard() {
     setState(() {
-      _selectedFlight = null;
       _showFlightCard = false;
     });
   }
@@ -57,21 +58,26 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     print('Building markers for ${flights.length} flights');
     for (final flight in flights) {
       print('Flight track: ${flight.track}, Type: ${flight.track.runtimeType}');
-      final icon = await getRotatedPlaneIcon((flight.track ?? 0.0).toDouble(), color: Colors.red);
+      final icon = await getRotatedPlaneIcon(
+        (flight.track).toDouble(),
+        color: Colors.red,
+      );
       markers.add(
         Marker(
           markerId: MarkerId(flight.id.toString()),
           position: LatLng(flight.latitude, flight.longitude),
           icon: icon,
           infoWindow: InfoWindow(
-            title: flight.flightNumber ?? "Unknown",
+            title: flight.flightNumber,
             snippet: "${flight.departureIata} → ${flight.arrivalIata}",
           ),
           onTap: () {
-            print("Flight: ${flight.flightNumber}\n"
-                "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
-                "Dir: ${flight.track}°\n"
-                "From: ${flight.departureIata} → To: ${flight.arrivalIata}");
+            print(
+              "Flight: ${flight.flightNumber}\n"
+                  "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
+                  "Dir: ${flight.track}°\n"
+                  "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
+            );
             _toggleFlightCard(flight: flight);
           },
         ),
@@ -82,18 +88,32 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   void _fitMapToBounds(List<FlightModel> flights, LatLng currentLatLng) {
     if (flights.isEmpty || _mapController == null) {
-      print('No flights or map controller not ready, skipping bounds adjustment');
+      print(
+        'No flights or map controller not ready, skipping bounds adjustment',
+      );
       return;
     }
 
     final latLngBounds = LatLngBounds(
       southwest: LatLng(
-        [currentLatLng.latitude, ...flights.map((f) => f.latitude)].reduce((a, b) => a < b ? a : b),
-        [currentLatLng.longitude, ...flights.map((f) => f.longitude)].reduce((a, b) => a < b ? a : b),
+        [
+          currentLatLng.latitude,
+          ...flights.map((f) => f.latitude),
+        ].reduce((a, b) => a < b ? a : b),
+        [
+          currentLatLng.longitude,
+          ...flights.map((f) => f.longitude),
+        ].reduce((a, b) => a < b ? a : b),
       ),
       northeast: LatLng(
-        [currentLatLng.latitude, ...flights.map((f) => f.latitude)].reduce((a, b) => a > b ? a : b),
-        [currentLatLng.longitude, ...flights.map((f) => f.longitude)].reduce((a, b) => a > b ? a : b),
+        [
+          currentLatLng.latitude,
+          ...flights.map((f) => f.latitude),
+        ].reduce((a, b) => a > b ? a : b),
+        [
+          currentLatLng.longitude,
+          ...flights.map((f) => f.longitude),
+        ].reduce((a, b) => a > b ? a : b),
       ),
     );
 
@@ -114,101 +134,214 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
             if (state.status == CommonApiStatus.failure) {
               return Center(
-                child: Text(state.errorMessage ?? 'Failed to get current location'),
+                child: Text(
+                  state.errorMessage ?? 'Failed to get current location',
+                ),
               );
             }
 
-            if (state.status == CommonApiStatus.success && state.position != null) {
+            if (state.status == CommonApiStatus.success &&
+                state.position != null) {
               final position = state.position!;
-              final currentLatLng = LatLng(position.latitude, position.longitude);
-              print('Current location: $currentLatLng, Flights: ${state.flights?.length ?? 0}');
+              final currentLatLng = LatLng(
+                position.latitude,
+                position.longitude,
+              );
+              print(
+                'Current location: $currentLatLng, Flights: ${state.flights?.length ?? 0}',
+              );
 
-              return GestureDetector(
-                onTap: _hideFlightCard,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    FutureBuilder<Set<Marker>>(
-                      future: _buildFlightMarkers(state.flights ?? []),
-                      builder: (context, snapshot) {
-                        return GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: currentLatLng,
-                            zoom: 8,
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  FutureBuilder<Set<Marker>>(
+                    future: _buildFlightMarkers(state.flights ?? []),
+                    builder: (context, snapshot) {
+                      return GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: currentLatLng,
+                          zoom: 8,
+                        ),
+                        myLocationEnabled: true,
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId("current"),
+                            position: currentLatLng,
+                            infoWindow: const InfoWindow(title: "You are here"),
                           ),
-                          myLocationEnabled: true,
-                          markers: {
-                            Marker(
-                              markerId: const MarkerId("current"),
-                              position: currentLatLng,
-                              infoWindow: const InfoWindow(title: "You are here"),
+                          if (snapshot.hasData) ...snapshot.data!,
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          _mapController = controller;
+                          if (state.flights != null) {
+                            _fitMapToBounds(state.flights!, currentLatLng);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                  Positioned(
+                    top: 20,
+                    left: 10,
+                    right: 10,
+                    child: SearchBarWidget(
+                      enableBackArrow: false,
+                      enableFilter: true,
+                      enableCloseScreen: false,
+                      isComeFromMapSection: true,
+                      controller: _searchController,
+                      onFilterTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
                             ),
-                            if (snapshot.hasData) ...snapshot.data!,
-                          },
-                          onMapCreated: (GoogleMapController controller) {
-                            _mapController = controller;
-                            if (state.flights != null) {
-                              _fitMapToBounds(state.flights!, currentLatLng);
-                            }
+                          ),
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return FractionallySizedBox(
+                              heightFactor: 0.84,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                                child: FilterForMapScreen(),
+                              ),
+                            );
                           },
                         );
-                      },
-                    ),
-                    Positioned(
-                      top: 20,
-                      left: 10,
-                      right: 10,
-                      child: SearchBarWidget(
-                        enableBackArrow: false,
-                        enableFilter: true,
-                        enableCloseScreen: false,
-                        isComeFromMapSection: true,
-                        controller: _searchController,
-                        onFilterTap: () {
-                          if (_showFlightCard) {
-                            _hideFlightCard();
-                          } else {
-                            _toggleFlightCard();
-                          }
 
-                          // For FIlter Screen.
-                          // showModalBottomSheet(
-                          //   context: context,
-                          //   isScrollControlled: true,
-                          //   shape: const RoundedRectangleBorder(
-                          //     borderRadius: BorderRadius.vertical(
-                          //       top: Radius.circular(20),
-                          //     ),
-                          //   ),
-                          //   backgroundColor: Colors.transparent,
-                          //   builder: (context) {
-                          //     return FractionallySizedBox(
-                          //       heightFactor: 0.84,
-                          //       child: ClipRRect(
-                          //         borderRadius: const BorderRadius.vertical(
-                          //           top: Radius.circular(20),
-                          //         ),
-                          //         child: FilterForMapScreen(),
-                          //       ),
-                          //     );
-                          //   },
-                        },
-                        searchTitle: 'Search...',
-                      ),
+                        _hideFlightCard();
+                      },
+                      searchTitle: 'Search...',
                     ),
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      left: 0,
-                      right: 0,
-                      bottom: _showFlightCard ? 0 : -MediaQuery.of(context).size.height * 0.4,
-                      child: GestureDetector(
-                        onTap: () {}, // block tap-through
-                        child: const FlightCard(),
-                      ),
+                  ),
+
+                  DraggableScrollableSheet(
+                    controller: _sheetController,
+                    initialChildSize: 0.2,
+                    minChildSize: 0.2,
+                    maxChildSize: 0.8,
+                    snap: true,
+                    builder: (context, scrollController) {
+                      return Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        child: CustomScrollView(
+                          controller: scrollController,
+                          slivers: [
+                            /// Handle + Header
+                            SliverToBoxAdapter(
+                              child: Column(
+                                children: [
+                                  // Handle bar
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    child: Container(
+                                      height: 4,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade400,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Header
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.radar, color: Colors.blue),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          "Flights in the area",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const Divider(height: 1),
+                                ],
+                              ),
+                            ),
+
+                            /// Flight list
+                            SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                  return ListTile(
+                                    leading: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Container(
+                                        height: 50,
+                                        width: 60,
+                                        color: Colors.grey.shade200,
+                                        child: const Icon(
+                                          Icons.airplanemode_active,
+                                        ),
+                                      ),
+                                    ),
+                                    title: const Text("A-320-200"),
+                                    subtitle: const Text("Airbus   A320"),
+                                    trailing: const Icon(Icons.chevron_right),
+                                    onTap: () {
+                                      setState(() {
+                                        _showFlightCard = !_showFlightCard;
+                                      });
+
+                                      // Collapse sheet to bottom
+                                      _sheetController.animateTo(
+                                        0.2, // minChildSize
+                                        duration: const Duration(
+                                          milliseconds: 400,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    },
+                                  );
+                                },
+                                childCount:
+                                10, // Replace with API flights.length
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    left: 0,
+                    right: 0,
+                    bottom: _showFlightCard
+                        ? 0
+                        : -MediaQuery.of(context).size.height * 0.4,
+                    child: GestureDetector(
+                      onTap: () {
+                        _hideFlightCard();
+                      }, // block tap-through
+                      child: const FlightCard(),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
             return const Center(child: Text('Fetching your location...'));
@@ -243,7 +376,6 @@ class FlightCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// Info
                 Expanded(
                   child: Column(
