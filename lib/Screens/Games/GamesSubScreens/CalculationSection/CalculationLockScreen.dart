@@ -67,9 +67,9 @@ class CalculationLockScreen extends StatelessWidget {
                       }
                     },
                     onInfoTap: () {
-                      if (game.isLocked) {
-                        context.read<CalculationCubit>().unlockGame(index);
-                      }
+                      // if (game.isLocked) {
+                      //   context.read<CalculationCubit>();
+                      // }
                     },
                   );
                 },

@@ -326,6 +326,30 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "geocoding",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/geocoding-4.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "geocoding_android",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/geocoding_android-4.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "geocoding_ios",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/geocoding_ios-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "geocoding_platform_interface",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/geocoding_platform_interface-3.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "geolocator",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/geolocator-11.1.0",
       "packageUri": "lib/",

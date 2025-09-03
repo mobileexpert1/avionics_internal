@@ -71,9 +71,9 @@ class QuizLockScreen extends StatelessWidget {
                       }
                     },
                     onInfoTap: () {
-                      if (game.isLocked) {
-                        context.read<QuizCubit>().unlockGame(index);
-                      }
+                      // if (game.isLocked) {
+                      //   context.read<QuizCubit>().unlockGame(index);
+                      // }
                     },
                   );
                 },

@@ -81,9 +81,9 @@ class OneWordTopicScreen extends StatelessWidget {
                            // }
                           },
                           onInfoTap: () {
-                            if (game.isLocked) {
-                              context.read<OnewordCubit>().unlockGame(index);
-                            }
+                            // if (game.isLocked) {
+                            //   context.read<OnewordCubit>().unlockGame(index);
+                            // }
                           },
                         );
                       },

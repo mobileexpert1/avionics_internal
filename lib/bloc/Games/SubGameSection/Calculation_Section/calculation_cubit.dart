@@ -40,11 +40,11 @@ class CalculationCubit extends Cubit<CalculationState> {
     }
   }
 
-  void unlockGame(int index) {
-    final updatedGames = List<quizItem>.from(state.games);
-    if (index >= 0 && index < updatedGames.length) {
-      updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
-      emit(state.copyWith(games: updatedGames));
-    }
-  }
+  // void unlockGame(int index) {
+  //   final updatedGames = List<quizItem>.from(state.games);
+  //   if (index >= 0 && index < updatedGames.length) {
+  //     updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
+  //     emit(state.copyWith(games: updatedGames));
+  //   }
+  // }
 }
