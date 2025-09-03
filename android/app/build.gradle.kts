@@ -17,7 +17,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
+        vectorDrawables.useSupportLibrary = true
         manifestPlaceholders += mapOf(
             "fbLoginProtocolScheme" to "fb1430451834195464"
         )

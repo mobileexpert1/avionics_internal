@@ -42,7 +42,7 @@
             tools:node="merge" />
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374"/>
+            android:value="AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
