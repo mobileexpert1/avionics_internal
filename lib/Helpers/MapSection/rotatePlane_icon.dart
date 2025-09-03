@@ -7,8 +7,6 @@ Future<BitmapDescriptor> getRotatedPlaneIcon(double direction, {Color color = Co
   final canvas = Canvas(recorder);
 
   final size = 80.0;
-  final paint = Paint()..color = color;
-
   // Draw airplane icon rotated
   final textPainter = TextPainter(
     text: TextSpan(
@@ -36,3 +34,4 @@ Future<BitmapDescriptor> getRotatedPlaneIcon(double direction, {Color color = Co
 
   return BitmapDescriptor.fromBytes(bytes!.buffer.asUint8List());
 }
+

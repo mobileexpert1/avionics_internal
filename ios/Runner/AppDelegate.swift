@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
-import StoreKit  // 👈 Needed for receipt access
+import StoreKit
+import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,6 +9,8 @@ import StoreKit  // 👈 Needed for receipt access
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+
+      GMSServices.provideAPIKey("AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374")
 
     // Get FlutterViewController
     guard let controller = window?.rootViewController as? FlutterViewController else {

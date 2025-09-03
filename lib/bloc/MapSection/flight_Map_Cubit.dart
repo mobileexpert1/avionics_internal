@@ -106,6 +106,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   FlightMapCubit() : super(FlightMapState());
 
+
+
+
   Future<void> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
 
