@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
@@ -169,6 +170,28 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           } else {
                             _toggleFlightCard();
                           }
+
+                          // For FIlter Screen.
+                          // showModalBottomSheet(
+                          //   context: context,
+                          //   isScrollControlled: true,
+                          //   shape: const RoundedRectangleBorder(
+                          //     borderRadius: BorderRadius.vertical(
+                          //       top: Radius.circular(20),
+                          //     ),
+                          //   ),
+                          //   backgroundColor: Colors.transparent,
+                          //   builder: (context) {
+                          //     return FractionallySizedBox(
+                          //       heightFactor: 0.84,
+                          //       child: ClipRRect(
+                          //         borderRadius: const BorderRadius.vertical(
+                          //           top: Radius.circular(20),
+                          //         ),
+                          //         child: FilterForMapScreen(),
+                          //       ),
+                          //     );
+                          //   },
                         },
                         searchTitle: 'Search...',
                       ),
@@ -178,10 +201,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       curve: Curves.easeInOut,
                       left: 0,
                       right: 0,
-                      bottom: _showFlightCard ? 0 : -250,
+                      bottom: _showFlightCard ? 0 : -MediaQuery.of(context).size.height * 0.4,
                       child: GestureDetector(
-                        onTap: () {}, // Block tap-through
-                        child: FlightCard(flight: _selectedFlight),
+                        onTap: () {}, // block tap-through
+                        child: const FlightCard(),
                       ),
                     ),
                   ],
@@ -197,7 +220,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 }
 
 class FlightCard extends StatelessWidget {
-  const FlightCard({super.key, FlightModel? flight});
+  const FlightCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +235,7 @@ class FlightCard extends StatelessWidget {
       elevation: 10,
       margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,6 +243,7 @@ class FlightCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 /// Info
                 Expanded(
                   child: Column(
@@ -274,83 +298,81 @@ class FlightCard extends StatelessWidget {
                 ),
 
                 /// Image
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        "https://picsum.photos/100/60",
-                        height: 60,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black87,
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      child: const Icon(
-                        Icons.airplanemode_active,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ],
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Icon(
+                    Icons.airplanemode_active,
+                    size: 50,
+                    color: Colors.black54,
+                  ),
                 ),
               ],
             ),
+
+            CustomDivider(height: 1.0),
 
             const SizedBox(height: 16),
 
             /// Route
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text("LFPG Paris\n40 min ago", style: TextStyle(fontSize: 13)),
-                Text(
-                  "LEMD Madrid\nin 1h 9m",
-                  style: TextStyle(fontSize: 13),
-                  textAlign: TextAlign.right,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            /// Progress
-            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                LinearProgressIndicator(
-                  value: 0.6,
-                  backgroundColor: Colors.grey.shade300,
-                  color: Colors.blue,
-                  minHeight: 5,
-                  borderRadius: BorderRadius.circular(4),
+                // Departure
+                Expanded(
+                  flex: 2,
+                  child: const Text(
+                    "LFPG Paris\n40 min ago",
+                    style: TextStyle(fontSize: 13),
+                  ),
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      "933 km/h",
-                      style: TextStyle(
+
+                // Progress + Speed + Altitude
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    children: [
+                      LinearProgressIndicator(
+                        value: 0.6,
+                        backgroundColor: Colors.grey.shade300,
                         color: Colors.blue,
-                        fontWeight: FontWeight.w500,
+                        minHeight: 5,
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    Text("•", style: TextStyle(color: Colors.grey)),
-                    SizedBox(width: 10),
-                    Text(
-                      "10,668m",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "933 km/h",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Text("•", style: TextStyle(color: Colors.grey)),
+                          SizedBox(width: 10),
+                          Text(
+                            "10,668m",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+
+                // Arrival
+                Expanded(
+                  flex: 2,
+                  child: const Text(
+                    "LEMD Madrid\nin 1h 9m",
+                    style: TextStyle(fontSize: 13),
+                    textAlign: TextAlign.right,
+                  ),
                 ),
               ],
             ),
