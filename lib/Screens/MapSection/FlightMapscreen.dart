@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/constantImages.dart';
 import '../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
@@ -24,40 +25,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _showFlightCard = false;
   GoogleMapController? _mapController;
-
-  // Static dummy data for testing
-  final dummyAircraft = [
-    {
-      "image":
-          "https://upload.wikimedia.org/wikipedia/commons/3/3f/Airbus_A320.jpg",
-      "model": "A320-200",
-      "badge": "A320",
-      "manufacturer": "Airbus",
-      "airline": "Lufthansa",
-      "airlineLogo":
-          "https://upload.wikimedia.org/wikipedia/commons/0/0d/Lufthansa_Logo_2018.svg",
-    },
-    {
-      "image":
-          "https://upload.wikimedia.org/wikipedia/commons/6/6e/Boeing_777_Air_France.jpg",
-      "model": "B777-300ER",
-      "badge": "B777",
-      "manufacturer": "Boeing",
-      "airline": "Air France",
-      "airlineLogo":
-          "https://upload.wikimedia.org/wikipedia/commons/4/45/Air_France_Logo.svg",
-    },
-    {
-      "image":
-          "https://upload.wikimedia.org/wikipedia/commons/8/89/Airbus_A350_Finnair.jpg",
-      "model": "A350-900",
-      "badge": "A350",
-      "manufacturer": "Airbus",
-      "airline": "Finnair",
-      "airlineLogo":
-          "https://upload.wikimedia.org/wikipedia/commons/c/c5/Finnair_Logo.svg",
-    },
-  ];
 
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -321,60 +288,66 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                             /// Flight list
                             SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final data = dummyAircraft[index];
-
-                                  return Padding(
-                                    key: ValueKey(index),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.width *
-                                          0.017,
+                              delegate: SliverChildBuilderDelegate((
+                                context,
+                                index,
+                              ) {
+                                final data = state.flights?[index];
+                                return Padding(
+                                  key: ValueKey(index),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical:
+                                        MediaQuery.of(context).size.width *
+                                        0.017,
+                                  ),
+                                  child: SimpleAircraftCard(
+                                    imagePath: Image.asset(
+                                      CommonUi.setPngImage(
+                                        AssetsPath.aeroplaneComparison,
+                                      ),
+                                      width: 50,
+                                      height: 120,
+                                      fit: BoxFit.fill,
                                     ),
-                                    child: SimpleAircraftCard(
-                                      imagePath: CachedAnyImage(
-                                        imagePath: data["image"]!,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                            0.15,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                            0.15,
-                                        contentImage: BoxFit.fill,
-                                      ),
-                                      model: data["model"]!,
-                                      badge: data["badge"]!,
-                                      manufacturer: data["manufacturer"]!,
-                                      airline: data["airline"]!,
-                                      airlineImagePath: CachedAnyImage(
-                                        imagePath: data["airlineLogo"]!,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                            0.05,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                            0.05,
-                                        contentImage: BoxFit.fill,
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          _showFlightCard = !_showFlightCard;
-                                        });
-
-                                        _sheetController.animateTo(
-                                          0.0, // hide it
-                                          duration: const Duration(
-                                            milliseconds: 400,
+                                    model: "${data?.hex}  " ?? "",
+                                    badge: data?.registration ?? "",
+                                    manufacturer: data?.type ?? "",
+                                    airline: "",
+                                    airlineImagePath: Icon(
+                                      Icons.airplanemode_active,
+                                      size: 16,
+                                      color: Colors.black54,
+                                    ),
+                                    onTap: () {
+                                      if (data != null &&
+                                          _mapController != null) {
+                                        _mapController!.animateCamera(
+                                          CameraUpdate.newCameraPosition(
+                                            CameraPosition(
+                                              target: LatLng(
+                                                data.latitude,
+                                                data.longitude,
+                                              ),
+                                            ),
                                           ),
-                                          curve: Curves.easeInOut,
                                         );
-                                      },
-                                    ),
-                                  );
-                                },
-                                childCount: 3, // static dummy items
-                              ),
+                                      }
+
+                                      setState(() {
+                                        _showFlightCard = !_showFlightCard;
+                                      });
+
+                                      _sheetController.animateTo(
+                                        0.0, // hide it
+                                        duration: const Duration(
+                                          milliseconds: 400,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    },
+                                  ),
+                                );
+                              }, childCount: state.flights?.length),
                             ),
                           ],
                         ),

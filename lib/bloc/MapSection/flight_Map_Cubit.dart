@@ -153,6 +153,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       final bounds = _calculateBounds(position);
 
       // Fetch flights
+      emit(state.copyWith(flights: [], isLoading: true));
       final flights = await FlightRepository().getFlights(bounds: bounds);
       print('Fetched ${flights.length} flights');
 

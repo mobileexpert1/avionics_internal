@@ -10,7 +10,7 @@ import GoogleMaps
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-      GMSServices.provideAPIKey("AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao")
+      GMSServices.provideAPIKey("AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374")
 
     // Get FlutterViewController
     guard let controller = window?.rootViewController as? FlutterViewController else {
@@ -23,7 +23,7 @@ import GoogleMaps
       binaryMessenger: controller.binaryMessenger
     )
 
-    // Handle method calls from Flutte r
+    // Handle method calls from Flutter
     receiptChannel.setMethodCallHandler { call, result in
       if call.method == "getReceiptData" {
         guard let receiptURL = Bundle.main.appStoreReceiptURL,
