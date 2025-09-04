@@ -10,7 +10,7 @@ import GoogleMaps
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-      GMSServices.provideAPIKey("AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374")
+      GMSServices.provideAPIKey("AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao")
 
     // Get FlutterViewController
     guard let controller = window?.rootViewController as? FlutterViewController else {

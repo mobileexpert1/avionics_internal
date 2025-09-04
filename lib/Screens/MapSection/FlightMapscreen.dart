@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Helpers/SearchBarWidget.dart';
+import '../../Helpers/SelectableAircraftCard.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
@@ -22,6 +24,40 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _showFlightCard = false;
   GoogleMapController? _mapController;
+
+  // Static dummy data for testing
+  final dummyAircraft = [
+    {
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/3/3f/Airbus_A320.jpg",
+      "model": "A320-200",
+      "badge": "A320",
+      "manufacturer": "Airbus",
+      "airline": "Lufthansa",
+      "airlineLogo":
+          "https://upload.wikimedia.org/wikipedia/commons/0/0d/Lufthansa_Logo_2018.svg",
+    },
+    {
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/6/6e/Boeing_777_Air_France.jpg",
+      "model": "B777-300ER",
+      "badge": "B777",
+      "manufacturer": "Boeing",
+      "airline": "Air France",
+      "airlineLogo":
+          "https://upload.wikimedia.org/wikipedia/commons/4/45/Air_France_Logo.svg",
+    },
+    {
+      "image":
+          "https://upload.wikimedia.org/wikipedia/commons/8/89/Airbus_A350_Finnair.jpg",
+      "model": "A350-900",
+      "badge": "A350",
+      "manufacturer": "Airbus",
+      "airline": "Finnair",
+      "airlineLogo":
+          "https://upload.wikimedia.org/wikipedia/commons/c/c5/Finnair_Logo.svg",
+    },
+  ];
 
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -125,6 +161,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SizedBox.expand(
         child: BlocBuilder<FlightMapCubit, FlightMapState>(
           builder: (context, state) {
@@ -181,9 +218,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     },
                   ),
                   Positioned(
-                    top: 20,
-                    left: 10,
-                    right: 10,
+                    top: 40,
+                    left: 5,
+                    right: 5,
                     child: SearchBarWidget(
                       enableBackArrow: false,
                       enableFilter: true,
@@ -212,7 +249,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             );
                           },
                         );
-
                         _hideFlightCard();
                       },
                       searchTitle: 'Search...',
@@ -221,8 +257,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                   DraggableScrollableSheet(
                     controller: _sheetController,
-                    initialChildSize: 0.2,
-                    minChildSize: 0.2,
+                    initialChildSize: 0.1,
+                    minChildSize: 0.1,
                     maxChildSize: 0.8,
                     snap: true,
                     builder: (context, scrollController) {
@@ -262,21 +298,23 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.radar, color: Colors.blue),
+                                        Icon(
+                                          Icons.radar,
+                                          color: Colors.black,
+                                          size: 30,
+                                        ),
                                         SizedBox(width: 8),
                                         Text(
                                           "Flights in the area",
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.blue,
+                                            color: Colors.black,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-
-                                  const Divider(height: 1),
                                 ],
                               ),
                             ),
@@ -285,39 +323,57 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             SliverList(
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {
-                                  return ListTile(
-                                    leading: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Container(
-                                        height: 50,
-                                        width: 60,
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(
-                                          Icons.airplanemode_active,
-                                        ),
-                                      ),
-                                    ),
-                                    title: const Text("A-320-200"),
-                                    subtitle: const Text("Airbus   A320"),
-                                    trailing: const Icon(Icons.chevron_right),
-                                    onTap: () {
-                                      setState(() {
-                                        _showFlightCard = !_showFlightCard;
-                                      });
+                                  final data = dummyAircraft[index];
 
-                                      // Collapse sheet to bottom
-                                      _sheetController.animateTo(
-                                        0.2, // minChildSize
-                                        duration: const Duration(
-                                          milliseconds: 400,
-                                        ),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    },
+                                  return Padding(
+                                    key: ValueKey(index),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.width *
+                                          0.017,
+                                    ),
+                                    child: SimpleAircraftCard(
+                                      imagePath: CachedAnyImage(
+                                        imagePath: data["image"]!,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                            0.15,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                            0.15,
+                                        contentImage: BoxFit.fill,
+                                      ),
+                                      model: data["model"]!,
+                                      badge: data["badge"]!,
+                                      manufacturer: data["manufacturer"]!,
+                                      airline: data["airline"]!,
+                                      airlineImagePath: CachedAnyImage(
+                                        imagePath: data["airlineLogo"]!,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                            0.05,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                            0.05,
+                                        contentImage: BoxFit.fill,
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _showFlightCard = !_showFlightCard;
+                                        });
+
+                                        _sheetController.animateTo(
+                                          0.0, // hide it
+                                          duration: const Duration(
+                                            milliseconds: 400,
+                                          ),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      },
+                                    ),
                                   );
                                 },
-                                childCount:
-                                    10, // Replace with API flights.length
+                                childCount: 3, // static dummy items
                               ),
                             ),
                           ],
@@ -337,7 +393,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     child: GestureDetector(
                       onTap: () {
                         _hideFlightCard();
-                      }, // block tap-through
+                      },
                       child: const FlightCard(),
                     ),
                   ),
