@@ -217,6 +217,11 @@ class ApiFunctionUrlGamesConstant {
 
 }
 
+
+class ApiFunctionUrlMapSecitonConstant {
+  static const aircraftFlyingList = "aircraft/flying-area/";
+}
+
 class ApiServiceUrlGamesConstant {
   static String getLimitedQuestions(int gameNumber, int actionNumber) =>
       "?game_no=$gameNumber&action_no=$actionNumber";

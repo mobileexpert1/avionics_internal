@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/constantImages.dart';
 import '../../Helpers/CacheManger/CachedImageFile.dart';
@@ -14,6 +16,7 @@ import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
+import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
 
 class FlightMapScreen extends StatefulWidget {
   const FlightMapScreen({Key? key}) : super(key: key);
@@ -337,9 +340,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                         );
                                       }
 
-                                      setState(() {
-                                        _showFlightCard = !_showFlightCard;
-                                      });
+                                      // setState(() {
+                                      //   _showFlightCard = !_showFlightCard;
+                                      // });
 
                                       _sheetController.animateTo(
                                         0.0, // hide it
@@ -381,6 +384,41 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           },
         ),
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 10, bottom: 10),
+        child: FloatingActionButton(
+          onPressed: () async {
+            final prefs = await SharedPreferences.getInstance();
+            final token = prefs.getString('UserAccessTokenKey');
+
+            if (token != null && token.isNotEmpty) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AskWilcoScreen(
+                    accessToken: token,
+                    isComeFromTab: false,
+                    sessionId: '',
+                    title: '',
+                  ),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Access token not found")),
+              );
+            }
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.Chatbot),
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -415,7 +453,9 @@ class FlightCard extends StatelessWidget {
       if (eta == null) return 'N/A';
 
       // Format the ETA to a readable time (e.g., "3:45 PM")
-      final formatter = DateFormat('h:mm a'); // Use 'intl' package for formatting
+      final formatter = DateFormat(
+        'h:mm a',
+      ); // Use 'intl' package for formatting
       final localEta = eta.toLocal(); // Convert UTC to local time
       final now = DateTime.now().toUtc();
       final difference = eta.difference(now);
