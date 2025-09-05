@@ -27,6 +27,16 @@ class AircraftModel {
           : null,
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'Aircraft_Model': aircraftModel,
+      'IsFavorite': isFavorite,
+      'ICAO_Type_Code': icaoTypeCode,
+      'Image': image,
+      'Manufacturer': manufacturer?.toJson(),
+    };
+  }
 }
 
 class ManufacturerModel {
@@ -54,5 +64,20 @@ class ManufacturerModel {
       'company_name': companyName,
       'logo': logo,
     };
+  }
+
+}
+
+class AircraftDetailsResponse {
+  final String detail;
+  final AircraftModel results;
+
+  AircraftDetailsResponse({required this.detail, required this.results});
+
+  factory AircraftDetailsResponse.fromJson(Map<String, dynamic> json) {
+    return AircraftDetailsResponse(
+      detail: json['detail'] as String,
+      results: AircraftModel.fromJson(json['results'] as Map<String, dynamic>),
+    );
   }
 }

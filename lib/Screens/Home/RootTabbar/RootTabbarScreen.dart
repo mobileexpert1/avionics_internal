@@ -1,7 +1,9 @@
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapscreen.dart';
 import '../../Profile/ProfileScreen.dart';
 import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
@@ -30,7 +32,10 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
     setState(() {
       _pages = [
         HomeScreen(),
-        FlightMapScreen(),
+        BlocProvider(
+          create: (context) => FlightMapCubit(), // Provide FlightMapCubit
+          child: FlightMapScreen(),
+        ),
         GamesScreen(),
         token != null && token.isNotEmpty
             ? AskWilcoScreen(
