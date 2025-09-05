@@ -12,6 +12,7 @@ import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../Helpers/SelectableAircraftCard.dart';
+import '../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Repository.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
@@ -30,6 +31,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   bool _showFlightCard = false;
   GoogleMapController? _mapController;
   FlightModel? selectedFlight;
+  bool _hasFetchedDetails = false;
 
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -37,15 +39,29 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     context.read<FlightMapCubit>().getCurrentLocation(context);
+
+    // Listen to sheet drag
+    _sheetController.addListener(() {
+      print(_sheetController.size);
+      if (!_hasFetchedDetails && _sheetController.size > 0.15) {
+        final flights = context.read<FlightMapCubit>().state.flights ?? [];
+        if (flights.isNotEmpty) {
+          _hasFetchedDetails = true;
+          final typeList = flights.map((f) => f.type).toList();
+          final uniqueTypes = typeList.toSet().toList();
+          context.read<FlightMapCubit>().fetchAircraftDetailsFromFlightsList(
+            uniqueTypes,
+          );
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _mapController?.dispose();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
 
@@ -299,7 +315,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 context,
                                 index,
                               ) {
-                                final data = state.flights?[index];
+                                final data = state.flightsListDetails?[index];
                                 return Padding(
                                   key: ValueKey(index),
                                   padding: EdgeInsets.symmetric(
@@ -308,42 +324,24 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                         0.017,
                                   ),
                                   child: SimpleAircraftCard(
-                                    imagePath: Image.asset(
-                                      CommonUi.setPngImage(
-                                        AssetsPath.aeroplaneComparison,
-                                      ),
+                                    imagePath: CachedAnyImage(
+                                      imagePath: data?.image ?? "",
                                       width: 50,
                                       height: 120,
-                                      fit: BoxFit.fill,
+                                      contentImage: BoxFit.fill,
                                     ),
-                                    model: "${data?.hex}  " ?? "",
-                                    badge: data?.registration ?? "",
-                                    manufacturer: data?.type ?? "",
+                                    model: "${data?.aircraftModel}  " ?? "",
+                                    badge: data?.icaoTypeCode ?? "",
+                                    manufacturer:
+                                        data?.manufacturer?.companyName ?? "",
                                     airline: "",
-                                    airlineImagePath: Icon(
-                                      Icons.airplanemode_active,
-                                      size: 16,
-                                      color: Colors.black54,
+                                    airlineImagePath: CachedAnyImage(
+                                      imagePath: data?.manufacturer?.logo ?? "",
+                                      width: 50,
+                                      height: 120,
+                                      contentImage: BoxFit.fill,
                                     ),
                                     onTap: () {
-                                      if (data != null &&
-                                          _mapController != null) {
-                                        _mapController!.animateCamera(
-                                          CameraUpdate.newCameraPosition(
-                                            CameraPosition(
-                                              target: LatLng(
-                                                data.latitude,
-                                                data.longitude,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }
-
-                                      // setState(() {
-                                      //   _showFlightCard = !_showFlightCard;
-                                      // });
-
                                       _sheetController.animateTo(
                                         0.0, // hide it
                                         duration: const Duration(
@@ -354,7 +352,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     },
                                   ),
                                 );
-                              }, childCount: state.flights?.length),
+                              }, childCount: state.flightsListDetails?.length),
                             ),
                           ],
                         ),
@@ -422,7 +420,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 }
-
 
 class FlightCard extends StatelessWidget {
   final FlightModel? flight;
@@ -638,5 +635,3 @@ class FlightCard extends StatelessWidget {
     );
   }
 }
-
-

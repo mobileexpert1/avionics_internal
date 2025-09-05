@@ -90,24 +90,17 @@
 // }
 //
 
-
-
-
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_state.dart';
-import 'flight_map_model.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
-
   FlightMapCubit() : super(FlightMapState());
-
-
-
 
   Future<void> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -115,11 +108,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        emit(state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: 'Location services are disabled.',
-          isLoading: false,
-        ));
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: 'Location services are disabled.',
+            isLoading: false,
+          ),
+        );
         return;
       }
 
@@ -127,7 +122,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          emit(state.copyWith(status: CommonApiStatus.failure, isLoading: false));
+          emit(
+            state.copyWith(status: CommonApiStatus.failure, isLoading: false),
+          );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Location permissions are denied')),
           );
@@ -138,7 +135,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       if (permission == LocationPermission.deniedForever) {
         emit(state.copyWith(status: CommonApiStatus.failure, isLoading: false));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location permissions are permanently denied')),
+          const SnackBar(
+            content: Text('Location permissions are permanently denied'),
+          ),
         );
         return;
       }
@@ -147,7 +146,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      print('Current location: Lat=${position.latitude}, Lon=${position.longitude}');
+      print(
+        'Current location: Lat=${position.latitude}, Lon=${position.longitude}',
+      );
 
       // Define bounds around current location
       final bounds = _calculateBounds(position);
@@ -157,32 +158,49 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       final flights = await FlightRepository().getFlights(bounds: bounds);
       print('Fetched ${flights.length} flights');
 
-      emit(state.copyWith(
-        position: position,
-        flights: flights,
-        status: CommonApiStatus.success,
-        isSuccess: true,
-        isLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          position: position,
+          flights: flights,
+          status: CommonApiStatus.success,
+          isSuccess: true,
+          isLoading: false,
+        ),
+      );
     } on PlatformException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Platform error: ${e.message}')),
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Platform error: ${e.message}')));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: 'Platform error: ${e.message}',
+          isLoading: false,
+        ),
       );
-      emit(state.copyWith(
-        status: CommonApiStatus.failure,
-        errorMessage: 'Platform error: ${e.message}',
-        isLoading: false,
-      ));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: 'Something went wrong: ${e.toString()}',
+          isLoading: false,
+        ),
       );
-      emit(state.copyWith(
-        status: CommonApiStatus.failure,
-        errorMessage: 'Something went wrong: ${e.toString()}',
-        isLoading: false,
-      ));
     }
+  }
+
+  Future<void> fetchAircraftDetailsFromFlightsList(
+    List<String> uniqueTypes,
+  ) async {
+    final flightsDetails = await AircraftListDataRepository()
+        .getListOfAllPlanes(aircraftIds: uniqueTypes);
+
+    print(
+      'Fetched ${flightsDetails.detail} flights from AircraftListDataRepository',
+    );
   }
 
   /// Helper: calculate bounding box for API

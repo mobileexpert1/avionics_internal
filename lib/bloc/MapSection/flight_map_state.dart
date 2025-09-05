@@ -45,6 +45,9 @@
 
 import 'package:geolocator/geolocator.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../Home/AircraftComparison/AircraftComparisonModel.dart';
+import '../Home/AllPlanesBloc/AllPlanes_model.dart';
+import 'MapAircraftList/aircraft_List_Data_State.dart';
 import 'flight_map_model.dart';
 
 class FlightMapState {
@@ -54,6 +57,7 @@ class FlightMapState {
   final String? errorMessage;
   final Position? position;
   final List<FlightModel>? flights;
+  final List<AircraftModel>? flightsListDetails;
 
   FlightMapState({
     this.status = CommonApiStatus.initial,
@@ -62,6 +66,7 @@ class FlightMapState {
     this.errorMessage,
     this.position,
     this.flights,
+    this.flightsListDetails,
   });
 
   FlightMapState copyWith({
@@ -71,6 +76,7 @@ class FlightMapState {
     String? errorMessage,
     Position? position,
     List<FlightModel>? flights,
+    List<AircraftModel>? flightsListDetails,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -79,6 +85,7 @@ class FlightMapState {
       errorMessage: errorMessage ?? this.errorMessage,
       position: position ?? this.position,
       flights: flights ?? this.flights,
+      flightsListDetails: flightsListDetails ?? this.flightsListDetails,
     );
   }
 }
