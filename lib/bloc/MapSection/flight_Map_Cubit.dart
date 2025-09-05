@@ -96,7 +96,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
+import 'flight_map_model.dart';
 import 'flight_map_state.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
@@ -198,9 +200,36 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     final flightsDetails = await AircraftListDataRepository()
         .getListOfAllPlanes(aircraftIds: uniqueTypes);
 
-    print(
-      'Fetched ${flightsDetails.detail} flights from AircraftListDataRepository',
-    );
+    if (flightsDetails.data.isNotEmpty) {
+      final enrichedFlights = await mergeFlightsWithDetails(
+        state.flights ?? [],
+        flightsDetails.data,
+      );
+
+      emit(state.copyWith(
+        flights: enrichedFlights,
+        status: CommonApiStatus.success,
+        isSuccess: true,
+        isLoading: false,
+      ));
+
+      print(
+        'Fetched ${flightsDetails.detail} flights from AircraftListDataRepository',
+      );
+    }
+  }
+
+  Future<List<FlightModel>> mergeFlightsWithDetails(
+    List<FlightModel> flights,
+    List<AircraftModel> aircraftDetails,
+  ) async {
+    return flights.map((flight) {
+      final matchingDetail = aircraftDetails.firstWhere(
+        (detail) =>
+            detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+      );
+      return flight.copyWith(aircraftDetails: matchingDetail);
+    }).toList();
   }
 
   /// Helper: calculate bounding box for API

@@ -52,7 +52,7 @@ class FlightRepository {
     int limit = 5,
   }) async {
     // Hardcode the aircraft types A318 and A320 in the URL
-    String url = "$_baseUrl/flight-positions/full?bounds=$bounds&limit=$limit&aircraft=A318,A320";
+    String url = "$_baseUrl/flight-positions/full?bounds=$bounds&limit=$limit&altitude_ranges=0-46000";
 
     final uri = Uri.parse(url);
     print('Fetching flights with URL: $uri');

@@ -26,6 +26,7 @@
 //   }
 // }
 
+import '../Home/AircraftComparison/AircraftComparisonModel.dart';
 
 class FlightResponse {
   final List<FlightModel> flights;
@@ -35,7 +36,9 @@ class FlightResponse {
   factory FlightResponse.fromJson(Map<String, dynamic> json) {
     final list = (json['data'] as List<dynamic>?) ?? [];
     return FlightResponse(
-      flights: list.map((e) => FlightModel.fromJson(e as Map<String, dynamic>)).toList(),
+      flights: list
+          .map((e) => FlightModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -70,6 +73,7 @@ class FlightModel {
   final String arrivalIata;
   final String arrivalIcao;
   final DateTime? eta;
+  final AircraftModel? aircraftDetails;
 
   FlightModel({
     required this.id,
@@ -94,10 +98,40 @@ class FlightModel {
     required this.arrivalIata,
     required this.arrivalIcao,
     this.eta,
+    this.aircraftDetails,
   });
 
+  FlightModel copyWith({AircraftModel? aircraftDetails}) {
+    return FlightModel(
+      id: id,
+      flightNumber: flightNumber,
+      callSign: callSign,
+      latitude: latitude,
+      longitude: longitude,
+      track: track,
+      altitude: altitude,
+      groundSpeed: groundSpeed,
+      verticalSpeed: verticalSpeed,
+      squawk: squawk,
+      timestamp: timestamp,
+      source: source,
+      hex: hex,
+      type: type,
+      registration: registration,
+      paintedAs: paintedAs,
+      operatingAs: operatingAs,
+      departureIata: departureIata,
+      departureIcao: departureIcao,
+      arrivalIata: arrivalIata,
+      arrivalIcao: arrivalIcao,
+      eta: eta,
+      aircraftDetails: aircraftDetails ?? this.aircraftDetails,
+    );
+  }
+
   factory FlightModel.fromJson(Map<String, dynamic> json) {
-    num _num(dynamic v) => (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
+    num _num(dynamic v) =>
+        (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
     String _str(dynamic v) => v == null ? '' : v.toString();
 
     DateTime? _parseDate(dynamic v) {
@@ -124,7 +158,9 @@ class FlightModel {
       groundSpeed: _num(json['gspeed']).toInt(),
       verticalSpeed: _num(json['vspeed']).toInt(),
       squawk: _str(json['squawk']),
-      timestamp: _parseDate(json['timestamp']) ?? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      timestamp:
+          _parseDate(json['timestamp']) ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
       source: _str(json['source']),
       hex: _str(json['hex']),
       type: _str(json['type']),
@@ -165,5 +201,6 @@ class FlightModel {
   };
 
   @override
-  String toString() => 'Flight($flightNumber, $callSign, $latitude,$longitude alt:$altitude)';
+  String toString() =>
+      'Flight($flightNumber, $callSign, $latitude,$longitude alt:$altitude)';
 }

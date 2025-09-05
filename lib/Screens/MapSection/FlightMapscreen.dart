@@ -315,7 +315,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 context,
                                 index,
                               ) {
-                                final data = state.flightsListDetails?[index];
+                                final data = state.flights?[index];
+
+                                print("Call Sign Data =-=--- ${data?.callSign}, Type Data =-=--- ${data?.type}");
+
                                 return Padding(
                                   key: ValueKey(index),
                                   padding: EdgeInsets.symmetric(
@@ -324,23 +327,64 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                         0.017,
                                   ),
                                   child: SimpleAircraftCard(
-                                    imagePath: CachedAnyImage(
-                                      imagePath: data?.image ?? "",
-                                      width: 50,
-                                      height: 120,
-                                      contentImage: BoxFit.fill,
-                                    ),
-                                    model: "${data?.aircraftModel}  " ?? "",
-                                    badge: data?.icaoTypeCode ?? "",
+                                    imagePath:
+                                        (data?.aircraftDetails?.image == null ||
+                                            data?.aircraftDetails?.image == "" ?
+                                        Image.asset(
+                                            CommonUi.setPngImage(
+                                              AssetsPath.aeroplaneComparison,
+                                            ),
+                                            width: 50,
+                                            height: 120,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : CachedAnyImage(
+                                            imagePath:
+                                                data!.aircraftDetails!.image,
+                                            width: 50,
+                                            height: 120,
+                                            contentImage: BoxFit.fill,
+                                          )),
+
+                                    model: "${data?.aircraftDetails?.aircraftModel ??
+                                        " " ??
+                                        ""} ",
+                                    badge:
+                                        data?.aircraftDetails?.icaoTypeCode ??
+                                        data?.type ??
+                                        "",
                                     manufacturer:
-                                        data?.manufacturer?.companyName ?? "",
+                                        data
+                                            ?.aircraftDetails
+                                            ?.manufacturer
+                                            ?.companyName ??
+                                        "",
                                     airline: "",
-                                    airlineImagePath: CachedAnyImage(
-                                      imagePath: data?.manufacturer?.logo ?? "",
-                                      width: 50,
-                                      height: 120,
-                                      contentImage: BoxFit.fill,
-                                    ),
+                                    airlineImagePath:
+                                        (data
+                                                    ?.aircraftDetails
+                                                    ?.manufacturer
+                                                    ?.logo ==
+                                                null ||
+                                            data
+                                                    ?.aircraftDetails
+                                                    ?.manufacturer
+                                                    ?.logo ==
+                                                ""
+                                        ? SizedBox.shrink()
+                                        : CachedAnyImage(
+                                            imagePath:
+                                                data
+                                                    ?.aircraftDetails
+                                                    ?.manufacturer
+                                                    ?.logo ??
+                                                "",
+                                            width: 50,
+                                            height: 120,
+                                            contentImage: BoxFit.fill,
+                                          )),
+                                      callSign:data?.callSign ??
+                                          "",
                                     onTap: () {
                                       _sheetController.animateTo(
                                         0.0, // hide it
@@ -352,7 +396,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     },
                                   ),
                                 );
-                              }, childCount: state.flightsListDetails?.length),
+                              }, childCount: state.flights?.length),
                             ),
                           ],
                         ),

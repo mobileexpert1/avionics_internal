@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 
 class SimpleAircraftCard extends StatelessWidget {
@@ -7,6 +8,7 @@ class SimpleAircraftCard extends StatelessWidget {
   final String? manufacturer;
   final String? airline;
   final Widget airlineImagePath;
+  final String? callSign;
   final VoidCallback? onTap;
 
   const SimpleAircraftCard({
@@ -17,6 +19,8 @@ class SimpleAircraftCard extends StatelessWidget {
     this.manufacturer,
     this.airline,
     required this.airlineImagePath,
+    this.callSign,
+
     this.onTap,
   }) : super(key: key);
 
@@ -39,14 +43,13 @@ class SimpleAircraftCard extends StatelessWidget {
           ],
         ),
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 6,
+          ),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: SizedBox(
-              width: 100,
-              height: 55,
-              child: imagePath,
-            ),
+            child: SizedBox(width: 100, height: 55, child: imagePath),
           ),
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -60,7 +63,7 @@ class SimpleAircraftCard extends StatelessWidget {
                   color: Color(0xFF3F3D56),
                 ),
               ),
-              _buildBadge(badge),
+              _buildBadge(badge, false, ""),
             ],
           ),
           subtitle: Padding(
@@ -94,6 +97,11 @@ class SimpleAircraftCard extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (callSign != null || callSign != "") ...[
+                  const SizedBox(width: 4),
+                  _buildBadge(badge, true, callSign ?? ""),
+                  const SizedBox(width: 8),
+                ],
               ],
             ),
           ),
@@ -102,26 +110,27 @@ class SimpleAircraftCard extends StatelessWidget {
     );
   }
 
-  Widget _buildBadge(String text) {
+  Widget _buildBadge(
+    String text,
+    bool isComeFromCallSign,
+    String callSignText,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isComeFromCallSign == true
+            ? AppColors.customBottomEnabledColour
+            : Colors.white,
         borderRadius: BorderRadius.circular(4),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 0.1,
-            blurRadius: 1,
-          ),
+          BoxShadow(color: Colors.grey, spreadRadius: 0.1, blurRadius: 1),
         ],
       ),
       child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
+        isComeFromCallSign == true ? callSignText : text,
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: isComeFromCallSign == true
+            ? Colors.white
+            : Colors.black),
       ),
     );
   }
