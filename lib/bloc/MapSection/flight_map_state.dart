@@ -56,8 +56,8 @@ class FlightMapState {
   final String? errorMessage;
   final Position? position;
   final List<FlightModel>? flights;
-  final List<FlightDetail>? flightDetail;
-  final FlightDetail? selectedFlightDetail;
+  final List<FlightAircraftDetail>? flightDetail;
+  final FlightAircraftDetail? selectedFlightDetail;
   final AircraftModel? selectedAircraftDetails;
 
   FlightMapState({
@@ -79,8 +79,8 @@ class FlightMapState {
     String? errorMessage,
     Position? position,
     List<FlightModel>? flights,
-    List<FlightDetail>? flightDetail,
-    FlightDetail? selectedFlightDetail,
+    List<FlightAircraftDetail>? flightDetail,
+    FlightAircraftDetail? selectedFlightDetail,
     AircraftModel? selectedAircraftDetails,
   }) {
     return FlightMapState(

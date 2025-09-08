@@ -411,13 +411,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 }
 
 class FlightCard extends StatelessWidget {
-  final FlightDetail? flightDetail;
-  final AircraftModel? aircraftDetails;
+  final FlightAircraftDetail? flightDetail;
+  // final AircraftModel? aircraftDetails;
 
   const FlightCard({
     super.key,
     this.flightDetail,
-    this.aircraftDetails,
+    // this.aircraftDetails,
   });
 
   String _formatDuration(Duration duration) {
@@ -441,19 +441,24 @@ class FlightCard extends StatelessWidget {
       return const Text('No flight details available');
     }
 
-    // final flightNumber = flightDetail!.flightNumber ?? 'Unknown';
+    print(
+      'FlightCard: Rendering with flightDetail: ${flightDetail!.toString()}',
+    );
     final departureIata = flightDetail!.departureIata ?? 'N/A';
     final arrivalIata = flightDetail!.arrivalIata ?? 'N/A';
     final groundSpeed = flightDetail!.groundSpeed ?? 0;
     final altitude = flightDetail!.altitude ?? 0;
     final takeoffTime = flightDetail!.takeoffTime;
     final eta = flightDetail!.eta;
+    final callsign = flightDetail!.callsign;
 
-    final aircraftType = aircraftDetails?.aircraftModel ?? flightDetail!.type ?? 'N/A';
-    final manufacturer = aircraftDetails?.manufacturer?.companyName ?? 'Unknown';
-    final category = aircraftDetails?.icaoTypeCode ?? flightDetail!.type ?? 'N/A';
-    final image = aircraftDetails?.image ?? 'https://via.placeholder.com/50';
-    final manufacturerLogo = aircraftDetails?.manufacturer?.logo ?? 'https://via.placeholder.com/16';
+    final aircraftType =
+        flightDetail!.aircraftModel ?? flightDetail!.type ?? 'N/A';
+    final manufacturer = flightDetail!.manufacturer?.companyName ?? 'Unknown';
+    final category = flightDetail!.icaoTypeCode ?? flightDetail!.type ?? 'N/A';
+    final image = flightDetail!.image ?? 'https://via.placeholder.com/50';
+    final manufacturerLogo =
+        flightDetail!.manufacturer?.logo ?? 'https://via.placeholder.com/16';
 
     String timeSinceTakeoff = 'N/A';
     if (takeoffTime != null) {
@@ -464,14 +469,17 @@ class FlightCard extends StatelessWidget {
     String timeToArrival = 'N/A';
     if (eta != null) {
       final duration = eta.difference(DateTime.now().toUtc());
-      timeToArrival = duration.isNegative ? 'Landed' : 'in ${_formatDuration(duration)}';
+      timeToArrival = duration.isNegative
+          ? 'Landed'
+          : 'in ${_formatDuration(duration)}';
     }
 
     double progress = 0.0;
     if (flightDetail!.actualDistance != null &&
         flightDetail!.circleDistance != null &&
         flightDetail!.circleDistance! > 0) {
-      progress = (flightDetail!.actualDistance! / flightDetail!.circleDistance!).clamp(0.0, 1.0);
+      progress = (flightDetail!.actualDistance! / flightDetail!.circleDistance!)
+          .clamp(0.0, 1.0);
     }
 
     return Card(
@@ -504,9 +512,10 @@ class FlightCard extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
+                              color: Color(0xFF3F3D56),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 20),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
@@ -514,11 +523,15 @@ class FlightCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               category,
-                              style: const TextStyle(fontSize: 12),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF3F3D56),
+                              ),
                             ),
                           ),
                         ],
@@ -530,7 +543,7 @@ class FlightCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                             child: CachedAnyImage(
                               imagePath: manufacturerLogo,
-                              width: 16.0,
+                              width: 22.0,
                               height: 16.0,
                               contentImage: BoxFit.contain,
                             ),
@@ -540,7 +553,28 @@ class FlightCard extends StatelessWidget {
                             manufacturer,
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Colors.black54,
+                              color: Color(0xFF3F3D56),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3F3D56),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              callsign!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Colors
+                                    .white, // better contrast with dark background
+                              ),
                             ),
                           ),
                         ],
@@ -549,10 +583,10 @@ class FlightCard extends StatelessWidget {
                   ),
                 ),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(6),
                   child: CachedAnyImage(
                     imagePath: image,
-                    width: 50.0,
+                    width: 100.0,
                     height: 50.0,
                     contentImage: BoxFit.cover,
                   ),

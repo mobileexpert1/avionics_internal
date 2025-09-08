@@ -199,11 +199,45 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     // Format as UTC without milliseconds, with 'Z'
     return dateTime.toUtc().toIso8601String().split('.').first + "Z";
   }
+  // Future<void> fetchFlightDetails({
+  //   required String flightId,
+  //   required BuildContext context,
+  // }) async {
+  //   // emit(state.copyWith(isLoading: true));
+  //   try {
+  //     final now = DateTime.now().toUtc();
+  //     final from = now.subtract(const Duration(hours: 24));
+  //     final formattedFrom = formatUtc(from);
+  //     final formattedTo = formatUtc(now);
+  //
+  //     print('Fetching flight details from: $formattedFrom to: $formattedTo');
+  //
+  //     final response = await FlightRepository().getFlightDetails(
+  //       flightId: flightId,
+  //       fromDateTime: formattedFrom,
+  //       toDateTime: formattedTo,
+  //     );
+  //
+  //     final flightDetail = response['flightDetail'] as FlightAircraftDetail;
+  //
+  //     emit(state.copyWith(
+  //       selectedFlightDetail: flightDetail, // Update the selected flight detail
+  //       status: CommonApiStatus.success,
+  //       isLoading: false,
+  //     ));
+  //   } catch (e) {
+  //     emit(state.copyWith(
+  //       status: CommonApiStatus.failure,
+  //       errorMessage: 'Error fetching flight details: ${e.toString()}',
+  //       isLoading: false,
+  //     ));
+  //   }
+  // }
+
   Future<void> fetchFlightDetails({
     required String flightId,
     required BuildContext context,
   }) async {
-    // emit(state.copyWith(isLoading: true));
     try {
       final now = DateTime.now().toUtc();
       final from = now.subtract(const Duration(hours: 24));
@@ -218,18 +252,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         toDateTime: formattedTo,
       );
 
-      final flightDetail = response['flightDetail'] as FlightDetail;
-      final aircraftDetails = response['aircraftDetails'] as AircraftModel;
-      print('AircraftDetails in fetchFlightDetails: ${jsonEncode(aircraftDetails.toJson())}');
-
-      final updatedFlightDetails = state.flightDetail != null
-          ? [...state.flightDetail!, flightDetail]
-          : [flightDetail];
+      final flightDetail = response['flightDetail'] as FlightAircraftDetail;
 
       emit(state.copyWith(
-        flightDetail: updatedFlightDetails,
-        selectedFlightDetail: flightDetail,
-        selectedAircraftDetails: aircraftDetails,
+        selectedFlightDetail: flightDetail, // Update with merged flight and aircraft details
         status: CommonApiStatus.success,
         isLoading: false,
       ));
@@ -241,7 +267,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       ));
     }
   }
-
 
   String _calculateBounds(Position position, {double delta = 5.0}) {
     final north = position.latitude + delta;

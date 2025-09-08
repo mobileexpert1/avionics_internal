@@ -27,16 +27,6 @@ class AircraftModel {
           : null,
     );
   }
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'Aircraft_Model': aircraftModel,
-      'IsFavorite': isFavorite,
-      'ICAO_Type_Code': icaoTypeCode,
-      'Image': image,
-      'Manufacturer': manufacturer?.toJson(),
-    };
-  }
 }
 
 class ManufacturerModel {
