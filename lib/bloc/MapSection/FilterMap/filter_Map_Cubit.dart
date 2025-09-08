@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'filter_Map_State.dart';
 
-class FilterMapCubit extends Cubit<FilterMapState> {
-  FilterMapCubit() : super(FilterMapState.initial());
+class FilterMapMainCubit extends Cubit<FilterMapState> {
+  FilterMapMainCubit() : super(FilterMapState.initial());
+
+  void setInitialMapType(MapType type) {
+    emit(state.copyWith(mapType: type));
+  }
 
   void toggleCategoriesSection() {
     emit(state.copyWith(showCategories: !state.showCategories));
@@ -26,7 +31,7 @@ class FilterMapCubit extends Cubit<FilterMapState> {
   void changeMapTypeByName(String val) {
     switch (val) {
       case 'Standard':
-        emit(state.copyWith(mapType: MapType.standard));
+        emit(state.copyWith(mapType: MapType.normal));
         break;
       case 'Satellite':
         emit(state.copyWith(mapType: MapType.satellite));
@@ -39,12 +44,16 @@ class FilterMapCubit extends Cubit<FilterMapState> {
 
   String getMapTypeName() {
     switch (state.mapType) {
-      case MapType.standard:
+      case MapType.normal:
         return "Standard";
       case MapType.satellite:
         return "Satellite";
       case MapType.hybrid:
         return "Hybrid";
+      case MapType.none:
+        return "Standard";
+      case MapType.terrain:
+        return "Standard";
     }
   }
 
@@ -60,9 +69,8 @@ class FilterMapCubit extends Cubit<FilterMapState> {
         showCategories: true,
         showMap: true,
         showAircraftLabels: false,
-        mapType: MapType.standard,
+        mapType: MapType.normal,
       ),
     );
   }
 }
-

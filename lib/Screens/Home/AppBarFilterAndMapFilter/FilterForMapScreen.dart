@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -9,6 +10,10 @@ import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 
 class FilterForMapScreen extends StatefulWidget {
+  final MapType initialMapType;
+
+  const FilterForMapScreen({Key? key, required this.initialMapType}) : super(key: key);
+
   @override
   _filterMapScreenState createState() => _filterMapScreenState();
 }
@@ -17,12 +22,12 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => FilterMapCubit(),
+      create: (_) => FilterMapMainCubit()..setInitialMapType(widget.initialMapType),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           isHideTopGradient: true,
-          leftButton: BlocBuilder<FilterMapCubit, FilterMapState>(
+          leftButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
               return Padding(
                 padding: const EdgeInsets.only(left: 10, top: 10),
@@ -37,17 +42,17 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
             },
           ),
           title: "",
-          rightButton: BlocBuilder<FilterMapCubit, FilterMapState>(
+          rightButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
               return Padding(
                 padding: const EdgeInsets.only(right: 16, top: 10),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.of(context).pop(state.mapType);
                   },
                   child: Text(
                     state.selectedCategories.isEmpty
-                        ? "No Filter"
+                        ? "Apply"
                         : "${state.selectedCategories.length} Selected",
                     style: const TextStyle(
                       fontSize: 15,
@@ -74,30 +79,30 @@ class _FilterContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FilterMapCubit, FilterMapState>(
+    return BlocBuilder<FilterMapMainCubit, FilterMapState>(
       builder: (context, state) {
-        final cubit = context.read<FilterMapCubit>();
+        final cubit = context.read<FilterMapMainCubit>();
 
         return ListView(
           children: [
-            ExpandableSection(
-              title: "CATEGORIES",
-              expanded: state.showCategories,
-              onToggle: cubit.toggleCategoriesSection,
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: state.categories.map((cat) {
-                  final isSelected = state.selectedCategories.contains(cat);
-                  return CategoryChip(
-                    label: cat,
-                    isSelected: isSelected,
-                    onTap: () => cubit.toggleCategory(cat),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 30),
+            // ExpandableSection(
+            //   title: "CATEGORIES",
+            //   expanded: state.showCategories,
+            //   onToggle: cubit.toggleCategoriesSection,
+            //   child: Wrap(
+            //     spacing: 10,
+            //     runSpacing: 10,
+            //     children: state.categories.map((cat) {
+            //       final isSelected = state.selectedCategories.contains(cat);
+            //       return CategoryChip(
+            //         label: cat,
+            //         isSelected: isSelected,
+            //         onTap: () => cubit.toggleCategory(cat),
+            //       );
+            //     }).toList(),
+            //   ),
+            // ),
+            // const SizedBox(height: 30),
 
             /// Map Section
             ExpandableSection(
@@ -133,39 +138,39 @@ class _FilterContent extends StatelessWidget {
             ),
 
             /// Aircraft Labels
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      CommonUi.setSvgImage(AssetsPath.blueAeroPlane),
-                      height: 25,
-                      width: 25,
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "Aircraft Labels",
-                      style: TextStyle(fontWeight: FontWeight.w400),
-                    ),
-                  ],
-                ),
-                Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: state.showAircraftLabels,
-                    onChanged: (_) => cubit.toggleAircraftLabels(),
-                    activeColor: Colors.white,
-                    activeTrackColor: Colors.black,
-                    inactiveThumbColor: Colors.black,
-                    inactiveTrackColor: Colors.white,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                ),
-              ],
-            ),
+           // const SizedBox(height: 30),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Row(
+            //       children: [
+            //         SvgPicture.asset(
+            //           CommonUi.setSvgImage(AssetsPath.blueAeroPlane),
+            //           height: 25,
+            //           width: 25,
+            //           fit: BoxFit.contain,
+            //         ),
+            //         const SizedBox(width: 10),
+            //         const Text(
+            //           "Aircraft Labels",
+            //           style: TextStyle(fontWeight: FontWeight.w400),
+            //         ),
+            //       ],
+            //     ),
+            //     Transform.scale(
+            //       scale: 0.8,
+            //       child: Switch(
+            //         value: state.showAircraftLabels,
+            //         onChanged: (_) => cubit.toggleAircraftLabels(),
+            //         activeColor: Colors.white,
+            //         activeTrackColor: Colors.black,
+            //         inactiveThumbColor: Colors.black,
+            //         inactiveTrackColor: Colors.white,
+            //         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            //       ),
+            //     ),
+            //   ],
+            // ),
 
             const SizedBox(height: 50),
 

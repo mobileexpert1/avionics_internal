@@ -95,6 +95,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
@@ -103,6 +104,10 @@ import 'flight_map_state.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
+
+  void changeMapType(MapType type) {
+    emit(state.copyWith(mapType: type));
+  }
 
   Future<void> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -227,6 +232,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       final matchingDetail = aircraftDetails.firstWhere(
         (detail) =>
             detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+        orElse: () => AircraftModel(id: '', aircraftModel: '', isFavorite: false, icaoTypeCode: '', image: ''),
       );
       return flight.copyWith(aircraftDetails: matchingDetail);
     }).toList();

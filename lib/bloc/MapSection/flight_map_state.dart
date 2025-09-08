@@ -44,10 +44,9 @@
 
 
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../Home/AircraftComparison/AircraftComparisonModel.dart';
-import '../Home/AllPlanesBloc/AllPlanes_model.dart';
-import 'MapAircraftList/aircraft_List_Data_State.dart';
 import 'flight_map_model.dart';
 
 class FlightMapState {
@@ -58,6 +57,7 @@ class FlightMapState {
   final Position? position;
   final List<FlightModel>? flights;
   final List<AircraftModel>? flightsListDetails;
+  final MapType mapType;
 
   FlightMapState({
     this.status = CommonApiStatus.initial,
@@ -67,6 +67,7 @@ class FlightMapState {
     this.position,
     this.flights,
     this.flightsListDetails,
+    this.mapType = MapType.normal,
   });
 
   FlightMapState copyWith({
@@ -77,6 +78,8 @@ class FlightMapState {
     Position? position,
     List<FlightModel>? flights,
     List<AircraftModel>? flightsListDetails,
+    MapType? mapType,
+
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -86,6 +89,7 @@ class FlightMapState {
       position: position ?? this.position,
       flights: flights ?? this.flights,
       flightsListDetails: flightsListDetails ?? this.flightsListDetails,
+      mapType: mapType ?? this.mapType,
     );
   }
 }

@@ -1,7 +1,6 @@
 // filter_Map_State.dart
 import 'package:equatable/equatable.dart';
-
-enum MapType { standard, satellite, hybrid }
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FilterMapState extends Equatable {
   final List<String> selectedCategories;
@@ -21,13 +20,13 @@ class FilterMapState extends Equatable {
   });
 
   factory FilterMapState.initial() {
-    return const FilterMapState(
-      selectedCategories: [],
+    return FilterMapState(
+      selectedCategories: const [],
       showCategories: true,
       showMap: true,
       showAircraftLabels: true,
-      mapType: MapType.standard,
-      categories: ["Commercial", "Cargo", "Business", "Other"],
+      mapType: MapType.normal,
+      categories: const ["Commercial", "Cargo", "Business", "Other"],
     );
   }
 
