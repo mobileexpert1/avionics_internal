@@ -188,10 +188,7 @@ class FlightRepository {
 
   Future<List<FlightAircraftDetail>> getAircraftDetails(String aircraftType) async {
     final url = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiServiceUrlAirplaneConstant.getListAirbus +
-          "details/$aircraftType",
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
     );
     try {
       final response = await ApiService.get(url: url);
