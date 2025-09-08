@@ -43,6 +43,7 @@
 // }
 
 
+import 'package:avionics_internal/bloc/MapSection/flight_map_detailModel.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -58,6 +59,9 @@ class FlightMapState {
   final List<FlightModel>? flights;
   final List<AircraftModel>? flightsListDetails;
   final MapType mapType;
+  final List<FlightAircraftDetail>? flightDetail;
+  final FlightAircraftDetail? selectedFlightDetail;
+  final AircraftModel? selectedAircraftDetails;
 
   FlightMapState({
     this.status = CommonApiStatus.initial,
@@ -68,6 +72,9 @@ class FlightMapState {
     this.flights,
     this.flightsListDetails,
     this.mapType = MapType.normal,
+    this.flightDetail,
+    this.selectedFlightDetail,
+    this.selectedAircraftDetails,
   });
 
   FlightMapState copyWith({
@@ -79,7 +86,9 @@ class FlightMapState {
     List<FlightModel>? flights,
     List<AircraftModel>? flightsListDetails,
     MapType? mapType,
-
+    List<FlightAircraftDetail>? flightDetail,
+    FlightAircraftDetail? selectedFlightDetail,
+    AircraftModel? selectedAircraftDetails,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -90,6 +99,9 @@ class FlightMapState {
       flights: flights ?? this.flights,
       flightsListDetails: flightsListDetails ?? this.flightsListDetails,
       mapType: mapType ?? this.mapType,
+      flightDetail: flightDetail ?? this.flightDetail,
+      selectedFlightDetail: selectedFlightDetail ?? this.selectedFlightDetail,
+      selectedAircraftDetails: selectedAircraftDetails ?? this.selectedAircraftDetails,
     );
   }
 }

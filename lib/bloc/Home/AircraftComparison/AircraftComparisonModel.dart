@@ -55,4 +55,19 @@ class ManufacturerModel {
       'logo': logo,
     };
   }
+
+}
+
+class AircraftDetailsResponse {
+  final String detail;
+  final AircraftModel results;
+
+  AircraftDetailsResponse({required this.detail, required this.results});
+
+  factory AircraftDetailsResponse.fromJson(Map<String, dynamic> json) {
+    return AircraftDetailsResponse(
+      detail: json['detail'] as String,
+      results: AircraftModel.fromJson(json['results'] as Map<String, dynamic>),
+    );
+  }
 }

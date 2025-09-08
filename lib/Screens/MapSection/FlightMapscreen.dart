@@ -1,3 +1,4 @@
+import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,7 @@ import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../Helpers/SelectableAircraftCard.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
@@ -63,17 +65,21 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     super.dispose();
   }
 
-  void _toggleFlightCard({FlightModel? flight}) {
+  void _toggleFlightCard({required FlightModel flight}) {
+    print('Toggling flight card for flight ID: ${flight.id}');
+    context.read<FlightMapCubit>().fetchFlightDetails(
+      flightId: flight.id,
+      context: context,
+    );
     setState(() {
-      _showFlightCard = !_showFlightCard;
-      selectedFlight = flight;
+      _showFlightCard = true;
     });
   }
 
   void _hideFlightCard() {
+    print('Hiding flight card');
     setState(() {
       _showFlightCard = false;
-      selectedFlight = null;
     });
   }
 
@@ -90,8 +96,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           position: LatLng(flight.latitude, flight.longitude),
           icon: icon,
           infoWindow: InfoWindow(
-            title: flight.flightNumber,
-            snippet: "${flight.departureIata} → ${flight.arrivalIata}",
+            title: flight.flightNumber ?? 'Unknown',
+            snippet:
+                "${flight.departureIata ?? 'N/A'} → ${flight.arrivalIata ?? 'N/A'}",
           ),
           onTap: () {
             print(
@@ -252,7 +259,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       searchTitle: 'Search...',
                     ),
                   ),
-
                   DraggableScrollableSheet(
                     controller: _sheetController,
                     initialChildSize: 0.1,
@@ -270,11 +276,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         child: CustomScrollView(
                           controller: scrollController,
                           slivers: [
-                            /// Handle + Header
                             SliverToBoxAdapter(
                               child: Column(
                                 children: [
-                                  // Handle bar
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -288,8 +292,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       ),
                                     ),
                                   ),
-
-                                  // Header
                                   const Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -316,19 +318,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 ],
                               ),
                             ),
-
-                            /// Flight list
                             SliverList(
                               delegate: SliverChildBuilderDelegate((
                                 context,
                                 index,
                               ) {
                                 final data = state.flights?[index];
-
-                                print(
-                                  "Call Sign Data =-=--- ${data?.callSign}, Type Data =-=--- ${data?.type}",
-                                );
-
                                 return Padding(
                                   key: ValueKey(index),
                                   padding: EdgeInsets.symmetric(
@@ -394,8 +389,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                           )),
                                     callSign: data?.callSign ?? "",
                                     onTap: () {
+                                      setState(() {
+                                        _showFlightCard = !_showFlightCard;
+                                      });
                                       _sheetController.animateTo(
-                                        0.0, // hide it
+                                        0.0,
                                         duration: const Duration(
                                           milliseconds: 400,
                                         ),
@@ -411,7 +409,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       );
                     },
                   ),
-
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
@@ -420,11 +417,14 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     bottom: _showFlightCard
                         ? 0
                         : -MediaQuery.of(context).size.height * 0.4,
-                    child: GestureDetector(
-                      onTap: () {
-                        _hideFlightCard();
+                    child: BlocBuilder<FlightMapCubit, FlightMapState>(
+                      builder: (context, state) {
+                        return FlightCard(
+                          flightDetail: state.selectedFlightDetail,
+                          // fromDateTime: state.fromDateTime,
+                          // toDateTime: state.toDateTime,
+                        );
                       },
-                      child: FlightCard(flight: selectedFlight),
                     ),
                   ),
                 ],
@@ -476,46 +476,76 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 }
 
 class FlightCard extends StatelessWidget {
-  final FlightModel? flight;
+  final FlightAircraftDetail? flightDetail;
 
-  const FlightCard({super.key, this.flight});
+  // final AircraftModel? aircraftDetails;
+
+  const FlightCard({
+    super.key,
+    this.flightDetail,
+    // this.aircraftDetails,
+  });
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    if (hours == 0 && minutes == 0) {
+      return '0min';
+    } else if (hours == 0) {
+      return '${minutes}min';
+    } else if (minutes == 0) {
+      return '${hours}h';
+    } else {
+      return '${hours}h${minutes}min';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (flight == null) {
-      return const SizedBox.shrink();
+    if (flightDetail == null) {
+      print('FlightCard: flightDetail is null');
+      return const Text('No flight details available');
     }
 
-    /// Format duration into "1h 35m"
-    String formatDuration(Duration duration) {
-      final hours = duration.inHours;
-      final minutes = duration.inMinutes.remainder(60);
-      if (hours > 0 && minutes > 0) {
-        return "${hours}h ${minutes}m";
-      } else if (hours > 0) {
-        return "${hours}h";
-      } else {
-        return "${minutes}m";
-      }
+    print(
+      'FlightCard: Rendering with flightDetail: ${flightDetail!.toString()}',
+    );
+    final departureIata = flightDetail!.departureIata ?? 'N/A';
+    final arrivalIata = flightDetail!.arrivalIata ?? 'N/A';
+    final groundSpeed = flightDetail!.groundSpeed ?? 0;
+    final altitude = flightDetail!.altitude ?? 0;
+    final takeoffTime = flightDetail!.takeoffTime;
+    final eta = flightDetail!.eta;
+    final callsign = flightDetail!.callsign;
+
+    final aircraftType =
+        flightDetail!.aircraftModel ?? flightDetail!.type ?? 'N/A';
+    final manufacturer = flightDetail!.manufacturer?.companyName ?? 'Unknown';
+    final category = flightDetail!.icaoTypeCode ?? flightDetail!.type ?? 'N/A';
+    final image = flightDetail!.image ?? 'https://via.placeholder.com/50';
+    final manufacturerLogo =
+        flightDetail!.manufacturer?.logo ?? 'https://via.placeholder.com/16';
+
+    String timeSinceTakeoff = 'N/A';
+    if (takeoffTime != null) {
+      final duration = DateTime.now().toUtc().difference(takeoffTime);
+      timeSinceTakeoff = '${_formatDuration(duration)} ago';
     }
 
-    /// Get arrival status
-    String getArrivalStatus(DateTime? eta) {
-      if (eta == null) return 'N/A';
+    String timeToArrival = 'N/A';
+    if (eta != null) {
+      final duration = eta.difference(DateTime.now().toUtc());
+      timeToArrival = duration.isNegative
+          ? 'Landed'
+          : 'in ${_formatDuration(duration)}';
+    }
 
-      // Format the ETA to a readable time (e.g., "3:45 PM")
-      final formatter = DateFormat(
-        'h:mm a',
-      ); // Use 'intl' package for formatting
-      final localEta = eta.toLocal(); // Convert UTC to local time
-      final now = DateTime.now().toUtc();
-      final difference = eta.difference(now);
-
-      if (difference.isNegative) {
-        return "ETA ${formatter.format(localEta)}";
-      } else {
-        return "ETA ${formatter.format(localEta)}";
-      }
+    double progress = 0.0;
+    if (flightDetail!.actualDistance != null &&
+        flightDetail!.circleDistance != null &&
+        flightDetail!.circleDistance! > 0) {
+      progress = (flightDetail!.actualDistance! / flightDetail!.circleDistance!)
+          .clamp(0.0, 1.0);
     }
 
     return Card(
@@ -537,7 +567,6 @@ class FlightCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Flight info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,13 +574,14 @@ class FlightCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            flight?.flightNumber ?? "Unknown Flight",
+                            aircraftType,
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
+                              color: Color(0xFF3F3D56),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 20),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
@@ -559,31 +589,58 @@ class FlightCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              flight?.type?.isNotEmpty ?? false
-                                  ? (flight!.type.substring(0, 4))
-                                  : "Unknown",
-                              style: const TextStyle(fontSize: 12),
+                              category,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF3F3D56),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(
-                            Icons.airplanemode_active,
-                            size: 16,
-                            color: Colors.black54,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: CachedAnyImage(
+                              imagePath: manufacturerLogo,
+                              width: 22.0,
+                              height: 16.0,
+                              contentImage: BoxFit.contain,
+                            ),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            flight?.operatingAs ?? 'Unknown Airline',
+                            manufacturer,
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Colors.black54,
+                              color: Color(0xFF3F3D56),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3F3D56),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              callsign!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Colors
+                                    .white, // better contrast with dark background
+                              ),
                             ),
                           ),
                         ],
@@ -591,55 +648,35 @@ class FlightCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                /// Image
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: const Icon(
-                    Icons.airplanemode_active,
-                    size: 50,
-                    color: Colors.black54,
+                  borderRadius: BorderRadius.circular(6),
+                  child: CachedAnyImage(
+                    imagePath: image,
+                    width: 100.0,
+                    height: 50.0,
+                    contentImage: BoxFit.cover,
                   ),
                 ),
               ],
             ),
-
-            CustomDivider(height: 1.0),
+            const CustomDivider(height: 1.0),
             const SizedBox(height: 16),
-
-            /// Route Row
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Departure → Only green dot + airport code
                 Expanded(
                   flex: 2,
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 6),
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Text(
-                        flight?.departureIata ?? 'Unknown',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
+                  child: Text(
+                    "$departureIata\n$timeSinceTakeoff",
+                    style: const TextStyle(fontSize: 13),
                   ),
                 ),
-
-                // Progress + Speed + Altitude
                 Expanded(
                   flex: 3,
                   child: Column(
                     children: [
                       LinearProgressIndicator(
-                        value: 0.5,
+                        value: progress,
                         backgroundColor: Colors.grey.shade300,
                         color: Colors.blue,
                         minHeight: 5,
@@ -650,7 +687,7 @@ class FlightCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "${flight?.groundSpeed ?? 'N/A'} km/h",
+                            groundSpeed == 0 ? 'N/A' : '$groundSpeed km/h',
                             style: const TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.w400,
@@ -660,7 +697,7 @@ class FlightCard extends StatelessWidget {
                           const Text("•", style: TextStyle(color: Colors.grey)),
                           const SizedBox(width: 10),
                           Text(
-                            "${flight?.altitude ?? 'N/A'} m",
+                            altitude == 0 ? 'N/A' : '$altitude m',
                             style: const TextStyle(
                               color: Colors.blue,
                               fontWeight: FontWeight.w500,
@@ -671,12 +708,10 @@ class FlightCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // Arrival → Airport code + ETA or Arrived time
                 Expanded(
                   flex: 2,
                   child: Text(
-                    "${flight?.arrivalIata ?? 'Unknown'}\n${getArrivalStatus(flight?.eta)}",
+                    "$arrivalIata\n$timeToArrival",
                     style: const TextStyle(fontSize: 13),
                     textAlign: TextAlign.right,
                   ),
