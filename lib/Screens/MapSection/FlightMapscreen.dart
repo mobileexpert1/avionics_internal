@@ -581,7 +581,7 @@ class FlightCard extends StatelessWidget {
                               color: Color(0xFF3F3D56),
                             ),
                           ),
-                          const SizedBox(width: 20),
+                          const SizedBox(width: 25),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
@@ -623,7 +623,7 @@ class FlightCard extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 15),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 18,
@@ -641,6 +641,15 @@ class FlightCard extends StatelessWidget {
                                 color: Colors
                                     .white, // better contrast with dark background
                               ),
+                            ),
+                          ),
+                          const SizedBox(width: 25),
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(
+                              Icons.my_location,
+                              color: Colors.blue,
+                              size: 20,
                             ),
                           ),
                         ],
