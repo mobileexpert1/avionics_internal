@@ -1,4 +1,4 @@
-import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart' hide Position;
 import 'dart:convert';
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:bloc/bloc.dart';
@@ -14,7 +14,7 @@ import 'flight_map_state.dart';
 import 'flight_map_detailModel.dart';
 import 'flight_map_state.dart';
 import 'flight_map_model.dart';
-import 'flight_map_repository.dart';
+import 'flight_map_repository.dart' hide Position;
 
 class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
