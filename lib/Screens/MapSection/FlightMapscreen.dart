@@ -510,8 +510,8 @@ class FlightCard extends StatelessWidget {
     print(
       'FlightCard: Rendering with flightDetail: ${flightDetail!.toString()}',
     );
-    final departureIata = flightDetail!.departureIata ?? 'N/A';
-    final arrivalIata = flightDetail!.arrivalIata ?? 'N/A';
+    final departureIata = flightDetail!.departureIcao ?? 'N/A';
+    final arrivalIata = flightDetail!.arrivalIcao ?? 'N/A';
     final groundSpeed = flightDetail!.groundSpeed ?? 0;
     final altitude = flightDetail!.altitude ?? 0;
     final takeoffTime = flightDetail!.takeoffTime;
@@ -540,13 +540,29 @@ class FlightCard extends StatelessWidget {
           : 'in ${_formatDuration(duration)}';
     }
 
+    // double progress = 0.0;
+    // if (flightDetail!.actualDistance != null &&
+    //     flightDetail!.circleDistance != null &&
+    //     flightDetail!.circleDistance! > 0) {
+    //   progress = (flightDetail!.actualDistance! / flightDetail!.circleDistance!)
+    //       .clamp(0.0, 1.0);
+    // }
+
     double progress = 0.0;
-    if (flightDetail!.actualDistance != null &&
-        flightDetail!.circleDistance != null &&
-        flightDetail!.circleDistance! > 0) {
-      progress = (flightDetail!.actualDistance! / flightDetail!.circleDistance!)
-          .clamp(0.0, 1.0);
+
+    if (takeoffTime != null && eta != null) {
+      final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
+      final etaMillis = eta.millisecondsSinceEpoch;
+      final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
+
+      final totalDuration = etaMillis - takeoffMillis;
+      final elapsed = nowMillis - takeoffMillis;
+
+      if (totalDuration > 0) {
+        progress = (elapsed / totalDuration).clamp(0.0, 1.0);
+      }
     }
+
 
     return Card(
       color: Colors.white,
