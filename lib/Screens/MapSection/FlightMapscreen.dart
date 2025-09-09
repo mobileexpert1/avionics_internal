@@ -19,6 +19,8 @@ import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
+import 'MapHelpers/MapToggleButtons.dart';
+import 'MapHelpers/MapTrackingModePopup.dart';
 
 class FlightMapScreen extends StatefulWidget {
   const FlightMapScreen({Key? key}) : super(key: key);
@@ -33,6 +35,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   GoogleMapController? _mapController;
   FlightModel? selectedFlight;
   bool _hasFetchedDetails = false;
+  int _isForFlyingInTheArea = 0;
+  bool isMapViewSelected = true;
+  bool isMapListViewShown = true;
 
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -42,7 +47,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     super.initState();
     context.read<FlightMapCubit>().getCurrentLocation(context);
 
-    // Listen to sheet drag
+    //Listen to sheet drag
     _sheetController.addListener(() {
       if (!_hasFetchedDetails && _sheetController.size > 0.15) {
         final flights = context.read<FlightMapCubit>().state.flights ?? [];
@@ -56,6 +61,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showTrackingModePopup(context);
+    });
   }
 
   @override
@@ -65,8 +74,44 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     super.dispose();
   }
 
+  void handleToggle(bool newIsMapViewSelected) {
+    setState(() {
+      isMapViewSelected = newIsMapViewSelected;
+    });
+    _sheetController.animateTo(
+      isMapViewSelected == true ? 0.0 : 0.78,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _showTrackingModePopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return MapTrackingModePopup(
+          onFlyingSelected: () {
+            setState(() {
+              _isForFlyingInTheArea = 1;
+            });
+            Navigator.pop(context);
+          },
+          onTrackSelected: () {
+            setState(() {
+              _isForFlyingInTheArea = 2;
+            });
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
   void _toggleFlightCard({required FlightModel flight}) {
-    print('Toggling flight card for flight ID: ${flight.id}');
     context.read<FlightMapCubit>().fetchFlightDetails(
       flightId: flight.id,
       context: context,
@@ -77,7 +122,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   void _hideFlightCard() {
-    print('Hiding flight card');
     setState(() {
       _showFlightCard = false;
     });
@@ -85,32 +129,34 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Future<Set<Marker>> _buildFlightMarkers(List<FlightModel> flights) async {
     final markers = <Marker>{};
-    for (final flight in flights) {
-      final icon = await getRotatedPlaneIcon(
-        (flight.track).toDouble(),
-        color: Colors.red,
-      );
-      markers.add(
-        Marker(
-          markerId: MarkerId(flight.id.toString()),
-          position: LatLng(flight.latitude, flight.longitude),
-          icon: icon,
-          infoWindow: InfoWindow(
-            title: flight.flightNumber ?? 'Unknown',
-            snippet:
-                "${flight.departureIata ?? 'N/A'} → ${flight.arrivalIata ?? 'N/A'}",
+    if (_isForFlyingInTheArea == 1) {
+      for (final flight in flights) {
+        final icon = await getRotatedPlaneIcon(
+          (flight.track).toDouble(),
+          color: Colors.red,
+        );
+        markers.add(
+          Marker(
+            markerId: MarkerId(flight.id.toString()),
+            position: LatLng(flight.latitude, flight.longitude),
+            icon: icon,
+            infoWindow: InfoWindow(
+              title: flight.flightNumber ?? 'Unknown',
+              snippet:
+                  "${flight.departureIata ?? 'N/A'} → ${flight.arrivalIata ?? 'N/A'}",
+            ),
+            onTap: () {
+              print(
+                "Flight: ${flight.flightNumber}\n"
+                "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
+                "Dir: ${flight.track}°\n"
+                "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
+              );
+              _toggleFlightCard(flight: flight);
+            },
           ),
-          onTap: () {
-            print(
-              "Flight: ${flight.flightNumber}\n"
-              "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
-              "Dir: ${flight.track}°\n"
-              "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
-            );
-            _toggleFlightCard(flight: flight);
-          },
-        ),
-      );
+        );
+      }
     }
     return markers;
   }
@@ -211,6 +257,16 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       );
                     },
                   ),
+                  if (isMapListViewShown)
+                    Positioned(
+                      top: 120,
+                      right: 30,
+                      child: MapToggleButtons(
+                        isMapViewSelected: isMapViewSelected,
+                        onToggle: handleToggle, // Passing the callback function
+                      ),
+                    ),
+
                   Positioned(
                     top: 40,
                     left: 5,
@@ -261,9 +317,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   ),
                   DraggableScrollableSheet(
                     controller: _sheetController,
-                    initialChildSize: 0.1,
-                    minChildSize: 0.1,
-                    maxChildSize: 0.8,
+                    initialChildSize: 0.0,
+                    minChildSize: 0.0,
+                    maxChildSize: 0.78,
                     snap: true,
                     builder: (context, scrollController) {
                       return Container(
@@ -390,6 +446,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     callSign: data?.callSign ?? "",
                                     onTap: () {
                                       setState(() {
+                                        isMapListViewShown = false;
                                         _showFlightCard = !_showFlightCard;
                                       });
                                       _sheetController.animateTo(
@@ -419,10 +476,35 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         : -MediaQuery.of(context).size.height * 0.4,
                     child: BlocBuilder<FlightMapCubit, FlightMapState>(
                       builder: (context, state) {
-                        return FlightCard(
-                          flightDetail: state.selectedFlightDetail,
-                          // fromDateTime: state.fromDateTime,
-                          // toDateTime: state.toDateTime,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 25,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    isMapListViewShown = true;
+                                    _showFlightCard = !_showFlightCard;
+                                  });
+                                },
+                              ),
+                              FlightCard(
+                                flightDetail: state.selectedFlightDetail,
+                                // fromDateTime: state.fromDateTime,
+                                // toDateTime: state.toDateTime,
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),
@@ -435,40 +517,47 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         ),
       ),
       floatingActionButton: _showFlightCard == false
-          ? Padding(
-              padding: const EdgeInsets.only(right: 10, bottom: 10),
-              child: FloatingActionButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final token = prefs.getString('UserAccessTokenKey');
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 70),
+                  child: FloatingActionButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final token = prefs.getString('UserAccessTokenKey');
 
-                  if (token != null && token.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AskWilcoScreen(
-                          accessToken: token,
-                          isComeFromTab: false,
-                          sessionId: '',
-                          title: '',
-                        ),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Access token not found")),
-                    );
-                  }
-                },
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.Chatbot),
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+                      if (token != null && token.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AskWilcoScreen(
+                              accessToken: token,
+                              isComeFromTab: false,
+                              sessionId: '',
+                              title: '',
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Access token not found"),
+                          ),
+                        );
+                      }
+                    },
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    child: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.Chatbot),
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             )
           : SizedBox.shrink(),
     );

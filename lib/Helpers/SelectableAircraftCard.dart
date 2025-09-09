@@ -97,7 +97,7 @@ class SimpleAircraftCard extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (callSign != null || callSign != "") ...[
+                if (callSign != "") ...[
                   const SizedBox(width: 4),
                   _buildBadge(badge, true, callSign ?? ""),
                   const SizedBox(width: 8),

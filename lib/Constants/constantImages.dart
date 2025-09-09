@@ -81,8 +81,8 @@ abstract class AssetsPath {
   static const String blackBox = "blackBoxIcon";
   static const String calculations = "calculationIcon";
 
-
-
+  static const String mapPopupAircraft = "MapPopupAircraft";
+  static const String mapPopupLivearea = "MapPopupLivearea";
 
   // png
   static const String aeroplane = "aeroplane";
