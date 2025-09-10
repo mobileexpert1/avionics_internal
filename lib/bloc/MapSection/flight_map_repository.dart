@@ -147,6 +147,28 @@ class FlightRepository {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>> getFlightPositions({
+    required String bounds,
+    required String flightId,
+  }) async {
+    String url =
+        "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=$bounds&flights=$flightId";
+
+    final uri = Uri.parse(url);
+    print('Fetching flight positions with URL: $uri');
+
+    final response = await http.get(uri, headers: _headers);
+    print('API Response: Status=${response.statusCode}, Body=${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final flightResponse = FlightResponse.fromJson(data);
+      return {'flights': flightResponse.flights};
+    } else {
+      throw Exception("Error ${response.statusCode}: ${response.body}");
+    }
+  }
 }
 
 class Position {

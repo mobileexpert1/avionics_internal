@@ -1,18 +1,23 @@
+import 'dart:async';
+
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     hide Position;
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Screens/MapSection/FlightMapscreen.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_model.dart';
 import 'flight_map_state.dart';
 import 'flight_map_detailModel.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
+  Timer? _trackingTimer;
   FlightMapCubit() : super(FlightMapState());
 
   void changeMapType(MapType type) {
@@ -197,6 +202,62 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
+
+
+  Future<void> _fetchAndUpdateFlight(String flightId, BuildContext context) async {
+    try {
+      const bounds = "35.6356162,25.6356162,81.7212967,71.7212967";
+      final response = await FlightRepository().getFlightPositions(
+        bounds: bounds,
+        flightId: flightId,
+      );
+
+      final flights = response['flights'] as List<FlightModel>;
+      final updatedFlight = flights.firstWhere(
+            (flight) => flight.id == flightId,
+        orElse: () => state.selectedFlight!,
+      );
+
+      emit(
+        state.copyWith(
+          selectedFlight: updatedFlight,
+          status: CommonApiStatus.success,
+          isLoading: false,
+          flights: state.flights,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error tracking flight: ${e.toString()}')),
+      );
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: 'Error tracking flight: ${e.toString()}',
+          isLoading: false,
+        ),
+      );
+    }
+  }
+
+
+  void startTrackingFlight(String flightId, BuildContext context) {
+    if (state.isTracking) return; // Prevent multiple timers
+
+    emit(state.copyWith(isTracking: true));
+    _fetchAndUpdateFlight(flightId, context);
+    _trackingTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+      _fetchAndUpdateFlight(flightId, context);
+    });
+  }
+
+  // Stop tracking a flight
+  void stopTrackingFlight() {
+    _trackingTimer?.cancel();
+    _trackingTimer = null;
+    emit(state.copyWith(isTracking: false));
+  }
+
   String _calculateBounds(Position position, {double delta = 5.0}) {
     final north = position.latitude + delta;
     final south = position.latitude - delta;
@@ -218,3 +279,4 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedFlight: null));
   }
 }
+
