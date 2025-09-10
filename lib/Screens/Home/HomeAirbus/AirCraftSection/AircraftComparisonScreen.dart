@@ -91,6 +91,8 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                       controller: searchController,
                       onChanged: _onSearch,
                       searchTitle: 'Search Models',
+                      onBackButtonTap: () { Navigator.pop(context);
+                      },
                     ),
                   ),
 

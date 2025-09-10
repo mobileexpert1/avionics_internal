@@ -11,10 +11,10 @@ import '../HomeScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
   @override
-  State<RootTabbarscreen> createState() => _RootTabbarScreenState();
+  State<RootTabbarscreen> createState() => RootTabbarScreenState();
 }
 
-class _RootTabbarScreenState extends State<RootTabbarscreen> {
+class RootTabbarScreenState extends State<RootTabbarscreen> {
   int _selectedIndex = 0;
   List<Widget> _pages = [];
   bool _isLoading = true;
@@ -33,8 +33,10 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
       _pages = [
         HomeScreen(),
         BlocProvider(
-          create: (context) => FlightMapCubit(), // Provide FlightMapCubit
-          child: FlightMapScreen(),
+          create: (context) => FlightMapCubit(),
+          child: FlightMapScreen(
+            onGoToFirstTab: () => onItemTapped(0),
+          ),
         ),
         GamesScreen(),
         token != null && token.isNotEmpty
@@ -51,7 +53,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
     });
   }
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -68,7 +70,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
           : BottomNavigationBar(
               backgroundColor: Colors.white,
               currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
+              onTap: onItemTapped,
               selectedItemColor: Colors.black,
               unselectedItemColor: Colors.grey,
               type: BottomNavigationBarType.fixed,
@@ -92,7 +94,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
                     height: 24,
                     color: _selectedIndex == 1 ? Colors.black : Colors.grey,
                   ),
-                  label: 'Map',
+                  label: 'Track',
                 ),
                 BottomNavigationBarItem(
                   icon: Image.asset(

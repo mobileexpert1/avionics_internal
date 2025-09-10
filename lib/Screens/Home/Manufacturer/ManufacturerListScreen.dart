@@ -62,6 +62,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                     enableCloseScreen: false,
                     controller: searchController,
                     onFilterTap: () {},
+                    onBackButtonTap: () { Navigator.pop(context);
+                    },
                     onChanged: (value) {
                       context.read<ManufacturerCubit>().loadListOfManufacturers(
                         context: context,

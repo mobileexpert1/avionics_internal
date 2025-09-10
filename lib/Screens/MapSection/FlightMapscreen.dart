@@ -23,7 +23,10 @@ import 'MapHelpers/MapToggleButtons.dart';
 import 'MapHelpers/MapTrackingModePopup.dart';
 
 class FlightMapScreen extends StatefulWidget {
-  const FlightMapScreen({Key? key}) : super(key: key);
+  final VoidCallback onGoToFirstTab;
+
+  const FlightMapScreen({required this.onGoToFirstTab, Key? key})
+    : super(key: key);
 
   @override
   State<FlightMapScreen> createState() => _FlightMapscreenState();
@@ -37,7 +40,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   bool _hasFetchedDetails = false;
   int _isForFlyingInTheArea = 0;
   bool isMapViewSelected = true;
-  bool isMapListViewShown = true;
+  bool _isMapListViewShown = true;
+  bool _isNeedToShowBackButton = false;
 
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -94,14 +98,22 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return MapTrackingModePopup(
+          onCrossButton: () {
+            Navigator.pop(context);
+            widget.onGoToFirstTab();
+          },
           onFlyingSelected: () {
             setState(() {
+              _isMapListViewShown = true;
+              _isNeedToShowBackButton = true;
               _isForFlyingInTheArea = 1;
             });
             Navigator.pop(context);
           },
           onTrackSelected: () {
             setState(() {
+              _isMapListViewShown = false;
+              _isNeedToShowBackButton = true;
               _isForFlyingInTheArea = 2;
             });
             Navigator.pop(context);
@@ -257,7 +269,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       );
                     },
                   ),
-                  if (isMapListViewShown)
+                  if (_isMapListViewShown)
                     Positioned(
                       top: 120,
                       right: 30,
@@ -272,7 +284,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     left: 5,
                     right: 5,
                     child: SearchBarWidget(
-                      enableBackArrow: false,
+                      enableBackArrow: _isNeedToShowBackButton,
+                      onBackButtonTap: () {
+                        _showTrackingModePopup(context);
+                      },
                       enableFilter: true,
                       enableCloseScreen: false,
                       isComeFromMapSection: true,
@@ -446,7 +461,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     callSign: data?.callSign ?? "",
                                     onTap: () {
                                       setState(() {
-                                        isMapListViewShown = false;
+                                        _isMapListViewShown = false;
                                         _showFlightCard = !_showFlightCard;
                                       });
                                       _sheetController.animateTo(
@@ -466,49 +481,25 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       );
                     },
                   ),
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    left: 0,
-                    right: 0,
-                    bottom: _showFlightCard
-                        ? 0
-                        : -MediaQuery.of(context).size.height * 0.4,
-                    child: BlocBuilder<FlightMapCubit, FlightMapState>(
-                      builder: (context, state) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 25,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.black,
-                                  size: 20,
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    isMapListViewShown = true;
-                                    _showFlightCard = !_showFlightCard;
-                                  });
-                                },
-                              ),
-                              FlightCard(
-                                flightDetail: state.selectedFlightDetail,
-                                // fromDateTime: state.fromDateTime,
-                                // toDateTime: state.toDateTime,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                  if (state.selectedFlightDetail != null)
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      left: 0,
+                      right: 0,
+                      bottom: _showFlightCard
+                          ? 0
+                          : -MediaQuery.of(context).size.height * 0.4,
+                      child: BlocBuilder<FlightMapCubit, FlightMapState>(
+                        builder: (context, state) {
+                          return FlightCard(
+                            flightDetail: state.selectedFlightDetail,
+                            // fromDateTime: state.fromDateTime,
+                            // toDateTime: state.toDateTime,
+                          );
+                        },
+                      ),
                     ),
-                  ),
                 ],
               );
             }
@@ -651,7 +642,6 @@ class FlightCard extends StatelessWidget {
         progress = (elapsed / totalDuration).clamp(0.0, 1.0);
       }
     }
-
 
     return Card(
       color: Colors.white,

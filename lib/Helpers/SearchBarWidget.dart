@@ -5,6 +5,7 @@ import '../Constants/constantImages.dart';
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback? onFilterTap;
+  final VoidCallback? onBackButtonTap;
   final bool enableFilter;
   final bool enableBackArrow;
   final bool enableCloseScreen;
@@ -16,6 +17,7 @@ class SearchBarWidget extends StatelessWidget {
     Key? key,
     required this.controller,
     this.onFilterTap,
+    this.onBackButtonTap,
     required this.enableFilter,
     required this.enableBackArrow,
     required this.enableCloseScreen,
@@ -48,10 +50,10 @@ class SearchBarWidget extends StatelessWidget {
                 children: [
                   if (enableBackArrow)
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(
+                      onTap: onBackButtonTap,
+                      child:  Icon(
                         Icons.arrow_back_ios_new,
-                        size: 20,
+                        size: isComeFromMapSection == true ? 25 : 20,
                         color: Colors.black87,
                       ),
                     ),

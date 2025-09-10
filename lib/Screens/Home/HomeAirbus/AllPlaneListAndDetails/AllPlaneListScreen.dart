@@ -82,6 +82,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                   controller: searchController,
                   onChanged: _onSearch,
                   searchTitle: 'Search ${widget.manufacturerName} Models',
+                  onBackButtonTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
                 const SizedBox(height: 10),
                 Padding(
