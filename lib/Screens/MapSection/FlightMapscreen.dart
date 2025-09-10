@@ -827,7 +827,7 @@ class FlightCard extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "$departureData\n$timeSinceTakeoff",
+                        "$departureIata\n$timeSinceTakeoff",
                         style: const TextStyle(fontSize: 13),
                       ),
                     ),
@@ -874,7 +874,7 @@ class FlightCard extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "$arrivalData\n$timeToArrival",
+                        "$arrivalIata\n$timeToArrival",
                         style: const TextStyle(fontSize: 13),
                         textAlign: TextAlign.right,
                       ),
