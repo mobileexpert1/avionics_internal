@@ -328,7 +328,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         }
                         _hideFlightCard();
                       },
-                      searchTitle: 'Search...',
+                      searchTitle: _isForFlyingInTheArea == 2 ? 'Track a flight...' :'Search...' ,
                     ),
                   ),
                   DraggableScrollableSheet(
@@ -461,9 +461,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                           )),
                                     callSign: data?.callSign ?? "",
                                     onTap: () {
+                                      context.read<FlightMapCubit>().setSelectedFlight(data!);
+                                    _toggleFlightCard(flight: data!);
                                       setState(() {
                                         _isMapListViewShown = false;
-                                        _showFlightCard = !_showFlightCard;
+                                        //_showFlightCard = !_showFlightCard;
                                       });
                                       _sheetController.animateTo(
                                         0.0,
