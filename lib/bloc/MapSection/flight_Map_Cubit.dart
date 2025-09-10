@@ -23,12 +23,49 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
 
     try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: 'Location services are disabled.',
+            isLoading: false,
+          ),
+        );
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          emit(
+            state.copyWith(status: CommonApiStatus.failure, isLoading: false),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')),
+          );
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        emit(state.copyWith(status: CommonApiStatus.failure, isLoading: false));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location permissions are permanently denied'),
+          ),
+        );
+        return;
+      }
+
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
       print(
         'Current location: Lat=${position.latitude}, Lon=${position.longitude}',
       );
+
       final bounds = _calculateBounds(position);
 
       emit(state.copyWith(flights: [], isLoading: true));
