@@ -173,6 +173,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                   ),
                                   model: model.aircraftModel,
                                   badge: model.icaoTypeCode,
+                                  callSign: "",
                                   manufacturer: model.manufacturer?.companyName,
                                   airline: null,
                                   airlineImagePath: CachedAnyImage(

@@ -19,6 +19,7 @@ import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'MapHelpers/MapToggleButtons.dart';
 import 'MapHelpers/MapTrackingModePopup.dart';
+import 'MapHelpers/TrackAndSeacrhFlight.dart';
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
@@ -102,6 +103,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           },
           onFlyingSelected: () {
             setState(() {
+              _hideFlightCard();
               _isMapListViewShown = true;
               _isNeedToShowBackButton = true;
               _isForFlyingInTheArea = 1;
@@ -110,6 +112,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           },
           onTrackSelected: () {
             setState(() {
+              _hideFlightCard();
               _isMapListViewShown = false;
               _isNeedToShowBackButton = true;
               _isForFlyingInTheArea = 2;
@@ -164,6 +167,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 "Dir: ${flight.track}°\n"
                 "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
               );
+              _isMapListViewShown = false;
               context.read<FlightMapCubit>().setSelectedFlight(flight);
               _toggleFlightCard(flight: flight);
             },
@@ -285,11 +289,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     left: 5,
                     right: 5,
                     child: SearchBarWidget(
+                      enableGestureMode: true,
+                      onTextTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => TrackAndSearchFlight(),
+                          ),
+                        );
+                      },
                       enableBackArrow: _isNeedToShowBackButton,
                       onBackButtonTap: () {
                         _showTrackingModePopup(context);
                       },
-                      enableFilter: true,
+                      enableFilter: _isMapListViewShown == false ? false : true,
                       enableCloseScreen: false,
                       isComeFromMapSection: true,
                       controller: _searchController,
@@ -328,7 +341,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         }
                         _hideFlightCard();
                       },
-                      searchTitle: _isForFlyingInTheArea == 2 ? 'Track a flight...' :'Search...' ,
+                      searchTitle: _isForFlyingInTheArea == 2
+                          ? 'Track a flight...'
+                          : 'Search...',
                     ),
                   ),
                   DraggableScrollableSheet(
@@ -461,12 +476,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                           )),
                                     callSign: data?.callSign ?? "",
                                     onTap: () {
-                                      context.read<FlightMapCubit>().setSelectedFlight(data!);
-                                    _toggleFlightCard(flight: data!);
                                       setState(() {
                                         _isMapListViewShown = false;
-                                        //_showFlightCard = !_showFlightCard;
                                       });
+
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .setSelectedFlight(data!);
+                                      _toggleFlightCard(flight: data!);
+
                                       _sheetController.animateTo(
                                         0.0,
                                         duration: const Duration(

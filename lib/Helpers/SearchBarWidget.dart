@@ -13,6 +13,9 @@ class SearchBarWidget extends StatelessWidget {
   final bool? isComeFromMapSection;
   final String searchTitle;
 
+  final bool enableGestureMode;
+  final VoidCallback? onTextTap;
+
   const SearchBarWidget({
     Key? key,
     required this.controller,
@@ -24,6 +27,8 @@ class SearchBarWidget extends StatelessWidget {
     this.onChanged,
     this.isComeFromMapSection,
     required this.searchTitle,
+    this.enableGestureMode = false, // default false → normal textfield
+    this.onTextTap,
   }) : super(key: key);
 
   @override
@@ -32,7 +37,6 @@ class SearchBarWidget extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 11, 16, 8),
-          // Add bottom spacing
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +55,7 @@ class SearchBarWidget extends StatelessWidget {
                   if (enableBackArrow)
                     GestureDetector(
                       onTap: onBackButtonTap,
-                      child:  Icon(
+                      child: Icon(
                         Icons.arrow_back_ios_new,
                         size: isComeFromMapSection == true ? 25 : 20,
                         color: Colors.black87,
@@ -63,47 +67,48 @@ class SearchBarWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: (isComeFromMapSection == true
                             ? Colors.white
-                            : Colors.transparent), // Light grey background
-                        borderRadius: BorderRadius.circular(
-                          5,
-                        ), // Optional: add rounded corners
+                            : Colors.transparent),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      child: TextField(
-                        controller: controller,
-                        onChanged: onChanged,
-                        decoration: InputDecoration(
-                          hintText: searchTitle,
-                          prefixIcon: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.search),
-                              width: 18,
-                              height: 18,
+                      child: GestureDetector(
+                        onTap: enableGestureMode ? onTextTap : null,
+                        child: AbsorbPointer(
+                          absorbing: enableGestureMode, // disable typing if true
+                          child: TextField(
+                            controller: controller,
+                            onChanged: onChanged,
+                            decoration: InputDecoration(
+                              hintText: searchTitle,
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: SvgPicture.asset(
+                                  CommonUi.setSvgImage(AssetsPath.search),
+                                  width: 18,
+                                  height: 18,
+                                ),
+                              ),
+                              contentPadding:
+                              const EdgeInsets.symmetric(vertical: 10),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: (isComeFromMapSection == true
+                                      ? Colors.transparent
+                                      : const Color(0xFFE1E4EA)),
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: (isComeFromMapSection == true
+                                      ? Colors.transparent
+                                      : const Color(0xFFE1E4EA)),
+                                  width: 1.5,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.transparent,
                             ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: (isComeFromMapSection == true
-                                  ? Colors.transparent
-                                  : Color(0xFFE1E4EA)),
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: (isComeFromMapSection == true
-                                  ? Colors.transparent
-                                  : Color(0xFFE1E4EA)),
-                              width: 1.5,
-                            ),
-                          ),
-                          filled:
-                              true, // Required to apply fillColor if using directly
-                          fillColor: Colors
-                              .transparent, // Set to transparent because we're using Container color
                         ),
                       ),
                     ),
@@ -112,18 +117,18 @@ class SearchBarWidget extends StatelessWidget {
                   if (enableFilter)
                     GestureDetector(
                       onTap: onFilterTap,
-                      child:  SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.sliders),
-                          width: 60,
-                          height: 60,
-                        ),
+                      child: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.sliders),
+                        width: 60,
+                        height: 60,
+                      ),
                     ),
                 ],
               ),
             ],
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         dividerWithShadow(),
       ],
     );
@@ -135,7 +140,7 @@ class SearchBarWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: (isComeFromMapSection == true
             ? Colors.transparent
-            : Color(0xFFDDDDDD)),
+            : const Color(0xFFDDDDDD)),
         boxShadow: [
           BoxShadow(
             color: (isComeFromMapSection == true
@@ -143,7 +148,7 @@ class SearchBarWidget extends StatelessWidget {
                 : Colors.grey.withOpacity(0.5)),
             spreadRadius: 0,
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
