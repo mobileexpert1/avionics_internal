@@ -2,7 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<BitmapDescriptor> getRotatedPlaneIcon(double direction, {Color color = Colors.red}) async {
+  Future<BitmapDescriptor> getRotatedPlaneIcon(double direction, {Color color = Colors.red}) async {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
 

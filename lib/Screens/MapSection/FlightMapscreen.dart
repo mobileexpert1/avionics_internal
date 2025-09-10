@@ -157,8 +157,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             position: LatLng(flight.latitude, flight.longitude),
             icon: icon,
             infoWindow: InfoWindow(
-              title: flight.flightNumber,
-              snippet: "${flight.departureIata} → ${flight.arrivalIata}",
+              title: flight.callSign ?? 'Unknown',
+              snippet:
+                  "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ?? 'N/A'}",
             ),
             onTap: () {
               print(
@@ -248,7 +249,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 fit: StackFit.expand,
                 children: [
                   FutureBuilder<Set<Marker>>(
-                    future: _buildFlightMarkers(state.flights ?? []),
+                    // future: _buildFlightMarkers(state.flights ?? []),
+                    future: _buildFlightMarkers(
+                      state.isTracking && state.selectedFlight != null
+                          ? [state.selectedFlight!]
+                          : state.flights ?? [],
+                    ),
                     builder: (context, snapshot) {
                       return GoogleMap(
                         mapType: state.mapType,
@@ -270,6 +276,16 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           _mapController = controller;
                           if (state.flights != null) {
                             _fitMapToBounds(state.flights!, currentLatLng);
+                          } else if (state.isTracking &&
+                              state.selectedFlight != null) {
+                            _mapController!.animateCamera(
+                              CameraUpdate.newLatLng(
+                                LatLng(
+                                  state.selectedFlight!.latitude,
+                                  state.selectedFlight!.longitude,
+                                ),
+                              ),
+                            );
                           }
                         },
                       );
@@ -636,9 +652,10 @@ class FlightCard extends StatelessWidget {
         final manufacturerLogo =
             detail?.manufacturer?.logo ?? 'https://via.placeholder.com/16';
         final callSign = selectedFlight?.callSign ?? detail?.callsign ?? 'N/A';
-
-        final departureData = detail?.departureIcao ?? 'N/A';
-        final arrivalData = detail?.arrivalIcao ?? 'N/A';
+        final departureIata = detail?.departureIcao ?? 'N/A';
+        final arrivalIata = detail?.arrivalIcao ?? 'N/A';
+        final flightId =
+            selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
 
         String timeSinceTakeoff = 'N/A';
         if (takeoffTime != null) {
@@ -763,12 +780,27 @@ class FlightCard extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 20),
-                              Container(
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(
-                                  Icons.my_location,
-                                  color: Colors.blue,
-                                  size: 20,
+                              GestureDetector(
+                                onTap: () {
+                                  if (state.isTracking) {
+                                    context
+                                        .read<FlightMapCubit>()
+                                        .stopTrackingFlight();
+                                  } else {
+                                    context
+                                        .read<FlightMapCubit>()
+                                        .startTrackingFlight(flightId, context);
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Icon(
+                                    Icons.my_location,
+                                    color: state.isTracking
+                                        ? Colors.green
+                                        : Colors.blue,
+                                    size: 20,
+                                  ),
                                 ),
                               ),
                             ],

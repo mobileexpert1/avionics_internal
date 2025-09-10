@@ -18,6 +18,7 @@ class FlightMapState {
   final FlightAircraftDetail? selectedFlightDetail;
   final AircraftModel? selectedAircraftDetails;
   final FlightModel? selectedFlight;
+  final bool isTracking;
 
   FlightMapState({
     this.status = CommonApiStatus.initial,
@@ -32,6 +33,7 @@ class FlightMapState {
     this.selectedFlightDetail,
     this.selectedAircraftDetails,
     this.selectedFlight,
+    this.isTracking = false,
   });
 
   FlightMapState copyWith({
@@ -47,6 +49,7 @@ class FlightMapState {
     FlightAircraftDetail? selectedFlightDetail,
     AircraftModel? selectedAircraftDetails,
     FlightModel? selectedFlight,
+    bool? isTracking,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -61,6 +64,7 @@ class FlightMapState {
       selectedFlightDetail: selectedFlightDetail ?? this.selectedFlightDetail,
       selectedAircraftDetails: selectedAircraftDetails ?? this.selectedAircraftDetails,
       selectedFlight: selectedFlight ?? this.selectedFlight,
+      isTracking: isTracking ?? this.isTracking,
     );
   }
 }
