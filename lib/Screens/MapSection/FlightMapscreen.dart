@@ -11,6 +11,7 @@ import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../Helpers/SelectableAircraftCard.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
@@ -290,13 +291,21 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     right: 5,
                     child: SearchBarWidget(
                       enableGestureMode: true,
-                      onTextTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => TrackAndSearchFlight(),
-                          ),
-                        );
+                      onTextTap: () async {
+                        final selectedFlight =
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider(
+                                  create: (_) => MapSearchAircraftListCubit(),
+                                  child: const TrackAndSearchFlight(),
+                                ),
+                              ),
+                            ).then((selectedFlight) {
+                              if (selectedFlight != null) {
+                                print("Selected flight: $selectedFlight");
+                              }
+                            });
                       },
                       enableBackArrow: _isNeedToShowBackButton,
                       onBackButtonTap: () {

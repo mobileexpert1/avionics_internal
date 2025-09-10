@@ -17,12 +17,18 @@ class ConstantStrings {
   // ─────────────────────────────
   // Onboarding Descriptions
   // ─────────────────────────────
-  static const String description1 = "Database for professionals with\nup-to-date technical info";
-  static const String description2 = "See how different aircraft \nperform on a live flight map";
-  static const String description3 = "Learn quickly from data \nwith advanced compare features";
-  static const String description4 = "Map filter and smart search options \ngive you quick access to data";
-  static const String description5 = "Get instant AI-powered answers to \naviation questions and flight procedures";
-  static const String description6 = "Master the skies through 4 thrilling \nchallenges. Quiz battles, Word puzzles, \nSurvival missions, and Fuel strategy games";
+  static const String description1 =
+      "Database for professionals with\nup-to-date technical info";
+  static const String description2 =
+      "See how different aircraft \nperform on a live flight map";
+  static const String description3 =
+      "Learn quickly from data \nwith advanced compare features";
+  static const String description4 =
+      "Map filter and smart search options \ngive you quick access to data";
+  static const String description5 =
+      "Get instant AI-powered answers to \naviation questions and flight procedures";
+  static const String description6 =
+      "Master the skies through 4 thrilling \nchallenges. Quiz battles, Word puzzles, \nSurvival missions, and Fuel strategy games";
 
   // ─────────────────────────────
   // Onboarding Buttons
@@ -60,7 +66,8 @@ class ConstantStrings {
   static const String oldPasswordLabel = 'Old Password';
   static const String newPasswordLabel = 'New Password';
   static const String resetPassword = ' Reset Password';
-  static const String Otptitle = 'Enter the 4-digit OTP sent to your registered email.';
+  static const String Otptitle =
+      'Enter the 4-digit OTP sent to your registered email.';
   static const String continueText = 'Continue';
   static const String goBack = 'Go Back';
 
@@ -81,7 +88,6 @@ class ConstantStrings {
   static const String contactSupport = 'Contact Support';
   static const String reviewTitle = 'Review';
 
-
   // ─────────────────────────────
   // Section Titles
   // ─────────────────────────────
@@ -95,11 +101,11 @@ class ConstantStrings {
   static const String glossaryTitle = 'Glossary';
   static const String avtarTitle = 'Choose Your Avatar';
 
-// ─────────────────────────────
-// Create New Password
-// ─────────────────────────────
-  static const String OtpVerified = 'Your OTP verified successfully. Please reset your password within 5 minutes.';
-
+  // ─────────────────────────────
+  // Create New Password
+  // ─────────────────────────────
+  static const String OtpVerified =
+      'Your OTP verified successfully. Please reset your password within 5 minutes.';
 
   // ─────────────────────────────
   // Chat History
@@ -118,12 +124,12 @@ class ConstantStrings {
   static const String calculationsTitle = 'Calculations';
 }
 
-
 class SubscriptionTexts {
   // ─────────────────────────────
   // Plan Descriptions
   // ─────────────────────────────
-  static const String trialMessage = 'Free for 7 days then 80 EURO per year.\nCancel anytime.';
+  static const String trialMessage =
+      'Free for 7 days then 80 EURO per year.\nCancel anytime.';
   static const String goPremiumTitle = 'Go Premium';
   static const String changeSubPlanTitle = 'Change Subscription Plan';
   static const String restoreSubTitle = 'Restore Subscription';
@@ -152,7 +158,7 @@ class SubscriptionTexts {
 }
 
 class ApiBaseUrlConstant {
-   static const String baseUrl = 'https://avionica.csdevhub.com/';
+  static const String baseUrl = 'https://avionica.csdevhub.com/';
   //static const String baseUrl = 'http://192.168.10.186:8010/';
 }
 
@@ -161,7 +167,6 @@ class ApiFunctionUrlConstant {
 }
 
 class ApiServiceUrlConstant {
-
   static const String authRefreshToken = 'auth/refresh';
   static const String checkEmail = 'auth/check-email';
   static const String authSignup = 'auth/sign-up';
@@ -188,12 +193,10 @@ class ApiServiceUrlConstant {
   static const String chatHistorySession = 'ai-engine/wilco/session';
 }
 
-
 class ApiFunctionUrlAirplaneConstant {
   static const String airplaneService = 'airplane-service/';
-  static const String airCraftDetail  = 'aircraft/details/';
+  static const String airCraftDetail = 'aircraft/details/';
 }
-
 
 class ApiServiceUrlAirplaneConstant {
   //Home
@@ -213,10 +216,7 @@ class ApiFunctionUrlGamesConstant {
   static const oneWordSubmit = "ai-engine/games/one-word/";
   static const quiz = "ai-engine/games/quiz/";
   static const quizQuestions = "ai-engine/games/quiz/questions/";
-
-
 }
-
 
 class ApiFunctionUrlMapSecitonConstant {
   static const aircraftFlyingList = "aircraft/flying-area/";
@@ -234,4 +234,12 @@ class ApiServiceUrlGamesConstant {
 
   static String submitQuizResults(int gameNumber) =>
       "${ApiFunctionUrlGamesConstant.quiz}$gameNumber/submit/";
+}
+
+class MapFlightAircraftSectionConstant {
+  static String baseUrl = "https://fr24api.flightradar24.com/api/live";
+  static String baseUrlDetail =
+      "https://fr24api.flightradar24.com/api/flight-summary/full";
+  static String baseUrlSearch =
+      "https://www.flightradar24.com/v1/search/web/find?query=";
 }

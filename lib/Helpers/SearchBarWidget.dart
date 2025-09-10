@@ -73,7 +73,8 @@ class SearchBarWidget extends StatelessWidget {
                       child: GestureDetector(
                         onTap: enableGestureMode ? onTextTap : null,
                         child: AbsorbPointer(
-                          absorbing: enableGestureMode, // disable typing if true
+                          absorbing: enableGestureMode,
+                          // disable typing if true
                           child: TextField(
                             controller: controller,
                             onChanged: onChanged,
@@ -87,8 +88,9 @@ class SearchBarWidget extends StatelessWidget {
                                   height: 18,
                                 ),
                               ),
-                              contentPadding:
-                              const EdgeInsets.symmetric(vertical: 10),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                              ),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: (isComeFromMapSection == true

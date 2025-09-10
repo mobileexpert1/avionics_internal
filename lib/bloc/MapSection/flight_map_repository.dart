@@ -6,20 +6,19 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
-  final String _baseUrl = "https://fr24api.flightradar24.com/api/live";
-  final String _baseUrlDetail = "https://fr24api.flightradar24.com/api/flight-summary/full";
   final Map<String, String> _headers = {
     'Accept': 'application/json',
     'Accept-Version': 'v1',
-    'Authorization': 'Bearer 0196f4a5-73b4-7219-98bc-7daf81cfc59f|5VQhYisoEAOc9iQwNpOoTviX5ufQUcRABLj9eol711b82e65',
+    'Authorization':
+        'Bearer 0196f4a5-73b4-7219-98bc-7daf81cfc59f|5VQhYisoEAOc9iQwNpOoTviX5ufQUcRABLj9eol711b82e65',
   };
 
   Future<List<FlightModel>> getFlights({
     required String bounds,
     int limit = 3,
   }) async {
-
-    String url = "$_baseUrl/flight-positions/full?bounds=$bounds&limit=$limit&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000";
+    String url =
+        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=$bounds&limit=$limit&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000";
 
     final uri = Uri.parse(url);
     print('Fetching flights with URL: $uri');
@@ -43,7 +42,7 @@ class FlightRepository {
     FlightModel? flightModel,
   }) async {
     String url =
-        "$_baseUrlDetail?flight_ids=$flightId&flight_datetime_from=$fromDateTime&flight_datetime_to=$toDateTime";
+        "${MapFlightAircraftSectionConstant.baseUrlDetail}?flight_ids=$flightId&flight_datetime_from=$fromDateTime&flight_datetime_to=$toDateTime";
     final uri = Uri.parse(url);
     print('Fetching flight details with URL: $uri');
 
@@ -61,27 +60,28 @@ class FlightRepository {
         throw Exception("No flight data found for ID: $flightId");
       }
 
-      final aircraftDetails = await getAircraftDetails(flightDetail.type ?? 'A318');
+      final aircraftDetails = await getAircraftDetails(
+        flightDetail.type ?? 'A318',
+      );
 
       final mergedDetail = mergeFlightAndAircraftDetails(
         flightDetail,
         aircraftDetails,
       );
 
-      return {
-        'flightDetail': mergedDetail,
-        'flightModel': flightModel,
-      };
+      return {'flightDetail': mergedDetail, 'flightModel': flightModel};
     } else {
       throw Exception("Error ${response.statusCode}: ${response.body}");
     }
   }
 
   FlightAircraftDetail mergeFlightAndAircraftDetails(
-      FlightAircraftDetail flightDetail,
-      List<FlightAircraftDetail> aircraftDetails,
-      ) {
-    final aircraftDetail = aircraftDetails.isNotEmpty ? aircraftDetails.first : null;
+    FlightAircraftDetail flightDetail,
+    List<FlightAircraftDetail> aircraftDetails,
+  ) {
+    final aircraftDetail = aircraftDetails.isNotEmpty
+        ? aircraftDetails.first
+        : null;
 
     return FlightAircraftDetail(
       id: flightDetail.id,
@@ -103,7 +103,8 @@ class FlightRepository {
       altitude: flightDetail.altitude,
 
       // Aircraft fields:
-      aircraftModel: aircraftDetail?.aircraftModel ?? flightDetail.aircraftModel,
+      aircraftModel:
+          aircraftDetail?.aircraftModel ?? flightDetail.aircraftModel,
       isFavorite: aircraftDetail?.isFavorite ?? flightDetail.isFavorite,
       icaoTypeCode: aircraftDetail?.icaoTypeCode ?? flightDetail.icaoTypeCode,
       image: aircraftDetail?.image ?? flightDetail.image,
@@ -127,7 +128,9 @@ class FlightRepository {
     );
   }
 
-  Future<List<FlightAircraftDetail>> getAircraftDetails(String aircraftType) async {
+  Future<List<FlightAircraftDetail>> getAircraftDetails(
+    String aircraftType,
+  ) async {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
     );
@@ -146,12 +149,9 @@ class FlightRepository {
   }
 }
 
-
 class Position {
   final double latitude;
   final double longitude;
+
   Position({required this.latitude, required this.longitude});
 }
-
-
-
