@@ -1,20 +1,3 @@
-// class SubmitCalculationResultResponse {
-//   final String detail;
-//   final SubmitCalculationResultData data;
-//
-//   SubmitCalculationResultResponse({
-//     required this.detail,
-//     required this.data,
-//   });
-//
-//   factory SubmitCalculationResultResponse.fromJson(Map<String, dynamic> json) {
-//     return SubmitCalculationResultResponse(
-//       detail: json['detail'] ?? '',
-//       data: SubmitCalculationResultData.fromJson(json['data'] ?? {}),
-//     );
-//   }
-// }
-
 class SubmitCalculationResultResponse {
   final String detail;
   final Map<String, dynamic> data;

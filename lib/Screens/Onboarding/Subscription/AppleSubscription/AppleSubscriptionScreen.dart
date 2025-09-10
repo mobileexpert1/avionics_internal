@@ -54,23 +54,25 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
           }
 
           if (state.purchased) {
-              AppSnackBar.custom(
-                context,
-                message: (widget.isComeFromSignup == true ? "Purchase Successfully" : "Restore Subscription Successfully"),
-                svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
-              );
+            AppSnackBar.custom(
+              context,
+              message: (widget.isComeFromSignup == true
+                  ? "Purchase Successfully"
+                  : "Restore Subscription Successfully"),
+              svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
+            );
 
-              (widget.isComeFromSignup == false ||
-                      widget.isComeFromSignup == null)
-                  ? () {
-                      //Navigator.of(context).pop();
-                    }()
-                  : Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                      (route) => false,
-                    );
-            }
+            (widget.isComeFromSignup == false ||
+                    widget.isComeFromSignup == null)
+                ? () {
+                    //Navigator.of(context).pop();
+                  }()
+                : Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+                    (route) => false,
+                  );
+          }
         },
         builder: (context, state) {
           final selectedProduct = state.selectedProduct;

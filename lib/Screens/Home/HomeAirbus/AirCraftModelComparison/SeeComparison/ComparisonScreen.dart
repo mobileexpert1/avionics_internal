@@ -200,36 +200,20 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
                   // TECHNICAL DATA
                   case 'wingspan_m':
-                    a1Values.add(
-                      model.aircraft1.technicalData.wingspan.meters,
-                    );
-                    a2Values.add(
-                      model.aircraft2.technicalData.wingspan.meters,
-                    );
+                    a1Values.add(model.aircraft1.technicalData.wingspan.meters);
+                    a2Values.add(model.aircraft2.technicalData.wingspan.meters);
                     break;
                   case 'length_m':
-                    a1Values.add(
-                      model.aircraft1.technicalData.length.meters,
-                    );
-                    a2Values.add(
-                      model.aircraft2.technicalData.length.meters,
-                    );
+                    a1Values.add(model.aircraft1.technicalData.length.meters);
+                    a2Values.add(model.aircraft2.technicalData.length.meters);
                     break;
                   case 'height_m':
-                    a1Values.add(
-                      model.aircraft1.technicalData.height.meters,
-                    );
-                    a2Values.add(
-                      model.aircraft2.technicalData.height.meters,
-                    );
+                    a1Values.add(model.aircraft1.technicalData.height.meters);
+                    a2Values.add(model.aircraft2.technicalData.height.meters);
                     break;
                   case 'max_Payload':
-                    a1Values.add(
-                      model.aircraft1.technicalData.maxPayload,
-                    );
-                    a2Values.add(
-                      model.aircraft2.technicalData.maxPayload,
-                    );
+                    a1Values.add(model.aircraft1.technicalData.maxPayload);
+                    a2Values.add(model.aircraft2.technicalData.maxPayload);
                     break;
                   case 'mtow':
                     a1Values.add(model.aircraft1.technicalData.mtow);
@@ -259,16 +243,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                     break;
                   case 'max_altitude_ft':
                     a1Values.add(
-                      model
-                              .aircraft1
-                              .operationalData
-                              .maxCertifiedAltitudeFtFl,
+                      model.aircraft1.operationalData.maxCertifiedAltitudeFtFl,
                     );
                     a2Values.add(
-                      model
-                              .aircraft2
-                              .operationalData
-                              .maxCertifiedAltitudeFtFl,
+                      model.aircraft2.operationalData.maxCertifiedAltitudeFtFl,
                     );
                     break;
                   case 'cruise_speed_kts':
@@ -284,7 +262,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                       model.aircraft1.operationalData.cruiseSpeed.cruiseMach,
                     );
                     a2Values.add(
-                      model.aircraft2.operationalData.cruiseSpeed.cruiseMach
+                      model.aircraft2.operationalData.cruiseSpeed.cruiseMach,
                     );
                     break;
                   case 'ferry_range_nm':
@@ -381,7 +359,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 }
               }
 
-              
               return Column(
                 children: [
                   if (widget.showTabs)

@@ -105,7 +105,6 @@ class _ForgotScreenState extends State<Forgotscreen> {
                 ),
               ),
 
-              // Full-screen loading indicator
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),

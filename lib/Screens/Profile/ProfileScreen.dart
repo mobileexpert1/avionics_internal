@@ -54,7 +54,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // USER Section
-
                 SettingsListGroup(
                   headerTitle: "USER",
                   items: [
@@ -83,7 +82,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                            (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen(isComeFromSignup: false) : ProfileSubscriptionScreen()),
+                                (defaultTargetPlatform == TargetPlatform.iOS
+                                ? AppleSubscriptionScreen(
+                                    isComeFromSignup: false,
+                                  )
+                                : ProfileSubscriptionScreen()),
                           ),
                         );
                       },
@@ -392,8 +395,6 @@ class SettingsSectionHeader extends StatelessWidget {
   }
 }
 
-/// A custom widget for a single item in a settings list.
-/// (This is your existing SettingsListItem, included for completeness)
 class SettingsListItem extends StatelessWidget {
   final String? leadingSvgAsset;
   final String title;
@@ -432,7 +433,6 @@ class SettingsListItem extends StatelessWidget {
   }
 }
 
-/// A custom widget to group a section header with multiple settings list items.
 class SettingsListGroup extends StatelessWidget {
   final String headerTitle;
   final TextStyle? headerTextStyle;

@@ -16,7 +16,7 @@ class ChatMessage extends BaseModel {
 
   @override
   final String id;
-  final ChatAuthor author; // Now using enum
+  final ChatAuthor author;
   final String text;
   String sessionId;
   @override
@@ -28,7 +28,7 @@ class ChatMessage extends BaseModel {
   @override
   Map<String, dynamic> toMap() => {
     'id': id,
-    'author': author.name, // Save as 'user' or 'bot'
+    'author': author.name,
     'text': text,
     'user_id': userId,
     'session_id': sessionId,

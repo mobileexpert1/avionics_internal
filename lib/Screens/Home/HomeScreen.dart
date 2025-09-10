@@ -40,9 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = size.width;
 
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<HomeCubit>(create: (_) => homeCubit),
-      ],
+      providers: [BlocProvider<HomeCubit>(create: (_) => homeCubit)],
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -80,7 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     );
-                  }, searchTitle: 'Search...',
+                  },
+                  searchTitle: 'Search...',
                 ),
                 SizedBox(height: screenWidth * 0.04),
               ],
@@ -172,7 +171,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: m.companyName,
                               imagePath: (m.icon ?? ''),
                               onTap: () {
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -180,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       create: (_) => ManufacturerCubit(),
                                       child: ManufacturerDetailScreen(
                                         manufacturerDetailId: m.id,
-                                      )
+                                      ),
                                     ),
                                   ),
                                 );
@@ -280,13 +278,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(2)
                           .map(
                             (f) => AppListTileCard(
-                          title: f.aircraftModel,
-                          imagePath: (f.image),
-                          onTap: () {},
-                          isSvg: (f.image).contains(".svg"),
-                          isNetwork: true,
-                        ),
-                      ),
+                              title: f.aircraftModel,
+                              imagePath: (f.image),
+                              onTap: () {},
+                              isSvg: (f.image).contains(".svg"),
+                              isNetwork: true,
+                            ),
+                          ),
                       Center(
                         child: TextButton(
                           onPressed: () => Navigator.push(

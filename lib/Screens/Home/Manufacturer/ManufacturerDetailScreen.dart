@@ -323,81 +323,50 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                     ),
                                   ),
 
-                                  // _buildSectionHeader(
-                                  //   title: "INTERESTING FACTS",
-                                  //   isExpanded: showInterestingFacts,
-                                  //   onTap: () => setState(
-                                  //     () => showInterestingFacts =
-                                  //         !showInterestingFacts,
-                                  //   ),
-                                  //   isShowMoreLessOption:
-                                  //       (detail.interestingFacts?.length ?? 0) >
-                                  //       2,
-                                  // ),
-                                  //
-                                  // if (showInterestingFacts)
-                                  //   Padding(
-                                  //     padding: const EdgeInsets.symmetric(
-                                  //       horizontal: 25,
-                                  //     ),
-                                  //     child: Column(
-                                  //       crossAxisAlignment:
-                                  //           CrossAxisAlignment.start,
-                                  //       children: List.generate(
-                                  //         detail.interestingFacts?.length ?? 0,
-                                  //         (index) {
-                                  //           final fact =
-                                  //               detail.interestingFacts?[index];
-                                  //
-                                  //           return Container(
-                                  //             margin: const EdgeInsets.only(
-                                  //               bottom: 12,
-                                  //             ),
-                                  //             padding: const EdgeInsets.all(12),
-                                  //             decoration: BoxDecoration(
-                                  //               color: Colors.grey.shade100,
-                                  //               borderRadius:
-                                  //                   BorderRadius.circular(8),
-                                  //             ),
-                                  //             child: Text(
-                                  //               "• $fact",
-                                  //               style: const TextStyle(
-                                  //                 fontSize: 14,
-                                  //                 height: 1.4,
-                                  //               ),
-                                  //             ),
-                                  //           );
-                                  //         },
-                                  //       ),
-                                  //     ),
-                                  //   ),
-
                                   _buildSectionHeader(
                                     title: "INTERESTING FACTS",
                                     isExpanded: showInterestingFacts,
                                     onTap: () => setState(() {
-                                      showInterestingFacts = !showInterestingFacts;
+                                      showInterestingFacts =
+                                          !showInterestingFacts;
                                     }),
-                                    isShowMoreLessOption: (detail.interestingFacts?.length ?? 0) > 2,
+                                    isShowMoreLessOption:
+                                        (detail.interestingFacts?.length ?? 0) >
+                                        2,
                                   ),
 
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                    ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: List.generate(
                                         // show 2 facts by default, full list if expanded
                                         showInterestingFacts
-                                            ? (detail.interestingFacts?.length ?? 0)
-                                            : (detail.interestingFacts?.length ?? 0).clamp(0, 1),
-                                            (index) {
-                                          final fact = detail.interestingFacts?[index] ?? "";
+                                            ? (detail
+                                                      .interestingFacts
+                                                      ?.length ??
+                                                  0)
+                                            : (detail
+                                                          .interestingFacts
+                                                          ?.length ??
+                                                      0)
+                                                  .clamp(0, 1),
+                                        (index) {
+                                          final fact =
+                                              detail.interestingFacts?[index] ??
+                                              "";
                                           return Container(
-                                            margin: const EdgeInsets.only(bottom: 12),
+                                            margin: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
                                             padding: const EdgeInsets.all(12),
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade100,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             child: Text(
                                               "• $fact",
@@ -411,7 +380,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                               const SizedBox(height: 50),

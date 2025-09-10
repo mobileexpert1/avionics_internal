@@ -67,20 +67,6 @@ class GameDetailCard extends StatelessWidget {
     );
   }
 
-
-  // Widget buildInfo(String svgAsset, String text) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 6),
-  //     child: Row(
-  //       children: [
-  //         SvgPicture.asset(svgAsset, width: 20, height: 20),
-  //         const SizedBox(width: 15),
-  //         Expanded(child: Text(text, style: const TextStyle(fontSize: 15))),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget buildInfo(String assetPath, String text) {
     final String path = assetPath.toLowerCase();
     final bool isSvg = path.endsWith('.svg');

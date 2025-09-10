@@ -1,5 +1,5 @@
-import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart' hide Position;
-import 'dart:convert';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
+    hide Position;
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
-import '../Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_model.dart';
 import 'flight_map_state.dart';
 import 'flight_map_detailModel.dart';
-import 'flight_map_state.dart';
-import 'flight_map_model.dart';
-import 'flight_map_repository.dart' hide Position;
 
 class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
@@ -212,5 +208,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   void resetLocationState() {
     emit(FlightMapState());
+  }
+
+  void setSelectedFlight(FlightModel flight) {
+    emit(state.copyWith(selectedFlight: flight));
+  }
+
+  void clearSelectedFlight() {
+    emit(state.copyWith(selectedFlight: null));
   }
 }

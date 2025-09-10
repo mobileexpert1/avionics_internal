@@ -79,10 +79,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           packageName: "xyz",
         );
 
-        // await SubscriptionRepository().postSubscriptionApi(
-        //   subscription_id: selectedFinalItem.id,
-        // );
-
         emit(
           currentState.copyWith(
             isLoading: false,

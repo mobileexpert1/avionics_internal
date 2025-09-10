@@ -55,12 +55,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
         title: ConstantStrings.avtarTitle,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => (widget.isComeFromSocialLogin == true ? Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => LoginScreen(),
-            ),
-                (route) => false,
-          ) : Navigator.pop(context) )
+          onPressed: () => (widget.isComeFromSocialLogin == true
+              ? Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
+                )
+              : Navigator.pop(context)),
         ),
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(

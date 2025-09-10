@@ -33,7 +33,7 @@ class _RootTabbarScreenState extends State<RootTabbarscreen> {
       _pages = [
         HomeScreen(),
         BlocProvider(
-          create: (context) => FlightMapCubit(), // Provide FlightMapCubit
+          create: (context) => FlightMapCubit(),
           child: FlightMapScreen(),
         ),
         GamesScreen(),

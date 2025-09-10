@@ -40,7 +40,9 @@ class OtpCubit extends Cubit<OtpState> {
         context,
         MaterialPageRoute(
           builder: (_) => (isFromSignup == true)
-              ? (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen(isComeFromSignup: true) : SubscriptionScreen())
+              ? (defaultTargetPlatform == TargetPlatform.iOS
+                    ? AppleSubscriptionScreen(isComeFromSignup: true)
+                    : SubscriptionScreen())
               : CreateNewPasswordScreen(email: email),
         ),
       );
@@ -74,10 +76,11 @@ class OtpCubit extends Cubit<OtpState> {
     emit(state.copyWith(otp: newOtp, isButtonEnabled: isValid));
   }
 
-
   Future<void> resendOtp(String email, bool isFromSignup) async {
     try {
-      emit(state.copyWith(status: CommonApiStatus.submitting, errorMessage: null));
+      emit(
+        state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+      );
 
       await OtpRepository().otpVerifyApi(
         email: email,
@@ -88,8 +91,12 @@ class OtpCubit extends Cubit<OtpState> {
 
       emit(state.copyWith(status: CommonApiStatus.success));
     } catch (e) {
-      emit(state.copyWith(status: CommonApiStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
-
 }

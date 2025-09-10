@@ -7,7 +7,7 @@ import '../../../bloc/Onboarding/login/login_response_model.dart';
 
 class RefreshAccessTokenRepository {
   Future<LoginResponseModel> getAndUpdateTheRefreshToken({
-    VoidCallback? onUnauthorized, // <--- Add this
+    VoidCallback? onUnauthorized,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +

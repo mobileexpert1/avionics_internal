@@ -6,7 +6,6 @@ import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'ComparisonState.dart';
 
-
 class ComparisonCubit extends Cubit<ComparisonState> {
   ComparisonCubit() : super(const ComparisonState());
 

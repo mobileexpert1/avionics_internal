@@ -1,5 +1,3 @@
-// Make SavedFlightState extend Equatable for proper state comparison
-
 import '../../home/SavedFlighDetails/savedFlight_model.dart';
 
 class ProfileScreenState  {

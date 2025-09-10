@@ -59,18 +59,15 @@ class CalculationLockScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => QuizQuestionScreen(
-                              sectionId:game.gameNumber,
-                              sectionTitle: ConstantStrings.calculationsTitle, gameId: "calculation",
+                              sectionId: game.gameNumber,
+                              sectionTitle: ConstantStrings.calculationsTitle,
+                              gameId: "calculation",
                             ),
                           ),
                         );
                       }
                     },
-                    onInfoTap: () {
-                      // if (game.isLocked) {
-                      //   context.read<CalculationCubit>();
-                      // }
-                    },
+                    onInfoTap: () {},
                   );
                 },
               );

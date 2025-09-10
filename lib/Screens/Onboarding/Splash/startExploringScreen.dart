@@ -55,7 +55,10 @@ class StartExploringScreen extends StatelessWidget {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 32,
+                  ),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -96,10 +99,7 @@ class StartExploringScreen extends StatelessWidget {
                           },
                           child: const Text(
                             ConstantStrings.CreateAccount,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
                       ),
@@ -117,7 +117,9 @@ class StartExploringScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => LoginScreen()),
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
                             );
                           },
                           child: const Text(
@@ -140,4 +142,3 @@ class StartExploringScreen extends StatelessWidget {
     );
   }
 }
-

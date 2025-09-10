@@ -57,13 +57,14 @@ class _SignupScreenState extends State<SignupScreen> {
                 appBar: CustomAppBar(
                   title: ConstantStrings.CreateAccount,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF151A6A)),
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Color(0xFF151A6A),
+                    ),
                     onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (_) => LoginScreen(),
-                        ),
-                            (route) => false,
+                        MaterialPageRoute(builder: (_) => LoginScreen()),
+                        (route) => false,
                       );
                     },
                   ),
@@ -97,8 +98,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   label: ConstantStrings.firstNameLabel,
                                   controller: firstNameController,
                                   errorText: state.firstNameError,
-                                  onChanged: (val) =>
-                                      context.read<SignupCubit>().firstNameChanged(val),
+                                  onChanged: (val) => context
+                                      .read<SignupCubit>()
+                                      .firstNameChanged(val),
                                 );
                               },
                             ),
@@ -112,8 +114,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   label: ConstantStrings.lastNameLabel,
                                   controller: lastNameController,
                                   errorText: state.lastNameError,
-                                  onChanged: (val) =>
-                                      context.read<SignupCubit>().lastNameChanged(val),
+                                  onChanged: (val) => context
+                                      .read<SignupCubit>()
+                                      .lastNameChanged(val),
                                 );
                               },
                             ),
@@ -127,8 +130,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   label: ConstantStrings.emailLabel,
                                   controller: emailController,
                                   errorText: state.emailError,
-                                  onChanged: (val) =>
-                                      context.read<SignupCubit>().emailChanged(val),
+                                  onChanged: (val) => context
+                                      .read<SignupCubit>()
+                                      .emailChanged(val),
                                 );
                               },
                             ),
@@ -143,8 +147,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   controller: passwordController,
                                   errorText: state.passwordError,
                                   obscureText: true,
-                                  onChanged: (val) =>
-                                      context.read<SignupCubit>().passwordChanged(val),
+                                  onChanged: (val) => context
+                                      .read<SignupCubit>()
+                                      .passwordChanged(val),
                                 );
                               },
                             ),
@@ -159,8 +164,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   controller: confirmPasswordController,
                                   errorText: state.confirmPasswordError,
                                   obscureText: true,
-                                  onChanged: (val) =>
-                                      context.read<SignupCubit>().confirmPasswordChanged(val),
+                                  onChanged: (val) => context
+                                      .read<SignupCubit>()
+                                      .confirmPasswordChanged(val),
                                 );
                               },
                             ),
@@ -212,7 +218,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-
               ),
               if (state.status == CommonApiStatus.submitting)
                 Container(

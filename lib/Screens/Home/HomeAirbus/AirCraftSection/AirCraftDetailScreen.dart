@@ -73,8 +73,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTopHeadingDetails(screenHeight),
-
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "IDENTIFICATION & CLASSIFICATION",
                       isExpanded: showIdentification,
@@ -86,7 +84,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "POWERPLANT & PROPULSION",
                       isExpanded: showPowerSection,
@@ -97,7 +94,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "DIMENSIONS",
                       isExpanded: showDimensionSection,
@@ -109,7 +105,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "WEIGHTS",
                       isExpanded: showWeightsSection,
@@ -121,7 +116,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
                       isExpanded: showPerformanceSection,
@@ -133,7 +127,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "OPERATIONAL LIMITATIONS",
                       isExpanded: showOperationalSection,
@@ -145,7 +138,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "LANDING GEAR",
                       isExpanded: showLandingSection,
@@ -157,7 +149,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     ),
 
-                    //------------------------------------------------------------------------------------------------------------------------
                     _buildExpandableSection(
                       title: "CERTIFICATION & ENVIRONMENTAL",
                       isExpanded: showCertificationSection,
@@ -169,7 +160,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                         state.airCraftDetails?.results.certification,
                       ),
                     ),
-                    // ------------------------------------------------------------------------------------------------------------------------
+
                     SizedBox(height: 50),
                   ],
                 ),

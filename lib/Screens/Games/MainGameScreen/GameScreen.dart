@@ -24,7 +24,7 @@ class GamesScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => GamesCubit()..loadGames(),
       child: Scaffold(
-        appBar: CustomAppBar(title: 'Games',),
+        appBar: CustomAppBar(title: 'Games'),
         backgroundColor: const Color(0xFF35314B),
         body: BlocBuilder<GamesCubit, GamesState>(
           builder: (context, state) {
@@ -46,26 +46,47 @@ class GamesScreen extends StatelessWidget {
                       onTap: () {
                         switch (game.id) {
                           case 'quiz':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => QuizDetailScreen(gameId: game.id)));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    QuizDetailScreen(gameId: game.id),
+                              ),
+                            );
                             break;
                           case 'calculation':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) =>  CalculationDetailScreen(gameId:game.id)));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    CalculationDetailScreen(gameId: game.id),
+                              ),
+                            );
                             break;
                           case 'one_word':
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => OneWordDetailScreen(gameId: game.id)));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    OneWordDetailScreen(gameId: game.id),
+                              ),
+                            );
                             break;
                           // case 'black_box':
                           //   Navigator.push(context, MaterialPageRoute(builder: (_) =>  BlackBoxScreen()));
                           //   break;
                           default:
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Screen not available for ${game.title}')),
+                              SnackBar(
+                                content: Text(
+                                  'Screen not available for ${game.title}',
+                                ),
+                              ),
                             );
                         }
                       },
                     );
                   },
-
                 ),
               );
             }
@@ -76,5 +97,3 @@ class GamesScreen extends StatelessWidget {
     );
   }
 }
-
-

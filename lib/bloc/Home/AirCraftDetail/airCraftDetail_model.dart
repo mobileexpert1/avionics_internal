@@ -2,10 +2,7 @@ class AirCraftDetailResponse {
   final String detail;
   final AircraftResult results;
 
-  AirCraftDetailResponse({
-    required this.detail,
-    required this.results,
-  });
+  AirCraftDetailResponse({required this.detail, required this.results});
 
   factory AirCraftDetailResponse.fromJson(Map<String, dynamic> json) {
     return AirCraftDetailResponse(
@@ -52,15 +49,20 @@ class AircraftResult {
       images: (json['Images'] as List)
           .map((i) => AircraftImage.fromJson(i))
           .toList(),
-      identification:
-      IdentificationClassification.fromJson(json['IdentificationClassification']),
+      identification: IdentificationClassification.fromJson(
+        json['IdentificationClassification'],
+      ),
       powerplant: PowerplantPropulsion.fromJson(json['PowerplantPropulsion']),
       dimensions: Dimensions.fromJson(json['Dimensions']),
       weights: Weights.fromJson(json['Weights']),
       performance: Performance.fromJson(json['Performance']),
-      operationalLimitations: OperationalLimitations.fromJson(json['OperationalLimitations']),
+      operationalLimitations: OperationalLimitations.fromJson(
+        json['OperationalLimitations'],
+      ),
       landingGear: LandingGear.fromJson(json['LandingGear']),
-      certification: CertificationEnvironmental.fromJson(json['CertificationEnvironmental']),
+      certification: CertificationEnvironmental.fromJson(
+        json['CertificationEnvironmental'],
+      ),
     );
   }
 }
@@ -88,12 +90,7 @@ class AircraftImage {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'url': url,
-      'source': source,
-      'cc': cc,
-      'is_default': isDefault,
-    };
+    return {'url': url, 'source': source, 'cc': cc, 'is_default': isDefault};
   }
 
   /// Create list from JSON and auto-sort by isDefault
@@ -159,7 +156,9 @@ class IdentificationClassification {
       productionStatus: json['Production_Status'],
       avionicsSystem: json['Avionics_System'],
       numberOfCrew: json['Number_of_Crew'],
-      numberOfPassengers: PassengerCapacity.fromJson(json['Number_of_Passengers']),
+      numberOfPassengers: PassengerCapacity.fromJson(
+        json['Number_of_Passengers'],
+      ),
     );
   }
 }
@@ -168,10 +167,7 @@ class PassengerCapacity {
   final String typical;
   final String maximum;
 
-  PassengerCapacity({
-    required this.typical,
-    required this.maximum,
-  });
+  PassengerCapacity({required this.typical, required this.maximum});
 
   factory PassengerCapacity.fromJson(Map<String, dynamic> json) {
     return PassengerCapacity(
@@ -327,10 +323,7 @@ class CargoVolume {
   final String minimum;
   final String maximum;
 
-  CargoVolume({
-    required this.minimum,
-    required this.maximum,
-  });
+  CargoVolume({required this.minimum, required this.maximum});
 
   factory CargoVolume.fromJson(Map<String, dynamic> json) {
     return CargoVolume(

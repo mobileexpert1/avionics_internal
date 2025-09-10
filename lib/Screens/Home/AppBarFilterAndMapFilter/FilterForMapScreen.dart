@@ -12,7 +12,8 @@ import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 class FilterForMapScreen extends StatefulWidget {
   final MapType initialMapType;
 
-  const FilterForMapScreen({Key? key, required this.initialMapType}) : super(key: key);
+  const FilterForMapScreen({Key? key, required this.initialMapType})
+    : super(key: key);
 
   @override
   _filterMapScreenState createState() => _filterMapScreenState();
@@ -22,7 +23,8 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => FilterMapMainCubit()..setInitialMapType(widget.initialMapType),
+      create: (_) =>
+          FilterMapMainCubit()..setInitialMapType(widget.initialMapType),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -85,25 +87,6 @@ class _FilterContent extends StatelessWidget {
 
         return ListView(
           children: [
-            // ExpandableSection(
-            //   title: "CATEGORIES",
-            //   expanded: state.showCategories,
-            //   onToggle: cubit.toggleCategoriesSection,
-            //   child: Wrap(
-            //     spacing: 10,
-            //     runSpacing: 10,
-            //     children: state.categories.map((cat) {
-            //       final isSelected = state.selectedCategories.contains(cat);
-            //       return CategoryChip(
-            //         label: cat,
-            //         isSelected: isSelected,
-            //         onTap: () => cubit.toggleCategory(cat),
-            //       );
-            //     }).toList(),
-            //   ),
-            // ),
-            // const SizedBox(height: 30),
-
             /// Map Section
             ExpandableSection(
               title: "MAP",
@@ -136,41 +119,6 @@ class _FilterContent extends StatelessWidget {
                 ],
               ),
             ),
-
-            /// Aircraft Labels
-           // const SizedBox(height: 30),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Row(
-            //       children: [
-            //         SvgPicture.asset(
-            //           CommonUi.setSvgImage(AssetsPath.blueAeroPlane),
-            //           height: 25,
-            //           width: 25,
-            //           fit: BoxFit.contain,
-            //         ),
-            //         const SizedBox(width: 10),
-            //         const Text(
-            //           "Aircraft Labels",
-            //           style: TextStyle(fontWeight: FontWeight.w400),
-            //         ),
-            //       ],
-            //     ),
-            //     Transform.scale(
-            //       scale: 0.8,
-            //       child: Switch(
-            //         value: state.showAircraftLabels,
-            //         onChanged: (_) => cubit.toggleAircraftLabels(),
-            //         activeColor: Colors.white,
-            //         activeTrackColor: Colors.black,
-            //         inactiveThumbColor: Colors.black,
-            //         inactiveTrackColor: Colors.white,
-            //         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            //       ),
-            //     ),
-            //   ],
-            // ),
 
             const SizedBox(height: 50),
 
@@ -346,4 +294,3 @@ class SegmentedControl extends StatelessWidget {
     );
   }
 }
-

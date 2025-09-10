@@ -25,12 +25,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     final bool isWeb = kIsWeb;
-    final WebResponsiveStyle? webStyle = isWeb ? WebResponsiveStyle.fromSize(size) : null;
+    final WebResponsiveStyle? webStyle = isWeb
+        ? WebResponsiveStyle.fromSize(size)
+        : null;
 
     final double textFontSize = isWeb ? webStyle!.descFontSize : 13;
     final double dotSize = isWeb ? webStyle!.dotSize : size.height * 0.010;
     final double dotSpacing = isWeb ? size.width * 0.03 : size.width * 0.04;
-    final double horizontalPadding = isWeb ? webStyle!.horizontalPadding : size.width * 0.08;
+    final double horizontalPadding = isWeb
+        ? webStyle!.horizontalPadding
+        : size.width * 0.08;
 
     final List<OnboardingInfo> pages = [
       OnboardingInfo(
@@ -171,7 +175,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => StartExploringApp()),
+                      MaterialPageRoute(
+                        builder: (context) => StartExploringApp(),
+                      ),
                     );
                   },
                   child: Text(
@@ -187,7 +193,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     if (onLastPage) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => StartExploringApp()),
+                        MaterialPageRoute(
+                          builder: (context) => StartExploringApp(),
+                        ),
                       );
                     } else {
                       _controller.nextPage(
@@ -212,4 +220,3 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 }
-

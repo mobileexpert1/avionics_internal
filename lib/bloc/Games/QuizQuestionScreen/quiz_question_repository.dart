@@ -146,47 +146,6 @@ class QuizQuestionRepository {
     }
   }
 
-
-
-  // ///One word, Calculation, Quiz Submit Questions API
-  // Future<SubmitCalculationResultResponse> submitResult(
-  //     Map<String, dynamic> payload,
-  //     String gameId,
-  //     ) async {
-  //   if (!await GenericMethods.hasInternet()) {
-  //     throw "No internet connection";
-  //   }
-  //
-  //   final gameNumber = payload['game_number'] ?? 1;
-  //   if (!gameNoAssign.containsKey(gameNumber)) {
-  //     throw "Invalid game number in payload: $gameNumber";
-  //   }
-  //
-  //   // Select the appropriate submit URL based on gameId
-  //   String submitUrl;
-  //   if (gameId == "calculation") {
-  //     submitUrl = "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitCalculationResults(gameNumber)}";
-  //   } else if (gameId == "one_word") {
-  //     submitUrl = "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitOneWordResults(gameNumber)}";
-  //   }
-  //   else if (gameId == "quiz") {
-  //     submitUrl = "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitQuizResults(gameNumber)}";
-  //   } else {
-  //     throw Exception('Invalid gameId: $gameId');
-  //   }
-  //
-  //   final uri = Uri.parse(submitUrl);
-  //
-  //   try {
-  //     final response = await ApiService.post(url: uri, body: payload);
-  //     print('Submit response for $gameId game $gameNumber: ${response.data}');
-  //     return SubmitCalculationResultResponse.fromJson(response);
-  //   } catch (e) {
-  //     print('Failed to submit result for $gameId game $gameNumber: $e');
-  //     throw e.toString();
-  //   }
-  // }
-
   Future<SubmitCalculationResultResponse> submitResult(
       Map<String, dynamic> payload,
       String gameId,

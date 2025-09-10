@@ -221,9 +221,9 @@ class DBHelper {
 }
 
 
-/* ── BaseModel contract remains unchanged ────────── */
+
 abstract class BaseModel {
-  String? userId; // <-- inject at insert time
+  String? userId;
   String get table;
   String get id;
   Map<String, dynamic> toMap();

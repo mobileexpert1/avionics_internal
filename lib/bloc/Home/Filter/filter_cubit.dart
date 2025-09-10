@@ -9,8 +9,6 @@ class FilterCubit extends Cubit<FilterState> {
   /// Loads a list of mock filter data.
   void loadFilters() {
     emit(state.copyWith(isLoading: true));
-
-    // Mock data based on the image, all categories initially expanded.
     final mockData = [
       FilterCategory(
         id: 'general',
@@ -172,10 +170,6 @@ class FilterCubit extends Cubit<FilterState> {
 
   /// Simulates applying the filters.
   void applyFilters() {
-    // In a real application, you would pass the selected filters to a data layer
-    // For this example, we just update the isApplied flag
     emit(state.copyWith(isApplied: true));
-    // You might want to pop the screen or trigger a data refresh here
   }
 }
-

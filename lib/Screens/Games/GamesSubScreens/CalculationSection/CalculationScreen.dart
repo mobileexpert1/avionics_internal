@@ -10,7 +10,6 @@ import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
-
 class CalculationDetailScreen extends StatelessWidget {
   final String gameId;
 
@@ -43,15 +42,16 @@ class CalculationDetailScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child:GameDetailCard(
+          child: GameDetailCard(
             onStartGame: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const CalculationLockScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const CalculationLockScreen(),
+                ),
               );
             },
           ),
-
         ),
       ),
     );
