@@ -2,7 +2,6 @@ import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Database/generic_methods.dart';
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
-import '../../Home/AllPlanesBloc/AllPlanes_model.dart';
 import 'aircraft_List_Data_State.dart';
 
 class AircraftListDataRepository {

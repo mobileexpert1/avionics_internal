@@ -1,18 +1,13 @@
-import 'package:avionics_internal/Screens/Home/HomeScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
-import '../../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
-import '../../Home/RootTabbar/RootTabbarScreen.dart';
 
 class MapTrackingModePopup extends StatelessWidget {
   final VoidCallback onFlyingSelected;
   final VoidCallback onTrackSelected;
   final VoidCallback onCrossButton;
-
 
   const MapTrackingModePopup({
     super.key,

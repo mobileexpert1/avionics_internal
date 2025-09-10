@@ -1,10 +1,6 @@
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
 
-import '../../Home/AllPlanesBloc/AllPlanes_model.dart';
-
-import '../../Home/AllPlanesBloc/AllPlanes_model.dart';
-
 class AircraftListResponse {
   final String detail;
   final List<AircraftModel> data;

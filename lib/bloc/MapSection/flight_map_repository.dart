@@ -35,6 +35,28 @@ class FlightRepository {
     }
   }
 
+  Future<List<FlightModel>> getParticularFlightDetails({
+    required String bounds,
+    required String flightId,
+  }) async {
+    String url =
+        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=$bounds&flights=$flightId";
+
+    final uri = Uri.parse(url);
+    print('Fetching flights with URL: $uri');
+
+    final response = await http.get(uri, headers: _headers);
+    print('API Response: Status=${response.statusCode}, Body=${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final flightResponse = FlightResponse.fromJson(data);
+      return flightResponse.flights;
+    } else {
+      throw Exception("Error ${response.statusCode}: ${response.body}");
+    }
+  }
+
   Future<Map<String, dynamic>> getFlightDetails({
     required String flightId,
     required String fromDateTime,

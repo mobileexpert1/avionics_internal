@@ -1,16 +1,11 @@
-import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_State.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../Constants/AppColors.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
-import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
-import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
-import '../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class TrackAndSearchFlight extends StatefulWidget {
   const TrackAndSearchFlight({super.key});
@@ -25,7 +20,6 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -38,14 +32,12 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900), // Web max width
+            constraints: BoxConstraints(maxWidth: 900),
             child: Column(
               children: [
                 const SizedBox(height: 10),
@@ -99,7 +91,9 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                       MediaQuery.of(context).size.width * 0.017,
                                 ),
                                 child: SimpleAircraftCard(
-                                  imagePath: (data.detail.logo == ""
+                                  imagePath:
+                                      (data.aircraftDetails?.image == null ||
+                                          data.aircraftDetails?.image == ""
                                       ? Image.asset(
                                           CommonUi.setPngImage(
                                             AssetsPath.aeroplaneComparison,
@@ -109,18 +103,48 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                           fit: BoxFit.fill,
                                         )
                                       : CachedAnyImage(
-                                          imagePath: data.detail.logo,
+                                          imagePath:
+                                              data.aircraftDetails!.image,
                                           width: 50,
                                           height: 120,
                                           contentImage: BoxFit.fill,
                                         )),
-
-                                  model: data.detail.acType,
-                                  badge: data.detail.flight ?? "",
-                                  manufacturer: "",
+                                  model:
+                                      "${data.aircraftDetails?.aircraftModel ?? " "} ",
+                                  badge:
+                                      data.aircraftDetails?.icaoTypeCode ??
+                                      data.type,
+                                  manufacturer:
+                                      data
+                                          .aircraftDetails
+                                          ?.manufacturer
+                                          ?.companyName ??
+                                      "",
                                   airline: "",
-                                  airlineImagePath: SizedBox.shrink(),
-                                  callSign: data.detail.callsign ?? "",
+                                  airlineImagePath:
+                                      (data
+                                                  .aircraftDetails
+                                                  ?.manufacturer
+                                                  ?.logo ==
+                                              null ||
+                                          data
+                                                  .aircraftDetails
+                                                  ?.manufacturer
+                                                  ?.logo ==
+                                              ""
+                                      ? SizedBox.shrink()
+                                      : CachedAnyImage(
+                                          imagePath:
+                                              data
+                                                  .aircraftDetails
+                                                  ?.manufacturer
+                                                  ?.logo ??
+                                              "",
+                                          width: 50,
+                                          height: 120,
+                                          contentImage: BoxFit.fill,
+                                        )),
+                                  callSign: data.detail.callsign,
                                   onTap: () {
                                     Navigator.pop(context, data);
                                   },

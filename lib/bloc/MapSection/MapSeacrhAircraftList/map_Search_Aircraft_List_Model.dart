@@ -1,4 +1,6 @@
 // Response Model
+import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
+
 class MapSearchAircraftListModel {
   final List<FlightResult> results;
   final FlightStats stats;
@@ -21,6 +23,7 @@ class FlightResult {
   final FlightDetail detail;
   final String type;
   final String match;
+  final AircraftModel? aircraftDetails;
 
   FlightResult({
     required this.id,
@@ -28,7 +31,19 @@ class FlightResult {
     required this.detail,
     required this.type,
     required this.match,
+    this.aircraftDetails,
   });
+
+  FlightResult copyWith({AircraftModel? aircraftDetails}) {
+    return FlightResult(
+      id: id,
+      label: label,
+      detail: detail,
+      type: type,
+      match: match,
+      aircraftDetails: aircraftDetails ?? this.aircraftDetails,
+    );
+  }
 
   factory FlightResult.fromJson(Map<String, dynamic> json) {
     return FlightResult(

@@ -125,9 +125,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
-  void _toggleFlightCard({required FlightModel flight}) {
+  void _toggleFlightCard({required String flight}) {
     context.read<FlightMapCubit>().fetchFlightDetails(
-      flightId: flight.id,
+      flightId: flight,
       context: context,
     );
     setState(() {
@@ -157,9 +157,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             position: LatLng(flight.latitude, flight.longitude),
             icon: icon,
             infoWindow: InfoWindow(
-              title: flight.flightNumber ?? 'Unknown',
-              snippet:
-                  "${flight.departureIata ?? 'N/A'} → ${flight.arrivalIata ?? 'N/A'}",
+              title: flight.flightNumber,
+              snippet: "${flight.departureIata} → ${flight.arrivalIata}",
             ),
             onTap: () {
               print(
@@ -170,7 +169,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               );
               _isMapListViewShown = false;
               context.read<FlightMapCubit>().setSelectedFlight(flight);
-              _toggleFlightCard(flight: flight);
+              _toggleFlightCard(flight: flight.id);
             },
           ),
         );
@@ -264,6 +263,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             position: currentLatLng,
                             infoWindow: const InfoWindow(title: "You are here"),
                           ),
+
                           if (snapshot.hasData) ...snapshot.data!,
                         },
                         onMapCreated: (GoogleMapController controller) {
@@ -292,20 +292,27 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     child: SearchBarWidget(
                       enableGestureMode: true,
                       onTextTap: () async {
-                        final selectedFlight =
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) => MapSearchAircraftListCubit(),
-                                  child: const TrackAndSearchFlight(),
-                                ),
-                              ),
-                            ).then((selectedFlight) {
-                              if (selectedFlight != null) {
-                                print("Selected flight: $selectedFlight");
-                              }
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider(
+                              create: (_) => MapSearchAircraftListCubit(),
+                              child: const TrackAndSearchFlight(),
+                            ),
+                          ),
+                        ).then((selectedFlight) {
+                          if (selectedFlight != null) {
+                            print("Selected flight: $selectedFlight");
+
+                            // context
+                            //     .read<FlightMapCubit>()
+                            //     .setSelectedFlight(data!);
+                            setState(() {
+                              _isMapListViewShown = false;
                             });
+                            _toggleFlightCard(flight: selectedFlight.id);
+                          }
+                        });
                       },
                       enableBackArrow: _isNeedToShowBackButton,
                       onBackButtonTap: () {
@@ -492,7 +499,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       context
                                           .read<FlightMapCubit>()
                                           .setSelectedFlight(data!);
-                                      _toggleFlightCard(flight: data!);
+                                      _toggleFlightCard(flight: data.id);
 
                                       _sheetController.animateTo(
                                         0.0,
@@ -628,10 +635,10 @@ class FlightCard extends StatelessWidget {
         final image = detail?.image ?? 'https://via.placeholder.com/50';
         final manufacturerLogo =
             detail?.manufacturer?.logo ?? 'https://via.placeholder.com/16';
-        final callsign = selectedFlight?.callSign ?? detail?.callsign ?? 'N/A';
+        final callSign = selectedFlight?.callSign ?? detail?.callsign ?? 'N/A';
 
-        final departureIata = detail?.departureIcao ?? 'N/A';
-        final arrivalIata = detail?.arrivalIcao ?? 'N/A';
+        final departureData = detail?.departureIcao ?? 'N/A';
+        final arrivalData = detail?.arrivalIcao ?? 'N/A';
 
         String timeSinceTakeoff = 'N/A';
         if (takeoffTime != null) {
@@ -747,7 +754,7 @@ class FlightCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  callsign,
+                                  callSign,
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
@@ -788,7 +795,7 @@ class FlightCard extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "$departureIata\n$timeSinceTakeoff",
+                        "$departureData\n$timeSinceTakeoff",
                         style: const TextStyle(fontSize: 13),
                       ),
                     ),
@@ -835,7 +842,7 @@ class FlightCard extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        "$arrivalIata\n$timeToArrival",
+                        "$arrivalData\n$timeToArrival",
                         style: const TextStyle(fontSize: 13),
                         textAlign: TextAlign.right,
                       ),
