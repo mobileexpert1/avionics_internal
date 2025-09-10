@@ -53,8 +53,6 @@ class QuizLockScreen extends StatelessWidget {
                     title: game.title,
                     isLocked: game.isLocked,
                     infoMessage: game.info,
-                    // infoMessage:
-                    //     'The sky’s quiet lounge above the clouds,where ozone gets to work.',
                     onTap: () {
                       if (!game.isLocked) {
                         Navigator.push(
@@ -70,11 +68,7 @@ class QuizLockScreen extends StatelessWidget {
                         print('Playing ${game.title}');
                       }
                     },
-                    onInfoTap: () {
-                      // if (game.isLocked) {
-                      //   context.read<QuizCubit>().unlockGame(index);
-                      // }
-                    },
+                    onInfoTap: () {},
                   );
                 },
               );

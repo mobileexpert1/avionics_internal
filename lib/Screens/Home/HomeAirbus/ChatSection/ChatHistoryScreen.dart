@@ -84,9 +84,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                           title: item.title,
                         ),
                       ),
-                          (route) => route.settings.name == 'HomeScreen' || route.isFirst,
+                      (route) =>
+                          route.settings.name == 'HomeScreen' || route.isFirst,
                     );
-
                   },
                 ),
               );

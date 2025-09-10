@@ -10,7 +10,6 @@ import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
-
 class OneWordDetailScreen extends StatelessWidget {
   final String gameId;
 

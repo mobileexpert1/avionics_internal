@@ -56,7 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ConstrainedBox(
                     constraints: kIsWeb
                         ? const BoxConstraints(
-                        maxWidth: 450) // Web layout width capped
+                            maxWidth: 450,
+                          ) // Web layout width capped
                         : const BoxConstraints(), // Mobile: no constraint
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -72,15 +73,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             BlocBuilder<LoginCubit, LoginState>(
                               buildWhen: (prev, curr) =>
-                              prev.emailError != curr.emailError,
+                                  prev.emailError != curr.emailError,
                               builder: (context, state) {
                                 return CustomTextField(
                                   label: ConstantStrings.emailLabel,
                                   controller: emailController,
                                   errorText: state.emailError,
-                                  onChanged: (val) =>
-                                      context.read<LoginCubit>().emailChanged(
-                                          val),
+                                  onChanged: (val) => context
+                                      .read<LoginCubit>()
+                                      .emailChanged(val),
                                 );
                               },
                             ),
@@ -88,17 +89,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             BlocBuilder<LoginCubit, LoginState>(
                               buildWhen: (prev, curr) =>
-                              prev.passwordError != curr.passwordError,
+                                  prev.passwordError != curr.passwordError,
                               builder: (context, state) {
                                 return CustomTextField(
                                   label: ConstantStrings.passwordLabel,
                                   controller: passwordController,
                                   obscureText: true,
                                   errorText: state.passwordError,
-                                  onChanged: (val) =>
-                                      context
-                                          .read<LoginCubit>()
-                                          .passwordChanged(val),
+                                  onChanged: (val) => context
+                                      .read<LoginCubit>()
+                                      .passwordChanged(val),
                                 );
                               },
                             ),
@@ -115,10 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   textColor: Colors.white,
                                   icon: const SizedBox(width: 0),
                                   isEnabled: isButtonEnabled,
-                                  onPressed: () =>
-                                      context
-                                          .read<LoginCubit>()
-                                          .validateAndLogin(context),
+                                  onPressed: () => context
+                                      .read<LoginCubit>()
+                                      .validateAndLogin(context),
                                 );
                               },
                             ),
@@ -162,7 +161,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               onPressed: () {
                                 context.read<LoginCubit>().signInWithGoogle(
-                                    context);
+                                  context,
+                                );
                               },
                             ),
 
@@ -181,7 +181,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 onPressed: () {
                                   context.read<LoginCubit>().signInWithApple(
-                                      context);
+                                    context,
+                                  );
                                 },
                               ),
                               const SizedBox(height: 12),
@@ -196,7 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
-                                 context.read<LoginCubit>().signInWithFacebook(context);
+                                context.read<LoginCubit>().signInWithFacebook(
+                                  context,
+                                );
                               },
                             ),
                             const SizedBox(height: 30),
@@ -222,7 +225,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
               ),
               if (state.status == CommonApiStatus.submitting)
                 Container(

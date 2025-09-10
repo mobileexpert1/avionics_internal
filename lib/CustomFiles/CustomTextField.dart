@@ -41,10 +41,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
       decoration: InputDecoration(
         labelText: widget.label,
         labelStyle: const TextStyle(
-          color: Colors.black, // Always keep label color black
+          color: Colors.black,
         ),
         floatingLabelStyle: const TextStyle(
-          color: Colors.black, // Keep floating label black even on error
+          color: Colors.black,
         ),
         errorText: widget.errorText,
         errorMaxLines: 3,

@@ -413,15 +413,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     loadQuestions(sectionId, context);
   }
 
-  // QuizQuestion _mapQuestion(dynamic q) {
-  //   return QuizQuestion(
-  //     question: q.question,
-  //     options: q.options.map((o) => o.value).toList().cast<String>(),
-  //     correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-  //     hint: q.explanation,
-  //   );
-  // }
-
   QuizQuestion _mapQuestion(Question q) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
     print(
@@ -553,22 +544,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       );
     }
   }
-
-  //
-  // Future<void> _fetchAndBufferBackgroundQuestions(int sectionId,BuildContext context) async {
-  //   for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
-  //     if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
-  //       break;
-  //     }
-  //     final additionalData = await _repository.fetchAdditionalQuestions(
-  //       sectionId,
-  //       actionNumber,
-  //     );
-  //     if (additionalData != null) {
-  //       await appendQuestionsSilently(additionalData,context);
-  //     }
-  //   }
-  // }
 
   Future<void> _fetchAndBufferBackgroundQuestions(
     int sectionId,
@@ -874,17 +849,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "difficulty": state.difficulty,
         "categories": categories,
       };
-      // //
-      // void debugPrintFull(dynamic data) {
-      //   const int chunkSize = 800;
-      //   final jsonStr = jsonEncode(data);
-      //   for (var i = 0; i < jsonStr.length; i += chunkSize) {
-      //     debugPrint(jsonStr.substring(
-      //         i, i + chunkSize > jsonStr.length ? jsonStr.length : i + chunkSize));
-      //   }
-      // }
-      //
-      // debugPrintFull(payload);
+
       try {
         await QuizQuestionRepository().submitResult(payload, gameId);
       } catch (e) {
@@ -916,9 +881,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           content: Text('Please wait, more questions are loading...'),
         ),
       );
-    }
-    // If fewer than maxQuestions
-    else {
+    } else {
       isNoMoreQuestionArrived = true;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

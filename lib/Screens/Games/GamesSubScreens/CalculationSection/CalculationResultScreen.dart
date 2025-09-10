@@ -63,10 +63,6 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
                 correctPoints: state.correctPoints,
                 bonusPoints: state.bonusPoints,
                 badgeText: state.badgeText,
-                // onBackTap: () => Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (_) => const GamesScreen()),
-                // ),
               );
             },
           ),

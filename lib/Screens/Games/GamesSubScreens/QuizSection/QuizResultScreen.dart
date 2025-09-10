@@ -42,7 +42,6 @@ class QuizResultScreen extends StatelessWidget {
                 correctPoints: state.correctPoints,
                 bonusPoints: state.bonusPoints,
                 badgeText: null,
-                // onBackTap: () => Navigator.pop(context),
               );
             },
           ),

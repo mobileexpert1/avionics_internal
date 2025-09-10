@@ -116,50 +116,6 @@ class ChatRepositoryImpl implements ChatRepository {
       });
     }
   }
-
-  // void _onData(dynamic data) async {
-  //   print('[WebSocket] Received: $data');
-  //
-  //   final decoded = jsonDecode(data as String);
-  //   print('[WebSocket] Decoded: $decoded');
-  //
-  //   if (decoded['error'] != null) {
-  //     final errorMsg = decoded['error'] as String;
-  //     _pushSystem("Internal Server Error: $errorMsg ❌");
-  //     return;
-  //   }
-  //   // Save session ID only once for a new session
-  //   if ((_sessionId ?? '').isEmpty && decoded['session_id'] != null) {
-  //     _sessionId = decoded['session_id'] as String;
-  //     final prefs = await SharedPreferences.getInstance();
-  //     await prefs.setString('wilco_session_id', _sessionId!);
-  //
-  //     if (_pendingUserMessageObject != null) {
-  //       _pendingUserMessageObject!.sessionId = _sessionId!;
-  //       await _chatDb.update(
-  //         _pendingUserMessageObject!,
-  //       ); // Update the saved message
-  //       _pendingUserMessage = null;
-  //     }
-  //   }
-  //
-  //   final answer = decoded['answer'] as String?;
-  //   if (answer != null) {
-  //     final msg = ChatMessage(
-  //       id: _uuid.v4(),
-  //       author: ChatAuthor.bot,
-  //       text: answer,
-  //       sessionId: _sessionId ?? '',
-  //     );
-  //     _controller.add(msg);
-  //     _saveChatMessage(msg);
-  //     _pendingUserMessage = null;
-  //     _pendingUserMessageObject = null;
-  //   } else {
-  //     print('[WebSocket] No "answer" in response');
-  //   }
-  // }
-
   void _onData(dynamic data) async {
     print('[WebSocket] Received: $data');
     final decoded = jsonDecode(data as String);
@@ -176,7 +132,6 @@ class ChatRepositoryImpl implements ChatRepository {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('wilco_session_id', _sessionId!);
 
-      // Update any pending user message with the new session ID
       if (_pendingUserMessageObject != null) {
         _pendingUserMessageObject!.sessionId = _sessionId!;
         final updateCount = await _chatDb.update(_pendingUserMessageObject!);
@@ -238,34 +193,7 @@ class ChatRepositoryImpl implements ChatRepository {
     });
   }
 
-  // @override
-  // void send(String text) {
-  //   print('[WebSocket] Sending: $text');
-  //   _channel?.sink.add(jsonEncode({'query': text}));
-  //
-  //   if ((_sessionId ?? '').isEmpty) {
-  //     _pendingUserMessage = text;
-  //     return;
-  //   }
-  //
-  //   final msg = ChatMessage(
-  //     id: _uuid.v4(),
-  //     author: ChatAuthor.user,
-  //     text: text,
-  //     sessionId: _sessionId ?? '',
-  //   );
-  //   _pendingUserMessage = null;
-  //   _pendingUserMessageObject = msg;
-  //   _controller.add(msg);
-  //   _saveChatMessage(msg);
-  //
-  //   if (_sessionId != null && _sessionId!.isNotEmpty) {
-  //     _pendingUserMessage = null; // Clear if session is already established
-  //   }
-  // }
-
-
-  void send(String text) {
+   void send(String text) {
     print('[WebSocket] Sending: $text');
     _channel?.sink.add(jsonEncode({'query': text}));
 
@@ -273,7 +201,7 @@ class ChatRepositoryImpl implements ChatRepository {
       id: _uuid.v4(),
       author: ChatAuthor.user,
       text: text,
-      sessionId: _sessionId ?? '', // Save with empty sessionId if not yet assigned
+      sessionId: _sessionId ?? '',
     );
     _pendingUserMessage = text;
     _pendingUserMessageObject = msg;
@@ -307,12 +235,6 @@ class ChatRepositoryImpl implements ChatRepository {
     _controller.add(msg);
     _saveChatMessage(msg);
   }
-  //
-  // void _saveChatMessage(ChatMessage msg) async {
-  //   msg.userId = await AuthStorage.read();
-  //   msg.sessionId = _sessionId ?? '';
-  //   await _chatDb.insertAll([msg]);
-  // }
 
   void _saveChatMessage(ChatMessage msg) async {
     msg.userId = await AuthStorage.read();

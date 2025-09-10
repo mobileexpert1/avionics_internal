@@ -33,12 +33,4 @@ class OnewordCubit extends Cubit<OneWordTopicState> {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
-
-  // void unlockGame(int index) {
-  //   final updatedGames = List<quizItem>.from(state.games);
-  //   if (index >= 0 && index < updatedGames.length) {
-  //     updatedGames[index] = updatedGames[index].copyWith(isLocked: false);
-  //     emit(state.copyWith(games: updatedGames));
-  //   }
-  // }
 }

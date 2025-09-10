@@ -1,13 +1,12 @@
 import '../../../Database/db_helper.dart';
 
 class ManageAccountModel extends BaseModel {
-  /* ── BaseModel fields ── */
-  @override
-  final String id;          // primary key
-  @override
-  String? userId;           // injected by GenericMethods
 
-  /* ── Profile data ── */
+  @override
+  final String id;
+  @override
+  String? userId;
+
   final String firstName;
   final String lastName;
   final String email;
@@ -19,7 +18,6 @@ class ManageAccountModel extends BaseModel {
   final String professionalRole;
   final String experienceLevel;
 
-  /* optional extras */
   final String countryCode;
   final String profileImage;
   final String gender;
@@ -54,7 +52,6 @@ class ManageAccountModel extends BaseModel {
     this.userId,
   });
 
-  /* ── JSON → model (API) ── */
   factory ManageAccountModel.fromJson(Map<String, dynamic> json) =>
       ManageAccountModel(
         id: json['id'] ?? '',
@@ -77,10 +74,9 @@ class ManageAccountModel extends BaseModel {
         state: json['state'] ?? '',
         zipCode: json['zip_code'] ?? '',
         country: json['country'] ?? '',
-        userId: json['user_id'],               // if backend sends it
+        userId: json['user_id'],
       );
 
-  /* ── DB row → model ── */
   factory ManageAccountModel.fromMap(Map<String, dynamic> m) =>
       ManageAccountModel(
         id: m['id'],
@@ -106,7 +102,6 @@ class ManageAccountModel extends BaseModel {
         userId: m['user_id'],
       );
 
-  /* ── model → DB row ── */
   @override
   Map<String, dynamic> toMap() => {
     'id': id,
@@ -132,7 +127,6 @@ class ManageAccountModel extends BaseModel {
     'user_id': userId,
   };
 
-  /* ── optional: model → JSON ── */
   Map<String, dynamic> toJson() => {
     ...toMap()
       ..update('is_active', (_) => isActive)

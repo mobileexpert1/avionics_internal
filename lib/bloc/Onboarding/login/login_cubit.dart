@@ -99,7 +99,7 @@ class LoginCubit extends Cubit<LoginState> {
       await _auth.signOut();
 
       if (kIsWeb) {
-        /* ---------- Web sign‑in ---------- */
+
         final userCred = await _auth.signInWithPopup(GoogleAuthProvider());
         if (userCred.user == null) return;
 

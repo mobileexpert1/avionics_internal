@@ -28,7 +28,7 @@ class ProfileScreenCubit extends Cubit<ProfileScreenState> {
 
   void resetActionState() {
     emit(state.copyWith(
-      isLoading: false, // Reset loading state for generic actions
+      isLoading: false,
       errorMessage: null,
       logoutSuccess: false,
       deleteAccountSuccess: false,

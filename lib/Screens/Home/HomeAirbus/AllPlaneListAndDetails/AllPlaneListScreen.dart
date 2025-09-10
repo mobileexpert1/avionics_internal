@@ -254,16 +254,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             ),
                                           ),
                                         );
-
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         AirCraftDetailScreen(
-                                        //           aircraftId: model.id,
-                                        //         ),
-                                        //   ),
-                                        // );
                                       },
                                     ),
                                   ),

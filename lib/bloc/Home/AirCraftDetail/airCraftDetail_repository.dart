@@ -8,9 +8,9 @@ import 'airCraftDetail_model.dart';
 
 class AirCraftRepository {
   Future<AirCraftDetailResponse> getAirCraftData(
-      String airCraftId, {
-        VoidCallback? onUnauthorized,
-      }) async {
+    String airCraftId, {
+    VoidCallback? onUnauthorized,
+  }) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
@@ -30,7 +30,7 @@ class AirCraftRepository {
       final aircraft = AirCraftDetailResponse.fromJson(json);
       debugPrint("Parsed Successfully");
       return aircraft;
-    } on HttpStatusException catch (e,stacktrace) {
+    } on HttpStatusException catch (e, stacktrace) {
       debugPrint("Parsing error: $e");
       debugPrint("Stacktrace: $stacktrace");
       if (e.statusCode == 400 || e.statusCode == 404) {}

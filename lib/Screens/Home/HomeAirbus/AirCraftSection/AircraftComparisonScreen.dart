@@ -118,76 +118,76 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                   Expanded(
                     child: models.isEmpty
                         ? const Center(
-                      child: Text(
-                        'No Compare models available',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
+                            child: Text(
+                              'No Compare models available',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
                         : ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.only(
-                        bottom: screenWidth * 0.05,
-                        left: screenWidth * 0.025,
-                        right: screenWidth * 0.025,
-                      ),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount:
-                      models.length + (state.isFetchingMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index >= models.length) {
-                          if (state.hasNextPage) {
-                            return const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          } else {
-                            return const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: Text(
-                                  "No more models",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ),
-                            );
-                          }
-                        }
+                            controller: _scrollController,
+                            padding: EdgeInsets.only(
+                              bottom: screenWidth * 0.05,
+                              left: screenWidth * 0.025,
+                              right: screenWidth * 0.025,
+                            ),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount:
+                                models.length + (state.isFetchingMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index >= models.length) {
+                                if (state.hasNextPage) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                } else {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(
+                                      child: Text(
+                                        "No more models",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
 
-                        final model = models[index];
-                        return Padding(
-                          key: ValueKey(model.id),
-                          padding: EdgeInsets.symmetric(
-                            vertical: screenWidth * 0.017,
-                          ),
-                          child: SimpleAircraftCard(
-                            imagePath: CachedAnyImage(
-                              imagePath: model.image,
-                              width: screenWidth * 0.15,
-                              height: screenWidth * 0.15,
-                              contentImage: BoxFit.fill,
-                            ),
-                            model: model.aircraftModel,
-                            badge: model.icaoTypeCode,
-                            manufacturer: model.manufacturer?.companyName,
-                            airline: null,
-                            airlineImagePath: CachedAnyImage(
-                              imagePath: model.manufacturer?.logo ?? "",
-                              width: screenWidth * 0.05,
-                              height: screenWidth * 0.05,
-                              contentImage: BoxFit.fill,
-                            ),
-                            onTap: () {
-                              Navigator.pop(context, model);
+                              final model = models[index];
+                              return Padding(
+                                key: ValueKey(model.id),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenWidth * 0.017,
+                                ),
+                                child: SimpleAircraftCard(
+                                  imagePath: CachedAnyImage(
+                                    imagePath: model.image,
+                                    width: screenWidth * 0.15,
+                                    height: screenWidth * 0.15,
+                                    contentImage: BoxFit.fill,
+                                  ),
+                                  model: model.aircraftModel,
+                                  badge: model.icaoTypeCode,
+                                  manufacturer: model.manufacturer?.companyName,
+                                  airline: null,
+                                  airlineImagePath: CachedAnyImage(
+                                    imagePath: model.manufacturer?.logo ?? "",
+                                    width: screenWidth * 0.05,
+                                    height: screenWidth * 0.05,
+                                    contentImage: BoxFit.fill,
+                                  ),
+                                  onTap: () {
+                                    Navigator.pop(context, model);
+                                  },
+                                ),
+                              );
                             },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ],
               );
@@ -198,4 +198,3 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
     );
   }
 }
-

@@ -1,48 +1,3 @@
-// import 'package:geolocator/geolocator.dart';
-// import '../../Constants/ApiClass/ApiErrorModel.dart';
-// import 'flight_map_model.dart';
-//
-// class FlightMapState {
-//   final Position? position;
-//   final List<FlightModel>? flights;
-//   final CommonApiStatus status;
-//   final bool isLoading;
-//   final bool isSuccess;
-//   final String? errorMessage;
-//   final String? selectedCountry;
-//
-//   FlightMapState({
-//     this.position,
-//     this.flights,
-//     this.status = CommonApiStatus.initial,
-//     this.isLoading = false,
-//     this.isSuccess = false,
-//     this.errorMessage,
-//     this.selectedCountry,
-//   });
-//
-//   FlightMapState copyWith({
-//     Position? position,
-//     List<FlightModel>? flights,
-//     CommonApiStatus? status,
-//     bool? isLoading,
-//     bool? isSuccess,
-//     String? errorMessage,
-//     String? selectedCountry,
-//   }) {
-//     return FlightMapState(
-//       position: position ?? this.position,
-//       flights: flights ?? this.flights,
-//       status: status ?? this.status,
-//       isLoading: isLoading ?? this.isLoading,
-//       isSuccess: isSuccess ?? this.isSuccess,
-//       errorMessage: errorMessage ?? this.errorMessage,
-//       selectedCountry: selectedCountry ?? this.selectedCountry,
-//     );
-//   }
-// }
-
-
 import 'package:avionics_internal/bloc/MapSection/flight_map_detailModel.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -62,6 +17,7 @@ class FlightMapState {
   final List<FlightAircraftDetail>? flightDetail;
   final FlightAircraftDetail? selectedFlightDetail;
   final AircraftModel? selectedAircraftDetails;
+  final FlightModel? selectedFlight;
 
   FlightMapState({
     this.status = CommonApiStatus.initial,
@@ -75,6 +31,7 @@ class FlightMapState {
     this.flightDetail,
     this.selectedFlightDetail,
     this.selectedAircraftDetails,
+    this.selectedFlight,
   });
 
   FlightMapState copyWith({
@@ -89,6 +46,7 @@ class FlightMapState {
     List<FlightAircraftDetail>? flightDetail,
     FlightAircraftDetail? selectedFlightDetail,
     AircraftModel? selectedAircraftDetails,
+    FlightModel? selectedFlight,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -102,6 +60,7 @@ class FlightMapState {
       flightDetail: flightDetail ?? this.flightDetail,
       selectedFlightDetail: selectedFlightDetail ?? this.selectedFlightDetail,
       selectedAircraftDetails: selectedAircraftDetails ?? this.selectedAircraftDetails,
+      selectedFlight: selectedFlight ?? this.selectedFlight,
     );
   }
 }

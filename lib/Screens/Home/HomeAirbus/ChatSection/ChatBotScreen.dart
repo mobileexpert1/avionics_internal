@@ -222,87 +222,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
       ),
     );
   }
-  // Widget _chatInput(BuildContext context) {
-  //   const double iconSize = 22;
-  //
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     children: [
-  //       const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
-  //       SafeArea(
-  //         child: Padding(
-  //           padding: const EdgeInsets.fromLTRB(20, 15, 16, 5),
-  //           child: Row(
-  //             crossAxisAlignment: CrossAxisAlignment.end,
-  //             children: [
-  //               // Text field
-  //               Expanded(
-  //                 child: Container(
-  //                   padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
-  //                   decoration: BoxDecoration(
-  //                     color: const Color(0xFFF5F8F9),
-  //                     borderRadius: BorderRadius.circular(15),
-  //                   ),
-  //                   child: TextField(
-  //                     controller: _controller,
-  //                     minLines: 1,
-  //                     maxLines: 5,
-  //                     style: const TextStyle(fontSize: 14),
-  //                     textInputAction: TextInputAction.done,
-  //                     decoration: InputDecoration(
-  //                       isCollapsed: true,
-  //                       hintText: 'Type your message here…',
-  //                       hintStyle: TextStyle(color: Colors.grey.shade500),
-  //                       border: InputBorder.none,
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //               const SizedBox(width: 10),
-  //
-  //               // Reactive send button
-  //               ValueListenableBuilder<bool>(
-  //                 valueListenable: _isConnected,
-  //                 builder: (_, isConnected, __) {
-  //                   return InkWell(
-  //                     onTap: isConnected
-  //                         ? () {
-  //                       final text = _controller.text.trim();
-  //                       if (text.isNotEmpty) {
-  //                         context.read<ChatCubit>().sendMessage(text);
-  //                         _controller.clear();
-  //                         _scrollToBottom();
-  //                       }
-  //                     }
-  //                         : null,
-  //                     borderRadius: BorderRadius.circular(22),
-  //                     child: Container(
-  //                       height: 44,
-  //                       width: 44,
-  //                       decoration: BoxDecoration(
-  //                         color: isConnected
-  //                             ? const Color(0xFF3F3D56) // enabled color
-  //                             : const Color(0xFF9E9E9E), // slightly lighter for disabled
-  //                         shape: BoxShape.circle,
-  //                       ),
-  //                       padding: const EdgeInsets.all(0),
-  //                       child: SvgPicture.asset(
-  //                         CommonUi.setSvgImage(AssetsPath.SendIcon),
-  //                         height: iconSize,
-  //                         width: iconSize,
-  //                         // keep icon same in both states
-  //                       ),
-  //                     ),
-  //                   );
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+
   Widget _chatInput(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -400,7 +320,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   }
 }
 
-/* ───────────────────────── Typing indicator ───────────────────────── */
 class _AnalyzingIndicator extends StatefulWidget {
   const _AnalyzingIndicator();
 

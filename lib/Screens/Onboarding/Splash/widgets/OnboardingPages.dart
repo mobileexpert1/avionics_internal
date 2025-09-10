@@ -13,23 +13,18 @@ class OnboardingPage extends StatelessWidget {
     return SizedBox.expand(
       child: Stack(
         children: [
+          Positioned(top: 0, left: 0, right: 0, child: info.imageWidget),
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: info.imageWidget,
-          ),
-          Positioned(
-            top: size.height * 0.62, // 55% from top of screen
-            left: size.width * 0.13,  // 8% horizontal padding
-            right: size.width * 0.04, // 4% horizontal padding
+            top: size.height * 0.62,
+            left: size.width * 0.13,
+            right: size.width * 0.04,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   info.title,
                   style: TextStyle(
-                    fontSize: size.width * 0.09, // responsive font size
+                    fontSize: size.width * 0.09,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF2E2E3A),
                   ),

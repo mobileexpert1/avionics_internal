@@ -7,33 +7,10 @@ import 'manufacturer_list_model.dart';
 
 class ManufacturerRepository {
   ManufacturerRepository()
-      : _manufacturer = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap);
+    : _manufacturer = GenericMethods<ManufacturerListModel>(
+        ManufacturerListModel.fromMap,
+      );
   final GenericMethods<ManufacturerListModel> _manufacturer;
-
-  // Future<List<ManufacturerListModel>> getListOfManufacturers({String? query}) async {
-  //   if (!await GenericMethods.hasInternet()) {
-  //     return _getLocalData();
-  //   }
-  //   final uri = Uri.parse(ApiBaseUrlConstant.baseUrl +
-  //       ApiFunctionUrlAirplaneConstant.airplaneService +
-  //       ApiServiceUrlAirplaneConstant.getListManufacturer +
-  //       (query != null && query.isNotEmpty ? '?q=$query' : ''),);
-  //   try {
-  //     final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-  //     final manufacturers = (jsonData['results'] as List<dynamic>? ?? []).map((
-  //         e) => ManufacturerListModel.fromJson(e)).toList();
-  //     await _manufacturer.insertAll(manufacturers);
-  //     return manufacturers;
-  //   } on HttpStatusException catch (e) {
-  //     if (e.statusCode == 400 || e.statusCode == 404) {
-  //       return _getLocalData();
-  //     }
-  //     throw e.toString();
-  //   } catch (e) {
-  //     // print('Error: $e');
-  //     throw e.toString();
-  //   }
-  // }
 
   Future<PaginatedList<ManufacturerListModel>> getListOfManufacturers({
     String? query,
@@ -72,7 +49,6 @@ class ManufacturerRepository {
     }
   }
 
-
   Future<List<ManufacturerListModel>> _getLocalData() async {
     return _manufacturer.getAll('manufacturers');
   }
@@ -94,5 +70,4 @@ class ManufacturerRepository {
       throw e.toString();
     }
   }
-
 }

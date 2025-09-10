@@ -1,10 +1,8 @@
-import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/constantImages.dart';
@@ -141,12 +139,14 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Future<Set<Marker>> _buildFlightMarkers(List<FlightModel> flights) async {
     final markers = <Marker>{};
+
     if (_isForFlyingInTheArea == 1) {
       for (final flight in flights) {
         final icon = await getRotatedPlaneIcon(
           (flight.track).toDouble(),
           color: Colors.red,
         );
+
         markers.add(
           Marker(
             markerId: MarkerId(flight.id.toString()),
@@ -164,6 +164,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 "Dir: ${flight.track}°\n"
                 "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
               );
+              context.read<FlightMapCubit>().setSelectedFlight(flight);
               _toggleFlightCard(flight: flight);
             },
           ),
@@ -558,13 +559,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 class FlightCard extends StatelessWidget {
   final FlightAircraftDetail? flightDetail;
 
-  // final AircraftModel? aircraftDetails;
-
-  const FlightCard({
-    super.key,
-    this.flightDetail,
-    // this.aircraftDetails,
-  });
+  const FlightCard({super.key, this.flightDetail});
 
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
@@ -582,249 +577,247 @@ class FlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (flightDetail == null) {
-      print('FlightCard: flightDetail is null');
-      return const Text('No flight details available');
-    }
+    return BlocBuilder<FlightMapCubit, FlightMapState>(
+      builder: (context, state) {
+        final selectedFlight = state.selectedFlight;
+        final detail = flightDetail;
 
-    print(
-      'FlightCard: Rendering with flightDetail: ${flightDetail!.toString()}',
-    );
-    final departureIata = flightDetail!.departureIcao ?? 'N/A';
-    final arrivalIata = flightDetail!.arrivalIcao ?? 'N/A';
-    final groundSpeed = flightDetail!.groundSpeed ?? 0;
-    final altitude = flightDetail!.altitude ?? 0;
-    final takeoffTime = flightDetail!.takeoffTime;
-    final eta = flightDetail!.eta;
-    final callsign = flightDetail!.callsign;
+        if (selectedFlight == null && detail == null) {
+          return const Text('No flight selected');
+        }
 
-    final aircraftType =
-        flightDetail!.aircraftModel ?? flightDetail!.type ?? 'N/A';
-    final manufacturer = flightDetail!.manufacturer?.companyName ?? 'Unknown';
-    final category = flightDetail!.icaoTypeCode ?? flightDetail!.type ?? 'N/A';
-    final image = flightDetail!.image ?? 'https://via.placeholder.com/50';
-    final manufacturerLogo =
-        flightDetail!.manufacturer?.logo ?? 'https://via.placeholder.com/16';
+        final groundSpeed =
+            selectedFlight?.groundSpeed ?? detail?.groundSpeed ?? 0;
+        final altitude = selectedFlight?.altitude ?? detail?.altitude ?? 0;
+        final eta = selectedFlight?.eta;
+        final takeoffTime = detail?.takeoffTime;
 
-    String timeSinceTakeoff = 'N/A';
-    if (takeoffTime != null) {
-      final duration = DateTime.now().toUtc().difference(takeoffTime);
-      timeSinceTakeoff = '${_formatDuration(duration)} ago';
-    }
+        final aircraftType =
+            detail?.aircraftModel ?? selectedFlight?.type ?? 'N/A';
+        final manufacturer = detail?.manufacturer?.companyName ?? 'Unknown';
+        final category = detail?.icaoTypeCode ?? selectedFlight?.type ?? 'N/A';
+        final image = detail?.image ?? 'https://via.placeholder.com/50';
+        final manufacturerLogo =
+            detail?.manufacturer?.logo ?? 'https://via.placeholder.com/16';
+        final callsign = selectedFlight?.callSign ?? detail?.callsign ?? 'N/A';
 
-    String timeToArrival = 'N/A';
-    if (eta != null) {
-      final duration = eta.difference(DateTime.now().toUtc());
-      timeToArrival = duration.isNegative
-          ? 'Landed'
-          : 'in ${_formatDuration(duration)}';
-    }
+        final departureIata = detail?.departureIcao ?? 'N/A';
+        final arrivalIata = detail?.arrivalIcao ?? 'N/A';
 
-    // double progress = 0.0;
-    // if (flightDetail!.actualDistance != null &&
-    //     flightDetail!.circleDistance != null &&
-    //     flightDetail!.circleDistance! > 0) {
-    //   progress = (flightDetail!.actualDistance! / flightDetail!.circleDistance!)
-    //       .clamp(0.0, 1.0);
-    // }
+        String timeSinceTakeoff = 'N/A';
+        if (takeoffTime != null) {
+          final duration = DateTime.now().toUtc().difference(takeoffTime);
+          timeSinceTakeoff = '${_formatDuration(duration)} ago';
+        }
 
-    double progress = 0.0;
+        String timeToArrival = 'N/A';
+        if (eta != null) {
+          final duration = eta.difference(DateTime.now().toUtc());
+          timeToArrival = duration.isNegative
+              ? 'Landed'
+              : 'in ${_formatDuration(duration)}';
+        }
 
-    if (takeoffTime != null && eta != null) {
-      final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
-      final etaMillis = eta.millisecondsSinceEpoch;
-      final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
+        double progress = 0.0;
+        if (takeoffTime != null && eta != null) {
+          final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
+          final etaMillis = eta.millisecondsSinceEpoch;
+          final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
 
-      final totalDuration = etaMillis - takeoffMillis;
-      final elapsed = nowMillis - takeoffMillis;
+          final totalDuration = etaMillis - takeoffMillis;
+          final elapsed = nowMillis - takeoffMillis;
 
-      if (totalDuration > 0) {
-        progress = (elapsed / totalDuration).clamp(0.0, 1.0);
-      }
-    }
+          if (totalDuration > 0) {
+            progress = (elapsed / totalDuration).clamp(0.0, 1.0);
+          }
+        }
 
-    return Card(
-      color: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-      ),
-      elevation: 10,
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        return Card(
+          color: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+          ),
+          elevation: 10,
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            aircraftType,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF3F3D56),
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              category,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF3F3D56),
+                          Row(
+                            children: [
+                              Text(
+                                aircraftType,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF3F3D56),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 25),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  category,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF3F3D56),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: CachedAnyImage(
+                                  imagePath: manufacturerLogo,
+                                  width: 22.0,
+                                  height: 16.0,
+                                  contentImage: BoxFit.contain,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                manufacturer,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFF3F3D56),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF3F3D56),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  callsign,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                child: const Icon(
+                                  Icons.my_location,
+                                  color: Colors.blue,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
-                      Row(
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: CachedAnyImage(
+                        imagePath: image,
+                        width: 100.0,
+                        height: 50.0,
+                        contentImage: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+                const CustomDivider(height: 1.0),
+                const SizedBox(height: 16),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "$departureIata\n$timeSinceTakeoff",
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
                         children: [
-                          ClipRRect(
+                          LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey.shade300,
+                            color: Colors.blue,
+                            minHeight: 5,
                             borderRadius: BorderRadius.circular(4),
-                            child: CachedAnyImage(
-                              imagePath: manufacturerLogo,
-                              width: 22.0,
-                              height: 16.0,
-                              contentImage: BoxFit.contain,
-                            ),
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            manufacturer,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF3F3D56),
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF3F3D56),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              callsign!,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Colors
-                                    .white, // better contrast with dark background
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                groundSpeed == 0 ? 'N/A' : '$groundSpeed km/h',
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            child: const Icon(
-                              Icons.my_location,
-                              color: Colors.blue,
-                              size: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: CachedAnyImage(
-                    imagePath: image,
-                    width: 100.0,
-                    height: 50.0,
-                    contentImage: BoxFit.cover,
-                  ),
-                ),
-              ],
-            ),
-            const CustomDivider(height: 1.0),
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "$departureIata\n$timeSinceTakeoff",
-                    style: const TextStyle(fontSize: 13),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: Colors.grey.shade300,
-                        color: Colors.blue,
-                        minHeight: 5,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            groundSpeed == 0 ? 'N/A' : '$groundSpeed km/h',
-                            style: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text("•", style: TextStyle(color: Colors.grey)),
-                          const SizedBox(width: 10),
-                          Text(
-                            altitude == 0 ? 'N/A' : '$altitude m',
-                            style: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w500,
-                            ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                "•",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                altitude == 0 ? 'N/A' : '$altitude m',
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "$arrivalIata\n$timeToArrival",
-                    style: const TextStyle(fontSize: 13),
-                    textAlign: TextAlign.right,
-                  ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "$arrivalIata\n$timeToArrival",
+                        style: const TextStyle(fontSize: 13),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

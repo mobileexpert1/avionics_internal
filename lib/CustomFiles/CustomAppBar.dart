@@ -28,7 +28,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           BoxShadow(
             color: isHideTopGradient ==  true ? Colors.white : Colors.black12,
             offset: const Offset(0, 2), // move down
-            blurRadius: 4, // soften the shadow
+            blurRadius: 4,
           ),
         ],
         border: Border(
@@ -39,8 +39,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       child: AppBar(
-        backgroundColor: Colors.transparent, // make AppBar background transparent
-        elevation: 0, // remove AppBar's default shadow
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         automaticallyImplyLeading: false,
         surfaceTintColor: Colors.white,
         title: Text(

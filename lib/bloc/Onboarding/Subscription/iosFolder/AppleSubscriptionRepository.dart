@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
-
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 

@@ -66,7 +66,7 @@ class General {
       foundingDate: json['founding_date'],
       logo: json['logo'],
       description: json['description'],
-      coverPhoto: CoverPhoto.fromJson(json['cover_photo'])
+      coverPhoto: CoverPhoto.fromJson(json['cover_photo']),
     );
   }
 }
@@ -115,9 +115,6 @@ class Product {
   Product({required this.series, required this.description});
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      series: json['series'],
-      description: json['description'],
-    );
+    return Product(series: json['series'], description: json['description']);
   }
 }

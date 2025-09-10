@@ -68,23 +68,19 @@ class OneWordTopicScreen extends StatelessWidget {
                           infoMessage: game.info,
                           onTap: () {
                             //if (!game.isLocked) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => QuizQuestionScreen(
-                                    sectionId: game.gameNumber,
-                                    sectionTitle: game.title,
-                                    gameId: "one_word",
-                                  ),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => QuizQuestionScreen(
+                                  sectionId: game.gameNumber,
+                                  sectionTitle: game.title,
+                                  gameId: "one_word",
                                 ),
-                              );
-                           // }
-                          },
-                          onInfoTap: () {
-                            // if (game.isLocked) {
-                            //   context.read<OnewordCubit>().unlockGame(index);
+                              ),
+                            );
                             // }
                           },
+                          onInfoTap: () {},
                         );
                       },
                     );
