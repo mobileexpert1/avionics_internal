@@ -62,7 +62,8 @@ class FlightMapState {
       mapType: mapType ?? this.mapType,
       flightDetail: flightDetail ?? this.flightDetail,
       selectedFlightDetail: selectedFlightDetail ?? this.selectedFlightDetail,
-      selectedAircraftDetails: selectedAircraftDetails ?? this.selectedAircraftDetails,
+      selectedAircraftDetails:
+          selectedAircraftDetails ?? this.selectedAircraftDetails,
       selectedFlight: selectedFlight ?? this.selectedFlight,
       isTracking: isTracking ?? this.isTracking,
     );

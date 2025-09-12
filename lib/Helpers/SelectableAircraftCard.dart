@@ -63,7 +63,9 @@ class SimpleAircraftCard extends StatelessWidget {
                   color: Color(0xFF3F3D56),
                 ),
               ),
-              _buildBadge(badge, false, ""),
+              if (badge.isNotEmpty) ...[
+                _buildBadge(badge, false, "")
+              ]
             ],
           ),
           subtitle: Padding(
@@ -128,9 +130,11 @@ class SimpleAircraftCard extends StatelessWidget {
       ),
       child: Text(
         isComeFromCallSign == true ? callSignText : text,
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: isComeFromCallSign == true
-            ? Colors.white
-            : Colors.black),
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: isComeFromCallSign == true ? Colors.white : Colors.black,
+        ),
       ),
     );
   }

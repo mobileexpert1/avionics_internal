@@ -8,6 +8,7 @@ class MapSearchAircraftListState {
   final String? errorMessage;
   final CommonApiStatus status;
   final FlightStats? stats;
+  final FlightResult? selectedFlight;
 
   const MapSearchAircraftListState({
     required this.flights,
@@ -16,6 +17,7 @@ class MapSearchAircraftListState {
     this.errorMessage,
     this.status = CommonApiStatus.initial,
     this.stats,
+    this.selectedFlight,
   });
 
   factory MapSearchAircraftListState.initial() {
@@ -32,6 +34,7 @@ class MapSearchAircraftListState {
     String? errorMessage,
     CommonApiStatus? status,
     FlightStats? stats,
+    FlightResult? selectedFlight,
   }) {
     return MapSearchAircraftListState(
       flights: flights ?? this.flights,
@@ -40,6 +43,7 @@ class MapSearchAircraftListState {
       errorMessage: errorMessage ?? this.errorMessage,
       status: status ?? this.status,
       stats: stats ?? this.stats,
+      selectedFlight: selectedFlight ?? this.selectedFlight,
     );
   }
 }

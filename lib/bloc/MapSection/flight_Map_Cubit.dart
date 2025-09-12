@@ -18,6 +18,7 @@ import 'flight_map_detailModel.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
   Timer? _trackingTimer;
+
   FlightMapCubit() : super(FlightMapState());
 
   void changeMapType(MapType type) {
@@ -202,11 +203,20 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-
-
-  Future<void> _fetchAndUpdateFlight(String flightId, BuildContext context) async {
+  Future<void> _fetchAndUpdateFlight(
+    String flightId,
+    BuildContext context,
+  ) async {
     try {
-      const bounds = "35.6356162,25.6356162,81.7212967,71.7212967";
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      print(
+        'Current location: Lat=${position.latitude}, Lon=${position.longitude}',
+      );
+
+      final bounds = _calculateBounds(position);
       final response = await FlightRepository().getFlightPositions(
         bounds: bounds,
         flightId: flightId,
@@ -214,7 +224,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final flights = response['flights'] as List<FlightModel>;
       final updatedFlight = flights.firstWhere(
-            (flight) => flight.id == flightId,
+        (flight) => flight.id == flightId,
         orElse: () => state.selectedFlight!,
       );
 
@@ -240,10 +250,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-
   void startTrackingFlight(String flightId, BuildContext context) {
-    if (state.isTracking) return; // Prevent multiple timers
-
+    if (state.isTracking) return;
     emit(state.copyWith(isTracking: true));
     _fetchAndUpdateFlight(flightId, context);
     _trackingTimer = Timer.periodic(Duration(seconds: 30), (timer) {
@@ -279,4 +287,3 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedFlight: null));
   }
 }
-

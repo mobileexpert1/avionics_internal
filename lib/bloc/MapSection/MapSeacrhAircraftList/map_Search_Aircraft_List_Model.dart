@@ -1,5 +1,7 @@
 // Response Model
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
+import '../flight_map_detailModel.dart';
+import '../flight_map_model.dart';
 
 class MapSearchAircraftListModel {
   final List<FlightResult> results;
@@ -24,6 +26,7 @@ class FlightResult {
   final String type;
   final String match;
   final AircraftModel? aircraftDetails;
+  final FlightModel? flightDetailResponse;
 
   FlightResult({
     required this.id,
@@ -32,9 +35,13 @@ class FlightResult {
     required this.type,
     required this.match,
     this.aircraftDetails,
+    this.flightDetailResponse,
   });
 
-  FlightResult copyWith({AircraftModel? aircraftDetails}) {
+  FlightResult copyWith({
+    AircraftModel? aircraftDetails,
+    FlightModel? flightDetailResponse,
+  }) {
     return FlightResult(
       id: id,
       label: label,
@@ -42,6 +49,7 @@ class FlightResult {
       type: type,
       match: match,
       aircraftDetails: aircraftDetails ?? this.aircraftDetails,
+      flightDetailResponse: flightDetailResponse ?? this.flightDetailResponse,
     );
   }
 

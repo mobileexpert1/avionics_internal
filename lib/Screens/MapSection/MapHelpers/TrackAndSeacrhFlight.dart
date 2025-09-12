@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
@@ -60,6 +61,24 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                         MapSearchAircraftListState
                       >(
                         builder: (context, state) {
+                          if (state.status == CommonApiStatus.failure && state.isLoading == false) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(state.errorMessage!)),
+                                );
+                              }
+                            });
+                          }
+
+                          if (state.status == CommonApiStatus.success &&
+                              state.selectedFlight != null) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (context.mounted) {
+                                Navigator.pop(context, state.selectedFlight);
+                              }
+                            });
+                          }
                           if (state.isLoading) {
                             return const Center(
                               child: CircularProgressIndicator(),
@@ -112,8 +131,18 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                   model:
                                       "${data.aircraftDetails?.aircraftModel ?? " "} ",
                                   badge:
-                                      data.aircraftDetails?.icaoTypeCode ??
-                                      data.type,
+                                      (data
+                                              .aircraftDetails
+                                              ?.icaoTypeCode
+                                              .isNotEmpty ??
+                                          false)
+                                      ? data.aircraftDetails!.icaoTypeCode
+                                      : (data.detail.acType.isNotEmpty ?? false
+                                            ? data.detail.acType
+                                            : ""),
+
+                                  // data.aircraftDetails?.icaoTypeCode ??
+                                  // data.type,
                                   manufacturer:
                                       data
                                           .aircraftDetails
@@ -146,7 +175,9 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                         )),
                                   callSign: data.detail.callsign,
                                   onTap: () {
-                                    Navigator.pop(context, data);
+                                    final cubit = context
+                                        .read<MapSearchAircraftListCubit>();
+                                    cubit.getCurrentSearchFlight(data, context);
                                   },
                                 ),
                               );

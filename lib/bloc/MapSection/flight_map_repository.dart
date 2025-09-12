@@ -35,12 +35,12 @@ class FlightRepository {
     }
   }
 
-  Future<List<FlightModel>> getParticularFlightDetails({
-    required String bounds,
+  Future<FlightResponse> getParticularFlightDetails({
     required String flightId,
   }) async {
+    // This is for whole world bounds...
     String url =
-        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=$bounds&flights=$flightId";
+        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=90,-90,-180,180&flights=$flightId";
 
     final uri = Uri.parse(url);
     print('Fetching flights with URL: $uri');
@@ -51,7 +51,7 @@ class FlightRepository {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final flightResponse = FlightResponse.fromJson(data);
-      return flightResponse.flights;
+      return flightResponse;
     } else {
       throw Exception("Error ${response.statusCode}: ${response.body}");
     }
