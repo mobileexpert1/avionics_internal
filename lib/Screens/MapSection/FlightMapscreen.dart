@@ -19,6 +19,7 @@ import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
+import 'FlightTrackScreen.dart';
 import 'MapHelpers/MapToggleButtons.dart';
 import 'MapHelpers/MapTrackingModePopup.dart';
 import 'MapHelpers/TrackAndSeacrhFlight.dart';
@@ -165,7 +166,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             position: LatLng(flight.latitude, flight.longitude),
             icon: icon,
             infoWindow: InfoWindow(
-              title: flight.callSign ?? 'Unknown',
+              title: flight.flightNumber ?? 'Unknown',
               snippet:
                   "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ?? 'N/A'}",
             ),
@@ -373,7 +374,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               });
                             });
                           }
-                        });
                       },
                       enableBackArrow: _isNeedToShowBackButton,
                       onBackButtonTap: () {
@@ -851,10 +851,24 @@ class FlightCard extends StatelessWidget {
                                     context
                                         .read<FlightMapCubit>()
                                         .stopTrackingFlight();
+                                    Navigator.pop(context);
                                   } else {
                                     context
                                         .read<FlightMapCubit>()
                                         .startTrackingFlight(flightId, context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider.value(
+                                          value: context.read<FlightMapCubit>(),
+                                          child: TrackFlightScreen(
+                                            flightId: flightId,
+                                            initialFlight: selectedFlight,
+                                            initialFlightDetail: detail,
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                                 child: Container(

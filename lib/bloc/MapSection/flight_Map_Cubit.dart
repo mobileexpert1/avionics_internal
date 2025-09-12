@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Screens/MapSection/FlightMapscreen.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_model.dart';
@@ -112,9 +113,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
+
+  void updateMarkers(Set<Marker> markers) {
+    emit(state.copyWith(markers: markers));
+  }
+
   Future<void> fetchAircraftDetailsFromFlightsList(
-    List<String> uniqueTypes,
-  ) async {
+      List<String> uniqueTypes,) async {
     final flightsDetails = await AircraftListDataRepository()
         .getListOfAllPlanes(aircraftIds: uniqueTypes);
 
@@ -134,26 +139,26 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
 
       print(
-        'Fetched ${flightsDetails.detail} flights from AircraftListDataRepository',
+        'Fetched ${flightsDetails
+            .detail} flights from AircraftListDataRepository',
       );
     }
   }
 
-  Future<List<FlightModel>> mergeFlightsWithDetails(
-    List<FlightModel> flights,
-    List<AircraftModel> aircraftDetails,
-  ) async {
+  Future<List<FlightModel>> mergeFlightsWithDetails(List<FlightModel> flights,
+      List<AircraftModel> aircraftDetails,) async {
     return flights.map((flight) {
       final matchingDetail = aircraftDetails.firstWhere(
-        (detail) =>
-            detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
-        orElse: () => AircraftModel(
-          id: '',
-          aircraftModel: '',
-          isFavorite: false,
-          icaoTypeCode: '',
-          image: '',
-        ),
+            (detail) =>
+        detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+        orElse: () =>
+            AircraftModel(
+              id: '',
+              aircraftModel: '',
+              isFavorite: false,
+              icaoTypeCode: '',
+              image: '',
+            ),
       );
       return flight.copyWith(aircraftDetails: matchingDetail);
     }).toList();
@@ -161,7 +166,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   String formatUtc(DateTime dateTime) {
     // Format as UTC without milliseconds, with 'Z'
-    return dateTime.toUtc().toIso8601String().split('.').first + "Z";
+    return dateTime
+        .toUtc()
+        .toIso8601String()
+        .split('.')
+        .first + "Z";
   }
 
   Future<void> fetchFlightDetails({
@@ -202,21 +211,16 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
     }
   }
-
-  Future<void> _fetchAndUpdateFlight(
-    String flightId,
-    BuildContext context,
-  ) async {
+  
+  Future<void> _fetchAndUpdateFlight(String flightId,
+      BuildContext context) async {
+    if (isClosed) return;
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      print(
-        'Current location: Lat=${position.latitude}, Lon=${position.longitude}',
-      );
+      final position = state.position;
+      if (position == null) return;
 
       final bounds = _calculateBounds(position);
+
       final response = await FlightRepository().getFlightPositions(
         bounds: bounds,
         flightId: flightId,
@@ -224,22 +228,23 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final flights = response['flights'] as List<FlightModel>;
       final updatedFlight = flights.firstWhere(
-        (flight) => flight.id == flightId,
+            (flight) => flight.id == flightId,
         orElse: () => state.selectedFlight!,
       );
 
-      emit(
-        state.copyWith(
-          selectedFlight: updatedFlight,
-          status: CommonApiStatus.success,
-          isLoading: false,
-          flights: state.flights,
-        ),
-      );
+      if (flights.isNotEmpty && !isClosed) {
+        final updatedFlight = flights.first;
+        emit(
+          state.copyWith(
+            selectedFlight: updatedFlight,
+            status: CommonApiStatus.success,
+            isLoading: false,
+            flights: state.flights,
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error tracking flight: ${e.toString()}')),
-      );
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -251,10 +256,12 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   void startTrackingFlight(String flightId, BuildContext context) {
-    if (state.isTracking) return;
-    emit(state.copyWith(isTracking: true));
+    stopTrackingFlight();
+    if (!isClosed) {
+      emit(state.copyWith(isTracking: true));
+    }
     _fetchAndUpdateFlight(flightId, context);
-    _trackingTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+    _trackingTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
       _fetchAndUpdateFlight(flightId, context);
     });
   }
@@ -279,6 +286,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(FlightMapState());
   }
 
+  //
   void setSelectedFlight(FlightModel flight) {
     emit(state.copyWith(selectedFlight: flight));
   }
@@ -286,4 +294,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   void clearSelectedFlight() {
     emit(state.copyWith(selectedFlight: null));
   }
+
+
 }
