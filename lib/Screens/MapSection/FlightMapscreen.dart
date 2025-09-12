@@ -18,6 +18,7 @@ import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
+import 'FlightTrackScreen.dart';
 import 'MapHelpers/MapToggleButtons.dart';
 import 'MapHelpers/MapTrackingModePopup.dart';
 import 'MapHelpers/TrackAndSeacrhFlight.dart';
@@ -157,7 +158,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             position: LatLng(flight.latitude, flight.longitude),
             icon: icon,
             infoWindow: InfoWindow(
-              title: flight.callSign ?? 'Unknown',
+              title: flight.flightNumber ?? 'Unknown',
               snippet:
                   "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ?? 'N/A'}",
             ),
@@ -316,18 +317,16 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               child: const TrackAndSearchFlight(),
                             ),
                           ),
-                        ).then((selectedFlight) {
-                          if (selectedFlight != null) {
-                            print("Selected flight: $selectedFlight");
-
-                            // context
-                            //     .read<FlightMapCubit>()
-                            //     .setSelectedFlight(data!);
-                            setState(() {
-                              _isMapListViewShown = false;
-                            });
-                            _toggleFlightCard(flight: selectedFlight.id);
-                          }
+                        ).then((result) {
+                          // if (result != null && result is FlightResult) {
+                          //   context.read<FlightMapCubit>().setSelectedFlight(
+                          //     result.flightDetailResponse!,
+                          //   );
+                          //   setState(() {
+                          //     _isMapListViewShown = false;
+                          //   });
+                          //   _toggleFlightCard(flight: result.id);
+                          // }
                         });
                       },
                       enableBackArrow: _isNeedToShowBackButton,
@@ -617,13 +616,13 @@ class FlightCard extends StatelessWidget {
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
     if (hours == 0 && minutes == 0) {
-      return '0min';
+      return '0 min';
     } else if (hours == 0) {
-      return '${minutes}min';
+      return '$minutes min';
     } else if (minutes == 0) {
-      return '${hours}h';
+      return '$hours h';
     } else {
-      return '${hours}h${minutes}min';
+      return '${hours}h ${minutes}min';
     }
   }
 
@@ -644,20 +643,19 @@ class FlightCard extends StatelessWidget {
         final eta = selectedFlight?.eta;
         final takeoffTime = detail?.takeoffTime;
 
-        final aircraftType =
-            detail?.aircraftModel ?? selectedFlight?.type ?? 'N/A';
-        final manufacturer = detail?.manufacturer?.companyName ?? 'Unknown';
-        final category = detail?.icaoTypeCode ?? selectedFlight?.type ?? 'N/A';
-        final image = detail?.image ?? 'https://via.placeholder.com/50';
-        final manufacturerLogo =
-            detail?.manufacturer?.logo ?? 'https://via.placeholder.com/16';
-        final callSign = selectedFlight?.callSign ?? detail?.callsign ?? 'N/A';
+        final aircraftType = detail?.aircraftModel ?? 'N/A';
+        final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
+        final category = detail?.icaoTypeCode ?? detail?.type ?? "";
+        final image = detail?.image ?? "";
+        final manufacturerLogo = detail?.manufacturer?.logo ?? "";
+        final callSign = detail?.callsign ?? selectedFlight?.callSign ?? 'N/A';
         final departureIata = detail?.departureIcao ?? 'N/A';
         final arrivalIata = detail?.arrivalIcao ?? 'N/A';
         final flightId =
             selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
 
         String timeSinceTakeoff = 'N/A';
+
         if (takeoffTime != null) {
           final duration = DateTime.now().toUtc().difference(takeoffTime);
           timeSinceTakeoff = '${_formatDuration(duration)} ago';
@@ -672,6 +670,7 @@ class FlightCard extends StatelessWidget {
         }
 
         double progress = 0.0;
+
         if (takeoffTime != null && eta != null) {
           final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
           final etaMillis = eta.millisecondsSinceEpoch;
@@ -744,12 +743,22 @@ class FlightCard extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
-                                child: CachedAnyImage(
-                                  imagePath: manufacturerLogo,
-                                  width: 22.0,
-                                  height: 16.0,
-                                  contentImage: BoxFit.contain,
-                                ),
+
+                                child: (manufacturerLogo == ""
+                                    ? SizedBox.shrink()
+                                    : CachedAnyImage(
+                                        imagePath: manufacturerLogo,
+                                        width: 22.0,
+                                        height: 16.0,
+                                        contentImage: BoxFit.contain,
+                                      )),
+
+                                // child: CachedAnyImage(
+                                //   imagePath: manufacturerLogo,
+                                //   width: 22.0,
+                                //   height: 16.0,
+                                //   contentImage: BoxFit.contain,
+                                // ),
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -786,10 +795,24 @@ class FlightCard extends StatelessWidget {
                                     context
                                         .read<FlightMapCubit>()
                                         .stopTrackingFlight();
+                                    Navigator.pop(context);
                                   } else {
                                     context
                                         .read<FlightMapCubit>()
                                         .startTrackingFlight(flightId, context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider.value(
+                                          value: context.read<FlightMapCubit>(),
+                                          child: TrackFlightScreen(
+                                            flightId: flightId,
+                                            initialFlight: selectedFlight,
+                                            initialFlightDetail: detail,
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                                 child: Container(
@@ -810,12 +833,29 @@ class FlightCard extends StatelessWidget {
                     ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: CachedAnyImage(
-                        imagePath: image,
-                        width: 100.0,
-                        height: 50.0,
-                        contentImage: BoxFit.cover,
-                      ),
+                      child: (manufacturerLogo == ""
+                          ? Image.asset(
+                              CommonUi.setPngImage(
+                                AssetsPath.aeroplaneComparison,
+                              ),
+                              width: 100,
+                              height: 50,
+                              fit: BoxFit.fill,
+                            )
+                          : CachedAnyImage(
+                              imagePath: image,
+                              width: 100,
+                              height: 50,
+                              contentImage: BoxFit.fill,
+                            )),
+
+                      //
+                      // CachedAnyImage(
+                      //   imagePath: image,
+                      //   width: 100.0,
+                      //   height: 50.0,
+                      //   contentImage: BoxFit.cover,
+                      // ),
                     ),
                   ],
                 ),

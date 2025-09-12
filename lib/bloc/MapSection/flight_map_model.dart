@@ -22,6 +22,7 @@ class FlightResponse {
   String toString() => 'FlightResponse(${flights.length} flights)';
 }
 
+
 class FlightModel {
   final String id;
   final String flightNumber;
@@ -73,30 +74,54 @@ class FlightModel {
     this.aircraftDetails,
   });
 
-  FlightModel copyWith({AircraftModel? aircraftDetails}) {
+  FlightModel copyWith({
+    String? id,
+    String? flightNumber,
+    String? callSign,
+    double? latitude,
+    double? longitude,
+    int? track,
+    int? altitude,
+    int? groundSpeed,
+    int? verticalSpeed,
+    String? squawk,
+    DateTime? timestamp,
+    String? source,
+    String? hex,
+    String? type,
+    String? registration,
+    String? paintedAs,
+    String? operatingAs,
+    String? departureIata,
+    String? departureIcao,
+    String? arrivalIata,
+    String? arrivalIcao,
+    DateTime? eta,
+    AircraftModel? aircraftDetails,
+  }) {
     return FlightModel(
-      id: id,
-      flightNumber: flightNumber,
-      callSign: callSign,
-      latitude: latitude,
-      longitude: longitude,
-      track: track,
-      altitude: altitude,
-      groundSpeed: groundSpeed,
-      verticalSpeed: verticalSpeed,
-      squawk: squawk,
-      timestamp: timestamp,
-      source: source,
-      hex: hex,
-      type: type,
-      registration: registration,
-      paintedAs: paintedAs,
-      operatingAs: operatingAs,
-      departureIata: departureIata,
-      departureIcao: departureIcao,
-      arrivalIata: arrivalIata,
-      arrivalIcao: arrivalIcao,
-      eta: eta,
+      id: id ?? this.id,
+      flightNumber: flightNumber ?? this.flightNumber,
+      callSign: callSign ?? this.callSign,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      track: track ?? this.track,
+      altitude: altitude ?? this.altitude,
+      groundSpeed: groundSpeed ?? this.groundSpeed,
+      verticalSpeed: verticalSpeed ?? this.verticalSpeed,
+      squawk: squawk ?? this.squawk,
+      timestamp: timestamp ?? this.timestamp,
+      source: source ?? this.source,
+      hex: hex ?? this.hex,
+      type: type ?? this.type,
+      registration: registration ?? this.registration,
+      paintedAs: paintedAs ?? this.paintedAs,
+      operatingAs: operatingAs ?? this.operatingAs,
+      departureIata: departureIata ?? this.departureIata,
+      departureIcao: departureIcao ?? this.departureIcao,
+      arrivalIata: arrivalIata ?? this.arrivalIata,
+      arrivalIcao: arrivalIcao ?? this.arrivalIcao,
+      eta: eta ?? this.eta,
       aircraftDetails: aircraftDetails ?? this.aircraftDetails,
     );
   }
@@ -131,7 +156,7 @@ class FlightModel {
       verticalSpeed: _num(json['vspeed']).toInt(),
       squawk: _str(json['squawk']),
       timestamp:
-          _parseDate(json['timestamp']) ??
+      _parseDate(json['timestamp']) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
       source: _str(json['source']),
       hex: _str(json['hex']),
