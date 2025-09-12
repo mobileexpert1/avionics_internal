@@ -323,15 +323,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       );
                     },
                   ),
-                  //if (_isMapListViewShown)
-                  Positioned(
-                    top: 120,
-                    right: 30,
-                    child: MapToggleButtons(
-                      isMapViewSelected: isMapViewSelected,
-                      onToggle: handleToggle, // Passing the callback function
+                  if (_isMapListViewShown)
+                    Positioned(
+                      top: 120,
+                      right: 30,
+                      child: MapToggleButtons(
+                        isMapViewSelected: isMapViewSelected,
+                        onToggle: handleToggle, // Passing the callback function
+                      ),
                     ),
-                  ),
 
                   Positioned(
                     top: 40,
@@ -374,6 +374,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               });
                             });
                           }
+                        });
                       },
                       enableBackArrow: _isNeedToShowBackButton,
                       onBackButtonTap: () {
