@@ -301,11 +301,6 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                           zoom: 8,
                         ),
                         myLocationEnabled: true,
-                        compassEnabled: false,
-                        zoomControlsEnabled: true,
-                        zoomGesturesEnabled: true,
-                        scrollGesturesEnabled: true,
-                        tiltGesturesEnabled: true,
                         markers: _flightMarker != null ? {_flightMarker!} : {},
                         onMapCreated: (GoogleMapController controller) {
                           _mapController = controller;
