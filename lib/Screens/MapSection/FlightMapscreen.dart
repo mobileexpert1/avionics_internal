@@ -30,7 +30,7 @@ class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
 
   const FlightMapScreen({required this.onGoToFirstTab, Key? key})
-    : super(key: key);
+      : super(key: key);
 
   @override
   State<FlightMapScreen> createState() => _FlightMapscreenState();
@@ -50,7 +50,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   Marker? _singleSearchMarker;
 
   final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+  DraggableScrollableController();
 
   @override
   void initState() {
@@ -60,7 +60,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     //Listen to sheet drag
     _sheetController.addListener(() {
       if (!_hasFetchedDetails && _sheetController.size > 0.15) {
-        final flights = context.read<FlightMapCubit>().state.flights ?? [];
+        final flights = context
+            .read<FlightMapCubit>()
+            .state
+            .flights ?? [];
         if (flights.isNotEmpty) {
           _hasFetchedDetails = true;
           final typeList = flights.map((f) => f.type).toList();
@@ -171,14 +174,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             infoWindow: InfoWindow(
               title: flight.flightNumber ?? 'Unknown',
               snippet:
-                  "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ?? 'N/A'}",
+              "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ??
+                  'N/A'}",
             ),
             onTap: () {
               print(
                 "Flight: ${flight.flightNumber}\n"
-                "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
-                "Dir: ${flight.track}°\n"
-                "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
+                    "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
+                    "Dir: ${flight.track}°\n"
+                    "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
               );
               _isMapListViewShown = false;
               context.read<FlightMapCubit>().setSelectedFlight(flight);
@@ -240,7 +244,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       infoWindow: InfoWindow(
         title: flight.callSign ?? 'Unknown',
         snippet:
-            "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ?? 'N/A'}",
+        "${flight.departureIcao ?? 'N/A'} → ${flight.arrivalIcao ?? 'N/A'}",
       ),
       onTap: () {
         context.read<FlightMapCubit>().setSelectedFlight(flight);
@@ -252,10 +256,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => MapSearchAircraftListCubit(),
-          child: const TrackAndSearchFlight(),
-        ),
+        builder: (_) =>
+            BlocProvider(
+              create: (_) => MapSearchAircraftListCubit(),
+              child: const TrackAndSearchFlight(),
+            ),
       ),
     );
 
@@ -320,7 +325,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 position.longitude,
               );
               print(
-                'Current location: $currentLatLng, Flights: ${state.flights?.length ?? 0}',
+                'Current location: $currentLatLng, Flights: ${state.flights
+                    ?.length ?? 0}',
               );
 
               return Stack(
@@ -398,32 +404,32 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       controller: _searchController,
                       onFilterTap: () async {
                         final selectedMapTypes =
-                            await showModalBottomSheet<MapType>(
-                              context: context,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
+                        await showModalBottomSheet<MapType>(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          backgroundColor: Colors.transparent,
+                          builder: (context) {
+                            return FractionallySizedBox(
+                              heightFactor: 0.84,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(20),
                                 ),
+                                child: FilterForMapScreen(
+                                  initialMapType: context
+                                      .read<FlightMapCubit>()
+                                      .state
+                                      .mapType,
+                                ),
                               ),
-                              backgroundColor: Colors.transparent,
-                              builder: (context) {
-                                return FractionallySizedBox(
-                                  heightFactor: 0.84,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(20),
-                                    ),
-                                    child: FilterForMapScreen(
-                                      initialMapType: context
-                                          .read<FlightMapCubit>()
-                                          .state
-                                          .mapType,
-                                    ),
-                                  ),
-                                );
-                              },
                             );
+                          },
+                        );
                         if (selectedMapTypes != null) {
                           context.read<FlightMapCubit>().changeMapType(
                             selectedMapTypes,
@@ -496,79 +502,80 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               ),
                             ),
                             SliverList(
-                              delegate: SliverChildBuilderDelegate((
-                                context,
-                                index,
-                              ) {
+                              delegate: SliverChildBuilderDelegate((context,
+                                  index,) {
                                 final data = state.flights?[index];
                                 return Padding(
                                   key: ValueKey(index),
                                   padding: EdgeInsets.symmetric(
                                     vertical:
-                                        MediaQuery.of(context).size.width *
+                                    MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width *
                                         0.017,
                                   ),
                                   child: SimpleAircraftCard(
                                     imagePath:
-                                        (data?.aircraftDetails?.image == null ||
-                                            data?.aircraftDetails?.image == ""
+                                    (data?.aircraftDetails?.image == null ||
+                                        data?.aircraftDetails?.image == ""
                                         ? Image.asset(
-                                            CommonUi.setPngImage(
-                                              AssetsPath.aeroplaneComparison,
-                                            ),
-                                            width: 50,
-                                            height: 120,
-                                            fit: BoxFit.fill,
-                                          )
+                                      CommonUi.setPngImage(
+                                        AssetsPath.aeroplaneComparison,
+                                      ),
+                                      width: 50,
+                                      height: 120,
+                                      fit: BoxFit.fill,
+                                    )
                                         : CachedAnyImage(
-                                            imagePath:
-                                                data!.aircraftDetails!.image,
-                                            width: 50,
-                                            height: 120,
-                                            contentImage: BoxFit.fill,
-                                          )),
+                                      imagePath:
+                                      data!.aircraftDetails!.image,
+                                      width: 50,
+                                      height: 120,
+                                      contentImage: BoxFit.fill,
+                                    )),
 
                                     model:
-                                        "${data?.aircraftDetails?.aircraftModel ?? " "} ",
+                                    "${data?.aircraftDetails?.aircraftModel ??
+                                        " "} ",
                                     badge:
-                                        data?.aircraftDetails?.icaoTypeCode ??
+                                    data?.aircraftDetails?.icaoTypeCode ??
                                         data?.type ??
                                         "",
                                     manufacturer:
-                                        data
-                                            ?.aircraftDetails
-                                            ?.manufacturer
-                                            ?.companyName ??
+                                    data
+                                        ?.aircraftDetails
+                                        ?.manufacturer
+                                        ?.companyName ??
                                         "",
                                     airline: "",
                                     airlineImagePath:
-                                        (data
-                                                    ?.aircraftDetails
-                                                    ?.manufacturer
-                                                    ?.logo ==
-                                                null ||
-                                            data
-                                                    ?.aircraftDetails
-                                                    ?.manufacturer
-                                                    ?.logo ==
-                                                ""
+                                    (data
+                                        ?.aircraftDetails
+                                        ?.manufacturer
+                                        ?.logo ==
+                                        null ||
+                                        data
+                                            ?.aircraftDetails
+                                            ?.manufacturer
+                                            ?.logo ==
+                                            ""
                                         ? SizedBox.shrink()
                                         : CachedAnyImage(
-                                            imagePath:
-                                                data
-                                                    ?.aircraftDetails
-                                                    ?.manufacturer
-                                                    ?.logo ??
-                                                "",
-                                            width: 50,
-                                            height: 120,
-                                            contentImage: BoxFit.fill,
-                                          )),
+                                      imagePath:
+                                      data
+                                          ?.aircraftDetails
+                                          ?.manufacturer
+                                          ?.logo ??
+                                          "",
+                                      width: 50,
+                                      height: 120,
+                                      contentImage: BoxFit.fill,
+                                    )),
                                     callSign: data?.callSign ?? "",
                                     onTap: () {
                                       _buildSingleFlightMarker(data!).then((
-                                        marker,
-                                      ) {
+                                          marker,) {
                                         setState(() {
                                           _singleSearchMarker = marker;
                                         });
@@ -626,7 +633,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       right: 0,
                       bottom: _showFlightCard
                           ? 0
-                          : -MediaQuery.of(context).size.height * 0.4,
+                          : -MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.4,
                       child: BlocBuilder<FlightMapCubit, FlightMapState>(
                         builder: (context, state) {
                           return FlightCard(
@@ -646,47 +656,48 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       ),
       floatingActionButton: _showFlightCard == false
           ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 70),
-                  child: FloatingActionButton(
-                    onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      final token = prefs.getString('UserAccessTokenKey');
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 70),
+            child: FloatingActionButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('UserAccessTokenKey');
 
-                      if (token != null && token.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AskWilcoScreen(
-                              accessToken: token,
-                              isComeFromTab: false,
-                              sessionId: '',
-                              title: '',
-                            ),
+                if (token != null && token.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          AskWilcoScreen(
+                            accessToken: token,
+                            isComeFromTab: false,
+                            sessionId: '',
+                            title: '',
                           ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Access token not found"),
-                          ),
-                        );
-                      }
-                    },
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    child: SvgPicture.asset(
-                      CommonUi.setSvgImage(AssetsPath.Chatbot),
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
                     ),
-                  ),
-                ),
-              ],
-            )
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Access token not found"),
+                    ),
+                  );
+                }
+              },
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.Chatbot),
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
+      )
           : SizedBox.shrink(),
     );
   }
@@ -736,8 +747,10 @@ class FlightCard extends StatelessWidget {
         final callSign = detail?.callsign ?? selectedFlight?.callSign ?? 'N/A';
         final departureIata = detail?.departureIcao ?? 'N/A';
         final arrivalIata = detail?.arrivalIcao ?? 'N/A';
-        final flightId =
-            detail?.flightNumber ?? selectedFlight?.flightNumber ?? '';
+        final flightNumber =
+            selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
+
+        final flightId = selectedFlight?.id ?? detail?.id ?? '';
 
         String timeSinceTakeoff = 'N/A';
 
@@ -759,7 +772,10 @@ class FlightCard extends StatelessWidget {
         if (takeoffTime != null && eta != null) {
           final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
           final etaMillis = eta.millisecondsSinceEpoch;
-          final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
+          final nowMillis = DateTime
+              .now()
+              .toUtc()
+              .millisecondsSinceEpoch;
 
           final totalDuration = etaMillis - takeoffMillis;
           final elapsed = nowMillis - takeoffMillis;
@@ -827,16 +843,22 @@ class FlightCard extends StatelessWidget {
                           Row(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-
+                                borderRadius: BorderRadius.circular(6),
                                 child: (manufacturerLogo == ""
-                                    ? SizedBox.shrink()
+                                    ? Image.asset(
+                                  CommonUi.setPngImage(
+                                    AssetsPath.manufacturer,
+                                  ),
+                                  width: 22.0,
+                                  height: 16.0,
+                                  fit: BoxFit.fill,
+                                )
                                     : CachedAnyImage(
-                                        imagePath: manufacturerLogo,
-                                        width: 22.0,
-                                        height: 16.0,
-                                        contentImage: BoxFit.contain,
-                                      )),
+                                  imagePath: manufacturerLogo,
+                                  width: 22.0,
+                                  height: 16.0,
+                                  contentImage: BoxFit.contain,
+                                )),
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -872,27 +894,19 @@ class FlightCard extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => BlocProvider.value(
-                                        value: context.read<FlightMapCubit>(),
-                                        child: TrackFlightScreen(
-                                          flightId: flightId,
-                                          initialFlight: selectedFlight,
-                                          initialFlightDetail: detail,
-                                        ),
-                                      ),
+                                      builder: (_) =>
+                                          BlocProvider.value(
+                                            value: context.read<
+                                                FlightMapCubit>(),
+                                            child: TrackFlightScreen(
+                                              flightNumber: flightNumber,
+                                              initialFlight: selectedFlight,
+                                              initialFlightDetail: detail,
+                                              flightId: flightId,
+                                            ),
+                                          ),
                                     ),
                                   );
-                                  // if (state.isTracking) {
-                                  //   context
-                                  //       .read<FlightMapCubit>()
-                                  //       .stopTrackingFlight();
-                                  //   Navigator.pop(context);
-                                  // } else {
-                                  //   context
-                                  //       .read<FlightMapCubit>()
-                                  //       .startTrackingFlight(flightId, context);
-                                  //
-                                  // }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
@@ -914,19 +928,19 @@ class FlightCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                       child: (manufacturerLogo == ""
                           ? Image.asset(
-                              CommonUi.setPngImage(
-                                AssetsPath.aeroplaneComparison,
-                              ),
-                              width: 100,
-                              height: 50,
-                              fit: BoxFit.fill,
-                            )
+                        CommonUi.setPngImage(
+                          AssetsPath.aeroplaneComparison,
+                        ),
+                        width: 100,
+                        height: 50,
+                        fit: BoxFit.fill,
+                      )
                           : CachedAnyImage(
-                              imagePath: image,
-                              width: 100,
-                              height: 50,
-                              contentImage: BoxFit.fill,
-                            )),
+                        imagePath: image,
+                        width: 100,
+                        height: 50,
+                        contentImage: BoxFit.fill,
+                      )),
                     ),
                   ],
                 ),

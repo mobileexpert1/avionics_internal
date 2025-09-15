@@ -38,7 +38,6 @@ class FlightRepository {
   Future<FlightResponse> getParticularFlightDetails({
     required String flightId,
   }) async {
-    // This is for whole world bounds...
     String url =
         "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=90,-90,-180,180&flights=$flightId";
 
@@ -172,10 +171,10 @@ class FlightRepository {
 
   Future<Map<String, dynamic>> getFlightPositions({
     required String bounds,
-    required String flightId,
+    required String flightNumber,
   }) async {
     String url =
-        "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=$bounds&flights=$flightId";
+        "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=$bounds&flights=$flightNumber";
 
     final uri = Uri.parse(url);
     print('Fetching flight positions with URL: $uri');

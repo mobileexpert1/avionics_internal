@@ -113,7 +113,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-
   void updateMarkers(Set<Marker> markers) {
     emit(state.copyWith(markers: markers));
   }
@@ -166,11 +165,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   String formatUtc(DateTime dateTime) {
     // Format as UTC without milliseconds, with 'Z'
-    return "${dateTime
+    return dateTime
         .toUtc()
         .toIso8601String()
         .split('.')
-        .first}Z";
+        .first + "Z";
   }
 
   Future<void> fetchFlightDetails({
@@ -222,7 +221,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       _fetchAndUpdateFlight(flightId, context);
     });
   }
-  
+
   Future<void> _fetchAndUpdateFlight(String flightId,
       BuildContext context) async {
     if (isClosed) return;
@@ -234,20 +233,16 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final response = await FlightRepository().getFlightPositions(
         bounds: bounds,
-        flightId: flightId,
+        flightNumber: flightNumber,
       );
 
       final flights = response['flights'] as List<FlightModel>;
-      final updatedFlight = flights.firstWhere(
-            (flight) => flight.id == flightId,
-        orElse: () => state.selectedFlight!,
-      );
-
       if (flights.isNotEmpty && !isClosed) {
         final updatedFlight = flights.first;
         emit(
           state.copyWith(
             selectedFlight: updatedFlight,
+            // animationDuration: animationDuration,
             status: CommonApiStatus.success,
             isLoading: false,
             flights: state.flights,
@@ -294,6 +289,4 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   void clearSelectedFlight() {
     emit(state.copyWith(selectedFlight: null));
   }
-
-
 }
