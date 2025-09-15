@@ -102,6 +102,7 @@ abstract class AssetsPath {
   static const String AirbusPageImage = "AirbusPageImage";
   static const String manufacturerLogo = "manufacturerLogo";
   static const String aeroplaneComparison = "aeroplaneComparison";
+  static const String manuLogo = "manuLogo";
   static const String boeinglogo = "boeinglogo";
   static const String DhcLogo = "DhcLogo";
   static const String airbusplane = "airbusplane";

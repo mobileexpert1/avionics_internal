@@ -715,8 +715,10 @@ class FlightCard extends StatelessWidget {
         final callSign = detail?.callsign ?? selectedFlight?.callSign ?? 'N/A';
         final departureIata = detail?.departureIcao ?? 'N/A';
         final arrivalIata = detail?.arrivalIcao ?? 'N/A';
-        final flightId =
+        final flightNumber =
             selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
+
+        final flightId = selectedFlight?.id ?? detail?.id ?? '';
 
         String timeSinceTakeoff = 'N/A';
 
@@ -806,10 +808,16 @@ class FlightCard extends StatelessWidget {
                           Row(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-
+                                borderRadius: BorderRadius.circular(6),
                                 child: (manufacturerLogo == ""
-                                    ? SizedBox.shrink()
+                                    ? Image.asset(
+                                        CommonUi.setPngImage(
+                                          AssetsPath.manufacturer,
+                                        ),
+                                        width: 22.0,
+                                        height: 16.0,
+                                        fit: BoxFit.fill,
+                                      )
                                     : CachedAnyImage(
                                         imagePath: manufacturerLogo,
                                         width: 22.0,
@@ -852,20 +860,24 @@ class FlightCard extends StatelessWidget {
                                     context
                                         .read<FlightMapCubit>()
                                         .stopTrackingFlight();
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, flightId);
                                   } else {
                                     context
                                         .read<FlightMapCubit>()
-                                        .startTrackingFlight(flightId, context);
+                                        .startTrackingFlight(
+                                          flightNumber,
+                                          context,
+                                        );
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => BlocProvider.value(
                                           value: context.read<FlightMapCubit>(),
                                           child: TrackFlightScreen(
-                                            flightId: flightId,
+                                            flightNumber: flightNumber,
                                             initialFlight: selectedFlight,
                                             initialFlightDetail: detail,
+                                            flightId: flightId,
                                           ),
                                         ),
                                       ),

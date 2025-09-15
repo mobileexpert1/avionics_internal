@@ -113,13 +113,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-
   void updateMarkers(Set<Marker> markers) {
     emit(state.copyWith(markers: markers));
   }
 
   Future<void> fetchAircraftDetailsFromFlightsList(
-      List<String> uniqueTypes,) async {
+    List<String> uniqueTypes,
+  ) async {
     final flightsDetails = await AircraftListDataRepository()
         .getListOfAllPlanes(aircraftIds: uniqueTypes);
 
@@ -139,26 +139,26 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
 
       print(
-        'Fetched ${flightsDetails
-            .detail} flights from AircraftListDataRepository',
+        'Fetched ${flightsDetails.detail} flights from AircraftListDataRepository',
       );
     }
   }
 
-  Future<List<FlightModel>> mergeFlightsWithDetails(List<FlightModel> flights,
-      List<AircraftModel> aircraftDetails,) async {
+  Future<List<FlightModel>> mergeFlightsWithDetails(
+    List<FlightModel> flights,
+    List<AircraftModel> aircraftDetails,
+  ) async {
     return flights.map((flight) {
       final matchingDetail = aircraftDetails.firstWhere(
-            (detail) =>
-        detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
-        orElse: () =>
-            AircraftModel(
-              id: '',
-              aircraftModel: '',
-              isFavorite: false,
-              icaoTypeCode: '',
-              image: '',
-            ),
+        (detail) =>
+            detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+        orElse: () => AircraftModel(
+          id: '',
+          aircraftModel: '',
+          isFavorite: false,
+          icaoTypeCode: '',
+          image: '',
+        ),
       );
       return flight.copyWith(aircraftDetails: matchingDetail);
     }).toList();
@@ -166,11 +166,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   String formatUtc(DateTime dateTime) {
     // Format as UTC without milliseconds, with 'Z'
-    return dateTime
-        .toUtc()
-        .toIso8601String()
-        .split('.')
-        .first + "Z";
+    return dateTime.toUtc().toIso8601String().split('.').first + "Z";
   }
 
   Future<void> fetchFlightDetails({
@@ -211,9 +207,14 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
     }
   }
-  
-  Future<void> _fetchAndUpdateFlight(String flightId,
-      BuildContext context) async {
+
+  Future<void> _fetchAndUpdateFlight(
+    String flightNumber,
+    BuildContext context,
+  // {
+    // int animationDuration = 50,
+  // }
+  ) async {
     if (isClosed) return;
     try {
       final position = state.position;
@@ -223,20 +224,16 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final response = await FlightRepository().getFlightPositions(
         bounds: bounds,
-        flightId: flightId,
+        flightNumber: flightNumber,
       );
 
       final flights = response['flights'] as List<FlightModel>;
-      final updatedFlight = flights.firstWhere(
-            (flight) => flight.id == flightId,
-        orElse: () => state.selectedFlight!,
-      );
-
       if (flights.isNotEmpty && !isClosed) {
         final updatedFlight = flights.first;
         emit(
           state.copyWith(
             selectedFlight: updatedFlight,
+            // animationDuration: animationDuration,
             status: CommonApiStatus.success,
             isLoading: false,
             flights: state.flights,
@@ -255,16 +252,67 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  void startTrackingFlight(String flightId, BuildContext context) {
+  void startTrackingFlight(String flightNumber, BuildContext context) {
     stopTrackingFlight();
     if (!isClosed) {
       emit(state.copyWith(isTracking: true));
     }
-    _fetchAndUpdateFlight(flightId, context);
+    _fetchAndUpdateFlight(flightNumber, context);
     _trackingTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
-      _fetchAndUpdateFlight(flightId, context);
+      _fetchAndUpdateFlight(flightNumber, context);
     });
   }
+
+  // void startTrackingFlight(String flightNumber, BuildContext context) {
+  //   stopTrackingFlight(); // cancel old timer if any
+  //   if (!isClosed) {
+  //     emit(state.copyWith(isTracking: true));
+  //   }
+  //
+  //   // Step 1: First call after 5 sec
+  //   // Step 1: 10 sec → 8s
+  //   Timer(const Duration(seconds: 10), () {
+  //     if (isClosed) return;
+  //     _fetchAndUpdateFlight(flightNumber, context, animationDuration: 8);
+  //
+  //     // Step 2: 10 sec → 8s
+  //     Timer(const Duration(seconds: 10), () {
+  //       if (isClosed) return;
+  //       _fetchAndUpdateFlight(flightNumber, context, animationDuration: 8);
+  //
+  //       // Step 3: 10 sec → 8s
+  //       Timer(const Duration(seconds: 10), () {
+  //         if (isClosed) return;
+  //         _fetchAndUpdateFlight(flightNumber, context, animationDuration: 8);
+  //
+  //         // Step 4: 20 sec → 16s
+  //         Timer(const Duration(seconds: 20), () {
+  //           if (isClosed) return;
+  //           _fetchAndUpdateFlight(flightNumber, context, animationDuration: 16);
+  //
+  //           // Step 5: 20 sec → 16s
+  //           Timer(const Duration(seconds: 20), () {
+  //             if (isClosed) return;
+  //             _fetchAndUpdateFlight(flightNumber, context, animationDuration: 16);
+  //
+  //             // Step 6: 35 sec → 30s
+  //             Timer(const Duration(seconds: 35), () {
+  //               if (isClosed) return;
+  //               _fetchAndUpdateFlight(flightNumber, context, animationDuration: 30);
+  //
+  //               // Step 7: periodic 60 sec → 50s
+  //               _trackingTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
+  //                 if (isClosed) return;
+  //                 _fetchAndUpdateFlight(flightNumber, context, animationDuration: 50);
+  //               });
+  //             });
+  //           });
+  //         });
+  //       });
+  //     });
+  //   });
+  //
+  // }
 
   // Stop tracking a flight
   void stopTrackingFlight() {
@@ -294,6 +342,4 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   void clearSelectedFlight() {
     emit(state.copyWith(selectedFlight: null));
   }
-
-
 }
