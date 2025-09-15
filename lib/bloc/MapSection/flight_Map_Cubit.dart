@@ -222,7 +222,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     });
   }
 
-  Future<void> _fetchAndUpdateFlight(String flightId,
+  Future<void> _fetchAndUpdateFlight(String flightNumber,
       BuildContext context) async {
     if (isClosed) return;
     try {
