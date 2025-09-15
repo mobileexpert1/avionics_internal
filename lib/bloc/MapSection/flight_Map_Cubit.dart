@@ -166,11 +166,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   String formatUtc(DateTime dateTime) {
     // Format as UTC without milliseconds, with 'Z'
-    return dateTime
+    return "${dateTime
         .toUtc()
         .toIso8601String()
         .split('.')
-        .first + "Z";
+        .first}Z";
   }
 
   Future<void> fetchFlightDetails({
@@ -210,6 +210,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         ),
       );
     }
+  }
+
+  void startTrackingFlight(String flightId, BuildContext context) {
+    stopTrackingFlight();
+    if (!isClosed) {
+      emit(state.copyWith(isTracking: true));
+    }
+    _fetchAndUpdateFlight(flightId, context);
+    _trackingTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
+      _fetchAndUpdateFlight(flightId, context);
+    });
   }
   
   Future<void> _fetchAndUpdateFlight(String flightId,
@@ -253,17 +264,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         ),
       );
     }
-  }
-
-  void startTrackingFlight(String flightId, BuildContext context) {
-    stopTrackingFlight();
-    if (!isClosed) {
-      emit(state.copyWith(isTracking: true));
-    }
-    _fetchAndUpdateFlight(flightId, context);
-    _trackingTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
-      _fetchAndUpdateFlight(flightId, context);
-    });
   }
 
   // Stop tracking a flight

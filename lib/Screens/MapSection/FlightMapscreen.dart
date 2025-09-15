@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,6 +130,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               _isForFlyingInTheArea = 2;
             });
             Navigator.pop(context);
+            _handleTextTap(context);
           },
         );
       },
@@ -245,6 +248,51 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
+  Future<void> _handleTextTap(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => MapSearchAircraftListCubit(),
+          child: const TrackAndSearchFlight(),
+        ),
+      ),
+    );
+
+    if (result != null && result is FlightResult) {
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(
+            result.flightDetailResponse?.latitude ?? 0.0,
+            result.flightDetailResponse?.longitude ?? 0.0,
+          ),
+          8, // Zoom level
+        ),
+      );
+
+      setState(() {
+        _isMapListViewShown = false;
+      });
+
+      _toggleFlightCard(flight: result.id);
+
+      _buildSingleFlightMarker(result.flightDetailResponse!).then((marker) {
+        setState(() {
+          _singleSearchMarker = marker;
+        });
+      });
+
+      Timer(const Duration(seconds: 3), () {
+        if (!mounted) return;
+        setState(() {
+          context.read<FlightMapCubit>().setSelectedFlight(
+            result.flightDetailResponse!,
+          );
+        }); // forces a single rebuild
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -339,43 +387,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     right: 5,
                     child: SearchBarWidget(
                       enableGestureMode: true,
-                      onTextTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => MapSearchAircraftListCubit(),
-                              child: const TrackAndSearchFlight(),
-                            ),
-                          ),
-                        ).then((result) {
-                          if (result != null && result is FlightResult) {
-                            _mapController?.animateCamera(
-                              CameraUpdate.newLatLngZoom(
-                                LatLng(
-                                  result.flightDetailResponse?.latitude ?? 0.0,
-                                  result.flightDetailResponse?.longitude ?? 0.0,
-                                ),
-                                8, // Zoom level
-                              ),
-                            );
-
-                            setState(() {
-                              _isMapListViewShown = false;
-                            });
-
-                            _toggleFlightCard(flight: result.id);
-
-                            _buildSingleFlightMarker(
-                              result.flightDetailResponse!,
-                            ).then((marker) {
-                              setState(() {
-                                _singleSearchMarker = marker;
-                              });
-                            });
-                          }
-                        });
-                      },
+                      onTextTap: () => _handleTextTap(context),
                       enableBackArrow: _isNeedToShowBackButton,
                       onBackButtonTap: () {
                         _showTrackingModePopup(context);
@@ -587,6 +599,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                         ),
                                         curve: Curves.easeInOut,
                                       );
+
+                                      Timer(const Duration(seconds: 3), () {
+                                        if (!mounted) return;
+                                        setState(() {
+                                          context
+                                              .read<FlightMapCubit>()
+                                              .setSelectedFlight(data);
+                                        }); // forces a single rebuild
+                                      });
                                     },
                                   ),
                                 );
@@ -702,9 +723,9 @@ class FlightCard extends StatelessWidget {
         }
 
         final groundSpeed =
-            selectedFlight?.groundSpeed ?? detail?.groundSpeed ?? 0;
-        final altitude = selectedFlight?.altitude ?? detail?.altitude ?? 0;
-        final eta = selectedFlight?.eta;
+            detail?.groundSpeed ?? selectedFlight?.groundSpeed ?? 0;
+        final altitude = detail?.altitude ?? selectedFlight?.altitude ?? 0;
+        final eta = detail?.eta ?? selectedFlight?.eta;
         final takeoffTime = detail?.takeoffTime;
 
         final aircraftType = detail?.aircraftModel ?? 'N/A';
@@ -716,7 +737,7 @@ class FlightCard extends StatelessWidget {
         final departureIata = detail?.departureIcao ?? 'N/A';
         final arrivalIata = detail?.arrivalIcao ?? 'N/A';
         final flightId =
-            selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
+            detail?.flightNumber ?? selectedFlight?.flightNumber ?? '';
 
         String timeSinceTakeoff = 'N/A';
 
@@ -848,29 +869,30 @@ class FlightCard extends StatelessWidget {
                               const SizedBox(width: 20),
                               GestureDetector(
                                 onTap: () {
-                                  if (state.isTracking) {
-                                    context
-                                        .read<FlightMapCubit>()
-                                        .stopTrackingFlight();
-                                    Navigator.pop(context);
-                                  } else {
-                                    context
-                                        .read<FlightMapCubit>()
-                                        .startTrackingFlight(flightId, context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => BlocProvider.value(
-                                          value: context.read<FlightMapCubit>(),
-                                          child: TrackFlightScreen(
-                                            flightId: flightId,
-                                            initialFlight: selectedFlight,
-                                            initialFlightDetail: detail,
-                                          ),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                        value: context.read<FlightMapCubit>(),
+                                        child: TrackFlightScreen(
+                                          flightId: flightId,
+                                          initialFlight: selectedFlight,
+                                          initialFlightDetail: detail,
                                         ),
                                       ),
-                                    );
-                                  }
+                                    ),
+                                  );
+                                  // if (state.isTracking) {
+                                  //   context
+                                  //       .read<FlightMapCubit>()
+                                  //       .stopTrackingFlight();
+                                  //   Navigator.pop(context);
+                                  // } else {
+                                  //   context
+                                  //       .read<FlightMapCubit>()
+                                  //       .startTrackingFlight(flightId, context);
+                                  //
+                                  // }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),

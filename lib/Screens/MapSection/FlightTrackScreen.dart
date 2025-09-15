@@ -39,10 +39,15 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
   void initState() {
     super.initState();
     if (widget.initialFlight != null) {
-      _currentFlightPosition =
-          LatLng(widget.initialFlight!.latitude, widget.initialFlight!.longitude);
+      _currentFlightPosition = LatLng(
+        widget.initialFlight!.latitude,
+        widget.initialFlight!.longitude,
+      );
     }
-    context.read<FlightMapCubit>().startTrackingFlight(widget.flightId, context);
+    context.read<FlightMapCubit>().startTrackingFlight(
+      widget.flightId,
+      context,
+    );
     _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
       if (!mounted) return;
       context.read<FlightMapCubit>().fetchFlightDetails(
@@ -59,12 +64,11 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     _animationController?.dispose();
     super.dispose();
   }
+
   Future<BitmapDescriptor> _getFlightMarkerIcon(double track) async {
-    return await getRotatedPlaneIcon(
-      track,
-      color: Colors.red,
-    );
+    return await getRotatedPlaneIcon(track, color: Colors.red);
   }
+
   // void _animateFlight(LatLng from, LatLng to, double track) async {
   //   _animationController?.dispose();
   //   _animationController = AnimationController(
@@ -94,88 +98,66 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
   // }
 
   void _animateFlight(LatLng from, LatLng to, double track) async {
-
-    // Dispose previous controller safely
-
     _animationController?.stop();
-
+    _animationController?.removeListener(() {});
+    _animationController?.removeStatusListener((_) {});
     _animationController?.dispose();
+    _animationController = null;
+    _positionAnimation = null;
+    _flightMarker = null;
 
     _animationController = AnimationController(
-
       vsync: this,
-
-      duration: const Duration(seconds: 50), // Match API interval
-
+      duration: const Duration(seconds: 120),
     );
 
-    final tween = LatLngTween(begin: from, end: to)
-
-        .chain(CurveTween(curve: Curves.linear));
+    final tween = LatLngTween(
+      begin: from,
+      end: to,
+    ).chain(CurveTween(curve: Curves.linear));
 
     _positionAnimation = tween.animate(_animationController!);
 
-    // Generate rotated plane icon once per update
-
     final icon = await _getFlightMarkerIcon(track);
 
+    var movingMarker = Marker(
+      markerId: MarkerId(widget.flightId),
+      position: from,
+      icon: icon,
+      infoWindow: InfoWindow(
+        title: widget.initialFlight?.callSign ?? 'Flight',
+        snippet:
+            '${widget.initialFlightDetail?.departureIcao ?? 'N/A'} → ${widget.initialFlightDetail?.arrivalIcao ?? 'N/A'}',
+      ),
+    );
+
+    setState(() {
+      _flightMarker = movingMarker;
+    });
+
     _positionAnimation!.addListener(() {
-
       if (!mounted) return;
-
       final pos = _positionAnimation!.value;
 
-      setState(() {
-
-        _flightMarker = Marker(
-
-          markerId: MarkerId(widget.flightId),
-
-          position: pos,
-
-          icon: icon,
-
-          infoWindow: InfoWindow(
-
-            title: widget.initialFlight?.callSign ?? 'Flight',
-
-            snippet:
-
-            '${widget.initialFlightDetail?.departureIcao ?? 'N/A'} → ${widget.initialFlightDetail?.arrivalIcao ?? 'N/A'}',
-
-          ),
-
-        );
-
-      });
-
-      // Keep camera centered smoothly
-
-      _mapController?.animateCamera(
-
-        CameraUpdate.newLatLng(pos),
-
+      print(
+        "pos=-=----==$pos,Shown on the Map New long=-=----==${_currentFlightPosition?.longitude}, lat=-=----==${_currentFlightPosition?.latitude}",
       );
+      movingMarker = movingMarker.copyWith(positionParam: pos);
 
+      setState(() {
+        _flightMarker = movingMarker;
+      });
+    });
+
+    _animationController!.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _currentFlightPosition = to;
+        _mapController?.animateCamera(CameraUpdate.newLatLng(to));
+      }
     });
 
     _animationController!.forward();
-
-    // After animation completes, set new "current" position
-
-    _animationController!.addStatusListener((status) {
-
-      if (status == AnimationStatus.completed) {
-
-        _currentFlightPosition = to;
-
-      }
-
-    });
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +176,9 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
             );
 
             if (_currentFlightPosition != null) {
+              print(
+                "Api Fetch New Lat long=-=----==${_currentFlightPosition?.longitude}, New Lat lat=-=----==${_currentFlightPosition?.latitude}",
+              );
               _animateFlight(
                 _currentFlightPosition!,
                 newPos,
@@ -212,13 +197,11 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                   infoWindow: InfoWindow(
                     title: state.selectedFlight!.callSign ?? 'Unknown',
                     snippet:
-                    '${state.selectedFlightDetail?.departureIcao ?? 'N/A'} → ${state.selectedFlightDetail?.arrivalIcao ?? 'N/A'}',
+                        '${state.selectedFlightDetail?.departureIcao ?? 'N/A'} → ${state.selectedFlightDetail?.arrivalIcao ?? 'N/A'}',
                   ),
                 );
               });
-              _mapController?.animateCamera(
-                CameraUpdate.newLatLng(newPos),
-              );
+              _mapController?.animateCamera(CameraUpdate.newLatLng(newPos));
             }
 
             _currentFlightPosition = newPos;
@@ -227,7 +210,8 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         child: BlocBuilder<FlightMapCubit, FlightMapState>(
           builder: (context, state) {
             final flight = state.selectedFlight ?? widget.initialFlight;
-            final detail = state.selectedFlightDetail ?? widget.initialFlightDetail;
+            final detail =
+                state.selectedFlightDetail ?? widget.initialFlightDetail;
 
             if (flight == null && detail == null) {
               return const Center(child: Text('No flight data available'));
@@ -248,20 +232,22 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                         return const Center(child: CircularProgressIndicator());
                       }
                       _flightMarker ??= Marker(
-                        markerId:
-                        MarkerId(flight?.id.toString() ?? widget.flightId),
+                        markerId: MarkerId(
+                          flight?.id.toString() ?? widget.flightId,
+                        ),
                         position: flightLatLng,
                         icon: snapshot.data!,
                         infoWindow: InfoWindow(
-                          title: flight?.callSign ??
-                              detail?.callsign ??
-                              'Unknown',
+                          title:
+                              flight?.callSign ?? detail?.callsign ?? 'Unknown',
                           snippet:
-                          '${detail?.departureIcao ?? 'N/A'} → ${detail?.arrivalIcao ?? 'N/A'}',
+                              '${detail?.departureIcao ?? 'N/A'} → ${detail?.arrivalIcao ?? 'N/A'}',
                         ),
                       );
                       return GoogleMap(
+                        rotateGesturesEnabled: false,
                         mapType: state.mapType,
+                        zoomGesturesEnabled: true,
                         initialCameraPosition: CameraPosition(
                           target: flightLatLng,
                           zoom: 8,
@@ -307,7 +293,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
 
 class LatLngTween extends Tween<LatLng> {
   LatLngTween({required LatLng begin, required LatLng end})
-      : super(begin: begin, end: end);
+    : super(begin: begin, end: end);
 
   @override
   LatLng lerp(double t) {
