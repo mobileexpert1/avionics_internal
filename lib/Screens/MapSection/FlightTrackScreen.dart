@@ -55,6 +55,13 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 
+  // @override
+  // void dispose() {
+  //   _mapController?.dispose();
+  //   _animationController?.dispose();
+  //   super.dispose();
+  // }
+
   @override
   void dispose() {
     _mapController?.dispose();
