@@ -9,6 +9,7 @@ class CachedAnyImage extends StatelessWidget {
   final double width;
   final double height;
   final BoxFit contentImage;
+  final bool useCache;
 
   const CachedAnyImage({
     super.key,
@@ -16,6 +17,7 @@ class CachedAnyImage extends StatelessWidget {
     required this.width,
     required this.height,
     required this.contentImage,
+    this.useCache = true,
   });
 
   bool get _isNetwork => imagePath.startsWith("http");
@@ -31,47 +33,51 @@ class CachedAnyImage extends StatelessWidget {
     if (_isNetwork) {
       if (_isSvg) {
         return FutureBuilder<File>(
-          future: CustomCacheManager.instance.getSingleFile(imagePath),
+          future: useCache
+              ? CustomCacheManager.instance.getSingleFile(imagePath)
+              : null,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            if (useCache &&
+                snapshot.connectionState == ConnectionState.waiting) {
               return _loader();
             }
             if (snapshot.hasError) {
               return _errorIcon();
             }
-            if (!snapshot.hasData) {
-              return _errorIcon();
-            }
 
-            return _fixedBox(
-              SvgPicture.file(
-                snapshot.data!,
-                fit: contentImage,
-              ),
-            );
+            if (!useCache || snapshot.hasData) {
+              final file = useCache ? snapshot.data! : null;
+              return _fixedBox(
+                useCache
+                    ? SvgPicture.file(file!, fit: contentImage)
+                    : SvgPicture.network(imagePath, fit: contentImage),
+              );
+            }
+            return _errorIcon();
           },
         );
       } else {
         return _fixedBox(
-          CachedNetworkImage(
-            cacheManager: CustomCacheManager.instance,
-            imageUrl: imagePath,
-            fit: contentImage,
-            placeholder: (context, url) => _loader(),
-            errorWidget: (context, url, error) => _errorIcon(),
-          ),
+          useCache
+              ? CachedNetworkImage(
+                  cacheManager: CustomCacheManager.instance,
+                  imageUrl: imagePath,
+                  fit: contentImage,
+                  placeholder: (context, url) => _loader(),
+                  errorWidget: (context, url, error) => _errorIcon(),
+                )
+              : Image.network(
+                  imagePath,
+                  fit: contentImage,
+                  errorBuilder: (c, e, s) => _errorIcon(),
+                ),
         );
       }
     }
 
     // --- Local Assets (SVG + PNG/JPG) ---
     if (_isSvg) {
-      return _fixedBox(
-        SvgPicture.asset(
-          imagePath,
-          fit: contentImage,
-        ),
-      );
+      return _fixedBox(SvgPicture.asset(imagePath, fit: contentImage));
     } else {
       return _fixedBox(
         Image.asset(
@@ -95,9 +101,7 @@ class CachedAnyImage extends StatelessWidget {
   Widget _loader() => SizedBox(
     width: width,
     height: height,
-    child: const Center(
-      child: CircularProgressIndicator(strokeWidth: 1.5),
-    ),
+    child: const Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
   );
 
   Widget _errorIcon() => SizedBox(
