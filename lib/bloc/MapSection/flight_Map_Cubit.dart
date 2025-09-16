@@ -21,13 +21,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
   static const int positionRetryDelay = 5;
   static const Duration pollInterval = Duration(seconds: 60);
-
-
-
   void changeMapType(MapType type) {
-    print(state.mapType);
     emit(state.copyWith(mapType: type));
-    print(state.mapType);
   }
 
   Future<void> getCurrentLocation(BuildContext context) async {

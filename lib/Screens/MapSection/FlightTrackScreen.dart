@@ -22,8 +22,8 @@ class TrackFlightScreen extends StatefulWidget {
     this.initialFlight,
     this.initialFlightDetail,
     this.flightId,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<TrackFlightScreen> createState() => _TrackFlightScreenState();
@@ -82,7 +82,6 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
   }
 
   void _animateFlight(LatLng from, LatLng to) async {
-    // If already animating, queue the next target
     if (_animationController != null && _animationController!.isAnimating) {
       _pendingTarget = to;
       debugPrint("Queued new target: $to");

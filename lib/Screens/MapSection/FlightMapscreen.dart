@@ -171,8 +171,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             icon: icon,
             infoWindow: InfoWindow(
               title: flight.flightNumber,
-              snippet:
-                  "${flight.departureIcao } → ${flight.arrivalIcao}",
+              snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
             ),
             onTap: () {
               print(
@@ -240,8 +239,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       icon: icon,
       infoWindow: InfoWindow(
         title: flight.callSign,
-        snippet:
-            "${flight.departureIcao} → ${flight.arrivalIcao}",
+        snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
       ),
       onTap: () {
         context.read<FlightMapCubit>().setSelectedFlight(flight);
@@ -336,6 +334,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ),
                     builder: (context, snapshot) {
                       return GoogleMap(
+                        myLocationButtonEnabled: false,
                         rotateGesturesEnabled: false,
                         mapType: state.mapType,
                         initialCameraPosition: CameraPosition(
@@ -374,7 +373,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   ),
                   if (_isMapListViewShown)
                     Positioned(
-                      top: 120,
+                      top: 130,
                       right: 30,
                       child: MapToggleButtons(
                         isMapViewSelected: isMapViewSelected,
@@ -397,36 +396,44 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       isComeFromMapSection: true,
                       controller: _searchController,
                       onFilterTap: () async {
-                        final selectedMapTypes = await showModalBottomSheet<MapType>(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          builder: (context) {
-                            return BlocProvider(
-                              create: (_) => FilterMapMainCubit()
-                                ..setInitialMapType(
-                                  context.read<FlightMapCubit>().state.mapType,
-                                ),
-                              child: FractionallySizedBox(
-                                heightFactor: 0.84,
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                  child: FilterForMapScreen(initialMapType:state.mapType),
+                        final selectedMapTypes =
+                            await showModalBottomSheet<MapType>(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
                                 ),
                               ),
+                              backgroundColor: Colors.transparent,
+                              builder: (context) {
+                                return BlocProvider(
+                                  create: (_) =>
+                                      FilterMapMainCubit()..setInitialMapType(
+                                        context
+                                            .read<FlightMapCubit>()
+                                            .state
+                                            .mapType,
+                                      ),
+                                  child: FractionallySizedBox(
+                                    heightFactor: 0.84,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(20),
+                                      ),
+                                      child: FilterForMapScreen(
+                                        initialMapType: state.mapType,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             );
-                          },
-                        );
 
                         if (selectedMapTypes != null) {
-                          context.read<FlightMapCubit>().changeMapType(selectedMapTypes);
+                          context.read<FlightMapCubit>().changeMapType(
+                            selectedMapTypes,
+                          );
                         }
 
                         _hideFlightCard();
@@ -577,10 +584,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                                       _mapController?.animateCamera(
                                         CameraUpdate.newLatLngZoom(
-                                          LatLng(
-                                            data.latitude,
-                                            data.longitude,
-                                          ),
+                                          LatLng(data.latitude, data.longitude),
                                           8, // Zoom level
                                         ),
                                       );
@@ -632,7 +636,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         builder: (context, state) {
                           return FlightCard(
                             flightDetail: state.selectedFlightDetail,
-                              isComeFromLiveTracking:false
+                            isComeFromLiveTracking: false,
                             // fromDateTime: state.fromDateTime,
                             // toDateTime: state.toDateTime,
                           );
@@ -650,41 +654,36 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           ? Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 70),
-                  child: FloatingActionButton(
-                    onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      final token = prefs.getString('UserAccessTokenKey');
+                FloatingActionButton(
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    final token = prefs.getString('UserAccessTokenKey');
 
-                      if (token != null && token.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AskWilcoScreen(
-                              accessToken: token,
-                              isComeFromTab: false,
-                              sessionId: '',
-                              title: '',
-                            ),
+                    if (token != null && token.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AskWilcoScreen(
+                            accessToken: token,
+                            isComeFromTab: false,
+                            sessionId: '',
+                            title: '',
                           ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Access token not found"),
-                          ),
-                        );
-                      }
-                    },
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    child: SvgPicture.asset(
-                      CommonUi.setSvgImage(AssetsPath.Chatbot),
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Access token not found")),
+                      );
+                    }
+                  },
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  child: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.Chatbot),
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ],
@@ -882,7 +881,9 @@ class FlightCard extends StatelessWidget {
                               GestureDetector(
                                 onTap: () {
                                   if (isComeFromLiveTracking == true) {
-                                    context.read<FlightMapCubit>().stopTrackingFlight();
+                                    context
+                                        .read<FlightMapCubit>()
+                                        .stopTrackingFlight();
                                     Navigator.pop(context, flightId);
                                   } else {
                                     Navigator.push(
