@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
+import 'Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxResultScreen.dart';
+import 'Screens/Games/GamesSubScreens/BlackBoxSection/BlackboxScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -115,7 +117,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: BlackBoxResultScreen(),
           );
         },
       ),

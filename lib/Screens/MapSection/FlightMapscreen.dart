@@ -171,8 +171,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             icon: icon,
             infoWindow: InfoWindow(
               title: flight.flightNumber,
-              snippet:
-                  "${flight.departureIcao } → ${flight.arrivalIcao}",
+              snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
             ),
             onTap: () {
               print(
@@ -240,8 +239,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       icon: icon,
       infoWindow: InfoWindow(
         title: flight.callSign,
-        snippet:
-            "${flight.departureIcao} → ${flight.arrivalIcao}",
+        snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
       ),
       onTap: () {
         context.read<FlightMapCubit>().setSelectedFlight(flight);
@@ -397,36 +395,44 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       isComeFromMapSection: true,
                       controller: _searchController,
                       onFilterTap: () async {
-                        final selectedMapTypes = await showModalBottomSheet<MapType>(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          builder: (context) {
-                            return BlocProvider(
-                              create: (_) => FilterMapMainCubit()
-                                ..setInitialMapType(
-                                  context.read<FlightMapCubit>().state.mapType,
-                                ),
-                              child: FractionallySizedBox(
-                                heightFactor: 0.84,
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                  child: FilterForMapScreen(initialMapType:state.mapType),
+                        final selectedMapTypes =
+                            await showModalBottomSheet<MapType>(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
                                 ),
                               ),
+                              backgroundColor: Colors.transparent,
+                              builder: (context) {
+                                return BlocProvider(
+                                  create: (_) =>
+                                      FilterMapMainCubit()..setInitialMapType(
+                                        context
+                                            .read<FlightMapCubit>()
+                                            .state
+                                            .mapType,
+                                      ),
+                                  child: FractionallySizedBox(
+                                    heightFactor: 0.84,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(20),
+                                      ),
+                                      child: FilterForMapScreen(
+                                        initialMapType: state.mapType,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             );
-                          },
-                        );
 
                         if (selectedMapTypes != null) {
-                          context.read<FlightMapCubit>().changeMapType(selectedMapTypes);
+                          context.read<FlightMapCubit>().changeMapType(
+                            selectedMapTypes,
+                          );
                         }
 
                         _hideFlightCard();
@@ -577,10 +583,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                                       _mapController?.animateCamera(
                                         CameraUpdate.newLatLngZoom(
-                                          LatLng(
-                                            data.latitude,
-                                            data.longitude,
-                                          ),
+                                          LatLng(data.latitude, data.longitude),
                                           8, // Zoom level
                                         ),
                                       );
@@ -632,7 +635,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         builder: (context, state) {
                           return FlightCard(
                             flightDetail: state.selectedFlightDetail,
-                              isComeFromLiveTracking:false
+                            isComeFromLiveTracking: false,
                             // fromDateTime: state.fromDateTime,
                             // toDateTime: state.toDateTime,
                           );
@@ -848,6 +851,7 @@ class FlightCard extends StatelessWidget {
                                         width: 22.0,
                                         height: 16.0,
                                         contentImage: BoxFit.contain,
+                                        useCache: false,
                                       )),
                               ),
                               const SizedBox(width: 4),
@@ -882,7 +886,9 @@ class FlightCard extends StatelessWidget {
                               GestureDetector(
                                 onTap: () {
                                   if (isComeFromLiveTracking == true) {
-                                    context.read<FlightMapCubit>().stopTrackingFlight();
+                                    context
+                                        .read<FlightMapCubit>()
+                                        .stopTrackingFlight();
                                     Navigator.pop(context, flightId);
                                   } else {
                                     Navigator.push(
@@ -933,6 +939,7 @@ class FlightCard extends StatelessWidget {
                               width: 100,
                               height: 50,
                               contentImage: BoxFit.fill,
+                              useCache: false,
                             )),
                     ),
                   ],
