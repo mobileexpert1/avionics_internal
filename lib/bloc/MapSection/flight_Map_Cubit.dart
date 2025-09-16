@@ -10,8 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../Helpers/MapSection/rotatePlane_icon.dart';
-import '../../Screens/MapSection/FlightMapscreen.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_model.dart';
 import 'flight_map_state.dart';
@@ -21,9 +19,15 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   Timer? _trackingTimer;
 
   FlightMapCubit() : super(FlightMapState());
+  static const int positionRetryDelay = 5;
+  static const Duration pollInterval = Duration(seconds: 60);
+
+
 
   void changeMapType(MapType type) {
+    print(state.mapType);
     emit(state.copyWith(mapType: type));
+    print(state.mapType);
   }
 
   Future<void> getCurrentLocation(BuildContext context) async {
@@ -212,25 +216,38 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   void startTrackingFlight(String flightId, BuildContext context) {
-    stopTrackingFlight();
-    if (!isClosed) {
-      emit(state.copyWith(isTracking: true));
+    if (_trackingTimer != null && _trackingTimer!.isActive) {
+      return;
     }
+    if (!isClosed) emit(state.copyWith(isTracking: true));
+
     _fetchAndUpdateFlight(flightId, context);
-    _trackingTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
+
+    _trackingTimer = Timer.periodic(pollInterval, (timer) {
+      if (isClosed) {
+        timer.cancel();
+        return;
+      }
       _fetchAndUpdateFlight(flightId, context);
     });
   }
 
-  Future<void> _fetchAndUpdateFlight(String flightNumber,
-      BuildContext context) async {
+  Future<void> _fetchAndUpdateFlight(
+      String flightNumber, BuildContext context) async {
     if (isClosed) return;
+
     try {
       final position = state.position;
-      if (position == null) return;
+      if (position == null) {
+        Future.delayed(Duration(seconds: positionRetryDelay), () {
+          if (!isClosed) {
+            _fetchAndUpdateFlight(flightNumber, context);
+          }
+        });
+        return;
+      }
 
       final bounds = _calculateBounds(position);
-
       final response = await FlightRepository().getFlightPositions(
         bounds: bounds,
         flightNumber: flightNumber,
@@ -242,7 +259,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         emit(
           state.copyWith(
             selectedFlight: updatedFlight,
-            // animationDuration: animationDuration,
             status: CommonApiStatus.success,
             isLoading: false,
             flights: state.flights,
@@ -261,12 +277,15 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  // Stop tracking a flight
+
   void stopTrackingFlight() {
-    _trackingTimer?.cancel();
-    _trackingTimer = null;
+    if (_trackingTimer != null) {
+      _trackingTimer?.cancel();
+      _trackingTimer = null;
+    }
     emit(state.copyWith(isTracking: false));
   }
+
 
   String _calculateBounds(Position position, {double delta = 5.0}) {
     final north = position.latitude + delta;
@@ -290,3 +309,4 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedFlight: null));
   }
 }
+

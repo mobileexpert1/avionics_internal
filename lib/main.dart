@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_Map_Cubit.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +15,6 @@ import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
-import 'bloc/MapSection/flight_Map_Cubit.dart';
 import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import 'bloc/Onboarding/login/login_cubit.dart';
@@ -101,11 +101,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ComparisonCubit()),
         BlocProvider(create: (_) => ChatHistoryCubit()),
         BlocProvider(create: (_) => AppleSubscriptionCubit()),
-        BlocProvider(create: (_) => FlightMapCubit()),
         BlocProvider(create: (_) => GamesCubit()),
         BlocProvider(create: (_) => QuizCubit()),
         BlocProvider(create: (_) => ComparisonFilterCubit1()),
         BlocProvider(create: (_) => MapSearchAircraftListCubit()),
+        BlocProvider(create: (_) => FlightMapCubit()),
+
       ],
       //Responsive test case
       child: ResponsiveSizer(
