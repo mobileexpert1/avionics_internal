@@ -55,13 +55,6 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 
-  // @override
-  // void dispose() {
-  //   _mapController?.dispose();
-  //   _animationController?.dispose();
-  //   super.dispose();
-  // }
-
   @override
   void dispose() {
     _mapController?.dispose();
@@ -220,6 +213,8 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                       );
                       return GoogleMap(
                         rotateGesturesEnabled: false,
+                        zoomControlsEnabled: false,
+                        myLocationButtonEnabled: false,
                         mapType: state.mapType,
                         zoomGesturesEnabled: true,
                         initialCameraPosition: CameraPosition(

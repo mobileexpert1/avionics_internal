@@ -334,6 +334,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ),
                     builder: (context, snapshot) {
                       return GoogleMap(
+                        zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
                         rotateGesturesEnabled: false,
                         mapType: state.mapType,
