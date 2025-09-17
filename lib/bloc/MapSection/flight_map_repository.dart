@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:avionics_internal/Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../../Constants/ApiClass/api_service.dart';
 import '../../Constants/ConstantStrings.dart';
@@ -6,53 +8,39 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
-  final Map<String, String> _headers = {
-    'Accept': 'application/json',
-    'Accept-Version': 'v1',
-    'Authorization':
-        'Bearer 0196f4a5-73b4-7219-98bc-7daf81cfc59f|5VQhYisoEAOc9iQwNpOoTviX5ufQUcRABLj9eol711b82e65',
-  };
-
   Future<List<FlightModel>> getFlights({
     required String bounds,
     int limit = 3,
   }) async {
-    String url =
-        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=$bounds&limit=$limit&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000";
+    final url = Uri.parse(
+      "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
+      "?bounds=$bounds&limit=$limit"
+      "&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000",
+    );
 
-    final uri = Uri.parse(url);
-    print('Fetching flights with URL: $uri');
-
-    final response = await http.get(uri, headers: _headers);
-    print('API Response: Status=${response.statusCode}, Body=${response.body}');
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final flightResponse = FlightResponse.fromJson(data);
+    try {
+      final response = await ApiService.get(url: url, isForFlightRadar: true);
+      final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;
-    } else {
-      throw Exception("Error ${response.statusCode}: ${response.body}");
+    } catch (e) {
+      throw throw e.toString();
     }
   }
 
   Future<FlightResponse> getParticularFlightDetails({
     required String flightId,
   }) async {
-    String url =
-        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full?bounds=90,-90,-180,180&flights=$flightId";
+    final url = Uri.parse(
+      "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
+      "?bounds=90,-90,-180,180&flights=$flightId",
+    );
 
-    final uri = Uri.parse(url);
-    print('Fetching flights with URL: $uri');
-
-    final response = await http.get(uri, headers: _headers);
-    print('API Response: Status=${response.statusCode}, Body=${response.body}');
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final flightResponse = FlightResponse.fromJson(data);
+    try {
+      final response = await ApiService.get(url: url, isForFlightRadar: true);
+      final flightResponse = FlightResponse.fromJson(response);
       return flightResponse;
-    } else {
-      throw Exception("Error ${response.statusCode}: ${response.body}");
+    } catch (e) {
+      throw e.toString();
     }
   }
 
@@ -62,15 +50,16 @@ class FlightRepository {
     required String toDateTime,
     FlightModel? flightModel,
   }) async {
-    String url =
-        "${MapFlightAircraftSectionConstant.baseUrlDetail}?flight_ids=$flightId&flight_datetime_from=$fromDateTime&flight_datetime_to=$toDateTime";
-    final uri = Uri.parse(url);
-    print('Fetching flight details with URL: $uri');
+    final url = Uri.parse(
+      "${MapFlightAircraftSectionConstant.baseUrlDetail}"
+      "?flight_ids=$flightId"
+      "&flight_datetime_from=$fromDateTime"
+      "&flight_datetime_to=$toDateTime",
+    );
 
-    final response = await http.get(uri, headers: _headers);
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final flightResponse = FlightDetailResponse.fromJson(data);
+    try {
+      final response = await ApiService.get(url: url, isForFlightRadar: true);
+      final flightResponse = FlightDetailResponse.fromJson(response);
 
       FlightAircraftDetail flightDetail;
       if (flightResponse.result != null) {
@@ -81,18 +70,15 @@ class FlightRepository {
         throw Exception("No flight data found for ID: $flightId");
       }
 
-      final aircraftDetails = await getAircraftDetails(
-        flightDetail.type ?? 'A318',
-      );
+      final aircraftDetails = await getAircraftDetails(flightDetail.type ?? '');
 
       final mergedDetail = mergeFlightAndAircraftDetails(
         flightDetail,
         aircraftDetails,
       );
-
       return {'flightDetail': mergedDetail, 'flightModel': flightModel};
-    } else {
-      throw Exception("Error ${response.statusCode}: ${response.body}");
+    } catch (e) {
+      throw e.toString();
     }
   }
 
@@ -158,36 +144,29 @@ class FlightRepository {
     try {
       final response = await ApiService.get(url: url);
       final aircraftResponse = FlightDetailResponse.fromJson(response);
-
       if (aircraftResponse.result != null) {
         return [aircraftResponse.result!];
       }
       return aircraftResponse.flights;
     } catch (e) {
-      print('Error fetching aircraft details: $e');
-      return [];
+      throw e.toString();
     }
   }
 
-  Future<Map<String, dynamic>> getFlightPositions({
-    required String bounds,
-    required String flightNumber,
-  }) async {
+  Future<FlightResponse?> getFlightPositions(
+    String bounds,
+    String flightNumber,
+  ) async {
     String url =
-        "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=$bounds&flights=$flightNumber";
-
+        "${MapFlightAircraftSectionConstant.baseUrlForFlightPosition}90,-90,-180,180&&flights=$flightNumber";
     final uri = Uri.parse(url);
-    print('Fetching flight positions with URL: $uri');
-
-    final response = await http.get(uri, headers: _headers);
-    print('API Response: Status=${response.statusCode}, Body=${response.body}');
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final flightResponse = FlightResponse.fromJson(data);
-      return {'flights': flightResponse.flights};
-    } else {
-      throw Exception("Error ${response.statusCode}: ${response.body}");
+    try {
+      final jsonData =
+          await ApiService.get(url: uri, isForFlightRadar: true)
+              as Map<String, dynamic>;
+      return FlightResponse.fromJson(jsonData);
+    } catch (e) {
+      throw e.toString();
     }
   }
 }

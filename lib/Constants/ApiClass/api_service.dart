@@ -12,6 +12,13 @@ class ApiService {
     'Content-Type': 'application/json',
   };
 
+  static final Map<String, String> _headersForTheMapSection = {
+    'Accept': 'application/json',
+    'Accept-Version': 'v1',
+    'Authorization':
+    'Bearer 0196f4a5-73b4-7219-98bc-7daf81cfc59f|5VQhYisoEAOc9iQwNpOoTviX5ufQUcRABLj9eol711b82e65',
+  };
+
   static Future<bool> _hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult != ConnectivityResult.none;
@@ -37,11 +44,13 @@ class ApiService {
 
   // GET
   static Future<dynamic> get({
+    bool? isForFlightRadar = false,
     required Uri url,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
   }) {
     return _handleRequest(
+      isForFlightRadar: isForFlightRadar,
       method: 'GET',
       url: url,
       headers: headers,
@@ -108,6 +117,7 @@ class ApiService {
   }
 
   static Future<dynamic> _handleRequest({
+    bool? isForFlightRadar = false,
     required String method,
     required Uri url,
     Map<String, String>? headers,
@@ -120,10 +130,13 @@ class ApiService {
     }
 
     final token = await _getBearerToken();
+
     final requestHeaders = {
-      ...defaultHeaders,
-      if (headers != null) ...headers,
-      if (token != null) 'Authorization': 'Bearer $token',
+      ...(isForFlightRadar == true ? _headersForTheMapSection : defaultHeaders),
+      if (isForFlightRadar == false) ...{
+        if (headers != null) ...headers,
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
     };
 
     final encodedBody = body != null ? jsonEncode(body) : null;

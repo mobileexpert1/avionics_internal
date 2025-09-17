@@ -1,31 +1,30 @@
 import 'dart:async';
-
+import 'FlightTrackScreen.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../Constants/constantImages.dart';
-import '../../Helpers/CacheManger/CachedImageFile.dart';
-import '../../Helpers/CustomDivider.dart';
-import '../../Helpers/MapSection/rotatePlane_icon.dart';
-import '../../Helpers/SearchBarWidget.dart';
-import '../../Helpers/SelectableAircraftCard.dart';
-import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
-import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
-import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
-import '../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../bloc/MapSection/flight_map_detailModel.dart';
-import '../../bloc/MapSection/flight_map_model.dart';
-import '../../bloc/MapSection/flight_map_state.dart';
-import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
-import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
-import 'FlightTrackScreen.dart';
 import 'MapHelpers/MapToggleButtons.dart';
+import '../../Helpers/CustomDivider.dart';
+import '../../Helpers/SearchBarWidget.dart';
+import '../../Constants/constantImages.dart';
 import 'MapHelpers/MapTrackingModePopup.dart';
 import 'MapHelpers/TrackAndSeacrhFlight.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../Helpers/SelectableAircraftCard.dart';
+import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../bloc/MapSection/flight_map_model.dart';
+import '../../bloc/MapSection/flight_map_state.dart';
+import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../Helpers/MapSection/rotatePlane_icon.dart';
+import '../../Helpers/CacheManger/CachedImageFile.dart';
+import '../../bloc/MapSection/flight_map_detailModel.dart';
+import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
+import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
@@ -38,7 +37,12 @@ class FlightMapScreen extends StatefulWidget {
 }
 
 class _FlightMapscreenState extends State<FlightMapScreen> {
-  final TextEditingController _searchController = TextEditingController();
+
+
+  FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
+  late final TextEditingController _searchController = TextEditingController();
+  late final DraggableScrollableController _sheetController = DraggableScrollableController();
+
   bool _showFlightCard = false;
   GoogleMapController? _mapController;
   FlightModel? selectedFlight;
@@ -50,25 +54,23 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Marker? _singleSearchMarker;
 
-  final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+
+
 
   @override
   void initState() {
     super.initState();
-    context.read<FlightMapCubit>().getCurrentLocation(context);
+    _mapCubit.getCurrentLocation(context);
 
     //Listen to sheet drag
     _sheetController.addListener(() {
       if (!_hasFetchedDetails && _sheetController.size > 0.15) {
-        final flights = context.read<FlightMapCubit>().state.flights ?? [];
+        final flights = _mapCubit.state.flights ?? [];
         if (flights.isNotEmpty) {
           _hasFetchedDetails = true;
           final typeList = flights.map((f) => f.type).toList();
           final uniqueTypes = typeList.toSet().toList();
-          context.read<FlightMapCubit>().fetchAircraftDetailsFromFlightsList(
-            uniqueTypes,
-          );
+          _mapCubit.fetchAircraftDetailsFromFlightsList(uniqueTypes, context);
         }
       }
     });
@@ -139,10 +141,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   void _toggleFlightCard({required String flight}) {
-    context.read<FlightMapCubit>().fetchFlightDetails(
-      flightId: flight,
-      context: context,
-    );
+    _mapCubit.fetchFlightDetails(flightId: flight, context: context);
     setState(() {
       _showFlightCard = true;
     });
@@ -154,48 +153,62 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     });
   }
 
+  Future<Marker> _createMarker({
+    required FlightModel flight,
+    required Color color,
+    required VoidCallback onTap,
+    bool useCallSign = false,
+  }) async {
+    final icon = await getRotatedPlaneIcon(
+      (flight.track).toDouble(),
+      color: color,
+    );
+
+    return Marker(
+      markerId: MarkerId(flight.id.toString()),
+      position: LatLng(flight.latitude, flight.longitude),
+      icon: icon,
+      infoWindow: InfoWindow(
+        title: useCallSign ? flight.callSign : flight.flightNumber,
+        snippet: "${flight.departureIata ?? flight.departureIcao} → ${flight.arrivalIata ?? flight.arrivalIcao}",
+      ),
+      onTap: onTap,
+    );
+  }
+
   Future<Set<Marker>> _buildFlightMarkers(List<FlightModel> flights) async {
     final markers = <Marker>{};
 
     if (_isForFlyingInTheArea == 1) {
       for (final flight in flights) {
-        final icon = await getRotatedPlaneIcon(
-          (flight.track).toDouble(),
+        final marker = await _createMarker(
+          flight: flight,
           color: Colors.red,
+          onTap: () {
+            _isMapListViewShown = false;
+            _mapCubit.setSelectedFlight(flight);
+            _toggleFlightCard(flight: flight.id);
+          },
         );
-
-        markers.add(
-          Marker(
-            markerId: MarkerId(flight.id.toString()),
-            position: LatLng(flight.latitude, flight.longitude),
-            icon: icon,
-            infoWindow: InfoWindow(
-              title: flight.flightNumber,
-              snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
-            ),
-            onTap: () {
-              print(
-                "Flight: ${flight.flightNumber}\n"
-                "Lat: ${flight.latitude}, Lon: ${flight.longitude}\n"
-                "Dir: ${flight.track}°\n"
-                "From: ${flight.departureIata} → To: ${flight.arrivalIata}",
-              );
-              _isMapListViewShown = false;
-              context.read<FlightMapCubit>().setSelectedFlight(flight);
-              _toggleFlightCard(flight: flight.id);
-            },
-          ),
-        );
+        markers.add(marker);
       }
     }
     return markers;
   }
 
+  Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
+    return _createMarker(
+      flight: flight,
+      color: Colors.blue,
+      useCallSign: true, // <- only difference
+      onTap: () {
+        _mapCubit.setSelectedFlight(flight);
+      },
+    );
+  }
+
   void _fitMapToBounds(List<FlightModel> flights, LatLng currentLatLng) {
     if (flights.isEmpty || _mapController == null) {
-      print(
-        'No flights or map controller not ready, skipping bounds adjustment',
-      );
       return;
     }
 
@@ -227,27 +240,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
-  Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
-    final icon = await getRotatedPlaneIcon(
-      (flight.track).toDouble(),
-      color: Colors.blue, // marker ka color
-    );
-
-    return Marker(
-      markerId: MarkerId(flight.id.toString()),
-      position: LatLng(flight.latitude, flight.longitude),
-      icon: icon,
-      infoWindow: InfoWindow(
-        title: flight.callSign,
-        snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
-      ),
-      onTap: () {
-        context.read<FlightMapCubit>().setSelectedFlight(flight);
-      },
-    );
-  }
-
   Future<void> _handleTextTap(BuildContext context) async {
+    handleToggle(true);
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -284,9 +278,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       Timer(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() {
-          context.read<FlightMapCubit>().setSelectedFlight(
-            result.flightDetailResponse!,
-          );
+          _mapCubit.setSelectedFlight(result.flightDetailResponse!);
         }); // forces a single rebuild
       });
     }
@@ -318,15 +310,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 position.latitude,
                 position.longitude,
               );
-              print(
-                'Current location: $currentLatLng, Flights: ${state.flights?.length ?? 0}',
-              );
 
               return Stack(
                 fit: StackFit.expand,
                 children: [
                   FutureBuilder<Set<Marker>>(
-                    // future: _buildFlightMarkers(state.flights ?? []),
                     future: _buildFlightMarkers(
                       state.isTracking && state.selectedFlight != null
                           ? [state.selectedFlight!]
@@ -334,6 +322,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ),
                     builder: (context, snapshot) {
                       return GoogleMap(
+                        minMaxZoomPreference: MinMaxZoomPreference(6, 10),
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
                         rotateGesturesEnabled: false,
@@ -372,6 +361,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       );
                     },
                   ),
+
                   if (_isMapListViewShown)
                     Positioned(
                       top: 130,
@@ -381,6 +371,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         onToggle: handleToggle, // Passing the callback function
                       ),
                     ),
+
                   Positioned(
                     top: 40,
                     left: 5,
@@ -432,11 +423,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             );
 
                         if (selectedMapTypes != null) {
-                          context.read<FlightMapCubit>().changeMapType(
-                            selectedMapTypes,
-                          );
+                          _mapCubit.changeMapType(selectedMapTypes);
                         }
-
                         _hideFlightCard();
                       },
                       searchTitle: _isForFlyingInTheArea == 2

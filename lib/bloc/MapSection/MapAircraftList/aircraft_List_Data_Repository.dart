@@ -8,13 +8,6 @@ class AircraftListDataRepository {
   Future<AircraftListResponse> getListOfAllPlanes({
     required List<String> aircraftIds,
   }) async {
-    if (!await GenericMethods.hasInternet()) {
-      return AircraftListResponse(
-        detail: "No internet",
-        data: await _getLocalData(),
-      );
-    }
-
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlAirplaneConstant.airplaneService}"
@@ -29,9 +22,5 @@ class AircraftListDataRepository {
     } catch (e) {
       throw e.toString();
     }
-  }
-
-  Future<List<AircraftModel>> _getLocalData() async {
-    return [];
   }
 }

@@ -242,4 +242,6 @@ class MapFlightAircraftSectionConstant {
       "https://fr24api.flightradar24.com/api/flight-summary/full";
   static String baseUrlSearch =
       "https://www.flightradar24.com/v1/search/web/find?query=";
+  static String baseUrlForFlightPosition =
+      "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
 }

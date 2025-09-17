@@ -1,21 +1,15 @@
+import 'package:bloc/bloc.dart';
+import '../flight_map_model.dart';
+import 'package:flutter/material.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../MapAircraftList/aircraft_List_Data_Repository.dart';
+import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
+    as repo;
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_State.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_repository.dart';
-import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
-import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
-import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
-import '../MapAircraftList/aircraft_List_Data_Repository.dart';
-
-import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
-    as repo;
-import 'package:geolocator/geolocator.dart';
-
-import '../flight_map_detailModel.dart';
-import '../flight_map_model.dart';
 
 class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
   MapSearchAircraftListCubit() : super(MapSearchAircraftListState.initial());
@@ -52,7 +46,6 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
       }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-
       emit(
         state.copyWith(
           isLoading: false,
@@ -108,33 +101,30 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
   }
 
   Future<List<FlightResult>> mergeFlightsResponseDetails(
-      List<FlightResult> flights,
-      List<FlightModel> aircraftDetails,
-      ) async {
+    List<FlightResult> flights,
+    List<FlightModel> aircraftDetails,
+  ) async {
     if (flights.isEmpty) return [];
-
-    print("🔎 mergeFlightsResponseDetails called");
-    print("Flights count: ${flights.length}");
-    print("Aircraft details count: ${aircraftDetails.length}");
 
     return flights.map((flight) {
       print("➡ Checking flight: ${flight.detail.flight}");
 
       final matchingDetail = aircraftDetails.firstWhere(
-            (detail) {
-          final isMatch = detail.flightNumber.toUpperCase() ==
+        (detail) {
+          final isMatch =
+              detail.flightNumber.toUpperCase() ==
               flight.detail.flight.toUpperCase();
 
           print(
             "   Comparing: detail.flightNumber=${detail.flightNumber} "
-                "with flight.detail.flight=${flight.detail.flight} "
-                "=> ${isMatch ? 'MATCH ✅' : 'NO MATCH ❌'}",
+            "with flight.detail.flight=${flight.detail.flight} "
+            "=> ${isMatch ? 'MATCH' : 'NO MATCH'}",
           );
 
           return isMatch;
         },
         orElse: () {
-          print("   ❌ No matching detail found for flight: ${flight.detail.flight}");
+          print("No matching detail found for flight: ${flight.detail.flight}");
           return FlightModel(
             id: '',
             flightNumber: '',
@@ -161,8 +151,9 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
         },
       );
 
-      print("✅ Selected detail for ${flight.detail.flight}: ${matchingDetail.flightNumber}");
-
+      print(
+        "Selected detail for ${flight.detail.flight}: ${matchingDetail.flightNumber}",
+      );
       return flight.copyWith(flightDetailResponse: matchingDetail);
     }).toList();
   }
@@ -173,54 +164,46 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
   ) async {
     emit(state.copyWith(status: CommonApiStatus.submitting));
 
-    // Fetch flights
-    final flightsDetails = await repo.FlightRepository()
-        .getParticularFlightDetails(flightId: flightDetails.detail.flight);
+    try {
+      // Fetch flights
+      final flightsDetails = await repo.FlightRepository()
+          .getParticularFlightDetails(flightId: flightDetails.detail.flight);
 
-    if (flightsDetails.flights.isNotEmpty) {
-      print("altitude-=-=-${flightsDetails.flights[0].altitude}");
-      print("groundSpeed=-=-=-${flightsDetails.flights[0].groundSpeed}");
-      print("eta-=-=-=-${flightsDetails.flights[0].eta}");
+      if (flightsDetails.flights.isNotEmpty) {
+        final enrichedFlight = await mergeFlightsResponseDetails(
+          state.flights,
+          flightsDetails.flights,
+        );
 
-      final enrichedFlight = await mergeFlightsResponseDetails(
-        state.flights,
-        flightsDetails.flights,
-      );
-
-      final selected = enrichedFlight.firstWhere(
-            (f) => f.detail.flight == flightDetails.detail.flight,
-        orElse: () => enrichedFlight.first,
-      );
-
-      print("after altitude = ${selected.flightDetailResponse?.altitude}");
-      print("after groundSpeed = ${selected.flightDetailResponse?.groundSpeed}");
-      print("after eta = ${selected.flightDetailResponse?.eta}");
-
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.success,
-          isLoading: false,
-          selectedFlight: selected,
-        ),
-      );
-
-    } else {
+        final selected = enrichedFlight.firstWhere(
+          (f) => f.detail.flight == flightDetails.detail.flight,
+          orElse: () => enrichedFlight.first,
+        );
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.success,
+            isLoading: false,
+            selectedFlight: selected,
+          ),
+        );
+      }else{
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: 'Tracking not available',
+            isLoading: false,
+          ),
+        );
+      }
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
-          errorMessage: 'Tracking not available',
+          errorMessage: e.toString(),
           isLoading: false,
         ),
       );
     }
-  }
-
-  String _calculateBounds(Position position, {double delta = 5.0}) {
-    final north = position.latitude + delta;
-    final south = position.latitude - delta;
-    final east = position.longitude + delta;
-    final west = position.longitude - delta;
-    print('Bounds: north=$north, south=$south, east=$east, west=$west');
-    return "$north,$south,$east,$west";
   }
 }

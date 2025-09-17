@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -30,7 +31,7 @@ class TrackFlightScreen extends StatefulWidget {
 }
 
 class _TrackFlightScreenState extends State<TrackFlightScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   GoogleMapController? _mapController;
   Marker? _flightMarker;
   LatLng? _currentFlightPosition;
@@ -40,26 +41,85 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
   // for queued animations
   LatLng? _pendingTarget;
 
+  bool _alertShown = false;
+
   @override
   void initState() {
     super.initState();
+
+    // set initial flight position
     if (widget.initialFlight != null) {
       _currentFlightPosition = LatLng(
         widget.initialFlight!.latitude,
         widget.initialFlight!.longitude,
       );
     }
+
+    // start flight tracking
     context.read<FlightMapCubit>().startTrackingFlight(
       widget.flightNumber,
       context,
     );
+
+    // observe lifecycle only on mobile
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS) {
+      WidgetsBinding.instance.addObserver(this);
+    }
   }
 
   @override
   void dispose() {
     _mapController?.dispose();
     _animationController?.dispose();
+
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS) {
+      WidgetsBinding.instance.removeObserver(this);
+    }
+
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    try {
+      debugPrint("TrackFlightScreen lifecycle → $state");
+      if (state == AppLifecycleState.paused ||
+          state == AppLifecycleState.inactive) {
+        if (_alertShown == false) {
+          _alertShown = true;
+          _showInactiveDialog();
+        }
+      }
+    } catch (e, s) {
+      debugPrint("Lifecycle error: $e\n$s");
+    }
+  }
+
+  void _showInactiveDialog() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text("Tracking Stopped"),
+        content: const Text(
+          "You’ve become inactive. Flight tracking has been stopped.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.read<FlightMapCubit>().stopTrackingFlight();
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<BitmapDescriptor> _getFlightMarkerIcon(double track) async {
