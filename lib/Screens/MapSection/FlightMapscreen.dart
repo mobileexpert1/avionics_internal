@@ -823,8 +823,8 @@ class FlightCard extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(6),
                                 child: (manufacturerLogo == ""
-                                    ? Image.asset(
-                                        CommonUi.setPngImage(
+                                    ? SvgPicture.asset(
+                                        CommonUi.setSvgImage(
                                           AssetsPath.manufacturer,
                                         ),
                                         width: 22.0,

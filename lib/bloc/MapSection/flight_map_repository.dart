@@ -136,20 +136,22 @@ class FlightRepository {
   }
 
   Future<List<FlightAircraftDetail>> getAircraftDetails(
-    String aircraftType,
-  ) async {
+      String aircraftType,
+      ) async {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
     );
     try {
       final response = await ApiService.get(url: url);
       final aircraftResponse = FlightDetailResponse.fromJson(response);
+
       if (aircraftResponse.result != null) {
         return [aircraftResponse.result!];
       }
       return aircraftResponse.flights;
     } catch (e) {
-      throw e.toString();
+      print('Error fetching aircraft details: $e');
+      return [];
     }
   }
 
