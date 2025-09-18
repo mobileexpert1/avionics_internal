@@ -160,7 +160,8 @@ class FlightRepository {
     String flightNumber,
   ) async {
     String url =
-        "${MapFlightAircraftSectionConstant.baseUrlForFlightPosition}90,-90,-180,180&&flights=$flightNumber";
+        "${MapFlightAircraftSectionConstant.baseUrlForFlightPosition}90,"
+        "-90,-180,180&&flights=$flightNumber";
     final uri = Uri.parse(url);
     try {
       final jsonData =
