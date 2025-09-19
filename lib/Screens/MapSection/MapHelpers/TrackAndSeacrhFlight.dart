@@ -48,7 +48,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                   enableCloseScreen: false,
                   controller: searchController,
                   onChanged: _onSearch,
-                  searchTitle: 'Search and Track a flight...',
+                  searchTitle: 'Search Flight no., CallSign.',
                   onBackButtonTap: () {
                     Navigator.pop(context);
                   },

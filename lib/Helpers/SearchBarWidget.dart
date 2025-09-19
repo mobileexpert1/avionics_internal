@@ -81,7 +81,7 @@ class SearchBarWidget extends StatelessWidget {
                             decoration: InputDecoration(
                               hintText: searchTitle,
                               prefixIcon: Padding(
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(13),
                                 child: SvgPicture.asset(
                                   CommonUi.setSvgImage(AssetsPath.search),
                                   width: 18,

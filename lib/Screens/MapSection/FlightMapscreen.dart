@@ -272,27 +272,27 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           selectedFlightId = result.flightDetailResponse!.id;
           _mapCubit.setSelectedFlight(result.flightDetailResponse!);
         });
-
-        Timer(const Duration(seconds: 3), () {
-          if (!mounted) return;
-          if (_isForFlyingInTheArea == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider.value(
-                  value: context.read<FlightMapCubit>(),
-                  child: TrackFlightScreen(
-                    flightNumber:
-                        _mapCubit.state.selectedFlight?.flightNumber ?? "",
-                    initialFlight: _mapCubit.state.selectedFlight,
-                    initialFlightDetail: _mapCubit.state.selectedFlightDetail,
-                    flightId: _mapCubit.state.selectedFlight?.id,
-                  ),
-                ),
-              ),
-            );
-          }
-        }); // forces a single rebuild
+        //
+        // Timer(const Duration(seconds: 3), () {
+        //   if (!mounted) return;
+        //   if (_isForFlyingInTheArea == 2) {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (_) => BlocProvider.value(
+        //           value: context.read<FlightMapCubit>(),
+        //           child: TrackFlightScreen(
+        //             flightNumber:
+        //                 _mapCubit.state.selectedFlight?.flightNumber ?? "",
+        //             initialFlight: _mapCubit.state.selectedFlight,
+        //             initialFlightDetail: _mapCubit.state.selectedFlightDetail,
+        //             flightId: _mapCubit.state.selectedFlight?.id,
+        //           ),
+        //         ),
+        //       ),
+        //     );
+        //   }
+        // }); // forces a single rebuild
       });
     }
   }
@@ -484,7 +484,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       },
                       searchTitle: _isForFlyingInTheArea == 2
                           ? 'Track a flight...'
-                          : 'Search...',
+                          : 'Search Flight no.,Callsign',
                     ),
                   ),
 

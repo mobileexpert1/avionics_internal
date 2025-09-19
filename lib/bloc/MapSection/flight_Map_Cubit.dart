@@ -83,7 +83,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   void clearSelectedFlight() {
     final newState = state.copyWith(selectedFlight: null);
     emit(newState);
-    print(newState.selectedFlight); // this will be null
   }
 
   double getDynamicRadius(double zoom) {
@@ -101,9 +100,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   LatLngBounds calculateNearbyBounds(
-      LatLng centerLatLng, {
-        required double zoom,
-      }) {
+    LatLng centerLatLng, {
+    required double zoom,
+  }) {
     final double distanceKm = getDynamicRadius(zoom);
 
     print("Zoome distanceKm-=-=$distanceKm, Zoom Level $zoom");
@@ -121,7 +120,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       northeast: LatLng(latMax, lonMax),
     );
   }
-
 
   Future<void> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -288,7 +286,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  Future<void> startTrackingFlight(String flightId, BuildContext context) async {
+  Future<void> startTrackingFlight(
+    String flightId,
+    BuildContext context,
+  ) async {
     if (_trackingTimer != null && _trackingTimer!.isActive) {
       return;
     }
