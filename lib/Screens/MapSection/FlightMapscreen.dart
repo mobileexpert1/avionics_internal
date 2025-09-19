@@ -240,6 +240,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
+
+  
   Future<void> _handleTextTap(BuildContext context) async {
     handleToggle(true);
     final result = await Navigator.push(
