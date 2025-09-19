@@ -232,6 +232,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Future<void> _handleTextTap(BuildContext context) async {
+    _isFlightIconPressed = true;
     handleToggle(true);
     final result = await Navigator.push(
       context,
@@ -266,33 +267,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         });
       });
 
-      Timer(const Duration(seconds: 1), () {
+      Timer(const Duration(seconds: 2), () {
         if (!mounted) return;
         setState(() {
           selectedFlightId = result.flightDetailResponse!.id;
           _mapCubit.setSelectedFlight(result.flightDetailResponse!);
         });
-        //
-        // Timer(const Duration(seconds: 3), () {
-        //   if (!mounted) return;
-        //   if (_isForFlyingInTheArea == 2) {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (_) => BlocProvider.value(
-        //           value: context.read<FlightMapCubit>(),
-        //           child: TrackFlightScreen(
-        //             flightNumber:
-        //                 _mapCubit.state.selectedFlight?.flightNumber ?? "",
-        //             initialFlight: _mapCubit.state.selectedFlight,
-        //             initialFlightDetail: _mapCubit.state.selectedFlightDetail,
-        //             flightId: _mapCubit.state.selectedFlight?.id,
-        //           ),
-        //         ),
-        //       ),
-        //     );
-        //   }
-        // }); // forces a single rebuild
       });
     }
   }
