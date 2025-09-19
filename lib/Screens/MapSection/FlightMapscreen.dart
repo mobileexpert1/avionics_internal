@@ -3,6 +3,7 @@ import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'MapHelpers/LiveBadge.dart';
 import 'MapHelpers/MapToggleButtons.dart';
 import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/SearchBarWidget.dart';
@@ -272,6 +273,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           _mapCubit.setSelectedFlight(result.flightDetailResponse!);
         }); // forces a single rebuild
       });
+    }else{
+      _isFlightIconPressed = false;
     }
   }
 
@@ -966,11 +969,11 @@ class FlightCard extends StatelessWidget {
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(4),
-                                        child: Icon(
+                                        child: state.isTracking
+                                            ? const LiveBadge()
+                                            : const Icon(
                                           Icons.my_location,
-                                          color: state.isTracking
-                                              ? Colors.green
-                                              : Colors.blue,
+                                          color: Colors.blue,
                                           size: 20,
                                         ),
                                       ),
