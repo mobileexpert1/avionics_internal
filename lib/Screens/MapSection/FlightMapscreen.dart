@@ -323,7 +323,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ),
                     builder: (context, snapshot) {
                       return GoogleMap(
-                        polygons: _boundsPolygon,
+                        //polygons: _boundsPolygon,
                         minMaxZoomPreference: MinMaxZoomPreference(4, 10),
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
@@ -356,20 +356,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 final ne = visibleRegion.northeast;
                                 final sw = visibleRegion.southwest;
 
-                                final nw = LatLng(ne.latitude, sw.longitude);
-                                final se = LatLng(sw.latitude, ne.longitude);
+                                // final nw = LatLng(ne.latitude, sw.longitude);
+                                // final se = LatLng(sw.latitude, ne.longitude);
 
-                                setState(() {
-                                  _boundsPolygon = {
-                                    Polygon(
-                                      polygonId: const PolygonId("visible_bounds"),
-                                      points: [ne, nw, sw, se, ne], // closed loop
-                                      strokeColor: Colors.transparent,
-                                      strokeWidth: 0,
-                                      fillColor: Colors.black.withOpacity(0.04),
-                                    ),
-                                  };
-                                });
+                                // setState(() {
+                                //   _boundsPolygon = {
+                                //     Polygon(
+                                //       polygonId: const PolygonId("visible_bounds"),
+                                //       points: [ne, nw, sw, se, ne], // closed loop
+                                //       strokeColor: Colors.transparent,
+                                //       strokeWidth: 0,
+                                //       fillColor: Colors.black.withOpacity(0.02),
+                                //     ),
+                                //   };
+                                // });
 
                                 //Calculate center & zoom for radius-based bounds
                                 final centerLat = (ne.latitude + sw.latitude) / 2;
