@@ -72,7 +72,7 @@ class FlightMapState {
           selectedAircraftDetails ?? this.selectedAircraftDetails,
       selectedFlight: selectedFlight ?? this.selectedFlight,
       isTracking: isTracking ?? this.isTracking,
-        markers: markers ?? this.markers,
+      markers: markers ?? this.markers,
       animationDuration: animationDuration ?? this.animationDuration,
     );
   }

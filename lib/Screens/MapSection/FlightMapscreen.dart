@@ -37,11 +37,10 @@ class FlightMapScreen extends StatefulWidget {
 }
 
 class _FlightMapscreenState extends State<FlightMapScreen> {
-
-
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
   late final TextEditingController _searchController = TextEditingController();
-  late final DraggableScrollableController _sheetController = DraggableScrollableController();
+  late final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
 
   bool _showFlightCard = false;
   GoogleMapController? _mapController;
@@ -51,16 +50,19 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
   bool _isNeedToShowBackButton = false;
-
   Marker? _singleSearchMarker;
-
-
-
+  String? selectedFlightId;
+  LatLng? _initialCurrentLatLng;
+  bool _isFlightIconPressed = false;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    _mapCubit.getCurrentLocation(context);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FlightMapCubit>().getCurrentLocation(context);
+    });
 
     //Listen to sheet drag
     _sheetController.addListener(() {
@@ -176,18 +178,38 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
-  Future<Set<Marker>> _buildFlightMarkers(List<FlightModel> flights) async {
+  Future<Set<Marker>> _buildFlightMarkers(
+    List<FlightModel> flights,
+    bool isHideMapColour,
+  ) async {
     final markers = <Marker>{};
-
     if (_isForFlyingInTheArea == 1) {
       for (final flight in flights) {
+        final isSelected = selectedFlightId == flight.id;
         final marker = await _createMarker(
           flight: flight,
-          color: Colors.red,
+          color: isHideMapColour == true
+              ? Colors.red
+              : (isSelected ? Colors.orangeAccent : Colors.red),
           onTap: () {
-            _isMapListViewShown = false;
-            _mapCubit.setSelectedFlight(flight);
-            _toggleFlightCard(flight: flight.id);
+            if (selectedFlightId != flight.id) {
+              _isFlightIconPressed = true;
+              _isMapListViewShown = false;
+              selectedFlightId = flight.id;
+              _mapCubit.setSelectedFlight(flight);
+              _toggleFlightCard(flight: flight.id);
+            } else {
+              selectedFlightId = "";
+              _isFlightIconPressed = false;
+              _hideFlightCard();
+              _buildFlightMarkers(
+                _mapCubit.state.isTracking &&
+                        _mapCubit.state.selectedFlight != null
+                    ? [_mapCubit.state.selectedFlight!]
+                    : _mapCubit.state.flights ?? [],
+                true,
+              );
+            }
           },
         );
         markers.add(marker);
@@ -207,42 +229,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
-  void _fitMapToBounds(List<FlightModel> flights, LatLng currentLatLng) {
-    if (flights.isEmpty || _mapController == null) {
-      return;
-    }
-
-    final latLngBounds = LatLngBounds(
-      southwest: LatLng(
-        [
-          currentLatLng.latitude,
-          ...flights.map((f) => f.latitude),
-        ].reduce((a, b) => a < b ? a : b),
-        [
-          currentLatLng.longitude,
-          ...flights.map((f) => f.longitude),
-        ].reduce((a, b) => a < b ? a : b),
-      ),
-      northeast: LatLng(
-        [
-          currentLatLng.latitude,
-          ...flights.map((f) => f.latitude),
-        ].reduce((a, b) => a > b ? a : b),
-        [
-          currentLatLng.longitude,
-          ...flights.map((f) => f.longitude),
-        ].reduce((a, b) => a > b ? a : b),
-      ),
-    );
-
-    _mapController!.animateCamera(
-      CameraUpdate.newLatLngBounds(latLngBounds, 50),
-    );
-  }
-
-
-  
   Future<void> _handleTextTap(BuildContext context) async {
+    _isFlightIconPressed = true;
     handleToggle(true);
     final result = await Navigator.push(
       context,
@@ -266,6 +254,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       );
 
       setState(() {
+        selectedFlightId = result.flightDetailResponse!.id;
         _isMapListViewShown = false;
       });
 
@@ -286,7 +275,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     }
   }
 
-  LatLng? _initialCurrentLatLng;
+  Set<Polygon> _boundsPolygon = {};
+
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +308,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               // Save initial location only once S...
               _initialCurrentLatLng ??= currentLatLng;
 
-
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -327,9 +316,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       state.isTracking && state.selectedFlight != null
                           ? [state.selectedFlight!]
                           : state.flights ?? [],
+                      false,
                     ),
                     builder: (context, snapshot) {
                       return GoogleMap(
+                        polygons: _boundsPolygon,
                         minMaxZoomPreference: MinMaxZoomPreference(4, 10),
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
@@ -350,11 +341,53 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           if (_singleSearchMarker != null) _singleSearchMarker!,
                           if (snapshot.hasData) ...snapshot.data!,
                         },
+                        onCameraIdle: () async {
+                          if (_mapController == null) return;
+                          if (_isFlightIconPressed == false) {
+                            _debounce?.cancel();
+                            _debounce = Timer(
+                              const Duration(seconds: 2),
+                              () async {
+                                final visibleRegion = await _mapController!.getVisibleRegion();
+
+                                final ne = visibleRegion.northeast;
+                                final sw = visibleRegion.southwest;
+
+                                final nw = LatLng(ne.latitude, sw.longitude);
+                                final se = LatLng(sw.latitude, ne.longitude);
+
+                                setState(() {
+                                  _boundsPolygon = {
+                                    Polygon(
+                                      polygonId: const PolygonId("visible_bounds"),
+                                      points: [ne, nw, sw, se, ne], // closed loop
+                                      strokeColor: Colors.transparent,
+                                      strokeWidth: 0,
+                                      fillColor: Colors.black.withOpacity(0.04),
+                                    ),
+                                  };
+                                });
+
+                                //Calculate center & zoom for radius-based bounds
+                                final centerLat = (ne.latitude + sw.latitude) / 2;
+                                final centerLng = (ne.longitude + sw.longitude) / 2;
+                                final centerLatLng = LatLng(centerLat, centerLng);
+                                final zoomLevel = await _mapController?.getZoomLevel();
+                                // final nearbyBounds = _mapCubit.calculateNearbyBounds(
+                                //   centerLatLng,
+                                //   zoom: zoomLevel ?? 0.0,
+                                // );
+                                _mapCubit.fetchFlightsByBounds(
+                                  bounds: visibleRegion,
+                                  context: context,
+                                );
+                              },
+                            );
+                          }
+                        },
                         onMapCreated: (GoogleMapController controller) {
                           _mapController = controller;
-                          if (state.flights != null) {
-                            _fitMapToBounds(state.flights!, currentLatLng);
-                          } else if (state.isTracking &&
+                          if (state.isTracking &&
                               state.selectedFlight != null) {
                             _mapController!.animateCamera(
                               CameraUpdate.newLatLng(
@@ -605,6 +638,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       Timer(const Duration(seconds: 2), () {
                                         if (!mounted) return;
                                         setState(() {
+                                          selectedFlightId = data.id;
                                           context
                                               .read<FlightMapCubit>()
                                               .setSelectedFlight(data);
@@ -634,6 +668,17 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           return FlightCard(
                             flightDetail: state.selectedFlightDetail,
                             isComeFromLiveTracking: false,
+                            callBackForHideFlightCard: () {
+                              selectedFlightId = "";
+                              _isFlightIconPressed = false;
+                              _hideFlightCard();
+                              _buildFlightMarkers(
+                                state.isTracking && state.selectedFlight != null
+                                    ? [state.selectedFlight!]
+                                    : state.flights ?? [],
+                                true,
+                              );
+                            },
                             // fromDateTime: state.fromDateTime,
                             // toDateTime: state.toDateTime,
                           );
@@ -692,10 +737,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
 class FlightCard extends StatelessWidget {
   final FlightAircraftDetail? flightDetail;
-
   final bool? isComeFromLiveTracking;
+  final VoidCallback? callBackForHideFlightCard;
 
-  const FlightCard({super.key, this.flightDetail, this.isComeFromLiveTracking});
+  const FlightCard({
+    super.key,
+    this.callBackForHideFlightCard,
+    this.flightDetail,
+    this.isComeFromLiveTracking,
+  });
 
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
@@ -771,235 +821,254 @@ class FlightCard extends StatelessWidget {
           }
         }
 
-        return Card(
-          color: Colors.white,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
+        return GestureDetector(
+          onTap: callBackForHideFlightCard,
+          child: Card(
+            color: Colors.white,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
             ),
-          ),
-          elevation: 10,
-          margin: EdgeInsets.zero,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                aircraftType,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF3F3D56),
-                                ),
-                              ),
-                              const SizedBox(width: 25),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  category,
+            elevation: 10,
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  aircraftType,
                                   style: const TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF3F3D56),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: (manufacturerLogo == ""
-                                    ? SvgPicture.asset(
-                                        CommonUi.setSvgImage(
-                                          AssetsPath.manufacturer,
-                                        ),
-                                        width: 22.0,
-                                        height: 16.0,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : CachedAnyImage(
-                                        imagePath: manufacturerLogo,
-                                        width: 22.0,
-                                        height: 16.0,
-                                        contentImage: BoxFit.contain,
-                                        useCache: false,
-                                      )),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                manufacturer,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFF3F3D56),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF3F3D56),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  callSign,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                const SizedBox(width: 25),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    category,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF3F3D56),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 20),
-                              GestureDetector(
-                                onTap: () {
-                                  if (isComeFromLiveTracking == true) {
-                                    context
-                                        .read<FlightMapCubit>()
-                                        .stopTrackingFlight();
-                                    Navigator.pop(context, flightId);
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => BlocProvider.value(
-                                          value: context.read<FlightMapCubit>(),
-                                          child: TrackFlightScreen(
-                                            flightNumber: flightNumber,
-                                            initialFlight: selectedFlight,
-                                            initialFlightDetail: detail,
-                                            flightId: flightId,
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: manufacturerLogo.isEmpty
+                                      ? SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.manufacturer,
                                           ),
+                                          width: 22,
+                                          height: 16,
+                                          fit: BoxFit.fill,
+                                        )
+                                      : CachedAnyImage(
+                                          imagePath: manufacturerLogo,
+                                          width: 22,
+                                          height: 16,
+                                          contentImage: BoxFit.contain,
+                                          useCache: false,
+                                        ),
+                                ),
+                                Text(
+                                  manufacturer,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Color(0xFF3F3D56),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // CallSign Box
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                        vertical: 3,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF3F3D56),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        callSign,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Icon(
-                                    Icons.my_location,
-                                    color: state.isTracking
-                                        ? Colors.green
-                                        : Colors.blue,
-                                    size: 20,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(6),
+                                      onTap: () {
+                                        if (isComeFromLiveTracking == true) {
+                                          context
+                                              .read<FlightMapCubit>()
+                                              .stopTrackingFlight();
+                                          Navigator.pop(context, flightId);
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  BlocProvider.value(
+                                                    value: context
+                                                        .read<FlightMapCubit>(),
+                                                    child: TrackFlightScreen(
+                                                      flightNumber:
+                                                          flightNumber,
+                                                      initialFlight:
+                                                          selectedFlight,
+                                                      initialFlightDetail:
+                                                          detail,
+                                                      flightId: flightId,
+                                                    ),
+                                                  ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: Icon(
+                                          Icons.my_location,
+                                          color: state.isTracking
+                                              ? Colors.green
+                                              : Colors.blue,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: (manufacturerLogo == ""
+                            ? Image.asset(
+                                CommonUi.setPngImage(
+                                  AssetsPath.aeroplaneComparison,
+                                ),
+                                width: 100,
+                                height: 50,
+                                fit: BoxFit.fill,
+                              )
+                            : CachedAnyImage(
+                                imagePath: image,
+                                width: 100,
+                                height: 50,
+                                contentImage: BoxFit.fill,
+                                useCache: false,
+                              )),
+                      ),
+                    ],
+                  ),
+                  const CustomDivider(height: 1.0),
+                  const SizedBox(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "$departureIata\n$timeSinceTakeoff",
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          children: [
+                            LinearProgressIndicator(
+                              value: progress,
+                              backgroundColor: Colors.grey.shade300,
+                              color: Colors.blue,
+                              minHeight: 5,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  groundSpeed == 0
+                                      ? 'N/A'
+                                      : '$groundSpeed km/h',
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: (manufacturerLogo == ""
-                          ? Image.asset(
-                              CommonUi.setPngImage(
-                                AssetsPath.aeroplaneComparison,
-                              ),
-                              width: 100,
-                              height: 50,
-                              fit: BoxFit.fill,
-                            )
-                          : CachedAnyImage(
-                              imagePath: image,
-                              width: 100,
-                              height: 50,
-                              contentImage: BoxFit.fill,
-                              useCache: false,
-                            )),
-                    ),
-                  ],
-                ),
-                const CustomDivider(height: 1.0),
-                const SizedBox(height: 16),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        "$departureIata\n$timeSinceTakeoff",
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor: Colors.grey.shade300,
-                            color: Colors.blue,
-                            minHeight: 5,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                groundSpeed == 0 ? 'N/A' : '$groundSpeed km/h',
-                                style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w400,
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "•",
+                                  style: TextStyle(color: Colors.grey),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text(
-                                "•",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                altitude == 0 ? 'N/A' : '$altitude m',
-                                style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
+                                const SizedBox(width: 10),
+                                Text(
+                                  altitude == 0 ? 'N/A' : '$altitude m',
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        "$arrivalIata\n$timeToArrival",
-                        style: const TextStyle(fontSize: 13),
-                        textAlign: TextAlign.right,
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "$arrivalIata\n$timeToArrival",
+                          style: const TextStyle(fontSize: 13),
+                          textAlign: TextAlign.right,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

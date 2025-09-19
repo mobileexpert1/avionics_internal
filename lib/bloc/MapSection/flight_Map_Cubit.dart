@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:avionics_internal/Constants/ApiClass/api_service.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     hide Position;
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
@@ -78,6 +80,42 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedFlight: flight));
   }
 
+  // double getDynamicRadius(double zoom) {
+  //   if (zoom < 5) {
+  //     return 2000; // 2000 km for world view
+  //   } else if (zoom < 10) {
+  //     return 500; // 500 km
+  //   } else if (zoom < 15) {
+  //     return 50; // 50 km for city level
+  //   } else if (zoom < 18) {
+  //     return 5; // 5 km for street level
+  //   } else {
+  //     return 1; // 1 km for very close zoom
+  //   }
+  // }
+
+  // LatLngBounds calculateNearbyBounds(
+  //   LatLng centerLatLng, {
+  //   required double zoom,
+  // }) {
+  //   final double distanceKm = getDynamicRadius(zoom);
+  //
+  //   print("Zoome distanceKm-=-=$distanceKm, Zoom Level $zoom");
+  //   final double latOffset = distanceKm / 111;
+  //   final double lonOffset =
+  //       distanceKm / (111 * cos(centerLatLng.latitude * pi / 180));
+  //
+  //   final double latMin = centerLatLng.latitude - latOffset;
+  //   final double latMax = centerLatLng.latitude + latOffset;
+  //   final double lonMin = centerLatLng.longitude - lonOffset;
+  //   final double lonMax = centerLatLng.longitude + lonOffset;
+  //
+  //   return LatLngBounds(
+  //     southwest: LatLng(latMin, lonMin),
+  //     northeast: LatLng(latMax, lonMax),
+  //   );
+  // }
+
   Future<void> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
 
@@ -118,44 +156,68 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         return;
       }
 
-      Position position = await Geolocator.getCurrentPosition(
+      final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-
-      final bounds = _calculateBounds(position);
-      emit(state.copyWith(flights: [], isLoading: true));
-
-      final flights = await FlightRepository().getFlights(bounds: bounds);
 
       emit(
         state.copyWith(
           position: position,
+          status: CommonApiStatus.success,
+          isSuccess: true,
+          isLoading: false,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+          isLoading: false,
+        ),
+      );
+    }
+  }
+
+  LatLngBounds? _previousBounds;
+
+  Future<void> fetchFlightsByBounds({
+    required LatLngBounds bounds,
+    required BuildContext context,
+  }) async {
+    // Agar bounds change nahi hua, API call skip karo
+    if (_previousBounds != null &&
+        _previousBounds!.southwest == bounds.southwest &&
+        _previousBounds!.northeast == bounds.northeast) {
+      debugPrint("Skipping fetch: same bounds as before");
+      return;
+    }
+
+    _previousBounds = bounds;
+
+    try {
+      final boundsString =
+          "${bounds.northeast.latitude},${bounds.southwest.latitude},"
+          "${bounds.southwest.longitude},${bounds.northeast.longitude}";
+
+      final flights = await FlightRepository().getFlights(bounds: boundsString);
+
+      print("flights-=-=-=-$flights");
+
+      emit(
+        state.copyWith(
           flights: flights,
           status: CommonApiStatus.success,
           isSuccess: true,
           isLoading: false,
         ),
       );
-    } on PlatformException catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Platform error: ${e.message}')));
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: 'Platform error: ${e.message}',
-          isLoading: false,
-        ),
-      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
-          errorMessage: 'Something went wrong: ${e.toString()}',
+          errorMessage: e.toString(),
           isLoading: false,
         ),
       );
@@ -219,7 +281,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  void startTrackingFlight(String flightId, BuildContext context) {
+  Future<void> startTrackingFlight(
+    String flightId,
+    BuildContext context,
+  ) async {
     if (_trackingTimer != null && _trackingTimer!.isActive) {
       return;
     }
