@@ -170,7 +170,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       icon: icon,
       infoWindow: InfoWindow(
         title: useCallSign ? flight.callSign : flight.flightNumber,
-        snippet: "${flight.departureIata ?? flight.departureIcao} → ${flight.arrivalIata ?? flight.arrivalIcao}",
+        snippet: "${flight.departureIata} → ${flight.arrivalIata}",
       ),
       onTap: onTap,
     );
@@ -286,6 +286,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     }
   }
 
+  LatLng? _initialCurrentLatLng;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -313,6 +315,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 position.longitude,
               );
 
+              // Save initial location only once S...
+              _initialCurrentLatLng ??= currentLatLng;
+
+
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -324,13 +330,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ),
                     builder: (context, snapshot) {
                       return GoogleMap(
-                        minMaxZoomPreference: MinMaxZoomPreference(6, 10),
+                        minMaxZoomPreference: MinMaxZoomPreference(4, 10),
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
                         rotateGesturesEnabled: false,
                         mapType: state.mapType,
                         initialCameraPosition: CameraPosition(
-                          target: currentLatLng,
+                          target: _initialCurrentLatLng!,
                           zoom: 8,
                         ),
                         myLocationEnabled: true,
@@ -431,7 +437,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       },
                       searchTitle: _isForFlyingInTheArea == 2
                           ? 'Track a flight...'
-                          : 'Search...',
+                          : 'Search Flight no.,CallSign',
                     ),
                   ),
 
