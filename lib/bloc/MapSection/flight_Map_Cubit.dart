@@ -182,15 +182,18 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   LatLngBounds? _previousBounds;
 
   Future<void> fetchFlightsByBounds({
+    required bool isNeedToRefresh,
     required LatLngBounds bounds,
     required BuildContext context,
   }) async {
     // Agar bounds change nahi hua, API call skip karo
-    if (_previousBounds != null &&
-        _previousBounds!.southwest == bounds.southwest &&
-        _previousBounds!.northeast == bounds.northeast) {
-      debugPrint("Skipping fetch: same bounds as before");
-      return;
+    if (isNeedToRefresh == true) {
+      if (_previousBounds != null &&
+          _previousBounds!.southwest == bounds.southwest &&
+          _previousBounds!.northeast == bounds.northeast) {
+        debugPrint("Skipping fetch: same bounds as before");
+        return;
+      }
     }
 
     _previousBounds = bounds;

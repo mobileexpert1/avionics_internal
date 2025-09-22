@@ -56,13 +56,21 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   LatLng? _initialCurrentLatLng;
   bool _isFlightIconPressed = false;
   Timer? _debounce;
+  Timer? _autoUpdateTimer;
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FlightMapCubit>().getCurrentLocation(context);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showTrackingModePopup(context);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAutoUpdate();
     });
 
     //Listen to sheet drag
@@ -77,16 +85,38 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         }
       }
     });
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showTrackingModePopup(context);
+  void _startAutoUpdate() {
+    _autoUpdateTimer?.cancel();
+    _autoUpdateTimer = Timer.periodic(const Duration(seconds: 60), (
+      timer,
+    ) async {
+      if (_mapController == null || _isFlightIconPressed) return;
+      _hasFetchedDetails = false;
+      final visibleRegion = await _mapController!.getVisibleRegion();
+      _mapCubit.fetchFlightsByBounds(bounds: visibleRegion, context: context, isNeedToRefresh: false);
+    });
+  }
+
+  void _fetchFlightsWithDebounce() {
+    if (_mapController == null || _isFlightIconPressed) return;
+    _hasFetchedDetails = false;
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(seconds: 2), () async {
+      if (_mapController == null) return;
+      final visibleRegion = await _mapController!.getVisibleRegion();
+      _mapCubit.fetchFlightsByBounds(bounds: visibleRegion, context: context, isNeedToRefresh: true);
     });
   }
 
   @override
   void dispose() {
+    _autoUpdateTimer?.cancel();
+    _debounce?.cancel();
     _searchController.dispose();
     _mapController?.dispose();
+    _sheetController.dispose();
     super.dispose();
   }
 
@@ -273,13 +303,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           _mapCubit.setSelectedFlight(result.flightDetailResponse!);
         }); // forces a single rebuild
       });
-    }else{
+    } else {
       _isFlightIconPressed = false;
     }
   }
-
-  Set<Polygon> _boundsPolygon = {};
-
 
   @override
   Widget build(BuildContext context) {
@@ -344,50 +371,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           if (_singleSearchMarker != null) _singleSearchMarker!,
                           if (snapshot.hasData) ...snapshot.data!,
                         },
-                        onCameraIdle: () async {
-                          if (_mapController == null) return;
-                          if (_isFlightIconPressed == false) {
-                            _debounce?.cancel();
-                            _debounce = Timer(
-                              const Duration(seconds: 2),
-                              () async {
-                                final visibleRegion = await _mapController!.getVisibleRegion();
-
-                                final ne = visibleRegion.northeast;
-                                final sw = visibleRegion.southwest;
-
-                                // final nw = LatLng(ne.latitude, sw.longitude);
-                                // final se = LatLng(sw.latitude, ne.longitude);
-
-                                // setState(() {
-                                //   _boundsPolygon = {
-                                //     Polygon(
-                                //       polygonId: const PolygonId("visible_bounds"),
-                                //       points: [ne, nw, sw, se, ne], // closed loop
-                                //       strokeColor: Colors.transparent,
-                                //       strokeWidth: 0,
-                                //       fillColor: Colors.black.withOpacity(0.02),
-                                //     ),
-                                //   };
-                                // });
-
-                                //Calculate center & zoom for radius-based bounds
-                                final centerLat = (ne.latitude + sw.latitude) / 2;
-                                final centerLng = (ne.longitude + sw.longitude) / 2;
-                                final centerLatLng = LatLng(centerLat, centerLng);
-                                final zoomLevel = await _mapController?.getZoomLevel();
-                                // final nearbyBounds = _mapCubit.calculateNearbyBounds(
-                                //   centerLatLng,
-                                //   zoom: zoomLevel ?? 0.0,
-                                // );
-                                _mapCubit.fetchFlightsByBounds(
-                                  bounds: visibleRegion,
-                                  context: context,
-                                );
-                              },
-                            );
-                          }
-                        },
+                        onCameraIdle: _fetchFlightsWithDebounce,
                         onMapCreated: (GoogleMapController controller) {
                           _mapController = controller;
                           if (state.isTracking &&
@@ -972,10 +956,10 @@ class FlightCard extends StatelessWidget {
                                         child: state.isTracking
                                             ? const LiveBadge()
                                             : const Icon(
-                                          Icons.my_location,
-                                          color: Colors.blue,
-                                          size: 20,
-                                        ),
+                                                Icons.my_location,
+                                                color: Colors.blue,
+                                                size: 20,
+                                              ),
                                       ),
                                     ),
                                   ],
