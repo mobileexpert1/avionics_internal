@@ -39,75 +39,46 @@ class FlightMapScreen extends StatefulWidget {
 
 class _FlightMapscreenState extends State<FlightMapScreen> {
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
+
   late final TextEditingController _searchController = TextEditingController();
+
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
   bool _showFlightCard = false;
-  GoogleMapController? _mapController;
-  FlightModel? selectedFlight;
-  bool _hasFetchedDetails = false;
-  int _isForFlyingInTheArea = 0;
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
-  bool _isNeedToShowBackButton = false;
-  Marker? _singleSearchMarker;
-  String? selectedFlightId;
-  LatLng? _initialCurrentLatLng;
+  bool _hasFetchedDetails = false;
   bool _isFlightIconPressed = false;
+  bool _isNeedToShowBackButton = false;
+
+  FlightModel? selectedFlight;
+  Marker? _singleSearchMarker;
+  GoogleMapController? _mapController;
+
+  String? selectedFlightId;
+  int _isForFlyingInTheArea = 0;
+
+  LatLng? _initialCurrentLatLng;
+
   Timer? _debounce;
   Timer? _autoUpdateTimer;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<FlightMapCubit>().getCurrentLocation(context);
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final hasPermission = await context
+          .read<FlightMapCubit>()
+          .getCurrentLocation(context);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showTrackingModePopup(context);
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (hasPermission) {
+        _showInitialTrackingModePopup(context);
+      }
       _startAutoUpdate();
     });
 
-    //Listen to sheet drag
-    _sheetController.addListener(() {
-      if (!_hasFetchedDetails && _sheetController.size > 0.15) {
-        final flights = _mapCubit.state.flights ?? [];
-        if (flights.isNotEmpty) {
-          _hasFetchedDetails = true;
-          final typeList = flights.map((f) => f.type).toList();
-          final uniqueTypes = typeList.toSet().toList();
-          _mapCubit.fetchAircraftDetailsFromFlightsList(uniqueTypes, context);
-        }
-      }
-    });
-  }
-
-  void _startAutoUpdate() {
-    _autoUpdateTimer?.cancel();
-    _autoUpdateTimer = Timer.periodic(const Duration(seconds: 60), (
-      timer,
-    ) async {
-      if (_mapController == null || _isFlightIconPressed) return;
-      _hasFetchedDetails = false;
-      final visibleRegion = await _mapController!.getVisibleRegion();
-      _mapCubit.fetchFlightsByBounds(bounds: visibleRegion, context: context, isNeedToRefresh: false);
-    });
-  }
-
-  void _fetchFlightsWithDebounce() {
-    if (_mapController == null || _isFlightIconPressed) return;
-    _hasFetchedDetails = false;
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(seconds: 2), () async {
-      if (_mapController == null) return;
-      final visibleRegion = await _mapController!.getVisibleRegion();
-      _mapCubit.fetchFlightsByBounds(bounds: visibleRegion, context: context, isNeedToRefresh: true);
-    });
+    _sheetController.addListener(_sheetListener);
   }
 
   @override
@@ -118,194 +89,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     _mapController?.dispose();
     _sheetController.dispose();
     super.dispose();
-  }
-
-  void handleToggle(bool newIsMapViewSelected) {
-    setState(() {
-      isMapViewSelected = newIsMapViewSelected;
-      if (!isMapViewSelected) {
-        _hideFlightCard();
-      }
-    });
-    _sheetController.animateTo(
-      isMapViewSelected == true ? 0.0 : 0.78,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _showTrackingModePopup(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      isDismissible: false,
-      enableDrag: false,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return MapTrackingModePopup(
-          onCrossButton: () {
-            Navigator.pop(context);
-            widget.onGoToFirstTab();
-          },
-          onFlyingSelected: () {
-            setState(() {
-              _hideFlightCard();
-              _singleSearchMarker = null;
-              _isMapListViewShown = true;
-              _isNeedToShowBackButton = true;
-              _isForFlyingInTheArea = 1;
-            });
-            Navigator.pop(context);
-          },
-          onTrackSelected: () {
-            setState(() {
-              _hideFlightCard();
-              _singleSearchMarker = null;
-              _isMapListViewShown = false;
-              _isNeedToShowBackButton = true;
-              _isForFlyingInTheArea = 2;
-            });
-            Navigator.pop(context);
-            _handleTextTap(context);
-          },
-        );
-      },
-    );
-  }
-
-  void _toggleFlightCard({required String flight}) {
-    _mapCubit.fetchFlightDetails(flightId: flight, context: context);
-    setState(() {
-      _showFlightCard = true;
-    });
-  }
-
-  void _hideFlightCard() {
-    setState(() {
-      _showFlightCard = false;
-    });
-  }
-
-  Future<Marker> _createMarker({
-    required FlightModel flight,
-    required Color color,
-    required VoidCallback onTap,
-    bool useCallSign = false,
-  }) async {
-    final icon = await getRotatedPlaneIcon(
-      (flight.track).toDouble(),
-      color: color,
-    );
-
-    return Marker(
-      markerId: MarkerId(flight.id.toString()),
-      position: LatLng(flight.latitude, flight.longitude),
-      icon: icon,
-      infoWindow: InfoWindow(
-        title: useCallSign ? flight.callSign : flight.flightNumber,
-        snippet: "${flight.departureIata} → ${flight.arrivalIata}",
-      ),
-      onTap: onTap,
-    );
-  }
-
-  Future<Set<Marker>> _buildFlightMarkers(
-    List<FlightModel> flights,
-    bool isHideMapColour,
-  ) async {
-    final markers = <Marker>{};
-    if (_isForFlyingInTheArea == 1) {
-      for (final flight in flights) {
-        final isSelected = selectedFlightId == flight.id;
-        final marker = await _createMarker(
-          flight: flight,
-          color: isHideMapColour == true
-              ? Colors.red
-              : (isSelected ? Colors.orangeAccent : Colors.red),
-          onTap: () {
-            if (selectedFlightId != flight.id) {
-              _isFlightIconPressed = true;
-              _isMapListViewShown = false;
-              selectedFlightId = flight.id;
-              _mapCubit.setSelectedFlight(flight);
-              _toggleFlightCard(flight: flight.id);
-            } else {
-              selectedFlightId = "";
-              _isFlightIconPressed = false;
-              _hideFlightCard();
-              _buildFlightMarkers(
-                _mapCubit.state.isTracking &&
-                        _mapCubit.state.selectedFlight != null
-                    ? [_mapCubit.state.selectedFlight!]
-                    : _mapCubit.state.flights ?? [],
-                true,
-              );
-            }
-          },
-        );
-        markers.add(marker);
-      }
-    }
-    return markers;
-  }
-
-  Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
-    return _createMarker(
-      flight: flight,
-      color: Colors.blue,
-      useCallSign: true, // <- only difference
-      onTap: () {
-        _mapCubit.setSelectedFlight(flight);
-      },
-    );
-  }
-
-  Future<void> _handleTextTap(BuildContext context) async {
-    _isFlightIconPressed = true;
-    handleToggle(true);
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => MapSearchAircraftListCubit(),
-          child: const TrackAndSearchFlight(),
-        ),
-      ),
-    );
-
-    if (result != null && result is FlightResult) {
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(
-            result.flightDetailResponse?.latitude ?? 0.0,
-            result.flightDetailResponse?.longitude ?? 0.0,
-          ),
-          8, // Zoom level
-        ),
-      );
-
-      setState(() {
-        selectedFlightId = result.flightDetailResponse!.id;
-        _isMapListViewShown = false;
-      });
-
-      _toggleFlightCard(flight: result.id);
-
-      _buildSingleFlightMarker(result.flightDetailResponse!).then((marker) {
-        setState(() {
-          _singleSearchMarker = marker;
-        });
-      });
-
-      Timer(const Duration(seconds: 2), () {
-        if (!mounted) return;
-        setState(() {
-          _mapCubit.setSelectedFlight(result.flightDetailResponse!);
-        }); // forces a single rebuild
-      });
-    } else {
-      _isFlightIconPressed = false;
-    }
   }
 
   @override
@@ -399,279 +182,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         onToggle: handleToggle, // Passing the callback function
                       ),
                     ),
-
-                  Positioned(
-                    top: 40,
-                    left: 5,
-                    right: 5,
-                    child: SearchBarWidget(
-                      enableGestureMode: true,
-                      onTextTap: () => _handleTextTap(context),
-                      enableBackArrow: _isNeedToShowBackButton,
-                      onBackButtonTap: () {
-                        _showTrackingModePopup(context);
-                      },
-                      enableFilter: _isMapListViewShown == false ? false : true,
-                      enableCloseScreen: false,
-                      isComeFromMapSection: true,
-                      controller: _searchController,
-                      onFilterTap: () async {
-                        final selectedMapTypes =
-                            await showModalBottomSheet<MapType>(
-                              context: context,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-                              backgroundColor: Colors.transparent,
-                              builder: (context) {
-                                return BlocProvider(
-                                  create: (_) =>
-                                      FilterMapMainCubit()..setInitialMapType(
-                                        context
-                                            .read<FlightMapCubit>()
-                                            .state
-                                            .mapType,
-                                      ),
-                                  child: FractionallySizedBox(
-                                    heightFactor: 0.84,
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(20),
-                                      ),
-                                      child: FilterForMapScreen(
-                                        initialMapType: state.mapType,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-
-                        if (selectedMapTypes != null) {
-                          _mapCubit.changeMapType(selectedMapTypes);
-                        }
-                        _hideFlightCard();
-                      },
-                      searchTitle: _isForFlyingInTheArea == 2
-                          ? 'Track a flight...'
-                          : 'Search Flight no.,CallSign',
-                    ),
-                  ),
-
-                  DraggableScrollableSheet(
-                    controller: _sheetController,
-                    initialChildSize: 0.0,
-                    minChildSize: 0.0,
-                    maxChildSize: 0.78,
-                    snap: true,
-                    builder: (context, scrollController) {
-                      return Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                        ),
-                        child: CustomScrollView(
-                          controller: scrollController,
-                          slivers: [
-                            SliverToBoxAdapter(
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
-                                    child: Container(
-                                      height: 4,
-                                      width: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade400,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.radar,
-                                          color: Colors.black,
-                                          size: 30,
-                                        ),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          "Flights in the area",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate((
-                                context,
-                                index,
-                              ) {
-                                final data = state.flights?[index];
-                                return Padding(
-                                  key: ValueKey(index),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        MediaQuery.of(context).size.width *
-                                        0.017,
-                                  ),
-                                  child: SimpleAircraftCard(
-                                    imagePath:
-                                        (data?.aircraftDetails?.image == null ||
-                                            data?.aircraftDetails?.image == ""
-                                        ? Image.asset(
-                                            CommonUi.setPngImage(
-                                              AssetsPath.aeroplaneComparison,
-                                            ),
-                                            width: 50,
-                                            height: 120,
-                                            fit: BoxFit.fill,
-                                          )
-                                        : CachedAnyImage(
-                                            imagePath:
-                                                data!.aircraftDetails!.image,
-                                            width: 50,
-                                            height: 120,
-                                            contentImage: BoxFit.fill,
-                                          )),
-
-                                    model:
-                                        "${data?.aircraftDetails?.aircraftModel ?? " "} ",
-                                    badge:
-                                        data?.aircraftDetails?.icaoTypeCode ??
-                                        data?.type ??
-                                        "",
-                                    manufacturer:
-                                        data
-                                            ?.aircraftDetails
-                                            ?.manufacturer
-                                            ?.companyName ??
-                                        "",
-                                    airline: "",
-                                    airlineImagePath:
-                                        (data
-                                                    ?.aircraftDetails
-                                                    ?.manufacturer
-                                                    ?.logo ==
-                                                null ||
-                                            data
-                                                    ?.aircraftDetails
-                                                    ?.manufacturer
-                                                    ?.logo ==
-                                                ""
-                                        ? SizedBox.shrink()
-                                        : CachedAnyImage(
-                                            imagePath:
-                                                data
-                                                    ?.aircraftDetails
-                                                    ?.manufacturer
-                                                    ?.logo ??
-                                                "",
-                                            width: 50,
-                                            height: 120,
-                                            contentImage: BoxFit.fill,
-                                          )),
-                                    callSign: data?.callSign ?? "",
-                                    onTap: () {
-                                      _buildSingleFlightMarker(data!).then((
-                                        marker,
-                                      ) {
-                                        setState(() {
-                                          _singleSearchMarker = marker;
-                                        });
-                                      });
-
-                                      _mapController?.animateCamera(
-                                        CameraUpdate.newLatLngZoom(
-                                          LatLng(data.latitude, data.longitude),
-                                          8, // Zoom level
-                                        ),
-                                      );
-
-                                      setState(() {
-                                        _singleSearchMarker = null;
-                                        isMapViewSelected = true;
-                                        _isMapListViewShown = false;
-                                      });
-
-                                      _toggleFlightCard(flight: data.id);
-
-                                      _sheetController.animateTo(
-                                        0.0,
-                                        duration: const Duration(
-                                          milliseconds: 400,
-                                        ),
-                                        curve: Curves.easeInOut,
-                                      );
-
-                                      Timer(const Duration(seconds: 2), () {
-                                        if (!mounted) return;
-                                        setState(() {
-                                          selectedFlightId = data.id;
-                                          context
-                                              .read<FlightMapCubit>()
-                                              .setSelectedFlight(data);
-                                        }); // forces a single rebuild
-                                      });
-                                    },
-                                  ),
-                                );
-                              }, childCount: state.flights?.length),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                  _buildSearchBar(context, state),
+                  _buildFlightsDraggableSheet(context, state),
                   if (state.selectedFlightDetail != null)
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      left: 0,
-                      right: 0,
-                      bottom: _showFlightCard
-                          ? 0
-                          : -MediaQuery.of(context).size.height * 0.4,
-                      child: BlocBuilder<FlightMapCubit, FlightMapState>(
-                        builder: (context, state) {
-                          return FlightCard(
-                            flightDetail: state.selectedFlightDetail,
-                            isComeFromLiveTracking: false,
-                            callBackForHideFlightCard: () {
-                              selectedFlightId = "";
-                              _isFlightIconPressed = false;
-                              _hideFlightCard();
-                              _buildFlightMarkers(
-                                state.isTracking && state.selectedFlight != null
-                                    ? [state.selectedFlight!]
-                                    : state.flights ?? [],
-                                true,
-                              );
-                            },
-                            // fromDateTime: state.fromDateTime,
-                            // toDateTime: state.toDateTime,
-                          );
-                        },
-                      ),
-                    ),
+                    _buildAnimatedFlightCard(context),
                 ],
               );
             }
@@ -680,44 +194,503 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         ),
       ),
       floatingActionButton: _showFlightCard == false
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    final token = prefs.getString('UserAccessTokenKey');
+          ? _buildChatFloatingButton(context)
+          : SizedBox.shrink(),
+    );
+  }
 
-                    if (token != null && token.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => AskWilcoScreen(
-                            accessToken: token,
-                            isComeFromTab: false,
-                            sessionId: '',
-                            title: '',
-                          ),
+  void _sheetListener() {
+    if (!_hasFetchedDetails && _sheetController.size > 0.15) {
+      final flights = _mapCubit.state.flights ?? [];
+      if (flights.isNotEmpty) {
+        _hasFetchedDetails = true;
+        final typeList = flights.map((f) => f.type).toList();
+        final uniqueTypes = typeList.toSet().toList();
+        _mapCubit.fetchAircraftDetailsFromFlightsList(uniqueTypes, context);
+      }
+    }
+  }
+
+  void _startAutoUpdate() {
+    _autoUpdateTimer?.cancel();
+    _autoUpdateTimer = Timer.periodic(const Duration(seconds: 60), (_) async {
+      if (!mounted || _mapController == null || _isFlightIconPressed) return;
+      _hasFetchedDetails = false;
+      final bounds = await _mapController!.getVisibleRegion();
+      _mapCubit.fetchFlightsByBounds(
+        bounds: bounds,
+        context: context,
+        isNeedToRefresh: false,
+      );
+    });
+  }
+
+  void _fetchFlightsWithDebounce() {
+    if (_mapController == null || _isFlightIconPressed) return;
+    _hasFetchedDetails = false;
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(seconds: 2), () async {
+      if (_mapController == null) return;
+      final visibleRegion = await _mapController!.getVisibleRegion();
+      _mapCubit.fetchFlightsByBounds(
+        bounds: visibleRegion,
+        context: context,
+        isNeedToRefresh: true,
+      );
+    });
+  }
+
+  void handleToggle(bool newIsMapViewSelected) {
+    setState(() {
+      isMapViewSelected = newIsMapViewSelected;
+      if (!isMapViewSelected) _hideFlightCard();
+    });
+    _sheetController.animateTo(
+      isMapViewSelected ? 0.0 : 0.78,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _showInitialTrackingModePopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return MapTrackingModePopup(
+          onCrossButton: () {
+            Navigator.pop(context);
+            widget.onGoToFirstTab();
+          },
+          onFlyingSelected: () {
+            setState(() {
+              _hideFlightCard();
+              _singleSearchMarker = null;
+              _isMapListViewShown = true;
+              _isNeedToShowBackButton = true;
+              _isForFlyingInTheArea = 1;
+            });
+            Navigator.pop(context);
+          },
+          onTrackSelected: () {
+            setState(() {
+              _hideFlightCard();
+              _singleSearchMarker = null;
+              _isMapListViewShown = false;
+              _isNeedToShowBackButton = true;
+              _isForFlyingInTheArea = 2;
+            });
+            Navigator.pop(context);
+            _handleTextTap(context);
+          },
+        );
+      },
+    );
+  }
+
+  void _toggleFlightCard({required String flight}) {
+    _mapCubit.fetchFlightDetails(flightId: flight, context: context);
+    setState(() => _showFlightCard = true);
+  }
+
+  void _hideFlightCard() => setState(() => _showFlightCard = false);
+
+  Future<Marker> _createMarker({
+    required FlightModel flight,
+    required Color color,
+    required VoidCallback onTap,
+    bool useCallSign = false,
+  }) async {
+    final icon = await getRotatedPlaneIcon(
+      (flight.track).toDouble(),
+      color: color,
+    );
+
+    return Marker(
+      markerId: MarkerId(flight.id.toString()),
+      position: LatLng(flight.latitude, flight.longitude),
+      icon: icon,
+      infoWindow: InfoWindow(
+        title: useCallSign ? flight.callSign : flight.flightNumber,
+        snippet: "${flight.departureIata} → ${flight.arrivalIata}",
+      ),
+      onTap: onTap,
+    );
+  }
+
+  Future<Set<Marker>> _buildFlightMarkers(
+    List<FlightModel> flights,
+    bool isHideMapColour,
+  ) async {
+    final markers = <Marker>{};
+    if (_isForFlyingInTheArea == 1) {
+      for (final flight in flights) {
+        final isSelected = selectedFlightId == flight.id;
+        final marker = await _createMarker(
+          flight: flight,
+          color: isHideMapColour == true
+              ? Colors.red
+              : (isSelected ? Colors.orangeAccent : Colors.red),
+          onTap: () {
+            if (selectedFlightId != flight.id) {
+              _isFlightIconPressed = true;
+              _isMapListViewShown = false;
+              selectedFlightId = flight.id;
+              _mapCubit.setSelectedFlight(flight);
+              _toggleFlightCard(flight: flight.id);
+            } else {
+              selectedFlightId = "";
+              _isFlightIconPressed = false;
+              _hideFlightCard();
+              _buildFlightMarkers(
+                _mapCubit.state.isTracking &&
+                        _mapCubit.state.selectedFlight != null
+                    ? [_mapCubit.state.selectedFlight!]
+                    : _mapCubit.state.flights ?? [],
+                true,
+              );
+            }
+          },
+        );
+        markers.add(marker);
+      }
+    }
+    return markers;
+  }
+
+  Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
+    return _createMarker(
+      flight: flight,
+      color: Colors.blue,
+      useCallSign: true,
+      onTap: () {
+        _mapCubit.setSelectedFlight(flight);
+      },
+    );
+  }
+
+  Future<void> _handleTextTap(BuildContext context) async {
+    _isFlightIconPressed = true;
+    handleToggle(true);
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => MapSearchAircraftListCubit(),
+          child: const TrackAndSearchFlight(),
+        ),
+      ),
+    );
+
+    if (result != null && result is FlightResult) {
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(
+            result.flightDetailResponse?.latitude ?? 0.0,
+            result.flightDetailResponse?.longitude ?? 0.0,
+          ),
+          8, // Zoom level
+        ),
+      );
+
+      setState(() {
+        selectedFlightId = result.flightDetailResponse!.id;
+        _isMapListViewShown = false;
+      });
+
+      _toggleFlightCard(flight: result.id);
+
+      _buildSingleFlightMarker(result.flightDetailResponse!).then((marker) {
+        setState(() {
+          _singleSearchMarker = marker;
+        });
+      });
+
+      Timer(const Duration(seconds: 2), () {
+        if (!mounted) return;
+        setState(() {
+          _mapCubit.setSelectedFlight(result.flightDetailResponse!);
+        }); // forces a single rebuild
+      });
+    } else {
+      _isFlightIconPressed = false;
+    }
+  }
+
+  Widget _buildFlightsDraggableSheet(
+    BuildContext context,
+    FlightMapState state,
+  ) {
+    return DraggableScrollableSheet(
+      controller: _sheetController,
+      initialChildSize: 0.0,
+      minChildSize: 0.0,
+      maxChildSize: 0.78,
+      snap: true,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Container(
+                        height: 4,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Access token not found")),
-                      );
-                    }
-                  },
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.Chatbot),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Icon(Icons.radar, color: Colors.black, size: 30),
+                          SizedBox(width: 8),
+                          Text(
+                            "Flights in the area",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final data = state.flights?[index];
+                  return Padding(
+                    key: ValueKey(index),
+                    padding: EdgeInsets.symmetric(
+                      vertical: MediaQuery.of(context).size.width * 0.017,
+                    ),
+                    child: SimpleAircraftCard(
+                      imagePath:
+                          (data?.aircraftDetails?.image == null ||
+                              data?.aircraftDetails?.image == ""
+                          ? Image.asset(
+                              CommonUi.setPngImage(
+                                AssetsPath.aeroplaneComparison,
+                              ),
+                              width: 50,
+                              height: 120,
+                              fit: BoxFit.fill,
+                            )
+                          : CachedAnyImage(
+                              imagePath: data!.aircraftDetails!.image,
+                              width: 50,
+                              height: 120,
+                              contentImage: BoxFit.fill,
+                            )),
+                      model: "${data?.aircraftDetails?.aircraftModel ?? " "} ",
+                      badge:
+                          data?.aircraftDetails?.icaoTypeCode ??
+                          data?.type ??
+                          "",
+                      manufacturer:
+                          data?.aircraftDetails?.manufacturer?.companyName ??
+                          "",
+                      airline: "",
+                      airlineImagePath:
+                          (data?.aircraftDetails?.manufacturer?.logo == null ||
+                              data?.aircraftDetails?.manufacturer?.logo == ""
+                          ? SizedBox.shrink()
+                          : CachedAnyImage(
+                              imagePath:
+                                  data?.aircraftDetails?.manufacturer?.logo ??
+                                  "",
+                              width: 50,
+                              height: 120,
+                              contentImage: BoxFit.fill,
+                            )),
+                      callSign: data?.callSign ?? "",
+                      onTap: () {
+                        _buildSingleFlightMarker(data!).then((marker) {
+                          setState(() {
+                            _singleSearchMarker = marker;
+                          });
+                        });
+
+                        _mapController?.animateCamera(
+                          CameraUpdate.newLatLngZoom(
+                            LatLng(data.latitude, data.longitude),
+                            8,
+                          ),
+                        );
+
+                        setState(() {
+                          _singleSearchMarker = null;
+                          isMapViewSelected = true;
+                          _isMapListViewShown = false;
+                        });
+
+                        _toggleFlightCard(flight: data.id);
+
+                        _sheetController.animateTo(
+                          0.0,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOut,
+                        );
+
+                        Timer(const Duration(seconds: 2), () {
+                          if (!mounted) return;
+                          setState(() {
+                            selectedFlightId = data.id;
+                            context.read<FlightMapCubit>().setSelectedFlight(
+                              data,
+                            );
+                          });
+                        });
+                      },
+                    ),
+                  );
+                }, childCount: state.flights?.length),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context, FlightMapState state) {
+    return Positioned(
+      top: 40,
+      left: 5,
+      right: 5,
+      child: SearchBarWidget(
+        enableGestureMode: true,
+        onTextTap: () => _handleTextTap(context),
+        enableBackArrow: _isNeedToShowBackButton,
+        onBackButtonTap: () => _showInitialTrackingModePopup(context),
+        enableFilter: _isMapListViewShown,
+        enableCloseScreen: false,
+        isComeFromMapSection: true,
+        controller: _searchController,
+        onFilterTap: () async {
+          final selectedMapTypes = await showModalBottomSheet<MapType>(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            backgroundColor: Colors.transparent,
+            builder: (context) {
+              return BlocProvider(
+                create: (_) => FilterMapMainCubit()
+                  ..setInitialMapType(
+                    context.read<FlightMapCubit>().state.mapType,
+                  ),
+                child: FractionallySizedBox(
+                  heightFactor: 0.84,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    child: FilterForMapScreen(initialMapType: state.mapType),
                   ),
                 ),
-              ],
-            )
-          : SizedBox.shrink(),
+              );
+            },
+          );
+
+          if (selectedMapTypes != null) {
+            _mapCubit.changeMapType(selectedMapTypes);
+          }
+          _hideFlightCard();
+        },
+        searchTitle: _isForFlyingInTheArea == 2
+            ? 'Track a flight...'
+            : 'Search Flight no.,CallSign',
+      ),
+    );
+  }
+
+  Widget _buildChatFloatingButton(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        FloatingActionButton(
+          onPressed: () async {
+            final prefs = await SharedPreferences.getInstance();
+            final token = prefs.getString('UserAccessTokenKey');
+
+            if (token != null && token.isNotEmpty) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AskWilcoScreen(
+                    accessToken: token,
+                    isComeFromTab: false,
+                    sessionId: '',
+                    title: '',
+                  ),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Access token not found")),
+              );
+            }
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.Chatbot),
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAnimatedFlightCard(BuildContext context) {
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      left: 0,
+      right: 0,
+      bottom: _showFlightCard ? 0 : -MediaQuery.of(context).size.height * 0.4,
+      child: BlocBuilder<FlightMapCubit, FlightMapState>(
+        builder: (context, state) {
+          return FlightCard(
+            flightDetail: state.selectedFlightDetail,
+            isComeFromLiveTracking: false,
+            callBackForHideFlightCard: () {
+              selectedFlightId = "";
+              _isFlightIconPressed = false;
+              _hideFlightCard();
+              _buildFlightMarkers(
+                state.isTracking && state.selectedFlight != null
+                    ? [state.selectedFlight!]
+                    : state.flights ?? [],
+                true,
+              );
+            },
+            // fromDateTime: state.fromDateTime,
+            // toDateTime: state.toDateTime,
+          );
+        },
+      ),
     );
   }
 }

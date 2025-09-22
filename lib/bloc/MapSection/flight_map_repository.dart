@@ -156,7 +156,6 @@ class FlightRepository {
   }
 
   Future<FlightResponse?> getFlightPositions(
-    String bounds,
     String flightNumber,
   ) async {
     String url =
