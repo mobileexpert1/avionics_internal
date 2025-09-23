@@ -1,4 +1,5 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/BlackBoxSection/BlackboxScreen.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/CalculationSection/CalculationScreen.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/OneWordSection/OneWordScreen.dart';
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizScreen.dart';
@@ -72,9 +73,15 @@ class GamesScreen extends StatelessWidget {
                               ),
                             );
                             break;
-                          // case 'black_box':
-                          //   Navigator.push(context, MaterialPageRoute(builder: (_) =>  BlackBoxScreen()));
-                          //   break;
+                          case 'black_box':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    BlackBoxStartScreen(gameId: game.id),
+                              ),
+                            );
+                            break;
                           default:
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

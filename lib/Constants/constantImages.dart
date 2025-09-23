@@ -80,6 +80,7 @@ abstract class AssetsPath {
   static const String oneWord = "oneWorldIcon";
   static const String blackBox = "blackBoxIcon";
   static const String calculations = "calculationIcon";
+  static const String Blackboxlogo = "gameBlackboxlogo";
 
   static const String mapPopupAircraft = "MapPopupAircraft";
   static const String mapPopupLivearea = "MapPopupLivearea";

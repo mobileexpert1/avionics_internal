@@ -23,11 +23,111 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   Timer? _trackingTimer;
 
-  // fetch Aircraft Details From Flights List......
+  Future<bool> getCurrentLocation(BuildContext context) async {
+    emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
+
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: 'Location services are disabled.',
+            isLoading: false,
+          ),
+        );
+        return false;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              isLoading: false,
+              errorMessage:
+              'Location permissions are permanently denied.\n   Please enable them from settings.',
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Location permissions are permanently denied.\n   Please enable them from settings.',
+              ),
+            ),
+          );
+          return false;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            isLoading: false,
+            errorMessage:
+            'Location permissions are permanently denied.\n   Please enable them from settings.',
+          ),
+        );
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Location Permission'),
+            content: const Text(
+              'Location permissions are permanently denied.\n   Please enable them from settings.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await Geolocator.openAppSettings();
+                },
+                child: const Text('Open Settings'),
+              ),
+            ],
+          ),
+        );
+        return false;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      emit(
+        state.copyWith(
+          position: position,
+          status: CommonApiStatus.success,
+          isSuccess: true,
+          isLoading: false,
+        ),
+      );
+
+      return true; // Successfully got location
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+          isLoading: false,
+        ),
+      );
+      return false;
+    }
+  }
+
+  // fetch Aircraft Details From Flights List...... For The Map List.....
   Future<void> fetchAircraftDetailsFromFlightsList(
-    List<String> uniqueTypes,
-    BuildContext context,
-  ) async {
+      List<String> uniqueTypes,
+      BuildContext context,
+      ) async {
     try {
       final flightsDetails = await AircraftListDataRepository()
           .getListOfAllPlanes(aircraftIds: uniqueTypes);
@@ -63,139 +163,25 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(mapType: type));
   }
 
-  String _calculateBounds(Position position, {double delta = 5.0}) {
-    final north = position.latitude + delta;
-    final south = position.latitude - delta;
-    final east = position.longitude + delta;
-    final west = position.longitude - delta;
-    print('Bounds: north=$north, south=$south, east=$east, west=$west');
-    return "$north,$south,$east,$west";
-  }
-
-  String formatUtc(DateTime dateTime) {
-    return "${dateTime.toUtc().toIso8601String().split('.').first}Z";
-  }
-
   void setSelectedFlight(FlightModel flight) {
     emit(state.copyWith(selectedFlight: flight));
-  }
-
-  void clearSelectedFlight() {
-    final newState = state.copyWith(selectedFlight: null);
-    emit(newState);
-  }
-
-  double getDynamicRadius(double zoom) {
-    if (zoom < 5) {
-      return 2000; // 2000 km for world view
-    } else if (zoom < 10) {
-      return 500; // 500 km
-    } else if (zoom < 15) {
-      return 50; // 50 km for city level
-    } else if (zoom < 18) {
-      return 5; // 5 km for street level
-    } else {
-      return 1; // 1 km for very close zoom
-    }
-  }
-
-  LatLngBounds calculateNearbyBounds(
-    LatLng centerLatLng, {
-    required double zoom,
-  }) {
-    final double distanceKm = getDynamicRadius(zoom);
-
-    print("Zoome distanceKm-=-=$distanceKm, Zoom Level $zoom");
-    final double latOffset = distanceKm / 111;
-    final double lonOffset =
-        distanceKm / (111 * cos(centerLatLng.latitude * pi / 180));
-
-    final double latMin = centerLatLng.latitude - latOffset;
-    final double latMax = centerLatLng.latitude + latOffset;
-    final double lonMin = centerLatLng.longitude - lonOffset;
-    final double lonMax = centerLatLng.longitude + lonOffset;
-
-    return LatLngBounds(
-      southwest: LatLng(latMin, lonMin),
-      northeast: LatLng(latMax, lonMax),
-    );
-  }
-
-  Future<void> getCurrentLocation(BuildContext context) async {
-    emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
-
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        emit(
-          state.copyWith(
-            status: CommonApiStatus.failure,
-            errorMessage: 'Location services are disabled.',
-            isLoading: false,
-          ),
-        );
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          emit(
-            state.copyWith(status: CommonApiStatus.failure, isLoading: false),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')),
-          );
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        emit(state.copyWith(status: CommonApiStatus.failure, isLoading: false));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Location permissions are permanently denied'),
-          ),
-        );
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      emit(
-        state.copyWith(
-          position: position,
-          status: CommonApiStatus.success,
-          isSuccess: true,
-          isLoading: false,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-          isLoading: false,
-        ),
-      );
-    }
   }
 
   LatLngBounds? _previousBounds;
 
   Future<void> fetchFlightsByBounds({
+    required bool isNeedToRefresh,
     required LatLngBounds bounds,
     required BuildContext context,
   }) async {
     // Agar bounds change nahi hua, API call skip karo
-    if (_previousBounds != null &&
-        _previousBounds!.southwest == bounds.southwest &&
-        _previousBounds!.northeast == bounds.northeast) {
-      debugPrint("Skipping fetch: same bounds as before");
-      return;
+    if (isNeedToRefresh == true) {
+      if (_previousBounds != null &&
+          _previousBounds!.southwest == bounds.southwest &&
+          _previousBounds!.northeast == bounds.northeast) {
+        debugPrint("Skipping fetch: same bounds as before");
+        return;
+      }
     }
 
     _previousBounds = bounds;
@@ -230,13 +216,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<List<FlightModel>> mergeFlightsWithDetails(
-    List<FlightModel> flights,
-    List<AircraftModel> aircraftDetails,
-  ) async {
+      List<FlightModel> flights,
+      List<AircraftModel> aircraftDetails,
+      ) async {
     return flights.map((flight) {
       final matchingDetail = aircraftDetails.firstWhere(
-        (detail) =>
-            detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+            (detail) =>
+        detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
         orElse: () => AircraftModel(
           id: '',
           aircraftModel: '',
@@ -247,6 +233,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
       return flight.copyWith(aircraftDetails: matchingDetail);
     }).toList();
+  }
+
+  String formatUtc(DateTime dateTime) {
+    return "${dateTime.toUtc().toIso8601String().split('.').first}Z";
   }
 
   Future<void> fetchFlightDetails({
@@ -287,9 +277,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> startTrackingFlight(
-    String flightId,
-    BuildContext context,
-  ) async {
+      String flightId,
+      BuildContext context,
+      ) async {
     if (_trackingTimer != null && _trackingTimer!.isActive) {
       return;
     }
@@ -307,9 +297,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> _fetchAndUpdateFlight(
-    String flightNumber,
-    BuildContext context,
-  ) async {
+      String flightNumber,
+      BuildContext context,
+      ) async {
     if (isClosed) return;
 
     try {
@@ -323,9 +313,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         return;
       }
 
-      final bounds = _calculateBounds(position);
       final response = await FlightRepository().getFlightPositions(
-        bounds,
         flightNumber,
       );
       final flights = response?.flights as List<FlightModel>;
@@ -361,3 +349,4 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(isTracking: false));
   }
 }
+
