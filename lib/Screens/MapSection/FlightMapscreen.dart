@@ -60,9 +60,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   int _isForFlyingInTheArea = 0;
 
   LatLng? _initialCurrentLatLng;
-
   Timer? _debounce;
-  Timer? _autoUpdateTimer;
 
   @override
   void initState() {
@@ -75,7 +73,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       if (hasPermission) {
         _showInitialTrackingModePopup(context);
       }
-      _startAutoUpdate();
     });
 
     _sheetController.addListener(_sheetListener);
@@ -83,7 +80,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   @override
   void dispose() {
-    _autoUpdateTimer?.cancel();
     _debounce?.cancel();
     _searchController.dispose();
     _mapController?.dispose();
@@ -209,20 +205,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         _mapCubit.fetchAircraftDetailsFromFlightsList(uniqueTypes, context);
       }
     }
-  }
-
-  void _startAutoUpdate() {
-    _autoUpdateTimer?.cancel();
-    _autoUpdateTimer = Timer.periodic(const Duration(seconds: 60), (_) async {
-      if (!mounted || _mapController == null || _isFlightIconPressed) return;
-      _hasFetchedDetails = false;
-      final bounds = await _mapController!.getVisibleRegion();
-      _mapCubit.fetchFlightsByBounds(
-        bounds: bounds,
-        context: context,
-        isNeedToRefresh: false,
-      );
-    });
   }
 
   void _fetchFlightsWithDebounce() {
