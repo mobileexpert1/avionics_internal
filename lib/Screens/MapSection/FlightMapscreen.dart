@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -171,7 +170,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             icon: icon,
             infoWindow: InfoWindow(
               title: flight.flightNumber,
-              snippet: "${flight.departureIcao} → ${flight.arrivalIcao}",
+              snippet: "${flight.departureIata} → ${flight.arrivalIata}",
             ),
             onTap: () {
               print(

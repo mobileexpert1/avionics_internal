@@ -216,6 +216,10 @@ class ApiFunctionUrlGamesConstant {
   static const oneWordSubmit = "ai-engine/games/one-word/";
   static const quiz = "ai-engine/games/quiz/";
   static const quizQuestions = "ai-engine/games/quiz/questions/";
+  static const blackBoxSummary = "/blackbox/summary";
+  static const blackBoxQuestions = "blackbox/question";
+  static const blackBoxSubmit = "blackbox/submit";
+
 }
 
 class ApiFunctionUrlMapSecitonConstant {

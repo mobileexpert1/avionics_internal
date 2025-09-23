@@ -1,15 +1,14 @@
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
+import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackbox_cubit.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
-import 'package:avionics_internal/bloc/MapSection/flight_Map_Cubit.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
-import 'Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxResultScreen.dart';
-import 'Screens/Games/GamesSubScreens/BlackBoxSection/BlackboxScreen.dart';
+import 'Screens/Games/MainGameScreen/GameScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -107,8 +106,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => QuizCubit()),
         BlocProvider(create: (_) => ComparisonFilterCubit1()),
         BlocProvider(create: (_) => MapSearchAircraftListCubit()),
-        BlocProvider(create: (_) => FlightMapCubit()),
-
+        BlocProvider(create: (_) => BlackboxCubit()),
       ],
       //Responsive test case
       child: ResponsiveSizer(
@@ -117,7 +115,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: BlackBoxResultScreen(),
+            home: SplashScreen(),
           );
         },
       ),

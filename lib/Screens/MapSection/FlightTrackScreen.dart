@@ -55,13 +55,6 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 
-  // @override
-  // void dispose() {
-  //   _mapController?.dispose();
-  //   _animationController?.dispose();
-  //   super.dispose();
-  // }
-
   @override
   void dispose() {
     _mapController?.dispose();
@@ -119,7 +112,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
       infoWindow: InfoWindow(
         title: widget.initialFlight?.callSign ?? 'Flight',
         snippet:
-            '${widget.initialFlightDetail?.departureIcao ?? 'N/A'} → ${widget.initialFlightDetail?.arrivalIcao ?? 'N/A'}',
+            '${widget.initialFlightDetail?.departureIata ?? 'N/A'} → ${widget.initialFlightDetail?.arrivalIata ?? 'N/A'}',
       ),
     );
 
