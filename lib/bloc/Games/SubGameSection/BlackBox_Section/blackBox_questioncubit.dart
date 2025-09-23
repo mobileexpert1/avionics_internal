@@ -281,7 +281,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   }
 
   void selectTrueFalse(int index) {
-    emit(state.copyWith(selectedIndex: index, showAnswer: false));
+    emit(state.copyWith(selectedIndex: index, showAnswer: false,selectedAnswer: index.toString()));
   }
 
   void updateSequence(List<String> newSequence) {
@@ -366,7 +366,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   }
 
 
-
   Future<void> nextQuestion(BuildContext context) async {
     print("before emit");
     print("selected Index ----------------- ${state.selectedIndex}");
@@ -380,9 +379,9 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
 
       emit(state.copyWith(
         currentIndex: state.currentIndex + 1,
-        selectedIndex: 7,
-        selectedSequence: null,
-        selectedAnswer: null,
+        selectedIndex: null,
+        selectedSequence: [],
+        selectedAnswer: '',
         showAnswer: false,
         timer: _totalDuration,
         isTimerEnded: false,
@@ -391,6 +390,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       print("after emit");
       print("selected Index ----------------- ${state.selectedIndex}");
       print("selected answer ----------------- ${state.selectedAnswer}");
+      print("selected answer ----------------- ${state.selectedSequence}");
 
       startTimer(context);
     } else {
