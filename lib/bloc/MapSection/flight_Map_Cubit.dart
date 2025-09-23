@@ -48,7 +48,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
               status: CommonApiStatus.failure,
               isLoading: false,
               errorMessage:
-              'Location permissions are permanently denied.\n   Please enable them from settings.',
+                  'Location permissions are permanently denied.\n   Please enable them from settings.',
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +68,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             status: CommonApiStatus.failure,
             isLoading: false,
             errorMessage:
-            'Location permissions are permanently denied.\n   Please enable them from settings.',
+                'Location permissions are permanently denied.\n   Please enable them from settings.',
           ),
         );
 
@@ -125,9 +125,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   // fetch Aircraft Details From Flights List...... For The Map List.....
   Future<void> fetchAircraftDetailsFromFlightsList(
-      List<String> uniqueTypes,
-      BuildContext context,
-      ) async {
+    List<String> uniqueTypes,
+    BuildContext context,
+  ) async {
     try {
       final flightsDetails = await AircraftListDataRepository()
           .getListOfAllPlanes(aircraftIds: uniqueTypes);
@@ -147,6 +147,35 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         );
       }
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          isSuccess: false,
+          isLoading: false,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  // Cubit method to fetch hardcoded airport list
+  Future<void> fetchAirportList(BuildContext context) async {
+    try {
+      // Call repository method
+      final airportList = await AircraftListDataRepository().getAirportList();
+
+      // Update the Cubit state
+      emit(
+        state.copyWith(
+          airports: airportList,
+          status: CommonApiStatus.success,
+          isSuccess: true,
+          isLoading: false,
+        ),
+      );
+    } catch (e) {
+      // Handle errors (unauthorized / other)
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(
@@ -195,6 +224,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       print("flights-=-=-=-$flights");
 
+      fetchAirportList(context);
+
       emit(
         state.copyWith(
           flights: flights,
@@ -216,13 +247,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<List<FlightModel>> mergeFlightsWithDetails(
-      List<FlightModel> flights,
-      List<AircraftModel> aircraftDetails,
-      ) async {
+    List<FlightModel> flights,
+    List<AircraftModel> aircraftDetails,
+  ) async {
     return flights.map((flight) {
       final matchingDetail = aircraftDetails.firstWhere(
-            (detail) =>
-        detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+        (detail) =>
+            detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
         orElse: () => AircraftModel(
           id: '',
           aircraftModel: '',
@@ -277,9 +308,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> startTrackingFlight(
-      String flightId,
-      BuildContext context,
-      ) async {
+    String flightId,
+    BuildContext context,
+  ) async {
     if (_trackingTimer != null && _trackingTimer!.isActive) {
       return;
     }
@@ -297,9 +328,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> _fetchAndUpdateFlight(
-      String flightNumber,
-      BuildContext context,
-      ) async {
+    String flightNumber,
+    BuildContext context,
+  ) async {
     if (isClosed) return;
 
     try {
@@ -349,4 +380,3 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(isTracking: false));
   }
 }
-

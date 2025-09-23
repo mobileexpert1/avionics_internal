@@ -85,6 +85,11 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     try {
       debugPrint("TrackFlightScreen lifecycle → $state");
+
+      if (state == AppLifecycleState.resumed) {
+        _alertShown = false;
+      }
+
       if (state == AppLifecycleState.paused ||
           state == AppLifecycleState.inactive) {
         if (_alertShown == false) {
@@ -322,6 +327,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 }
+
 
 class LatLngTween extends Tween<LatLng> {
   LatLngTween({required LatLng begin, required LatLng end})

@@ -22,6 +22,9 @@ class FlightMapState {
   final Set<Marker> markers;
   final int animationDuration;
 
+  // NEW: Airport list for map icons
+  final List<Map<String, dynamic>> airports;
+
   FlightMapState({
     this.status = CommonApiStatus.initial,
     this.isLoading = false,
@@ -38,6 +41,7 @@ class FlightMapState {
     this.isTracking = false,
     this.markers = const {},
     this.animationDuration = 50,
+    this.airports = const [], // initialize as empty list
   });
 
   FlightMapState copyWith({
@@ -56,6 +60,7 @@ class FlightMapState {
     bool? isTracking,
     Set<Marker>? markers,
     int? animationDuration,
+    List<Map<String, dynamic>>? airports, // new copyWith parameter
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -69,11 +74,12 @@ class FlightMapState {
       flightDetail: flightDetail ?? this.flightDetail,
       selectedFlightDetail: selectedFlightDetail ?? this.selectedFlightDetail,
       selectedAircraftDetails:
-          selectedAircraftDetails ?? this.selectedAircraftDetails,
+      selectedAircraftDetails ?? this.selectedAircraftDetails,
       selectedFlight: selectedFlight ?? this.selectedFlight,
       isTracking: isTracking ?? this.isTracking,
       markers: markers ?? this.markers,
       animationDuration: animationDuration ?? this.animationDuration,
+      airports: airports ?? this.airports, // update airports
     );
   }
 }
