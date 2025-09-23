@@ -8,6 +8,7 @@ import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_questioncubit.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
+import 'BlackboxScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -89,41 +90,47 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                 onPressed: () async {
                   final shouldExit = await showDialog<bool>(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text("Exit BlackBox?"),
-                      backgroundColor: Colors.white,
-                      content: const Text(
-                        "Are you sure you want to exit? Your progress will be lost.",
+                      builder: (context) => AlertDialog(
+                        title: const Text("Exit BlackBox?"),
+                        backgroundColor: Colors.white,
+                        content: const Text(
+                          "Are you sure you want to exit? Your progress will be lost.",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                Colors.black,
+                              ),
+                            ),
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                isNeedToShowOrNot = false;
+                              });
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const BlackBoxStartScreen(gameId: 'black_box'),
+                                ),
+                                    (route) => false,
+                              );
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.blue,
+                              ),
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.sepratorColourAppBar,
+                              ),
+                            ),
+                            child: const Text("Yes, Exit"),
+                          ),
+                        ],
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all<Color>(
-                              Colors.black,
-                            ),
-                          ),
-                          child: const Text("Cancel"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              isNeedToShowOrNot = false;
-                            });
-                            Navigator.of(context).pop(true);
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.blue,
-                            ),
-                            foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.sepratorColourAppBar,
-                            ),
-                          ),
-                          child: const Text("Yes, Exit"),
-                        ),
-                      ],
-                    ),
                   );
                   if (shouldExit ?? false) {
                     Navigator.pop(context);
@@ -303,7 +310,7 @@ class BlackBoxCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   if (questionType == '2')
-                    _buildTrueFalseOptions()
+                    _buildTrueFalseOptions(context)
                   else if (questionType == '3')
                     _buildMultipleChoiceOptions()
                   else if (questionType == '1')
@@ -383,18 +390,23 @@ class BlackBoxCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTrueFalseOptions() {
+  Widget _buildTrueFalseOptions(BuildContext context) {
     return Column(
       children: [
-        _buildTrueFalseButton(true, 'A. True'),
+        _buildTrueFalseButton(context,true, 'A. True'),
         const SizedBox(height: 12),
-        _buildTrueFalseButton(false, 'B. False'),
+        _buildTrueFalseButton(context,false, 'B. False'),
       ],
     );
   }
 
-  Widget _buildTrueFalseButton(bool isTrue, String label) {
+  Widget _buildTrueFalseButton(BuildContext context,bool isTrue, String label) {
+    print("1userAnswer;-;-;-$userAnswer");
+    print("2userAnswer;-;-;-${userAnswer != null}");
+    print("3userAnswer;-;-;-${userAnswer == isTrue}");
+    // context.read<BlackBoxQuestionCubit>().ResetTrueFalse();
     final isSelected = userAnswer != null && userAnswer == isTrue;
+    // final isSelected = userAnswer;
 
     final isCorrect = isTrue == (correctOption == 0);
 
@@ -402,17 +414,18 @@ class BlackBoxCard extends StatelessWidget {
     Color borderColor = Colors.grey.shade300;
     Icon? trailingIcon;
 
+    // print(";-;-;-$isSelected");
     if (isShowAnswers) {
       if (isCorrect) {
         backgroundColor = Colors.green.shade100;
         borderColor = Colors.green;
         trailingIcon = const Icon(Icons.check_circle, color: Colors.green, size: 20);
-      } else if (isSelected && !isCorrect) {
+      } else if (isSelected! && !isCorrect) {
         backgroundColor = Colors.red.shade100;
         borderColor = Colors.red;
         trailingIcon = const Icon(Icons.cancel, color: Colors.red, size: 20);
       }
-    } else if (isSelected) {
+    } else if (isSelected!) {
       backgroundColor = Colors.grey.shade300;
       borderColor = Colors.white;
     }
@@ -725,6 +738,9 @@ class BlackBoxCard extends StatelessWidget {
   }
 
   bool _isSubmitEnabled() {
+    print("questionType;-;-;-$questionType");
+    print("selectedSequence;-;-;-$selectedSequence");
+    print("selectedIndex;-;-;-$selectedIndex");
     switch (questionType) {
       case '1':
         return selectedSequence != null;

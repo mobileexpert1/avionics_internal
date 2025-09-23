@@ -110,7 +110,7 @@ class BlackBoxState extends Equatable {
       blackboxModels: blackboxModels ?? this.blackboxModels,
       questions: questions ?? this.questions,
       currentIndex: currentIndex ?? this.currentIndex,
-      selectedIndex: selectedIndex ?? this.selectedIndex,
+      selectedIndex: selectedIndex ?? null,
       selectedAnswer: selectedAnswer ?? this.selectedAnswer,
       showAnswer: showAnswer ?? this.showAnswer,
       timer: timer ?? this.timer,
