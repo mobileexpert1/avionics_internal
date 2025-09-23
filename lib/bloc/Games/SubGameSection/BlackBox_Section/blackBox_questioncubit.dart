@@ -1,0 +1,569 @@
+import 'dart:async';
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxResultScreen.dart';
+import 'blackBox_repository.dart';
+import 'blackBox_question_model.dart';
+import 'blackBox_state.dart';
+
+class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
+  Timer? _timer;
+  final BlackboxRepository _repository;
+  final String gameId;
+  int _totalDuration = 60;
+  DateTime? _startTime;
+  bool? selectedAnswer; // default is null, do NOT initialize as false
+  bool showAnswer = false;
+  BlackBoxQuestionCubit(
+      int sectionId,
+      BuildContext context, {
+        required this.gameId,
+        BlackboxRepository? repository,
+      }) : _repository = repository ?? BlackboxRepository(),
+        super(BlackBoxState()) {
+    const gameDurations = {"blackbox": 60};
+    _totalDuration = gameDurations[gameId] ?? 60;
+    loadQuestions(sectionId, context);
+  }
+
+  BlackBoxQuestion _mapQuestion(Questions q, String categoryType) {
+    final type = categoryType.isNotEmpty
+        ? categoryType
+        : '3';
+
+    int correctIndex = -1;
+    List<int>? correctSequence;
+    List<String>? sequenceItems;
+    String? correctAnswer;
+
+    if (type == '1') {
+      if (q.answer != null && q.options != null && q.options!.isNotEmpty) {
+        final answerLabels = q.answer!.split(',').map((e) => e.trim()).toList();
+        sequenceItems = [];
+        correctSequence = [];
+
+        for (var label in answerLabels) {
+          final index = q.options!.indexWhere((o) => o.label == label);
+          if (index >= 0 && q.options![index].value != null) {
+            sequenceItems.add(q.options![index].value!);
+            correctSequence.add(index);
+          } else {
+            print('Warning: Invalid option for label "$label" in question "${q.question}"');
+          }
+        }
+
+        if (sequenceItems.isEmpty || correctSequence.isEmpty) {
+          print('Warning: Empty sequence for event_sequence question "${q.question}"');
+          sequenceItems = null;
+          correctSequence = null;
+        }
+      } else {
+        print('Warning: Missing answer or options for event_sequence question "${q.question}"');
+      }
+    } else if (type == '2') {
+      // True/False
+      if (q.answer != null && q.options != null) {
+        final answer = q.answer!.toLowerCase();
+        if (answer == 'true' || answer == 'a') {
+          correctIndex = q.options!.indexWhere(
+                (o) => o.value?.toLowerCase() == 'true',
+          );
+          if (correctIndex == -1) correctIndex = 0;
+        } else if (answer == 'false' || answer == 'b') {
+          correctIndex = q.options!.indexWhere(
+                (o) => o.value?.toLowerCase() == 'false',
+          );
+          if (correctIndex == -1) correctIndex = 1;
+        }
+        if (correctIndex == -1) {
+          print(
+            'Warning: Invalid answer for true_false question "${q.question}", answer: ${q.answer}',
+          );
+        }
+      } else {
+        print(
+          'Warning: Missing answer or options for true_false question "${q.question}"',
+        );
+      }
+    } else if (type == '3') {
+      // Multiple choice
+      if (q.answer != null && q.options != null) {
+        correctIndex = q.options!.indexWhere((o) => o.label == q.answer);
+        if (correctIndex == -1) {
+          print(
+            'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
+          );
+        }
+      } else {
+        print(
+          'Warning: Missing answer or options for multiple_choice_question "${q.question}"',
+        );
+      }
+    }
+
+    return BlackBoxQuestion(
+      question: q.question ?? '',
+      options: q.options?.map((o) => o.value ?? '').toList() ?? [],
+      correctIndex: correctIndex,
+      hint: q.explanation ?? '',
+      type: type,
+      correctSequence: correctSequence,
+      sequenceItems: sequenceItems,
+      correctAnswer: correctAnswer,
+      title: q.title ?? 'Question',
+    );
+  }
+
+  Future<void> loadQuestions(int sectionId, BuildContext context) async {
+    try {
+      emit(state.copyWith(isLoading: true));
+      final gameData = await _repository.getBlackBoxQuestions();
+
+      if (gameData == null ||
+          gameData.categoryTypes == null ||
+          gameData.categoryTypes!.isEmpty) {
+        print('No categories found in gameData');
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'No questions available from API',
+          ),
+        );
+        return;
+      }
+
+      final Map<String, List<BlackBoxQuestion>> categorizedQuestions = {};
+      for (var category in gameData.categoryTypes!) {
+        final List<BlackBoxQuestion>? mappedQuestions = category.questions
+            ?.map((q) => _mapQuestion(q, category.type ?? '3'))
+            .toList();
+        final List<BlackBoxQuestion> catQuestions =
+            mappedQuestions ?? <BlackBoxQuestion>[];
+        categorizedQuestions[category.type ?? 'Unknown'] = catQuestions;
+      }
+
+      final allowedTypes = ['1', '2', '3', '4'];
+      final Iterable<BlackBoxQuestion> expandedQuestions = gameData
+          .categoryTypes!
+          .expand(
+            (category) => (category.questions ?? <Questions>[]).map(
+              (q) => _mapQuestion(q, category.type ?? '3'),
+        ),
+      );
+      final List<BlackBoxQuestion> allQuestions = expandedQuestions.where((q) {
+        final isValid =
+            allowedTypes.contains(q.type) &&
+                (q.type == '1'
+                    ? q.sequenceItems != null && q.sequenceItems!.isNotEmpty
+                    : true) &&
+                (q.type == '2' || q.type == '3' ? q.options.isNotEmpty : true);
+        if (!isValid) {
+          print(
+            'Filtered out question: ${q.question}, type: ${q.type}, valid: $isValid',
+          );
+        }
+        return isValid;
+      }).toList();
+
+      final int totalQuestions = allQuestions.length;
+
+      if (totalQuestions == 0) {
+        print('No valid questions mapped from categories');
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'No valid questions found for allowed types',
+          ),
+        );
+        return;
+      }
+
+      final initialResults = List<BlackBoxQuestionResult>.generate(
+        totalQuestions,
+            (index) => BlackBoxQuestionResult(
+          userAnswerIndex: null,
+          userSequence: null,
+          userAnswer: null,
+          correctPoint: 0,
+          bonusPoint: 0,
+          timeTakenSeconds: 0,
+        ),
+      );
+
+      emit(
+        state.copyWith(
+          isLoading: false,
+          questions: allQuestions,
+          currentIndex: 0,
+          selectedIndex: null,
+          selectedSequence: null,
+          selectedAnswer: null,
+          showAnswer: false,
+          timer: _totalDuration,
+          score: 0,
+          correctAnswers: 0,
+          wrongAnswers: 0,
+          pointsEarned: 0,
+          bonusPoints: 0,
+          timeTaken: 0,
+          questionResults: initialResults,
+          timePerQuestion: List<int>.filled(totalQuestions, 0),
+          categorizedQuestions: categorizedQuestions,
+          game: gameData.game,
+          level: gameData.level,
+          difficulty: gameData.difficulty,
+          categoryTypes: gameData.categoryTypes ?? <CategoryTypes>[],
+        ),
+      );
+
+      // Start timer
+      startTimer(context);
+    } catch (e, stackTrace) {
+      print('Error loading questions: $e, StackTrace: $stackTrace');
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to load questions: $e',
+        ),
+      );
+    }
+  }
+
+  void startTimer(BuildContext context) {
+    _startTime = DateTime.now();
+    emit(state.copyWith(timer: _totalDuration));
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final elapsed = DateTime.now().difference(_startTime!).inSeconds;
+      final remaining = _totalDuration - elapsed;
+
+      if (remaining >= 0) {
+        emit(
+          state.copyWith(
+            timer: remaining,
+            selectedIndex: state.selectedIndex,
+            selectedSequence: state.selectedSequence,
+            selectedAnswer: state.selectedAnswer,
+          ),
+        );
+      } else {
+        _timer?.cancel();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Time\'s Up')));
+        Future.delayed(const Duration(seconds: 2), () {
+          emit(
+            state.copyWith(
+              showAnswer: true,
+              isTimerEnded: true,
+              timeTaken: 0,
+              selectedIndex:
+              state.currentQuestion.type == '1' ||
+                  state.currentQuestion.type == '4'
+                  ? null
+                  : state.currentQuestion.correctIndex,
+              selectedSequence: state.currentQuestion.type == '1'
+                  ? state.currentQuestion.correctSequence
+                  : null,
+              selectedAnswer: state.currentQuestion.type == '4'
+                  ? state.currentQuestion.correctAnswer
+                  : null,
+            ),
+          );
+        });
+      }
+    });
+  }
+
+  void selectOption(int index) {
+    emit(state.copyWith(selectedIndex: index, showAnswer: false));
+  }
+
+  void selectTrueFalse(int index) {
+    emit(state.copyWith(selectedIndex: index, showAnswer: false));
+  }
+
+  void updateSequence(List<String> newSequence) {
+    final indices = newSequence.map((item) {
+      final index = state.currentQuestion.options.indexWhere((option) => option == item);
+      return index >= 0 ? index : 0;
+    }).toList();
+
+    emit(state.copyWith(
+      selectedSequence: indices,
+      selectedSequenceItems: newSequence,
+      showAnswer: false,
+    ));
+  }
+
+  void updateShortAnswer(String answer) {
+    emit(state.copyWith(selectedAnswer: answer, showAnswer: false));
+  }
+
+  Future<void> submitQuestion(BuildContext context) async {
+    _timer?.cancel();
+
+    bool isCorrect = false;
+
+    if (state.currentQuestion.type == '1') { // Event sequence
+      final userSequence = state.selectedSequence ?? [];
+      final correctSequence = state.currentQuestion.correctSequence ?? [];
+
+      isCorrect = userSequence.length == correctSequence.length &&
+          userSequence.asMap().entries.every(
+                (entry) => entry.value == correctSequence[entry.key],
+          );
+    } else if (state.currentQuestion.type == '4') {
+
+      isCorrect = state.selectedAnswer != null &&
+          state.selectedAnswer == state.currentQuestion.correctAnswer;
+    } else { // Other MCQ
+      isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
+    }
+
+    int timeBonus = isCorrect && state.timer >= _totalDuration / 2 ? 1 : 0;
+    int pointsThisQuestion = isCorrect ? 2 : 0;
+    int bonusPointsThisQuestion = timeBonus;
+    final timeSpentThisQuestion = max(1, _totalDuration - state.timer);
+
+    final updatedResults = List<BlackBoxQuestionResult>.from(state.questionResults);
+    final updatedTimePerQuestion = List<int>.from(state.timePerQuestion);
+
+    updatedResults[state.currentIndex] = BlackBoxQuestionResult(
+      userAnswerIndex: state.currentQuestion.type == '1' || state.currentQuestion.type == '4'
+          ? null
+          : state.selectedIndex,
+      userSequence: state.currentQuestion.type == '1' ? state.selectedSequence : null,
+      userAnswer: state.currentQuestion.type == '4' ? state.selectedAnswer : null,
+      correctPoint: pointsThisQuestion,
+      bonusPoint: bonusPointsThisQuestion,
+      timeTakenSeconds: timeSpentThisQuestion,
+    );
+
+    updatedTimePerQuestion[state.currentIndex] = timeSpentThisQuestion;
+
+    emit(
+      state.copyWith(
+        questionResults: updatedResults,
+        timePerQuestion: updatedTimePerQuestion,
+        selectedIndex: state.currentQuestion.type == '1' || state.currentQuestion.type == '4'
+            ? null
+            : state.selectedIndex,
+        selectedSequence: state.currentQuestion.type == '1' ? state.selectedSequence : null,
+        selectedAnswer: state.currentQuestion.type == '4' ? state.selectedAnswer : null, // keep null if not selected
+        showAnswer: true,
+        correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
+        wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
+        score: state.score + pointsThisQuestion + bonusPointsThisQuestion,
+        pointsEarned: state.pointsEarned + pointsThisQuestion,
+        bonusPoints: state.bonusPoints + bonusPointsThisQuestion,
+        timeTaken: state.timeTaken + timeSpentThisQuestion,
+        isTimerEnded: true,
+        totalBonusPoints: state.totalBonusPoints + timeBonus,
+      ),
+    );
+  }
+
+
+
+  Future<void> nextQuestion(BuildContext context) async {
+    print("before emit");
+    print("selected Index ----------------- ${state.selectedIndex}");
+    print("selected answer ----------------- ${state.selectedAnswer}");
+    if (state.currentIndex + 1 < state.questions.length) {
+      final nextQuestion = state.questions[state.currentIndex + 1];
+
+      final shuffledSequenceItems = nextQuestion.type == '1' && nextQuestion.sequenceItems != null
+          ? (List<String>.from(nextQuestion.sequenceItems!)..shuffle())
+          : null;
+
+      emit(state.copyWith(
+        currentIndex: state.currentIndex + 1,
+        selectedIndex: 7,
+        selectedSequence: null,
+        selectedAnswer: null,
+        showAnswer: false,
+        timer: _totalDuration,
+        isTimerEnded: false,
+        selectedSequenceItems: shuffledSequenceItems,
+      ));
+      print("after emit");
+      print("selected Index ----------------- ${state.selectedIndex}");
+      print("selected answer ----------------- ${state.selectedAnswer}");
+
+      startTimer(context);
+    } else {
+      _timer?.cancel();
+
+      String formatTime(int seconds) => "${seconds}s";
+      String indexToLetter(int? index) => index == null ? "" : String.fromCharCode(65 + index);
+
+      final categoryNameMap = {
+        "1": "event sequence",
+        "2": "true false",
+        "3": "multiple choice question",
+      };
+
+      final categories = state.categorizedQuestions.entries.map((entry) {
+        final categoryKey = entry.key;
+        final questions = entry.value;
+        final categoryType = questions.isNotEmpty ? questions[0].type : '3';
+        final categoryName = categoryNameMap[categoryKey] ?? categoryKey;
+
+        return {
+          "category_type": categoryType?.toString() ?? '3',
+          "category_name": categoryName,
+          "questions": questions.map((q) {
+            int resultIndex = state.questions.indexWhere(
+                    (x) => x.question.trim() == q.question.trim()
+            );
+
+            final result = resultIndex != -1
+                ? state.questionResults[resultIndex]
+                : BlackBoxQuestionResult(
+              userAnswerIndex: null,
+              userSequence: null,
+              userAnswer: null,
+              correctPoint: 0,
+              bonusPoint: 0,
+              timeTakenSeconds: 0,
+            );
+
+            final options = List.generate(
+              q.options.length,
+                  (i) => {
+                "label": String.fromCharCode(65 + i),
+                "value": q.options[i].toString().trim()
+              },
+            );
+
+            String answer = '';
+            String userAnswered = '';
+
+            switch (q.type) {
+              case '1': // Sequence type
+                final normalizedOpts = q.options.map((o) => o.toString().trim()).toList();
+
+                // Correct answer mapping
+                answer = q.sequenceItems
+                    ?.map((v) {
+                  final idx = normalizedOpts.indexWhere((o) => o == v.toString().trim());
+                  return idx != -1 ? String.fromCharCode(65 + idx) : '';
+                })
+                    .where((l) => l.isNotEmpty)
+                    .join(',') ?? '';
+
+                // User answer mapping
+                if (result.userSequence != null && result.userSequence!.isNotEmpty) {
+                  userAnswered = result.userSequence!
+                      .map((i) => (i >= 0 && i < normalizedOpts.length)
+                      ? String.fromCharCode(65 + i)
+                      : '')
+                      .where((l) => l.isNotEmpty)
+                      .join(',');
+                } else {
+                  userAnswered = '';
+                }
+                break;
+
+
+
+              case '2':
+                answer = q.correctIndex != null ? String.fromCharCode(65 + q.correctIndex!) : '';
+                userAnswered = result.userAnswerIndex != null
+                    ? String.fromCharCode(65 + result.userAnswerIndex!)
+                    : '';
+                break;
+
+              case '3':
+              default:
+                answer = q.correctIndex != null ? String.fromCharCode(65 + q.correctIndex!) : '';
+                userAnswered = result.userAnswerIndex != null
+                    ? String.fromCharCode(65 + result.userAnswerIndex!)
+                    : '';
+                break;
+            }
+
+            return {
+              "question": q.question,
+              "options": options,
+              "answer": answer,
+              "explanation": q.hint ?? '',
+              "user_answered": userAnswered,
+              "correct_point": result.correctPoint ?? 0,
+              "bonus_point": result.bonusPoint ?? 0,
+              "time_taken": formatTime(result.timeTakenSeconds ?? 0),
+            };
+          }).toList(),
+        };
+      }).toList();
+
+      final correctAnswers = state.questionResults
+          .fold<int>(0, (sum, result) => sum + (result.correctPoint > 0 ? 1 : 0));
+      final correctPoints =
+      state.questionResults.fold<int>(0, (sum, result) => sum + result.correctPoint);
+      final bonusPoints =
+      state.questionResults.fold<int>(0, (sum, result) => sum + result.bonusPoint);
+
+      final allCorrectBonus = (correctAnswers == state.questions.length) ? 3 : 0;
+      final finalScore = correctPoints + bonusPoints + allCorrectBonus;
+
+      final payload = {
+        "total_questions": state.questions.length,
+        "correct_answers": correctAnswers,
+        "correct_points": correctPoints,
+        "earned_points": finalScore,
+        "additional_points": bonusPoints,
+        "total_time": formatTime(state.timeTaken),
+        "game": state.game,
+        "level": state.level,
+        "difficulty": state.difficulty,
+        "categories": categories,
+      };
+
+      void printFullPayload(dynamic object) {
+        const int chunkSize = 800;
+        final jsonString = object is String ? object : object.toString();
+        for (var i = 0; i < jsonString.length; i += chunkSize) {
+          final end = (i + chunkSize < jsonString.length) ? i + chunkSize : jsonString.length;
+          debugPrint(jsonString.substring(i, end));
+        }
+      }
+
+      printFullPayload('Submission Payload: $payload');
+
+      try {
+        await _repository.submitBlackBoxAnswers(payload);
+        debugPrint('Results submitted successfully!');
+      } catch (e) {
+        debugPrint('Failed to submit results: $e');
+        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
+      }
+
+      final percent = (correctAnswers / state.questions.length) * 100;
+      final winAchieved = percent >= 80;
+      Navigator.push(context, MaterialPageRoute(
+        builder: (_) => BlackBoxResultScreen(
+          correctedAnswer: correctAnswers,
+          totalQuestion: state.questions.length,
+          score: finalScore,
+          winAchieved: winAchieved,
+          bonusPoints: bonusPoints,
+        ),
+      ));
+    }
+  }
+  String formatCategoryName(String name) {
+    return name
+        .split('_')
+        .map((word) => word[0].toLowerCase() + word.substring(1))
+        .join(' ');
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
+  }
+}

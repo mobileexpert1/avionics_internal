@@ -5,21 +5,42 @@ import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_state.dart';
 
-class BlackBoxResultScreen extends StatelessWidget {
-  const BlackBoxResultScreen({super.key});
+class BlackBoxResultScreen extends StatefulWidget {
+  const BlackBoxResultScreen({
+    super.key,
+    required this.totalQuestion,
+    required this.correctedAnswer,
+    required this.score,
+    required this.winAchieved,
+    required this.bonusPoints,
+  });
 
+  final int totalQuestion;
+  final int correctedAnswer;
+  final int score;
+  final bool winAchieved;
+  final int bonusPoints;
+
+  @override
+  State<BlackBoxResultScreen> createState() => _BlackBoxResultScreenState();
+}
+
+class _BlackBoxResultScreenState extends State<BlackBoxResultScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => GameResultCubit()
         ..setResult(
           title: "Game Completed!",
-          score: 2,
-          total: 4,
-          totalPoints:4,
-          correctPoints: 34,
-          bonusPoints: [],
-          badgeText: "",
+          score: widget.correctedAnswer,
+          total: widget.totalQuestion,
+          totalPoints: widget.score,
+          correctPoints: widget.correctedAnswer,
+          bonusPoints: [
+            if (widget.bonusPoints > 0)
+              '+${widget.bonusPoints} point${widget.bonusPoints == 1 ? '' : 's'} for time bonus',
+          ],
+          badgeText: widget.winAchieved ? "Winner!" : "",
         ),
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -27,7 +48,7 @@ class BlackBoxResultScreen extends StatelessWidget {
           title: "Result",
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
           ),
         ),
         body: Padding(

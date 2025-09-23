@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
+import 'OverViewAndClueScreen.dart';
 
 class BlackBoxStartScreen extends StatelessWidget {
   final String gameId;
@@ -22,10 +23,10 @@ class BlackBoxStartScreen extends StatelessWidget {
           title: 'Black Box',
           description: 'Analyze real world aviation \n scenarios',
           questions: 0,
-          questionType: 'Solve aviation problems',
+          questionType: '',
           moduleType: 'Play more, earn more badges',
           iconWidget: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.blackBox),
+            CommonUi.setSvgImage(AssetsPath.Blackboxlogo),
           ),
           isTopicWise: true,
         ),
@@ -45,7 +46,7 @@ class BlackBoxStartScreen extends StatelessWidget {
             onStartGame: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const QuizLockScreen()),
+                MaterialPageRoute(builder: (_) => const OverviewAndClueDeckScreen()),
               );
             },
           ),

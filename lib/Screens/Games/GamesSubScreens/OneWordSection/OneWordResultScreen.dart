@@ -27,7 +27,7 @@ class OneWordResultScreen extends StatelessWidget {
           title: "Result",
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
           ),
         ),
         body: Padding(
