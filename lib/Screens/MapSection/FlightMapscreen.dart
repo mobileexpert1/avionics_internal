@@ -31,7 +31,7 @@ class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
 
   const FlightMapScreen({required this.onGoToFirstTab, Key? key})
-    : super(key: key);
+      : super(key: key);
 
   @override
   State<FlightMapScreen> createState() => _FlightMapscreenState();
@@ -43,7 +43,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   late final TextEditingController _searchController = TextEditingController();
 
   late final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
+  DraggableScrollableController();
 
   bool _showFlightCard = false;
   bool isMapViewSelected = true;
@@ -304,9 +304,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Future<Set<Marker>> _buildFlightMarkers(
-    List<FlightModel> flights,
-    bool isHideMapColour,
-  ) async {
+      List<FlightModel> flights,
+      bool isHideMapColour,
+      ) async {
     final markers = <Marker>{};
     if (_isForFlyingInTheArea == 1) {
       for (final flight in flights) {
@@ -329,7 +329,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               _hideFlightCard();
               _buildFlightMarkers(
                 _mapCubit.state.isTracking &&
-                        _mapCubit.state.selectedFlight != null
+                    _mapCubit.state.selectedFlight != null
                     ? [_mapCubit.state.selectedFlight!]
                     : _mapCubit.state.flights ?? [],
                 true,
@@ -403,9 +403,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Widget _buildFlightsDraggableSheet(
-    BuildContext context,
-    FlightMapState state,
-  ) {
+      BuildContext context,
+      FlightMapState state,
+      ) {
     return DraggableScrollableSheet(
       controller: _sheetController,
       initialChildSize: 0.0,
@@ -465,43 +465,43 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ),
                     child: SimpleAircraftCard(
                       imagePath:
-                          (data?.aircraftDetails?.image == null ||
-                              data?.aircraftDetails?.image == ""
+                      (data?.aircraftDetails?.image == null ||
+                          data?.aircraftDetails?.image == ""
                           ? Image.asset(
-                              CommonUi.setPngImage(
-                                AssetsPath.aeroplaneComparison,
-                              ),
-                              width: 50,
-                              height: 120,
-                              fit: BoxFit.fill,
-                            )
+                        CommonUi.setPngImage(
+                          AssetsPath.aeroplaneComparison,
+                        ),
+                        width: 50,
+                        height: 120,
+                        fit: BoxFit.fill,
+                      )
                           : CachedAnyImage(
-                              imagePath: data!.aircraftDetails!.image,
-                              width: 50,
-                              height: 120,
-                              contentImage: BoxFit.fill,
-                            )),
+                        imagePath: data!.aircraftDetails!.image,
+                        width: 50,
+                        height: 120,
+                        contentImage: BoxFit.fill,
+                      )),
                       model: "${data?.aircraftDetails?.aircraftModel ?? " "} ",
                       badge:
-                          data?.aircraftDetails?.icaoTypeCode ??
+                      data?.aircraftDetails?.icaoTypeCode ??
                           data?.type ??
                           "",
                       manufacturer:
-                          data?.aircraftDetails?.manufacturer?.companyName ??
+                      data?.aircraftDetails?.manufacturer?.companyName ??
                           "",
                       airline: "",
                       airlineImagePath:
-                          (data?.aircraftDetails?.manufacturer?.logo == null ||
-                              data?.aircraftDetails?.manufacturer?.logo == ""
+                      (data?.aircraftDetails?.manufacturer?.logo == null ||
+                          data?.aircraftDetails?.manufacturer?.logo == ""
                           ? SizedBox.shrink()
                           : CachedAnyImage(
-                              imagePath:
-                                  data?.aircraftDetails?.manufacturer?.logo ??
-                                  "",
-                              width: 50,
-                              height: 120,
-                              contentImage: BoxFit.fill,
-                            )),
+                        imagePath:
+                        data?.aircraftDetails?.manufacturer?.logo ??
+                            "",
+                        width: 50,
+                        height: 120,
+                        contentImage: BoxFit.fill,
+                      )),
                       callSign: data?.callSign ?? "",
                       onTap: () {
                         _buildSingleFlightMarker(data!).then((marker) {
@@ -829,20 +829,20 @@ class FlightCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(6),
                                   child: manufacturerLogo.isEmpty
                                       ? SvgPicture.asset(
-                                          CommonUi.setSvgImage(
-                                            AssetsPath.manufacturer,
-                                          ),
-                                          width: 22,
-                                          height: 16,
-                                          fit: BoxFit.fill,
-                                        )
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.manufacturer,
+                                    ),
+                                    width: 22,
+                                    height: 16,
+                                    fit: BoxFit.fill,
+                                  )
                                       : CachedAnyImage(
-                                          imagePath: manufacturerLogo,
-                                          width: 22,
-                                          height: 16,
-                                          contentImage: BoxFit.contain,
-                                          useCache: false,
-                                        ),
+                                    imagePath: manufacturerLogo,
+                                    width: 22,
+                                    height: 16,
+                                    contentImage: BoxFit.contain,
+                                    useCache: false,
+                                  ),
                                 ),
                                 Text(
                                   manufacturer,
@@ -894,11 +894,11 @@ class FlightCard extends StatelessWidget {
                                                         .read<FlightMapCubit>(),
                                                     child: TrackFlightScreen(
                                                       flightNumber:
-                                                          flightNumber,
+                                                      flightNumber,
                                                       initialFlight:
-                                                          selectedFlight,
+                                                      selectedFlight,
                                                       initialFlightDetail:
-                                                          detail,
+                                                      detail,
                                                       flightId: flightId,
                                                     ),
                                                   ),
@@ -911,10 +911,10 @@ class FlightCard extends StatelessWidget {
                                         child: state.isTracking
                                             ? const LiveBadge()
                                             : const Icon(
-                                                Icons.my_location,
-                                                color: Colors.blue,
-                                                size: 20,
-                                              ),
+                                          Icons.my_location,
+                                          color: Colors.blue,
+                                          size: 20,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -928,20 +928,20 @@ class FlightCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                         child: (manufacturerLogo == ""
                             ? Image.asset(
-                                CommonUi.setPngImage(
-                                  AssetsPath.aeroplaneComparison,
-                                ),
-                                width: 100,
-                                height: 50,
-                                fit: BoxFit.fill,
-                              )
+                          CommonUi.setPngImage(
+                            AssetsPath.aeroplaneComparison,
+                          ),
+                          width: 100,
+                          height: 50,
+                          fit: BoxFit.fill,
+                        )
                             : CachedAnyImage(
-                                imagePath: image,
-                                width: 100,
-                                height: 50,
-                                contentImage: BoxFit.fill,
-                                useCache: false,
-                              )),
+                          imagePath: image,
+                          width: 100,
+                          height: 50,
+                          contentImage: BoxFit.fill,
+                          useCache: false,
+                        )),
                       ),
                     ],
                   ),
@@ -1018,3 +1018,4 @@ class FlightCard extends StatelessWidget {
     );
   }
 }
+
