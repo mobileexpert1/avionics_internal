@@ -13,6 +13,7 @@ class BlackBoxResultScreen extends StatefulWidget {
     required this.score,
     required this.winAchieved,
     required this.bonusPoints,
+    required this.correctPoints,
   });
 
   final int totalQuestion;
@@ -20,6 +21,7 @@ class BlackBoxResultScreen extends StatefulWidget {
   final int score;
   final bool winAchieved;
   final int bonusPoints;
+  final int correctPoints;
 
   @override
   State<BlackBoxResultScreen> createState() => _BlackBoxResultScreenState();
@@ -35,7 +37,7 @@ class _BlackBoxResultScreenState extends State<BlackBoxResultScreen> {
           score: widget.correctedAnswer,
           total: widget.totalQuestion,
           totalPoints: widget.score,
-          correctPoints: widget.correctedAnswer,
+          correctPoints: widget.correctPoints,
           bonusPoints: [
             if (widget.bonusPoints > 0)
               '+${widget.bonusPoints} point${widget.bonusPoints == 1 ? '' : 's'} for time bonus',
