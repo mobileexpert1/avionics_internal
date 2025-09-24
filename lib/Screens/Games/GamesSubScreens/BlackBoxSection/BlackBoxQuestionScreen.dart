@@ -77,7 +77,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
             }
           }
           final currentQuestionTitle =
-          state.currentQuestion.title?.isNotEmpty == true
+              state.currentQuestion.title?.isNotEmpty == true
               ? state.currentQuestion.title!
               : 'Question';
 
@@ -90,47 +90,49 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                 onPressed: () async {
                   final shouldExit = await showDialog<bool>(
                     context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Exit BlackBox?"),
-                        backgroundColor: Colors.white,
-                        content: const Text(
-                          "Are you sure you want to exit? Your progress will be lost.",
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                Colors.black,
-                              ),
-                            ),
-                            child: const Text("Cancel"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                isNeedToShowOrNot = false;
-                              });
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) => const BlackBoxStartScreen(gameId: 'black_box'),
-                                ),
-                                    (route) => false,
-                              );
-                            },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.blue,
-                              ),
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.sepratorColourAppBar,
-                              ),
-                            ),
-                            child: const Text("Yes, Exit"),
-                          ),
-                        ],
+                    builder: (context) => AlertDialog(
+                      title: const Text("Exit BlackBox?"),
+                      backgroundColor: Colors.white,
+                      content: const Text(
+                        "Are you sure you want to exit? Your progress will be lost.",
                       ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              Colors.black,
+                            ),
+                          ),
+                          child: const Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isNeedToShowOrNot = false;
+                            });
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => const BlackBoxStartScreen(
+                                  gameId: 'black_box',
+                                ),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.blue,
+                            ),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.sepratorColourAppBar,
+                            ),
+                          ),
+                          child: const Text("Yes, Exit"),
+                        ),
+                      ],
+                    ),
                   );
                   if (shouldExit ?? false) {
                     Navigator.pop(context);
@@ -138,6 +140,62 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                 },
               ),
             ),
+
+            //Animation App bar
+            // appBar: AppBar(
+            //   backgroundColor: Colors.white,
+            //   automaticallyImplyLeading: false,
+            //   surfaceTintColor: Colors.white,
+            //   elevation: 0,
+            //   leading: IconButton(
+            //     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            //     onPressed: () async {
+            //       final shouldExit = await showDialog<bool>(
+            //         context: context,
+            //         builder: (context) => AlertDialog(
+            //           title: const Text("Exit BlackBox?"),
+            //           backgroundColor: Colors.white,
+            //           content: const Text(
+            //             "Are you sure you want to exit? Your progress will be lost.",
+            //           ),
+            //           actions: [
+            //             TextButton(
+            //               onPressed: () => Navigator.of(context).pop(false),
+            //               child: const Text(
+            //                 "Cancel",
+            //                 style: TextStyle(color: Colors.black),
+            //               ),
+            //             ),
+            //             TextButton(
+            //               onPressed: () {
+            //                 Navigator.of(context).pushAndRemoveUntil(
+            //                   MaterialPageRoute(
+            //                     builder: (context) => const BlackBoxStartScreen(
+            //                       gameId: 'black_box',
+            //                     ),
+            //                   ),
+            //                   (route) => false,
+            //                 );
+            //               },
+            //               style: TextButton.styleFrom(
+            //                 backgroundColor: Colors.blue,
+            //                 foregroundColor: Colors.white,
+            //               ),
+            //               child: const Text("Yes, Exit"),
+            //             ),
+            //           ],
+            //         ),
+            //       );
+            //       if (shouldExit ?? false) {
+            //         Navigator.pop(context);
+            //       }
+            //     },
+            //   ),
+            //   centerTitle: true,
+            //   title: AnimatedTitle(
+            //     text: currentQuestionTitle,
+            //   ),
+            // ),
             body: Stack(
               children: [
                 Padding(
@@ -160,8 +218,12 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                               : state.selectedIndex == 0,
                           selectedIndex: state.selectedIndex,
                           selectedSequence: state.selectedSequence,
-                          sequenceItems: state.selectedSequenceItems ?? state.currentQuestion.sequenceItems ?? [],
-                          correctSequence: state.currentQuestion.sequenceItems ?? [],
+                          sequenceItems:
+                              state.selectedSequenceItems ??
+                              state.currentQuestion.sequenceItems ??
+                              [],
+                          correctSequence:
+                              state.currentQuestion.sequenceItems ?? [],
                           isNeedToShowOrNot: isNeedToShowOrNot,
                           isShowAnswers: state.showAnswer,
                           currentQuestion: state.currentIndex + 1,
@@ -169,9 +231,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                           secondsRemaining: state.timer,
                           onTrueFalseSelected: (isTrue) {
                             if (state.timer.toInt() != 0 && !state.showAnswer) {
-                              blackBoxCubit.selectTrueFalse(
-                                isTrue ? 0 : 1,
-                              );
+                              blackBoxCubit.selectTrueFalse(isTrue ? 0 : 1);
                             }
                           },
                           onOptionSelected: (index) {
@@ -314,9 +374,9 @@ class BlackBoxCard extends StatelessWidget {
                   else if (questionType == '3')
                     _buildMultipleChoiceOptions()
                   else if (questionType == '1')
-                      _buildEventSequence(context)
-                    else
-                      const Text('Unsupported question type'),
+                    _buildEventSequence(context)
+                  else
+                    const Text('Unsupported question type'),
                   const SizedBox(height: 10),
                   if (isNeedToShowOrNot)
                     Padding(
@@ -393,33 +453,35 @@ class BlackBoxCard extends StatelessWidget {
   Widget _buildTrueFalseOptions(BuildContext context) {
     return Column(
       children: [
-        _buildTrueFalseButton(context,true, 'A. True'),
+        _buildTrueFalseButton(context, true, 'A. True'),
         const SizedBox(height: 12),
-        _buildTrueFalseButton(context,false, 'B. False'),
+        _buildTrueFalseButton(context, false, 'B. False'),
       ],
     );
   }
 
-  Widget _buildTrueFalseButton(BuildContext context,bool isTrue, String label) {
-    print("1userAnswer;-;-;-$userAnswer");
-    print("2userAnswer;-;-;-${userAnswer != null}");
-    print("3userAnswer;-;-;-${userAnswer == isTrue}");
-    // context.read<BlackBoxQuestionCubit>().ResetTrueFalse();
+  Widget _buildTrueFalseButton(
+    BuildContext context,
+    bool isTrue,
+    String label,
+  ) {
     final isSelected = userAnswer != null && userAnswer == isTrue;
-    // final isSelected = userAnswer;
-
     final isCorrect = isTrue == (correctOption == 0);
-
     Color backgroundColor = Colors.white;
     Color borderColor = Colors.grey.shade300;
     Icon? trailingIcon;
 
-    // print(";-;-;-$isSelected");
     if (isShowAnswers) {
       if (isCorrect) {
-        backgroundColor = Colors.green.shade100;
-        borderColor = Colors.green;
-        trailingIcon = const Icon(Icons.check_circle, color: Colors.green, size: 20);
+        backgroundColor = timeTaken == 0
+            ? AppColors.customColourOfTimeExpired
+            : Colors.green.shade100;
+        borderColor = timeTaken == 0 ? Colors.blue : Colors.green;
+        trailingIcon = const Icon(
+          Icons.check_circle,
+          color: Colors.green,
+          size: 20,
+        );
       } else if (isSelected! && !isCorrect) {
         backgroundColor = Colors.red.shade100;
         borderColor = Colors.red;
@@ -450,7 +512,10 @@ class BlackBoxCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               if (trailingIcon != null) trailingIcon,
@@ -460,7 +525,6 @@ class BlackBoxCard extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildMultipleChoiceOptions() {
     return Column(
@@ -538,63 +602,62 @@ class BlackBoxCard extends StatelessWidget {
 
   // Widget _buildEventSequence(BuildContext context) {
   //   final state = context.watch<BlackBoxQuestionCubit>().state;
-  //   final sequenceItems = state.selectedSequenceItems ?? state.currentQuestion.sequenceItems ?? [];
-  //   final correctSequence = state.currentQuestion.correctSequence ?? [];
-  //   final options = state.currentQuestion.options;
+  //   final options = state.currentQuestion.options ?? [];
   //
-  //   final isCorrectSequence = state.showAnswer &&
+  //   final sequenceItems =
+  //       state.selectedSequenceItems ?? List<String>.from(options);
+  //   final correctSequence = state.currentQuestion.correctSequence ?? [];
+  //
+  //   final isCorrectSequence =
+  //       state.showAnswer &&
   //       sequenceItems.length == correctSequence.length &&
   //       List.generate(
   //         sequenceItems.length,
-  //             (index) => sequenceItems[index] == options[correctSequence[index]],
+  //         (index) => sequenceItems[index] == options[correctSequence[index]],
   //       ).every((isMatch) => isMatch);
   //
+  //   final displaySequence = sequenceItems;
   //   final originalLabels = Map<String, String>.fromIterables(
   //     options,
-  //     options.asMap().keys.map((index) => String.fromCharCode(65 + index)),
+  //     List.generate(options.length, (i) => String.fromCharCode(65 + i)),
   //   );
-  //   final displaySequence = state.showAnswer
-  //       ? correctSequence.map((index) => options[index]).toList()
-  //       : sequenceItems;
   //
   //   return ReorderableListView(
   //     buildDefaultDragHandles: false,
   //     onReorder: (oldIndex, newIndex) {
   //       if (state.timer > 0 && !state.showAnswer) {
   //         final newList = List<String>.from(sequenceItems);
-  //         if (newIndex > oldIndex) {
-  //           newIndex -= 1;
-  //         }
+  //         if (newIndex > oldIndex) newIndex -= 1;
   //         final item = newList.removeAt(oldIndex);
   //         newList.insert(newIndex, item);
   //         context.read<BlackBoxQuestionCubit>().updateSequence(newList);
   //       }
   //     },
-  //     children: displaySequence.asMap().entries.map((entry) {
-  //       final index = entry.key;
-  //       final item = entry.value;
+  //     children: displaySequence.map((item) {
+  //       final optionIndex = options.indexOf(item);
   //
   //       Color backgroundColor = state.showAnswer
   //           ? (isCorrectSequence ? Colors.green.shade100 : Colors.red.shade100)
   //           : Colors.grey.shade100;
+  //
   //       Color borderColor = state.showAnswer
   //           ? (isCorrectSequence ? Colors.green : Colors.red)
   //           : Colors.grey.shade300;
+  //
   //       Icon? trailingIcon = state.showAnswer
   //           ? Icon(
-  //         isCorrectSequence ? Icons.check_circle : Icons.cancel,
-  //         color: isCorrectSequence ? Colors.green : Colors.red,
-  //         size: 20,
-  //       )
+  //               isCorrectSequence ? Icons.check_circle : Icons.cancel,
+  //               color: isCorrectSequence ? Colors.green : Colors.red,
+  //               size: 20,
+  //             )
   //           : null;
   //
-  //       final optionIndex = options.indexWhere((option) => option == item);
-  //       final optionText = optionIndex >= 0 ? options[optionIndex] : item;
-  //       final label = originalLabels[optionText] ?? String.fromCharCode(65 + index);
+  //       final label =
+  //           originalLabels[item] ?? String.fromCharCode(65 + optionIndex);
   //
   //       return ReorderableDragStartListener(
-  //         key: ValueKey('$item-$index'),
-  //         index: index,
+  //         key: ValueKey(item), // stable key based on option text
+  //         index: displaySequence.indexOf(item),
   //         enabled: state.timer > 0 && !state.showAnswer,
   //         child: Container(
   //           margin: const EdgeInsets.only(bottom: 12),
@@ -620,7 +683,12 @@ class BlackBoxCard extends StatelessWidget {
   //                 ),
   //               ),
   //               const SizedBox(width: 12),
-  //               Expanded(child: Text(optionText)),
+  //               Expanded(child: Text(item)),
+  //               ReorderableDragStartListener(
+  //                 index: displaySequence.indexOf(item),
+  //                 enabled: state.timer > 0 && !state.showAnswer,
+  //                 child: const Icon(Icons.drag_handle, color: Colors.grey),
+  //               ),
   //               if (trailingIcon != null) trailingIcon,
   //             ],
   //           ),
@@ -631,30 +699,24 @@ class BlackBoxCard extends StatelessWidget {
   //     physics: const NeverScrollableScrollPhysics(),
   //   );
   // }
-  // 2
+
   Widget _buildEventSequence(BuildContext context) {
     final state = context.watch<BlackBoxQuestionCubit>().state;
     final options = state.currentQuestion.options ?? [];
 
-    // Ensure sequenceItems start in original order if null
-    final sequenceItems = state.selectedSequenceItems ?? List<String>.from(options);
+    final sequenceItems =
+        state.selectedSequenceItems ?? List<String>.from(options);
     final correctSequence = state.currentQuestion.correctSequence ?? [];
 
-    // Determine if the user's sequence is correct
-    final isCorrectSequence = state.showAnswer &&
+    final isCorrectSequence =
+        state.showAnswer &&
         sequenceItems.length == correctSequence.length &&
         List.generate(
           sequenceItems.length,
-              (index) => sequenceItems[index] == options[correctSequence[index]],
+          (index) => sequenceItems[index] == options[correctSequence[index]],
         ).every((isMatch) => isMatch);
 
-    // Build the sequence to display
-    // final displaySequence = state.showAnswer
-    //     ? correctSequence.map((index) => options[index]).toList()
-    //     : sequenceItems;
-    final displaySequence = sequenceItems; // Always show what user selected
-
-    // Original labels for A, B, C...
+    final displaySequence = sequenceItems;
     final originalLabels = Map<String, String>.fromIterables(
       options,
       List.generate(options.length, (i) => String.fromCharCode(65 + i)),
@@ -684,51 +746,55 @@ class BlackBoxCard extends StatelessWidget {
 
         Icon? trailingIcon = state.showAnswer
             ? Icon(
-          isCorrectSequence ? Icons.check_circle : Icons.cancel,
-          color: isCorrectSequence ? Colors.green : Colors.red,
-          size: 20,
-        )
+                isCorrectSequence ? Icons.check_circle : Icons.cancel,
+                color: isCorrectSequence ? Colors.green : Colors.red,
+                size: 20,
+              )
             : null;
 
-        final label = originalLabels[item] ?? String.fromCharCode(65 + optionIndex);
+        final label =
+            originalLabels[item] ?? String.fromCharCode(65 + optionIndex);
+        return Container(
+          key: ValueKey(item),
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  label,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: Text(item)),
+              ReorderableDragStartListener(
+                index: displaySequence.indexOf(item),
+                enabled: state.timer > 0 && !state.showAnswer,
+                child: Container(
+                  padding: const EdgeInsets.all(12), // increase touch area
+                  child: const Icon(
+                    Icons.drag_handle,
+                    color: Colors.grey,
+                    size: 24,
+                  ),
+                ),
+              ),
 
-        return ReorderableDragStartListener(
-          key: ValueKey(item), // stable key based on option text
-          index: displaySequence.indexOf(item),
-          enabled: state.timer > 0 && !state.showAnswer,
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: borderColor),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    label,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: Text(item)),
-                ReorderableDragStartListener(
-                  index: displaySequence.indexOf(item),
-                  enabled: state.timer > 0 && !state.showAnswer,
-                  child: const Icon(Icons.drag_handle, color: Colors.grey),
-                ),
-                if (trailingIcon != null) trailingIcon,
-              ],
-            ),
+              if (trailingIcon != null) trailingIcon,
+            ],
           ),
         );
       }).toList(),
@@ -738,9 +804,6 @@ class BlackBoxCard extends StatelessWidget {
   }
 
   bool _isSubmitEnabled() {
-    print("questionType;-;-;-$questionType");
-    print("selectedSequence;-;-;-$selectedSequence");
-    print("selectedIndex;-;-;-$selectedIndex");
     switch (questionType) {
       case '1':
         return selectedSequence != null;
@@ -830,6 +893,59 @@ class BlackBoxProgressCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
         ],
+      ),
+    );
+  }
+}
+
+class AnimatedTitle extends StatefulWidget {
+  final String text;
+  const AnimatedTitle({super.key, required this.text});
+
+  @override
+  State<AnimatedTitle> createState() => _AnimatedTitleState();
+}
+
+class _AnimatedTitleState extends State<AnimatedTitle>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<Offset> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat(reverse: false);
+
+    _offsetAnimation = Tween<Offset>(
+      begin: const Offset(1.0, 0.0),
+      end: const Offset(-1.5, 0.0),
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: SlideTransition(
+        position: _offsetAnimation,
+        child: Text(
+          widget.text,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF151A6A),
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.visible,
+        ),
       ),
     );
   }
