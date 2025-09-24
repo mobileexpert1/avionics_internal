@@ -112,6 +112,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                               isNeedToShowOrNot = false;
                             });
                             Navigator.of(context).pop();
+                            Navigator.of(context).pop();
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
                                 builder: (context) => const BlackBoxStartScreen(

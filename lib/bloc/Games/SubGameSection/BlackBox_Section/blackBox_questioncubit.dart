@@ -768,12 +768,10 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         };
       }).toList();
 
-      // ✅ Yaha se naya calculation
       final correctAnswers = state.questionResults.fold<int>(
         0,
             (sum, result) => sum + ((result.correctPoint ?? 0) > 0 ? 1 : 0),
       );
-
       final correctPoints = state.questionResults.fold<int>(
         0,
             (sum, result) => sum + (result.correctPoint ?? 0),
@@ -784,7 +782,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
             (sum, result) => sum + (result.bonusPoint ?? 0),
       );
 
-      // ✅ All-correct bonus same rakha
       final allCorrectBonus = (correctAnswers == state.questions.length)
           ? 3
           : 0;
@@ -832,6 +829,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           builder: (_) =>
               BlackBoxResultScreen(
                 correctedAnswer: correctAnswers,
+                correctPoints: correctPoints,
                 totalQuestion: state.questions.length,
                 score: finalScore,
                 winAchieved: winAchieved,
