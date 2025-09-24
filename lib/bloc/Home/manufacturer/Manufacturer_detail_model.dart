@@ -47,7 +47,7 @@ class General {
   final String? headquarter;
   final String foundingDate;
   final String logo;
-  final String description;
+  final String? description;
   final CoverPhoto coverPhoto;
 
   General({

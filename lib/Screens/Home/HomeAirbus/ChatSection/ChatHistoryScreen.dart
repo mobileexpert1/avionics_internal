@@ -56,11 +56,15 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                    color: Colors.grey, // set your border color here
+                    width: 0.2, // set your border width here
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 8,
-                      offset: Offset(0, 40),
+                      offset: Offset(0, 1),
                     ),
                   ],
                 ),

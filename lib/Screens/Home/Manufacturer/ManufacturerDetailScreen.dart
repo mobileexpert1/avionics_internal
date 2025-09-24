@@ -162,8 +162,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       () => showMoreGeneralInfo =
                                           !showMoreGeneralInfo,
                                     ),
-                                    isShowMoreLessOption:
-                                        detail.general.description.length > 100,
+                                    isShowMoreLessOption: ((detail.general.description?.length ?? 0) > 100)
                                   ),
 
                                   showMoreGeneralInfo
@@ -611,10 +610,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '© ${coverImages.author}',
+                    '© ${coverImages.author == "" ? coverImages.license : coverImages.author}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 8,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                     softWrap: true,
