@@ -1,8 +1,16 @@
 class Validators {
+  // String? validateEmail(String value) {
+  //   final emailRegex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+  //   if (value.isEmpty) return 'Email is required';
+  //   if (!emailRegex.hasMatch(value)) return 'Enter a valid email';
+  //   return null;
+  // }
+
   String? validateEmail(String value) {
-    final emailRegex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+    // only lowercase letters allowed
+    final emailRegex = RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$');
     if (value.isEmpty) return 'Email is required';
-    if (!emailRegex.hasMatch(value)) return 'Enter a valid email';
+    if (!emailRegex.hasMatch(value)) return 'Enter a valid email (lowercase only)';
     return null;
   }
 
