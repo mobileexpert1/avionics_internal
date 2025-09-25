@@ -212,20 +212,40 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                           : Colors.grey.shade400,
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
+                      // onPressed: () {
+                      //   if(isLastPage) {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             BlackBoxScreen(
+                      //               gameId: 'black_box',
+                      //               sectionId: 1,
+                      //             ),
+                      //       ),
+                      //     );
+                      //   }
+                      // },
+
                       onPressed: () {
-                        if(isLastPage) {
+                        if (isLastPage) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  BlackBoxScreen(
-                                    gameId: 'black_box',
-                                    sectionId: 1,
-                                  ),
+                              builder: (context) => BlackBoxScreen(
+                                gameId: 'black_box',
+                                sectionId: 1,
+                              ),
                             ),
-                          );
+                          ).then((reset) {
+                            if (reset == true) {
+                              _pageController.jumpToPage(0);
+                              setState(() => _currentPage = 0);
+                            }
+                          });
                         }
                       },
+
                     );
                   },
                 ),

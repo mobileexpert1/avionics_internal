@@ -111,16 +111,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                             setState(() {
                               isNeedToShowOrNot = false;
                             });
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) => const BlackBoxStartScreen(
-                                  gameId: 'black_box',
-                                ),
-                              ),
-                              (route) => false,
-                            );
+                            Navigator.of(context).pop(true);
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -136,7 +127,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                     ),
                   );
                   if (shouldExit ?? false) {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   }
                 },
               ),
