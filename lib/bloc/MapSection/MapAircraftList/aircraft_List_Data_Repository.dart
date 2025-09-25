@@ -24,6 +24,28 @@ class AircraftListDataRepository {
     }
   }
 
+  Future<AircraftListResponse> getListOfAllAircraftStationAccordingToLatLong({
+    required String longitude,
+    required String latitude,
+  }) async {
+    final url = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+          "${ApiFunctionUrlMapSecitonConstant.aircraftStationList}",
+    ).replace(queryParameters: {
+      'longitude': longitude,
+      'latitude': latitude,
+    });
+
+    try {
+      final jsonData = await ApiService.get(url: url) as Map<String, dynamic>;
+      return AircraftListResponse.fromJson(jsonData);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+
   Future<List<Map<String, dynamic>>> getAirportList() async {
     try {
       await Future.delayed(const Duration(milliseconds: 200));

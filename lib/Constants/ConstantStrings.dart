@@ -224,6 +224,7 @@ class ApiFunctionUrlGamesConstant {
 
 class ApiFunctionUrlMapSecitonConstant {
   static const aircraftFlyingList = "aircraft/flying-area/";
+    static const aircraftStationList = "airport/?";
 }
 
 class ApiServiceUrlGamesConstant {

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:geolocator/geolocator.dart';
+
 import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +65,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   LatLng? _initialCurrentLatLng;
   Timer? _debounce;
 
+  Marker? _centerMarker;
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +91,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     _sheetController.dispose();
     super.dispose();
   }
+
+  Circle? _visibleRegionCircle;
 
   @override
   Widget build(BuildContext context) {
@@ -121,50 +127,62 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               return Stack(
                 fit: StackFit.expand,
                 children: [
-                  FutureBuilder<Set<Marker>>(
-                    future: _buildFlightMarkers(
-                      state.isTracking && state.selectedFlight != null
-                          ? [state.selectedFlight!]
-                          : state.flights ?? [],
-                      false,
-                    ),
-                    builder: (context, snapshot) {
-                      return GoogleMap(
-                        //polygons: _boundsPolygon,
-                        minMaxZoomPreference: MinMaxZoomPreference(4, 10),
-                        zoomControlsEnabled: false,
-                        myLocationButtonEnabled: false,
-                        rotateGesturesEnabled: false,
-                        mapType: state.mapType,
-                        initialCameraPosition: CameraPosition(
-                          target: _initialCurrentLatLng!,
-                          zoom: 8,
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return FutureBuilder<Set<Marker>>(
+                        future: _buildFlightMarkers(
+                          state.isTracking && state.selectedFlight != null
+                              ? [state.selectedFlight!]
+                              : state.flights ?? [],
+                          false,
                         ),
-                        myLocationEnabled: true,
-                        markers: {
-                          Marker(
-                            markerId: const MarkerId("current"),
-                            position: currentLatLng,
-                            infoWindow: const InfoWindow(title: "You are here"),
-                          ),
-
-                          if (_singleSearchMarker != null) _singleSearchMarker!,
-                          if (snapshot.hasData) ...snapshot.data!,
-                        },
-                        onCameraIdle: _fetchFlightsWithDebounce,
-                        onMapCreated: (GoogleMapController controller) async {
-                          _mapController = controller;
-                          if (state.isTracking &&
-                              state.selectedFlight != null) {
-                            _mapController!.animateCamera(
-                              CameraUpdate.newLatLng(
-                                LatLng(
-                                  state.selectedFlight!.latitude,
-                                  state.selectedFlight!.longitude,
+                        builder: (context, snapshot) {
+                          return GoogleMap(
+                            minMaxZoomPreference: MinMaxZoomPreference(4, 10),
+                            zoomControlsEnabled: false,
+                            myLocationButtonEnabled: false,
+                            rotateGesturesEnabled: false,
+                            mapType: state.mapType,
+                            initialCameraPosition: CameraPosition(
+                              target: _initialCurrentLatLng!,
+                              zoom: 8,
+                            ),
+                            myLocationEnabled: true,
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId("current"),
+                                position: currentLatLng,
+                                infoWindow: const InfoWindow(
+                                  title: "You are here",
                                 ),
                               ),
-                            );
-                          }
+                              if (_singleSearchMarker != null)
+                                _singleSearchMarker!,
+                              if (snapshot.hasData) ...snapshot.data!,
+                              if (_centerMarker != null) _centerMarker!,
+                            },
+                            circles: _visibleRegionCircle != null
+                                ? {_visibleRegionCircle!}
+                                : {},
+                            onCameraIdle: () async {
+                              _fetchFlightsWithDebounce(constraints);
+                            },
+                            onMapCreated:
+                                (GoogleMapController controller) async {
+                                  _mapController = controller;
+                                  if (state.isTracking &&
+                                      state.selectedFlight != null) {
+                                    _mapController!.animateCamera(
+                                      CameraUpdate.newLatLng(
+                                        LatLng(
+                                          state.selectedFlight!.latitude,
+                                          state.selectedFlight!.longitude,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                          );
                         },
                       );
                     },
@@ -208,14 +226,60 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     }
   }
 
-  void _fetchFlightsWithDebounce() {
+  void _fetchFlightsWithDebounce(BoxConstraints constraints) {
     if (_mapController == null || _isFlightIconPressed) return;
     _hasFetchedDetails = false;
     _debounce?.cancel();
     _debounce = Timer(const Duration(seconds: 2), () async {
       if (_mapController == null) return;
       final visibleRegion = await _mapController!.getVisibleRegion();
+
+      final screenCenter = ScreenCoordinate(
+        x: (constraints.maxWidth ~/ 2),
+        y: (constraints.maxHeight ~/ 2),
+      );
+
+      final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
+
+      setState(() {
+        _centerMarker = Marker(
+          markerId: const MarkerId("center"),
+          position: centerLatLng,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          infoWindow: const InfoWindow(title: "Map Center"),
+        );
+      });
+
+      final LatLng center = LatLng(
+        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
+            2,
+        (visibleRegion.northeast.longitude +
+                visibleRegion.southwest.longitude) /
+            2,
+      );
+
+      final double radius = Geolocator.distanceBetween(
+        center.latitude,
+        center.longitude,
+        visibleRegion.northeast.latitude,
+        visibleRegion.northeast.longitude,
+      );
+
+      print("jjhfdjkfhdsjkfhsdfhhsdf$radius"); // Meter
+
+      setState(() {
+        _visibleRegionCircle = Circle(
+          circleId: const CircleId("visible_radius"),
+          center: center,
+          radius: radius,
+          strokeWidth: 2,
+          strokeColor: Colors.blue.withOpacity(0.7),
+          fillColor: Colors.blue.withOpacity(0.2),
+        );
+      });
+
       _mapCubit.fetchFlightsByBounds(
+        currentCenterLatLong: centerLatLng,
         bounds: visibleRegion,
         context: context,
         isNeedToRefresh: true,
@@ -361,7 +425,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           title: airport['airport_name'] ?? "",
           snippet: "${airport['city']}, ${airport['country']}",
         ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueMagenta,
+        ),
       );
       markers.add(marker);
     }

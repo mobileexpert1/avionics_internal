@@ -202,6 +202,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required bool isNeedToRefresh,
     required LatLngBounds bounds,
     required BuildContext context,
+    required LatLng currentCenterLatLong,
   }) async {
     // Agar bounds change nahi hua, API call skip karo
     if (isNeedToRefresh == true) {
