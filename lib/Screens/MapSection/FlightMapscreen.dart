@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 
+import '../../Constants/AppColors.dart';
+import '../../Helpers/Custom_widget.dart';
+import '../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
+import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -48,18 +52,19 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       DraggableScrollableController();
 
   bool _showFlightCard = false;
+  bool _showAirportCard = false;
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
   bool _hasFetchedDetails = false;
   bool _isFlightIconPressed = false;
   bool _isNeedToShowBackButton = false;
 
-  Set<Marker>? _airportMarkers;
   FlightModel? selectedFlight;
   Marker? _singleSearchMarker;
   GoogleMapController? _mapController;
 
   String? selectedFlightId;
+  String? selectedAirportId;
   int _isForFlyingInTheArea = 0;
 
   LatLng? _initialCurrentLatLng;
@@ -198,9 +203,17 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       ),
                     ),
                   _buildSearchBar(context, state),
-                  _buildFlightsDraggableSheet(context, state),
-                  if (state.selectedFlightDetail != null)
+                  Visibility(
+                    visible: _isMapListViewShown,
+                    maintainState: true,
+                    child: _buildFlightsDraggableSheet(context, state),
+                  ),
+
+                  if (_showFlightCard && state.selectedFlightDetail != null)
                     _buildAnimatedFlightCard(context),
+
+                  if (_showAirportCard && state.selectedAirport != null)
+                    _buildAnimatedAirportDetailsCard(context),
                 ],
               );
             }
@@ -208,8 +221,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           },
         ),
       ),
-      floatingActionButton: _showFlightCard == false
-          ? _buildChatFloatingButton(context)
+      floatingActionButton: (_showFlightCard == false)
+          ? (_showAirportCard == false
+                ? _buildChatFloatingButton(context)
+                : SizedBox.shrink())
           : SizedBox.shrink(),
     );
   }
@@ -240,43 +255,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       );
 
       final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
-
-      setState(() {
-        _centerMarker = Marker(
-          markerId: const MarkerId("center"),
-          position: centerLatLng,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          infoWindow: const InfoWindow(title: "Map Center"),
-        );
-      });
-
-      final LatLng center = LatLng(
-        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
-            2,
-        (visibleRegion.northeast.longitude +
-                visibleRegion.southwest.longitude) /
-            2,
-      );
-
-      final double radius = Geolocator.distanceBetween(
-        center.latitude,
-        center.longitude,
-        visibleRegion.northeast.latitude,
-        visibleRegion.northeast.longitude,
-      );
-
-      print("jjhfdjkfhdsjkfhsdfhhsdf$radius"); // Meter
-
-      setState(() {
-        _visibleRegionCircle = Circle(
-          circleId: const CircleId("visible_radius"),
-          center: center,
-          radius: radius,
-          strokeWidth: 2,
-          strokeColor: Colors.blue.withOpacity(0.7),
-          fillColor: Colors.blue.withOpacity(0.2),
-        );
-      });
 
       _mapCubit.fetchFlightsByBounds(
         currentCenterLatLong: centerLatLng,
@@ -315,6 +293,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           onFlyingSelected: () {
             setState(() {
               _hideFlightCard();
+              _hideAirPortDetailsCard();
               _singleSearchMarker = null;
               _isMapListViewShown = true;
               _isNeedToShowBackButton = true;
@@ -325,6 +304,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           onTrackSelected: () {
             setState(() {
               _hideFlightCard();
+              _hideAirPortDetailsCard();
               _singleSearchMarker = null;
               _isMapListViewShown = false;
               _isNeedToShowBackButton = true;
@@ -340,10 +320,21 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   void _toggleFlightCard({required String flight}) {
     _mapCubit.fetchFlightDetails(flightId: flight, context: context);
-    setState(() => _showFlightCard = true);
+    setState(() {
+      if (_showAirportCard == true) {
+        _showAirportCard = false;
+      }
+      _showFlightCard = true;
+
+      print(
+        "_toggleFlightCard _showAirportCard-=-=-${_showAirportCard},_showFlightCard--=-=-=-=-=-==${_showFlightCard}",
+      );
+    });
   }
 
   void _hideFlightCard() => setState(() => _showFlightCard = false);
+
+  void _hideAirPortDetailsCard() => setState(() => _showAirportCard = false);
 
   Future<Marker> _createMarker({
     required FlightModel flight,
@@ -382,6 +373,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               ? Colors.red
               : (isSelected ? Colors.orangeAccent : Colors.red),
           onTap: () {
+            print(
+              "_buildFlightMarkers _showAirportCard-=-=-${_showAirportCard},_showFlightCard--=-=-=-=-=-==${_showFlightCard}",
+            );
             if (selectedFlightId != flight.id) {
               _isFlightIconPressed = true;
               _isMapListViewShown = false;
@@ -404,9 +398,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         );
         markers.add(marker);
       }
+      final airportMarkers = await _buildAirportMarkers();
+      markers.addAll(airportMarkers);
     }
-    final airportMarkers = await _buildAirportMarkers();
-    markers.addAll(airportMarkers);
     return markers;
   }
 
@@ -414,20 +408,37 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     final markers = <Marker>{};
     final airports = _mapCubit.state.airports;
 
+    if (airports == null) return markers;
+
     for (final airport in airports) {
       final marker = Marker(
-        markerId: MarkerId(airport['icao'] ?? airport['airport_name']),
-        position: LatLng(
-          airport['latitude'] as double,
-          airport['longitude'] as double,
-        ),
+        markerId: MarkerId(airport.iataCode),
+        position: LatLng(airport.latitude, airport.longitude),
         infoWindow: InfoWindow(
-          title: airport['airport_name'] ?? "",
-          snippet: "${airport['city']}, ${airport['country']}",
+          title: airport.name,
+          snippet: "${airport.city}, ${airport.country}",
         ),
         icon: BitmapDescriptor.defaultMarkerWithHue(
           BitmapDescriptor.hueMagenta,
         ),
+        onTap: () {
+          print(
+            "_buildAirportMarkers _showAirportCard-=-=-${_showAirportCard},_showFlightCard--=-=-=-=-=-==${_showFlightCard},_buildAirportMarkers: Airport tapped - ${airport.name}",
+          );
+          _isFlightIconPressed = true;
+          _isMapListViewShown = false;
+          _mapCubit.setSelectedAirport(airport);
+          setState(() {
+            if (_showFlightCard == true) {
+              _hideFlightCard();
+            }
+            if (_showAirportCard == true) {
+              _hideAirPortDetailsCard();
+            } else {
+              _showAirportCard = true;
+            }
+          });
+        },
       );
       markers.add(marker);
     }
@@ -441,6 +452,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       useCallSign: true,
       onTap: () {
         _mapCubit.setSelectedFlight(flight);
+        print(
+          "_buildSingleFlightMarker _showAirportCard-=-=-${_showAirportCard},_showFlightCard--=-=-=-=-=-==${_showFlightCard}",
+        );
       },
     );
   }
@@ -501,7 +515,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       controller: _sheetController,
       initialChildSize: 0.0,
       minChildSize: 0.0,
-      maxChildSize: 0.78,
+      maxChildSize: 0.75,
       snap: true,
       builder: (context, scrollController) {
         return Container(
@@ -688,6 +702,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             _mapCubit.changeMapType(selectedMapTypes);
           }
           _hideFlightCard();
+          _hideAirPortDetailsCard();
         },
         searchTitle: _isForFlyingInTheArea == 2
             ? 'Track a flight...'
@@ -745,6 +760,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       bottom: _showFlightCard ? 0 : -MediaQuery.of(context).size.height * 0.4,
       child: BlocBuilder<FlightMapCubit, FlightMapState>(
         builder: (context, state) {
+          if (state.selectedFlightDetail == null) {
+            return const SizedBox.shrink();
+          }
           return FlightCard(
             flightDetail: state.selectedFlightDetail,
             isComeFromLiveTracking: false,
@@ -761,6 +779,32 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             },
             // fromDateTime: state.fromDateTime,
             // toDateTime: state.toDateTime,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      left: 0,
+      right: 0,
+      bottom: _showAirportCard ? 0 : -MediaQuery.of(context).size.height * 0.4,
+      child: BlocBuilder<FlightMapCubit, FlightMapState>(
+        builder: (context, state) {
+          if (state.selectedAirport == null) {
+            return const SizedBox.shrink();
+          }
+
+          return AirportStationCard(
+            airportDetail: state.selectedAirport!,
+            isComeFromLiveTracking: false,
+            callBackForHideFlightCard: () {
+              _isFlightIconPressed = false;
+              _hideAirPortDetailsCard();
+            },
           );
         },
       ),
@@ -1106,6 +1150,118 @@ class FlightCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class AirportStationCard extends StatelessWidget {
+  final AircraftStationModel? airportDetail;
+  final bool? isComeFromLiveTracking;
+  final VoidCallback? callBackForHideFlightCard;
+
+  const AirportStationCard({
+    super.key,
+    this.callBackForHideFlightCard,
+    this.airportDetail,
+    this.isComeFromLiveTracking,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final detail = airportDetail;
+    if (detail == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return GestureDetector(
+      onTap: () {
+        print("Airport card tapped");
+      },
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              offset: Offset(0, -2), // slight shadow above
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [Text("Airport Details")],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: customField(label: 'Name', text: detail.name),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: customField(label: 'City', text: detail.city),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: customField(label: 'State', text: detail.state),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: customField(label: 'Country', text: detail.country),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: customField(label: 'Runway', text: detail.type),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: customField(
+                      label: 'Length(m)',
+                      text: detail.runwayLength.toString(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: customField(
+                      label: 'ICAO Code',
+                      text: detail.iataCode,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: customField(
+                      label: 'Elevation(m)',
+                      text: detail.elev.toString(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

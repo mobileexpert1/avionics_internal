@@ -13,6 +13,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import 'AircraftStationList/aircraft_Station_List_Model.dart';
+import 'AircraftStationList/aircraft_Station_List_Repository.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_model.dart';
 import 'flight_map_state.dart';
@@ -159,41 +161,16 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  // Cubit method to fetch hardcoded airport list
-  Future<void> fetchAirportList(BuildContext context) async {
-    try {
-      // Call repository method
-      final airportList = await AircraftListDataRepository().getAirportList();
-
-      // Update the Cubit state
-      emit(
-        state.copyWith(
-          airports: airportList,
-          status: CommonApiStatus.success,
-          isSuccess: true,
-          isLoading: false,
-        ),
-      );
-    } catch (e) {
-      // Handle errors (unauthorized / other)
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          isSuccess: false,
-          isLoading: false,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
   void changeMapType(MapType type) {
     emit(state.copyWith(mapType: type));
   }
 
   void setSelectedFlight(FlightModel flight) {
     emit(state.copyWith(selectedFlight: flight));
+  }
+
+  void setSelectedAirport(AircraftStationModel airportModel) {
+    emit(state.copyWith(selectedAirport: airportModel));
   }
 
   LatLngBounds? _previousBounds;
@@ -204,7 +181,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required BuildContext context,
     required LatLng currentCenterLatLong,
   }) async {
-    // Agar bounds change nahi hua, API call skip karo
     if (isNeedToRefresh == true) {
       if (_previousBounds != null &&
           _previousBounds!.southwest == bounds.southwest &&
@@ -215,7 +191,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
 
     _previousBounds = bounds;
-
     try {
       final boundsString =
           "${bounds.northeast.latitude},${bounds.southwest.latitude},"
@@ -223,13 +198,20 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final flights = await FlightRepository().getFlights(bounds: boundsString);
 
-      print("flights-=-=-=-$flights");
+      final airportList = await AircraftStationListRepository()
+          .getListOfAllAircraftStationAccordingToLatLong(
+            longitude: currentCenterLatLong.longitude.toString(),
+            latitude: currentCenterLatLong.latitude.toString(),
+          );
 
-      fetchAirportList(context);
+      print(
+        "flights-=-=-=-$flights. \n\n airportList count-=-=-=-=-=${airportList.data.length}",
+      );
 
       emit(
         state.copyWith(
           flights: flights,
+          airports: airportList.data,
           status: CommonApiStatus.success,
           isSuccess: true,
           isLoading: false,
