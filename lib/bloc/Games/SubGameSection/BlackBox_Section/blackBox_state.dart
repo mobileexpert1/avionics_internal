@@ -35,6 +35,7 @@ class BlackBoxState extends Equatable {
   final List<CategoryTypes> categoryTypes;
   final List<int>? selectedSequence;
   final List<String>? selectedSequenceItems;
+  final List<int>? selectedIndices;
 
   const BlackBoxState({
     this.isLoading = false,
@@ -67,6 +68,7 @@ class BlackBoxState extends Equatable {
     this.categoryTypes = const [],
     this.selectedSequence,
     this.selectedSequenceItems,
+    this.selectedIndices = const [],
   });
 
   BlackBoxState copyWith({
@@ -100,6 +102,7 @@ class BlackBoxState extends Equatable {
     List<CategoryTypes>? categoryTypes,
     List<int>? selectedSequence,
     List<String>? selectedSequenceItems,
+    List<int>? selectedIndices,
   }) {
     return BlackBoxState(
       isLoading: isLoading ?? this.isLoading,
@@ -132,6 +135,7 @@ class BlackBoxState extends Equatable {
       categoryTypes: categoryTypes ?? this.categoryTypes,
       selectedSequence: selectedSequence ?? this.selectedSequence,
       selectedSequenceItems: selectedSequenceItems ?? this.selectedSequenceItems,
+      selectedIndices: selectedIndices ?? this.selectedIndices,
     );
   }
 
@@ -176,6 +180,7 @@ class BlackBoxState extends Equatable {
     difficulty,
     categoryTypes,
     selectedSequence,
+    selectedIndices,
   ];
 }
 
@@ -189,6 +194,7 @@ class BlackBoxQuestion {
   final List<String>? sequenceItems;
   final String? correctAnswer;
   final String? title;
+  final List<int>? correctOptionList;
 
   BlackBoxQuestion({
     required this.question,
@@ -200,6 +206,7 @@ class BlackBoxQuestion {
     this.sequenceItems,
     this.correctAnswer,
     this.title,
+    this.correctOptionList,
   });
 }
 
@@ -210,6 +217,7 @@ class BlackBoxQuestionResult {
   final int correctPoint;
   final int bonusPoint;
   final int timeTakenSeconds;
+  final List<int>? selectedIndices;
 
   BlackBoxQuestionResult({
     this.userAnswerIndex,
@@ -218,5 +226,6 @@ class BlackBoxQuestionResult {
     required this.correctPoint,
     required this.bonusPoint,
     required this.timeTakenSeconds,
+    required this.selectedIndices,
   });
 }

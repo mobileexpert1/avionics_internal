@@ -16,7 +16,9 @@ class FlightDetailResponse {
     if (json['data'] != null) {
       final List<dynamic> data = json['data'];
       return FlightDetailResponse(
-        flights: data.map((item) => FlightAircraftDetail.fromJson(item)).toList(),
+        flights: data
+            .map((item) => FlightAircraftDetail.fromJson(item))
+            .toList(),
       );
     }
 
@@ -24,7 +26,13 @@ class FlightDetailResponse {
     if (json['results'] != null) {
       return FlightDetailResponse(
         detail: json['detail'],
-        result: FlightAircraftDetail.fromJson(json['results']),
+
+        // result: FlightAircraftDetail.fromJson(json['results']),
+        result: FlightAircraftDetail.fromJson({
+          ...json['results'],
+          'orig_icao_airport': json['orig_icao_airport'],
+          'dest_icao_airport': json['dest_icao_airport'],
+        }),
       );
     }
 
@@ -32,6 +40,7 @@ class FlightDetailResponse {
     return const FlightDetailResponse(flights: []);
   }
 }
+
 class FlightAircraftDetail extends Equatable {
   // Flight fields
   final String id;
@@ -72,6 +81,8 @@ class FlightAircraftDetail extends Equatable {
   final String? icaoTypeCode;
   final String? image;
   final ManufacturerModel? manufacturer;
+  final AirportModel? originAirport;
+  final AirportModel? destinationAirport;
 
   const FlightAircraftDetail({
     // Flight
@@ -113,6 +124,8 @@ class FlightAircraftDetail extends Equatable {
     this.icaoTypeCode,
     this.image,
     this.manufacturer,
+    this.originAirport,
+    this.destinationAirport,
   });
 
   factory FlightAircraftDetail.fromJson(Map<String, dynamic> json) {
@@ -166,6 +179,16 @@ class FlightAircraftDetail extends Equatable {
       manufacturer: json['Manufacturer'] != null
           ? ManufacturerModel.fromJson(json['Manufacturer'])
           : null,
+
+      //Aircports
+      originAirport: json['orig_icao_airport'] != null &&
+          json['orig_icao_airport'] is Map<String, dynamic>
+          ? AirportModel.fromJson(json['orig_icao_airport'])
+          : null,
+      destinationAirport: json['dest_icao_airport'] != null &&
+          json['dest_icao_airport'] is Map<String, dynamic>
+          ? AirportModel.fromJson(json['dest_icao_airport'])
+          : null,
     );
   }
 
@@ -207,6 +230,8 @@ class FlightAircraftDetail extends Equatable {
     icaoTypeCode,
     image,
     manufacturer,
+    originAirport,
+    destinationAirport,
   ];
 }
 
@@ -230,13 +255,10 @@ class ManufacturerModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'company_name': companyName,
-      'logo': logo,
-    };
+    return {'id': id, 'company_name': companyName, 'logo': logo};
   }
 }
+
 extension FlightAircraftDetailCopy on FlightAircraftDetail {
   FlightAircraftDetail copyWith({
     double? latitude,
@@ -283,6 +305,44 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
       icaoTypeCode: icaoTypeCode,
       image: image,
       manufacturer: manufacturer,
+      originAirport: originAirport,
+      destinationAirport: destinationAirport,
     );
+  }
+}
+
+class AirportModel {
+  final String id;
+  final String name;
+  final String city;
+  final String state;
+  final String country;
+
+  const AirportModel({
+    required this.id,
+    required this.name,
+    required this.city,
+    required this.state,
+    required this.country,
+  });
+
+  factory AirportModel.fromJson(Map<String, dynamic> json) {
+    return AirportModel(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      city: json['city'] ?? '',
+      state: json['state'] ?? '',
+      country: json['country'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'city': city,
+      'state': state,
+      'country': country,
+    };
   }
 }
