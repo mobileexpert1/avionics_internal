@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import 'FlightTrackScreen.dart';
@@ -42,31 +43,22 @@ class FlightMapScreen extends StatefulWidget {
 class _FlightMapscreenState extends State<FlightMapScreen> {
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
 
-  late final TextEditingController _searchController = TextEditingController();
-
-  late final DraggableScrollableController _sheetController =
-      DraggableScrollableController();
-
-  int _activeCard = 0;
-
-  // 0 = none, 1 = flight card, 2 = airport card
+  Timer? _debounce;
+  int _activeCard = 0; // 0 = none, 1 = flight card, 2 = airport card
 
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
   bool _hasFetchedDetails = false;
-  bool _isNeedToShowBackButton = false;
 
-  FlightModel? selectedFlight;
+  String? selectedFlightId;
+
+  int _isForFlyingInTheArea = 0;
   Marker? _singleSearchMarker;
   GoogleMapController? _mapController;
 
-  String? selectedFlightId;
-  int _isForFlyingInTheArea = 0;
-
-  Timer? _debounce;
-  LatLng? _initialCurrentLatLng;
-
-  Marker? _centerMarker;
+  late final TextEditingController _searchController = TextEditingController();
+  late final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
 
   @override
   void initState() {
@@ -86,14 +78,14 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   @override
   void dispose() {
+    _resetFlightSelection();
     _debounce?.cancel();
+    _singleSearchMarker = null;
     _searchController.dispose();
     _mapController?.dispose();
     _sheetController.dispose();
     super.dispose();
   }
-
-  Circle? _visibleRegionCircle;
 
   @override
   Widget build(BuildContext context) {
@@ -116,15 +108,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
             if (state.status == CommonApiStatus.success &&
                 state.position != null) {
-              final position = state.position!;
-              final currentLatLng = LatLng(
-                position.latitude,
-                position.longitude,
-              );
-
-              // Save initial location only once S...
-              _initialCurrentLatLng ??= currentLatLng;
-
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -145,26 +128,28 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             rotateGesturesEnabled: false,
                             mapType: state.mapType,
                             initialCameraPosition: CameraPosition(
-                              target: _initialCurrentLatLng!,
+                              target: LatLng(
+                                state.position!.latitude,
+                                state.position!.longitude,
+                              ),
                               zoom: 8,
                             ),
                             myLocationEnabled: true,
                             markers: {
                               Marker(
                                 markerId: const MarkerId("current"),
-                                position: currentLatLng,
+                                position: LatLng(
+                                  state.position!.latitude,
+                                  state.position!.longitude,
+                                ),
                                 infoWindow: const InfoWindow(
-                                  title: "You are here",
+                                  title: "Current Location",
                                 ),
                               ),
                               if (_singleSearchMarker != null)
                                 _singleSearchMarker!,
                               if (snapshot.hasData) ...snapshot.data!,
-                              if (_centerMarker != null) _centerMarker!,
                             },
-                            circles: _visibleRegionCircle != null
-                                ? {_visibleRegionCircle!}
-                                : {},
                             onCameraIdle: () async {
                               _fetchFlightsWithDebounce(constraints);
                             },
@@ -198,6 +183,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         onToggle: handleToggle, // Passing the callback function
                       ),
                     ),
+
                   _buildSearchBar(context, state),
 
                   if (_isMapListViewShown == true)
@@ -220,6 +206,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                 ? _buildChatFloatingButton(context)
                 : SizedBox.shrink())
           : SizedBox.shrink(),
+    );
+  }
+
+  void _resetFlightSelection() {
+    setState(() {
+      _activeCard = 0;
+      selectedFlightId = "";
+    });
+
+    _buildFlightMarkers(
+      _mapCubit.state.isTracking && _mapCubit.state.selectedFlight != null
+          ? [_mapCubit.state.selectedFlight!]
+          : _mapCubit.state.flights ?? [],
+      true,
     );
   }
 
@@ -286,12 +286,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           },
           onFlyingSelected: () {
             setState(() {
-              _activeCard = 0;
               _singleSearchMarker = null;
               _isMapListViewShown = true;
-              _isNeedToShowBackButton = true;
               _isForFlyingInTheArea = 1;
             });
+            _resetFlightSelection();
             Navigator.pop(context);
           },
           onTrackSelected: () {
@@ -299,7 +298,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               _activeCard = 0;
               _singleSearchMarker = null;
               _isMapListViewShown = false;
-              _isNeedToShowBackButton = true;
               _isForFlyingInTheArea = 2;
             });
             Navigator.pop(context);
@@ -361,15 +359,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               _mapCubit.setSelectedFlight(flight);
               _toggleFlightCard(flight: flight.id);
             } else {
-              selectedFlightId = "";
-              _activeCard = 0;
-              _buildFlightMarkers(
-                _mapCubit.state.isTracking &&
-                        _mapCubit.state.selectedFlight != null
-                    ? [_mapCubit.state.selectedFlight!]
-                    : _mapCubit.state.flights ?? [],
-                true,
-              );
+              _resetFlightSelection();
             }
           },
         );
@@ -384,6 +374,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   Future<Set<Marker>> _buildAirportMarkers() async {
     final markers = <Marker>{};
     final airports = _mapCubit.state.airports;
+    final customIcon = await _getBitmapDescriptorFromSvgAsset(
+      assetName: 'assets/svg_images/Airport1.svg',
+      size: 150,
+    );
 
     if (airports == null) return markers;
 
@@ -395,29 +389,50 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           title: airport.name,
           snippet: "${airport.city}, ${airport.country}",
         ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          BitmapDescriptor.hueMagenta,
-        ),
+        // icon: BitmapDescriptor.defaultMarkerWithHue(
+        //   BitmapDescriptor.hueMagenta,
+        // ),
+        icon: customIcon,
         onTap: () {
           _isMapListViewShown = false;
           _mapCubit.setSelectedAirport(airport);
+          _resetFlightSelection();
           setState(() {
-            _activeCard = 0;
             _activeCard = 2;
-            selectedFlightId = "";
-            _buildFlightMarkers(
-              _mapCubit.state.isTracking &&
-                      _mapCubit.state.selectedFlight != null
-                  ? [_mapCubit.state.selectedFlight!]
-                  : _mapCubit.state.flights ?? [],
-              true,
-            );
           });
         },
       );
       markers.add(marker);
     }
     return markers;
+  }
+
+  Future<BitmapDescriptor> _getBitmapDescriptorFromSvgAsset({
+    required String assetName,
+    required double size,
+  }) async {
+    try {
+      final pictureInfo = await vg.loadPicture(SvgAssetLoader(assetName), null);
+      final scale = size / pictureInfo.size.width;
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      canvas.scale(scale, scale);
+
+      canvas.drawPicture(pictureInfo.picture);
+
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(
+        (pictureInfo.size.width * scale).round(),
+        (pictureInfo.size.height * scale).round(),
+      );
+
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      final uint8List = byteData!.buffer.asUint8List();
+      return BitmapDescriptor.fromBytes(uint8List);
+    } catch (e) {
+      debugPrint('Error loading SVG------------------------------: $e');
+      return BitmapDescriptor.defaultMarker;
+    }
   }
 
   Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
@@ -580,7 +595,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                       onTap: () {
                         _buildSingleFlightMarker(data!).then((marker) {
                           setState(() {
+                            isMapViewSelected = true;
+                            _isMapListViewShown = false;
                             _singleSearchMarker = marker;
+                            selectedFlightId = data.id;
+                            context.read<FlightMapCubit>().setSelectedFlight(
+                              data,
+                            );
                           });
                         });
 
@@ -591,12 +612,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           ),
                         );
 
-                        setState(() {
-                          _singleSearchMarker = null;
-                          isMapViewSelected = true;
-                          _isMapListViewShown = false;
-                        });
-
                         _toggleFlightCard(flight: data.id);
 
                         _sheetController.animateTo(
@@ -604,16 +619,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeInOut,
                         );
-
-                        Timer(const Duration(seconds: 2), () {
-                          if (!mounted) return;
-                          setState(() {
-                            selectedFlightId = data.id;
-                            context.read<FlightMapCubit>().setSelectedFlight(
-                              data,
-                            );
-                          });
-                        });
                       },
                     ),
                   );
@@ -634,7 +639,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       child: SearchBarWidget(
         enableGestureMode: true,
         onTextTap: () => _handleTextTap(context),
-        enableBackArrow: _isNeedToShowBackButton,
+        enableBackArrow: _isForFlyingInTheArea != 0,
         onBackButtonTap: () => _showInitialTrackingModePopup(context),
         enableFilter: _isMapListViewShown,
         enableCloseScreen: false,
@@ -735,16 +740,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             flightDetail: state.selectedFlightDetail,
             isComeFromLiveTracking: false,
             callBackForHideFlightCard: () {
-              setState(() {
-                selectedFlightId = "";
-                _activeCard = 0;
-                _buildFlightMarkers(
-                  state.isTracking && state.selectedFlight != null
-                      ? [state.selectedFlight!]
-                      : state.flights ?? [],
-                  true,
-                );
-              });
+              _resetFlightSelection();
             },
             // fromDateTime: state.fromDateTime,
             // toDateTime: state.toDateTime,
@@ -867,6 +863,9 @@ class FlightCard extends StatelessWidget {
             progress = (elapsed / totalDuration).clamp(0.0, 1.0);
           }
         }
+
+        final departureCity = detail?.originAirport?.city ?? 'N/A';
+        final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
 
         return GestureDetector(
           onTap: callBackForHideFlightCard,
@@ -1058,7 +1057,7 @@ class FlightCard extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "$departureIata\n$timeSinceTakeoff",
+                          "$departureCity\n$departureIata\n$timeSinceTakeoff",
                           style: const TextStyle(fontSize: 13),
                         ),
                       ),
@@ -1107,7 +1106,7 @@ class FlightCard extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "$arrivalIata\n$timeToArrival",
+                          "$arrivalCity\n$arrivalIata\n$timeToArrival",
                           style: const TextStyle(fontSize: 13),
                           textAlign: TextAlign.right,
                         ),
@@ -1217,12 +1216,13 @@ class AirportStationCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'Elevation(m)',
-                      text: detail.elev.toString(),
+                  if (detail.elev.toString() != "")
+                    Expanded(
+                      child: customField(
+                        label: 'Elevation(m)',
+                        text: detail.elev.toString(),
+                      ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 12),
