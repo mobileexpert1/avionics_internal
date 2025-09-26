@@ -69,8 +69,12 @@ class FlightRepository {
       } else {
         throw Exception("No flight data found for ID: $flightId");
       }
-
-      final aircraftDetails = await getAircraftDetails(flightDetail.type ?? '');
+      // final aircraftDetails = await getAircraftDetails(flightDetail.type ?? '');
+      final aircraftDetails = await getAircraftDetails(
+        aircraftId: flightDetail.type ?? '',
+        origIcao: flightDetail.departureIcao ?? '',
+        destIcao: flightDetail.arrivalIcao ?? '',
+      );
 
       final mergedDetail = mergeFlightAndAircraftDetails(
         flightDetail,
@@ -117,6 +121,11 @@ class FlightRepository {
       image: aircraftDetail?.image ?? flightDetail.image,
       manufacturer: aircraftDetail?.manufacturer ?? flightDetail.manufacturer,
 
+
+      // Airport fields
+      originAirport: aircraftDetail?.originAirport ?? flightDetail.originAirport,
+      destinationAirport: aircraftDetail?.destinationAirport ?? flightDetail.destinationAirport,
+
       // Preserve other fields from flightDetail
       takeoffTime: flightDetail.takeoffTime,
       takeoffRunway: flightDetail.takeoffRunway,
@@ -135,12 +144,38 @@ class FlightRepository {
     );
   }
 
-  Future<List<FlightAircraftDetail>> getAircraftDetails(
-      String aircraftType,
-      ) async {
+  // Future<List<FlightAircraftDetail>> getAircraftDetails(
+  //     String aircraftType,
+  //     ) async {
+  //   final url = Uri.parse(
+  //     "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
+  //   );
+  //   try {
+  //     final response = await ApiService.get(url: url);
+  //     final aircraftResponse = FlightDetailResponse.fromJson(response);
+  //
+  //     if (aircraftResponse.result != null) {
+  //       return [aircraftResponse.result!];
+  //     }
+  //     return aircraftResponse.flights;
+  //   } catch (e) {
+  //     print('Error fetching aircraft details: $e');
+  //     return [];
+  //   }
+  // }
+
+  Future<List<FlightAircraftDetail>> getAircraftDetails({
+    required String aircraftId,
+    required String origIcao,
+    required String destIcao,
+  }) async {
     final url = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+          "${ApiServiceUrlAirplaneConstant.getListAirbus}details"
+          "?aircraft_id=$aircraftId&orig_icao=$origIcao&dest_icao=$destIcao",
     );
+
     try {
       final response = await ApiService.get(url: url);
       final aircraftResponse = FlightDetailResponse.fromJson(response);
@@ -154,6 +189,7 @@ class FlightRepository {
       return [];
     }
   }
+
 
   Future<FlightResponse?> getFlightPositions(
     String flightNumber,

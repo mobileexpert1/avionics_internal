@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -346,9 +347,36 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     return markers;
   }
 
+  // Future<Set<Marker>> _buildAirportMarkers() async {
+  //   final markers = <Marker>{};
+  //   final airports = _mapCubit.state.airports;
+  //
+  //   for (final airport in airports) {
+  //     final marker = Marker(
+  //       markerId: MarkerId(airport['icao'] ?? airport['airport_name']),
+  //       position: LatLng(
+  //         airport['latitude'] as double,
+  //         airport['longitude'] as double,
+  //       ),
+  //       infoWindow: InfoWindow(
+  //         title: airport['airport_name'] ?? "",
+  //         snippet: "${airport['city']}, ${airport['country']}",
+  //       ),
+  //       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+  //     );
+  //     markers.add(marker);
+  //   }
+  //   return markers;
+  // }
+
+
   Future<Set<Marker>> _buildAirportMarkers() async {
     final markers = <Marker>{};
     final airports = _mapCubit.state.airports;
+    final customIcon = await _getBitmapDescriptorFromSvgAsset(
+      assetName: 'assets/svg_images/Airport1.svg',
+      size: 150,
+    );
 
     for (final airport in airports) {
       final marker = Marker(
@@ -361,11 +389,42 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           title: airport['airport_name'] ?? "",
           snippet: "${airport['city']}, ${airport['country']}",
         ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+        icon: customIcon,
       );
       markers.add(marker);
     }
     return markers;
+  }
+
+  Future<BitmapDescriptor> _getBitmapDescriptorFromSvgAsset({
+    required String assetName,
+    required double size,
+  }) async {
+    try {
+      final pictureInfo = await vg.loadPicture(
+        SvgAssetLoader(assetName),
+        null,
+      );
+      final scale = size / pictureInfo.size.width;
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      canvas.scale(scale, scale);
+
+      canvas.drawPicture(pictureInfo.picture);
+
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(
+        (pictureInfo.size.width * scale).round(),
+        (pictureInfo.size.height * scale).round(),
+      );
+
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      final uint8List = byteData!.buffer.asUint8List();
+      return BitmapDescriptor.fromBytes(uint8List);
+    } catch (e) {
+      debugPrint('Error loading SVG------------------------------: $e');
+      return BitmapDescriptor.defaultMarker;
+    }
   }
 
   Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
@@ -756,6 +815,11 @@ class FlightCard extends StatelessWidget {
         final flightNumber =
             selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
 
+
+        final departureCity = detail?.originAirport?.city ?? 'N/A';
+        final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
+
+
         final flightId = selectedFlight?.id ?? detail?.id ?? '';
 
         String timeSinceTakeoff = 'N/A';
@@ -978,7 +1042,7 @@ class FlightCard extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "$departureIata\n$timeSinceTakeoff",
+                          "$departureCity\n$departureIata\n$timeSinceTakeoff",
                           style: const TextStyle(fontSize: 13),
                         ),
                       ),
@@ -1027,7 +1091,7 @@ class FlightCard extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "$arrivalIata\n$timeToArrival",
+                          "$arrivalCity\n$arrivalIata\n$timeToArrival",
                           style: const TextStyle(fontSize: 13),
                           textAlign: TextAlign.right,
                         ),
