@@ -111,16 +111,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                             setState(() {
                               isNeedToShowOrNot = false;
                             });
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) => const BlackBoxStartScreen(
-                                  gameId: 'black_box',
-                                ),
-                              ),
-                              (route) => false,
-                            );
+                            Navigator.of(context).pop(true);
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -136,7 +127,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                     ),
                   );
                   if (shouldExit ?? false) {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   }
                 },
               ),
@@ -230,6 +221,11 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                           currentQuestion: state.currentIndex + 1,
                           totalQuestions: state.questions.length,
                           secondsRemaining: state.timer,
+                          onMultipleOptionSelected: (index, selected) {
+                            blackBoxCubit.toggleMultipleOption(index, selected);
+                          },
+                          correctOptionList: state.currentQuestion.correctOptionList,
+                          selectedOptionList: state.selectedIndices ?? [],
                           onTrueFalseSelected: (isTrue) {
                             if (state.timer.toInt() != 0 && !state.showAnswer) {
                               blackBoxCubit.selectTrueFalse(isTrue ? 0 : 1);
@@ -245,11 +241,11 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                               blackBoxCubit.updateSequence(newSequence);
                             }
                           },
-                          onShortAnswerChanged: (answer) {
-                            if (state.timer.toInt() != 0 && !state.showAnswer) {
-                              blackBoxCubit.updateShortAnswer(answer);
-                            }
-                          },
+                          // onShortAnswerChanged: (answer) {
+                          //   if (state.timer.toInt() != 0 && !state.showAnswer) {
+                          //     blackBoxCubit.updateShortAnswer(answer);
+                          //   }
+                          // },
                           onNext: () {
                             if (state.isTimerEnded || state.showAnswer) {
                               setState(() {
@@ -258,7 +254,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                               blackBoxCubit.nextQuestion(context);
                             } else if (state.selectedIndex != null ||
                                 state.selectedSequence != null ||
-                                state.selectedAnswer != null) {
+                                state.selectedAnswer != null || state.selectedIndices?.isNotEmpty == true) {
                               blackBoxCubit.submitQuestion(context);
                             }
                           },
@@ -300,10 +296,13 @@ class BlackBoxCard extends StatelessWidget {
   final Function(bool) onTrueFalseSelected;
   final Function(int) onOptionSelected;
   final Function(List<String>) onSequenceReordered;
-  final Function(String) onShortAnswerChanged;
+  // final Function(String) onShortAnswerChanged;
+  final Function(int, bool)? onMultipleOptionSelected;
   final VoidCallback? onNext;
   final int? selectedIndex;
   final List<int>? selectedSequence;
+  final List<int>? correctOptionList;
+  final List<int> selectedOptionList;
 
   const BlackBoxCard({
     super.key,
@@ -321,13 +320,16 @@ class BlackBoxCard extends StatelessWidget {
     required this.onTrueFalseSelected,
     required this.onOptionSelected,
     required this.onSequenceReordered,
-    required this.onShortAnswerChanged,
+    // required this.onShortAnswerChanged,
     this.userAnswer,
     this.sequenceItems = const [],
     this.correctSequence = const [],
     this.onNext,
     this.selectedIndex,
     this.selectedSequence,
+    this.correctOptionList,
+    this.onMultipleOptionSelected,
+    this.selectedOptionList = const [],
   });
 
   @override
@@ -376,6 +378,8 @@ class BlackBoxCard extends StatelessWidget {
                     _buildMultipleChoiceOptions()
                   else if (questionType == '1')
                     _buildEventSequence(context)
+                  else if (questionType == '4')
+                    _buildMultipleCorrectOptions()
                   else
                     const Text('Unsupported question type'),
                   const SizedBox(height: 10),
@@ -601,106 +605,6 @@ class BlackBoxCard extends StatelessWidget {
     );
   }
 
-  // Widget _buildEventSequence(BuildContext context) {
-  //   final state = context.watch<BlackBoxQuestionCubit>().state;
-  //   final options = state.currentQuestion.options ?? [];
-  //
-  //   final sequenceItems =
-  //       state.selectedSequenceItems ?? List<String>.from(options);
-  //   final correctSequence = state.currentQuestion.correctSequence ?? [];
-  //
-  //   final isCorrectSequence =
-  //       state.showAnswer &&
-  //       sequenceItems.length == correctSequence.length &&
-  //       List.generate(
-  //         sequenceItems.length,
-  //         (index) => sequenceItems[index] == options[correctSequence[index]],
-  //       ).every((isMatch) => isMatch);
-  //
-  //   final displaySequence = sequenceItems;
-  //   final originalLabels = Map<String, String>.fromIterables(
-  //     options,
-  //     List.generate(options.length, (i) => String.fromCharCode(65 + i)),
-  //   );
-  //
-  //   return ReorderableListView(
-  //     buildDefaultDragHandles: false,
-  //     onReorder: (oldIndex, newIndex) {
-  //       if (state.timer > 0 && !state.showAnswer) {
-  //         final newList = List<String>.from(sequenceItems);
-  //         if (newIndex > oldIndex) newIndex -= 1;
-  //         final item = newList.removeAt(oldIndex);
-  //         newList.insert(newIndex, item);
-  //         context.read<BlackBoxQuestionCubit>().updateSequence(newList);
-  //       }
-  //     },
-  //     children: displaySequence.map((item) {
-  //       final optionIndex = options.indexOf(item);
-  //
-  //       Color backgroundColor = state.showAnswer
-  //           ? (isCorrectSequence ? Colors.green.shade100 : Colors.red.shade100)
-  //           : Colors.grey.shade100;
-  //
-  //       Color borderColor = state.showAnswer
-  //           ? (isCorrectSequence ? Colors.green : Colors.red)
-  //           : Colors.grey.shade300;
-  //
-  //       Icon? trailingIcon = state.showAnswer
-  //           ? Icon(
-  //               isCorrectSequence ? Icons.check_circle : Icons.cancel,
-  //               color: isCorrectSequence ? Colors.green : Colors.red,
-  //               size: 20,
-  //             )
-  //           : null;
-  //
-  //       final label =
-  //           originalLabels[item] ?? String.fromCharCode(65 + optionIndex);
-  //
-  //       return ReorderableDragStartListener(
-  //         key: ValueKey(item), // stable key based on option text
-  //         index: displaySequence.indexOf(item),
-  //         enabled: state.timer > 0 && !state.showAnswer,
-  //         child: Container(
-  //           margin: const EdgeInsets.only(bottom: 12),
-  //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-  //           decoration: BoxDecoration(
-  //             color: backgroundColor,
-  //             borderRadius: BorderRadius.circular(8),
-  //             border: Border.all(color: borderColor),
-  //           ),
-  //           child: Row(
-  //             children: [
-  //               Container(
-  //                 width: 30,
-  //                 height: 30,
-  //                 decoration: const BoxDecoration(
-  //                   color: Colors.blue,
-  //                   shape: BoxShape.circle,
-  //                 ),
-  //                 alignment: Alignment.center,
-  //                 child: Text(
-  //                   label,
-  //                   style: const TextStyle(color: Colors.white, fontSize: 14),
-  //                 ),
-  //               ),
-  //               const SizedBox(width: 12),
-  //               Expanded(child: Text(item)),
-  //               ReorderableDragStartListener(
-  //                 index: displaySequence.indexOf(item),
-  //                 enabled: state.timer > 0 && !state.showAnswer,
-  //                 child: const Icon(Icons.drag_handle, color: Colors.grey),
-  //               ),
-  //               if (trailingIcon != null) trailingIcon,
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     }).toList(),
-  //     shrinkWrap: true,
-  //     physics: const NeverScrollableScrollPhysics(),
-  //   );
-  // }
-
   Widget _buildEventSequence(BuildContext context) {
     final state = context.watch<BlackBoxQuestionCubit>().state;
     final options = state.currentQuestion.options ?? [];
@@ -804,6 +708,159 @@ class BlackBoxCard extends StatelessWidget {
     );
   }
 
+
+  // Widget _buildMultipleCorrectOptions() {
+  //   return Column(
+  //     children: List.generate(options.length, (index) {
+  //       final isSelected = selectedOptionList.contains(index);
+  //       final isCorrect = correctOptionList?.contains(index) ?? false;
+  //
+  //       Color backgroundColor = Colors.white;
+  //       Color borderColor = Colors.grey.shade300;
+  //       Icon? trailingIcon;
+  //
+  //       if (isShowAnswers) {
+  //         if (isCorrect) {
+  //           backgroundColor = timeTaken == 0
+  //               ? AppColors.customColourOfTimeExpired
+  //               : Colors.green.shade100;
+  //           borderColor = timeTaken == 0 ? Colors.blue : Colors.green;
+  //           trailingIcon = const Icon(Icons.check_circle,
+  //               color: Colors.green, size: 20);
+  //         } else if (isSelected && !isCorrect) {
+  //           backgroundColor = Colors.red.shade100;
+  //           borderColor = Colors.red;
+  //           trailingIcon =
+  //           const Icon(Icons.cancel, color: Colors.red, size: 20);
+  //         }
+  //       } else if (isSelected) {
+  //         backgroundColor = Colors.grey.shade300;
+  //         borderColor = Colors.white;
+  //       }
+  //
+  //       String letter = String.fromCharCode(65 + index);
+  //
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 12),
+  //         child: InkWell(
+  //           onTap: secondsRemaining > 0 && !isShowAnswers
+  //               ? () => onMultipleOptionSelected?.call(index, !isSelected)
+  //               : null,
+  //           borderRadius: BorderRadius.circular(8),
+  //           child: Container(
+  //             width: double.infinity,
+  //             padding:
+  //             const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+  //             decoration: BoxDecoration(
+  //               color: backgroundColor,
+  //               borderRadius: BorderRadius.circular(8),
+  //               border: Border.all(color: borderColor),
+  //             ),
+  //             child: Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: Text(
+  //                     "$letter. ${options[index]}",
+  //                     style: const TextStyle(
+  //                       fontSize: 15,
+  //                       fontWeight: FontWeight.w500,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Checkbox(
+  //                   value: isSelected,
+  //                   onChanged: secondsRemaining > 0 && !isShowAnswers
+  //                       ? (val) =>
+  //                       onMultipleOptionSelected?.call(index, val!)
+  //                       : null,
+  //                 ),
+  //                 if (trailingIcon != null) trailingIcon,
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
+
+  Widget _buildMultipleCorrectOptions() {
+    return Column(
+      children: List.generate(options.length, (index) {
+        final isSelected = selectedOptionList.contains(index);
+        final isCorrect = correctOptionList?.contains(index) ?? false;
+
+        Color backgroundColor = Colors.white;
+        Color borderColor = Colors.grey.shade300;
+        Icon? trailingIcon;
+
+        if (isShowAnswers) {
+          if (isCorrect) {
+            backgroundColor = timeTaken == 0
+                ? AppColors.customColourOfTimeExpired
+                : Colors.green.shade100;
+            borderColor = timeTaken == 0 ? Colors.blue : Colors.green;
+            trailingIcon = const Icon(Icons.check_circle,
+                color: Colors.green, size: 20);
+          } else if (isSelected && !isCorrect) {
+            backgroundColor = Colors.red.shade100;
+            borderColor = Colors.red;
+            trailingIcon = const Icon(Icons.cancel, color: Colors.red, size: 20);
+          }
+        } else if (isSelected) {
+          backgroundColor = Colors.grey.shade300;
+          borderColor = Colors.white;
+        }
+
+        String letter = String.fromCharCode(65 + index);
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: InkWell(
+            onTap: secondsRemaining > 0 && !isShowAnswers
+                ? () => onMultipleOptionSelected?.call(index, !isSelected)
+                : null,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: borderColor),
+              ),
+              child: Row(
+                children: [
+                  // Checkbox on the LEFT side
+                  Checkbox(
+                    value: isSelected,
+                    activeColor: Colors.blue, // always blue when selected
+                    checkColor: Colors.white,
+                    onChanged: secondsRemaining > 0 && !isShowAnswers
+                        ? (val) => onMultipleOptionSelected?.call(index, val!)
+                        : null,
+                  ),
+                  // Option text
+                  Expanded(
+                    child: Text(
+                      "$letter. ${options[index]}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  // Trailing icon (check/cancel)
+                  if (trailingIcon != null) trailingIcon,
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
   bool _isSubmitEnabled() {
     switch (questionType) {
       case '1':
@@ -812,6 +869,8 @@ class BlackBoxCard extends StatelessWidget {
         return selectedIndex != null;
       case '3':
         return selectedIndex != null;
+      case '4':
+        return selectedOptionList != null && selectedOptionList!.isNotEmpty;
       default:
         return false;
     }

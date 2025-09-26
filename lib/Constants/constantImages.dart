@@ -84,6 +84,7 @@ abstract class AssetsPath {
 
   static const String mapPopupAircraft = "MapPopupAircraft";
   static const String mapPopupLivearea = "MapPopupLivearea";
+  static const String airportsIcon = "airportsIcon";
 
   // png
   static const String aeroplane = "aeroplane";

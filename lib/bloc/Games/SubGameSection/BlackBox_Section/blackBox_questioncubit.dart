@@ -37,6 +37,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     List<int>? correctSequence;
     List<String>? sequenceItems;
     String? correctAnswer;
+    List<int>? correctOptionList;
 
     if (type == '1') {
       if (q.answer != null && q.options != null && q.options!.isNotEmpty) {
@@ -111,6 +112,30 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       }
     }
 
+    else if (type == '4') {
+      // ✅ Multiple correct answers
+      if (q.answer != null && q.options != null && q.options!.isNotEmpty) {
+        final answerLabels = q.answer!.split(',').map((e) => e.trim()).toList();
+        correctOptionList = [];
+
+        for (var label in answerLabels) {
+          final index = q.options!.indexWhere((o) => o.label == label);
+          if (index >= 0) {
+            correctOptionList.add(index);
+          } else {
+            print('Warning: Invalid label "$label" in multiple_correct question "${q.question}"');
+          }
+        }
+
+        if (correctOptionList.isEmpty) {
+          print('Warning: No valid answers for multiple_correct question "${q.question}"');
+          correctOptionList = null;
+        }
+      } else {
+        print('Warning: Missing answer or options for multiple_correct question "${q.question}"');
+      }
+    }
+
     return BlackBoxQuestion(
       question: q.question ?? '',
       options: q.options?.map((o) => o.value ?? '').toList() ?? [],
@@ -120,6 +145,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       correctSequence: correctSequence,
       sequenceItems: sequenceItems,
       correctAnswer: correctAnswer,
+      correctOptionList: correctOptionList,
       title: q.title ?? 'Question',
     );
   }
@@ -167,7 +193,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
                 (q.type == '1'
                     ? q.sequenceItems != null && q.sequenceItems!.isNotEmpty
                     : true) &&
-                (q.type == '2' || q.type == '3' ? q.options.isNotEmpty : true);
+                (q.type == '2' || q.type == '3' || q.type == '4' ? q.options.isNotEmpty : true);
         if (!isValid) {
           print(
             'Filtered out question: ${q.question}, type: ${q
@@ -200,6 +226,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
               correctPoint: 0,
               bonusPoint: 0,
               timeTakenSeconds: 0,
+              selectedIndices: [],
             ),
       );
 
@@ -226,6 +253,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           level: gameData.level,
           difficulty: gameData.difficulty,
           categoryTypes: gameData.categoryTypes ?? <CategoryTypes>[],
+          selectedIndices: [],
         ),
       );
 
@@ -315,73 +343,16 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     ));
   }
 
-  void updateShortAnswer(String answer) {
-    emit(state.copyWith(selectedAnswer: answer, showAnswer: false));
-  }
 
-  // Future<void> submitQuestion(BuildContext context) async {
-  //   _timer?.cancel();
-  //
-  //   bool isCorrect = false;
-  //
-  //   if (state.currentQuestion.type == '1') { // Event sequence
-  //     final userSequence = state.selectedSequence ?? [];
-  //     final correctSequence = state.currentQuestion.correctSequence ?? [];
-  //
-  //     isCorrect = userSequence.length == correctSequence.length &&
-  //         userSequence.asMap().entries.every(
-  //               (entry) => entry.value == correctSequence[entry.key],
-  //         );
-  //   } else if (state.currentQuestion.type == '4') {
-  //
-  //     isCorrect = state.selectedAnswer != null &&
-  //         state.selectedAnswer == state.currentQuestion.correctAnswer;
-  //   } else { // Other MCQ
-  //     isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
-  //   }
-  //
-  //   int timeBonus = isCorrect && state.timer >= _totalDuration / 2 ? 1 : 0;
-  //   int pointsThisQuestion = isCorrect ? 2 : 0;
-  //   int bonusPointsThisQuestion = timeBonus;
-  //   final timeSpentThisQuestion = max(1, _totalDuration - state.timer);
-  //
-  //   final updatedResults = List<BlackBoxQuestionResult>.from(state.questionResults);
-  //   final updatedTimePerQuestion = List<int>.from(state.timePerQuestion);
-  //
-  //   updatedResults[state.currentIndex] = BlackBoxQuestionResult(
-  //     userAnswerIndex: state.currentQuestion.type == '1' || state.currentQuestion.type == '4'
-  //         ? null
-  //         : state.selectedIndex,
-  //     userSequence: state.currentQuestion.type == '1' ? state.selectedSequence : null,
-  //     userAnswer: state.currentQuestion.type == '4' ? state.selectedAnswer : null,
-  //     correctPoint: pointsThisQuestion,
-  //     bonusPoint: bonusPointsThisQuestion,
-  //     timeTakenSeconds: timeSpentThisQuestion,
-  //   );
-  //
-  //   updatedTimePerQuestion[state.currentIndex] = timeSpentThisQuestion;
-  //
-  //   emit(
-  //     state.copyWith(
-  //       questionResults: updatedResults,
-  //       timePerQuestion: updatedTimePerQuestion,
-  //       selectedIndex: state.currentQuestion.type == '1' || state.currentQuestion.type == '4'
-  //           ? null
-  //           : state.selectedIndex,
-  //       selectedSequence: state.currentQuestion.type == '1' ? state.selectedSequence : null,
-  //       selectedAnswer: state.currentQuestion.type == '4' ? state.selectedAnswer : null, // keep null if not selected
-  //       showAnswer: true,
-  //       correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
-  //       wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-  //       score: state.score + pointsThisQuestion + bonusPointsThisQuestion,
-  //       pointsEarned: state.pointsEarned + pointsThisQuestion,
-  //       bonusPoints: state.bonusPoints + bonusPointsThisQuestion,
-  //       timeTaken: state.timeTaken + timeSpentThisQuestion,
-  //       isTimerEnded: true,
-  //       totalBonusPoints: state.totalBonusPoints + timeBonus,
-  //     ),
-  //   );
-  // }
+  void toggleMultipleOption(int index, bool isSelected) {
+    final updatedList = List<int>.from(state.selectedIndices ?? []);
+    if (isSelected) {
+      updatedList.add(index);
+    } else {
+      updatedList.remove(index);
+    }
+    emit(state.copyWith(selectedIndices: updatedList));
+  }
 
 
   Future<void> submitQuestion(BuildContext context) async {
@@ -400,27 +371,36 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
               .every(
                 (entry) => entry.value == correctSequence[entry.key],
           );
-    } else if (state.currentQuestion.type == '4') {
-      isCorrect = state.selectedAnswer != null &&
-          state.selectedAnswer == state.currentQuestion.correctAnswer;
+    }else if (state.currentQuestion.type == '4') {
+      // Multiple correct options
+      final userSelected = state.selectedIndices ?? [];
+      final correctIndices = state.currentQuestion.correctOptionList ?? [];
+
+      // ✅ Check if selected options match the correct indices exactly
+      isCorrect = userSelected.length == correctIndices.length &&
+          userSelected.toSet().containsAll(correctIndices);
     } else {
       isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
     }
-
     int basePoints = 0;
     switch (state.currentQuestion.type) {
       case '1': // Sequence
         basePoints = 6;
         break;
-      case '2':
-      case '4': // True/False
+      case '2': // True/False
         basePoints = 2;
         break;
-      case '3': // MCQ
+      case '3': // Multiple Choice
+        basePoints = 5;
+        break;
+      case '4': // Multiple Correct
+        basePoints = 6;
+        break;
       default:
         basePoints = 5;
         break;
     }
+
 
     int pointsThisQuestion = isCorrect ? basePoints : 0;
     int timeBonus = isCorrect && state.timer >= _totalDuration / 2 ? 1 : 0;
@@ -442,6 +422,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       userAnswer: state.currentQuestion.type == '4'
           ? state.selectedAnswer
           : null,
+      selectedIndices: state.currentQuestion.type == '4' ? state.selectedIndices : null,
       correctPoint: pointsThisQuestion,
       bonusPoint: bonusPointsThisQuestion,
       timeTakenSeconds: timeSpentThisQuestion,
@@ -481,6 +462,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     print("before emit");
     print("selected Index ----------------- ${state.selectedIndex}");
     print("selected answer ----------------- ${state.selectedAnswer}");
+
     if (state.currentIndex + 1 < state.questions.length) {
       final nextQuestion = state.questions[state.currentIndex + 1];
 
@@ -499,6 +481,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         timer: _totalDuration,
         isTimerEnded: false,
         selectedSequenceItems: shuffledSequenceItems,
+        selectedIndices: [],
       ));
       print("after emit");
       print("selected Index ----------------- ${state.selectedIndex}");
@@ -506,166 +489,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       print("selected answer ----------------- ${state.selectedSequence}");
 
       startTimer(context);
-      //   } else {
-      //     _timer?.cancel();
-      //
-      //     String formatTime(int seconds) => "${seconds}s";
-      //     String indexToLetter(int? index) => index == null ? "" : String.fromCharCode(65 + index);
-      //
-      //     final categoryNameMap = {
-      //       "1": "event sequence",
-      //       "2": "true false",
-      //       "3": "multiple choice question",
-      //     };
-      //
-      //     final categories = state.categorizedQuestions.entries.map((entry) {
-      //       final categoryKey = entry.key;
-      //       final questions = entry.value;
-      //       final categoryType = questions.isNotEmpty ? questions[0].type : '3';
-      //       final categoryName = categoryNameMap[categoryKey] ?? categoryKey;
-      //
-      //       return {
-      //         "category_type": categoryType?.toString() ?? '3',
-      //         "category_name": categoryName,
-      //         "questions": questions.map((q) {
-      //           int resultIndex = state.questions.indexWhere(
-      //                   (x) => x.question.trim() == q.question.trim()
-      //           );
-      //
-      //           final result = resultIndex != -1
-      //               ? state.questionResults[resultIndex]
-      //               : BlackBoxQuestionResult(
-      //             userAnswerIndex: null,
-      //             userSequence: null,
-      //             userAnswer: null,
-      //             correctPoint: 0,
-      //             bonusPoint: 0,
-      //             timeTakenSeconds: 0,
-      //           );
-      //
-      //           final options = List.generate(
-      //             q.options.length,
-      //                 (i) => {
-      //               "label": String.fromCharCode(65 + i),
-      //               "value": q.options[i].toString().trim()
-      //             },
-      //           );
-      //
-      //           String answer = '';
-      //           String userAnswered = '';
-      //
-      //           switch (q.type) {
-      //             case '1': // Sequence type
-      //               final normalizedOpts = q.options.map((o) => o.toString().trim()).toList();
-      //
-      //               // Correct answer mapping
-      //               answer = q.sequenceItems
-      //                   ?.map((v) {
-      //                 final idx = normalizedOpts.indexWhere((o) => o == v.toString().trim());
-      //                 return idx != -1 ? String.fromCharCode(65 + idx) : '';
-      //               })
-      //                   .where((l) => l.isNotEmpty)
-      //                   .join(',') ?? '';
-      //
-      //               // User answer mapping
-      //               if (result.userSequence != null && result.userSequence!.isNotEmpty) {
-      //                 userAnswered = result.userSequence!
-      //                     .map((i) => (i >= 0 && i < normalizedOpts.length)
-      //                     ? String.fromCharCode(65 + i)
-      //                     : '')
-      //                     .where((l) => l.isNotEmpty)
-      //                     .join(',');
-      //               } else {
-      //                 userAnswered = '';
-      //               }
-      //               break;
-      //
-      //             case '2':
-      //               answer = q.correctIndex != null ? String.fromCharCode(65 + q.correctIndex!) : '';
-      //               userAnswered = result.userAnswerIndex != null
-      //                   ? String.fromCharCode(65 + result.userAnswerIndex!)
-      //                   : '';
-      //               break;
-      //
-      //             case '3':
-      //             default:
-      //               answer = q.correctIndex != null ? String.fromCharCode(65 + q.correctIndex!) : '';
-      //               userAnswered = result.userAnswerIndex != null
-      //                   ? String.fromCharCode(65 + result.userAnswerIndex!)
-      //                   : '';
-      //               break;
-      //           }
-      //
-      //           return {
-      //             "question": q.question,
-      //             "options": options,
-      //             "answer": answer,
-      //             "explanation": q.hint ?? '',
-      //             "user_answered": userAnswered,
-      //             "correct_point": result.correctPoint ?? 0,
-      //             "bonus_point": result.bonusPoint ?? 0,
-      //             "time_taken": formatTime(result.timeTakenSeconds ?? 0),
-      //           };
-      //         }).toList(),
-      //       };
-      //     }).toList();
-      //
-      //     final correctAnswers = state.questionResults
-      //         .fold<int>(0, (sum, result) => sum + (result.correctPoint > 0 ? 1 : 0));
-      //     final correctPoints =
-      //     state.questionResults.fold<int>(0, (sum, result) => sum + result.correctPoint);
-      //     final bonusPoints =
-      //     state.questionResults.fold<int>(0, (sum, result) => sum + result.bonusPoint);
-      //
-      //     final allCorrectBonus = (correctAnswers == state.questions.length) ? 3 : 0;
-      //     final finalScore = correctPoints + bonusPoints + allCorrectBonus;
-      //
-      //     final payload = {
-      //       "total_questions": state.questions.length,
-      //       "correct_answers": correctAnswers,
-      //       "correct_points": correctPoints,
-      //       "earned_points": finalScore,
-      //       "additional_points": bonusPoints,
-      //       "total_time": formatTime(state.timeTaken),
-      //       "game": state.game,
-      //       "level": state.level,
-      //       "difficulty": state.difficulty,
-      //       "categories": categories,
-      //     };
-      //
-      //     void printFullPayload(dynamic object) {
-      //       const int chunkSize = 800;
-      //       final jsonString = object is String ? object : object.toString();
-      //       for (var i = 0; i < jsonString.length; i += chunkSize) {
-      //         final end = (i + chunkSize < jsonString.length) ? i + chunkSize : jsonString.length;
-      //         debugPrint(jsonString.substring(i, end));
-      //       }
-      //     }
-      //
-      //     printFullPayload('Submission Payload: $payload');
-      //
-      //     try {
-      //       await _repository.submitBlackBoxAnswers(payload);
-      //       debugPrint('Results submitted successfully!');
-      //     } catch (e) {
-      //       debugPrint('Failed to submit results: $e');
-      //       emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
-      //     }
-      //
-      //     final percent = (correctAnswers / state.questions.length) * 100;
-      //     final winAchieved = percent >= 80;
-      //     Navigator.push(context, MaterialPageRoute(
-      //       builder: (_) => BlackBoxResultScreen(
-      //         correctedAnswer: correctAnswers,
-      //         totalQuestion: state.questions.length,
-      //         score: finalScore,
-      //         winAchieved: winAchieved,
-      //         bonusPoints: bonusPoints,
-      //       ),
-      //     ));
-      //   }
-      // }
-
     } else {
       _timer?.cancel();
 
@@ -677,6 +500,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         "1": "event sequence",
         "2": "true false",
         "3": "multiple choice question",
+        "4": "multiple correct question",
       };
 
       final categories = state.categorizedQuestions.entries.map((entry) {
@@ -702,6 +526,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
               correctPoint: 0,
               bonusPoint: 0,
               timeTakenSeconds: 0,
+              selectedIndices: []
             );
 
             final options = List.generate(
@@ -735,6 +560,26 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
                   userAnswered = result.userSequence!
                       .map((i) =>
                   (i >= 0 && i < normalizedOpts.length)
+                      ? String.fromCharCode(65 + i)
+                      : '')
+                      .where((l) => l.isNotEmpty)
+                      .join(',');
+                }
+                break;
+
+              case '4': // Multiple correct
+                final normalizedOpts =
+                q.options.map((o) => o.toString().trim()).toList();
+                answer = q.correctOptionList
+                    ?.map((i) => (i >= 0 && i < normalizedOpts.length)
+                    ? String.fromCharCode(65 + i)
+                    : '')
+                    .where((l) => l.isNotEmpty)
+                    .join(',') ??
+                    '';
+                if (result.selectedIndices != null && result.selectedIndices!.isNotEmpty) {
+                  userAnswered = result.selectedIndices!
+                      .map((i) => (i >= 0 && i < normalizedOpts.length)
                       ? String.fromCharCode(65 + i)
                       : '')
                       .where((l) => l.isNotEmpty)
@@ -838,14 +683,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         ),
       );
     }
-
-    String formatCategoryName(String name) {
-      return name
-          .split('_')
-          .map((word) => word[0].toLowerCase() + word.substring(1))
-          .join(' ');
-    }
-
     @override
     Future<void> close() {
       _timer?.cancel();
