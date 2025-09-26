@@ -1,3 +1,4 @@
+import 'package:avionics_internal/bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_detailModel.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,8 +23,8 @@ class FlightMapState {
   final Set<Marker> markers;
   final int animationDuration;
 
-  // NEW: Airport list for map icons
-  final List<Map<String, dynamic>> airports;
+  final List<AircraftStationModel>? airports;
+  final AircraftStationModel? selectedAirport;
 
   FlightMapState({
     this.status = CommonApiStatus.initial,
@@ -41,7 +42,8 @@ class FlightMapState {
     this.isTracking = false,
     this.markers = const {},
     this.animationDuration = 50,
-    this.airports = const [], // initialize as empty list
+    this.airports,
+    this.selectedAirport,
   });
 
   FlightMapState copyWith({
@@ -60,7 +62,8 @@ class FlightMapState {
     bool? isTracking,
     Set<Marker>? markers,
     int? animationDuration,
-    List<Map<String, dynamic>>? airports, // new copyWith parameter
+    List<AircraftStationModel>? airports,
+    AircraftStationModel? selectedAirport,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -74,12 +77,13 @@ class FlightMapState {
       flightDetail: flightDetail ?? this.flightDetail,
       selectedFlightDetail: selectedFlightDetail ?? this.selectedFlightDetail,
       selectedAircraftDetails:
-      selectedAircraftDetails ?? this.selectedAircraftDetails,
+          selectedAircraftDetails ?? this.selectedAircraftDetails,
       selectedFlight: selectedFlight ?? this.selectedFlight,
       isTracking: isTracking ?? this.isTracking,
       markers: markers ?? this.markers,
       animationDuration: animationDuration ?? this.animationDuration,
-      airports: airports ?? this.airports, // update airports
+      airports: airports ?? this.airports,
+      selectedAirport: selectedAirport ?? this.selectedAirport,
     );
   }
 }
