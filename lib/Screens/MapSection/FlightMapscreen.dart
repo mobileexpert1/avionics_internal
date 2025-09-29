@@ -78,7 +78,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   @override
   void dispose() {
-    _resetFlightSelection();
+    _resetFlightSelection(cleanupOnly: true);
     _debounce?.cancel();
     _singleSearchMarker = null;
     _searchController.dispose();
@@ -209,18 +209,26 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
   }
 
-  void _resetFlightSelection() {
-    setState(() {
+  void _resetFlightSelection({bool cleanupOnly = false}) {
+    if (cleanupOnly) {
       _activeCard = 0;
       selectedFlightId = "";
-    });
+      return;
+    }
 
-    _buildFlightMarkers(
-      _mapCubit.state.isTracking && _mapCubit.state.selectedFlight != null
-          ? [_mapCubit.state.selectedFlight!]
-          : _mapCubit.state.flights ?? [],
-      true,
-    );
+    if (mounted) {
+      setState(() {
+        _activeCard = 0;
+        selectedFlightId = "";
+      });
+
+      _buildFlightMarkers(
+        _mapCubit.state.isTracking && _mapCubit.state.selectedFlight != null
+            ? [_mapCubit.state.selectedFlight!]
+            : _mapCubit.state.flights ?? [],
+        true,
+      );
+    }
   }
 
   void _sheetListener() {
