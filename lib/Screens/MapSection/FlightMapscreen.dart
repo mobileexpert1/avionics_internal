@@ -499,7 +499,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         if (!mounted) return;
         setState(() {
           _mapCubit.setSelectedFlight(result.flightDetailResponse!);
-        }); // forces a single rebuild
+        });
       });
     }
   }
