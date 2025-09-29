@@ -376,7 +376,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     final airports = _mapCubit.state.airports;
     final customIcon = await _getBitmapDescriptorFromSvgAsset(
       assetName: 'assets/svg_images/Airport1.svg',
-      size: 150,
+      size: 120,
+      color: Colors.blue,
     );
 
     if (airports == null) return markers;
@@ -389,9 +390,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           title: airport.name,
           snippet: "${airport.city}, ${airport.country}",
         ),
-        // icon: BitmapDescriptor.defaultMarkerWithHue(
-        //   BitmapDescriptor.hueMagenta,
-        // ),
+
         icon: customIcon,
         onTap: () {
           _isMapListViewShown = false;
@@ -410,6 +409,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   Future<BitmapDescriptor> _getBitmapDescriptorFromSvgAsset({
     required String assetName,
     required double size,
+    Color? color, // optional color parameter
   }) async {
     try {
       final pictureInfo = await vg.loadPicture(SvgAssetLoader(assetName), null);
@@ -418,7 +418,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       final canvas = Canvas(recorder);
       canvas.scale(scale, scale);
 
-      canvas.drawPicture(pictureInfo.picture);
+      // If color is provided, apply it as a ColorFilter
+      if (color != null) {
+        final paint = Paint()
+          ..colorFilter = ColorFilter.mode(color, BlendMode.srcIn);
+        canvas.saveLayer(
+          Rect.fromLTWH(0, 0, pictureInfo.size.width, pictureInfo.size.height),
+          paint,
+        );
+        canvas.drawPicture(pictureInfo.picture);
+        canvas.restore();
+      } else {
+        // Draw original svg
+        canvas.drawPicture(pictureInfo.picture);
+      }
 
       final picture = recorder.endRecording();
       final img = await picture.toImage(
@@ -431,7 +444,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       return BitmapDescriptor.fromBytes(uint8List);
     } catch (e) {
       debugPrint('Error loading SVG------------------------------: $e');
-      return BitmapDescriptor.defaultMarker;
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
     }
   }
 
