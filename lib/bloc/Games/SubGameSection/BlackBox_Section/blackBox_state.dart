@@ -146,6 +146,7 @@ class BlackBoxState extends Equatable {
     hint: '',
     type: '',
     title: 'Question',
+    name: ''
   );
 
 
@@ -194,6 +195,7 @@ class BlackBoxQuestion {
   final List<String>? sequenceItems;
   final String? correctAnswer;
   final String? title;
+  final String? name;
   final List<int>? correctOptionList;
 
   BlackBoxQuestion({
@@ -206,6 +208,7 @@ class BlackBoxQuestion {
     this.sequenceItems,
     this.correctAnswer,
     this.title,
+    this.name,
     this.correctOptionList,
   });
 }

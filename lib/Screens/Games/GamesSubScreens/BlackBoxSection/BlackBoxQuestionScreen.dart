@@ -29,12 +29,19 @@ class BlackBoxScreen extends StatefulWidget {
 bool isNeedToShowOrNot = false;
 
 class _BlackBoxScreenState extends State<BlackBoxScreen> {
+  final ScrollController _scrollController = ScrollController();
   bool isNeedToShowOrNot = false;
 
   @override
   void initState() {
     super.initState();
     isNeedToShowOrNot = false;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -81,10 +88,18 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
               ? state.currentQuestion.title!
               : 'Question';
 
+          final currentQuestionName =
+          state.currentQuestion.name?.isNotEmpty == true
+              ? state.currentQuestion.name!
+              : '';
+          print("Current Question Name-----------------: $currentQuestionName");
+
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: CustomAppBar(
-              title: currentQuestionTitle,
+              title: currentQuestionName.isNotEmpty
+                  ? "$currentQuestionTitle\n$currentQuestionName"
+                  : currentQuestionTitle,
               leftButton: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
                 onPressed: () async {
@@ -193,6 +208,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     child: Column(
                       children: [
                         const SizedBox(height: 24),
@@ -256,6 +272,15 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                                 state.selectedSequence != null ||
                                 state.selectedAnswer != null || state.selectedIndices?.isNotEmpty == true) {
                               blackBoxCubit.submitQuestion(context);
+                              Future.delayed(const Duration(milliseconds: 300), () {
+                                if (_scrollController.hasClients) {
+                                  _scrollController.animateTo(
+                                    _scrollController.position.maxScrollExtent,
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOut,
+                                  );
+                                }
+                              });
                             }
                           },
                         ),
@@ -832,14 +857,30 @@ class BlackBoxCard extends StatelessWidget {
               child: Row(
                 children: [
                   // Checkbox on the LEFT side
+                  // Checkbox(
+                  //   value: isSelected,
+                  //   activeColor: Colors.blue, // always blue when selected
+                  //   checkColor: Colors.white,
+                  //   onChanged: secondsRemaining > 0 && !isShowAnswers
+                  //       ? (val) => onMultipleOptionSelected?.call(index, val!)
+                  //       : null,
+                  // ),
+
                   Checkbox(
                     value: isSelected,
-                    activeColor: Colors.blue, // always blue when selected
-                    checkColor: Colors.white,
+                    activeColor: Colors.blue, // keeps the fill always blue
+                    checkColor: Colors.white, // tick color
+                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(MaterialState.selected)) {
+                        return Colors.blue; // blue even after submit
+                      }
+                      return Colors.white; // white when unselected
+                    }),
                     onChanged: secondsRemaining > 0 && !isShowAnswers
                         ? (val) => onMultipleOptionSelected?.call(index, val!)
                         : null,
                   ),
+
                   // Option text
                   Expanded(
                     child: Text(

@@ -28,7 +28,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     loadQuestions(sectionId, context);
   }
 
-  BlackBoxQuestion _mapQuestion(Questions q, String categoryType) {
+  BlackBoxQuestion _mapQuestion(Questions q, String categoryType, {String? name}) {
     final type = categoryType.isNotEmpty
         ? categoryType
         : '3';
@@ -147,6 +147,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       correctAnswer: correctAnswer,
       correctOptionList: correctOptionList,
       title: q.title ?? 'Question',
+      name: name,
     );
   }
 
@@ -171,7 +172,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       final Map<String, List<BlackBoxQuestion>> categorizedQuestions = {};
       for (var category in gameData.categoryTypes!) {
         final List<BlackBoxQuestion>? mappedQuestions = category.questions
-            ?.map((q) => _mapQuestion(q, category.type ?? '3'))
+            ?.map((q) => _mapQuestion(q, category.type ?? '3', name: category.name))
             .toList();
         final List<BlackBoxQuestion> catQuestions =
             mappedQuestions ?? <BlackBoxQuestion>[];
