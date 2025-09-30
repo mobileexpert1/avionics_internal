@@ -272,6 +272,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                                 state.selectedSequence != null ||
                                 state.selectedAnswer != null || state.selectedIndices?.isNotEmpty == true) {
                               blackBoxCubit.submitQuestion(context);
+
                               Future.delayed(const Duration(milliseconds: 300), () {
                                 if (_scrollController.hasClients) {
                                   _scrollController.animateTo(
