@@ -30,6 +30,7 @@ class QuizQuestionScreen extends StatefulWidget {
 bool isNeedToShowOrNot = false;
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -118,6 +119,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     child: Column(
                       children: [
                         const SizedBox(height: 24),
@@ -147,6 +149,16 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                             } else if (state.selectedIndex != null ||
                                 state.showAnswer) {
                               quizCubit.submitQuestion(context);
+
+                              Future.delayed(const Duration(milliseconds: 300), () {
+                                if (_scrollController.hasClients) {
+                                  _scrollController.animateTo(
+                                    _scrollController.position.maxScrollExtent,
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOut,
+                                  );
+                                }
+                              });
                             }
                           },
                         ),
