@@ -1192,37 +1192,57 @@ class AirportStationCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: customField(label: 'Name', text: detail.name),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(label: 'City', text: detail.city),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(label: 'State', text: detail.state),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(label: 'Country', text: detail.country),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(label: 'Runway', text: detail.type),
+                    child: customField(
+                      label: 'Name',
+                      text: detail.name == "" ? "N/A" : detail.name,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: customField(
-                      label: 'Length(m)',
-                      text: detail.runwayLength.toString(),
+                      label: 'City',
+                      text: detail.city == "" ? "N/A" : detail.city,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: customField(
+                      label: 'State',
+                      text: detail.state == "" ? "N/A" : detail.state,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: customField(
+                      label: 'Country',
+                      text: detail.country == "" ? "N/A" : detail.country,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: customField(
+                      label: 'Elevation(m)',
+                      text: detail.elev.toString() == ""
+                          ? "N/A"
+                          : detail.elev.toString(),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: customField(
+                      label: 'Runway Length(m)',
+                      text: detail.runwayLength.toString() == ""
+                          ? "N/A"
+                          : detail.runwayLength.toString(),
                     ),
                   ),
                 ],
@@ -1233,17 +1253,18 @@ class AirportStationCard extends StatelessWidget {
                   Expanded(
                     child: customField(
                       label: 'ICAO Code',
-                      text: detail.iataCode,
+                      text: detail.icao == "" ? "N/A" : detail.icao ?? "",
                     ),
                   ),
                   const SizedBox(width: 12),
-                  if (detail.elev.toString() != "")
-                    Expanded(
-                      child: customField(
-                        label: 'Elevation(m)',
-                        text: detail.elev.toString(),
-                      ),
+                  Expanded(
+                    child: customField(
+                      label: 'IATA Code',
+                      text: detail.iataCode == ""
+                          ? "N/A"
+                          : detail.iataCode ?? "",
                     ),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
