@@ -384,7 +384,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     final airports = _mapCubit.state.airports;
     final customIcon = await _getBitmapDescriptorFromSvgAsset(
       assetName: 'assets/svg_images/Airport1.svg',
-      size: 120,
+      size: 150,
       color: Colors.blue,
     );
 
@@ -398,7 +398,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           title: airport.name,
           snippet: "${airport.city}, ${airport.country}",
         ),
-
         icon: customIcon,
         onTap: () {
           _isMapListViewShown = false;
@@ -447,14 +446,49 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         (pictureInfo.size.height * scale).round(),
       );
 
-      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-      final uint8List = byteData!.buffer.asUint8List();
-      return BitmapDescriptor.fromBytes(uint8List);
+      // ---- 🔥 Crop out transparent space (top/bottom) ----
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.rawRgba);
+      if (byteData == null) {
+        return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+      }
+      final pixels = byteData.buffer.asUint32List();
+
+      int top = img.height, bottom = 0;
+      for (int y = 0; y < img.height; y++) {
+        for (int x = 0; x < img.width; x++) {
+          if (pixels[y * img.width + x] != 0) {
+            if (y < top) top = y;
+            if (y > bottom) bottom = y;
+          }
+        }
+      }
+
+      if (bottom >= top) {
+        final croppedHeight = bottom - top + 1;
+        final recorder2 = ui.PictureRecorder();
+        final canvas2 = Canvas(recorder2);
+        final paint = Paint();
+        canvas2.drawImageRect(
+          img,
+          Rect.fromLTWH(0, top.toDouble(), img.width.toDouble(), croppedHeight.toDouble()),
+          Rect.fromLTWH(0, 0, img.width.toDouble(), croppedHeight.toDouble()),
+          paint,
+        );
+        final cropped = await recorder2.endRecording().toImage(img.width, croppedHeight);
+
+        final croppedBytes = await cropped.toByteData(format: ui.ImageByteFormat.png);
+        return BitmapDescriptor.fromBytes(croppedBytes!.buffer.asUint8List());
+      }
+
+      // fallback if crop fails
+      final pngBytes = await img.toByteData(format: ui.ImageByteFormat.png);
+      return BitmapDescriptor.fromBytes(pngBytes!.buffer.asUint8List());
     } catch (e) {
       debugPrint('Error loading SVG------------------------------: $e');
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
     }
   }
+
 
   Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
     return _createMarker(
