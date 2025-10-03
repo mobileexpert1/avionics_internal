@@ -1,3 +1,4 @@
+import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +35,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   @override
   void initState() {
     super.initState();
+    final cubit = context.read<ManufacturerCubit>();
+    cubit.emit(cubit.state.copyWith(manufacturerDetail: null, isLoading: true));
+
     context.read<ManufacturerCubit>().getParticularAirbusDetail(
       context: context,
       query: widget.manufacturerDetailId,
@@ -47,428 +51,395 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
     return BlocBuilder<ManufacturerCubit, ManufacturerState>(
       builder: (context, state) {
-        final detail = state.manufacturerDetail?.data;
-        return detail == null
-            ? const Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(child: CircularProgressIndicator()),
-              )
-            : Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: 900,
-                    ), // Web max width
-                    child: SingleChildScrollView(
-                      child: Stack(
-                        children: [
-                          Column(
-                            children: [
-                              _buildImageCoverScroller(
-                                screenHeight,
-                                detail.general.coverPhoto,
-                              ),
+        if (state.isLoading) {
+          return const Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-                              Column(
+        final detail = state.manufacturerDetail?.data;
+        if (detail == null) {
+          return const Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(child: Text("No data found")),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 900), // Web max width
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        _buildImageCoverScroller(
+                          screenHeight,
+                          detail.general.coverPhoto,
+                        ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 0,
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                color: Colors.grey.shade100,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 8,
+                                ), // Internal padding
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 45),
+                                    Text(
+                                      detail.general.companyName,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    // const SizedBox(height: 4),
+                                    // Text(
+                                    //   detail.general.description,
+                                    //   style: TextStyle(fontSize: 14),
+                                    // ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // All List Of Airplane
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AllPlanesListScreen(
+                                      selectedAirbusId: detail.id,
+                                      manufacturerName:
+                                          detail.general.companyName,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                  vertical: 5,
+                                ),
+
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      CommonUi.setSvgImage(AssetsPath.Plane1),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                      child: Text(
+                                        "List of All Planes",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    const Icon(Icons.chevron_right),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            const Divider(
+                              height: 0,
+                              thickness: 3,
+                              color: AppColors.sepratorColourAppBar,
+                            ),
+
+                            _buildSectionHeader(
+                              title: "GENERAL INFORMATION",
+                              isExpanded: showMoreGeneralInfo,
+                              onTap: () => setState(
+                                () =>
+                                    showMoreGeneralInfo = !showMoreGeneralInfo,
+                              ),
+                              isShowMoreLessOption:
+                                  ((detail.general.description?.length ?? 0) >
+                                  100),
+                            ),
+
+                            showMoreGeneralInfo
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 25,
+                                    ),
+                                    child: _buildGeneralInfo(detail.general),
+                                  )
+                                : const SizedBox.shrink(),
+                            Divider(
+                              height: 0,
+                              color: AppColors.sepratorColourAppBar,
+                              thickness: 3,
+                            ),
+
+                            _buildSectionHeader(
+                              title: "ABOUT THE COMPANY",
+                              isExpanded: showMoreAboutInfo,
+                              onTap: () => setState(
+                                () => showMoreAboutInfo = !showMoreAboutInfo,
+                              ),
+                              isShowMoreLessOption:
+                                  detail.company.companyDescription.length >
+                                  100,
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 0,
-                                    ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      color: Colors.grey.shade100,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 30,
-                                        vertical: 8,
-                                      ), // Internal padding
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 45),
-                                          Text(
-                                            detail.general.companyName,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          // const SizedBox(height: 4),
-                                          // Text(
-                                          //   detail.general.description,
-                                          //   style: TextStyle(fontSize: 14),
-                                          // ),
-                                          const SizedBox(height: 20),
-                                        ],
-                                      ),
-                                    ),
+                                  Text(
+                                    detail.company.companyDescription,
+                                    style: const TextStyle(height: 1.5),
+                                    maxLines: showMoreAboutInfo ? null : 2,
+                                    // null = show full text
+                                    overflow: showMoreAboutInfo
+                                        ? TextOverflow.visible
+                                        : TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 15),
+                                ],
+                              ),
+                            ),
 
-                                  // All List Of Airplane
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => AllPlanesListScreen(
-                                            selectedAirbusId: detail.id,
-                                            manufacturerName:
-                                                detail.general.companyName,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 25,
-                                        vertical: 5,
-                                      ),
+                            Divider(
+                              height: 0,
+                              color: AppColors.sepratorColourAppBar,
+                              thickness: 3,
+                            ),
 
-                                      child: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            CommonUi.setSvgImage(
-                                              AssetsPath.Plane1,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          const Expanded(
-                                            child: Text(
-                                              "List of All Planes",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                          ),
-                                          const Icon(Icons.chevron_right),
-                                        ],
-                                      ),
-                                    ),
+                            _buildSectionHeader(
+                              title: "HISTORY",
+                              isExpanded: showMoreHistory,
+                              onTap: () => setState(
+                                () => showMoreHistory = !showMoreHistory,
+                              ),
+                              isShowMoreLessOption:
+                                  detail.company.companyHistory.length > 100,
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    detail.company.companyHistory,
+                                    style: const TextStyle(height: 1.5),
+                                    maxLines: showMoreHistory ? null : 2,
+                                    overflow: showMoreHistory
+                                        ? TextOverflow.visible
+                                        : TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 8),
+                                ],
+                              ),
+                            ),
 
-                                  const Divider(
-                                    height: 0,
-                                    thickness: 3,
-                                    color: AppColors.sepratorColourAppBar,
-                                  ),
+                            Divider(
+                              height: 0,
+                              color: AppColors.sepratorColourAppBar,
+                              thickness: 3,
+                            ),
 
-                                  _buildSectionHeader(
-                                    title: "GENERAL INFORMATION",
-                                    isExpanded: showMoreGeneralInfo,
-                                    onTap: () => setState(
-                                      () => showMoreGeneralInfo =
-                                          !showMoreGeneralInfo,
-                                    ),
-                                    isShowMoreLessOption:
-                                        ((detail.general.description?.length ??
-                                            0) >
-                                        100),
-                                  ),
+                            _buildSectionHeader(
+                              title: "PRODUCTS",
+                              isExpanded: showMoreProducts,
+                              onTap: () => setState(
+                                () => showMoreProducts = !showMoreProducts,
+                              ),
+                              isShowMoreLessOption: detail.product.length > 2,
+                            ),
 
-                                  showMoreGeneralInfo
-                                      ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                          ),
-                                          child: _buildGeneralInfo(
-                                            detail.general,
-                                          ),
-                                        )
-                                      : const SizedBox.shrink(),
-                                  Divider(
-                                    height: 0,
-                                    color: AppColors.sepratorColourAppBar,
-                                    thickness: 3,
-                                  ),
-
-                                  _buildSectionHeader(
-                                    title: "ABOUT THE COMPANY",
-                                    isExpanded: showMoreAboutInfo,
-                                    onTap: () => setState(
-                                      () => showMoreAboutInfo =
-                                          !showMoreAboutInfo,
-                                    ),
-                                    isShowMoreLessOption:
-                                        detail
-                                            .company
-                                            .companyDescription
-                                            .length >
-                                        100,
-                                  ),
-
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25,
-                                    ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(detail.product.length, (
+                                  index,
+                                ) {
+                                  final product = detail.product[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          detail.company.companyDescription,
-                                          style: const TextStyle(height: 1.5),
-                                          maxLines: showMoreAboutInfo
-                                              ? null
-                                              : 2,
-                                          // null = show full text
-                                          overflow: showMoreAboutInfo
-                                              ? TextOverflow.visible
-                                              : TextOverflow.ellipsis,
+                                          product.series,
+                                          style: const TextStyle(fontSize: 15),
                                         ),
-                                        const SizedBox(height: 15),
-                                      ],
-                                    ),
-                                  ),
-
-                                  Divider(
-                                    height: 0,
-                                    color: AppColors.sepratorColourAppBar,
-                                    thickness: 3,
-                                  ),
-
-                                  _buildSectionHeader(
-                                    title: "HISTORY",
-                                    isExpanded: showMoreHistory,
-                                    onTap: () => setState(
-                                      () => showMoreHistory = !showMoreHistory,
-                                    ),
-                                    isShowMoreLessOption:
-                                        detail.company.companyHistory.length >
-                                        100,
-                                  ),
-
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
+                                        const SizedBox(height: 4),
                                         Text(
-                                          detail.company.companyHistory,
+                                          product.description,
                                           style: const TextStyle(height: 1.5),
-                                          maxLines: showMoreHistory ? null : 2,
-                                          overflow: showMoreHistory
+                                          maxLines: showMoreProducts ? null : 2,
+                                          overflow: showMoreProducts
                                               ? TextOverflow.visible
                                               : TextOverflow.ellipsis,
                                         ),
                                         const SizedBox(height: 8),
                                       ],
                                     ),
-                                  ),
-
-                                  Divider(
-                                    height: 0,
-                                    color: AppColors.sepratorColourAppBar,
-                                    thickness: 3,
-                                  ),
-
-                                  _buildSectionHeader(
-                                    title: "PRODUCTS",
-                                    isExpanded: showMoreProducts,
-                                    onTap: () => setState(
-                                      () =>
-                                          showMoreProducts = !showMoreProducts,
-                                    ),
-                                    isShowMoreLessOption:
-                                        detail.product.length > 2,
-                                  ),
-
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: List.generate(
-                                        detail.product.length,
-                                        (index) {
-                                          final product = detail.product[index];
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 12,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  product.series,
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  product.description,
-                                                  style: const TextStyle(
-                                                    height: 1.5,
-                                                  ),
-                                                  maxLines: showMoreProducts
-                                                      ? null
-                                                      : 2,
-                                                  overflow: showMoreProducts
-                                                      ? TextOverflow.visible
-                                                      : TextOverflow.ellipsis,
-                                                ),
-                                                const SizedBox(height: 8),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-
-                                  _buildSectionHeader(
-                                    title: "INTERESTING FACTS",
-                                    isExpanded: showInterestingFacts,
-                                    onTap: () => setState(() {
-                                      showInterestingFacts =
-                                          !showInterestingFacts;
-                                    }),
-                                    isShowMoreLessOption:
-                                        (detail.interestingFacts?.length ?? 0) >
-                                        2,
-                                  ),
-
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 25,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: List.generate(
-                                        // show 2 facts by default, full list if expanded
-                                        showInterestingFacts
-                                            ? (detail
-                                                      .interestingFacts
-                                                      ?.length ??
-                                                  0)
-                                            : (detail
-                                                          .interestingFacts
-                                                          ?.length ??
-                                                      0)
-                                                  .clamp(0, 1),
-                                        (index) {
-                                          final fact =
-                                              detail.interestingFacts?[index] ??
-                                              "";
-                                          return Container(
-                                            margin: const EdgeInsets.only(
-                                              bottom: 12,
-                                            ),
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade100,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Text(
-                                              "• $fact",
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                height: 1.4,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 50),
-                            ],
-                          ),
-                          Positioned(
-                            top: screenHeight * 0.06,
-                            left: screenWidth * 0.05,
-                            child: GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: const Icon(
-                                Icons.arrow_back_ios_new,
-                                color: Colors.white,
+                                  );
+                                }),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: screenHeight * 0.21,
-                            left: screenWidth * 0.06,
-                            child: ClipOval(
-                              child: Container(
-                                width: screenWidth * 0.22,
-                                height: screenWidth * 0.22,
-                                color: Colors
-                                    .grey
-                                    .shade200, // Background circle color
-                                child: Builder(
-                                  builder: (context) {
-                                    final logoUrl =
-                                        '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
-                                    debugPrint(logoUrl);
 
-                                    final isSvg = detail.general.logo.contains(
-                                      ".svg",
+                            _buildSectionHeader(
+                              title: "INTERESTING FACTS",
+                              isExpanded: showInterestingFacts,
+                              onTap: () => setState(() {
+                                showInterestingFacts = !showInterestingFacts;
+                              }),
+                              isShowMoreLessOption:
+                                  (detail.interestingFacts?.length ?? 0) > 2,
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(
+                                  // show 2 facts by default, full list if expanded
+                                  showInterestingFacts
+                                      ? (detail.interestingFacts?.length ?? 0)
+                                      : (detail.interestingFacts?.length ?? 0)
+                                            .clamp(0, 1),
+                                  (index) {
+                                    final fact =
+                                        detail.interestingFacts?[index] ?? "";
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 12),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        "• $fact",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          height: 1.4,
+                                        ),
+                                      ),
                                     );
-                                    final isAsset = detail.general.logo
-                                        .contains("assets");
-
-                                    if (isAsset) {
-                                      return Image.asset(
-                                        detail.general.logo,
-                                        width: screenWidth * 0.22,
-                                        height: screenWidth * 0.22,
-                                        fit: BoxFit.cover,
-                                      );
-                                    } else {
-                                      return isSvg
-                                          ? SvgPicture.network(
-                                              logoUrl,
-                                              fit: BoxFit.contain,
-                                              placeholderBuilder: (context) =>
-                                                  SvgPicture.asset(
-                                                    CommonUi.setSvgImage(
-                                                      AssetsPath.manuFirstImage,
-                                                    ),
-                                                    height: 10,
-                                                    width: 10,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                            )
-                                          : Image.network(
-                                              logoUrl,
-                                              width: screenWidth * 0.22,
-                                              height: screenWidth * 0.22,
-                                              fit: BoxFit.contain,
-                                              errorBuilder: (_, _, _) =>
-                                                  SvgPicture.asset(
-                                                    CommonUi.setSvgImage(
-                                                      AssetsPath.manuFirstImage,
-                                                    ),
-                                                    height: 10,
-                                                    width: 10,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                            );
-                                    }
                                   },
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                    Positioned(
+                      top: screenHeight * 0.06,
+                      left: screenWidth * 0.05,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      top: screenHeight * 0.21,
+                      left: screenWidth * 0.06,
+                      child: ClipOval(
+                        child: Container(
+                          width: screenWidth * 0.22,
+                          height: screenWidth * 0.22,
+                          color:
+                              Colors.grey.shade200, // Background circle color
+                          child: Builder(
+                            builder: (context) {
+                              final logoUrl =
+                                  '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                              debugPrint(logoUrl);
+
+                              final isSvg = detail.general.logo.contains(
+                                ".svg",
+                              );
+                              final isAsset = detail.general.logo.contains(
+                                "assets",
+                              );
+
+                              if (isAsset) {
+                                return Image.asset(
+                                  detail.general.logo,
+                                  width: screenWidth * 0.22,
+                                  height: screenWidth * 0.22,
+                                  fit: BoxFit.cover,
+                                );
+                              } else {
+                                return isSvg
+                                    ? SvgPicture.network(
+                                        logoUrl,
+                                        fit: BoxFit.contain,
+                                        placeholderBuilder: (context) =>
+                                            SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath.manuFirstImage,
+                                              ),
+                                              height: 10,
+                                              width: 10,
+                                              fit: BoxFit.contain,
+                                            ),
+                                      )
+                                    : Image.network(
+                                        logoUrl,
+                                        width: screenWidth * 0.22,
+                                        height: screenWidth * 0.22,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (_, _, _) =>
+                                            SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath.manuFirstImage,
+                                              ),
+                                              height: 10,
+                                              width: 10,
+                                              fit: BoxFit.contain,
+                                            ),
+                                      );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
+              ),
+            ),
+          ),
+        );
       },
     );
   }
@@ -565,76 +536,51 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       ),
     );
 
-    final imageWidget = (coverImages.wiki?.isNotEmpty ?? false)
-        ? GestureDetector(
-            onTap: () async {
-              if (coverImages.author != "") {
-                final uri = Uri.tryParse(coverImages.wiki!);
-                if (uri != null && await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Could not open URL.')),
-                  );
-                }
-              }
-            },
-            child: image,
-          )
-        : image;
-
     return SizedBox(
       height: screenHeight * 0.26,
       width: double.infinity,
       child: Stack(
         children: [
-          imageWidget,
-          if (coverImages.wiki?.isNotEmpty ?? false)
+          image,
+          // Show author only if wiki exists AND author is not null/empty
+          if ((coverImages.wiki?.isNotEmpty ?? false) &&
+              (coverImages.author?.isNotEmpty ?? false))
             Positioned(
               right: 8,
               bottom: 8,
-              child: coverImages.author == ""
-                  ? SizedBox.shrink()
-                  : GestureDetector(
-                      onTap: () async {
-                        if (coverImages.author != "") {
-                          final uri = Uri.tryParse(coverImages.wiki!);
-                          if (uri != null && await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not open URL.'),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        constraints: const BoxConstraints(maxWidth: 250),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '© ${coverImages.author}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          softWrap: true,
-                          overflow: TextOverflow.visible,
-                        ),
-                      ),
+              child: GestureDetector(
+                onTap: () async {
+                  final uri = Uri.tryParse(coverImages.wiki!);
+                  if (uri != null && await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Could not open URL.')),
+                    );
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  constraints: const BoxConstraints(maxWidth: 250),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '© ${coverImages.author}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+              ),
             ),
         ],
       ),

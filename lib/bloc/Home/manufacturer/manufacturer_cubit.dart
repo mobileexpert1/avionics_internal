@@ -4,6 +4,7 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'manufacturer_state.dart';
 import 'manufacturer_repository.dart';
+import 'dart:math';
 
 class ManufacturerCubit extends Cubit<ManufacturerState> {
   final ManufacturerRepository repository;
@@ -18,10 +19,14 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
     int page = 1,
     bool isLoadMore = false,
   }) async {
+    if (isLoadMore && state.currentPage >= state.totalPages) {
+      return;
+    }
+
     if (isLoadMore) {
       emit(state.copyWith(isFetchingMore: true));
     } else {
-      emit(state.copyWith(isLoading: true, currentPage: 1));
+      emit(state.copyWith(isLoading: true, currentPage: 1, totalPages: 1));
     }
 
     try {
@@ -34,57 +39,66 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
           ? [...state.manufacturers, ...paginated.results]
           : paginated.results;
 
-      updatedList.sort((a, b) => a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()));
+      updatedList.sort(
+        (a, b) =>
+            a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()),
+      );
 
-      emit(state.copyWith(
-        manufacturers: updatedList,
-        currentPage: paginated.currentPage,
-        hasNextPage: paginated.hasNext,
-        isLoading: false,
-        isFetchingMore: false,
-      ));
+      emit(
+        state.copyWith(
+          manufacturers: updatedList,
+          currentPage: paginated.currentPage,
+          totalPages: paginated.totalPages,
+          hasNextPage: paginated.hasNext,
+          isLoading: false,
+          isFetchingMore: false,
+        ),
+      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(
-        isLoading: false,
-        isFetchingMore: false,
-      ));
+      emit(state.copyWith(isLoading: false, isFetchingMore: false));
     }
-   }
-
-
+  }
 
   Future<void> getParticularAirbusDetail({
     required String query,
     required BuildContext context,
   }) async {
-    emit(state.copyWith(
-      isLoading: true,
-      status: CommonApiStatus.initial,
-      errorMessage: null,
-      apiError: null,
-      isSuccess: false,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        status: CommonApiStatus.initial,
+        errorMessage: null,
+        apiError: null,
+        isSuccess: false,
+        manufacturerDetail: null,
+      ),
+    );
 
     try {
       final response = await repository.getParticularAirbusDetail(query: query);
 
-      emit(state.copyWith(
-        manufacturerDetail: response,
-        isLoading: false,
-        status: CommonApiStatus.success,
-        isSuccess: true,
-      ));
+      print(response);
+
+      emit(
+        state.copyWith(
+          manufacturerDetail: response,
+          isLoading: false,
+          status: CommonApiStatus.success,
+          isSuccess: true,
+        ),
+      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-      emit(state.copyWith(
-        manufacturerDetail: null,
-        isLoading: false,
-        status: CommonApiStatus.failure,
-        errorMessage: e.toString(),
-        isSuccess: false,
-      ));
+      emit(
+        state.copyWith(
+          manufacturerDetail: null,
+          isLoading: false,
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+          isSuccess: false,
+        ),
+      );
     }
   }
 }

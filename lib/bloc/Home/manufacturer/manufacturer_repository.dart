@@ -65,6 +65,8 @@ class ManufacturerRepository {
 
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+
+      print(jsonData);
       return ManufacturerDetailResponse.fromJson(jsonData);
     } catch (e) {
       throw e.toString();

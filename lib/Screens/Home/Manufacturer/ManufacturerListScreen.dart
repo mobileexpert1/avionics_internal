@@ -174,12 +174,16 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) =>
-                                            ManufacturerDetailScreen(
-                                              manufacturerDetailId: item.id,
-                                            ),
+                                        builder: (_) => BlocProvider(
+                                          create: (_) => ManufacturerCubit(),
+                                          child: ManufacturerDetailScreen(
+                                            key: ValueKey(item.id), // <-- Add this
+                                            manufacturerDetailId: item.id,
+                                          ),
+                                        ),
                                       ),
                                     );
+
                                   },
                                 ),
                               );

@@ -74,22 +74,22 @@ class General {
 class CoverPhoto {
   final String url;
   final String license;
-  final String author;
+  final String? author; // make nullable
   final String? wiki;
 
   CoverPhoto({
     required this.url,
     required this.license,
-    required this.author,
+    this.author, // optional
     this.wiki,
   });
 
   factory CoverPhoto.fromJson(Map<String, dynamic> json) {
     return CoverPhoto(
-      url: json['url'],
-      license: json['license'],
-      author: json['author'],
-      wiki: json['wiki'],
+      url: json['url'] ?? '', // default empty string if missing
+      license: json['license'] ?? 'Unknown',
+      author: json['author'], // nullable
+      wiki: json['wiki'],     // nullable
     );
   }
 }

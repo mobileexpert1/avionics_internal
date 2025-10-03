@@ -22,21 +22,20 @@ class AircraftRepository {
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-          "${ApiServiceUrlAirplaneConstant.getListAirbus}"
-          "?page=$page"
-          "${query != null && query.isNotEmpty ? '&q=$query' : ''}&max_page_size=10",
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+      "${ApiServiceUrlAirplaneConstant.getListAirbus}"
+      "?page=$page"
+      "${query != null && query.isNotEmpty ? '&q=$query' : ''}&max_page_size=10",
     );
 
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-
       return PaginatedList.fromJson(
         json: jsonData,
         fromJson: (e) => AircraftModel.fromJson(e),
         currentPage: page,
       );
-    } catch (e) {
+    } catch (e, st) {
       throw e.toString();
     }
   }

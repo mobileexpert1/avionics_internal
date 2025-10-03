@@ -21,16 +21,17 @@ class PaginatedList<T> {
     required int currentPage,
   }) {
     final resultsJson = json['results'] as List<dynamic>? ?? [];
+    final totalPages = json['total_pages'] ?? 1;
 
     return PaginatedList<T>(
       results: resultsJson
           .map((e) => fromJson(e as Map<String, dynamic>))
           .toList(),
       count: json['count'] ?? 0,
-      totalPages: json['total_pages'] ?? 1,
+      totalPages: totalPages,
       currentPage: currentPage,
-      hasNext: json['next'] != null,
-      hasPrevious: json['previous'] != null,
+      hasNext: currentPage < totalPages,
+      hasPrevious: currentPage > 1,
     );
   }
 

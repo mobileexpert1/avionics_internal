@@ -122,7 +122,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         ),
                         builder: (context, snapshot) {
                           return GoogleMap(
-                            minMaxZoomPreference: MinMaxZoomPreference(4, 10),
+                            minMaxZoomPreference: MinMaxZoomPreference(7, 12),
                             zoomControlsEnabled: false,
                             myLocationButtonEnabled: false,
                             rotateGesturesEnabled: false,
@@ -256,8 +256,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       );
 
       final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
-
-      print("_activeCard Api Calling-=-=-=-=-${_activeCard}");
       _mapCubit.fetchFlightsByBounds(
         currentCenterLatLong: centerLatLng,
         bounds: visibleRegion,
@@ -379,15 +377,39 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     return markers;
   }
 
+  double getIconSize(double currentZoom) {
+    switch (currentZoom.floor()) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        return 80;
+      case 5:
+      case 6:
+      case 7:
+        return 100;
+      case 8:
+      case 9:
+      case 10:
+        return 150;
+      default:
+        return 180;
+    }
+  }
+
   Future<Set<Marker>> _buildAirportMarkers() async {
     final markers = <Marker>{};
     final airports = _mapCubit.state.airports;
+
+    double currentZoom = await _mapController!.getZoomLevel();
+    double iconSize = getIconSize(currentZoom);
+
     final customIcon = await _getBitmapDescriptorFromSvgAsset(
       assetName: 'assets/svg_images/Airport1.svg',
-      size: 150,
+      size: iconSize,
       color: Colors.blue,
     );
-
     if (airports == null) return markers;
 
     for (final airport in airports) {
@@ -470,13 +492,23 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         final paint = Paint();
         canvas2.drawImageRect(
           img,
-          Rect.fromLTWH(0, top.toDouble(), img.width.toDouble(), croppedHeight.toDouble()),
+          Rect.fromLTWH(
+            0,
+            top.toDouble(),
+            img.width.toDouble(),
+            croppedHeight.toDouble(),
+          ),
           Rect.fromLTWH(0, 0, img.width.toDouble(), croppedHeight.toDouble()),
           paint,
         );
-        final cropped = await recorder2.endRecording().toImage(img.width, croppedHeight);
+        final cropped = await recorder2.endRecording().toImage(
+          img.width,
+          croppedHeight,
+        );
 
-        final croppedBytes = await cropped.toByteData(format: ui.ImageByteFormat.png);
+        final croppedBytes = await cropped.toByteData(
+          format: ui.ImageByteFormat.png,
+        );
         return BitmapDescriptor.fromBytes(croppedBytes!.buffer.asUint8List());
       }
 
@@ -488,7 +520,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
     }
   }
-
 
   Future<Marker> _buildSingleFlightMarker(FlightModel flight) async {
     return _createMarker(

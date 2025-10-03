@@ -8,6 +8,7 @@ class ManufacturerState {
   final bool isLoading;
   final bool isFetchingMore;
   final int currentPage;
+  final int totalPages;
   final bool hasNextPage;
   final bool isSuccess;
   final String? apiError;
@@ -20,6 +21,7 @@ class ManufacturerState {
     this.isLoading = false,
     this.isFetchingMore = false,
     this.currentPage = 1,
+    this.totalPages = 1,
     this.hasNextPage = false,
     this.isSuccess = false,
     this.apiError,
@@ -33,6 +35,7 @@ class ManufacturerState {
     bool? isLoading,
     bool? isFetchingMore,
     int? currentPage,
+    int? totalPages,
     bool? hasNextPage,
     bool? isSuccess,
     String? apiError,
@@ -45,6 +48,7 @@ class ManufacturerState {
       isLoading: isLoading ?? this.isLoading,
       isFetchingMore: isFetchingMore ?? this.isFetchingMore,
       currentPage: currentPage ?? this.currentPage,
+      totalPages: totalPages ?? this.totalPages,
       hasNextPage: hasNextPage ?? this.hasNextPage,
       isSuccess: isSuccess ?? this.isSuccess,
       apiError: apiError ?? this.apiError,
