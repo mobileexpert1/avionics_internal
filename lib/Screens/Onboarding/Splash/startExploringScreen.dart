@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
@@ -24,121 +25,143 @@ class StartExploringScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    double logoWidth = screenWidth * 0.4; // adjust as needed
-    double textFontSize = screenWidth < 360
-        ? 24
-        : screenWidth < 600
-        ? 28
-        : 35;
+    double logoWidth = screenWidth * 0.4;
+    double textFontSize =
+    screenWidth < 360 ? 24 : screenWidth < 600 ? 28 : 35;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: constraints.maxHeight * 0.6,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                  child: Image.asset(
-                    CommonUi.setjpgImage(AssetsPath.explore),
-                    width: logoWidth,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 32,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: kIsWeb
+              ? const BoxConstraints(maxWidth: 600)
+              : const BoxConstraints(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final double buttonWidth =
+              kIsWeb ? constraints.maxWidth * 0.7 : double.infinity;
+
+              return Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: constraints.maxHeight * 0.6,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                      child: Image.asset(
+                        CommonUi.setjpgImage(AssetsPath.explore),
+                        width: logoWidth,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        ConstantStrings.exploring,
-                        style: TextStyle(
-                          fontSize: textFontSize,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1C1733),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 32,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: const Color(0xFF1C1733),
-                            side: const BorderSide(color: Color(0xFF1C1733)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SignupScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            ConstantStrings.CreateAccount,
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            side: const BorderSide(color: Color(0xFF1C1733)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            ConstantStrings.loginButton,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            ConstantStrings.exploring,
                             style: TextStyle(
-                              fontSize: 16,
-                              color: AppColors.LoginTxt,
+                              fontSize: textFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF1C1733),
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 24),
+
+                          // --- Create Account Button ---
+                          SizedBox(
+                            width: buttonWidth,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 16),
+                                backgroundColor: const Color(0xFF1C1733),
+                                side: const BorderSide(
+                                  color: Color(0xFF1C1733),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SignupScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                ConstantStrings.CreateAccount,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // --- Login Button ---
+                          SizedBox(
+                            width: buttonWidth,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 15),
+                                side: const BorderSide(
+                                  color: Color(0xFF1C1733),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                ConstantStrings.loginButton,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.LoginTxt,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ],
-          );
-        },
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 }
+

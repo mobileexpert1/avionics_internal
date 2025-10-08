@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,12 +13,12 @@ import '../../../CustomFiles/CustomTextField.dart';
 import '../../../bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import '../../../bloc/Onboarding/forgotPassword/forgot_state.dart';
 
-class Forgotscreen extends StatefulWidget {
+class ForgotScreen extends StatefulWidget {
   @override
   _ForgotScreenState createState() => _ForgotScreenState();
 }
 
-class _ForgotScreenState extends State<Forgotscreen> {
+class _ForgotScreenState extends State<ForgotScreen> {
   final TextEditingController emailController = TextEditingController();
 
   @override
@@ -28,6 +29,18 @@ class _ForgotScreenState extends State<Forgotscreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = kIsWeb;
+
+    // --- Responsive sizes ---
+    final logoWidth = isWeb ? 120.0 : screenWidth * 0.4;
+    final topPadding = isWeb ? 20.0 : 40.0;
+    final spacingAfterLogo = isWeb ? 20.0 : 40.0;
+    final contentMaxWidth = isWeb ? 420.0 : double.infinity;
+    final buttonWidth = isWeb ? 280.0 : double.infinity;
+
+    final topSpacerHeight = isWeb ? 50.0 : 0.0;
+
     return BlocProvider(
       create: (_) => ForgotCubit(),
       child: BlocConsumer<ForgotCubit, ForgotState>(
@@ -50,61 +63,72 @@ class _ForgotScreenState extends State<Forgotscreen> {
                   title: ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                body: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.logoMain),
-                          fit: BoxFit.fill,
-                        ),
-                        SizedBox(height: 20),
-                        BlocSelector<ForgotCubit, ForgotState, String?>(
-                          selector: (state) => state.emailError,
-                          builder: (context, emailError) {
-                            return CustomTextField(
-                              label: ConstantStrings.emailLabel,
-                              controller: emailController,
-                              errorText: emailError,
-                              onChanged: (val) =>
-                                  context.read<ForgotCubit>().emailChanged(val),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 20),
+                body: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: contentMaxWidth),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: topPadding),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            //SizedBox(height: topSpacerHeight),
+                            SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.logoMain),
+                              width: logoWidth,
+                              fit: BoxFit.contain,
+                            ),
+                            SizedBox(height: spacingAfterLogo),
 
-                        BlocSelector<ForgotCubit, ForgotState, bool>(
-                          selector: (state) => state.isButtonEnabled,
-                          builder: (context, isButtonEnabled) {
-                            return CustomBottomButton(
-                              title: ConstantStrings.sendEmailButton,
-                              backgroundColor: state.isButtonEnabled == true
-                                  ? AppColors.customBottomEnabledColour
-                                  : AppColors.customBottomDisableColour,
-                              textColor: Colors.white,
-                              icon: const SizedBox(width: 0),
-                              isEnabled: isButtonEnabled,
-                              onPressed: () {
-                                context.read<ForgotCubit>().validateAndSubmit(
-                                  context,
+                            // --- Email Field ---
+                            BlocSelector<ForgotCubit, ForgotState, String?>(
+                              selector: (state) => state.emailError,
+                              builder: (context, emailError) {
+                                return CustomTextField(
+                                  label: ConstantStrings.emailLabel,
+                                  controller: emailController,
+                                  errorText: emailError,
+                                  onChanged: (val) =>
+                                      context.read<ForgotCubit>().emailChanged(val),
                                 );
                               },
-                            );
-                          },
+                            ),
+                            const SizedBox(height: 30),
+
+                            // --- Submit Button ---
+                            BlocSelector<ForgotCubit, ForgotState, bool>(
+                              selector: (state) => state.isButtonEnabled,
+                              builder: (context, isButtonEnabled) {
+                                return SizedBox(
+                                  width: buttonWidth,
+                                  child: CustomBottomButton(
+                                    title: ConstantStrings.sendEmailButton,
+                                    backgroundColor: isButtonEnabled
+                                        ? AppColors.customBottomEnabledColour
+                                        : AppColors.customBottomDisableColour,
+                                    textColor: Colors.white,
+                                    icon: const SizedBox.shrink(),
+                                    isEnabled: isButtonEnabled,
+                                    onPressed: () => context
+                                        .read<ForgotCubit>()
+                                        .validateAndSubmit(context),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
 
+              // --- Loading Overlay ---
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),

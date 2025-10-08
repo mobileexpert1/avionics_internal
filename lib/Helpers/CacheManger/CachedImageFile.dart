@@ -48,9 +48,11 @@ class CachedAnyImage extends StatelessWidget {
             if (!useCache || snapshot.hasData) {
               final file = useCache ? snapshot.data! : null;
               return _fixedBox(
-                useCache
-                    ? SvgPicture.file(file!, fit: contentImage)
-                    : SvgPicture.network(imagePath, fit: contentImage),
+                /// Comment Because Web Not working with this code.
+                // useCache
+                //     ? SvgPicture.file(file!, fit: contentImage)
+                //     : SvgPicture.network(imagePath, fit: contentImage),
+                SvgPicture.network(imagePath, fit: contentImage),
               );
             }
             return _errorIcon();
