@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 
@@ -15,12 +16,12 @@ class AircraftCard {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
 
-        final imageWidth = screenWidth * 0.3;
-        final imageHeight = screenWidth * 0.2;
-        final titleFontSize = screenWidth * 0.04;
-        final badgeFontSize = screenWidth * 0.03;
-        final infoFontSize = screenWidth * 0.031;
-        final iconSize = screenWidth * 0.04;
+        final imageWidth = kIsWeb ? screenWidth * 0.12 : screenWidth * 0.3;
+        final imageHeight = kIsWeb ? screenWidth : screenWidth * 0.2;
+        final titleFontSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04;
+        final badgeFontSize = kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03;
+        final infoFontSize = kIsWeb ? screenWidth * 0.011 : screenWidth * 0.031;
+        final iconSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04;
 
         String manufacturerImagePath;
         bool isNetworkLogo = false;
@@ -29,7 +30,8 @@ class AircraftCard {
           manufacturerImagePath = AssetsPath.boeinglogo;
         } else if (manufacturer == 'Airbus') {
           manufacturerImagePath = AssetsPath.airbus;
-        } else if (manufacturerLogoPath.startsWith('http') || manufacturerLogoPath.startsWith('/media')) {
+        } else if (manufacturerLogoPath.startsWith('http') ||
+            manufacturerLogoPath.startsWith('/media')) {
           manufacturerImagePath = manufacturerLogoPath;
           isNetworkLogo = true;
         } else {
@@ -38,8 +40,8 @@ class AircraftCard {
 
         return Container(
           margin: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.045,
-            vertical: screenWidth * 0.015,
+            horizontal: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.045,
+            vertical: kIsWeb ? screenWidth * 0.008 : screenWidth * 0.015,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -66,55 +68,58 @@ class AircraftCard {
                     Icon(Icons.broken_image, size: imageHeight),
               ),
             ),
-            title:  Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                fit: FlexFit.loose,
-                child: Text(
-                  model,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: titleFontSize,
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Text(
+                    model,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: titleFontSize,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(width: 6),
-              _buildBadge(badge, badgeFontSize),
-            ],
-          ),
+                const SizedBox(width: 6),
+                _buildBadge(badge, badgeFontSize),
+              ],
+            ),
             subtitle: Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: Row(
-            children: [
-              isNetworkLogo
-                  ? Image.network(
-                manufacturerImagePath,
-                width: iconSize,
-                height: iconSize,
-                errorBuilder: (_, _,_) =>
-                    Icon(Icons.error, size: iconSize),
-              )
-                  : Image.asset(
-                CommonUi.setPngImage(manufacturerImagePath),
-                width: iconSize,
-                height: iconSize,
+              padding: const EdgeInsets.only(top: 5),
+              child: Row(
+                children: [
+                  isNetworkLogo
+                      ? Image.network(
+                          manufacturerImagePath,
+                          width: iconSize,
+                          height: iconSize,
+                          errorBuilder: (_, _, _) =>
+                              Icon(Icons.error, size: iconSize),
+                        )
+                      : Image.asset(
+                          CommonUi.setPngImage(manufacturerImagePath),
+                          width: iconSize,
+                          height: iconSize,
+                        ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      manufacturer,
+                      style: TextStyle(fontSize: infoFontSize),
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                  _buildBadge(registrationNumber, badgeFontSize, bold: true),
+                ],
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  manufacturer,
-                  style: TextStyle(fontSize: infoFontSize),
-                  overflow: TextOverflow.visible,
-                ),
-              ),
-              _buildBadge(registrationNumber, badgeFontSize, bold: true),
-            ],
-          ),
-        ),
+            ),
 
-            trailing: Icon(Icons.chevron_right, size: screenWidth * 0.05),
+            trailing: Icon(
+              Icons.chevron_right,
+              size: kIsWeb ? screenWidth * 0.03 : screenWidth * 0.05,
+            ),
           ),
         );
       },
@@ -127,12 +132,7 @@ class AircraftCard {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 0.1,
-          ),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.grey, spreadRadius: 0.1)],
       ),
       child: Text(
         text,

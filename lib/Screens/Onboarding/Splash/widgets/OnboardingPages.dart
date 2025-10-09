@@ -52,19 +52,19 @@ class OnboardingPage extends StatelessWidget {
         children: [
           SizedBox(
             width: double.infinity,
-            height: size.height * 0.55,
+            height: size.height * 0.65,
             child: info.imageWidget,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 75, vertical: 0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTitle(text: info.title, baseFontSize: 24),
+                  _buildTitle(text: info.title, baseFontSize: 30),
                   const SizedBox(height: 20),
-                  _buildDescription(text: info.description, baseFontSize: 14),
+                  _buildDescription(text: info.description, baseFontSize: 20),
                 ],
               ),
             ),

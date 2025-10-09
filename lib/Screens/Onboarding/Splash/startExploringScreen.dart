@@ -26,20 +26,24 @@ class StartExploringScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     double logoWidth = screenWidth * 0.4;
-    double textFontSize =
-    screenWidth < 360 ? 24 : screenWidth < 600 ? 28 : 35;
+    double textFontSize = screenWidth < 360
+        ? 24
+        : screenWidth < 600
+        ? 28
+        : 35;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: ConstrainedBox(
           constraints: kIsWeb
-              ? const BoxConstraints(maxWidth: 600)
+              ? const BoxConstraints(maxWidth: 1500)
               : const BoxConstraints(),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final double buttonWidth =
-              kIsWeb ? constraints.maxWidth * 0.7 : double.infinity;
+              final double buttonWidth = kIsWeb
+                  ? constraints.maxWidth * 0.5
+                  : double.infinity;
 
               return Column(
                 children: [
@@ -54,7 +58,7 @@ class StartExploringScreen extends StatelessWidget {
                       child: Image.asset(
                         CommonUi.setjpgImage(AssetsPath.explore),
                         width: logoWidth,
-                        fit: BoxFit.cover,
+                        fit: kIsWeb ? BoxFit.fitWidth : BoxFit.cover,
                       ),
                     ),
                   ),
@@ -90,8 +94,9 @@ class StartExploringScreen extends StatelessWidget {
                             width: buttonWidth,
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 backgroundColor: const Color(0xFF1C1733),
                                 side: const BorderSide(
                                   color: Color(0xFF1C1733),
@@ -125,8 +130,9 @@ class StartExploringScreen extends StatelessWidget {
                             width: buttonWidth,
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 15),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 15,
+                                ),
                                 side: const BorderSide(
                                   color: Color(0xFF1C1733),
                                 ),
@@ -164,4 +170,3 @@ class StartExploringScreen extends StatelessWidget {
     );
   }
 }
-

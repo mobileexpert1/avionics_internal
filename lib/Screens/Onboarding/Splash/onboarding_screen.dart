@@ -26,10 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final bool isWeb = kIsWeb;
 
     // --- Adjust sizes for Chrome vs Mobile ---
-    final double imageHeight = isWeb ? size.height * 0.55 : size.height * 0.45;
-    final double titleFont = isWeb ? 22 : 20;
-    final double descFont = isWeb ? 16 : 14;
-    final double textPadding = isWeb ? 24 : 16;
+    final double imageHeight = isWeb ? size.height : size.height * 0.45;
 
     final List<OnboardingInfo> pages = [
       OnboardingInfo(
@@ -142,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: Center(
         child: ConstrainedBox(
           constraints: isWeb
-              ? const BoxConstraints(maxWidth: 600)
+              ? const BoxConstraints(maxWidth: 1500)
               : const BoxConstraints(),
           child: Stack(
             alignment: Alignment.center,
@@ -160,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
               // --- SmoothPageIndicator ---
               Positioned(
-                bottom: size.height * (isWeb ? 0.12 : 0.115),
+                bottom: size.height * (isWeb ?  0.06 : 0.115),
                 left: 0,
                 right: 0,
                 child: Center(
@@ -180,7 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
               // --- Skip & Next Buttons ---
               Positioned(
-                bottom: size.height * (isWeb ? 0.07 : 0.09),
+                bottom: size.height * (isWeb ? 0.06 : 0.09),
                 left: isWeb ? 60 : 30,
                 right: isWeb ? 60 : 30,
                 child: Row(
@@ -199,7 +196,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ConstantStrings.skip,
                         style: TextStyle(
                           color: AppColors.skip,
-                          fontSize: isWeb ? 15 : 13,
+                          fontSize: isWeb ? 20 : 13,
                         ),
                       ),
                     ),
@@ -223,7 +220,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ConstantStrings.next,
                         style: TextStyle(
                           color: AppColors.next,
-                          fontSize: isWeb ? 15 : 13,
+                          fontSize: isWeb ? 20 : 13,
                         ),
                       ),
                     ),
@@ -238,13 +235,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildImage(String path, double height) {
-    return Center(
-      child: SizedBox(
-        height: height,
-        child: SvgPicture.asset(
-          CommonUi.setSvgImage(path),
-          fit: BoxFit.contain,
-        ),
+    return SizedBox(
+      width: double.infinity,
+      height: height,
+      child: FittedBox(
+        fit: BoxFit.contain,
+        alignment: Alignment.center,
+        child: SvgPicture.asset(CommonUi.setSvgImage(path)),
       ),
     );
   }

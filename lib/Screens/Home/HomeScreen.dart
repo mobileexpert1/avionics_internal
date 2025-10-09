@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -45,8 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(110),
-          // adjust to fit your search bar height
+          preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
           child: SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -66,22 +66,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       backgroundColor: Colors.transparent,
-                      builder: (context) {
-                        return FractionallySizedBox(
-                          heightFactor: 0.9,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                            child: FilterScreen(),
+                      builder: (context) => FractionallySizedBox(
+                        heightFactor: 0.9,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20),
                           ),
-                        );
-                      },
+                          child: FilterScreen(),
+                        ),
+                      ),
                     );
                   },
                   searchTitle: 'Search...',
                 ),
-                SizedBox(height: screenWidth * 0.04),
+                SizedBox(height: kIsWeb ? 16 : 10),
               ],
             ),
           ),
@@ -94,218 +92,297 @@ class _HomeScreenState extends State<HomeScreen> {
             } else if (state is HomeError) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is HomeLoaded) {
-              return SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: screenWidth * 0.03),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.05,
-                      ),
-                      child: Text(
-                        "Welcome Onboard",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.04,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
+              return Align(
+                alignment: Alignment.topCenter,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1500),
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: screenWidth * 0.03),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: kIsWeb
+                                  ? screenWidth * 0.01
+                                  : screenWidth * 0.05,
+                            ),
+                            child: Text(
+                              "Welcome Onboard",
+                              style: TextStyle(
+                                fontSize: kIsWeb
+                                    ? screenWidth * 0.03
+                                    : screenWidth * 0.04,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
 
-                    SizedBox(height: screenWidth * 0.05),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(screenWidth * 0.05),
-                      color: const Color(0xFF3F3D51),
-                      child: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.avionicaHome),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.03
+                                : screenWidth * 0.05,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(screenWidth * 0.05),
+                            color: const Color(0xFF3F3D51),
+                            child: SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.avionicaHome),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
 
-                    SizedBox(height: screenWidth * 0.06),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.06,
+                          ),
 
-                    /// Model Comparison
-                    _buildSectionTitle(
-                      "Model Comparison",
-                      AssetsPath.comparsion,
-                      screenWidth,
-                    ),
-                    SizedBox(height: screenWidth * 0.035),
-                    AppListTileCard(
-                      title: "Select model for comparison",
-                      imagePath: CommonUi.setSvgImage(AssetsPath.selectModel),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SelectModelCompareScreen(),
-                        ),
-                      ),
-                      isSvg: true,
-                    ),
-                    SizedBox(height: screenWidth * 0.045),
+                          /// Model Comparison
+                          _buildSectionTitle(
+                            "Model Comparison",
+                            AssetsPath.comparsion,
+                            screenWidth,
+                          ),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.035,
+                          ),
 
-                    const Divider(
-                      height: 0,
-                      thickness: 3,
-                      color: AppColors.sepratorColourAppBar,
-                    ),
-                    // Manufacturer
-                    SizedBox(height: screenWidth * 0.045),
+                          AppListTileCard(
+                            title: "Select model for comparison",
+                            imagePath: CommonUi.setSvgImage(
+                              AssetsPath.selectModel,
+                            ),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => SelectModelCompareScreen(),
+                              ),
+                            ),
+                            isSvg: true,
+                          ),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
 
-                    /* ───────────── Manufacturer ───────────── */
-                    _buildSectionTitle(
-                      'Manufacturer',
-                      AssetsPath.manufacturer,
-                      screenWidth,
-                    ),
-                    SizedBox(height: screenWidth * 0.045),
-                    if (state.manufacturers.isNotEmpty) ...[
-                      ...state.manufacturers
-                          .take(2)
-                          .map(
-                            (m) => AppListTileCard(
-                              title: m.companyName,
-                              imagePath: (m.icon ?? ''),
-                              onTap: () {
-                                Navigator.push(
+                          const Divider(
+                            height: 0,
+                            thickness: 3,
+                            color: AppColors.sepratorColourAppBar,
+                          ),
+
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+
+                          /* ───────────── Manufacturer ───────────── */
+                          _buildSectionTitle(
+                            'Manufacturer',
+                            AssetsPath.manufacturer,
+                            screenWidth,
+                          ),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+                          if (state.manufacturers.isNotEmpty) ...[
+                            ...state.manufacturers
+                                .take(2)
+                                .map(
+                                  (m) => AppListTileCard(
+                                    title: m.companyName,
+                                    imagePath: (m.icon ?? ''),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider(
+                                            create: (_) => ManufacturerCubit(),
+                                            child: ManufacturerDetailScreen(
+                                              manufacturerDetailId: m.id,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    isSvg: (m.icon ?? '').contains(".svg"),
+                                    isNetwork: true,
+                                  ),
+                                ),
+                            SizedBox(
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045,
+                            ),
+                            Center(
+                              child: TextButton(
+                                onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => BlocProvider(
                                       create: (_) => ManufacturerCubit(),
-                                      child: ManufacturerDetailScreen(
-                                        manufacturerDetailId: m.id,
-                                      ),
+                                      child: ManufacturerScreen(),
                                     ),
                                   ),
-                                );
-                              },
-                              isSvg: (m.icon ?? '').contains(".svg"),
-                              isNetwork: true,
-                            ),
-                          ),
-                      Center(
-                        child: TextButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider(
-                                create: (_) => ManufacturerCubit(),
-                                child: ManufacturerScreen(),
+                                ),
+                                child: Text(
+                                  'See All',
+                                  style: TextStyle(
+                                    fontSize: kIsWeb
+                                        ? screenWidth * 0.02
+                                        : screenWidth * 0.04,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textColour,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          child: Text(
-                            'See All',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textColour,
+                            SizedBox(
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045,
                             ),
+                          ] else
+                            _emptyRow(
+                              'No manufacturers available yet.',
+                              screenWidth,
+                            ),
+                          const Divider(
+                            height: 0,
+                            thickness: 3,
+                            color: AppColors.sepratorColourAppBar,
                           ),
-                        ),
+
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+
+                          /* ────────── Flying in the area ─────────── */
+                          _buildSectionTitle(
+                            'Flying in the area',
+                            AssetsPath.flyingareaicon,
+                            screenWidth,
+                          ),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+
+                          if (state.flights.isNotEmpty) ...[
+                            ...state.flights
+                                .take(2)
+                                .map(
+                                  (f) => AircraftCard.buildAircraftCard(
+                                    imagePath: (f.image ?? ''),
+                                    model: f.model,
+                                    badge: f.code,
+                                    manufacturer: f.companyName,
+                                    manufacturerLogoPath: f.logo ?? '',
+                                    registrationNumber: f.flightId,
+                                  ),
+                                ),
+                            Center(
+                              child: TextButton(
+                                onPressed: () {},
+                                child: Text(
+                                  'See All',
+                                  style: TextStyle(
+                                    fontSize: kIsWeb
+                                        ? screenWidth * 0.02
+                                        : screenWidth * 0.04,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textColour,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045,
+                            ),
+                          ] else
+                            _emptyRow(
+                              'No flights found in this area.',
+                              screenWidth,
+                            ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 3,
+                            color: AppColors.sepratorColourAppBar,
+                          ),
+
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+
+                          _buildSectionTitle(
+                            'Favourites',
+                            AssetsPath.star,
+                            screenWidth,
+                          ),
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+                          if (state.favourites.isNotEmpty) ...[
+                            ...state.favourites
+                                .take(2)
+                                .map(
+                                  (f) => AppListTileCard(
+                                    title: f.aircraftModel,
+                                    imagePath: (f.image),
+                                    onTap: () {},
+                                    isSvg: (f.image).contains(".svg"),
+                                    isNetwork: true,
+                                  ),
+                                ),
+                            Center(
+                              child: TextButton(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        SavedFlighScreen(showTabs: false),
+                                  ),
+                                ),
+                                child: Text(
+                                  'See All',
+                                  style: TextStyle(
+                                    fontSize: kIsWeb
+                                        ? screenWidth * 0.02
+                                        : screenWidth * 0.04,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF626262),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ] else
+                            _emptyRow('No favourites saved yet.', screenWidth),
+                        ],
                       ),
-                      SizedBox(height: screenWidth * 0.03),
-                    ] else
-                      _emptyRow('No manufacturers available yet.', screenWidth),
-                    const Divider(
-                      height: 0,
-                      thickness: 3,
-                      color: AppColors.sepratorColourAppBar,
                     ),
-
-                    SizedBox(height: screenWidth * 0.05),
-
-                    /* ────────── Flying in the area ─────────── */
-                    _buildSectionTitle(
-                      'Flying in the area',
-                      AssetsPath.flyingareaicon,
-                      screenWidth,
-                    ),
-                    SizedBox(height: screenWidth * 0.045),
-
-                    if (state.flights.isNotEmpty) ...[
-                      ...state.flights
-                          .take(2)
-                          .map(
-                            (f) => AircraftCard.buildAircraftCard(
-                              imagePath: (f.image ?? ''),
-                              model: f.model,
-                              badge: f.code,
-                              manufacturer: f.companyName,
-                              manufacturerLogoPath: f.logo ?? '',
-                              registrationNumber: f.flightId,
-                            ),
-                          ),
-
-                      Center(
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'See All',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textColour,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: screenWidth * 0.03),
-                    ] else
-                      _emptyRow('No flights found in this area.', screenWidth),
-
-                    const Divider(
-                      height: 0,
-                      thickness: 3,
-                      color: AppColors.sepratorColourAppBar,
-                    ),
-
-                    /* ───────────────── Favourites ──────────── */
-                    SizedBox(height: screenWidth * 0.045),
-
-                    _buildSectionTitle(
-                      'Favourites',
-                      AssetsPath.star,
-                      screenWidth,
-                    ),
-                    SizedBox(height: screenWidth * 0.045),
-                    if (state.favourites.isNotEmpty) ...[
-                      ...state.favourites
-                          .take(2)
-                          .map(
-                            (f) => AppListTileCard(
-                              title: f.aircraftModel,
-                              imagePath: (f.image),
-                              onTap: () {},
-                              isSvg: (f.image).contains(".svg"),
-                              isNetwork: true,
-                            ),
-                          ),
-                      Center(
-                        child: TextButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => SavedFlighScreen(showTabs: false),
-                            ),
-                          ),
-                          child: Text(
-                            'See All',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.045,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF626262),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ] else
-                      _emptyRow('No favourites saved yet.', screenWidth),
-                  ],
+                  ),
                 ),
               );
             }
@@ -356,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
     child: Text(
       message,
       style: TextStyle(
-        fontSize: screenWidth * 0.042,
+        fontSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.042,
         color: const Color(0xFF9E9E9E),
       ),
     ),
@@ -366,11 +443,13 @@ class _HomeScreenState extends State<HomeScreen> {
     String text,
     String iconPath,
     double screenWidth, {
-    double fontSize = 0.045,
-    double imageSize = 0.060,
+    double fontSize = (kIsWeb ? 0.03 : 0.045),
+    double imageSize = (kIsWeb ? 0.03 : 0.060),
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      padding: EdgeInsets.symmetric(
+        horizontal: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.05,
+      ),
       child: AppTexts(
         text: text,
         imageName: CommonUi.setSvgImage(iconPath),

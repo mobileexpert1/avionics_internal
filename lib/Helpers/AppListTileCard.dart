@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -23,9 +24,11 @@ class AppListTileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final horizontalPadding = screenWidth * 0.042;
-    final iconSize = screenWidth * 0.15;
-    final fontSize = screenWidth * 0.038;
+    final horizontalPadding = kIsWeb
+        ? screenWidth * 0.02
+        : screenWidth * 0.042;
+    final iconSize = kIsWeb ? screenWidth * 0.1 : screenWidth * 0.15;
+    final fontSize = kIsWeb ? screenWidth * 0.03 : screenWidth * 0.038;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 6),
@@ -46,7 +49,7 @@ class AppListTileCard extends StatelessWidget {
           dense: true,
           visualDensity: VisualDensity(vertical: -3),
           contentPadding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.03,
+            horizontal: kIsWeb ? screenWidth * 0.01 :screenWidth * 0.03,
             vertical: 6,
           ),
           leading: _buildLeadingImage(iconSize),
@@ -54,7 +57,7 @@ class AppListTileCard extends StatelessWidget {
             title,
             style: TextStyle(fontWeight: FontWeight.w500, fontSize: fontSize),
           ),
-          trailing: Icon(Icons.arrow_forward_ios, size: screenWidth * 0.040),
+          trailing: Icon(Icons.arrow_forward_ios, size: kIsWeb ?  screenWidth * 0.020: screenWidth * 0.040),
           onTap: onTap,
         ),
       ),
@@ -77,13 +80,12 @@ class AppListTileCard extends StatelessWidget {
           child: SvgPicture.network(
             imagePath,
             fit: BoxFit.contain,
-            placeholderBuilder: (context) =>
-                SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-                  height: 32,
-                  width: 32,
-                  fit: BoxFit.contain,
-                ),
+            placeholderBuilder: (context) => SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+              height: 32,
+              width: 32,
+              fit: BoxFit.contain,
+            ),
           ),
         );
       }
