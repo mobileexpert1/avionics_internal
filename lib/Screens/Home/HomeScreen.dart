@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               "Welcome Onboard",
                               style: TextStyle(
                                 fontSize: kIsWeb
-                                    ? screenWidth * 0.03
+                                    ? screenWidth * 0.02
                                     : screenWidth * 0.04,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87,
@@ -124,16 +124,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           SizedBox(
                             height: kIsWeb
-                                ? screenWidth * 0.03
+                                ? screenWidth * 0.01
                                 : screenWidth * 0.05,
                           ),
                           Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(screenWidth * 0.05),
+                            width: size.width,
+                            height: screenWidth * 0.09,
                             color: const Color(0xFF3F3D51),
                             child: SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.avionicaHome),
-                              fit: BoxFit.cover,
+                              CommonUi.setSvgImage(AssetsPath.WebAppLogo),
+                              fit: BoxFit.contain,
                             ),
                           ),
 
@@ -443,12 +443,12 @@ class _HomeScreenState extends State<HomeScreen> {
     String text,
     String iconPath,
     double screenWidth, {
-    double fontSize = (kIsWeb ? 0.03 : 0.045),
-    double imageSize = (kIsWeb ? 0.03 : 0.060),
+    double fontSize = (kIsWeb ? 0.02 : 0.045),
+    double imageSize = (kIsWeb ? 0.02 : 0.060),
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.05,
+        horizontal: kIsWeb ? screenWidth * 0.00 : screenWidth * 0.05,
       ),
       child: AppTexts(
         text: text,

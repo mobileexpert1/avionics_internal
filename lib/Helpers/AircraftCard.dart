@@ -16,9 +16,9 @@ class AircraftCard {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
 
-        final imageWidth = kIsWeb ? screenWidth * 0.12 : screenWidth * 0.3;
-        final imageHeight = kIsWeb ? screenWidth : screenWidth * 0.2;
-        final titleFontSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04;
+        final imageWidth = kIsWeb ? screenWidth * 0.1 : screenWidth * 0.3;
+        final imageHeight = kIsWeb ? screenWidth  * 0.9: screenWidth * 0.2;
+        final titleFontSize = kIsWeb ? screenWidth * 0.015 : screenWidth * 0.04;
         final badgeFontSize = kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03;
         final infoFontSize = kIsWeb ? screenWidth * 0.011 : screenWidth * 0.031;
         final iconSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04;

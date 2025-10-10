@@ -27,8 +27,8 @@ class AppListTileCard extends StatelessWidget {
     final horizontalPadding = kIsWeb
         ? screenWidth * 0.02
         : screenWidth * 0.042;
-    final iconSize = kIsWeb ? screenWidth * 0.1 : screenWidth * 0.15;
-    final fontSize = kIsWeb ? screenWidth * 0.03 : screenWidth * 0.038;
+    final iconSize = kIsWeb ? screenWidth * 0.055 : screenWidth * 0.15;
+    final fontSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.038;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 6),

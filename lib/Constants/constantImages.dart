@@ -20,6 +20,7 @@ abstract class AssetsPath {
   static const String tickIcon = "TickIcon";
   static const String sliders = "Sliders";
   static const String avionicaHome = "homeLogo";
+  static const String WebAppLogo = "WebAppLogo";
   static const String search = "search";
   static const String comparsion = "Comparsion";
   static const String selectModel = "SelectModel";

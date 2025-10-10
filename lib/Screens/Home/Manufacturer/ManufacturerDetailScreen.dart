@@ -70,7 +70,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
           backgroundColor: Colors.white,
           body: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 900), // Web max width
+              constraints: const BoxConstraints(maxWidth: 1500), // Web max width
               child: SingleChildScrollView(
                 child: Stack(
                   children: [
