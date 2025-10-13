@@ -1,4 +1,4 @@
-import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -7,6 +7,7 @@ import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import '../AirCraftSection/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
@@ -31,10 +32,13 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    context.read<AllPlanesCubit>().loadListOAllAirbusModels(
-      selectedAirbusId: widget.selectedAirbusId,
-      context: context,
-    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AllPlanesCubit>().loadListOAllAirbusModels(
+        selectedAirbusId: widget.selectedAirbusId,
+        context: context,
+      );
+    });
   }
 
   void _onScroll() {
@@ -53,8 +57,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   }
 
   void _onSearch(String value) {
-    final cubit = context.read<AllPlanesCubit>();
-    cubit.loadListOAllAirbusModels(
+    context.read<AllPlanesCubit>().loadListOAllAirbusModels(
       context: context,
       query: value,
       page: 1,
@@ -66,42 +69,52 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
+    double titleFontSize = kIsWeb ? screenWidth * 0.02 : 18;
+    double bodyFontSize = kIsWeb ? screenWidth * 0.015 : 16;
+    double paddingHorizontal = kIsWeb ? screenWidth * 0.02 : 20;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900), // Web max width
+            constraints: const BoxConstraints(maxWidth: 1500), // ✅ Responsive max width
             child: Column(
               children: [
-                const SizedBox(height: 10),
-                SearchBarWidget(
-                  enableBackArrow: true,
-                  enableFilter: false,
-                  enableCloseScreen: false,
-                  controller: searchController,
-                  onChanged: _onSearch,
-                  searchTitle: 'Search ${widget.manufacturerName} Models',
-                  onBackButtonTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const SizedBox(height: 10),
+                SizedBox(height: kIsWeb ? 15 : 10),
+                // Search Bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+                  child: SearchBarWidget(
+                    enableBackArrow: true,
+                    enableFilter: false,
+                    enableCloseScreen: false,
+                    controller: searchController,
+                    onChanged: _onSearch,
+                    searchTitle: 'Search ${widget.manufacturerName} Models',
+                    onBackButtonTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                SizedBox(height: kIsWeb ? 15 : 10),
+                // Title
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'All ${widget.manufacturerName} Models',
                       style: TextStyle(
-                        fontSize: screenWidth > 600 ? 18 : 13,
+                        fontSize: titleFontSize,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: kIsWeb ? 10 : 10),
+                // Aircraft List
                 Expanded(
                   child: BlocBuilder<AllPlanesCubit, AllPlanesState>(
                     builder: (context, state) {
@@ -124,10 +137,14 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                         itemCount: state.listoFAircraftModels.length,
                         itemBuilder: (context, index) {
                           final model = state.listoFAircraftModels[index];
+
+                          double cardHorizontalPadding =
+                          kIsWeb ? screenWidth * 0.02 : 30;
+
                           return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 30,
+                            padding: EdgeInsets.symmetric(
+                              vertical: kIsWeb ? 8 : 10,
+                              horizontal: cardHorizontalPadding,
                             ),
                             child: Stack(
                               children: [
@@ -144,7 +161,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                       color: (model.isFavorite == true
                                           ? Colors.black
                                           : Colors.white),
-                                      size: 25,
+                                      size: kIsWeb ? 22 : 25,
                                     ),
                                   ),
                                 ),
@@ -158,11 +175,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         onPressed: (_) {
                                           context
                                               .read<AllPlanesCubit>()
-                                              .toggleFavorite(
-                                                model.id,
-                                                context,
-                                              );
-                                          debugPrint("Tapped delete");
+                                              .toggleFavorite(model.id, context);
                                         },
                                         backgroundColor: Colors.transparent,
                                         child: const SizedBox.shrink(),
@@ -184,18 +197,16 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                     ),
                                     child: ListTile(
                                       contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                          ),
+                                      const EdgeInsets.symmetric(horizontal: 10),
                                       leading: CachedAnyImage(
                                         imagePath: model.image,
-                                        width: screenWidth * 0.18,
-                                        height: screenWidth * 0.1,
+                                        width: kIsWeb ? screenWidth * 0.12 : screenWidth * 0.18,
+                                        height: kIsWeb ? screenWidth * 0.08 : screenWidth * 0.1,
                                         contentImage: BoxFit.fill,
                                       ),
                                       title: Wrap(
                                         crossAxisAlignment:
-                                            WrapCrossAlignment.center,
+                                        WrapCrossAlignment.center,
                                         spacing: 8,
                                         runSpacing: 4,
                                         children: [
@@ -203,22 +214,16 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             model.model,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              fontSize: screenWidth > 600
-                                                  ? 18
-                                                  : 16,
+                                              fontSize: bodyFontSize,
                                             ),
                                           ),
                                           if (model.ICAOCode.isNotEmpty)
                                             Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 6,
-                                                    vertical: 2,
-                                                  ),
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 6, vertical: 2),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
+                                                borderRadius: BorderRadius.circular(4),
                                                 boxShadow: const [
                                                   BoxShadow(
                                                     color: Colors.grey,
@@ -236,18 +241,13 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             ),
                                         ],
                                       ),
-
-                                      trailing: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15,
-                                      ),
+                                      trailing: const Icon(Icons.arrow_forward_ios, size: 15),
                                       onTap: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) => BlocProvider(
-                                              create: (_) =>
-                                                  AirCraftDetailCubit(),
+                                              create: (_) => AirCraftDetailCubit(),
                                               child: AirCraftDetailScreen(
                                                 aircraftId: model.id,
                                               ),

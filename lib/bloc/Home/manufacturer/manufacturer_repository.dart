@@ -16,16 +16,17 @@ class ManufacturerRepository {
     String? query,
     int page = 1,
   }) async {
-    if (!await GenericMethods.hasInternet()) {
-      return PaginatedList<ManufacturerListModel>(
-        results: await _getLocalData(),
-        count: 0,
-        totalPages: 1,
-        currentPage: 1,
-        hasNext: false,
-        hasPrevious: false,
-      );
-    }
+    // Not working in the web section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return PaginatedList<ManufacturerListModel>(
+    //     results: await _getLocalData(),
+    //     count: 0,
+    //     totalPages: 1,
+    //     currentPage: 1,
+    //     hasNext: false,
+    //     hasPrevious: false,
+    //   );
+    // }
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListManufacturer}?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",

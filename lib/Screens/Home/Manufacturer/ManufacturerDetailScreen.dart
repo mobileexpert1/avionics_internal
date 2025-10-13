@@ -1,12 +1,15 @@
 import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
@@ -68,9 +71,19 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
         return Scaffold(
           backgroundColor: Colors.white,
+          appBar: kIsWeb
+              ? CustomAppBar(
+                  title: "",
+                  leftButton: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                )
+              : null,
           body: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1500), // Web max width
+              constraints: const BoxConstraints(maxWidth: 1500),
+              // Web max width
               child: SingleChildScrollView(
                 child: Stack(
                   children: [
@@ -80,42 +93,145 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                           screenHeight,
                           detail.general.coverPhoto,
                         ),
-
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 0,
-                              ),
-                              child: Container(
-                                width: double.infinity,
-                                color: Colors.grey.shade100,
+                            if (kIsWeb)
+                              Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 8,
-                                ), // Internal padding
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 45),
-                                    Text(
-                                      detail.general.companyName,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+                                  horizontal: 0,
+                                ),
+                                child: Container(
+                                  width: double.infinity,
+                                  color: Colors.grey.shade100,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 16,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      ClipOval(
+                                        child: Container(
+                                          width: screenWidth * 0.03,
+
+                                          height: screenWidth * 0.03,
+
+                                          color: Colors.grey.shade200,
+                                          child: Builder(
+                                            builder: (context) {
+                                              final logoUrl =
+                                                  '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                                              final isSvg = detail.general.logo
+                                                  .contains(".svg");
+                                              final isAsset = detail
+                                                  .general
+                                                  .logo
+                                                  .contains("assets");
+
+                                              if (isAsset) {
+                                                return Image.asset(
+                                                  detail.general.logo,
+                                                  width: screenWidth * 0.06,
+                                                  height: screenWidth * 0.06,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              } else {
+                                                return isSvg
+                                                    ? SvgPicture.network(
+                                                        logoUrl,
+                                                        fit: BoxFit.contain,
+                                                        placeholderBuilder:
+                                                            (
+                                                              context,
+                                                            ) => SvgPicture.asset(
+                                                              CommonUi.setSvgImage(
+                                                                AssetsPath
+                                                                    .manuFirstImage,
+                                                              ),
+                                                              height: 10,
+                                                              width: 10,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            ),
+                                                      )
+                                                    : Image.network(
+                                                        logoUrl,
+                                                        width:
+                                                            screenWidth * 0.06,
+                                                        height:
+                                                            screenWidth * 0.06,
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder: (_, _, _) =>
+                                                            SvgPicture.asset(
+                                                              CommonUi.setSvgImage(
+                                                                AssetsPath
+                                                                    .manuFirstImage,
+                                                              ),
+                                                              height: 10,
+                                                              width: 10,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            ),
+                                                      );
+                                              }
+                                            },
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    // const SizedBox(height: 4),
-                                    // Text(
-                                    //   detail.general.description,
-                                    //   style: TextStyle(fontSize: 14),
-                                    // ),
-                                    const SizedBox(height: 20),
-                                  ],
+                                      const SizedBox(width: 16),
+
+                                      // --- TITLE + SUBTITLE ---
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              detail.general.companyName,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                            if (!kIsWeb)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                ),
+                                child: Container(
+                                  width: double.infinity,
+                                  color: Colors.grey.shade100,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 8,
+                                  ), // Internal padding
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 45),
+                                      Text(
+                                        detail.general.companyName,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             const SizedBox(height: 20),
 
                             // All List Of Airplane
@@ -324,7 +440,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 horizontal: 25,
                               ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: List.generate(
                                   // show 2 facts by default, full list if expanded
                                   showInterestingFacts
@@ -358,82 +474,84 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                         const SizedBox(height: 50),
                       ],
                     ),
-                    Positioned(
-                      top: screenHeight * 0.06,
-                      left: screenWidth * 0.05,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: screenHeight * 0.21,
-                      left: screenWidth * 0.06,
-                      child: ClipOval(
-                        child: Container(
-                          width: screenWidth * 0.22,
-                          height: screenWidth * 0.22,
-                          color:
-                              Colors.grey.shade200, // Background circle color
-                          child: Builder(
-                            builder: (context) {
-                              final logoUrl =
-                                  '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
-                              debugPrint(logoUrl);
 
-                              final isSvg = detail.general.logo.contains(
-                                ".svg",
-                              );
-                              final isAsset = detail.general.logo.contains(
-                                "assets",
-                              );
-
-                              if (isAsset) {
-                                return Image.asset(
-                                  detail.general.logo,
-                                  width: screenWidth * 0.22,
-                                  height: screenWidth * 0.22,
-                                  fit: BoxFit.cover,
-                                );
-                              } else {
-                                return isSvg
-                                    ? SvgPicture.network(
-                                        logoUrl,
-                                        fit: BoxFit.contain,
-                                        placeholderBuilder: (context) =>
-                                            SvgPicture.asset(
-                                              CommonUi.setSvgImage(
-                                                AssetsPath.manuFirstImage,
-                                              ),
-                                              height: 10,
-                                              width: 10,
-                                              fit: BoxFit.contain,
-                                            ),
-                                      )
-                                    : Image.network(
-                                        logoUrl,
-                                        width: screenWidth * 0.22,
-                                        height: screenWidth * 0.22,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (_, _, _) =>
-                                            SvgPicture.asset(
-                                              CommonUi.setSvgImage(
-                                                AssetsPath.manuFirstImage,
-                                              ),
-                                              height: 10,
-                                              width: 10,
-                                              fit: BoxFit.contain,
-                                            ),
-                                      );
-                              }
-                            },
+                    if (kIsWeb == false)
+                      Positioned(
+                        top: screenHeight * 0.06,
+                        left: screenWidth * 0.05,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
+                    // Positioned(
+                    //   top: screenHeight * 0.21,
+                    //   left: screenWidth * 0.06,
+                    //   child: ClipOval(
+                    //     child: Container(
+                    //       width: screenWidth * 0.22,
+                    //       height: screenWidth * 0.22,
+                    //       color:
+                    //           Colors.grey.shade200, // Background circle color
+                    //       child: Builder(
+                    //         builder: (context) {
+                    //           final logoUrl =
+                    //               '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                    //           debugPrint(logoUrl);
+                    //
+                    //           final isSvg = detail.general.logo.contains(
+                    //             ".svg",
+                    //           );
+                    //           final isAsset = detail.general.logo.contains(
+                    //             "assets",
+                    //           );
+                    //
+                    //           if (isAsset) {
+                    //             return Image.asset(
+                    //               detail.general.logo,
+                    //               width: screenWidth * 0.22,
+                    //               height: screenWidth * 0.22,
+                    //               fit: BoxFit.cover,
+                    //             );
+                    //           } else {
+                    //             return isSvg
+                    //                 ? SvgPicture.network(
+                    //                     logoUrl,
+                    //                     fit: BoxFit.contain,
+                    //                     placeholderBuilder: (context) =>
+                    //                         SvgPicture.asset(
+                    //                           CommonUi.setSvgImage(
+                    //                             AssetsPath.manuFirstImage,
+                    //                           ),
+                    //                           height: 10,
+                    //                           width: 10,
+                    //                           fit: BoxFit.contain,
+                    //                         ),
+                    //                   )
+                    //                 : Image.network(
+                    //                     logoUrl,
+                    //                     width: screenWidth * 0.22,
+                    //                     height: screenWidth * 0.22,
+                    //                     fit: BoxFit.contain,
+                    //                     errorBuilder: (_, _, _) =>
+                    //                         SvgPicture.asset(
+                    //                           CommonUi.setSvgImage(
+                    //                             AssetsPath.manuFirstImage,
+                    //                           ),
+                    //                           height: 10,
+                    //                           width: 10,
+                    //                           fit: BoxFit.contain,
+                    //                         ),
+                    //                   );
+                    //           }
+                    //         },
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -531,7 +649,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       child: Image.network(
         coverImages.url,
         width: MediaQuery.of(context).size.width,
-        height: screenHeight * 0.26,
+        height: screenHeight * 0.30,
         fit: BoxFit.cover,
       ),
     );
