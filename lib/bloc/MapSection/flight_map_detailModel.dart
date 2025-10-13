@@ -60,7 +60,7 @@ class FlightAircraftDetail extends Equatable {
   final String? actualArrivalIata;
   final DateTime? landingTime;
   final String? landingRunway;
-  final int? flightTime;
+  final String? flightTime;
   final double? actualDistance;
   final double? circleDistance;
   final String? category;
@@ -74,6 +74,9 @@ class FlightAircraftDetail extends Equatable {
   final int? groundSpeed;
   final int? altitude;
   final DateTime? eta;
+  final String? squawk;
+  final String? source;
+  final int? vspeed;
 
   // Aircraft fields
   final String? aircraftModel;
@@ -117,6 +120,9 @@ class FlightAircraftDetail extends Equatable {
     this.groundSpeed,
     this.altitude,
     this.eta,
+    this.squawk,
+    this.source,
+    this.vspeed,
 
     // Aircraft
     this.aircraftModel,
@@ -170,6 +176,9 @@ class FlightAircraftDetail extends Equatable {
       groundSpeed: json['ground_speed'],
       altitude: json['altitude'],
       eta: json['eta'] != null ? DateTime.tryParse(json['eta']) : null,
+      squawk: json['squawk'],
+      source: json['source'],
+      vspeed: json['vspeed'],
 
       // Aircraft
       aircraftModel: json['Aircraft_Model'],
@@ -225,6 +234,9 @@ class FlightAircraftDetail extends Equatable {
     groundSpeed,
     altitude,
     eta,
+    squawk,
+    source,
+    vspeed,
     aircraftModel,
     isFavorite,
     icaoTypeCode,
@@ -266,19 +278,27 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
     int? track,
     int? groundSpeed,
     int? altitude,
+    DateTime? takeoffTime,
     DateTime? eta,
+    String? flightNumber,
+    String? callsign,
+    String? registration,
+    String? squawk,
+    String? source,
+    int? vspeed,
+    String? flightTime,
   }) {
     return FlightAircraftDetail(
       id: id,
-      flightNumber: flightNumber,
-      callsign: callsign,
+      flightNumber: flightNumber ?? this.flightNumber,
+      callsign: callsign ?? this.callsign,
       operatingAs: operatingAs,
       paintedAs: paintedAs,
       type: type,
-      registration: registration,
+      registration: registration ?? this.registration,
       departureIcao: departureIcao,
       departureIata: departureIata,
-      takeoffTime: takeoffTime,
+      takeoffTime: takeoffTime ?? this.takeoffTime,
       takeoffRunway: takeoffRunway,
       arrivalIcao: arrivalIcao,
       arrivalIata: arrivalIata,
@@ -286,7 +306,7 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
       actualArrivalIata: actualArrivalIata,
       landingTime: landingTime,
       landingRunway: landingRunway,
-      flightTime: flightTime,
+      flightTime: flightTime ?? this.flightTime,
       actualDistance: actualDistance,
       circleDistance: circleDistance,
       category: category,
@@ -300,6 +320,9 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
       groundSpeed: groundSpeed ?? this.groundSpeed,
       altitude: altitude ?? this.altitude,
       eta: eta ?? this.eta,
+      squawk: squawk ?? this.squawk,
+      source: source ?? this.source,
+      vspeed: vspeed ?? this.vspeed,
       aircraftModel: aircraftModel,
       isFavorite: isFavorite,
       icaoTypeCode: icaoTypeCode,
@@ -310,6 +333,7 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
     );
   }
 }
+
 
 class AirportModel {
   final String id;

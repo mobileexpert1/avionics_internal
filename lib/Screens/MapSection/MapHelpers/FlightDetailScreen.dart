@@ -1,6 +1,7 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/AppColors.dart';
@@ -8,17 +9,23 @@ import '../../../../Helpers/Custom_widget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
+import '../../../bloc/MapSection/flight_map_detailModel.dart';
 
-class AirCraftDetailScreen extends StatefulWidget {
-  final String aircraftId;
+class FlightDetailScreen extends StatefulWidget {
+  final String ICAOType;
+  final FlightAircraftDetail? flightDetail;
 
-  const AirCraftDetailScreen({super.key, required this.aircraftId});
+  const FlightDetailScreen({
+    super.key,
+    required this.ICAOType,
+    this.flightDetail,
+  });
 
   @override
-  State<AirCraftDetailScreen> createState() => _AirCraftDetailScreenState();
+  State<FlightDetailScreen> createState() => _AirCraftDetailScreenState();
 }
 
-class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
+class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   bool showIdentification = true;
   bool showPowerSection = true;
   bool showDimensionSection = true;
@@ -29,11 +36,15 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   bool showLandingSection = true;
   bool showCertificationSection = true;
 
+  bool showIdentificationFlight = true;
+  bool showFlightPlan = true;
+  bool showTrackingStatus = true;
+
   @override
   void initState() {
     super.initState();
-    context.read<AirCraftDetailCubit>().fetchAircraftDetailById(
-      widget.aircraftId,
+    context.read<AirCraftDetailCubit>().fetchAircraftDetailByICAOCode(
+      widget.ICAOType,
       context,
     );
   }
@@ -55,8 +66,10 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         return Scaffold(
           appBar: CustomAppBar(
             title:
-                state.airCraftDetails?.results.identification.aircraftModel ??
-                "",
+                "${state.airCraftDetails?.results.identification.icaoTypeCode ?? ''}"
+                " , "
+                "${state.airCraftDetails?.results.identification.aircraftModel ?? ''}",
+
             centerTitle: false,
             leftButton: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
@@ -187,7 +200,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           final isSingleImage = coverImages.length == 1;
           final imageWidth = isSingleImage
               ? MediaQuery.of(context).size.width - 30
-              : 300.0; // or 300.toDouble();
+              : 300.0;
           final imagePadding = isSingleImage
               ? const EdgeInsets.symmetric(horizontal: 0)
               : const EdgeInsets.only(right: 10);
@@ -196,43 +209,44 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
           return Padding(
             padding: imagePadding,
-            child: GestureDetector(
-              onTap: hasCopyright
-                  ? () async {
-                      final uri = Uri.tryParse(image.source);
-                      if (uri != null && await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Could not open URL.')),
-                        );
-                      }
-                    }
-                  : null,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Stack(
-                  children: [
-                    Image.network(
-                      image.url,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Stack(
+                children: [
+                  Image.network(
+                    image.url,
+                    width: imageWidth,
+                    height: screenHeight * 0.18,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
                       width: imageWidth,
                       height: screenHeight * 0.18,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: imageWidth,
-                        height: screenHeight * 0.18,
-                        color: Colors.grey.shade300,
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.broken_image),
-                      ),
+                      color: Colors.grey.shade300,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.broken_image),
                     ),
-                    if (hasCopyright)
-                      Positioned(
-                        left: 8,
-                        bottom: 8,
+                  ),
+
+                  if (hasCopyright)
+                    Positioned(
+                      left: 8,
+                      bottom: 8,
+                      child: GestureDetector(
+                        onTap: () async {
+                          final uri = Uri.tryParse(image.source);
+                          if (uri != null && await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not open URL.'),
+                              ),
+                            );
+                          }
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
@@ -255,8 +269,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                           ),
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ),
           );
@@ -284,6 +298,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           children: [
             _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
             //Text(aircraftData?.identification.avionicsSystem ?? ""),
+            const SizedBox(height: 10),
+            _buildFlightDataSection(context),
           ],
         ),
       ),
@@ -499,10 +515,333 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
+  Widget _buildFlightDataSection(BuildContext context) {
+    final flight = widget.flightDetail;
+    if (flight == null) return const SizedBox.shrink();
+    return Container(
+      color: const Color(0xFF3E3C55),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader(
+            title: "IDENTIFICATION & POSITION",
+            isExpanded: showIdentificationFlight,
+            onTap: () => setState(
+              () => showIdentificationFlight = !showIdentificationFlight,
+            ),
+            showBlueDot: true,
+          ),
+          if (showIdentificationFlight)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Builder(
+                builder: (_) {
+                  final detail = widget.flightDetail;
+
+                  DateTime? takeoffTime = detail?.takeoffTime;
+                  DateTime? eta = detail?.eta;
+                  String timeSinceTakeoff = 'N/A';
+                  String timeToArrival = 'N/A';
+                  double progress = 0.0;
+
+                  String _formatDuration(Duration duration) {
+                    final hours = duration.inHours;
+                    final minutes = duration.inMinutes.remainder(60);
+                    if (hours == 0 && minutes == 0) return '0 min';
+                    if (hours == 0) return '$minutes min';
+                    if (minutes == 0) return '${hours}h';
+                    return '${hours}h ${minutes}min';
+                  }
+
+                  if (takeoffTime != null) {
+                    final duration = DateTime.now().toUtc().difference(
+                      takeoffTime,
+                    );
+                    timeSinceTakeoff = '${_formatDuration(duration)} ago';
+                  }
+
+                  if (eta != null) {
+                    final duration = eta.difference(DateTime.now().toUtc());
+                    timeToArrival = duration.isNegative
+                        ? 'Landed'
+                        : 'in ${_formatDuration(duration)}';
+                  }
+
+                  if (takeoffTime != null && eta != null) {
+                    final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
+                    final etaMillis = eta.millisecondsSinceEpoch;
+                    final nowMillis = DateTime.now()
+                        .toUtc()
+                        .millisecondsSinceEpoch;
+                    final totalDuration = etaMillis - takeoffMillis;
+                    final elapsed = nowMillis - takeoffMillis;
+                    if (totalDuration > 0) {
+                      progress = (elapsed / totalDuration).clamp(0.0, 1.0);
+                    }
+                  }
+
+                  final departureCity = detail?.originAirport?.city ?? 'N/A';
+                  final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
+                  final departureIata = detail?.departureIcao ?? 'N/A';
+                  final arrivalIata = detail?.arrivalIcao ?? 'N/A';
+                  final groundSpeed = detail?.groundSpeed ?? 0;
+                  final altitude = detail?.altitude ?? 0;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                departureCity,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                departureIata,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                timeSinceTakeoff,
+                                style: const TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+                                    backgroundColor: Colors.grey.shade300,
+                                    color: Colors.blue,
+                                    minHeight: 5,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      groundSpeed == 0
+                                          ? 'N/A'
+                                          : '$groundSpeed km/h',
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      "•",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      altitude == 0 ? 'N/A' : '$altitude m',
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                arrivalCity,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                arrivalIata,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                timeToArrival,
+                                style: const TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 🧭 Flight Info
+                      _buildFieldRows([
+                        ['Call Sign', detail?.callsign ?? 'N/A'],
+                        ['Flight Code', detail?.flightNumber ?? 'N/A'],
+                        ['Squawk', detail?.squawk ?? 'N/A', true],
+                        ['ADS-B Hex', detail?.hex ?? 'N/A', true],
+                        [
+                          'Latitude',
+                          detail?.latitude.toString() ?? 'N/A',
+                          true,
+                        ],
+                        [
+                          'Longitude',
+                          detail?.longitude.toString() ?? 'N/A',
+                          true,
+                        ],
+                        ['Registration', detail?.registration ?? 'N/A', true],
+                        ['Data Source', detail?.source ?? 'N/A', true],
+                      ]),
+                    ],
+                  );
+                },
+              ),
+            ),
+          const Divider(
+            height: 0,
+            color: AppColors.sepratorColourAppBar,
+            thickness: 3,
+          ),
+
+          _buildSectionHeader(
+            title: "FLIGHT PLAN",
+            isExpanded: showFlightPlan,
+            onTap: () => setState(() => showFlightPlan = !showFlightPlan),
+            showBlueDot: true,
+          ),
+          if (showFlightPlan)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildFieldRows([
+                ['Track (degree)', flight.track?.toString() ?? 'N/A'],
+                ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
+                [
+                  'Ground Speed (km/h)',
+                  flight.groundSpeed?.toString() ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Vertical Speed (ft/min)',
+                  flight.vspeed?.toString() ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Airport of Departure',
+                  flight.originAirport?.city ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Airport of Arrival',
+                  flight.destinationAirport?.city ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Take-off Time',
+                  flight.takeoffTime != null
+                      ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.takeoffTime!.toLocal())} IST'
+                      : 'N/A',
+                  true,
+                ],
+                [
+                  'Estimated Time of Arrival',
+                  flight.eta != null
+                      ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.eta!.toLocal())} IST'
+                      : 'N/A',
+                  true,
+                ],
+                [
+                  'Take-off Runway',
+                  flight.takeoffRunway?.toString() ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Landing Runway',
+                  flight.landingRunway?.toString() ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Actual ground distance (km)',
+                  flight.actualDistance?.toString() ?? 'N/A',
+                  true,
+                ],
+                [
+                  'Circle distance (km)',
+                  flight.circleDistance?.toString() ?? 'N/A',
+                  true,
+                ],
+                ['Flight Duration', flight.flightTime ?? 'N/A', true],
+                // ['Time Zone', 'InterGlobe Aviation Ltd',true],
+                [
+                  'Carrier Operating',
+                  flight.operatingAs?.toString() ?? 'N/A',
+                  true,
+                ],
+              ]),
+            ),
+          const Divider(
+            height: 0,
+            color: AppColors.sepratorColourAppBar,
+            thickness: 3,
+          ),
+
+          // Tracking Status Section
+          _buildSectionHeader(
+            title: "TRACKING STATUS",
+            isExpanded: showTrackingStatus,
+            onTap: () =>
+                setState(() => showTrackingStatus = !showTrackingStatus),
+            showBlueDot: true,
+          ),
+          if (showTrackingStatus)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildFieldRows([
+                ['First seen', flight.firstSeen?.toString() ?? 'N/A'],
+                ['Last seen', flight.lastSeen?.toString() ?? 'N/A'],
+                ['Landed', flight.flightEnded == true ? "Yes (Ended)" : "No"],
+                ['Landing Time', flight.landingTime?.toString() ?? 'N/A'],
+              ]),
+            ),
+          const Divider(
+            height: 0,
+            color: AppColors.sepratorColourAppBar,
+            thickness: 3,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSectionHeader({
     required String title,
     required bool isExpanded,
     required VoidCallback onTap,
+    Color textColor = Colors.white,
+    bool showBlueDot = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,27 +856,39 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                    child: Text(
-                      title.toUpperCase(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: Color(0xFF3F3D56),
+                  Row(
+                    children: [
+                      if (showBlueDot)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      Text(
+                        title.toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: textColor,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-
                   Row(
                     children: [
                       Text(
                         isExpanded ? "Show Less" : "Show More",
-                        style: const TextStyle(fontSize: 13),
+                        style: TextStyle(fontSize: 13, color: textColor),
                       ),
                       Icon(
                         isExpanded
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
+                        color: textColor,
                       ),
                     ],
                   ),
@@ -546,7 +897,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
             ),
           ),
         ),
-
         Divider(
           height: 0,
           color: AppColors.sepratorColourAppBar,
@@ -559,63 +909,11 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-  Widget _buildExpandableSection({
-    required String title,
-    required bool isExpanded,
-    required VoidCallback onToggle,
-    required Widget content,
-  }) {
-    return Column(
-      children: [
-        _buildSectionHeader(
-          title: title,
-          isExpanded: isExpanded,
-          onTap: onToggle,
-        ),
-        isExpanded
-            ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: content,
-              )
-            : const SizedBox.shrink(),
-        const Divider(
-          height: 0,
-          color: AppColors.sepratorColourAppBar,
-          thickness: 3,
-        ),
-      ],
-    );
-  }
-
-  // Widget _buildFieldRows(List<List<String>> fields) {
-  //   return Column(
-  //     children: List.generate((fields.length / 2).ceil(), (i) {
-  //       final first = fields[i * 2];
-  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-  //
-  //       return Padding(
-  //         padding: const EdgeInsets.only(bottom: 15),
-  //         child: Row(
-  //           children: [
-  //             Expanded(
-  //               child: customField(label: first[0], text: first[1]),
-  //             ),
-  //             const SizedBox(width: 15),
-  //             Expanded(
-  //               child: second != null
-  //                   ? customField(label: second[0], text: second[1])
-  //                   : const SizedBox(),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }),
-  //   );
-  // }
   Widget _buildFieldRows(
-    List<List<String>> fields, {
+    List<List<dynamic>> fields, {
     Color labelColor = Colors.white70,
     Color valueColor = Colors.white,
+    List<int>? showInfoFields,
   }) {
     return Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
@@ -632,6 +930,9 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                   text: first[1],
                   labelColor: labelColor,
                   textColor: valueColor,
+                  showInfoIcon:
+                      (first.length > 2 && first[2] == true) ||
+                      (showInfoFields?.contains(i * 2) ?? false),
                 ),
               ),
               const SizedBox(width: 15),
@@ -642,6 +943,9 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                         text: second[1],
                         labelColor: labelColor,
                         textColor: valueColor,
+                        showInfoIcon:
+                            (second.length > 2 && second[2] == true) ||
+                            (showInfoFields?.contains(i * 2 + 1) ?? false),
                       )
                     : const SizedBox(),
               ),
@@ -649,6 +953,36 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildExpandableSection({
+    required String title,
+    required bool isExpanded,
+    required VoidCallback onToggle,
+    required Widget content,
+    Color headerColor = const Color(0xFF3F3D56),
+  }) {
+    return Column(
+      children: [
+        _buildSectionHeader(
+          title: title,
+          isExpanded: isExpanded,
+          onTap: onToggle,
+          textColor: headerColor,
+        ),
+        isExpanded
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: content,
+              )
+            : const SizedBox.shrink(),
+        const Divider(
+          height: 0,
+          color: AppColors.sepratorColourAppBar,
+          thickness: 3,
+        ),
+      ],
     );
   }
 }

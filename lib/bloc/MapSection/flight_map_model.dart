@@ -22,7 +22,6 @@ class FlightResponse {
   String toString() => 'FlightResponse(${flights.length} flights)';
 }
 
-
 class FlightModel {
   final String id;
   final String flightNumber;
@@ -46,6 +45,8 @@ class FlightModel {
   final String arrivalIata;
   final String arrivalIcao;
   final DateTime? eta;
+  final DateTime? takeoffTime;
+  final String? flightTime;
   final AircraftModel? aircraftDetails;
 
   FlightModel({
@@ -71,6 +72,8 @@ class FlightModel {
     required this.arrivalIata,
     required this.arrivalIcao,
     this.eta,
+    this.takeoffTime,
+    this.flightTime,
     this.aircraftDetails,
   });
 
@@ -97,6 +100,8 @@ class FlightModel {
     String? arrivalIata,
     String? arrivalIcao,
     DateTime? eta,
+    DateTime? takeoffTime,
+    String? flightTime,
     AircraftModel? aircraftDetails,
   }) {
     return FlightModel(
@@ -122,6 +127,8 @@ class FlightModel {
       arrivalIata: arrivalIata ?? this.arrivalIata,
       arrivalIcao: arrivalIcao ?? this.arrivalIcao,
       eta: eta ?? this.eta,
+      takeoffTime: takeoffTime ?? this.takeoffTime,
+      flightTime: flightTime ?? this.flightTime,
       aircraftDetails: aircraftDetails ?? this.aircraftDetails,
     );
   }
@@ -169,6 +176,8 @@ class FlightModel {
       arrivalIata: _str(json['dest_iata']),
       arrivalIcao: _str(json['dest_icao']),
       eta: _parseDate(json['eta']),
+      takeoffTime: _parseDate(json['datetime_takeoff']),
+      flightTime: _str(json['flight_time']),
     );
   }
 
@@ -195,9 +204,11 @@ class FlightModel {
     'dest_iata': arrivalIata,
     'dest_icao': arrivalIcao,
     'eta': eta?.toUtc().toIso8601String(),
+    'takeoff_time': takeoffTime?.toUtc().toIso8601String(),
+    'flight_time': flightTime,
   };
 
   @override
   String toString() =>
-      'Flight($flightNumber, $callSign, $latitude,$longitude alt:$altitude)';
+      'Flight($flightNumber, $callSign, alt:$altitude, takeoff:$takeoffTime, flightTime:$flightTime)';
 }

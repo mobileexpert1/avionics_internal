@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 Widget customField({
   required String label,
@@ -8,7 +9,9 @@ Widget customField({
   double? width,
   double? fontSize,
   bool showInfoIcon = false,
-  bool isDarkDivider = false,// Toggle icon visibility
+  bool isDarkDivider = false,
+  Color labelColor = Colors.white70,
+  Color textColor = Colors.white,
 }) {
   return SizedBox(
     width: width,
@@ -18,7 +21,7 @@ Widget customField({
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey.shade700,
+            color: labelColor,
             fontSize: fontSize != null ? fontSize - 2 : 11,
           ),
         ),
@@ -31,14 +34,14 @@ Widget customField({
               child: Text(
                 text,
                 style: TextStyle(
-                  color: Color(0xFF3F3D56),
+                  color: textColor,
                   fontSize: fontSize ?? 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             if (showInfoIcon)
-              Image.asset(CommonUi.setPngImage(AssetsPath.infoIcon))
+              SvgPicture.asset(CommonUi.setSvgImage(AssetsPath.flightinfoIcon))
           ],
         ),
 

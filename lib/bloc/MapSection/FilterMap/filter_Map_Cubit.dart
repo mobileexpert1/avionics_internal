@@ -68,9 +68,14 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
         selectedCategories: [],
         showCategories: true,
         showMap: true,
-        showAircraftLabels: false,
+        showAircraftLabels: true,
         mapType: MapType.normal,
       ),
     );
   }
+
+
+
+
+
 }

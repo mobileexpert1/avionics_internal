@@ -238,7 +238,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         (detail) =>
             detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
         orElse: () => AircraftModel(
-          id: '',
+          aircraftId: '',
           aircraftModel: '',
           isFavorite: false,
           icaoTypeCode: '',

@@ -6,6 +6,7 @@ import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'MapHelpers/FlightDetailScreen.dart';
 import 'MapHelpers/LiveBadge.dart';
 import 'MapHelpers/MapToggleButtons.dart';
 import '../../Helpers/CustomDivider.dart';
@@ -438,7 +439,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   Future<BitmapDescriptor> _getBitmapDescriptorFromSvgAsset({
     required String assetName,
     required double size,
-    Color? color, // optional color parameter
+    Color? color,
   }) async {
     try {
       final pictureInfo = await vg.loadPicture(SvgAssetLoader(assetName), null);
@@ -1199,6 +1200,95 @@ class FlightCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade300, width: 1),
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          final combinedDetail = detail?.copyWith(
+                            latitude:
+                                (detail?.latitude != null &&
+                                    detail!.latitude != 0.0)
+                                ? detail.latitude
+                                : selectedFlight?.latitude,
+                            longitude:
+                                (detail?.longitude != null &&
+                                    detail!.longitude != 0.0)
+                                ? detail.longitude
+                                : selectedFlight?.longitude,
+                            groundSpeed:
+                                detail?.groundSpeed ??
+                                selectedFlight?.groundSpeed,
+                            altitude:
+                                detail?.altitude ?? selectedFlight?.altitude,
+                            takeoffTime:
+                                detail?.takeoffTime ??
+                                selectedFlight?.takeoffTime,
+                            eta: detail?.eta ?? selectedFlight?.eta,
+                            flightNumber:
+                                detail?.flightNumber ??
+                                selectedFlight?.flightNumber,
+                            registration:
+                                detail?.registration ??
+                                selectedFlight?.registration,
+                            callsign:
+                                detail?.callsign ?? selectedFlight?.callSign,
+                            track: detail?.track ?? selectedFlight?.track,
+                            vspeed:
+                                detail?.vspeed ?? selectedFlight?.verticalSpeed,
+                            source: detail?.source ?? selectedFlight?.source,
+                            squawk: detail?.squawk ?? selectedFlight?.squawk,
+                            flightTime:
+                                detail?.flightTime ??
+                                selectedFlight?.flightTime,
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: context.read<FlightMapCubit>(),
+                                child: FlightDetailScreen(
+                                  ICAOType: category,
+                                  flightDetail: combinedDetail,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                "View Details",
+                                style: TextStyle(
+                                  color: Color(0xFF3F3D56),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                                color: Color(0xFF3F3D56),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -1241,7 +1331,7 @@ class AirportStationCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black12,
               blurRadius: 10,
-              offset: Offset(0, -2), // slight shadow above
+              offset: Offset(0, -2),
             ),
           ],
         ),
@@ -1251,7 +1341,16 @@ class AirportStationCard extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [Text("Airport Details")],
+                children: const [
+                  Text(
+                    "Airport Details",
+                    style: TextStyle(
+                      color: Color(0xFF3E3C55),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               Row(
@@ -1260,6 +1359,8 @@ class AirportStationCard extends StatelessWidget {
                     child: customField(
                       label: 'Name',
                       text: detail.name == "" ? "N/A" : detail.name,
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1267,6 +1368,8 @@ class AirportStationCard extends StatelessWidget {
                     child: customField(
                       label: 'City',
                       text: detail.city == "" ? "N/A" : detail.city,
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                 ],
@@ -1278,6 +1381,8 @@ class AirportStationCard extends StatelessWidget {
                     child: customField(
                       label: 'State',
                       text: detail.state == "" ? "N/A" : detail.state,
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1285,6 +1390,8 @@ class AirportStationCard extends StatelessWidget {
                     child: customField(
                       label: 'Country',
                       text: detail.country == "" ? "N/A" : detail.country,
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                 ],
@@ -1298,9 +1405,10 @@ class AirportStationCard extends StatelessWidget {
                       text: detail.elev.toString() == ""
                           ? "N/A"
                           : detail.elev.toString(),
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
-
                   const SizedBox(width: 12),
                   Expanded(
                     child: customField(
@@ -1308,6 +1416,8 @@ class AirportStationCard extends StatelessWidget {
                       text: detail.runwayLength.toString() == ""
                           ? "N/A"
                           : detail.runwayLength.toString(),
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                 ],
@@ -1319,6 +1429,8 @@ class AirportStationCard extends StatelessWidget {
                     child: customField(
                       label: 'ICAO Code',
                       text: detail.icao == "" ? "N/A" : detail.icao ?? "",
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1328,6 +1440,8 @@ class AirportStationCard extends StatelessWidget {
                       text: detail.iataCode == ""
                           ? "N/A"
                           : detail.iataCode ?? "",
+                      labelColor: const Color(0xFF3E3C55),
+                      textColor: Colors.black,
                     ),
                   ),
                 ],
