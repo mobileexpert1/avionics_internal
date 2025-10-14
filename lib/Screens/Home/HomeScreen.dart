@@ -14,6 +14,7 @@ import '../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import 'AppBarFilterAndMapFilter/FilterScreen.dart';
+import 'HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
@@ -128,12 +129,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : screenWidth * 0.05,
                           ),
                           Container(
-                            width: size.width,
-                            height: screenWidth * 0.09,
+                            width: kIsWeb ? size.width : double.infinity,
+                            height: kIsWeb
+                                ? screenWidth * 0.09
+                                : screenWidth * 0.50,
                             color: const Color(0xFF3F3D51),
+                            //alignment: Alignment.center,
                             child: SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.WebAppLogo),
-                              fit: BoxFit.contain,
+                              CommonUi.setSvgImage(
+                                kIsWeb
+                                    ? AssetsPath.WebAppLogo
+                                    : AssetsPath.avionicaHome,
+                              ),
+                              fit: kIsWeb ? BoxFit.contain :BoxFit.cover,
                             ),
                           ),
 

@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Helpers/AppText.dart';
@@ -63,136 +66,176 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
       value: _cubit,
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: BlocBuilder<AircraftComparisonCubit, AircraftState>(
-            builder: (context, state) {
-              final models = state.aircraftList.where((model) {
-                final selected1 = widget.selectedModel1;
-                final selected2 = widget.selectedModel2;
-                final currentId = model.id;
-                return currentId != selected1 && currentId != selected2;
-              }).toList();
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SearchBarWidget(
+                  enableBackArrow: true,
+                  enableFilter: false,
+                  enableCloseScreen: false,
+                  controller: searchController,
+                  onChanged: _onSearch,
+                  searchTitle: 'Search Models',
+                  onBackButtonTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: kIsWeb ? 1500 : double.infinity,
+            ),
+            child: SafeArea(
+              child: BlocBuilder<AircraftComparisonCubit, AircraftState>(
+                builder: (context, state) {
+                  final models = state.aircraftList.where((model) {
+                    final selected1 = widget.selectedModel1;
+                    final selected2 = widget.selectedModel2;
+                    final currentId = model.id;
+                    return currentId != selected1 && currentId != selected2;
+                  }).toList();
 
-              if (state.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+                  if (state.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.04,
-                    ),
-                    child: SearchBarWidget(
-                      enableBackArrow: true,
-                      enableFilter: false,
-                      enableCloseScreen: false,
-                      controller: searchController,
-                      onChanged: _onSearch,
-                      searchTitle: 'Search Models',
-                      onBackButtonTap: () { Navigator.pop(context);
-                      },
-                    ),
-                  ),
-
-                  SizedBox(height: screenWidth * 0.04),
-
-                  Padding(
-                    padding: EdgeInsets.only(left: screenWidth * 0.06),
-                    child: AppTexts(
-                      text: "Select Model for Comparison",
-                      imageName: null,
-                      font: 'Roboto',
-                      side: 'left',
-                      color: const Color(0xFF3F3D56),
-                      weight: FontWeight.w600,
-                      fontSize: screenWidth * 0.04,
-                      imageSize: screenWidth * 0.04,
-                    ),
-                  ),
-
-                  SizedBox(height: screenWidth * 0.03),
-
-                  /// 🛩 Aircraft List
-                  Expanded(
-                    child: models.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No Compare models available',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            padding: EdgeInsets.only(
-                              bottom: screenWidth * 0.05,
-                              left: screenWidth * 0.025,
-                              right: screenWidth * 0.025,
-                            ),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount:
-                                models.length + (state.isFetchingMore ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index >= models.length) {
-                                if (state.hasNextPage) {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                } else {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Center(
-                                      child: Text(
-                                        "No more models",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-
-                              final model = models[index];
-                              return Padding(
-                                key: ValueKey(model.id),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenWidth * 0.017,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: kIsWeb
+                            ? screenWidth * 0.01
+                            : screenWidth * 0.04,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: kIsWeb
+                              ? screenWidth * 0.03
+                              : screenWidth * 0.06,
+                        ),
+                        child: AppTexts(
+                          text: "Select Model for Comparison",
+                          imageName: null,
+                          font: 'Roboto',
+                          side: 'left',
+                          color: const Color(0xFF3F3D56),
+                          weight: FontWeight.w600,
+                          fontSize: kIsWeb
+                              ? screenWidth * 0.02
+                              : screenWidth * 0.04,
+                          imageSize: kIsWeb
+                              ? screenWidth * 0.02
+                              : screenWidth * 0.04,
+                        ),
+                      ),
+                      SizedBox(
+                        height: kIsWeb
+                            ? screenWidth * 0.01
+                            : screenWidth * 0.04,
+                      ),
+                      Expanded(
+                        child: models.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  'No Compare models available',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                child: SimpleAircraftCard(
-                                  imagePath: CachedAnyImage(
-                                    imagePath: model.image,
-                                    width: screenWidth * 0.15,
-                                    height: screenWidth * 0.15,
-                                    contentImage: BoxFit.fill,
-                                  ),
-                                  model: model.aircraftModel,
-                                  badge: model.icaoTypeCode,
-                                  callSign: "",
-                                  manufacturer: model.manufacturer?.companyName,
-                                  airline: null,
-                                  airlineImagePath: CachedAnyImage(
-                                    imagePath: model.manufacturer?.logo ?? "",
-                                    width: screenWidth * 0.05,
-                                    height: screenWidth * 0.05,
-                                    contentImage: BoxFit.fill,
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context, model);
+                              )
+                            : ScrollConfiguration(
+                                behavior: const ScrollBehavior().copyWith(
+                                  scrollbars: true,
+                                  dragDevices: {
+                                    PointerDeviceKind.touch,
+                                    PointerDeviceKind.mouse,
                                   },
                                 ),
-                              );
-                            },
-                          ),
-                  ),
-                ],
-              );
-            },
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  padding: EdgeInsets.only(
+                                    bottom: screenWidth * 0.05,
+                                    left: screenWidth * 0.025,
+                                    right: screenWidth * 0.025,
+                                  ),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount:
+                                      models.length +
+                                      (state.isFetchingMore ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index >= models.length) {
+                                      if (state.hasNextPage) {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      } else {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: Text(
+                                              "No more models",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+
+                                    final model = models[index];
+                                    return Padding(
+                                      key: ValueKey(model.id),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical:
+                                            screenWidth *
+                                            (kIsWeb ? 0.0 : 0.017),
+                                      ),
+                                      child: SimpleAircraftCard(
+                                        imagePath: CachedAnyImage(
+                                          imagePath: model.image,
+                                          width: screenWidth * 0.15,
+                                          height: screenWidth * 0.15,
+                                          contentImage: BoxFit.fill,
+                                        ),
+                                        model: model.aircraftModel,
+                                        badge: model.icaoTypeCode,
+                                        callSign: "",
+                                        manufacturer:
+                                            model.manufacturer?.companyName,
+                                        airline: null,
+                                        airlineImagePath: CachedAnyImage(
+                                          imagePath:
+                                              model.manufacturer?.logo ?? "",
+                                          width: screenWidth * 0.05,
+                                          height: screenWidth * 0.05,
+                                          contentImage: BoxFit.fill,
+                                        ),
+                                        onTap: () {
+                                          Navigator.pop(context, model);
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),

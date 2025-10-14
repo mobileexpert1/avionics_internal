@@ -73,32 +73,42 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     double bodyFontSize = kIsWeb ? screenWidth * 0.015 : 16;
     double paddingHorizontal = kIsWeb ? screenWidth * 0.02 : 20;
 
+    // card height for web
+    double cardHeight = kIsWeb ? 120 : 80;
+    double imageWidth = kIsWeb ? screenWidth * 0.12 : screenWidth * 0.22;
+    double imageHeight = cardHeight - 20;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SearchBarWidget(
+                enableBackArrow: true,
+                enableFilter: false,
+                enableCloseScreen: false,
+                controller: searchController,
+                onChanged: _onSearch,
+                searchTitle: 'Search ${widget.manufacturerName} Models',
+                onBackButtonTap: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1500), // ✅ Responsive max width
+            constraints: const BoxConstraints(maxWidth: 1500),
             child: Column(
               children: [
                 SizedBox(height: kIsWeb ? 15 : 10),
-                // Search Bar
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                  child: SearchBarWidget(
-                    enableBackArrow: true,
-                    enableFilter: false,
-                    enableCloseScreen: false,
-                    controller: searchController,
-                    onChanged: _onSearch,
-                    searchTitle: 'Search ${widget.manufacturerName} Models',
-                    onBackButtonTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                SizedBox(height: kIsWeb ? 15 : 10),
-                // Title
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
                   child: Align(
@@ -114,7 +124,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                   ),
                 ),
                 SizedBox(height: kIsWeb ? 10 : 10),
-                // Aircraft List
                 Expanded(
                   child: BlocBuilder<AllPlanesCubit, AllPlanesState>(
                     builder: (context, state) {
@@ -137,7 +146,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                         itemCount: state.listoFAircraftModels.length,
                         itemBuilder: (context, index) {
                           final model = state.listoFAircraftModels[index];
-
                           double cardHorizontalPadding =
                           kIsWeb ? screenWidth * 0.02 : 30;
 
@@ -175,86 +183,121 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         onPressed: (_) {
                                           context
                                               .read<AllPlanesCubit>()
-                                              .toggleFavorite(model.id, context);
+                                              .toggleFavorite(
+                                              model.id, context);
                                         },
                                         backgroundColor: Colors.transparent,
                                         child: const SizedBox.shrink(),
                                       ),
                                     ],
                                   ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 5,
-                                          spreadRadius: 1,
-                                          offset: const Offset(0, 1),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ListTile(
-                                      contentPadding:
-                                      const EdgeInsets.symmetric(horizontal: 10),
-                                      leading: CachedAnyImage(
-                                        imagePath: model.image,
-                                        width: kIsWeb ? screenWidth * 0.12 : screenWidth * 0.18,
-                                        height: kIsWeb ? screenWidth * 0.08 : screenWidth * 0.1,
-                                        contentImage: BoxFit.fill,
-                                      ),
-                                      title: Wrap(
-                                        crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                        spacing: 8,
-                                        runSpacing: 4,
-                                        children: [
-                                          Text(
-                                            model.model,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: bodyFontSize,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider(
+                                            create: (_) =>
+                                                AirCraftDetailCubit(),
+                                            child: AirCraftDetailScreen(
+                                              aircraftId: model.id,
                                             ),
                                           ),
-                                          if (model.ICAOCode.isNotEmpty)
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(4),
-                                                boxShadow: const [
-                                                  BoxShadow(
-                                                    color: Colors.grey,
-                                                    spreadRadius: 0.1,
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Text(
-                                                model.ICAOCode,
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      height: cardHeight,
+                                      clipBehavior: Clip.hardEdge,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.08),
+                                            blurRadius: 5,
+                                            spreadRadius: 1,
+                                            offset: const Offset(0, 1),
+                                          ),
                                         ],
                                       ),
-                                      trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => BlocProvider(
-                                              create: (_) => AirCraftDetailCubit(),
-                                              child: AirCraftDetailScreen(
-                                                aircraftId: model.id,
-                                              ),
+                                      padding: const EdgeInsets.all(10),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                        children: [
+                                          CachedAnyImage(
+                                            imagePath: model.image,
+                                            width: imageWidth,
+                                            height: imageHeight,
+                                            contentImage: BoxFit.cover,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Flexible(
+                                                  child: Wrap(
+                                                    crossAxisAlignment:
+                                                    WrapCrossAlignment.center,
+                                                    spacing: 8,
+                                                    runSpacing: 4,
+                                                    children: [
+                                                      Text(
+                                                        model.model,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.w600,
+                                                          fontSize: bodyFontSize,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                      if (model.ICAOCode.isNotEmpty)
+                                                        Container(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                            horizontal: 6,
+                                                            vertical: 2,
+                                                          ),
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
+                                                            boxShadow: const [
+                                                              BoxShadow(
+                                                                color:
+                                                                Colors.grey,
+                                                                spreadRadius: 0.1,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          child: Text(
+                                                            model.ICAOCode,
+                                                            style:
+                                                            const TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                              FontWeight.w500,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        );
-                                      },
+                                          const Icon(Icons.arrow_forward_ios,
+                                              size: 15),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

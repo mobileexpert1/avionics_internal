@@ -89,7 +89,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1800),
+            constraints: const BoxConstraints(maxWidth: 1500),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

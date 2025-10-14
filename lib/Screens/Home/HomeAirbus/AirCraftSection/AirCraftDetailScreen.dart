@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -53,6 +56,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           return const Scaffold(body: Center(child: Text("No data available")));
         }
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: CustomAppBar(
             title:
                 state.airCraftDetails?.results.identification.aircraftModel ??
@@ -65,106 +69,110 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               },
             ),
           ),
-          backgroundColor: Colors.white,
           body: SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 1500 : double.infinity,
+                ),
+                child: Stack(
                   children: [
-                    _buildTopHeadingDetails(screenHeight),
-                    _buildExpandableSection(
-                      title: "IDENTIFICATION & CLASSIFICATION",
-                      isExpanded: showIdentification,
-                      onToggle: () => setState(
-                        () => showIdentification = !showIdentification,
-                      ),
-                      content: _buildTechnicalData(
-                        state.airCraftDetails?.results.identification,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTopHeadingDetails(screenHeight),
+                        _buildExpandableSection(
+                          title: "IDENTIFICATION & CLASSIFICATION",
+                          isExpanded: showIdentification,
+                          onToggle: () => setState(
+                            () => showIdentification = !showIdentification,
+                          ),
+                          content: _buildTechnicalData(
+                            state.airCraftDetails?.results.identification,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "POWERPLANT & PROPULSION",
+                          isExpanded: showPowerSection,
+                          onToggle: () => setState(
+                            () => showPowerSection = !showPowerSection,
+                          ),
+                          content: _buildPowerPlantData(
+                            state.airCraftDetails?.results.powerplant,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "DIMENSIONS",
+                          isExpanded: showDimensionSection,
+                          onToggle: () => setState(
+                            () => showDimensionSection = !showDimensionSection,
+                          ),
+                          content: _buildDimenionsData(
+                            state.airCraftDetails?.results.dimensions,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "WEIGHTS",
+                          isExpanded: showWeightsSection,
+                          onToggle: () => setState(
+                            () => showWeightsSection = !showWeightsSection,
+                          ),
+                          content: _buildWeightsData(
+                            state.airCraftDetails?.results.weights,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
+                          isExpanded: showPerformanceSection,
+                          onToggle: () => setState(
+                            () => showPerformanceSection =
+                                !showPerformanceSection,
+                          ),
+                          content: _builPerfomanceOrderedBYsData(
+                            state.airCraftDetails?.results.performance,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "OPERATIONAL LIMITATIONS",
+                          isExpanded: showOperationalSection,
+                          onToggle: () => setState(
+                            () => showOperationalSection =
+                                !showOperationalSection,
+                          ),
+                          content: _builOperationLimitationsData(
+                            state
+                                .airCraftDetails
+                                ?.results
+                                .operationalLimitations,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "LANDING GEAR",
+                          isExpanded: showLandingSection,
+                          onToggle: () => setState(
+                            () => showLandingSection = !showLandingSection,
+                          ),
+                          content: _builLandingGearData(
+                            state.airCraftDetails?.results.landingGear,
+                          ),
+                        ),
+                        _buildExpandableSection(
+                          title: "CERTIFICATION & ENVIRONMENTAL",
+                          isExpanded: showCertificationSection,
+                          onToggle: () => setState(
+                            () => showCertificationSection =
+                                !showCertificationSection,
+                          ),
+                          content: _builCertificationData(
+                            state.airCraftDetails?.results.certification,
+                          ),
+                        ),
+                        const SizedBox(height: 50),
+                      ],
                     ),
-
-                    _buildExpandableSection(
-                      title: "POWERPLANT & PROPULSION",
-                      isExpanded: showPowerSection,
-                      onToggle: () =>
-                          setState(() => showPowerSection = !showPowerSection),
-                      content: _buildPowerPlantData(
-                        state.airCraftDetails?.results.powerplant,
-                      ),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "DIMENSIONS",
-                      isExpanded: showDimensionSection,
-                      onToggle: () => setState(
-                        () => showDimensionSection = !showDimensionSection,
-                      ),
-                      content: _buildDimenionsData(
-                        state.airCraftDetails?.results.dimensions,
-                      ),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "WEIGHTS",
-                      isExpanded: showWeightsSection,
-                      onToggle: () => setState(
-                        () => showWeightsSection = !showWeightsSection,
-                      ),
-                      content: _buildWeightsData(
-                        state.airCraftDetails?.results.weights,
-                      ),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
-                      isExpanded: showPerformanceSection,
-                      onToggle: () => setState(
-                        () => showPerformanceSection = !showPerformanceSection,
-                      ),
-                      content: _builPerfomanceOrderedBYsData(
-                        state.airCraftDetails?.results.performance,
-                      ),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "OPERATIONAL LIMITATIONS",
-                      isExpanded: showOperationalSection,
-                      onToggle: () => setState(
-                        () => showOperationalSection = !showOperationalSection,
-                      ),
-                      content: _builOperationLimitationsData(
-                        state.airCraftDetails?.results.operationalLimitations,
-                      ),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "LANDING GEAR",
-                      isExpanded: showLandingSection,
-                      onToggle: () => setState(
-                        () => showLandingSection = !showLandingSection,
-                      ),
-                      content: _builLandingGearData(
-                        state.airCraftDetails?.results.landingGear,
-                      ),
-                    ),
-
-                    _buildExpandableSection(
-                      title: "CERTIFICATION & ENVIRONMENTAL",
-                      isExpanded: showCertificationSection,
-                      onToggle: () => setState(
-                        () => showCertificationSection =
-                            !showCertificationSection,
-                      ),
-                      content: _builCertificationData(
-                        state.airCraftDetails?.results.certification,
-                      ),
-                    ),
-
-                    SizedBox(height: 50),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -173,97 +181,103 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   }
 
   Widget _buildImageCoverScroller(
-    double screenHeight,
-    List<AircraftImage> coverImages,
-  ) {
+      double screenHeight,
+      List<AircraftImage> coverImages,
+      ) {
     return SizedBox(
       height: screenHeight * 0.18,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: coverImages.length,
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          final image = coverImages[index];
-          final isSingleImage = coverImages.length == 1;
-          final imageWidth = isSingleImage
-              ? MediaQuery.of(context).size.width - 30
-              : 300.0; // or 300.toDouble();
-          final imagePadding = isSingleImage
-              ? const EdgeInsets.symmetric(horizontal: 0)
-              : const EdgeInsets.only(right: 10);
+      child: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(
+          scrollbars: true, // show scrollbar on web
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse, // allow mouse dragging on web
+          },
+        ),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: coverImages.length,
+          itemBuilder: (context, index) {
+            final image = coverImages[index];
+            final isSingleImage = coverImages.length == 1;
+            final imageWidth = isSingleImage
+                ? MediaQuery.of(context).size.width
+                : 300.0;
+            final imagePadding = isSingleImage
+                ? EdgeInsets.zero
+                : const EdgeInsets.only(right: 10);
 
-          final hasCopyright = (image.cc).isNotEmpty;
+            final hasCopyright = (image.cc).isNotEmpty;
 
-          return Padding(
-            padding: imagePadding,
-            child: GestureDetector(
-              onTap: hasCopyright
-                  ? () async {
-                      final uri = Uri.tryParse(image.source);
-                      if (uri != null && await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Could not open URL.')),
-                        );
-                      }
-                    }
-                  : null,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Stack(
-                  children: [
-                    Image.network(
-                      image.url,
-                      width: imageWidth,
-                      height: screenHeight * 0.18,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
+            return Padding(
+              padding: imagePadding,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: hasCopyright
+                    ? () async {
+                  final uri = Uri.tryParse(image.source);
+                  if (uri != null && await canLaunchUrl(uri)) {
+                    await launchUrl(uri,
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Could not open URL.')),
+                    );
+                  }
+                }
+                    : null,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Stack(
+                    children: [
+                      Image.network(
+                        image.url,
                         width: imageWidth,
                         height: screenHeight * 0.18,
-                        color: Colors.grey.shade300,
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.broken_image),
-                      ),
-                    ),
-                    if (hasCopyright)
-                      Positioned(
-                        left: 8,
-                        bottom: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          constraints: const BoxConstraints(maxWidth: 250),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '© ${image.cc}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                          ),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: imageWidth,
+                          height: screenHeight * 0.18,
+                          color: Colors.grey.shade300,
+                          alignment: Alignment.center,
+                          child: const Icon(Icons.broken_image),
                         ),
                       ),
-                  ],
+                      if (hasCopyright)
+                        Positioned(
+                          left: 8,
+                          bottom: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '© ${image.cc}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
+
+
 
   Widget _buildTopHeadingDetails(double screenHeight) {
     final aircraftData = context
