@@ -33,9 +33,15 @@ import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cub
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
+  final bool skipInitialPopup;
+  final int? openMode;
 
-  const FlightMapScreen({required this.onGoToFirstTab, Key? key})
-    : super(key: key);
+  const FlightMapScreen({
+    required this.onGoToFirstTab,
+    this.skipInitialPopup = false,
+    this.openMode,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<FlightMapScreen> createState() => _FlightMapscreenState();
@@ -45,7 +51,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
 
   Timer? _debounce;
-  int _activeCard = 0; // 0 = none, 1 = flight card, 2 = airport card
+  int _activeCard = 0;
 
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
@@ -61,16 +67,51 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     final hasPermission = await context
+  //         .read<FlightMapCubit>()
+  //         .getCurrentLocation(context);
+  //
+  //     if (hasPermission) {
+  //       _showInitialTrackingModePopup(context);
+  //     }
+  //   });
+  //
+  //   _sheetController.addListener(_sheetListener);
+  // }
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final hasPermission = await context
           .read<FlightMapCubit>()
           .getCurrentLocation(context);
 
       if (hasPermission) {
-        _showInitialTrackingModePopup(context);
+        if (widget.skipInitialPopup && widget.openMode != null) {
+          if (widget.openMode == 1) {
+            setState(() {
+              _singleSearchMarker = null;
+              _isMapListViewShown = true;
+              _isForFlyingInTheArea = 1;
+            });
+            _resetFlightSelection();
+          } else if (widget.openMode == 2) {
+            setState(() {
+              _activeCard = 0;
+              _singleSearchMarker = null;
+              _isMapListViewShown = false;
+              _isForFlyingInTheArea = 2;
+            });
+            _handleTextTap(context);
+          }
+        } else {
+          _showInitialTrackingModePopup(context);
+        }
       }
     });
 
@@ -316,6 +357,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   void _toggleFlightCard({required String flight}) {
+    _mapCubit.clearSelectedFlightDetail();
     _mapCubit.fetchFlightDetails(flightId: flight, context: context);
     setState(() {
       _activeCard = 0;
@@ -448,7 +490,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       final canvas = Canvas(recorder);
       canvas.scale(scale, scale);
 
-      // If color is provided, apply it as a ColorFilter
       if (color != null) {
         final paint = Paint()
           ..colorFilter = ColorFilter.mode(color, BlendMode.srcIn);
@@ -727,7 +768,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         enableGestureMode: true,
         onTextTap: () => _handleTextTap(context),
         enableBackArrow: _isForFlyingInTheArea != 0,
-        onBackButtonTap: () => _showInitialTrackingModePopup(context),
+        // onBackButtonTap: () => _showInitialTrackingModePopup(context),
+        onBackButtonTap: () {
+          if (widget.skipInitialPopup && widget.openMode != null) {
+            widget.onGoToFirstTab();
+            Navigator.pop(context);
+          } else {
+            _showInitialTrackingModePopup(context);
+          }
+        },
         enableFilter: _isMapListViewShown,
         enableCloseScreen: false,
         isComeFromMapSection: true,
@@ -967,7 +1016,8 @@ class FlightCard extends StatelessWidget {
             elevation: 10,
             margin: EdgeInsets.zero,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+              // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+              padding: const EdgeInsets.fromLTRB(20, 35, 20, 0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,

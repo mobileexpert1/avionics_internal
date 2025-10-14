@@ -7,13 +7,15 @@ import '../../../Constants/constantImages.dart';
 class MapTrackingModePopup extends StatelessWidget {
   final VoidCallback onFlyingSelected;
   final VoidCallback onTrackSelected;
-  final VoidCallback onCrossButton;
+  final VoidCallback? onCrossButton;
+  final bool showHeader;
 
   const MapTrackingModePopup({
     super.key,
-    required this.onCrossButton,
+    this.onCrossButton,
     required this.onFlyingSelected,
     required this.onTrackSelected,
+    this.showHeader = true,
   });
 
   @override
@@ -30,37 +32,40 @@ class MapTrackingModePopup extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                height: 1,
-                width: 50,
-                margin: const EdgeInsets.only(bottom: 15),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(2.5),
+            if (showHeader) ...[
+              Center(
+                child: Container(
+                  height: 1,
+                  width: 50,
+                  margin: const EdgeInsets.only(bottom: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(2.5),
+                  ),
                 ),
               ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "Choose Your Tracking Mode",
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
+              Row(
+                children: [
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        "Choose Your Tracking Mode",
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: onCrossButton,
-                  child: const Icon(Icons.close, color: Colors.black, size: 30),
-                ),
-              ],
-            ),
+                  GestureDetector(
+                    onTap: onCrossButton,
+                    child: const Icon(Icons.close, color: Colors.black, size: 30),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
             const SizedBox(height: 20),
 
             // Flying in the Area

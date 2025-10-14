@@ -37,23 +37,66 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
     }
   }
 
-
+  // Future<void> fetchAircraftDetailByICAOCode(
+  //     String ICAOCode,
+  //     BuildContext context,
+  //     ) async {
+  //   emit(state.copyWith(airCraftDetails: null));
+  //   emit(state.copyWith(isLoading: true, isSuccess: false, isError: false));
+  //   try {
+  //     final aircraftDetail = await repository.getAirCraftDetailICAOCode(ICAOCode);
+  //     emit(
+  //       state.copyWith(
+  //         isLoading: false,
+  //         isSuccess: true,
+  //         airCraftDetails: aircraftDetail,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     SessionCommonTokenError.handleUnauthorizedError(context, e);
+  //     emit(
+  //       state.copyWith(
+  //         isLoading: false,
+  //         isError: true,
+  //         errorMessage: e.toString(),
+  //       ),
+  //     );
+  //   }
+  // }
 
   Future<void> fetchAircraftDetailByICAOCode(
-      String ICAOCode,
-      BuildContext context,
-      ) async {
-    emit(state.copyWith(airCraftDetails: null));
-    emit(state.copyWith(isLoading: true, isSuccess: false, isError: false));
+    String ICAOCode,
+    BuildContext context,
+  ) async {
+    emit(
+      state.copyWith(
+        airCraftDetails: null,
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+      ),
+    );
     try {
-      final aircraftDetail = await repository.getAirCraftDetailICAOCode(ICAOCode);
-      emit(
-        state.copyWith(
-          isLoading: false,
-          isSuccess: true,
-          airCraftDetails: aircraftDetail,
-        ),
+      final aircraftDetail = await repository.getAirCraftDetailICAOCode(
+        ICAOCode,
       );
+      if (aircraftDetail?.results == null) {
+        emit(
+          state.copyWith(
+            airCraftDetails: null,
+            isLoading: false,
+            isSuccess: false,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            airCraftDetails: aircraftDetail,
+            isLoading: false,
+            isSuccess: true,
+          ),
+        );
+      }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
@@ -61,9 +104,9 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
           isLoading: false,
           isError: true,
           errorMessage: e.toString(),
+          airCraftDetails: null,
         ),
       );
     }
   }
-
 }

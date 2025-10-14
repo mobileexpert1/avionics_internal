@@ -362,4 +362,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
     emit(state.copyWith(isTracking: false));
   }
+
+  void clearSelectedFlightDetail() {
+    emit(state.copyWith(selectedFlightDetail: null));
+  }
 }

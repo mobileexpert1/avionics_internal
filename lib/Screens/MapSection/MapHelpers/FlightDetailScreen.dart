@@ -60,17 +60,13 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             backgroundColor: Colors.white,
             body: Center(child: CircularProgressIndicator()),
           );
-        } else if (state.airCraftDetails == null) {
-          return const Scaffold(body: Center(child: Text("No data available")));
         }
+        final details = state.airCraftDetails?.results;
         return Scaffold(
           appBar: CustomAppBar(
-            title:
-                "${state.airCraftDetails?.results.identification.icaoTypeCode ?? ''}"
-                " , "
-                "${state.airCraftDetails?.results.identification.aircraftModel ?? ''}",
-
-            centerTitle: false,
+            title: "${widget.flightDetail?.callsign ?? 'N/A'}",
+            // " , ${widget.flightDetail?.aircraftModel ?? 'N/A'}",
+            centerTitle: true,
             leftButton: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
               onPressed: () {
@@ -86,15 +82,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTopHeadingDetails(screenHeight),
+
                     _buildExpandableSection(
                       title: "IDENTIFICATION & CLASSIFICATION",
                       isExpanded: showIdentification,
                       onToggle: () => setState(
                         () => showIdentification = !showIdentification,
                       ),
-                      content: _buildTechnicalData(
-                        state.airCraftDetails?.results.identification,
-                      ),
+                      content: _buildTechnicalData(details?.identification),
                     ),
 
                     _buildExpandableSection(
@@ -102,9 +97,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       isExpanded: showPowerSection,
                       onToggle: () =>
                           setState(() => showPowerSection = !showPowerSection),
-                      content: _buildPowerPlantData(
-                        state.airCraftDetails?.results.powerplant,
-                      ),
+                      content: _buildPowerPlantData(details?.powerplant),
                     ),
 
                     _buildExpandableSection(
@@ -113,9 +106,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       onToggle: () => setState(
                         () => showDimensionSection = !showDimensionSection,
                       ),
-                      content: _buildDimenionsData(
-                        state.airCraftDetails?.results.dimensions,
-                      ),
+                      content: _buildDimenionsData(details?.dimensions),
                     ),
 
                     _buildExpandableSection(
@@ -124,9 +115,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       onToggle: () => setState(
                         () => showWeightsSection = !showWeightsSection,
                       ),
-                      content: _buildWeightsData(
-                        state.airCraftDetails?.results.weights,
-                      ),
+                      content: _buildWeightsData(details?.weights),
                     ),
 
                     _buildExpandableSection(
@@ -136,7 +125,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                         () => showPerformanceSection = !showPerformanceSection,
                       ),
                       content: _builPerfomanceOrderedBYsData(
-                        state.airCraftDetails?.results.performance,
+                        details?.performance,
                       ),
                     ),
 
@@ -147,7 +136,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                         () => showOperationalSection = !showOperationalSection,
                       ),
                       content: _builOperationLimitationsData(
-                        state.airCraftDetails?.results.operationalLimitations,
+                        details?.operationalLimitations,
                       ),
                     ),
 
@@ -157,9 +146,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       onToggle: () => setState(
                         () => showLandingSection = !showLandingSection,
                       ),
-                      content: _builLandingGearData(
-                        state.airCraftDetails?.results.landingGear,
-                      ),
+                      content: _builLandingGearData(details?.landingGear),
                     ),
 
                     _buildExpandableSection(
@@ -169,12 +156,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                         () => showCertificationSection =
                             !showCertificationSection,
                       ),
-                      content: _builCertificationData(
-                        state.airCraftDetails?.results.certification,
-                      ),
+                      content: _builCertificationData(details?.certification),
                     ),
-
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                   ],
                 ),
               ],
@@ -297,7 +281,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         child: Column(
           children: [
             _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
-            //Text(aircraftData?.identification.avionicsSystem ?? ""),
             const SizedBox(height: 10),
             _buildFlightDataSection(context),
           ],
@@ -308,33 +291,32 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
 
   final fieldColor = const Color(0xFF3E3C55);
   Widget _buildTechnicalData(IdentificationClassification? detail) {
-    if (detail == null) return const Text('No data available');
-    final identification = detail;
+    final flight = widget.flightDetail;
     return _buildFieldRows(
       [
-        ['ICAO Type Code', identification.icaoTypeCode],
-        ['Aircraft Manufacturer', identification.manufacturer],
-        ['Aircraft Model', identification.aircraftModel],
-        ['Aircraft Role', identification.aircraftRole],
-        ['Aircraft Type', identification.aircraftType],
-        ['Wake Turbulence Category', identification.wakeTurbulenceCategory],
+        ['ICAO Type Code', detail?.icaoTypeCode ?? flight?.type ?? 'N/A'],
+        ['Aircraft Manufacturer', detail?.manufacturer ?? 'N/A'],
+        ['Aircraft Model', detail?.aircraftModel ?? 'N/A'],
+        ['Aircraft Role', detail?.aircraftRole ?? 'N/A'],
+        ['Aircraft Type', detail?.aircraftType ?? flight?.type ?? 'N/A'],
+        ['Wake Turbulence Category', detail?.wakeTurbulenceCategory ?? 'N/A'],
         [
           'Civilian / Military / Dual Use',
-          identification.civilianMilitaryOrDualUse,
+          detail?.civilianMilitaryOrDualUse ?? 'N/A',
         ],
-        ['Country of Origin', identification.countryOfOrigin],
-        ['Date of Maiden Flight', identification.dateOfMaidenFlight],
-        ['Year of Introduction', identification.yearOfIntroduction],
-        ['Production Status', identification.productionStatus],
-        ['Avionics System Name', identification.avionicsSystem],
-        ['Number of Crew', identification.numberOfCrew],
+        ['Country of Origin', detail?.countryOfOrigin ?? 'N/A'],
+        ['Date of Maiden Flight', detail?.dateOfMaidenFlight ?? 'N/A'],
+        ['Year of Introduction', detail?.yearOfIntroduction ?? 'N/A'],
+        ['Production Status', detail?.productionStatus ?? 'N/A'],
+        ['Avionics System Name', detail?.avionicsSystem ?? 'N/A'],
+        ['Number of Crew', detail?.numberOfCrew ?? 'N/A'],
         [
           'Number of Passengers (Typical)',
-          identification.numberOfPassengers.typical,
+          detail?.numberOfPassengers?.typical ?? 'N/A',
         ],
         [
           'Number of Passengers (Maximum)',
-          identification.numberOfPassengers.maximum,
+          detail?.numberOfPassengers?.maximum ?? 'N/A',
         ],
       ],
       labelColor: fieldColor,
@@ -343,21 +325,19 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildPowerPlantData(PowerplantPropulsion? detail) {
-    if (detail == null) return const Text('No data available');
-    final powerPlantDetails = detail;
     return _buildFieldRows(
       [
-        ['Number of Engines', powerPlantDetails.numberOfEngines.toString()],
-        ['Fuel Consumption', powerPlantDetails.fuel.burnRate],
-        ['Manufacturer', powerPlantDetails.engine.manufacturer],
-        ['Model', powerPlantDetails.engine.model],
-        ['Engine Type', powerPlantDetails.engine.engineType],
-        ['Thrust Per Engine (kN)', powerPlantDetails.engine.thrust],
-        ['Physical Engine Code', powerPlantDetails.engine.physicalEngineCode],
-        ['APU Type', powerPlantDetails.apuType],
-        ['Fuel Type', powerPlantDetails.fuel.fuelType],
-        ['Fuel Additives', powerPlantDetails.fuel.fuelAdditives],
-        ['Fuel Capacity', powerPlantDetails.fuel.capacity],
+        ['Number of Engines', detail?.numberOfEngines?.toString() ?? 'N/A'],
+        ['Fuel Consumption', detail?.fuel?.burnRate ?? 'N/A'],
+        ['Manufacturer', detail?.engine?.manufacturer ?? 'N/A'],
+        ['Model', detail?.engine?.model ?? 'N/A'],
+        ['Engine Type', detail?.engine?.engineType ?? 'N/A'],
+        ['Thrust Per Engine (kN)', detail?.engine?.thrust ?? 'N/A'],
+        ['Physical Engine Code', detail?.engine?.physicalEngineCode ?? 'N/A'],
+        ['APU Type', detail?.apuType ?? 'N/A'],
+        ['Fuel Type', detail?.fuel?.fuelType ?? 'N/A'],
+        ['Fuel Additives', detail?.fuel?.fuelAdditives ?? 'N/A'],
+        ['Fuel Capacity', detail?.fuel?.capacity ?? 'N/A'],
       ],
       labelColor: fieldColor,
       valueColor: fieldColor,
@@ -365,17 +345,15 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildDimenionsData(Dimensions? detail) {
-    if (detail == null) return const Text('No data available');
-    final dimensionDetails = detail;
     return _buildFieldRows(
       [
-        ['Wingspan (m)', dimensionDetails.wingspanM],
-        ['Cabin Width (m)', dimensionDetails.cabinWidthM],
-        ['Length (m)', dimensionDetails.lengthM],
-        ['Wingtip Configuration', dimensionDetails.wingtipConfiguration],
-        ['Height (m)', dimensionDetails.heightM],
-        ['Wing Area (m2)', dimensionDetails.wingAreaM2],
-        ['Door Height (m)', dimensionDetails.doorHeightM],
+        ['Wingspan (m)', detail?.wingspanM ?? 'N/A'],
+        ['Cabin Width (m)', detail?.cabinWidthM ?? 'N/A'],
+        ['Length (m)', detail?.lengthM ?? 'N/A'],
+        ['Wingtip Configuration', detail?.wingtipConfiguration ?? 'N/A'],
+        ['Height (m)', detail?.heightM ?? 'N/A'],
+        ['Wing Area (m²)', detail?.wingAreaM2 ?? 'N/A'],
+        ['Door Height (m)', detail?.doorHeightM ?? 'N/A'],
       ],
       labelColor: fieldColor,
       valueColor: fieldColor,
@@ -383,22 +361,20 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildWeightsData(Weights? detail) {
-    if (detail == null) return const Text('No data available');
-    final weightsDetails = detail;
     return _buildFieldRows(
       [
-        ['Operating Empty Weight (kg)', weightsDetails.emptyWeight],
-        ['Maximum Zero Fuel Weight (kg)', weightsDetails.zeroFuelWeight],
-        ['Maximum Takeoff Weight (kg)', weightsDetails.takeoffWeight],
-        ['Max Payload (kg)', weightsDetails.payload],
-        ['Maximum Landing Weight (kg)', weightsDetails.landingWeight],
+        ['Operating Empty Weight (kg)', detail?.emptyWeight ?? 'N/A'],
+        ['Maximum Zero Fuel Weight (kg)', detail?.zeroFuelWeight ?? 'N/A'],
+        ['Maximum Takeoff Weight (kg)', detail?.takeoffWeight ?? 'N/A'],
+        ['Max Payload (kg)', detail?.payload ?? 'N/A'],
+        ['Maximum Landing Weight (kg)', detail?.landingWeight ?? 'N/A'],
         [
-          'Maximum Baggage or Cargo Volume (m3)',
-          weightsDetails.baggage.maximum,
+          'Maximum Baggage or Cargo Volume (m³)',
+          detail?.baggage?.maximum ?? 'N/A',
         ],
         [
-          'Minimum Baggage or Cargo Volume (m3)',
-          weightsDetails.baggage.minimum,
+          'Minimum Baggage or Cargo Volume (m³)',
+          detail?.baggage?.minimum ?? 'N/A',
         ],
       ],
       labelColor: fieldColor,
@@ -407,43 +383,34 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _builPerfomanceOrderedBYsData(Performance? detail) {
-    if (detail == null) return const Text('No data available');
-    final performanceDetails = detail;
     return _buildFieldRows(
       [
-        ['Takeoff Speed (kts)', performanceDetails.takeoffSpeedKts],
-        ['Takeoff Distance (m)', performanceDetails.takeoffDistanceM],
-        ['Initial Rate of Climb (fpm)', performanceDetails.climbInitialFpm],
-        ['Average Rate of Climb (fpm)', performanceDetails.climbAvgFpm],
-        ['Maximum Rate of Climb (fpm)', performanceDetails.climbMaxFpm],
-        ['Service Ceiling (ft)', performanceDetails.serviceCeiling],
-        [
-          'Max Certified Altitude (ft)',
-          performanceDetails.maxCertifiedAltitude,
-        ],
-        ['Cruise Speed (kt)', performanceDetails.cruiseSpeedKt],
-        ['Cruise(Mach)', performanceDetails.cruiseMach],
-        ['Maximum Speed', performanceDetails.maxCruiseSpeed],
-        ['VMO (kts)', performanceDetails.vmoKts],
-        ['MMO (Mach)', performanceDetails.mmoMach],
-
+        ['Takeoff Speed (kts)', detail?.takeoffSpeedKts ?? 'N/A'],
+        ['Takeoff Distance (m)', detail?.takeoffDistanceM ?? 'N/A'],
+        ['Initial Rate of Climb (fpm)', detail?.climbInitialFpm ?? 'N/A'],
+        ['Average Rate of Climb (fpm)', detail?.climbAvgFpm ?? 'N/A'],
+        ['Maximum Rate of Climb (fpm)', detail?.climbMaxFpm ?? 'N/A'],
+        ['Service Ceiling (ft)', detail?.serviceCeiling ?? 'N/A'],
+        ['Max Certified Altitude (ft)', detail?.maxCertifiedAltitude ?? 'N/A'],
+        ['Cruise Speed (kt)', detail?.cruiseSpeedKt ?? 'N/A'],
+        ['Cruise (Mach)', detail?.cruiseMach ?? 'N/A'],
+        ['Maximum Speed', detail?.maxCruiseSpeed ?? 'N/A'],
+        ['VMO (kts)', detail?.vmoKts ?? 'N/A'],
+        ['MMO (Mach)', detail?.mmoMach ?? 'N/A'],
         [
           'Range (NM / km)',
-          "${performanceDetails.range.normalRangeNm} NM / ${performanceDetails.range.normalRangeKm} Km",
+          "${detail?.range?.normalRangeNm ?? 'N/A'} NM / ${detail?.range?.normalRangeKm ?? 'N/A'} Km",
         ],
-        ['Ferry Range (if applicable)', performanceDetails.range.ferryRangeNm],
-        ['Initial Rate of Descent (fpm)', performanceDetails.descentInitialFpm],
-        ['Average Rate of Descent (fpm)', performanceDetails.descentAvgFpm],
-        [
-          'Minimum Clean Speed (kts)',
-          performanceDetails.minCleanSpeed.toString(),
-        ],
-        ['Approach Speed (kts)', performanceDetails.approachSpeed],
-        ['Approach Category', performanceDetails.approachCategory],
-        ['Landing Speed (kts)', performanceDetails.landingSpeed],
-        ['Landing Distance (m)', performanceDetails.landingDistance],
-        ['Runway Length Required (m)', performanceDetails.runwayRequired],
-        ['Stall Speed (kts)', performanceDetails.stallSpeed],
+        ['Ferry Range (if applicable)', detail?.range?.ferryRangeNm ?? 'N/A'],
+        ['Initial Rate of Descent (fpm)', detail?.descentInitialFpm ?? 'N/A'],
+        ['Average Rate of Descent (fpm)', detail?.descentAvgFpm ?? 'N/A'],
+        ['Minimum Clean Speed (kts)', detail?.minCleanSpeed ?? 'N/A'],
+        ['Approach Speed (kts)', detail?.approachSpeed ?? 'N/A'],
+        ['Approach Category', detail?.approachCategory ?? 'N/A'],
+        ['Landing Speed (kts)', detail?.landingSpeed ?? 'N/A'],
+        ['Landing Distance (m)', detail?.landingDistance ?? 'N/A'],
+        ['Runway Length Required (m)', detail?.runwayRequired ?? 'N/A'],
+        ['Stall Speed (kts)', detail?.stallSpeed ?? 'N/A'],
       ],
       labelColor: fieldColor,
       valueColor: fieldColor,
@@ -451,32 +418,24 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _builOperationLimitationsData(OperationalLimitations? detail) {
-    if (detail == null) return const Text('No data available');
-    final operationalDetails = detail;
     return _buildFieldRows(
       [
-        ['Runway Slope Limit percent', operationalDetails.runwaySlopeLimit],
-        [
-          'Max Crosswind Normal Law (kts)',
-          operationalDetails.maxCrosswindNormal,
-        ],
+        ['Runway Slope Limit (%)', detail?.runwaySlopeLimit ?? 'N/A'],
+        ['Max Crosswind Normal Law (kts)', detail?.maxCrosswindNormal ?? 'N/A'],
         [
           'Maximum Crosswind (Degraded Law)',
-          operationalDetails.maxCrosswindDegraded,
+          detail?.maxCrosswindDegraded ?? 'N/A',
         ],
-        ['Max Tailwind Landing (kts)', operationalDetails.maxTailwindLanding],
-        ['Max Tailwind Takeoff (kts)', operationalDetails.maxTailwindTakeoff],
-        ['Field Elevation Limit (ft)', operationalDetails.fieldElevationLimit],
-        ['Maximum Runway Altitude (ft)', operationalDetails.maxRunwayAltitude],
-        ['Tailwind Limit (Flaps ≤10°)', operationalDetails.maxTailwindTakeoff],
+        ['Max Tailwind Landing (kts)', detail?.maxTailwindLanding ?? 'N/A'],
+        ['Max Tailwind Takeoff (kts)', detail?.maxTailwindTakeoff ?? 'N/A'],
+        ['Field Elevation Limit (ft)', detail?.fieldElevationLimit ?? 'N/A'],
+        ['Maximum Runway Altitude (ft)', detail?.maxRunwayAltitude ?? 'N/A'],
+        ['Tailwind Limit (Flaps ≤10°)', detail?.maxTailwindTakeoff ?? 'N/A'],
         [
           'Supported Categories',
-          operationalDetails.autoland.supportedCategories,
+          detail?.autoland?.supportedCategories ?? 'N/A',
         ],
-        [
-          'Certified Autoland Level',
-          operationalDetails.autoland.certifiedLevel,
-        ],
+        ['Certified Autoland Level', detail?.autoland?.certifiedLevel ?? 'N/A'],
       ],
       labelColor: fieldColor,
       valueColor: fieldColor,
@@ -484,14 +443,12 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _builLandingGearData(LandingGear? detail) {
-    if (detail == null) return const Text('No data available');
-    final landingDetails = detail;
     return _buildFieldRows(
       [
-        ['Landing Gear Configuration', landingDetails.type],
-        ['Number of Wheels', landingDetails.numberOfWheels],
-        ['Tyre Size (inches)', landingDetails.tyreSize],
-        ['Tyre Pressure (psi)', landingDetails.tyrePressure],
+        ['Landing Gear Configuration', detail?.type ?? 'N/A'],
+        ['Number of Wheels', detail?.numberOfWheels ?? 'N/A'],
+        ['Tyre Size (inches)', detail?.tyreSize ?? 'N/A'],
+        ['Tyre Pressure (psi)', detail?.tyrePressure ?? 'N/A'],
       ],
       labelColor: fieldColor,
       valueColor: fieldColor,
@@ -499,16 +456,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _builCertificationData(CertificationEnvironmental? detail) {
-    if (detail == null) return const Text('No data available');
-    final certificationDetails = detail;
     return _buildFieldRows(
       [
-        ['Certification Basis', certificationDetails.certificationBasis],
-        ['Special Conditions', certificationDetails.specialConditions],
-        ['Noise Compliance', certificationDetails.noiseCompliance],
-        ['Emissions Category', certificationDetails.emissionsCategory],
-        ['EASA TCDS Number', certificationDetails.easa],
-        ['FAA TCDS Number', certificationDetails.faa],
+        ['Certification Basis', detail?.certificationBasis ?? 'N/A'],
+        ['Special Conditions', detail?.specialConditions ?? 'N/A'],
+        ['Noise Compliance', detail?.noiseCompliance ?? 'N/A'],
+        ['Emissions Category', detail?.emissionsCategory ?? 'N/A'],
+        ['EASA TCDS Number', detail?.easa ?? 'N/A'],
+        ['FAA TCDS Number', detail?.faa ?? 'N/A'],
       ],
       labelColor: fieldColor,
       valueColor: fieldColor,

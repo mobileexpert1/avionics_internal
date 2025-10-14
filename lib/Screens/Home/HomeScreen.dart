@@ -9,9 +9,13 @@ import '../../Helpers/AircraftCard.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
 import '../../Helpers/SearchBarWidget.dart';
+import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
+import '../MapSection/FlightMapScreen.dart';
+import '../MapSection/MapHelpers/MapTrackingModePopup.dart';
+import '../MapSection/MapHelpers/TrackAndSeacrhFlight.dart';
 import 'AppBarFilterAndMapFilter/FilterScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
@@ -219,45 +223,157 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     SizedBox(height: screenWidth * 0.05),
 
-                    /* ────────── Flying in the area ─────────── */
                     _buildSectionTitle(
                       'Flying in the area',
                       AssetsPath.flyingareaicon,
                       screenWidth,
                     ),
-                    SizedBox(height: screenWidth * 0.045),
 
-                    if (state.flights.isNotEmpty) ...[
-                      ...state.flights
-                          .take(2)
-                          .map(
-                            (f) => AircraftCard.buildAircraftCard(
-                              imagePath: (f.image ?? ''),
-                              model: f.model,
-                              badge: f.code,
-                              manufacturer: f.companyName,
-                              manufacturerLogoPath: f.logo ?? '',
-                              registrationNumber: f.flightId,
-                            ),
-                          ),
-
-                      Center(
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'See All',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textColour,
-                            ),
-                          ),
-                        ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      SizedBox(height: screenWidth * 0.03),
-                    ] else
-                      _emptyRow('No flights found in this area.', screenWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Flying in the Area Button
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider(
+                                    create: (_) {
+                                      final mapCubit = FlightMapCubit();
+                                      final firstFlight = mapCubit.state.flights?.first;
+                                      if (firstFlight != null) {
+                                        mapCubit.setSelectedFlight(firstFlight);
+                                        mapCubit.clearSelectedFlightDetail();
+                                      }
+                                      return mapCubit;
+                                    },
+                                    child: FlightMapScreen(
+                                      onGoToFirstTab: () {},
+                                      skipInitialPopup: true,
+                                      openMode: 1,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.facebookButton,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
+                                    height: 32,
+                                    width: 32,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(
+                                    child: Text(
+                                      "Flying in the Area",
+                                      style: TextStyle(color: Colors.white, fontSize: 16),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
 
+                          const SizedBox(height: 6),
+                          const Text(
+                            "Click to view flights currently flying in this area on the map",
+                            style: TextStyle(color: Colors.black, fontSize: 13),
+                            textAlign: TextAlign.start,
+                          ),
+
+                          const SizedBox(height: 16),
+                          // Track a Flight Button
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider(
+                                    create: (_) {
+                                      final mapCubit = FlightMapCubit();
+                                      final flightToTrack = mapCubit.state.flights?.first;
+                                      if (flightToTrack != null) {
+                                        mapCubit.startTrackingFlight(
+                                          flightToTrack.id,
+                                          context,
+                                        );
+                                      }
+                                      return mapCubit;
+                                    },
+                                    child: FlightMapScreen(
+                                      onGoToFirstTab: () {},
+                                      skipInitialPopup: true,
+                                      openMode: 2,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.customBottomEnabledColour,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    CommonUi.setSvgImage(AssetsPath.mapPopupLivearea),
+                                    height: 25,
+                                    width: 25,
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(
+                                    child: Text(
+                                      "Track a Flight",
+                                      style: TextStyle(color: Colors.white, fontSize: 16),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 6),
+                          const Text(
+                            "View real-time status, route, and updates for a flight.",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     const Divider(
                       height: 0,
                       thickness: 3,
