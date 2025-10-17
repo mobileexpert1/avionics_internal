@@ -9,6 +9,7 @@ import '../../../../Helpers/Custom_widget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
+import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 
 class FlightDetailScreen extends StatefulWidget {
@@ -39,10 +40,12 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   bool showIdentificationFlight = true;
   bool showFlightPlan = true;
   bool showTrackingStatus = true;
+  FlightAircraftDetail? _currentFlightDetail;
 
   @override
   void initState() {
     super.initState();
+    _currentFlightDetail = widget.flightDetail;
     context.read<AirCraftDetailCubit>().fetchAircraftDetailByICAOCode(
       widget.ICAOType,
       context,
@@ -71,6 +74,43 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
               onPressed: () {
                 Navigator.pop(context);
+              },
+            ),
+            rightButton: IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.black),
+              onPressed: () async {
+                final flight = widget.flightDetail;
+                if (flight == null) return;
+
+                final flightMapCubit = context.read<FlightMapCubit>();
+
+                await flightMapCubit.refreshFlightPosition(
+                  flightNumber: flight.flightNumber ?? '',
+                  context: context,
+                );
+
+                if (!mounted) return;
+
+                final updatedFlightModel = flightMapCubit.state.selectedFlight;
+                if (updatedFlightModel != null) {
+                  setState(() {
+                    _currentFlightDetail = FlightAircraftDetail(
+                      flightNumber: updatedFlightModel.flightNumber,
+                      latitude: updatedFlightModel.latitude,
+                      longitude: updatedFlightModel.longitude,
+                      altitude: updatedFlightModel.altitude,
+                      groundSpeed: updatedFlightModel.groundSpeed,
+                      vspeed: updatedFlightModel.verticalSpeed,
+                      id: updatedFlightModel.id,
+
+
+                      firstSeen: updatedFlightModel.firstSeen,
+                      lastSeen: updatedFlightModel.lastSeen,
+                      flightEnded: updatedFlightModel.flightEnded,
+                      landingTime: updatedFlightModel.landingTime,
+                    );
+                  });
+                }
               },
             ),
           ),
@@ -173,6 +213,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     double screenHeight,
     List<AircraftImage> coverImages,
   ) {
+    if (coverImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return SizedBox(
       height: screenHeight * 0.18,
       child: ListView.builder(
@@ -263,26 +306,55 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     );
   }
 
+  // Widget _buildTopHeadingDetails(double screenHeight) {
+  //   final aircraftData = context
+  //       .read<AirCraftDetailCubit>()
+  //       .state
+  //       .airCraftDetails
+  //       ?.results;
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 0),
+  //     child: Container(
+  //       width: double.infinity,
+  //       color: Colors.grey.shade100,
+  //       padding: const EdgeInsets.symmetric(
+  //         horizontal: 15,
+  //         vertical: 15,
+  //       ), // Internal padding
+  //       child: Column(
+  //         children: [
+  //           _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
+  //           const SizedBox(height: 10),
+  //           _buildFlightDataSection(context),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildTopHeadingDetails(double screenHeight) {
     final aircraftData = context
         .read<AirCraftDetailCubit>()
         .state
         .airCraftDetails
         ?.results;
+
+    // ✅ Agar backend se image list null ya empty hai to skip image section
+    final hasValidImages =
+        aircraftData?.images != null && aircraftData!.images!.isNotEmpty;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Container(
         width: double.infinity,
         color: Colors.grey.shade100,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
-        ), // Internal padding
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         child: Column(
           children: [
-            _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
-            const SizedBox(height: 10),
-            _buildFlightDataSection(context),
+            if (hasValidImages) // ✅ Only show image scroller if images available
+              _buildImageCoverScroller(screenHeight, aircraftData!.images!),
+            if (hasValidImages) const SizedBox(height: 10),
+            _buildFlightDataSection(context), // ✅ Always visible below
           ],
         ),
       ),
@@ -471,7 +543,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildFlightDataSection(BuildContext context) {
-    final flight = widget.flightDetail;
+    final flight =widget.flightDetail;
+    final flight1 =_currentFlightDetail;
     if (flight == null) return const SizedBox.shrink();
     return Container(
       color: const Color(0xFF3E3C55),
@@ -492,6 +565,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
               child: Builder(
                 builder: (_) {
                   final detail = widget.flightDetail;
+                  final detail1 = _currentFlightDetail;
 
                   DateTime? takeoffTime = detail?.takeoffTime;
                   DateTime? eta = detail?.eta;
@@ -539,8 +613,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
                   final departureIata = detail?.departureIcao ?? 'N/A';
                   final arrivalIata = detail?.arrivalIcao ?? 'N/A';
-                  final groundSpeed = detail?.groundSpeed ?? 0;
-                  final altitude = detail?.altitude ?? 0;
+                  final groundSpeed = detail1?.groundSpeed ?? 0;
+                  final altitude = detail1?.altitude ?? 0;
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -660,12 +734,12 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                         ['ADS-B Hex', detail?.hex ?? 'N/A', true],
                         [
                           'Latitude',
-                          detail?.latitude.toString() ?? 'N/A',
+                          detail1?.latitude.toString() ?? 'N/A',
                           true,
                         ],
                         [
                           'Longitude',
-                          detail?.longitude.toString() ?? 'N/A',
+                          detail1?.longitude.toString() ?? 'N/A',
                           true,
                         ],
                         ['Registration', detail?.registration ?? 'N/A', true],
@@ -693,15 +767,15 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildFieldRows([
                 ['Track (degree)', flight.track?.toString() ?? 'N/A'],
-                ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
+                ['Altitude (ft)', flight1?.altitude?.toString() ?? 'N/A'],
                 [
                   'Ground Speed (km/h)',
-                  flight.groundSpeed?.toString() ?? 'N/A',
+                  flight1?.groundSpeed?.toString() ?? 'N/A',
                   true,
                 ],
                 [
                   'Vertical Speed (ft/min)',
-                  flight.vspeed?.toString() ?? 'N/A',
+                  flight1?.vspeed?.toString() ?? 'N/A',
                   true,
                 ],
                 [
@@ -748,7 +822,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   flight.circleDistance?.toString() ?? 'N/A',
                   true,
                 ],
-                ['Flight Duration', flight.flightTime ?? 'N/A', true],
+                ['Flight Duration', (flight.flightTime?.isNotEmpty ?? false) ? flight.flightTime! : 'N/A', true],
                 // ['Time Zone', 'InterGlobe Aviation Ltd',true],
                 [
                   'Carrier Operating',

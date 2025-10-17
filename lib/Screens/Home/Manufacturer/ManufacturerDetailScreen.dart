@@ -263,14 +263,17 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                               thickness: 3,
                             ),
 
-                            _buildSectionHeader(
-                              title: "PRODUCTS",
-                              isExpanded: showMoreProducts,
-                              onTap: () => setState(
-                                () => showMoreProducts = !showMoreProducts,
+                            if (detail.product.isNotEmpty)
+                              _buildSectionHeader(
+                                title: "PRODUCTS",
+                                isExpanded: showMoreProducts,
+                                onTap: () =>
+                                    setState(
+                                          () =>
+                                      showMoreProducts = !showMoreProducts,
+                                    ),
+                                isShowMoreLessOption: detail.product.length > 2,
                               ),
-                              isShowMoreLessOption: detail.product.length > 2,
-                            ),
 
                             Padding(
                               padding: const EdgeInsets.symmetric(
@@ -453,6 +456,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: customField(
                 label: 'Headquarters',
                 text: generalDetails.headquarter ?? '',
+                labelColor: const Color(0xFF3E3C55),
+                textColor: Colors.black,
               ),
             ),
             const SizedBox(width: 12),
@@ -461,6 +466,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: customField(
                 label: 'Founding Date',
                 text: generalDetails.foundingDate,
+                labelColor: const Color(0xFF3E3C55),
+                textColor: const Color(0xFF3F3D56),
               ),
             ),
           ],

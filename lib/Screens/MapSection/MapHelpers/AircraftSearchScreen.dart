@@ -9,17 +9,22 @@ import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_State.dart';
 class AircraftSearchScreen extends StatelessWidget {
   final List<AircraftModel> initialSelected;
   final Function(List<AircraftModel>)? onSelectionChanged;
+
   const AircraftSearchScreen({
     Key? key,
     this.initialSelected = const [],
     this.onSelectionChanged,
   }) : super(key: key);
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          AircraftListDataCubit()..initSelectedAircraft(initialSelected)..loadSelectedAircraft(),
+      create: (_) {
+        final cubit = AircraftListDataCubit();
+        cubit.initSelectedAircraft(List<AircraftModel>.from(initialSelected));
+        cubit.loadSelectedAircraft();
+        return cubit;
+      },
       child: _AircraftSearchView(onSelectionChanged: onSelectionChanged),
     );
   }
@@ -27,6 +32,7 @@ class AircraftSearchScreen extends StatelessWidget {
 
 class _AircraftSearchView extends StatefulWidget {
   final Function(List<AircraftModel>)? onSelectionChanged;
+
   const _AircraftSearchView({this.onSelectionChanged});
 
   @override
@@ -48,10 +54,9 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
     super.dispose();
   }
 
-
   void _notifySelectionChanged(AircraftListDataCubit cubit) {
     if (widget.onSelectionChanged != null) {
-      widget.onSelectionChanged!(cubit.selectedAircraft);
+      widget.onSelectionChanged!(List<AircraftModel>.from(cubit.selectedAircraft));
     }
   }
 
@@ -133,10 +138,10 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
           Container(height: 1, color: Colors.grey.shade300),
           const SizedBox(height: 10),
 
+          // --- Selected Aircraft ---
           BlocBuilder<AircraftListDataCubit, AircraftListDataState>(
             builder: (context, state) {
-              if (cubit.selectedAircraft.isEmpty)
-                return const SizedBox.shrink();
+              if (cubit.selectedAircraft.isEmpty) return const SizedBox.shrink();
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -210,9 +215,6 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                 ),
                                 const SizedBox(width: 10),
                                 GestureDetector(
-                                  // onTap: () => cubit.removeSelectedAircraft(
-                                  //   aircraft.icaoTypeCode,
-                                  // ),
                                   onTap: () {
                                     cubit.removeSelectedAircraft(aircraft.icaoTypeCode);
                                     _notifySelectionChanged(cubit);
@@ -243,41 +245,26 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: BlocBuilder<AircraftListDataCubit, AircraftListDataState>(
                 builder: (context, state) {
-                  if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                  if (state.isLoading) return const Center(child: CircularProgressIndicator());
 
                   final filteredList = state.aircraftList
-                      .where(
-                        (a) => !cubit.selectedAircraft.any(
-                          (s) => s.icaoTypeCode == a.icaoTypeCode,
-                        ),
-                      )
+                      .where((a) => !cubit.selectedAircraft.any((s) => s.icaoTypeCode == a.icaoTypeCode))
                       .toList();
 
-                  if (filteredList.isEmpty) {
-                    return const Center(child: Text("No results found"));
-                  }
+                  if (filteredList.isEmpty) return const Center(child: Text("No results found"));
 
                   return ListView.separated(
                     itemCount: filteredList.length,
-                    separatorBuilder: (_, __) =>
-                        const Divider(color: Colors.grey, height: 15),
+                    separatorBuilder: (_, __) => const Divider(color: Colors.grey, height: 15),
                     itemBuilder: (context, index) {
                       final aircraft = filteredList[index];
                       return GestureDetector(
-                        // onTap: () {
-                        //   cubit.addSelectedAircraft(aircraft);
-                        // },
                         onTap: () {
                           cubit.addSelectedAircraft(aircraft);
                           _notifySelectionChanged(cubit);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 5,
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                           decoration: BoxDecoration(
                             color: Colors.grey.shade50,
                             borderRadius: BorderRadius.circular(8),
@@ -305,16 +292,10 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 0.2,
-                                  ),
+                                  border: Border.all(color: Colors.grey, width: 0.2),
                                 ),
                                 child: Text(
                                   aircraft.icaoTypeCode ?? "-",
@@ -342,16 +323,14 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context, cubit.selectedAircraft);
+                  Navigator.pop(context, List<AircraftModel>.from(cubit.selectedAircraft));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFF3F3D56),
                   side: const BorderSide(color: Color(0xFF3F3D56)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: const Text("Save", style: TextStyle(fontSize: 16)),
               ),

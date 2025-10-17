@@ -10,26 +10,49 @@ import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
+import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
+
+class FilterResult {
+  final MapType mapType;
+  final List<String> categories;
+  final List<String> aircraftIcaos;
+
+  FilterResult(this.mapType, this.categories, this.aircraftIcaos);
+}
 
 class FilterForMapScreen extends StatefulWidget {
   final MapType initialMapType;
 
-  const FilterForMapScreen({Key? key, required this.initialMapType})
-    : super(key: key);
+  const FilterForMapScreen({
+    Key? key,
+    required this.initialMapType,
+  }) : super(key: key);
 
   @override
   _filterMapScreenState createState() => _filterMapScreenState();
 }
 
 class _filterMapScreenState extends State<FilterForMapScreen> {
-  List<AircraftModel> _selectedAircraftForFilter = [];
+  late AircraftListDataCubit aircraftCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    aircraftCubit = AircraftListDataCubit();
+    aircraftCubit.loadSelectedAircraft();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AircraftListDataCubit>.value(value: aircraftCubit),
+        BlocProvider<FilterMapMainCubit>(
+          create: (_) =>
           FilterMapMainCubit()..setInitialMapType(widget.initialMapType),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -55,14 +78,15 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                 padding: const EdgeInsets.only(right: 16, top: 10),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pop(state.mapType);
+                    Navigator.of(context).pop(FilterResult(
+                      state.mapType,
+                      state.selectedCategories,
+                      aircraftCubit.selectedAircraft
+                          .map((a) => a.icaoTypeCode ?? '')
+                          .where((c) => c.isNotEmpty)
+                          .toList(),
+                    ));
                   },
-                  // onTap: () {
-                  //   Navigator.of(context).pop({
-                  //     "mapType": state.mapType,
-                  //     "categories": state.selectedCategories,
-                  //   });
-                  // },
                   child: Text(
                     state.selectedCategories.isEmpty
                         ? "Apply"
@@ -77,17 +101,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
             },
           ),
         ),
-
         body: Padding(
           padding: const EdgeInsets.all(25.0),
-          child: _FilterContent(
-            selectedAircraft: _selectedAircraftForFilter,
-            onAddAircraft: (selected) {
-              setState(() {
-                _selectedAircraftForFilter = selected;
-              });
-            },
-          ),
+          child: _FilterContent(),
         ),
       ),
     );
@@ -95,13 +111,8 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
 }
 
 class _FilterContent extends StatelessWidget {
-  final List<AircraftModel> selectedAircraft;
-  final Function(List<AircraftModel>) onAddAircraft;
-
   const _FilterContent({
     Key? key,
-    required this.selectedAircraft,
-    required this.onAddAircraft,
   }) : super(key: key);
 
   @override
@@ -109,6 +120,7 @@ class _FilterContent extends StatelessWidget {
     return BlocBuilder<FilterMapMainCubit, FilterMapState>(
       builder: (context, state) {
         final cubit = context.read<FilterMapMainCubit>();
+        final aircraftCubit = context.watch<AircraftListDataCubit>();
 
         return ListView(
           children: [
@@ -119,9 +131,13 @@ class _FilterContent extends StatelessWidget {
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: ["Commercial", "Cargo", "Business", "Other"].map((
-                  label,
-                ) {
+                children: [
+                  "Commercial",
+                  "CARGO",
+                  "BUSINESS_JETS",
+                  "PASSENGER",
+                  "GLIDERS",
+                ].map((label) {
                   final isSelected = state.selectedCategories.contains(label);
                   return GestureDetector(
                     onTap: () => cubit.toggleCategory(label),
@@ -166,7 +182,6 @@ class _FilterContent extends StatelessWidget {
                 }).toList(),
               ),
             ),
-
             const SizedBox(height: 50),
 
             /// Map Section
@@ -203,100 +218,6 @@ class _FilterContent extends StatelessWidget {
             ),
 
             const SizedBox(height: 50),
-            // /// Aircraft ICAO Code
-            // ExpandableSection(
-            //   title: "AIRCRAFT ICAO CODE",
-            //   expanded: state.showAircraftLabels,
-            //   onToggle: cubit.toggleAircraftLabels,
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       GestureDetector(
-            //         onTap: () {
-            //           Navigator.push(
-            //             context,
-            //             MaterialPageRoute(
-            //               builder: (_) => const AircraftSearchScreen(),
-            //             ),
-            //           );
-            //         },
-            //         child: Padding(
-            //           padding: const EdgeInsets.only(bottom: 12.0),
-            //           child: Center(
-            //             child: Text(
-            //               "+ Add Aircraft ICAO Code",
-            //               style: TextStyle(
-            //                 color: const Color(0xFF3E3C55),
-            //                 fontWeight: FontWeight.w500,
-            //                 fontSize: 16,
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //
-            //       ...[
-            //         {"name": "Airbus A-220-300", "code": "A220"},
-            //         {"name": "Antonov An-12", "code": "AN12"},
-            //         {"name": "Boeing 717", "code": "B712"},
-            //       ].map((aircraft) {
-            //         return Padding(
-            //           padding: const EdgeInsets.only(bottom: 12),
-            //           child: Row(
-            //             children: [
-            //               SvgPicture.asset(
-            //                 CommonUi.setSvgImage(AssetsPath.aircraftIconmap),
-            //                 height: 20,
-            //                 width: 20,
-            //               ),
-            //               const SizedBox(width: 10),
-            //               Expanded(
-            //                 child: Text(
-            //                   aircraft["name"]!,
-            //                   style: const TextStyle(
-            //                     fontWeight: FontWeight.w600,
-            //                     fontSize: 14,
-            //                     color: Color(0xFF3E3C55),
-            //                   ),
-            //                 ),
-            //               ),
-            //               Container(
-            //                 padding:
-            //                 const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            //                 decoration: BoxDecoration(
-            //                   borderRadius: BorderRadius.circular(6),
-            //                   border: Border.all(color:Colors.grey,width: 0.2),
-            //                 ),
-            //                 child: Text(
-            //                   aircraft["code"]!,
-            //                   style: const TextStyle(
-            //                     color: Color(0xFF3E3C55),
-            //                     fontWeight: FontWeight.w600,
-            //                     fontSize: 13,
-            //                   ),
-            //                 ),
-            //               ),
-            //               const SizedBox(width: 10),
-            //               GestureDetector(
-            //                 onTap: () {
-            //                 },
-            //                 child: SvgPicture.asset(
-            //                   CommonUi.setSvgImage(AssetsPath.closeIcon),
-            //                   width: 20,
-            //                   height: 20,
-            //                 ),
-            //               ),
-            //               const CustomDivider(),
-            //             ],
-            //           ),
-            //         );
-            //       }),
-            //     ],
-            //   ),
-            // ),
-            // const SizedBox(height: 20),
-
-            /// Aircraft ICAO Code
             ExpandableSection(
               title: "AIRCRAFT ICAO CODE",
               expanded: cubit.state.showAircraftLabels,
@@ -309,23 +230,18 @@ class _FilterContent extends StatelessWidget {
                       final result = await Navigator.push<List<AircraftModel>>(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => AircraftSearchScreen(
-                            initialSelected: selectedAircraft,
+                          builder: (_) => BlocProvider.value(
+                            value: aircraftCubit,
+                            child: AircraftSearchScreen(
+                              initialSelected: aircraftCubit.selectedAircraft,
+                            ),
                           ),
                         ),
                       );
-
                       if (result != null) {
-                        // Exclude already selected aircraft from search
-                        final uniqueList = [
-                          ...selectedAircraft,
-                          ...result.where(
-                            (r) => !selectedAircraft.any(
-                              (s) => s.icaoTypeCode == r.icaoTypeCode,
-                            ),
-                          ),
-                        ];
-                        onAddAircraft(uniqueList);
+                        for (var aircraft in result) {
+                          await aircraftCubit.addSelectedAircraft(aircraft);
+                        }
                       }
                     },
                     child: const Padding(
@@ -343,7 +259,7 @@ class _FilterContent extends StatelessWidget {
                     ),
                   ),
 
-                  ...selectedAircraft.map((aircraft) {
+                  ...aircraftCubit.selectedAircraft.map((aircraft) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(
@@ -397,13 +313,9 @@ class _FilterContent extends StatelessWidget {
                           ),
                           const SizedBox(width: 10),
                           GestureDetector(
-                            onTap: () {
-                              final updatedList = List<AircraftModel>.from(
-                                selectedAircraft,
-                              );
-                              updatedList.remove(aircraft);
-                              onAddAircraft(updatedList);
-                            },
+                            onTap: () => aircraftCubit.removeSelectedAircraft(
+                              aircraft.icaoTypeCode,
+                            ),
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.closeIcon),
                               width: 20,
@@ -423,7 +335,10 @@ class _FilterContent extends StatelessWidget {
 
             /// Reset Button
             ElevatedButton(
-              onPressed: cubit.resetFilter,
+              onPressed: () {
+                cubit.resetFilter();
+                // aircraftCubit.clearSelectedAircraft();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,

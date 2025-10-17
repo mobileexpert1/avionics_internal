@@ -8,22 +8,54 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
+  // Future<List<FlightModel>> getFlights({
+  //   required String bounds,
+  //   int limit = 3,
+  // }) async {
+  //   final url = Uri.parse(
+  //     "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
+  //     "?bounds=$bounds&limit=$limit"
+  //     "&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000&categories=C,P",
+  //   );
+  //
+  //   try {
+  //     final response = await ApiService.get(url: url, isForFlightRadar: true);
+  //     final flightResponse = FlightResponse.fromJson(response);
+  //     return flightResponse.flights;
+  //   } catch (e) {
+  //     throw throw e.toString();
+  //   }
+  // }
+
+
   Future<List<FlightModel>> getFlights({
     required String bounds,
-    int limit = 3,
+    int limit = 20,
+    String? aircraft,      // e.g. "A318,A320"
+    String? categories,    // e.g. "P,C"
+    String altitudeRanges = "0-46000",
   }) async {
-    final url = Uri.parse(
+    // Base URL
+    var url = Uri.parse(
       "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
-      "?bounds=$bounds&limit=$limit"
-      "&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000",
+          "?bounds=$bounds&limit=$limit&altitude_ranges=$altitudeRanges",
     );
+
+    // Add optional query params **only if they are non-null / non-empty**
+    final Map<String, String> query = {};
+    if (aircraft != null && aircraft.isNotEmpty) query['aircraft'] = aircraft;
+    if (categories != null && categories.isNotEmpty) query['categories'] = categories;
+
+    if (query.isNotEmpty) {
+      url = url.replace(queryParameters: {...url.queryParameters, ...query});
+    }
 
     try {
       final response = await ApiService.get(url: url, isForFlightRadar: true);
       final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;
     } catch (e) {
-      throw throw e.toString();
+      throw e.toString();
     }
   }
 
@@ -207,6 +239,41 @@ class FlightRepository {
       throw e.toString();
     }
   }
+
+
+  Future<List<FlightModel>> getFlightsWithFilters({
+    required String bounds,
+    int limit = 3,
+    List<String>? selectedIcaoTypes,
+    List<String>? selectedCategories,
+  }) async {
+    try {
+
+      final aircraftParam = (selectedIcaoTypes != null && selectedIcaoTypes.isNotEmpty)
+          ? selectedIcaoTypes.join(',')
+          : 'A318,A320,A20N,A21N';
+
+      final categoriesParam = (selectedCategories != null && selectedCategories.isNotEmpty)
+          ? selectedCategories.join(',')
+          : 'C,P';
+
+      final url = Uri.parse(
+        "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
+            "?bounds=$bounds"
+            "&limit=$limit"
+            "&aircraft=$aircraftParam"
+            "&altitude_ranges=0-46000"
+            "&categories=$categoriesParam",
+      );
+
+      final response = await ApiService.get(url: url, isForFlightRadar: true);
+      final flightResponse = FlightResponse.fromJson(response);
+      return flightResponse.flights;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
 }
 
 class Position {

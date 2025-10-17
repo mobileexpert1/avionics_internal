@@ -120,6 +120,7 @@ abstract class AssetsPath {
   static const String airCraftDetailImage = "airCraftDetailImage";
   static const String infoIcon = "infoIcon";
   static const String flightinfoIcon = "flightinfoIcon";
+  static const String infoIcon2 = "infoIcon2";
   static const String CarImg = "CarImg";
   static const String badgeimg = "badgeimg";
 
