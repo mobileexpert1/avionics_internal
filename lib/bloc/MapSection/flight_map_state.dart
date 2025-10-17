@@ -26,6 +26,10 @@ class FlightMapState {
   final List<AircraftStationModel>? airports;
   final AircraftStationModel? selectedAirport;
 
+
+  final List<String>? selectedCategories;
+  final List<String>? selectedAircraftIcaos;
+
   final int activeCard;
 
   FlightMapState({
@@ -47,6 +51,9 @@ class FlightMapState {
     this.airports,
     this.selectedAirport,
     this.activeCard = 0,
+
+    this.selectedCategories,
+    this.selectedAircraftIcaos,
   });
 
   FlightMapState copyWith({
@@ -68,6 +75,10 @@ class FlightMapState {
     List<AircraftStationModel>? airports,
     AircraftStationModel? selectedAirport,
     int? activeCard,
+
+
+    List<String>? selectedCategories,
+    List<String>? selectedAircraftIcaos,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -89,6 +100,9 @@ class FlightMapState {
       airports: airports ?? this.airports,
       selectedAirport: selectedAirport ?? this.selectedAirport,
       activeCard: activeCard ?? this.activeCard,
+
+      selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedAircraftIcaos: selectedAircraftIcaos ?? this.selectedAircraftIcaos,
     );
   }
 }

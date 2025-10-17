@@ -30,6 +30,8 @@ class AircraftListDataState {
   final String? detail;
   final List<SelectedAircraftModel> aircraftList1;
 
+  final List<AircraftModel> selectedAircraftList;
+
   const AircraftListDataState({
     required this.aircraftList,
     this.isLoading = false,
@@ -38,6 +40,8 @@ class AircraftListDataState {
     this.status = CommonApiStatus.initial,
     this.detail,
     required this.aircraftList1,
+
+    this.selectedAircraftList = const [],
   });
 
   factory AircraftListDataState.initial() {
@@ -45,6 +49,8 @@ class AircraftListDataState {
       aircraftList: [],
       status: CommonApiStatus.initial,
       aircraftList1: [],
+
+      selectedAircraftList: const [],
     );
   }
 
@@ -56,6 +62,7 @@ class AircraftListDataState {
     CommonApiStatus? status,
     String? detail,
     List<SelectedAircraftModel>? aircraftList1,
+    List<AircraftModel>? selectedAircraftList,
   }) {
     return AircraftListDataState(
       aircraftList: aircraftList ?? this.aircraftList,
@@ -65,6 +72,7 @@ class AircraftListDataState {
       status: status ?? this.status,
       detail: detail ?? this.detail,
       aircraftList1: aircraftList1 ?? this.aircraftList1,
+      selectedAircraftList: selectedAircraftList ?? this.selectedAircraftList,
     );
   }
 }

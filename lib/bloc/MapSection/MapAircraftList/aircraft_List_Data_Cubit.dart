@@ -135,4 +135,5 @@ class AircraftListDataCubit extends Cubit<AircraftListDataState> {
     selectedAircraft = await _genericMethods.getAll('selected_aircraft');
     emit(state.copyWith());
   }
+
 }
