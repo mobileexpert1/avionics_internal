@@ -52,48 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(110),
-          // adjust to fit your search bar height
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // SearchBarWidget(
-                //   enableBackArrow: false,
-                //   enableFilter: true,
-                //   enableCloseScreen: false,
-                //   controller: searchController,
-                //   onFilterTap: () {
-                //     showModalBottomSheet(
-                //       context: context,
-                //       isScrollControlled: true,
-                //       shape: const RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.vertical(
-                //           top: Radius.circular(20),
-                //         ),
-                //       ),
-                //       backgroundColor: Colors.transparent,
-                //       builder: (context) {
-                //         return FractionallySizedBox(
-                //           heightFactor: 0.9,
-                //           child: ClipRRect(
-                //             borderRadius: const BorderRadius.vertical(
-                //               top: Radius.circular(20),
-                //             ),
-                //             child: FilterScreen(),
-                //           ),
-                //         );
-                //       },
-                //     );
-                //   },
-                //   searchTitle: 'Search...',
-                // ),
-                SizedBox(height: screenWidth * 0.04),
-              ],
-            ),
-          ),
-        ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(right: 10, bottom: 10),
           child: FloatingActionButton(
@@ -136,36 +94,34 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SearchBarWidget(
-                  enableBackArrow: false,
-                  enableFilter: true,
-                  enableCloseScreen: false,
-                  controller: searchController,
-                  onFilterTap: () {
-                    showModalBottomSheet(
-                      context: context,
-
-                      
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => FractionallySizedBox(
-                        heightFactor: 0.9,
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
-                          child: FilterScreen(),
-                        ),
-                      ),
-                    );
-                  },
-                  searchTitle: 'Search...',
-                ),
+                // SearchBarWidget(
+                //   enableBackArrow: false,
+                //   enableFilter: true,
+                //   enableCloseScreen: false,
+                //   controller: searchController,
+                //   onFilterTap: () {
+                //     showModalBottomSheet(
+                //       context: context,
+                //       isScrollControlled: true,
+                //       shape: const RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.vertical(
+                //           top: Radius.circular(20),
+                //         ),
+                //       ),
+                //       backgroundColor: Colors.transparent,
+                //       builder: (context) => FractionallySizedBox(
+                //         heightFactor: 0.9,
+                //         child: ClipRRect(
+                //           borderRadius: const BorderRadius.vertical(
+                //             top: Radius.circular(20),
+                //           ),
+                //           child: FilterScreen(),
+                //         ),
+                //       ),
+                //     );
+                //   },
+                //   searchTitle: 'Search...',
+                // ),
                 SizedBox(height: kIsWeb ? 16 : 10),
               ],
             ),
