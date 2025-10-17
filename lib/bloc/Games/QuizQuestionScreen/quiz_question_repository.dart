@@ -17,9 +17,10 @@ class QuizQuestionRepository {
 
   /// Fetch calculation game data from API for a specific game number
   Future<CalculationGameModel?> getCalculationData(int gameNumber,int actionNumber) async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     // Validate gameNumber
     if (!gameNoAssign.containsKey(gameNumber)) {
@@ -43,9 +44,10 @@ class QuizQuestionRepository {
   }
 
   Future<CalculationGameModel?> fetchAdditionalQuestions(int gameNumber, int actionNumber) async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     // Validate gameNumber
     if (!gameNoAssign.containsKey(gameNumber)) {
@@ -70,9 +72,10 @@ class QuizQuestionRepository {
 
   ///One word Get API
   Future<CalculationGameModel?> getOneWordData(int gameNumber,int actionNumber) async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
@@ -90,9 +93,10 @@ class QuizQuestionRepository {
 
   ///One word Get Questions API
   Future<CalculationGameModel?> fetchOneWordQuestions(int gameNumber, int actionNumber) async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
@@ -109,9 +113,10 @@ class QuizQuestionRepository {
 
   ///Quiz Get Questions API
   Future<CalculationGameModel?> getQuizData(int gameNumber,int actionNumber) async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.quizQuestions}"
@@ -129,9 +134,10 @@ class QuizQuestionRepository {
 
   ///Quiz Get Questions API hit background
   Future<CalculationGameModel?> fetchQuizQuestions(int gameNumber, int actionNumber) async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.quizQuestions}"
@@ -150,9 +156,10 @@ class QuizQuestionRepository {
       Map<String, dynamic> payload,
       String gameId,
       ) async {
-    if (!await GenericMethods.hasInternet()) {
-      throw "No internet connection";
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     final gameNumber = payload['game_number'] ?? 1;
     if (!gameNoAssign.containsKey(gameNumber)) {

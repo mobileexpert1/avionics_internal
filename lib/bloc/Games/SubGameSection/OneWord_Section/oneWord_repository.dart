@@ -5,9 +5,10 @@ import '../../../../Database/generic_methods.dart';
 
 class OneWordTopicRepository {
   Future<OneWordTopicModel?> getOneWordTopic() async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
@@ -27,9 +28,10 @@ class OneWordTopicRepository {
   }
 
   Future<OneWordTopicModel?> getQuizTopic() async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
@@ -50,9 +52,10 @@ class OneWordTopicRepository {
 
 
   Future<OneWordTopicModel?> getCalculationTopic() async {
-    if (!await GenericMethods.hasInternet()) {
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"

@@ -6,10 +6,10 @@ import 'blackBox_question_model.dart';
 String questionNo = "";
 class BlackboxRepository {
   Future<List<BlackBoxSummaryModel>?> getBlackboxSummary() async {
-    if (!await GenericMethods.hasInternet()) {
-      print('No internet connection'); // Debug
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxSummary}",
@@ -35,10 +35,10 @@ class BlackboxRepository {
 
   // Future<BlackBoxQuestionModel?> getBlackBoxQuestions(String question_no) async {
   Future<BlackBoxQuestionModel?> getBlackBoxQuestions() async {
-    if (!await GenericMethods.hasInternet()) {
-      print('No internet connection');
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
 
     final uri = Uri.parse(
       // "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxQuestions}/$question_no",
@@ -62,10 +62,10 @@ class BlackboxRepository {
   }
 
   Future<BlackBoxSubmitResponse?> submitBlackBoxAnswers(Map<String, dynamic> payload) async {
-    if (!await GenericMethods.hasInternet()) {
-      print('No internet connection');
-      return null;
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return null;
+    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxSubmit}",
     );
