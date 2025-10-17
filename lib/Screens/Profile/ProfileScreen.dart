@@ -78,11 +78,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SettingsListItem(
                       leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.subsrcitAcc),
+                      CommonUi.setSvgImage( AssetsPath.badgeIcon),
                       title: "Badges",
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.badgeIcon,
-                      ),
                       onTap: () {
                         Navigator.push(
                           context,
