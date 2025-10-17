@@ -1696,27 +1696,27 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   if (_activeCard == 2 && state.selectedAirport != null)
                     _buildAnimatedAirportDetailsCard(context),
 
-                  if ((state.selectedCategories?.isNotEmpty ?? false) ||
-                      (state.selectedAircraftIcaos?.isNotEmpty ?? false))
-                    Positioned(
-                      top: 100,
-                      left: 10,
-                      right: 10,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Wrap(
-                          spacing: 8.0,
-                          children: [
-                            ...?state.selectedCategories?.map(
-                              (cat) => Chip(label: Text(cat)),
-                            ),
-                            ...?state.selectedAircraftIcaos?.map(
-                              (icao) => Chip(label: Text(icao)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  // if ((state.selectedCategories?.isNotEmpty ?? false) ||
+                  //     (state.selectedAircraftIcaos?.isNotEmpty ?? false))
+                  //   Positioned(
+                  //     top: 100,
+                  //     left: 10,
+                  //     right: 10,
+                  //     child: SingleChildScrollView(
+                  //       scrollDirection: Axis.horizontal,
+                  //       child: Wrap(
+                  //         spacing: 8.0,
+                  //         children: [
+                  //           ...?state.selectedCategories?.map(
+                  //             (cat) => Chip(label: Text(cat)),
+                  //           ),
+                  //           ...?state.selectedAircraftIcaos?.map(
+                  //             (icao) => Chip(label: Text(icao)),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               );
             }

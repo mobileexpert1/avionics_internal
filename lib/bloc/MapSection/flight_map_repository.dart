@@ -8,9 +8,12 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
+
   // Future<List<FlightModel>> getFlights({
   //   required String bounds,
-  //   int limit = 3,
+  //   int limit = 20,
+  //   String? aircraft,
+  //   String? categories,
   // }) async {
   //   final url = Uri.parse(
   //     "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
@@ -28,29 +31,38 @@ class FlightRepository {
   // }
 
 
+
   Future<List<FlightModel>> getFlights({
     required String bounds,
     int limit = 20,
-    String? aircraft,      // e.g. "A318,A320"
-    String? categories,    // e.g. "P,C"
-    String altitudeRanges = "0-46000",
+    String? aircraft,
+    String? categories,
   }) async {
-    // Base URL
-    var url = Uri.parse(
-      "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
-          "?bounds=$bounds&limit=$limit&altitude_ranges=$altitudeRanges",
-    );
-
-    // Add optional query params **only if they are non-null / non-empty**
-    final Map<String, String> query = {};
-    if (aircraft != null && aircraft.isNotEmpty) query['aircraft'] = aircraft;
-    if (categories != null && categories.isNotEmpty) query['categories'] = categories;
-
-    if (query.isNotEmpty) {
-      url = url.replace(queryParameters: {...url.queryParameters, ...query});
-    }
-
     try {
+      final baseUrl = "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full";
+
+      String finalAircraft = "A318,A320,A20N,A21N";
+      String finalCategories = "C,P";
+
+      if (aircraft != null && aircraft.isNotEmpty) {
+        finalAircraft = aircraft;
+      }
+
+      if (categories != null && categories.isNotEmpty) {
+        finalCategories = categories;
+      }
+
+      final url = Uri.parse(
+        "$baseUrl?"
+            "bounds=$bounds"
+            "&limit=$limit"
+            "&aircraft=$finalAircraft"
+            "&altitude_ranges=0-46000"
+            "&categories=$finalCategories",
+      );
+
+      debugPrint("✈️ Final Flight API URL: $url");
+
       final response = await ApiService.get(url: url, isForFlightRadar: true);
       final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;
@@ -58,6 +70,7 @@ class FlightRepository {
       throw e.toString();
     }
   }
+
 
   Future<FlightResponse> getParticularFlightDetails({
     required String flightId,

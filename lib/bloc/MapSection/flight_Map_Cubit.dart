@@ -241,25 +241,28 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required BuildContext context,
     required LatLng currentCenterLatLong,
   }) async {
-    if (isNeedToRefresh == true) {
-      if (_previousBounds != null &&
-          _previousBounds!.southwest == bounds.southwest &&
-          _previousBounds!.northeast == bounds.northeast) {
-        debugPrint("Skipping fetch: same bounds as before");
-        return;
-      }
-    }
-
-    _previousBounds = bounds;
     try {
+      _previousBounds = bounds;
+
+      debugPrint("🌍 Fetching flights for bounds: $bounds");
+
       final boundsString =
           "${bounds.northeast.latitude},${bounds.southwest.latitude},"
           "${bounds.southwest.longitude},${bounds.northeast.longitude}";
 
+      // ✅ Determine if filters applied
+      final hasAircraftFilter =
+          state.selectedAircraftIcaos != null && state.selectedAircraftIcaos!.isNotEmpty;
+      final hasCategoryFilter =
+          state.selectedCategories != null && state.selectedCategories!.isNotEmpty;
+
+      // ✅ Pass filters only if applied
       final flights = await FlightRepository().getFlights(
         bounds: boundsString,
-        aircraft: state.selectedAircraftIcaos?.join(','),
-        categories: state.selectedCategories?.map((cat) => _getCategoryCode(cat)).join(','),
+        aircraft: hasAircraftFilter ? state.selectedAircraftIcaos!.join(',') : null,
+        categories: hasCategoryFilter
+            ? state.selectedCategories!.map((cat) => _getCategoryCode(cat)).join(',')
+            : null,
       );
 
       final airportList = await AircraftStationListRepository()
@@ -268,8 +271,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         latitude: currentCenterLatLong.latitude.toString(),
       );
 
-      print(
-        "flights-=-=-=-$flights. \n\n airportList count-=-=-=-=-=${airportList.data.length}",
+
+      //https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=32.252355981477805,28.99138728132285,75.73254201561213,77.71007940173149&limit=20&aircraft=AN2,AN24&altitude_ranges=0-46000&categories=C,C
+
+      // https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=32.252355981477805,28.99138728132285,75.73254201561213,77.71007940173149&limit=20&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000&categories=C,P
+      debugPrint(
+        "✅ Flights fetched: ${flights.length}\n"
+            "🛬 Airport list count: ${airportList.data.length}",
       );
 
       emit(
@@ -281,7 +289,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           isLoading: false,
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint("❌ Error fetching flights: $e");
+      debugPrint(stack.toString());
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(
@@ -295,12 +305,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   String _getCategoryCode(String label) {
     switch (label) {
-      case "Commercial":
-        return "COM";
       case "CARGO":
         return "C";
       case "BUSINESS_JETS":
-        return "BJ";
+        return "B";
       case "PASSENGER":
         return "P";
       case "GLIDERS":
