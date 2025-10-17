@@ -46,9 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = size.width;
 
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<HomeCubit>(create: (_) => homeCubit),
-      ],
+      providers: [BlocProvider<HomeCubit>(create: (_) => homeCubit)],
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -88,46 +86,46 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kIsWeb ? 120 : 110),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // SearchBarWidget(
-                //   enableBackArrow: false,
-                //   enableFilter: true,
-                //   enableCloseScreen: false,
-                //   controller: searchController,
-                //   onFilterTap: () {
-                //     showModalBottomSheet(
-                //       context: context,
-                //       isScrollControlled: true,
-                //       shape: const RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.vertical(
-                //           top: Radius.circular(20),
-                //         ),
-                //       ),
-                //       backgroundColor: Colors.transparent,
-                //       builder: (context) => FractionallySizedBox(
-                //         heightFactor: 0.9,
-                //         child: ClipRRect(
-                //           borderRadius: const BorderRadius.vertical(
-                //             top: Radius.circular(20),
-                //           ),
-                //           child: FilterScreen(),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                //   searchTitle: 'Search...',
-                // ),
-                SizedBox(height: kIsWeb ? 16 : 10),
-              ],
-            ),
-          ),
-        ),
-
+        //
+        // appBar: PreferredSize(
+        //   preferredSize: Size.fromHeight(kIsWeb ? 120 : 110),
+        //   child: SafeArea(
+        //     child: Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         // SearchBarWidget(
+        //         //   enableBackArrow: false,
+        //         //   enableFilter: true,
+        //         //   enableCloseScreen: false,
+        //         //   controller: searchController,
+        //         //   onFilterTap: () {
+        //         //     showModalBottomSheet(
+        //         //       context: context,
+        //         //       isScrollControlled: true,
+        //         //       shape: const RoundedRectangleBorder(
+        //         //         borderRadius: BorderRadius.vertical(
+        //         //           top: Radius.circular(20),
+        //         //         ),
+        //         //       ),
+        //         //       backgroundColor: Colors.transparent,
+        //         //       builder: (context) => FractionallySizedBox(
+        //         //         heightFactor: 0.9,
+        //         //         child: ClipRRect(
+        //         //           borderRadius: const BorderRadius.vertical(
+        //         //             top: Radius.circular(20),
+        //         //           ),
+        //         //           child: FilterScreen(),
+        //         //         ),
+        //         //       ),
+        //         //     );
+        //         //   },
+        //         //   searchTitle: 'Search...',
+        //         // ),
+        //         //
+        //       ],
+        //     ),
+        //   ),
+        // ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading) {
@@ -146,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: screenWidth * 0.03),
+                          SizedBox(height: kIsWeb ? 30 : 60),
+                          //SizedBox(height: screenWidth * 0.03),
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: kIsWeb
@@ -166,13 +165,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                            height:
-                            kIsWeb ? screenWidth * 0.01 : screenWidth * 0.05,
+                            height: kIsWeb
+                                ? screenWidth * 0.01
+                                : screenWidth * 0.05,
                           ),
                           Container(
                             width: kIsWeb ? size.width : double.infinity,
-                            height:
-                            kIsWeb ? screenWidth * 0.09 : screenWidth * 0.50,
+                            height: kIsWeb
+                                ? screenWidth * 0.09
+                                : screenWidth * 0.50,
                             color: const Color(0xFF3F3D51),
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(
@@ -185,8 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                            height:
-                            kIsWeb ? screenWidth * 0.02 : screenWidth * 0.06,
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.06,
                           ),
 
                           /// Model Comparison
@@ -196,13 +198,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             screenWidth,
                           ),
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.035),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.035,
+                          ),
                           AppListTileCard(
                             title: "Select model for comparison",
-                            imagePath:
-                            CommonUi.setSvgImage(AssetsPath.selectModel),
+                            imagePath: CommonUi.setSvgImage(
+                              AssetsPath.selectModel,
+                            ),
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -213,9 +217,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
                           const Divider(
                             height: 0,
                             thickness: 3,
@@ -223,9 +228,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
 
                           /// Manufacturer Section
                           _buildSectionTitle(
@@ -234,31 +240,34 @@ class _HomeScreenState extends State<HomeScreen> {
                             screenWidth,
                           ),
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
                           if (state.manufacturers.isNotEmpty) ...[
-                            ...state.manufacturers.take(2).map(
+                            ...state.manufacturers
+                                .take(2)
+                                .map(
                                   (m) => AppListTileCard(
-                                title: m.companyName,
-                                imagePath: (m.icon ?? ''),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                        create: (_) => ManufacturerCubit(),
-                                        child: ManufacturerDetailScreen(
-                                          manufacturerDetailId: m.id,
+                                    title: m.companyName,
+                                    imagePath: (m.icon ?? ''),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider(
+                                            create: (_) => ManufacturerCubit(),
+                                            child: ManufacturerDetailScreen(
+                                              manufacturerDetailId: m.id,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                isSvg: (m.icon ?? '').contains(".svg"),
-                                isNetwork: true,
-                              ),
-                            ),
+                                      );
+                                    },
+                                    isSvg: (m.icon ?? '').contains(".svg"),
+                                    isNetwork: true,
+                                  ),
+                                ),
                             Center(
                               child: TextButton(
                                 onPressed: () => Navigator.push(
@@ -283,7 +292,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ] else
-                            _emptyRow('No manufacturers available yet.', screenWidth),
+                            _emptyRow(
+                              'No manufacturers available yet.',
+                              screenWidth,
+                            ),
 
                           const Divider(
                             height: 0,
@@ -292,9 +304,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
 
                           /// Flying in the area
                           _buildSectionTitle(
@@ -302,22 +315,196 @@ class _HomeScreenState extends State<HomeScreen> {
                             AssetsPath.flyingareaicon,
                             screenWidth,
                           ),
+
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 25,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Flying in the Area Button
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider(
+                                          create: (_) {
+                                            final mapCubit = FlightMapCubit();
+                                            final firstFlight =
+                                                mapCubit.state.flights?.first;
+                                            if (firstFlight != null) {
+                                              mapCubit.setSelectedFlight(
+                                                firstFlight,
+                                              );
+                                              mapCubit
+                                                  .clearSelectedFlightDetail();
+                                            }
+                                            return mapCubit;
+                                          },
+                                          child: FlightMapScreen(
+                                            onGoToFirstTab: () {},
+                                            skipInitialPopup: true,
+                                            openMode: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.facebookButton,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.mapPopupAircraft,
+                                          ),
+                                          height: 32,
+                                          width: 32,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Expanded(
+                                          child: Text(
+                                            "Flying in the Area",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+                                const Text(
+                                  "Click to view flights currently flying in this area on the map",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                ),
+
+                                const SizedBox(height: 16),
+                                // Track a Flight Button
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider(
+                                          create: (_) {
+                                            final mapCubit = FlightMapCubit();
+                                            final flightToTrack =
+                                                mapCubit.state.flights?.first;
+                                            if (flightToTrack != null) {
+                                              mapCubit.startTrackingFlight(
+                                                flightToTrack.id,
+                                                context,
+                                              );
+                                            }
+                                            return mapCubit;
+                                          },
+                                          child: FlightMapScreen(
+                                            onGoToFirstTab: () {},
+                                            skipInitialPopup: true,
+                                            openMode: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          AppColors.customBottomEnabledColour,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.mapPopupLivearea,
+                                          ),
+                                          height: 25,
+                                          width: 25,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Expanded(
+                                          child: Text(
+                                            "Track a Flight",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+                                const Text(
+                                  "View real-time status, route, and updates for a flight.",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
 
                           if (state.flights.isNotEmpty) ...[
-                            ...state.flights.take(2).map(
+                            ...state.flights
+                                .take(2)
+                                .map(
                                   (f) => AircraftCard.buildAircraftCard(
-                                imagePath: (f.image ?? ''),
-                                model: f.model,
-                                badge: f.code,
-                                manufacturer: f.companyName,
-                                manufacturerLogoPath: f.logo ?? '',
-                                registrationNumber: f.flightId,
-                              ),
-                            ),
+                                    imagePath: (f.image ?? ''),
+                                    model: f.model,
+                                    badge: f.code,
+                                    manufacturer: f.companyName,
+                                    manufacturerLogoPath: f.logo ?? '',
+                                    registrationNumber: f.flightId,
+                                  ),
+                                ),
                             Center(
                               child: TextButton(
                                 onPressed: () {},
@@ -334,7 +521,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ] else
-                            _emptyRow('No flights found in this area.', screenWidth),
+                            _emptyRow(
+                              'No flights found in this area.',
+                              screenWidth,
+                            ),
 
                           const Divider(
                             height: 0,
@@ -343,9 +533,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
 
                           /// Favourites
                           _buildSectionTitle(
@@ -354,19 +545,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             screenWidth,
                           ),
                           SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045),
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
                           if (state.favourites.isNotEmpty) ...[
-                            ...state.favourites.take(2).map(
+                            ...state.favourites
+                                .take(2)
+                                .map(
                                   (f) => AppListTileCard(
-                                title: f.aircraftModel,
-                                imagePath: (f.image),
-                                onTap: () {},
-                                isSvg: (f.image).contains(".svg"),
-                                isNetwork: true,
-                              ),
-                            ),
+                                    title: f.aircraftModel,
+                                    imagePath: (f.image),
+                                    onTap: () {},
+                                    isSvg: (f.image).contains(".svg"),
+                                    isNetwork: true,
+                                  ),
+                                ),
                             Center(
                               child: TextButton(
                                 onPressed: () => Navigator.push(
@@ -403,7 +597,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 
   Widget _emptyRow(String message, double screenWidth) => Padding(
     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
