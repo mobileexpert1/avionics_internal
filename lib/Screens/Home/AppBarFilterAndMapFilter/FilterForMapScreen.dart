@@ -132,7 +132,6 @@ class _FilterContent extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  "Commercial",
                   "CARGO",
                   "BUSINESS_JETS",
                   "PASSENGER",

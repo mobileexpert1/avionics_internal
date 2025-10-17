@@ -492,39 +492,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : screenWidth * 0.045,
                           ),
 
-                          if (state.flights.isNotEmpty) ...[
-                            ...state.flights
-                                .take(2)
-                                .map(
-                                  (f) => AircraftCard.buildAircraftCard(
-                                    imagePath: (f.image ?? ''),
-                                    model: f.model,
-                                    badge: f.code,
-                                    manufacturer: f.companyName,
-                                    manufacturerLogoPath: f.logo ?? '',
-                                    registrationNumber: f.flightId,
-                                  ),
-                                ),
-                            Center(
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'See All',
-                                  style: TextStyle(
-                                    fontSize: kIsWeb
-                                        ? screenWidth * 0.02
-                                        : screenWidth * 0.04,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textColour,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ] else
-                            _emptyRow(
-                              'No flights found in this area.',
-                              screenWidth,
-                            ),
+                          // if (state.flights.isNotEmpty) ...[
+                          //   ...state.flights
+                          //       .take(2)
+                          //       .map(
+                          //         (f) => AircraftCard.buildAircraftCard(
+                          //           imagePath: (f.image ?? ''),
+                          //           model: f.model,
+                          //           badge: f.code,
+                          //           manufacturer: f.companyName,
+                          //           manufacturerLogoPath: f.logo ?? '',
+                          //           registrationNumber: f.flightId,
+                          //         ),
+                          //       ),
+                          //   Center(
+                          //     child: TextButton(
+                          //       onPressed: () {},
+                          //       child: Text(
+                          //         'See All',
+                          //         style: TextStyle(
+                          //           fontSize: kIsWeb
+                          //               ? screenWidth * 0.02
+                          //               : screenWidth * 0.04,
+                          //           fontWeight: FontWeight.w600,
+                          //           color: AppColors.textColour,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ] else
+                          //   _emptyRow(
+                          //     'No flights found in this area.',
+                          //     screenWidth,
+                          //   ),
 
                           const Divider(
                             height: 0,
