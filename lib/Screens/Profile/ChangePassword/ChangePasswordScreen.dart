@@ -17,8 +17,7 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController namePasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
@@ -55,100 +54,85 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     },
                   ),
                 ),
-                body: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        BlocSelector<
-                          ChangePasswordCubit,
-                          ChangeNewPasswordState,
-                          String?
-                        >(
-                          selector: (state) => state.oldPasswordError,
-                          builder: (context, firstNameError) {
-                            return CustomTextField(
-                              obscureText: true,
+                body: LayoutBuilder(
+                  builder: (context, constraints) {
+                    double maxWidth = constraints.maxWidth > 1500 ? 1500 : constraints.maxWidth;
 
-                              label: ConstantStrings.oldPasswordLabel,
-                              controller: oldPasswordController,
-                              errorText: firstNameError,
-                              onChanged: (val) => context
-                                  .read<ChangePasswordCubit>()
-                                  .oldPasswordChanged(val),
-                            );
-                          },
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Align(
+                        alignment: Alignment.topCenter, // center horizontally
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: maxWidth),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 20),
+                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, String?>(
+                                selector: (state) => state.oldPasswordError,
+                                builder: (context, oldPasswordError) {
+                                  return CustomTextField(
+                                    obscureText: true,
+                                    label: ConstantStrings.oldPasswordLabel,
+                                    controller: oldPasswordController,
+                                    errorText: oldPasswordError,
+                                    onChanged: (val) =>
+                                        context.read<ChangePasswordCubit>().oldPasswordChanged(val),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 15),
+                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, String?>(
+                                selector: (state) => state.passwordError,
+                                builder: (context, passwordError) {
+                                  return CustomTextField(
+                                    obscureText: true,
+                                    label: ConstantStrings.newPasswordLabel,
+                                    controller: namePasswordController,
+                                    errorText: passwordError,
+                                    onChanged: (val) =>
+                                        context.read<ChangePasswordCubit>().newPasswordChanged(val),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 15),
+                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, String?>(
+                                selector: (state) => state.confirmPasswordError,
+                                builder: (context, confirmPasswordError) {
+                                  return CustomTextField(
+                                    obscureText: true,
+                                    label: ConstantStrings.confirmPasswordLabel,
+                                    controller: confirmPasswordController,
+                                    errorText: confirmPasswordError,
+                                    onChanged: (val) =>
+                                        context.read<ChangePasswordCubit>().confirmPasswordChanged(val),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 30),
+                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, bool>(
+                                selector: (state) => state.isButtonEnabled,
+                                builder: (context, isButtonEnabled) {
+                                  return CustomBottomButton(
+                                    title: ConstantStrings.saveTitle,
+                                    backgroundColor: isButtonEnabled
+                                        ? AppColors.customBottomEnabledColour
+                                        : AppColors.customBottomDisableColour,
+                                    textColor: Colors.white,
+                                    icon: const SizedBox(width: 0),
+                                    isEnabled: isButtonEnabled,
+                                    onPressed: () {
+                                      context.read<ChangePasswordCubit>().submitIfValid(context);
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 15),
-
-                        BlocSelector<
-                          ChangePasswordCubit,
-                          ChangeNewPasswordState,
-                          String?
-                        >(
-                          selector: (state) => state.passwordError,
-                          builder: (context, lastNameError) {
-                            return CustomTextField(
-                              obscureText: true,
-
-                              label: ConstantStrings.newPasswordLabel,
-                              controller: namePasswordController,
-                              errorText: lastNameError,
-                              onChanged: (val) => context
-                                  .read<ChangePasswordCubit>()
-                                  .newPasswordChanged(val),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 15),
-
-                        BlocSelector<
-                          ChangePasswordCubit,
-                          ChangeNewPasswordState,
-                          String?
-                        >(
-                          selector: (state) => state.confirmPasswordError,
-                          builder: (context, emailError) {
-                            return CustomTextField(
-                              obscureText: true,
-                              label: ConstantStrings.confirmPasswordLabel,
-                              controller: confirmPasswordController,
-                              errorText: emailError,
-                              onChanged: (val) => context
-                                  .read<ChangePasswordCubit>()
-                                  .confirmPasswordChanged(val),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 30),
-
-                        BlocSelector<
-                          ChangePasswordCubit,
-                          ChangeNewPasswordState,
-                          bool
-                        >(
-                          selector: (state) => state.isButtonEnabled,
-                          builder: (context, isButtonEnabled) {
-                            return CustomBottomButton(
-                              title: ConstantStrings.saveTitle,
-                              backgroundColor: state.isButtonEnabled == true
-                                  ? AppColors.customBottomEnabledColour
-                                  : AppColors.customBottomDisableColour,
-                              textColor: Colors.white,
-                              icon: const SizedBox(width: 0),
-                              isEnabled: isButtonEnabled,
-                              onPressed: () {
-                                context
-                                    .read<ChangePasswordCubit>()
-                                    .submitIfValid(context);
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
               if (state.status == CommonApiStatus.submitting)

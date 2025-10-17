@@ -24,7 +24,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ManufacturerCubit>().loadListOfManufacturers(
-          context: context);
+        context: context,
+      );
     });
   }
 
@@ -44,14 +45,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     double titleFontSize = kIsWeb ? screenWidth * 0.015 : screenWidth * 0.05;
     double bodyFontSize = kIsWeb ? screenWidth * 0.013 : screenWidth * 0.035;
@@ -64,23 +59,24 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [SearchBarWidget(
-              enableBackArrow: true,
-              enableFilter: false,
-              enableCloseScreen: false,
-              controller: searchController,
-              onFilterTap: () {},
-              onBackButtonTap: () {
-                Navigator.pop(context);
-              },
-              onChanged: (value) {
-                context.read<ManufacturerCubit>().loadListOfManufacturers(
-                  context: context,
-                  query: value.trim(),
-                );
-              },
-              searchTitle: 'Search Manufacturer...',
-            )
+            children: [
+              SearchBarWidget(
+                enableBackArrow: true,
+                enableFilter: false,
+                enableCloseScreen: false,
+                controller: searchController,
+                onFilterTap: () {},
+                onBackButtonTap: () {
+                  Navigator.pop(context);
+                },
+                onChanged: (value) {
+                  context.read<ManufacturerCubit>().loadListOfManufacturers(
+                    context: context,
+                    query: value.trim(),
+                  );
+                },
+                searchTitle: 'Search Manufacturer...',
+              ),
             ],
           ),
         ),
@@ -94,14 +90,16 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: kIsWeb
-                      ? screenWidth * 0.02
-                      : screenWidth * 0.03,
+                  height: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.03,
                 ),
 
                 // Title
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal:kIsWeb ? screenWidth * 0.02 : screenWidth * 0.06),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: kIsWeb
+                        ? screenWidth * 0.02
+                        : screenWidth * 0.06,
+                  ),
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: AppTexts(
@@ -118,39 +116,42 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                 ),
 
                 SizedBox(
-                  height: kIsWeb
-                      ? screenWidth * 0.02
-                      : screenWidth * 0.03,
+                  height: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.03,
                 ),
 
                 // Manufacturer List
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: kIsWeb ? screenWidth * 0.02 : screenWidth *
-                          0.04,
+                      horizontal: kIsWeb
+                          ? screenWidth * 0.02
+                          : screenWidth * 0.04,
                     ),
                     child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
                       builder: (context, state) {
                         if (state.isLoading) {
                           return const Center(
-                              child: CircularProgressIndicator());
+                            child: CircularProgressIndicator(),
+                          );
                         }
 
                         if (state.manufacturers.isEmpty) {
                           return const Center(
-                              child: Text("No manufacturers available."));
+                            child: Text("No manufacturers available."),
+                          );
                         }
 
                         final sortedManufacturers = [...state.manufacturers]
-                          ..sort((a, b) =>
-                              a.companyName.toLowerCase().compareTo(
-                                b.companyName.toLowerCase(),
-                              ));
+                          ..sort(
+                            (a, b) => a.companyName.toLowerCase().compareTo(
+                              b.companyName.toLowerCase(),
+                            ),
+                          );
 
                         return ListView.builder(
                           controller: _scrollController,
-                          itemCount: sortedManufacturers.length +
+                          itemCount:
+                              sortedManufacturers.length +
                               (state.isFetchingMore ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index < sortedManufacturers.length) {
@@ -158,7 +159,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               return Card(
                                 color: Colors.white,
                                 margin: EdgeInsets.symmetric(
-                                    vertical: kIsWeb ? 6 : 8),
+                                  vertical: kIsWeb ? 6 : 8,
+                                ),
                                 elevation: 2,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
@@ -172,42 +174,53 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                   ),
                                   leading: item.icon != null
                                       ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: CachedAnyImage(
-                                      imagePath: item.icon ?? "",
-                                      width: kIsWeb
-                                          ? screenWidth * 0.06
-                                          : screenWidth * 0.15,
-                                      height: kIsWeb
-                                          ? screenWidth * 0.06
-                                          : screenWidth * 0.15,
-                                      contentImage: BoxFit.contain,
-                                    ),
-                                  )
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                          child: CachedAnyImage(
+                                            imagePath: item.icon ?? "",
+                                            width: kIsWeb
+                                                ? screenWidth * 0.06
+                                                : screenWidth * 0.15,
+                                            height: kIsWeb
+                                                ? screenWidth * 0.07
+                                                : screenWidth * 0.15,
+                                            contentImage: BoxFit.contain,
+                                          ),
+                                        )
                                       : const Icon(Icons.image_not_supported),
-                                  title: Text(
-                                    item.companyName,
-                                    style: TextStyle(
-                                      fontSize: bodyFontSize,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF3F3D56),
+                                  title: Align(
+                                    alignment: kIsWeb
+                                        ? Alignment.center
+                                        : Alignment.centerLeft,
+                                    child: Text(
+                                      item.companyName,
+                                      textAlign: kIsWeb
+                                          ? TextAlign.center
+                                          : TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: bodyFontSize,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF3F3D56),
+                                      ),
                                     ),
                                   ),
+
                                   trailing: const Icon(
-                                      Icons.arrow_forward_ios, size: 16),
+                                    Icons.arrow_forward_ios,
+                                    size: kIsWeb ? 30 : 15,
+                                  ),
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) =>
-                                            BlocProvider(
-                                              create: (_) =>
-                                                  ManufacturerCubit(),
-                                              child: ManufacturerDetailScreen(
-                                                key: ValueKey(item.id),
-                                                manufacturerDetailId: item.id,
-                                              ),
-                                            ),
+                                        builder: (_) => BlocProvider(
+                                          create: (_) => ManufacturerCubit(),
+                                          child: ManufacturerDetailScreen(
+                                            key: ValueKey(item.id),
+                                            manufacturerDetailId: item.id,
+                                          ),
+                                        ),
                                       ),
                                     );
                                   },
@@ -217,7 +230,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               return const Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Center(
-                                    child: CircularProgressIndicator()),
+                                  child: CircularProgressIndicator(),
+                                ),
                               );
                             }
                           },

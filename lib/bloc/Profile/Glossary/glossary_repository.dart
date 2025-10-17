@@ -13,9 +13,10 @@ class GlossaryRepository {
   Future<Map<String, List<GlossaryItem>>> getGlossaryData({
     String? query,
   }) async {
-    if (!await GenericMethods.hasInternet()) {
-      return _getLocalData();
-    }
+    // Not Working in Web Section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return _getLocalData();
+    // }
 
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +

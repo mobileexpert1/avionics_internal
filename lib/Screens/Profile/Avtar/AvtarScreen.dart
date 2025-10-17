@@ -49,6 +49,10 @@ class _AvtarScreenState extends State<AvtarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double maxWidth = MediaQuery.of(context).size.width > 1500
+        ? 1500
+        : MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -57,9 +61,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => LoginScreen()),
-                  (route) => false,
-                )
+            MaterialPageRoute(builder: (_) => LoginScreen()),
+                (route) => false,
+          )
               : Navigator.pop(context)),
         ),
       ),
@@ -75,115 +79,120 @@ class _AvtarScreenState extends State<AvtarScreen> {
           }
         },
         builder: (context, state) {
-          return ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-            itemCount: titles.length,
-            separatorBuilder: (context, index) =>
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                itemCount: titles.length,
+                separatorBuilder: (context, index) =>
                 const Divider(height: 0.1, color: Colors.grey, thickness: 0.1),
-            itemBuilder: (context, index) {
-              final userType = userTypes[index];
-              final isSelected = state.selectedUserType == userType;
+                itemBuilder: (context, index) {
+                  final userType = userTypes[index];
+                  final isSelected = state.selectedUserType == userType;
 
-              return GestureDetector(
-                onTap: () {
-                  final cubit = context.read<AvtarCubit>();
-                  if (widget.isComeFromSignupScreen ||
-                      widget.isComeFromSocialLogin) {
-                    cubit.selectAvatarTypeOnly(userType);
-                  } else {
-                    cubit.selectAvatar(
-                      userType,
-                      widget.isComeFromSignupScreen,
-                      widget.isComeFromSocialLogin,
-                      context,
-                      {},
-                    );
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 20,
-                  ),
-                  child: Card(
-                    color: Colors.white,
-                    elevation: 0,
-                    margin: EdgeInsets.zero,
-                    child: Padding(
+                  return GestureDetector(
+                    onTap: () {
+                      final cubit = context.read<AvtarCubit>();
+                      if (widget.isComeFromSignupScreen ||
+                          widget.isComeFromSocialLogin) {
+                        cubit.selectAvatarTypeOnly(userType);
+                      } else {
+                        cubit.selectAvatar(
+                          userType,
+                          widget.isComeFromSignupScreen,
+                          widget.isComeFromSocialLogin,
+                          context,
+                          {},
+                        );
+                      }
+                    },
+                    child: Container(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 12,
                         horizontal: 10,
+                        vertical: 20,
                       ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            CommonUi.setSvgImage(icons[index]),
-                            height: 40,
-                            width: 40,
+                      child: Card(
+                        color: Colors.white,
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 10,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              titles[index],
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                CommonUi.setSvgImage(icons[index]),
+                                height: 40,
+                                width: 40,
                               ),
-                            ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  titles[index],
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              if (isSelected)
+                                const Icon(
+                                  Icons.check,
+                                  size: 25,
+                                  color: Colors.blue,
+                                ),
+                            ],
                           ),
-                          if (isSelected)
-                            const Icon(
-                              Icons.check,
-                              size: 25,
-                              color: Colors.blue,
-                            ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
+                  );
+                },
+              ),
+            ),
           );
         },
       ),
       bottomNavigationBar:
-          (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
+      (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
           ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 20,
-                ),
-                child: BlocSelector<AvtarCubit, AvtarState, bool>(
-                  selector: (state) =>
-                      state.selectedUserType != null &&
-                      state.selectedUserType!.isNotEmpty,
-                  builder: (context, isButtonEnabled) {
-                    return CustomBottomButton(
-                      title: ConstantStrings.submitTitle,
-                      backgroundColor: AppColors.customBottomEnabledColour,
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      isEnabled: isButtonEnabled,
-                      onPressed: () {
-                        final selectedUserType =
-                            context.read<AvtarCubit>().state.selectedUserType ??
-                            '';
-                        context.read<AvtarCubit>().selectAvatar(
-                          selectedUserType,
-                          widget.isComeFromSignupScreen,
-                          widget.isComeFromSocialLogin,
-                          context,
-                          widget.signupData,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            )
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 20,
+          ),
+          child: BlocSelector<AvtarCubit, AvtarState, bool>(
+            selector: (state) =>
+            state.selectedUserType != null &&
+                state.selectedUserType!.isNotEmpty,
+            builder: (context, isButtonEnabled) {
+              return CustomBottomButton(
+                title: ConstantStrings.submitTitle,
+                backgroundColor: AppColors.customBottomEnabledColour,
+                textColor: Colors.white,
+                icon: const SizedBox(width: 0),
+                isEnabled: isButtonEnabled,
+                onPressed: () {
+                  final selectedUserType =
+                      context.read<AvtarCubit>().state.selectedUserType ??
+                          '';
+                  context.read<AvtarCubit>().selectAvatar(
+                    selectedUserType,
+                    widget.isComeFromSignupScreen,
+                    widget.isComeFromSocialLogin,
+                    context,
+                    widget.signupData,
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      )
           : const SizedBox.shrink(),
     );
   }

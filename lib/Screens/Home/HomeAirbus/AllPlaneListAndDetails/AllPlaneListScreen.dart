@@ -236,7 +236,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              kIsWeb ? CrossAxisAlignment.center: CrossAxisAlignment.start,
                                               mainAxisAlignment:
                                               MainAxisAlignment.center,
                                               children: [
@@ -295,7 +295,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             ),
                                           ),
                                           const Icon(Icons.arrow_forward_ios,
-                                              size: 15),
+                                              size: kIsWeb ? 30 :15),
                                         ],
                                       ),
                                     ),

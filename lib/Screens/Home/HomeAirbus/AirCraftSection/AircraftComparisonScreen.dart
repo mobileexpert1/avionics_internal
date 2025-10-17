@@ -62,6 +62,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
+    // Dynamic sizes
+    double bodyFontSize = kIsWeb ? screenWidth * 0.015 : 16;
+    double cardHeight = kIsWeb ? 120 : 80;
+    double imageWidth = kIsWeb ? screenWidth * 0.12 : screenWidth * 0.22;
+    double imageHeight = cardHeight - 20;
+
     return BlocProvider.value(
       value: _cubit,
       child: Scaffold(
@@ -109,16 +115,10 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: kIsWeb
-                            ? screenWidth * 0.01
-                            : screenWidth * 0.04,
-                      ),
+                      SizedBox(height: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.04),
                       Padding(
                         padding: EdgeInsets.only(
-                          left: kIsWeb
-                              ? screenWidth * 0.03
-                              : screenWidth * 0.06,
+                          left: kIsWeb ? screenWidth * 0.03 : screenWidth * 0.06,
                         ),
                         child: AppTexts(
                           text: "Select Model for Comparison",
@@ -127,109 +127,199 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                           side: 'left',
                           color: const Color(0xFF3F3D56),
                           weight: FontWeight.w600,
-                          fontSize: kIsWeb
-                              ? screenWidth * 0.02
-                              : screenWidth * 0.04,
-                          imageSize: kIsWeb
-                              ? screenWidth * 0.02
-                              : screenWidth * 0.04,
+                          fontSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04,
+                          imageSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04,
                         ),
                       ),
-                      SizedBox(
-                        height: kIsWeb
-                            ? screenWidth * 0.01
-                            : screenWidth * 0.04,
-                      ),
-                      Expanded(
+                      SizedBox(height: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.04),
+
+                      // Scrollable list
+                      Flexible(
                         child: models.isEmpty
                             ? const Center(
-                                child: Text(
-                                  'No Compare models available',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              )
+                          child: Text(
+                            'No Compare models available',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        )
                             : ScrollConfiguration(
-                                behavior: const ScrollBehavior().copyWith(
-                                  scrollbars: true,
-                                  dragDevices: {
-                                    PointerDeviceKind.touch,
-                                    PointerDeviceKind.mouse,
-                                  },
-                                ),
-                                child: ListView.builder(
-                                  controller: _scrollController,
-                                  padding: EdgeInsets.only(
-                                    bottom: screenWidth * 0.05,
-                                    left: screenWidth * 0.025,
-                                    right: screenWidth * 0.025,
-                                  ),
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount:
-                                      models.length +
-                                      (state.isFetchingMore ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index >= models.length) {
-                                      if (state.hasNextPage) {
-                                        return const Padding(
-                                          padding: EdgeInsets.all(16),
-                                          child: Center(
-                                            child: CircularProgressIndicator(),
+                          behavior: const ScrollBehavior().copyWith(
+                            scrollbars: true,
+                            dragDevices: {
+                              PointerDeviceKind.touch,
+                              PointerDeviceKind.mouse,
+                            },
+                          ),
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            padding: EdgeInsets.only(
+                              bottom: screenWidth * 0.05,
+                              left: screenWidth * 0.025,
+                              right: screenWidth * 0.025,
+                            ),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: models.length + (state.isFetchingMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index >= models.length) {
+                                if (state.hasNextPage) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(child: CircularProgressIndicator()),
+                                  );
+                                } else {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(
+                                      child: Text(
+                                        "No more models",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+
+                              final model = models[index];
+
+                              // Web layout
+                              if (kIsWeb) {
+                                return Padding(
+                                  key: ValueKey(model.id),
+                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context, model);
+                                    },
+                                    child: Container(
+                                      height: cardHeight,
+                                      clipBehavior: Clip.hardEdge,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.08),
+                                            blurRadius: 5,
+                                            spreadRadius: 1,
+                                            offset: const Offset(0, 1),
                                           ),
-                                        );
-                                      } else {
-                                        return const Padding(
-                                          padding: EdgeInsets.all(16),
-                                          child: Center(
-                                            child: Text(
-                                              "No more models",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          CachedAnyImage(
+                                            key: ValueKey(model.image),
+                                            imagePath: model.image,
+                                            width: imageWidth,
+                                            height: imageHeight,
+                                            contentImage: BoxFit.cover,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      model.aircraftModel,
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: bodyFontSize,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                    if (model.icaoTypeCode.isNotEmpty)
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 8.0),
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: BorderRadius.circular(4),
+                                                            boxShadow: const [
+                                                              BoxShadow(color: Colors.grey, spreadRadius: 0.1),
+                                                            ],
+                                                          ),
+                                                          child: Text(
+                                                            model.icaoTypeCode,
+                                                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius: BorderRadius.circular(2),
+                                                      child: SizedBox(
+                                                        width: 40,
+                                                        height: 40,
+                                                        child: CachedAnyImage(
+                                                          imagePath: model.manufacturer?.logo ?? "",
+                                                          width: 40,
+                                                          height: 40,
+                                                          contentImage: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    if (model.manufacturer?.companyName != null)
+                                                      Text(
+                                                        model.manufacturer?.companyName ?? "",
+                                                        style: const TextStyle(fontSize: 13),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        );
-                                      }
-                                    }
-
-                                    final model = models[index];
-                                    return Padding(
-                                      key: ValueKey(model.id),
-                                      padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            screenWidth *
-                                            (kIsWeb ? 0.0 : 0.017),
+                                          const Icon(Icons.arrow_forward_ios, size: 30),
+                                        ],
                                       ),
-                                      child: SimpleAircraftCard(
-                                        imagePath: CachedAnyImage(
-                                          imagePath: model.image,
-                                          width: screenWidth * 0.15,
-                                          height: screenWidth * 0.15,
-                                          contentImage: BoxFit.fill,
-                                        ),
-                                        model: model.aircraftModel,
-                                        badge: model.icaoTypeCode,
-                                        callSign: "",
-                                        manufacturer:
-                                            model.manufacturer?.companyName,
-                                        airline: null,
-                                        airlineImagePath: CachedAnyImage(
-                                          imagePath:
-                                              model.manufacturer?.logo ?? "",
-                                          width: screenWidth * 0.05,
-                                          height: screenWidth * 0.05,
-                                          contentImage: BoxFit.fill,
-                                        ),
-                                        onTap: () {
-                                          Navigator.pop(context, model);
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                // Mobile layout
+                                return Padding(
+                                  key: ValueKey(model.id),
+                                  padding: EdgeInsets.symmetric(vertical: screenWidth * 0.017),
+                                  child: SimpleAircraftCard(
+                                    imagePath: CachedAnyImage(
+                                      imagePath: model.image,
+                                      width: screenWidth * 0.15,
+                                      height: screenWidth * 0.15,
+                                      contentImage: BoxFit.fill,
+                                    ),
+                                    model: model.aircraftModel,
+                                    badge: model.icaoTypeCode,
+                                    callSign: "",
+                                    manufacturer: model.manufacturer?.companyName,
+                                    airline: null,
+                                    airlineImagePath: CachedAnyImage(
+                                      imagePath: model.manufacturer?.logo ?? "",
+                                      width: screenWidth * 0.05,
+                                      height: screenWidth * 0.05,
+                                      contentImage: BoxFit.fill,
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context, model);
+                                    },
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       ),
                     ],
                   );

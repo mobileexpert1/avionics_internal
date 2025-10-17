@@ -12,9 +12,10 @@ class UnitSelectionRepository {
   final GenericMethods<UnitOption> _prefs;
 
   Future<UnitSelectionModel> getUnitPreferences({required String token}) async {
-    if (!await GenericMethods.hasInternet()) {
-      return _getLocalData();
-    }
+    // Not working in web.
+    // if (!await GenericMethods.hasInternet()) {
+    //   return _getLocalData();
+    // }
 
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +

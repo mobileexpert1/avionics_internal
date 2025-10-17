@@ -15,9 +15,11 @@ class ManageAccountRepository {
   final GenericMethods<ManageAccountModel> _profiles;
 
   Future<ManageAccountModel> getUserDetail() async {
-    if (!await GenericMethods.hasInternet()) {
-      return _getLocalRow();
-    }
+    // Not Working in web section
+    // if (!await GenericMethods.hasInternet()) {
+    //   return _getLocalRow();
+    // }
+
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +

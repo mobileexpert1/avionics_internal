@@ -8,6 +8,10 @@ class ContactSupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double maxWidth = MediaQuery.of(context).size.width > 1500
+        ? 1500
+        : MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -19,22 +23,27 @@ class ContactSupportScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _buildCenteredContactBox(
-              icon: Icons.email_outlined,
-              text: "Avinoncia@gmail.com",
-              onTap: () => _launchEmail(context),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                _buildCenteredContactBox(
+                  icon: Icons.email_outlined,
+                  text: "Avinoncia@gmail.com",
+                  onTap: () => _launchEmail(context),
+                ),
+                const SizedBox(height: 16),
+                _buildCenteredContactBox(
+                  icon: Icons.local_phone_outlined,
+                  text: "+91-834 569 9234",
+                  onTap: () => _launchPhone(context),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            _buildCenteredContactBox(
-              icon: Icons.local_phone_outlined,
-              text: "+91-834 569 9234",
-              onTap: () => _launchPhone(context),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -88,12 +97,11 @@ class ContactSupportScreen extends StatelessWidget {
     );
 
     if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
+      await launchUrl(emailUri, mode: LaunchMode.externalApplication);
     } else {
       _showErrorSnack(context, "Unable to open email app.");
     }
   }
-
 
   void _launchPhone(BuildContext context) async {
     final Uri phoneUri = Uri(scheme: 'tel', path: '+918345699234');
@@ -105,8 +113,8 @@ class ContactSupportScreen extends StatelessWidget {
   }
 
   void _showErrorSnack(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

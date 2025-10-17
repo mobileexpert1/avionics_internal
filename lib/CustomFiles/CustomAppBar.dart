@@ -26,14 +26,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: isHideTopGradient ==  true ? Colors.white : Colors.black12,
+            color: isHideTopGradient == true ? Colors.white : Colors.black12,
             offset: const Offset(0, 2), // move down
             blurRadius: 4,
           ),
         ],
         border: Border(
           bottom: BorderSide(
-            color: isHideTopGradient ==  true ? Colors.white : AppColors.sepratorColourAppBar,
+            color: isHideTopGradient == true
+                ? Colors.white
+                : AppColors.sepratorColourAppBar,
             width: 1.0,
           ),
         ),
@@ -51,27 +53,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         titleSpacing: centerTitle == true ? titleSpacing : 0,
         leading: leftButton != null
             ? Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: leftButton!,
-          ),
-        )
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: leftButton!,
+                ),
+              )
             : null,
         leadingWidth: 100,
 
         actions: rightButton != null
             ? [
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: rightButton!,
-            ),
-          ),
-        ]
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: rightButton!,
+                  ),
+                ),
+              ]
             : null,
-
       ),
     );
   }

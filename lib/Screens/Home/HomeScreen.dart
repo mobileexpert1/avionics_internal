@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+          preferredSize: Size.fromHeight(kIsWeb ? 120 : 110),
           child: SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,

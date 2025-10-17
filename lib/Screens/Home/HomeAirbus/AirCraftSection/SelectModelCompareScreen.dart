@@ -1,10 +1,12 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
@@ -64,6 +66,7 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: Stack(
         children: [
           // Background image on top half
@@ -78,13 +81,133 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
             ),
           ),
 
+          kIsWeb
+              ? Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
+
           // Foreground UI
           SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Center(
+            child: kIsWeb
+                ? Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          children: [
+                            Column(
+                              children: [
+                                const SizedBox(height: 15),
+                                SvgPicture.asset(
+                                  CommonUi.setSvgImage(AssetsPath.compare1),
+                                  width: 130,
+                                ),
+                                const SizedBox(height: 25),
+                                const Text(
+                                  "Compare every detail\nfrom engines to dimensions",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    height: 1.5,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 42),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 24,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    "Compare Aircraft Specifications",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  _buildRadioOption(
+                                    "Select Model 1",
+                                    model1,
+                                    () => _navigateAndSelectModel(1),
+                                  ),
+                                  const Divider(height: 1),
+                                  _buildRadioOption(
+                                    "Select Model 2",
+                                    model2,
+                                    () => _navigateAndSelectModel(2),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  CustomBottomButton(
+                                    title: ConstantStrings.compare,
+                                    backgroundColor: isButtonEnabled
+                                        ? AppColors.customBottomEnabledColour
+                                        : AppColors.customBottomDisableColour,
+                                    textColor: Colors.white,
+                                    icon: const SizedBox(width: 0),
+                                    isEnabled: isButtonEnabled,
+                                    onPressed: () {
+                                      if (!isButtonEnabled) return;
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider(
+                                            create: (_) =>
+                                                ComparisonFilterCubit1(),
+                                            child: ComparisonScreen(
+                                              model1: model1!.id,
+                                              model2: model2!.id,
+                                              model1Name: model1!.aircraftModel,
+                                              model2Name: model2!.aircraftModel,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
                         Row(
@@ -116,83 +239,79 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 42),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Compare Aircraft Specifications",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                        const SizedBox(height: 42),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 24,
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildRadioOption(
-                          "Select Model 1",
-                          model1,
-                          () => _navigateAndSelectModel(1),
-                        ),
-
-                        const Divider(height: 1),
-                        _buildRadioOption(
-                          "Select Model 2",
-                          model2,
-                          () => _navigateAndSelectModel(2),
-                        ),
-                        const SizedBox(height: 24),
-                        CustomBottomButton(
-                          title: ConstantStrings.compare,
-                          backgroundColor: isButtonEnabled
-                              ? AppColors.customBottomEnabledColour
-                              : AppColors.customBottomDisableColour,
-                          textColor: Colors.white,
-                          icon: const SizedBox(width: 0),
-                          isEnabled: isButtonEnabled,
-                          onPressed: () {
-                            if (!isButtonEnabled) return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) => ComparisonFilterCubit1(),
-                                  child: ComparisonScreen(
-                                    model1: model1!.id,
-                                    model2: model2!.id,
-                                    model1Name: model1!.aircraftModel,
-                                    model2Name: model2!.aircraftModel,
-                                  ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                "Compare Aircraft Specifications",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            );
-                          },
+                              const SizedBox(height: 20),
+                              _buildRadioOption(
+                                "Select Model 1",
+                                model1,
+                                () => _navigateAndSelectModel(1),
+                              ),
+                              const Divider(height: 1),
+                              _buildRadioOption(
+                                "Select Model 2",
+                                model2,
+                                () => _navigateAndSelectModel(2),
+                              ),
+                              const SizedBox(height: 24),
+                              CustomBottomButton(
+                                title: ConstantStrings.compare,
+                                backgroundColor: isButtonEnabled
+                                    ? AppColors.customBottomEnabledColour
+                                    : AppColors.customBottomDisableColour,
+                                textColor: Colors.white,
+                                icon: const SizedBox(width: 0),
+                                isEnabled: isButtonEnabled,
+                                onPressed: () {
+                                  if (!isButtonEnabled) return;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
+                                        create: (_) => ComparisonFilterCubit1(),
+                                        child: ComparisonScreen(
+                                          model1: model1!.id,
+                                          model2: model2!.id,
+                                          model1Name: model1!.aircraftModel,
+                                          model2Name: model2!.aircraftModel,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 40),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
           ),
         ],
       ),

@@ -40,16 +40,21 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: ConstantStrings.profileTitle),
-      body: BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    final size = MediaQuery.of(context).size;
 
-          return SingleChildScrollView(
+    Widget content = BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return SingleChildScrollView(
+          child: Container(
+            width: kIsWeb ? 1500 : double.infinity, // 💡 Box constraint for web
+            alignment: Alignment.center,
+            margin: kIsWeb
+                ? const EdgeInsets.symmetric(horizontal: 50)
+                : EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -59,9 +64,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   items: [
                     SettingsListItem(
                       title: "Manage Your Account",
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.manageAccountAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.manageAccountAcc),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -72,20 +76,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.subsrcitAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.subsrcitAcc),
                       leadingIconColor: Colors.blue,
                       title: "Subscription",
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                (defaultTargetPlatform == TargetPlatform.iOS
+                            builder: (context) => (defaultTargetPlatform ==
+                                TargetPlatform.iOS
                                 ? AppleSubscriptionScreen(
-                                    isComeFromSignup: false,
-                                  )
+                              isComeFromSignup: false,
+                            )
                                 : ProfileSubscriptionScreen()),
                           ),
                         );
@@ -99,9 +102,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "INTERFACE",
                   items: [
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.avtarAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.avtarAcc),
                       title: "Avatar",
                       onTap: () {
                         Navigator.push(
@@ -116,9 +118,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.unitMeasureAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
                       title: "Units & Measurements",
                       onTap: () {
                         Navigator.push(
@@ -140,9 +141,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "REFERENCES",
                   items: [
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.glossaryAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.glossaryAcc),
                       title: "Glossary",
                       onTap: () {
                         Navigator.push(
@@ -158,15 +158,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
+
                 // FEEDBACK Section
                 SettingsListGroup(
                   headerTitle: "FEEDBACK",
                   showBottomDivider: false,
                   items: [
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.reviewsAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.reviewsAcc),
                       title: "Write Review",
                       onTap: () {
                         Navigator.push(
@@ -178,9 +178,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.contactAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.contactAcc),
                       title: "Contact Support",
                       onTap: () {
                         Navigator.push(
@@ -192,18 +191,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.deleteAcc,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.deleteAcc),
                       title: "Logout",
                       onTap: () {
                         showDeleteConfirmation(context, true);
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.deleteAccSvg,
-                      ),
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.deleteAccSvg),
                       title: "Delete account",
                       onTap: () {
                         showDeleteConfirmation(context, false);
@@ -223,26 +220,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 24),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
+    );
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(title: ConstantStrings.profileTitle),
+      body: kIsWeb
+          ? Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1500),
+          child: content,
+        ),
+      )
+          : content,
     );
   }
 
   Future<void> _clearAllDataAndRedirectToSplashScreen(
-    BuildContext context,
-  ) async {
+      BuildContext context) async {
     await SharedPrefsHelper.clearAll([], false);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginScreen()),
-      (route) => false,
+          (route) => false,
     );
   }
 
   void showDeleteConfirmation(
-    BuildContext bottomSheetContext,
-    isComeFromLogout,
-  ) {
+      BuildContext bottomSheetContext,
+      isComeFromLogout,
+      ) {
     showModalBottomSheet(
       context: bottomSheetContext,
       backgroundColor: Colors.transparent,
@@ -259,9 +268,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               } else if (state.errorMessage.isNotEmpty) {
                 Navigator.pop(bottomSheetContext);
-                ScaffoldMessenger.of(
-                  bottomSheetContext,
-                ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+                ScaffoldMessenger.of(bottomSheetContext).showSnackBar(
+                  SnackBar(content: Text(state.errorMessage)),
+                );
               }
             },
             child: Builder(
@@ -305,77 +314,99 @@ class InfoBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            (isComeFromLogout == true
-                ? "Are you sure you want to logout ?"
-                : "Do you want to Delete account ?"),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double maxWidth =
+        constraints.maxWidth > 500 ? 500 : constraints.maxWidth;
+
+        Widget content = Container(
+          width: maxWidth,
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(16), bottom: Radius.circular(16)),
           ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.38,
-                child: ElevatedButton(
-                  onPressed: onYes,
-                  style: ElevatedButton.styleFrom(
-                    side: const BorderSide(color: Colors.transparent),
-                    backgroundColor: const Color(0xFF3F3D51),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
+              Text(
+                isComeFromLogout
+                    ? "Are you sure you want to logout?"
+                    : "Do you want to delete your account?",
+                textAlign: TextAlign.center,
+                style:
+                const TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.38,
-                child: OutlinedButton(
-                  onPressed: onNo,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.transparent),
-                    backgroundColor: Color.fromRGBO(234, 234, 234, 1.0),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: onYes,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3F3D51),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        child: const Text(
+                          "Yes",
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 16),
+                        ),
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    "No",
-                    style: TextStyle(color: Color(0xFF3F3D51), fontSize: 16),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: OutlinedButton(
+                        onPressed: onNo,
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: const Color(0xFFEAEAEA),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        child: const Text(
+                          "No",
+                          style: TextStyle(
+                              color: Color(0xFF3F3D51), fontSize: 16),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+
+        // Web -> Center, Mobile -> Bottom
+        return kIsWeb
+            ? Center(child: content)
+            : Align(
+          alignment: Alignment.bottomCenter,
+          child: content,
+        );
+      },
     );
   }
 }
+
+
 
 class SettingsSectionHeader extends StatelessWidget {
   final String title;
   final TextStyle? textStyle;
 
   const SettingsSectionHeader({Key? key, required this.title, this.textStyle})
-    : super(key: key);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -383,8 +414,7 @@ class SettingsSectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20.0, 24.0, 10.0, 10.0),
       child: Text(
         title,
-        style:
-            textStyle ??
+        style: textStyle ??
             TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -455,27 +485,16 @@ class SettingsListGroup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SettingsSectionHeader(title: headerTitle, textStyle: headerTextStyle),
-        if (showTopDivider == true)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 8.0,
-            ),
-            child: const Divider(
-              height: 1,
-              thickness: 1,
-              color: Color(0xFFE0E0E0),
-            ),
+        if (showTopDivider)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            child: Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
           ),
         ...items,
-        if (showBottomDivider == true)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: const Divider(
-              height: 1,
-              thickness: 1,
-              color: Color(0xFFE0E0E0),
-            ),
+        if (showBottomDivider)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
           ),
       ],
     );
