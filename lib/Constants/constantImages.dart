@@ -41,6 +41,8 @@ abstract class AssetsPath {
   static const String manuFirstImage = "ManuFirstImage";
   static const String carFollowImage = "CarFollowIcon";
   static const String LockIcon = "LockIcon";
+  static const String badgesLock = "badgesLock";
+  static const String badgeTrophy = "badgeTrophy";
   static const String resultIcon = "resultIcon";
   static const String Tik = "TickIcon";
   static const String Trophy = "Trophy";
@@ -62,6 +64,8 @@ abstract class AssetsPath {
   static const String subsrcitAcc = "Subscriptions";
   static const String manageAccountAcc = "manageAccount";
   static const String editIcon = "EditIcon";
+  static const String badgeIcon = "badgeIcon";
+  static const String bagdestarIcon = "bagdestarIcon";
 
   static const String avtarFirst = "AvtarFirst";
   static const String avtarSecond = "AvtarSecond";
@@ -86,6 +90,10 @@ abstract class AssetsPath {
   static const String mapPopupAircraft = "MapPopupAircraft";
   static const String mapPopupLivearea = "MapPopupLivearea";
   static const String airportsIcon = "airportsIcon";
+  static const String filterCheckMap = "filterCheckMap";
+  static const String aircraftIconmap = "aircraftIconmap";
+  static const String closeIcon = "closeMapIcon";
+  static const String closeIconsearch = "closeIconsearch";
 
   // png
   static const String aeroplane = "aeroplane";
@@ -112,7 +120,10 @@ abstract class AssetsPath {
   static const String HistoryImg = "HistoryImg";
   static const String airCraftDetailImage = "airCraftDetailImage";
   static const String infoIcon = "infoIcon";
+  static const String flightinfoIcon = "flightinfoIcon";
+  static const String infoIcon2 = "infoIcon2";
   static const String CarImg = "CarImg";
+  static const String badgeimg = "badgeimg";
 
 }
 

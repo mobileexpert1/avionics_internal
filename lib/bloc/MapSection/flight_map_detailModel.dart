@@ -60,7 +60,7 @@ class FlightAircraftDetail extends Equatable {
   final String? actualArrivalIata;
   final DateTime? landingTime;
   final String? landingRunway;
-  final int? flightTime;
+  final String? flightTime;
   final double? actualDistance;
   final double? circleDistance;
   final String? category;
@@ -74,6 +74,9 @@ class FlightAircraftDetail extends Equatable {
   final int? groundSpeed;
   final int? altitude;
   final DateTime? eta;
+  final String? squawk;
+  final String? source;
+  final int? vspeed;
 
   // Aircraft fields
   final String? aircraftModel;
@@ -117,6 +120,9 @@ class FlightAircraftDetail extends Equatable {
     this.groundSpeed,
     this.altitude,
     this.eta,
+    this.squawk,
+    this.source,
+    this.vspeed,
 
     // Aircraft
     this.aircraftModel,
@@ -152,7 +158,9 @@ class FlightAircraftDetail extends Equatable {
           ? DateTime.tryParse(json['datetime_landed'])
           : null,
       landingRunway: json['runway_landed'],
-      flightTime: json['flight_time'],
+      flightTime: json['flight_time'] == null || json['flight_time'].toString().trim().isEmpty
+          ? null
+          : json['flight_time'].toString(),
       actualDistance: json['actual_distance']?.toDouble(),
       circleDistance: json['circle_distance']?.toDouble(),
       category: json['category'],
@@ -170,6 +178,9 @@ class FlightAircraftDetail extends Equatable {
       groundSpeed: json['ground_speed'],
       altitude: json['altitude'],
       eta: json['eta'] != null ? DateTime.tryParse(json['eta']) : null,
+      squawk: json['squawk'],
+      source: json['source'],
+      vspeed: json['vspeed'],
 
       // Aircraft
       aircraftModel: json['Aircraft_Model'],
@@ -225,6 +236,9 @@ class FlightAircraftDetail extends Equatable {
     groundSpeed,
     altitude,
     eta,
+    squawk,
+    source,
+    vspeed,
     aircraftModel,
     isFavorite,
     icaoTypeCode,
@@ -266,40 +280,55 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
     int? track,
     int? groundSpeed,
     int? altitude,
+    DateTime? takeoffTime,
     DateTime? eta,
+    String? flightNumber,
+    String? callsign,
+    String? registration,
+    String? squawk,
+    String? source,
+    int? vspeed,
+    String? flightTime,
+    DateTime? firstSeen,       // new
+    DateTime? lastSeen,        // new
+    bool? flightEnded,         // new
+    DateTime? landingTime,     // new
   }) {
     return FlightAircraftDetail(
       id: id,
-      flightNumber: flightNumber,
-      callsign: callsign,
+      flightNumber: flightNumber ?? this.flightNumber,
+      callsign: callsign ?? this.callsign,
       operatingAs: operatingAs,
       paintedAs: paintedAs,
       type: type,
-      registration: registration,
+      registration: registration ?? this.registration,
       departureIcao: departureIcao,
       departureIata: departureIata,
-      takeoffTime: takeoffTime,
+      takeoffTime: takeoffTime ?? this.takeoffTime,
       takeoffRunway: takeoffRunway,
       arrivalIcao: arrivalIcao,
       arrivalIata: arrivalIata,
       actualArrivalIcao: actualArrivalIcao,
       actualArrivalIata: actualArrivalIata,
-      landingTime: landingTime,
+      landingTime: landingTime ?? this.landingTime,       // updated
       landingRunway: landingRunway,
-      flightTime: flightTime,
+      flightTime: flightTime ?? this.flightTime,
       actualDistance: actualDistance,
       circleDistance: circleDistance,
       category: category,
       hex: hex,
-      firstSeen: firstSeen,
-      lastSeen: lastSeen,
-      flightEnded: flightEnded,
+      firstSeen: firstSeen ?? this.firstSeen,            // updated
+      lastSeen: lastSeen ?? this.lastSeen,               // updated
+      flightEnded: flightEnded ?? this.flightEnded,      // updated
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       track: track ?? this.track,
       groundSpeed: groundSpeed ?? this.groundSpeed,
       altitude: altitude ?? this.altitude,
       eta: eta ?? this.eta,
+      squawk: squawk ?? this.squawk,
+      source: source ?? this.source,
+      vspeed: vspeed ?? this.vspeed,
       aircraftModel: aircraftModel,
       isFavorite: isFavorite,
       icaoTypeCode: icaoTypeCode,

@@ -89,7 +89,7 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
           flight.detail.acType.toUpperCase(),
         ),
         orElse: () => AircraftModel(
-          id: '',
+          aircraftId: '',
           aircraftModel: '',
           isFavorite: false,
           icaoTypeCode: '',

@@ -23,4 +23,19 @@ class AircraftListDataRepository {
       throw e.toString();
     }
   }
+
+  Future<AircraftListResponse> searchAircraftByICAO(String icaoCode) async {
+    final url = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+          "aircraft/icao-aircraft/$icaoCode",
+    );
+
+    try {
+      final jsonResponse = await ApiService.get(url: url) as Map<String, dynamic>;
+      return AircraftListResponse.fromJson(jsonResponse);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 }

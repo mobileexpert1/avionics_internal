@@ -1,3 +1,5 @@
+import 'package:avionics_internal/bloc/MapSection/MapAircraftList/selected_aricraft_model.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
 
@@ -26,6 +28,7 @@ class AircraftListDataState {
   final String? errorMessage;
   final CommonApiStatus status;
   final String? detail;
+  final List<SelectedAircraftModel> aircraftList1;
 
   const AircraftListDataState({
     required this.aircraftList,
@@ -34,12 +37,14 @@ class AircraftListDataState {
     this.errorMessage,
     this.status = CommonApiStatus.initial,
     this.detail,
+    required this.aircraftList1,
   });
 
   factory AircraftListDataState.initial() {
     return const AircraftListDataState(
       aircraftList: [],
       status: CommonApiStatus.initial,
+      aircraftList1: [],
     );
   }
 
@@ -50,6 +55,7 @@ class AircraftListDataState {
     String? errorMessage,
     CommonApiStatus? status,
     String? detail,
+    List<SelectedAircraftModel>? aircraftList1,
   }) {
     return AircraftListDataState(
       aircraftList: aircraftList ?? this.aircraftList,
@@ -58,6 +64,7 @@ class AircraftListDataState {
       errorMessage: errorMessage ?? this.errorMessage,
       status: status ?? this.status,
       detail: detail ?? this.detail,
+      aircraftList1: aircraftList1 ?? this.aircraftList1,
     );
   }
 }

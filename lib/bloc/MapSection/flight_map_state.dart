@@ -26,6 +26,8 @@ class FlightMapState {
   final List<AircraftStationModel>? airports;
   final AircraftStationModel? selectedAirport;
 
+  final int activeCard;
+
   FlightMapState({
     this.status = CommonApiStatus.initial,
     this.isLoading = false,
@@ -44,6 +46,7 @@ class FlightMapState {
     this.animationDuration = 50,
     this.airports,
     this.selectedAirport,
+    this.activeCard = 0,
   });
 
   FlightMapState copyWith({
@@ -64,6 +67,7 @@ class FlightMapState {
     int? animationDuration,
     List<AircraftStationModel>? airports,
     AircraftStationModel? selectedAirport,
+    int? activeCard,
   }) {
     return FlightMapState(
       status: status ?? this.status,
@@ -84,6 +88,7 @@ class FlightMapState {
       animationDuration: animationDuration ?? this.animationDuration,
       airports: airports ?? this.airports,
       selectedAirport: selectedAirport ?? this.selectedAirport,
+      activeCard: activeCard ?? this.activeCard,
     );
   }
 }

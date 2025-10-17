@@ -10,9 +10,13 @@ import '../../Helpers/AircraftCard.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
 import '../../Helpers/SearchBarWidget.dart';
-import '../../bloc/Home/manufacturer/manufacturer_cubit.dart';
+import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
+import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
+import '../MapSection/FlightMapScreen.dart';
+import '../MapSection/MapHelpers/MapTrackingModePopup.dart';
+import '../MapSection/MapHelpers/TrackAndSeacrhFlight.dart';
 import 'AppBarFilterAndMapFilter/FilterScreen.dart';
 import 'HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
@@ -42,10 +46,49 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenWidth = size.width;
 
     return MultiBlocProvider(
-      providers: [BlocProvider<HomeCubit>(create: (_) => homeCubit)],
+      providers: [
+        BlocProvider<HomeCubit>(create: (_) => homeCubit),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
+
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(right: 10, bottom: 10),
+          child: FloatingActionButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final token = prefs.getString('UserAccessTokenKey');
+
+              if (token != null && token.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AskWilcoScreen(
+                      accessToken: token,
+                      isComeFromTab: false,
+                      sessionId: '',
+                      title: '',
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Access token not found")),
+                );
+              }
+            },
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.Chatbot),
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kIsWeb ? 120 : 110),
           child: SafeArea(
@@ -124,31 +167,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.01
-                                : screenWidth * 0.05,
+                            height:
+                            kIsWeb ? screenWidth * 0.01 : screenWidth * 0.05,
                           ),
                           Container(
                             width: kIsWeb ? size.width : double.infinity,
-                            height: kIsWeb
-                                ? screenWidth * 0.09
-                                : screenWidth * 0.50,
+                            height:
+                            kIsWeb ? screenWidth * 0.09 : screenWidth * 0.50,
                             color: const Color(0xFF3F3D51),
-                            //alignment: Alignment.center,
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(
                                 kIsWeb
                                     ? AssetsPath.WebAppLogo
                                     : AssetsPath.avionicaHome,
                               ),
-                              fit: kIsWeb ? BoxFit.contain :BoxFit.cover,
+                              fit: kIsWeb ? BoxFit.contain : BoxFit.cover,
                             ),
                           ),
 
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.06,
+                            height:
+                            kIsWeb ? screenWidth * 0.02 : screenWidth * 0.06,
                           ),
 
                           /// Model Comparison
@@ -158,16 +197,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             screenWidth,
                           ),
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.035,
-                          ),
-
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.035),
                           AppListTileCard(
                             title: "Select model for comparison",
-                            imagePath: CommonUi.setSvgImage(
-                              AssetsPath.selectModel,
-                            ),
+                            imagePath:
+                            CommonUi.setSvgImage(AssetsPath.selectModel),
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -176,12 +212,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             isSvg: true,
                           ),
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
 
+                          SizedBox(
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045),
                           const Divider(
                             height: 0,
                             thickness: 3,
@@ -189,50 +224,41 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045),
 
-                          /* ───────────── Manufacturer ───────────── */
+                          /// Manufacturer Section
                           _buildSectionTitle(
                             'Manufacturer',
                             AssetsPath.manufacturer,
                             screenWidth,
                           ),
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-                          if (state.manufacturers.isNotEmpty) ...[
-                            ...state.manufacturers
-                                .take(2)
-                                .map(
-                                  (m) => AppListTileCard(
-                                    title: m.companyName,
-                                    imagePath: (m.icon ?? ''),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
-                                            create: (_) => ManufacturerCubit(),
-                                            child: ManufacturerDetailScreen(
-                                              manufacturerDetailId: m.id,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    isSvg: (m.icon ?? '').contains(".svg"),
-                                    isNetwork: true,
-                                  ),
-                                ),
-                            SizedBox(
                               height: kIsWeb
                                   ? screenWidth * 0.02
-                                  : screenWidth * 0.045,
+                                  : screenWidth * 0.045),
+                          if (state.manufacturers.isNotEmpty) ...[
+                            ...state.manufacturers.take(2).map(
+                                  (m) => AppListTileCard(
+                                title: m.companyName,
+                                imagePath: (m.icon ?? ''),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
+                                        create: (_) => ManufacturerCubit(),
+                                        child: ManufacturerDetailScreen(
+                                          manufacturerDetailId: m.id,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                isSvg: (m.icon ?? '').contains(".svg"),
+                                isNetwork: true,
+                              ),
                             ),
                             Center(
                               child: TextButton(
@@ -257,16 +283,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045,
-                            ),
                           ] else
-                            _emptyRow(
-                              'No manufacturers available yet.',
-                              screenWidth,
-                            ),
+                            _emptyRow('No manufacturers available yet.', screenWidth),
+
                           const Divider(
                             height: 0,
                             thickness: 3,
@@ -274,36 +293,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045),
 
-                          /* ────────── Flying in the area ─────────── */
+                          /// Flying in the area
                           _buildSectionTitle(
                             'Flying in the area',
                             AssetsPath.flyingareaicon,
                             screenWidth,
                           ),
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045),
 
                           if (state.flights.isNotEmpty) ...[
-                            ...state.flights
-                                .take(2)
-                                .map(
+                            ...state.flights.take(2).map(
                                   (f) => AircraftCard.buildAircraftCard(
-                                    imagePath: (f.image ?? ''),
-                                    model: f.model,
-                                    badge: f.code,
-                                    manufacturer: f.companyName,
-                                    manufacturerLogoPath: f.logo ?? '',
-                                    registrationNumber: f.flightId,
-                                  ),
-                                ),
+                                imagePath: (f.image ?? ''),
+                                model: f.model,
+                                badge: f.code,
+                                manufacturer: f.companyName,
+                                manufacturerLogoPath: f.logo ?? '',
+                                registrationNumber: f.flightId,
+                              ),
+                            ),
                             Center(
                               child: TextButton(
                                 onPressed: () {},
@@ -319,16 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045,
-                            ),
                           ] else
-                            _emptyRow(
-                              'No flights found in this area.',
-                              screenWidth,
-                            ),
+                            _emptyRow('No flights found in this area.', screenWidth),
 
                           const Divider(
                             height: 0,
@@ -337,33 +344,30 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045),
 
+                          /// Favourites
                           _buildSectionTitle(
                             'Favourites',
                             AssetsPath.star,
                             screenWidth,
                           ),
                           SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045),
                           if (state.favourites.isNotEmpty) ...[
-                            ...state.favourites
-                                .take(2)
-                                .map(
+                            ...state.favourites.take(2).map(
                                   (f) => AppListTileCard(
-                                    title: f.aircraftModel,
-                                    imagePath: (f.image),
-                                    onTap: () {},
-                                    isSvg: (f.image).contains(".svg"),
-                                    isNetwork: true,
-                                  ),
-                                ),
+                                title: f.aircraftModel,
+                                imagePath: (f.image),
+                                onTap: () {},
+                                isSvg: (f.image).contains(".svg"),
+                                isNetwork: true,
+                              ),
+                            ),
                             Center(
                               child: TextButton(
                                 onPressed: () => Navigator.push(
@@ -397,44 +401,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return const SizedBox();
           },
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(right: 10, bottom: 10),
-          child: FloatingActionButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final token = prefs.getString('UserAccessTokenKey');
-
-              if (token != null && token.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AskWilcoScreen(
-                      accessToken: token,
-                      isComeFromTab: false,
-                      sessionId: '',
-                      title: '',
-                    ),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Access token not found")),
-                );
-              }
-            },
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.Chatbot),
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
       ),
     );
   }
+
 
   Widget _emptyRow(String message, double screenWidth) => Padding(
     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),

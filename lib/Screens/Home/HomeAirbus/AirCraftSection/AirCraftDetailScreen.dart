@@ -304,162 +304,213 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
+  final fieldColor = const Color(0xFF3E3C55);
   Widget _buildTechnicalData(IdentificationClassification? detail) {
     if (detail == null) return const Text('No data available');
     final identification = detail;
-    return _buildFieldRows([
-      ['ICAO Type Code', identification.icaoTypeCode],
-      ['Aircraft Manufacturer', identification.manufacturer],
-      ['Aircraft Model', identification.aircraftModel],
-      ['Aircraft Role', identification.aircraftRole],
-      ['Aircraft Type', identification.aircraftType],
-      ['Wake Turbulence Category', identification.wakeTurbulenceCategory],
+    return _buildFieldRows(
       [
-        'Civilian / Military / Dual Use',
-        identification.civilianMilitaryOrDualUse,
+        ['ICAO Type Code', identification.icaoTypeCode],
+        ['Aircraft Manufacturer', identification.manufacturer],
+        ['Aircraft Model', identification.aircraftModel],
+        ['Aircraft Role', identification.aircraftRole],
+        ['Aircraft Type', identification.aircraftType],
+        ['Wake Turbulence Category', identification.wakeTurbulenceCategory],
+        [
+          'Civilian / Military / Dual Use',
+          identification.civilianMilitaryOrDualUse,
+        ],
+        ['Country of Origin', identification.countryOfOrigin],
+        ['Date of Maiden Flight', identification.dateOfMaidenFlight],
+        ['Year of Introduction', identification.yearOfIntroduction],
+        ['Production Status', identification.productionStatus],
+        ['Avionics System Name', identification.avionicsSystem],
+        ['Number of Crew', identification.numberOfCrew],
+        [
+          'Number of Passengers (Typical)',
+          identification.numberOfPassengers.typical,
+        ],
+        [
+          'Number of Passengers (Maximum)',
+          identification.numberOfPassengers.maximum,
+        ],
       ],
-      ['Country of Origin', identification.countryOfOrigin],
-      ['Date of Maiden Flight', identification.dateOfMaidenFlight],
-      ['Year of Introduction', identification.yearOfIntroduction],
-      ['Production Status', identification.productionStatus],
-      ['Avionics System Name', identification.avionicsSystem],
-      ['Number of Crew', identification.numberOfCrew],
-      [
-        'Number of Passengers (Typical)',
-        identification.numberOfPassengers.typical,
-      ],
-      [
-        'Number of Passengers (Maximum)',
-        identification.numberOfPassengers.maximum,
-      ],
-    ]);
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _buildPowerPlantData(PowerplantPropulsion? detail) {
     if (detail == null) return const Text('No data available');
     final powerPlantDetails = detail;
-    return _buildFieldRows([
-      ['Number of Engines', powerPlantDetails.numberOfEngines.toString()],
-      ['Fuel Consumption', powerPlantDetails.fuel.burnRate],
-      ['Manufacturer', powerPlantDetails.engine.manufacturer],
-      ['Model', powerPlantDetails.engine.model],
-      ['Engine Type', powerPlantDetails.engine.engineType],
-      ['Thrust Per Engine (kN)', powerPlantDetails.engine.thrust],
-      ['Physical Engine Code', powerPlantDetails.engine.physicalEngineCode],
-      ['APU Type', powerPlantDetails.apuType],
-      ['Fuel Type', powerPlantDetails.fuel.fuelType],
-      ['Fuel Additives', powerPlantDetails.fuel.fuelAdditives],
-      ['Fuel Capacity', powerPlantDetails.fuel.capacity],
-    ]);
+    return _buildFieldRows(
+      [
+        ['Number of Engines', powerPlantDetails.numberOfEngines.toString()],
+        ['Fuel Consumption', powerPlantDetails.fuel.burnRate],
+        ['Manufacturer', powerPlantDetails.engine.manufacturer],
+        ['Model', powerPlantDetails.engine.model],
+        ['Engine Type', powerPlantDetails.engine.engineType],
+        ['Thrust Per Engine (kN)', powerPlantDetails.engine.thrust],
+        ['Physical Engine Code', powerPlantDetails.engine.physicalEngineCode],
+        ['APU Type', powerPlantDetails.apuType],
+        ['Fuel Type', powerPlantDetails.fuel.fuelType],
+        ['Fuel Additives', powerPlantDetails.fuel.fuelAdditives],
+        ['Fuel Capacity', powerPlantDetails.fuel.capacity],
+      ],
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _buildDimenionsData(Dimensions? detail) {
     if (detail == null) return const Text('No data available');
     final dimensionDetails = detail;
-    return _buildFieldRows([
-      ['Wingspan (m)', dimensionDetails.wingspanM],
-      ['Cabin Width (m)', dimensionDetails.cabinWidthM],
-      ['Length (m)', dimensionDetails.lengthM],
-      ['Wingtip Configuration', dimensionDetails.wingtipConfiguration],
-      ['Height (m)', dimensionDetails.heightM],
-      ['Wing Area (m2)', dimensionDetails.wingAreaM2],
-      ['Door Height (m)', dimensionDetails.doorHeightM],
-    ]);
+    return _buildFieldRows(
+      [
+        ['Wingspan (m)', dimensionDetails.wingspanM],
+        ['Cabin Width (m)', dimensionDetails.cabinWidthM],
+        ['Length (m)', dimensionDetails.lengthM],
+        ['Wingtip Configuration', dimensionDetails.wingtipConfiguration],
+        ['Height (m)', dimensionDetails.heightM],
+        ['Wing Area (m2)', dimensionDetails.wingAreaM2],
+        ['Door Height (m)', dimensionDetails.doorHeightM],
+      ],
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _buildWeightsData(Weights? detail) {
     if (detail == null) return const Text('No data available');
     final weightsDetails = detail;
-    return _buildFieldRows([
-      ['Operating Empty Weight (kg)', weightsDetails.emptyWeight],
-      ['Maximum Zero Fuel Weight (kg)', weightsDetails.zeroFuelWeight],
-      ['Maximum Takeoff Weight (kg)', weightsDetails.takeoffWeight],
-      ['Max Payload (kg)', weightsDetails.payload],
-      ['Maximum Landing Weight (kg)', weightsDetails.landingWeight],
-      ['Maximum Baggage or Cargo Volume (m3)', weightsDetails.baggage.maximum],
-      ['Minimum Baggage or Cargo Volume (m3)', weightsDetails.baggage.minimum],
-    ]);
+    return _buildFieldRows(
+      [
+        ['Operating Empty Weight (kg)', weightsDetails.emptyWeight],
+        ['Maximum Zero Fuel Weight (kg)', weightsDetails.zeroFuelWeight],
+        ['Maximum Takeoff Weight (kg)', weightsDetails.takeoffWeight],
+        ['Max Payload (kg)', weightsDetails.payload],
+        ['Maximum Landing Weight (kg)', weightsDetails.landingWeight],
+        [
+          'Maximum Baggage or Cargo Volume (m3)',
+          weightsDetails.baggage.maximum,
+        ],
+        [
+          'Minimum Baggage or Cargo Volume (m3)',
+          weightsDetails.baggage.minimum,
+        ],
+      ],
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _builPerfomanceOrderedBYsData(Performance? detail) {
     if (detail == null) return const Text('No data available');
     final performanceDetails = detail;
-    return _buildFieldRows([
-      ['Takeoff Speed (kts)', performanceDetails.takeoffSpeedKts],
-      ['Takeoff Distance (m)', performanceDetails.takeoffDistanceM],
-      ['Initial Rate of Climb (fpm)', performanceDetails.climbInitialFpm],
-      ['Average Rate of Climb (fpm)', performanceDetails.climbAvgFpm],
-      ['Maximum Rate of Climb (fpm)', performanceDetails.climbMaxFpm],
-      ['Service Ceiling (ft)', performanceDetails.serviceCeiling],
-      ['Max Certified Altitude (ft)', performanceDetails.maxCertifiedAltitude],
-      ['Cruise Speed (kt)', performanceDetails.cruiseSpeedKt],
-      ['Cruise(Mach)', performanceDetails.cruiseMach],
-      ['Maximum Speed', performanceDetails.maxCruiseSpeed],
-      ['VMO (kts)', performanceDetails.vmoKts],
-      ['MMO (Mach)', performanceDetails.mmoMach],
+    return _buildFieldRows(
+      [
+        ['Takeoff Speed (kts)', performanceDetails.takeoffSpeedKts],
+        ['Takeoff Distance (m)', performanceDetails.takeoffDistanceM],
+        ['Initial Rate of Climb (fpm)', performanceDetails.climbInitialFpm],
+        ['Average Rate of Climb (fpm)', performanceDetails.climbAvgFpm],
+        ['Maximum Rate of Climb (fpm)', performanceDetails.climbMaxFpm],
+        ['Service Ceiling (ft)', performanceDetails.serviceCeiling],
+        [
+          'Max Certified Altitude (ft)',
+          performanceDetails.maxCertifiedAltitude,
+        ],
+        ['Cruise Speed (kt)', performanceDetails.cruiseSpeedKt],
+        ['Cruise(Mach)', performanceDetails.cruiseMach],
+        ['Maximum Speed', performanceDetails.maxCruiseSpeed],
+        ['VMO (kts)', performanceDetails.vmoKts],
+        ['MMO (Mach)', performanceDetails.mmoMach],
 
-      [
-        'Range (NM / km)',
-        "${performanceDetails.range.normalRangeNm} NM / ${performanceDetails.range.normalRangeKm} Km",
+        [
+          'Range (NM / km)',
+          "${performanceDetails.range.normalRangeNm} NM / ${performanceDetails.range.normalRangeKm} Km",
+        ],
+        ['Ferry Range (if applicable)', performanceDetails.range.ferryRangeNm],
+        ['Initial Rate of Descent (fpm)', performanceDetails.descentInitialFpm],
+        ['Average Rate of Descent (fpm)', performanceDetails.descentAvgFpm],
+        [
+          'Minimum Clean Speed (kts)',
+          performanceDetails.minCleanSpeed.toString(),
+        ],
+        ['Approach Speed (kts)', performanceDetails.approachSpeed],
+        ['Approach Category', performanceDetails.approachCategory],
+        ['Landing Speed (kts)', performanceDetails.landingSpeed],
+        ['Landing Distance (m)', performanceDetails.landingDistance],
+        ['Runway Length Required (m)', performanceDetails.runwayRequired],
+        ['Stall Speed (kts)', performanceDetails.stallSpeed],
       ],
-      ['Ferry Range (if applicable)', performanceDetails.range.ferryRangeNm],
-      ['Initial Rate of Descent (fpm)', performanceDetails.descentInitialFpm],
-      ['Average Rate of Descent (fpm)', performanceDetails.descentAvgFpm],
-      [
-        'Minimum Clean Speed (kts)',
-        performanceDetails.minCleanSpeed.toString(),
-      ],
-      ['Approach Speed (kts)', performanceDetails.approachSpeed],
-      ['Approach Category', performanceDetails.approachCategory],
-      ['Landing Speed (kts)', performanceDetails.landingSpeed],
-      ['Landing Distance (m)', performanceDetails.landingDistance],
-      ['Runway Length Required (m)', performanceDetails.runwayRequired],
-      ['Stall Speed (kts)', performanceDetails.stallSpeed],
-    ]);
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _builOperationLimitationsData(OperationalLimitations? detail) {
     if (detail == null) return const Text('No data available');
     final operationalDetails = detail;
-    return _buildFieldRows([
-      ['Runway Slope Limit percent', operationalDetails.runwaySlopeLimit],
-      ['Max Crosswind Normal Law (kts)', operationalDetails.maxCrosswindNormal],
+    return _buildFieldRows(
       [
-        'Maximum Crosswind (Degraded Law)',
-        operationalDetails.maxCrosswindDegraded,
+        ['Runway Slope Limit percent', operationalDetails.runwaySlopeLimit],
+        [
+          'Max Crosswind Normal Law (kts)',
+          operationalDetails.maxCrosswindNormal,
+        ],
+        [
+          'Maximum Crosswind (Degraded Law)',
+          operationalDetails.maxCrosswindDegraded,
+        ],
+        ['Max Tailwind Landing (kts)', operationalDetails.maxTailwindLanding],
+        ['Max Tailwind Takeoff (kts)', operationalDetails.maxTailwindTakeoff],
+        ['Field Elevation Limit (ft)', operationalDetails.fieldElevationLimit],
+        ['Maximum Runway Altitude (ft)', operationalDetails.maxRunwayAltitude],
+        ['Tailwind Limit (Flaps ≤10°)', operationalDetails.maxTailwindTakeoff],
+        [
+          'Supported Categories',
+          operationalDetails.autoland.supportedCategories,
+        ],
+        [
+          'Certified Autoland Level',
+          operationalDetails.autoland.certifiedLevel,
+        ],
       ],
-      ['Max Tailwind Landing (kts)', operationalDetails.maxTailwindLanding],
-      ['Max Tailwind Takeoff (kts)', operationalDetails.maxTailwindTakeoff],
-      ['Field Elevation Limit (ft)', operationalDetails.fieldElevationLimit],
-      ['Maximum Runway Altitude (ft)', operationalDetails.maxRunwayAltitude],
-      ['Tailwind Limit (Flaps ≤10°)', operationalDetails.maxTailwindTakeoff],
-      ['Supported Categories', operationalDetails.autoland.supportedCategories],
-      ['Certified Autoland Level', operationalDetails.autoland.certifiedLevel],
-    ]);
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _builLandingGearData(LandingGear? detail) {
     if (detail == null) return const Text('No data available');
     final landingDetails = detail;
-    return _buildFieldRows([
-      ['Landing Gear Configuration', landingDetails.type],
-      ['Number of Wheels', landingDetails.numberOfWheels],
-      ['Tyre Size (inches)', landingDetails.tyreSize],
-      ['Tyre Pressure (psi)', landingDetails.tyrePressure],
-    ]);
+    return _buildFieldRows(
+      [
+        ['Landing Gear Configuration', landingDetails.type],
+        ['Number of Wheels', landingDetails.numberOfWheels],
+        ['Tyre Size (inches)', landingDetails.tyreSize],
+        ['Tyre Pressure (psi)', landingDetails.tyrePressure],
+      ],
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _builCertificationData(CertificationEnvironmental? detail) {
     if (detail == null) return const Text('No data available');
     final certificationDetails = detail;
-    return _buildFieldRows([
-      ['Certification Basis', certificationDetails.certificationBasis],
-      ['Special Conditions', certificationDetails.specialConditions],
-      ['Noise Compliance', certificationDetails.noiseCompliance],
-      ['Emissions Category', certificationDetails.emissionsCategory],
-      ['EASA TCDS Number', certificationDetails.easa],
-      ['FAA TCDS Number', certificationDetails.faa],
-    ]);
+    return _buildFieldRows(
+      [
+        ['Certification Basis', certificationDetails.certificationBasis],
+        ['Special Conditions', certificationDetails.specialConditions],
+        ['Noise Compliance', certificationDetails.noiseCompliance],
+        ['Emissions Category', certificationDetails.emissionsCategory],
+        ['EASA TCDS Number', certificationDetails.easa],
+        ['FAA TCDS Number', certificationDetails.faa],
+      ],
+      labelColor: fieldColor,
+      valueColor: fieldColor,
+    );
   }
 
   Widget _buildSectionHeader({
@@ -550,7 +601,36 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-  Widget _buildFieldRows(List<List<String>> fields) {
+  // Widget _buildFieldRows(List<List<String>> fields) {
+  //   return Column(
+  //     children: List.generate((fields.length / 2).ceil(), (i) {
+  //       final first = fields[i * 2];
+  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+  //
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 15),
+  //         child: Row(
+  //           children: [
+  //             Expanded(
+  //               child: customField(label: first[0], text: first[1]),
+  //             ),
+  //             const SizedBox(width: 15),
+  //             Expanded(
+  //               child: second != null
+  //                   ? customField(label: second[0], text: second[1])
+  //                   : const SizedBox(),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
+  Widget _buildFieldRows(
+    List<List<String>> fields, {
+    Color labelColor = Colors.white70,
+    Color valueColor = Colors.white,
+  }) {
     return Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
         final first = fields[i * 2];
@@ -561,12 +641,22 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           child: Row(
             children: [
               Expanded(
-                child: customField(label: first[0], text: first[1]),
+                child: customField(
+                  label: first[0],
+                  text: first[1],
+                  labelColor: labelColor,
+                  textColor: valueColor,
+                ),
               ),
               const SizedBox(width: 15),
               Expanded(
                 child: second != null
-                    ? customField(label: second[0], text: second[1])
+                    ? customField(
+                        label: second[0],
+                        text: second[1],
+                        labelColor: labelColor,
+                        textColor: valueColor,
+                      )
                     : const SizedBox(),
               ),
             ],

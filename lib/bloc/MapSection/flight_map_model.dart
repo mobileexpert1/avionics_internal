@@ -22,7 +22,6 @@ class FlightResponse {
   String toString() => 'FlightResponse(${flights.length} flights)';
 }
 
-
 class FlightModel {
   final String id;
   final String flightNumber;
@@ -46,6 +45,15 @@ class FlightModel {
   final String arrivalIata;
   final String arrivalIcao;
   final DateTime? eta;
+  final DateTime? takeoffTime;
+  final String? flightTime;
+
+  // ✅ New fields
+  final DateTime? firstSeen;
+  final DateTime? lastSeen;
+  final bool? flightEnded;
+  final DateTime? landingTime;
+
   final AircraftModel? aircraftDetails;
 
   FlightModel({
@@ -71,6 +79,12 @@ class FlightModel {
     required this.arrivalIata,
     required this.arrivalIcao,
     this.eta,
+    this.takeoffTime,
+    this.flightTime,
+    this.firstSeen,
+    this.lastSeen,
+    this.flightEnded,
+    this.landingTime,
     this.aircraftDetails,
   });
 
@@ -97,6 +111,12 @@ class FlightModel {
     String? arrivalIata,
     String? arrivalIcao,
     DateTime? eta,
+    DateTime? takeoffTime,
+    String? flightTime,
+    DateTime? firstSeen,
+    DateTime? lastSeen,
+    bool? flightEnded,
+    DateTime? landingTime,
     AircraftModel? aircraftDetails,
   }) {
     return FlightModel(
@@ -122,6 +142,12 @@ class FlightModel {
       arrivalIata: arrivalIata ?? this.arrivalIata,
       arrivalIcao: arrivalIcao ?? this.arrivalIcao,
       eta: eta ?? this.eta,
+      takeoffTime: takeoffTime ?? this.takeoffTime,
+      flightTime: flightTime ?? this.flightTime,
+      firstSeen: firstSeen ?? this.firstSeen,
+      lastSeen: lastSeen ?? this.lastSeen,
+      flightEnded: flightEnded ?? this.flightEnded,
+      landingTime: landingTime ?? this.landingTime,
       aircraftDetails: aircraftDetails ?? this.aircraftDetails,
     );
   }
@@ -155,8 +181,7 @@ class FlightModel {
       groundSpeed: _num(json['gspeed']).toInt(),
       verticalSpeed: _num(json['vspeed']).toInt(),
       squawk: _str(json['squawk']),
-      timestamp:
-      _parseDate(json['timestamp']) ??
+      timestamp: _parseDate(json['timestamp']) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
       source: _str(json['source']),
       hex: _str(json['hex']),
@@ -169,6 +194,14 @@ class FlightModel {
       arrivalIata: _str(json['dest_iata']),
       arrivalIcao: _str(json['dest_icao']),
       eta: _parseDate(json['eta']),
+      takeoffTime: _parseDate(json['datetime_takeoff']),
+      flightTime: _str(json['flight_time']),
+
+      // ✅ New fields
+      firstSeen: _parseDate(json['first_seen']),
+      lastSeen: _parseDate(json['last_seen']),
+      flightEnded: json['flight_ended'] as bool?,
+      landingTime: _parseDate(json['datetime_landed']),
     );
   }
 
@@ -195,9 +228,17 @@ class FlightModel {
     'dest_iata': arrivalIata,
     'dest_icao': arrivalIcao,
     'eta': eta?.toUtc().toIso8601String(),
+    'takeoff_time': takeoffTime?.toUtc().toIso8601String(),
+    'flight_time': flightTime,
+
+    // ✅ New fields
+    'first_seen': firstSeen?.toUtc().toIso8601String(),
+    'last_seen': lastSeen?.toUtc().toIso8601String(),
+    'flight_ended': flightEnded,
+    'landing_time': landingTime?.toUtc().toIso8601String(),
   };
 
   @override
   String toString() =>
-      'Flight($flightNumber, $callSign, $latitude,$longitude alt:$altitude)';
+      'Flight($flightNumber, $callSign, alt:$altitude, takeoff:$takeoffTime, flightTime:$flightTime)';
 }

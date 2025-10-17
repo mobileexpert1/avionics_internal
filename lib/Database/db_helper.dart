@@ -148,6 +148,19 @@ class DBHelper {
         user_id TEXT
       );
     ''');
+
+    await db.execute('''
+    CREATE TABLE selected_aircraft (
+      id TEXT PRIMARY KEY,
+      aircraftModel TEXT,
+      manufacturerName TEXT,
+      user_id TEXT,
+      icaoTypeCode TEXT,
+      isFavorite INTEGER,
+      image TEXT
+    );
+  ''');
+
   }
 
   static Future<void> _createUserIdIndices(Database db) async {
@@ -167,6 +180,7 @@ class DBHelper {
     'unit_prefs',
     'user_profile',
     'chat_messages',
+    'selected_aircraft'
   ];
 
   /* ── CRUD methods ── */

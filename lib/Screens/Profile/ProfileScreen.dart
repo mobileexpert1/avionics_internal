@@ -8,6 +8,7 @@ import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
+import 'GameBadges/BadgesScreens.dart';
 import 'Glossary/GlossaryScreen.dart';
 import 'package:flutter/material.dart';
 import '../../Constants/constantImages.dart';
@@ -78,6 +79,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SettingsListItem(
                       leadingSvgAsset:
                       CommonUi.setSvgImage(AssetsPath.subsrcitAcc),
+                      title: "Badges",
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.badgeIcon,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const BadgesScreen(userWins: 10,totalPoints: 510,),
+                          ),
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subsrcitAcc,
+                      ),
                       leadingIconColor: Colors.blue,
                       title: "Subscription",
                       onTap: () {

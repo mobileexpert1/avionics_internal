@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../MapSection/flight_map_detailModel.dart';
 import 'airCraftDetail_repository.dart';
 import 'airCraftDetail_state.dart';
 
@@ -31,6 +32,52 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
           isLoading: false,
           isError: true,
           errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> fetchAircraftDetailByICAOCode(
+    String ICAOCode,
+    BuildContext context,
+  ) async {
+    emit(
+      state.copyWith(
+        airCraftDetails: null,
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+      ),
+    );
+    try {
+      final aircraftDetail = await repository.getAirCraftDetailICAOCode(
+        ICAOCode,
+      );
+      if (aircraftDetail?.results == null) {
+        emit(
+          state.copyWith(
+            airCraftDetails: null,
+            isLoading: false,
+            isSuccess: false,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            airCraftDetails: aircraftDetail,
+            isLoading: false,
+            isSuccess: true,
+          ),
+        );
+      }
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      emit(
+        state.copyWith(
+          isLoading: false,
+          isError: true,
+          errorMessage: e.toString(),
+          airCraftDetails: null,
         ),
       );
     }
