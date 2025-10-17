@@ -2,6 +2,8 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../Constants/constantImages.dart';
 import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import 'ChatHistoryScreen.dart';
@@ -29,13 +31,78 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   final _scrollCtrl = ScrollController();
 
   final ValueNotifier<bool> _isConnected = ValueNotifier(true);
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  bool _isSendingFromSpeech = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+
+    _controller.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _scrollCtrl.dispose();
+    _speech.stop();
     super.dispose();
   }
+
+  Future<void> _startListening(BuildContext context) async {
+    final micStatus = await Permission.microphone.request();
+    if (!micStatus.isGranted) return;
+
+    bool available = await _speech.initialize(
+      onStatus: (status) async {
+        if (status == "done" || status == "notListening") {
+          await _stopListening(context, autoSend: true);
+        }
+      },
+      onError: (error) => debugPrint("Speech error: $error"),
+    );
+
+    if (!available) return;
+
+    setState(() => _isListening = true);
+
+    _speech.listen(
+      onResult: (result) {
+        setState(() {
+          _controller.text = result.recognizedWords;
+          _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller.text.length),
+          );
+        });
+      },
+    );
+  }
+
+
+  Future<void> _stopListening(BuildContext context, {bool autoSend = false}) async {
+    if (!_isListening) return;
+    await _speech.stop();
+    setState(() => _isListening = false);
+
+    final text = _controller.text.trim();
+    if (text.isNotEmpty && autoSend && !_isSendingFromSpeech) {
+      _isSendingFromSpeech = true;
+
+      context.read<ChatCubit>().sendMessage(text);
+      _controller.clear();
+      _scrollToBottom();
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _isSendingFromSpeech = false;
+      });
+    }
+  }
+
 
   void _listenToInternet(ChatCubit cubit) {
     cubit.internetStream.listen((status) {
@@ -222,7 +289,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
       ),
     );
   }
-
   Widget _chatInput(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -234,13 +300,11 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // Text field
+                // ✏️ Text Field
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 13,
-                      vertical: 13,
-                    ),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF5F8F9),
                       borderRadius: BorderRadius.circular(15),
@@ -263,50 +327,111 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 const SizedBox(width: 10),
                 BlocBuilder<ChatCubit, List<Map<String, String>>>(
                   builder: (context, state) {
-                    final isAnalyzing = state.any(
-                      (msg) => msg['type'] == 'analyzing',
-                    );
+                    final isAnalyzing =
+                    state.any((msg) => msg['type'] == 'analyzing');
                     return ValueListenableBuilder<bool>(
                       valueListenable: _isConnected,
-                      builder: (_, isConnected, _) {
-                        return InkWell(
-                          onTap: !isConnected
-                              ? null
-                              : () {
-                                  if (isAnalyzing) {
-                                    // Optional: Add cancel logic here
-                                    return;
-                                  }
-                                  final text = _controller.text.trim();
-                                  if (text.isNotEmpty) {
-                                    context.read<ChatCubit>().sendMessage(text);
-                                    _controller.clear();
-                                    _scrollToBottom();
-                                  }
-                                },
-                          borderRadius: BorderRadius.circular(22),
-                          child: Container(
-                            height: 44,
-                            width: 44,
-                            decoration: BoxDecoration(
-                              color: isConnected
-                                  ? const Color(0xFF3F3D56)
-                                  : const Color(0xFF9E9E9E),
-                              shape: BoxShape.circle,
+                      builder: (_, isConnected, __) {
+                        final hasText = _controller.text.trim().isNotEmpty;
+                        final showSendButton = hasText || isAnalyzing;
+
+                        return
+
+                          GestureDetector(
+                            onLongPressStart: !_controller.text.trim().isNotEmpty && _isConnected.value
+                                ? (_) => _startListening(context)
+                                : null,
+                            onLongPressEnd: !_controller.text.trim().isNotEmpty && _isConnected.value
+                                ? (_) => _stopListening(context, autoSend: true)
+                                : null,
+                            onTap: _controller.text.trim().isNotEmpty && _isConnected.value
+                                ? () {
+                              final text = _controller.text.trim();
+                              if (text.isNotEmpty) {
+                                context.read<ChatCubit>().sendMessage(text);
+                                _controller.clear();
+                                _scrollToBottom();
+                              }
+                            }
+                                : null,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              height: 44,
+                              width: 44,
+                              decoration: BoxDecoration(
+                                color: _isConnected.value ? const Color(0xFF3F3D56) : const Color(0xFF9E9E9E),
+                                shape: BoxShape.circle,
+                                boxShadow: _isListening
+                                    ? [BoxShadow(color: Colors.purple.withOpacity(0.4), blurRadius: 10, spreadRadius: 2)]
+                                    : [],
+                              ),
+                              child: Center(
+                                child: _controller.text.trim().isNotEmpty
+                                    ? SvgPicture.asset(CommonUi.setSvgImage(AssetsPath.SendIcon))
+                                    : Icon(_isListening ? Icons.mic_none_rounded : Icons.mic_rounded, color: Colors.white, size: 24),
+                              ),
                             ),
-                            child: Center(
-                              child: isAnalyzing
-                                  ? const Icon(
-                                      Icons.stop,
-                                      color: Colors.white,
-                                      size: 22,
-                                    )
-                                  : SvgPicture.asset(
-                                      CommonUi.setSvgImage(AssetsPath.SendIcon),
-                                    ),
-                            ),
-                          ),
-                        );
+                          );
+
+                        //   GestureDetector(
+                        //   onLongPressStart: !showSendButton && isConnected
+                        //       ? (_) => _startListening(context)
+                        //       : null,
+                        //
+                        //   onLongPressEnd: !showSendButton && isConnected
+                        //       ? (_) => _stopListening(context, autoSend: true)
+                        //       : null,
+                        //   onTap: showSendButton && isConnected
+                        //       ? () {
+                        //     if (isAnalyzing) return;
+                        //     final text = _controller.text.trim();
+                        //     if (text.isNotEmpty) {
+                        //       context
+                        //           .read<ChatCubit>()
+                        //           .sendMessage(text);
+                        //       _controller.clear();
+                        //       _scrollToBottom();
+                        //     }
+                        //   }
+                        //       : null,
+                        //   child: AnimatedContainer(
+                        //     duration: const Duration(milliseconds: 200),
+                        //     height: 44,
+                        //     width: 44,
+                        //     decoration: BoxDecoration(
+                        //       color: isConnected
+                        //           ? const Color(0xFF3F3D56)
+                        //           : const Color(0xFF9E9E9E),
+                        //       shape: BoxShape.circle,
+                        //       boxShadow: _isListening
+                        //           ? [
+                        //         BoxShadow(
+                        //           color: Colors.purple.withOpacity(0.4),
+                        //           blurRadius: 10,
+                        //           spreadRadius: 2,
+                        //         )
+                        //       ]
+                        //           : [],
+                        //     ),
+                        //     child: Center(
+                        //       child: showSendButton
+                        //           ? (isAnalyzing
+                        //           ? const Icon(Icons.stop,
+                        //           color: Colors.white, size: 22)
+                        //           : SvgPicture.asset(
+                        //         CommonUi.setSvgImage(
+                        //             AssetsPath.SendIcon),
+                        //       ))
+                        //           : Icon(
+                        //         _isListening
+                        //             ? Icons.mic_none_rounded
+                        //             : Icons.mic_rounded,
+                        //         color: Colors.white,
+                        //         size: 24,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // );
                       },
                     );
                   },
@@ -319,6 +444,102 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     );
   }
 }
+  // Widget _chatInput(BuildContext context) {
+  //   return Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
+  //       SafeArea(
+  //         child: Padding(
+  //           padding: const EdgeInsets.fromLTRB(20, 15, 16, 5),
+  //           child: Row(
+  //             crossAxisAlignment: CrossAxisAlignment.end,
+  //             children: [
+  //               // Text field
+  //               Expanded(
+  //                 child: Container(
+  //                   padding: const EdgeInsets.symmetric(
+  //                     horizontal: 13,
+  //                     vertical: 13,
+  //                   ),
+  //                   decoration: BoxDecoration(
+  //                     color: const Color(0xFFF5F8F9),
+  //                     borderRadius: BorderRadius.circular(15),
+  //                   ),
+  //                   child: TextField(
+  //                     controller: _controller,
+  //                     minLines: 1,
+  //                     maxLines: 5,
+  //                     style: const TextStyle(fontSize: 14),
+  //                     textInputAction: TextInputAction.done,
+  //                     decoration: InputDecoration(
+  //                       isCollapsed: true,
+  //                       hintText: 'Type your message here…',
+  //                       hintStyle: TextStyle(color: Colors.grey.shade500),
+  //                       border: InputBorder.none,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 10),
+  //               BlocBuilder<ChatCubit, List<Map<String, String>>>(
+  //                 builder: (context, state) {
+  //                   final isAnalyzing = state.any(
+  //                     (msg) => msg['type'] == 'analyzing',
+  //                   );
+  //                   return ValueListenableBuilder<bool>(
+  //                     valueListenable: _isConnected,
+  //                     builder: (_, isConnected, _) {
+  //                       return InkWell(
+  //                         onTap: !isConnected
+  //                             ? null
+  //                             : () {
+  //                                 if (isAnalyzing) {
+  //                                   // Optional: Add cancel logic here
+  //                                   return;
+  //                                 }
+  //                                 final text = _controller.text.trim();
+  //                                 if (text.isNotEmpty) {
+  //                                   context.read<ChatCubit>().sendMessage(text);
+  //                                   _controller.clear();
+  //                                   _scrollToBottom();
+  //                                 }
+  //                               },
+  //                         borderRadius: BorderRadius.circular(22),
+  //                         child: Container(
+  //                           height: 44,
+  //                           width: 44,
+  //                           decoration: BoxDecoration(
+  //                             color: isConnected
+  //                                 ? const Color(0xFF3F3D56)
+  //                                 : const Color(0xFF9E9E9E),
+  //                             shape: BoxShape.circle,
+  //                           ),
+  //                           child: Center(
+  //                             child: isAnalyzing
+  //                                 ? const Icon(
+  //                                     Icons.stop,
+  //                                     color: Colors.white,
+  //                                     size: 22,
+  //                                   )
+  //                                 : SvgPicture.asset(
+  //                                     CommonUi.setSvgImage(AssetsPath.SendIcon),
+  //                                   ),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   );
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
 
 class _AnalyzingIndicator extends StatefulWidget {
   const _AnalyzingIndicator();

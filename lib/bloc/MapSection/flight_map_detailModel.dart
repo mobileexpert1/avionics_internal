@@ -158,7 +158,9 @@ class FlightAircraftDetail extends Equatable {
           ? DateTime.tryParse(json['datetime_landed'])
           : null,
       landingRunway: json['runway_landed'],
-      flightTime: json['flight_time'],
+      flightTime: json['flight_time'] == null || json['flight_time'].toString().trim().isEmpty
+          ? null
+          : json['flight_time'].toString(),
       actualDistance: json['actual_distance']?.toDouble(),
       circleDistance: json['circle_distance']?.toDouble(),
       category: json['category'],
@@ -287,6 +289,10 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
     String? source,
     int? vspeed,
     String? flightTime,
+    DateTime? firstSeen,       // new
+    DateTime? lastSeen,        // new
+    bool? flightEnded,         // new
+    DateTime? landingTime,     // new
   }) {
     return FlightAircraftDetail(
       id: id,
@@ -304,16 +310,16 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
       arrivalIata: arrivalIata,
       actualArrivalIcao: actualArrivalIcao,
       actualArrivalIata: actualArrivalIata,
-      landingTime: landingTime,
+      landingTime: landingTime ?? this.landingTime,       // updated
       landingRunway: landingRunway,
       flightTime: flightTime ?? this.flightTime,
       actualDistance: actualDistance,
       circleDistance: circleDistance,
       category: category,
       hex: hex,
-      firstSeen: firstSeen,
-      lastSeen: lastSeen,
-      flightEnded: flightEnded,
+      firstSeen: firstSeen ?? this.firstSeen,            // updated
+      lastSeen: lastSeen ?? this.lastSeen,               // updated
+      flightEnded: flightEnded ?? this.flightEnded,      // updated
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       track: track ?? this.track,
@@ -333,7 +339,6 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
     );
   }
 }
-
 
 class AirportModel {
   final String id;

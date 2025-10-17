@@ -41,7 +41,7 @@ Widget customField({
               ),
             ),
             if (showInfoIcon)
-              SvgPicture.asset(CommonUi.setSvgImage(AssetsPath.flightinfoIcon))
+              SvgPicture.asset(CommonUi.setSvgImage(AssetsPath.infoIcon2))
           ],
         ),
 

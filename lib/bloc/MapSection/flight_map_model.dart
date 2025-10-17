@@ -47,6 +47,13 @@ class FlightModel {
   final DateTime? eta;
   final DateTime? takeoffTime;
   final String? flightTime;
+
+  // ✅ New fields
+  final DateTime? firstSeen;
+  final DateTime? lastSeen;
+  final bool? flightEnded;
+  final DateTime? landingTime;
+
   final AircraftModel? aircraftDetails;
 
   FlightModel({
@@ -74,6 +81,10 @@ class FlightModel {
     this.eta,
     this.takeoffTime,
     this.flightTime,
+    this.firstSeen,
+    this.lastSeen,
+    this.flightEnded,
+    this.landingTime,
     this.aircraftDetails,
   });
 
@@ -102,6 +113,10 @@ class FlightModel {
     DateTime? eta,
     DateTime? takeoffTime,
     String? flightTime,
+    DateTime? firstSeen,
+    DateTime? lastSeen,
+    bool? flightEnded,
+    DateTime? landingTime,
     AircraftModel? aircraftDetails,
   }) {
     return FlightModel(
@@ -129,6 +144,10 @@ class FlightModel {
       eta: eta ?? this.eta,
       takeoffTime: takeoffTime ?? this.takeoffTime,
       flightTime: flightTime ?? this.flightTime,
+      firstSeen: firstSeen ?? this.firstSeen,
+      lastSeen: lastSeen ?? this.lastSeen,
+      flightEnded: flightEnded ?? this.flightEnded,
+      landingTime: landingTime ?? this.landingTime,
       aircraftDetails: aircraftDetails ?? this.aircraftDetails,
     );
   }
@@ -162,8 +181,7 @@ class FlightModel {
       groundSpeed: _num(json['gspeed']).toInt(),
       verticalSpeed: _num(json['vspeed']).toInt(),
       squawk: _str(json['squawk']),
-      timestamp:
-      _parseDate(json['timestamp']) ??
+      timestamp: _parseDate(json['timestamp']) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
       source: _str(json['source']),
       hex: _str(json['hex']),
@@ -178,6 +196,12 @@ class FlightModel {
       eta: _parseDate(json['eta']),
       takeoffTime: _parseDate(json['datetime_takeoff']),
       flightTime: _str(json['flight_time']),
+
+      // ✅ New fields
+      firstSeen: _parseDate(json['first_seen']),
+      lastSeen: _parseDate(json['last_seen']),
+      flightEnded: json['flight_ended'] as bool?,
+      landingTime: _parseDate(json['datetime_landed']),
     );
   }
 
@@ -206,6 +230,12 @@ class FlightModel {
     'eta': eta?.toUtc().toIso8601String(),
     'takeoff_time': takeoffTime?.toUtc().toIso8601String(),
     'flight_time': flightTime,
+
+    // ✅ New fields
+    'first_seen': firstSeen?.toUtc().toIso8601String(),
+    'last_seen': lastSeen?.toUtc().toIso8601String(),
+    'flight_ended': flightEnded,
+    'landing_time': landingTime?.toUtc().toIso8601String(),
   };
 
   @override

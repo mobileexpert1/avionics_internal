@@ -101,13 +101,16 @@ class AircraftListDataCubit extends Cubit<AircraftListDataState> {
     emit(state.copyWith(aircraftList: updated));
   }
 
+
   Future<void> addSelectedAircraft(AircraftModel aircraft) async {
-    if (selectedAircraft.length < 5 && !selectedAircraft.contains(aircraft)) {
+    final exists = selectedAircraft.any((a) => a.icaoTypeCode == aircraft.icaoTypeCode);
+    if (selectedAircraft.length < 5 && !exists) {
       selectedAircraft.add(aircraft);
       await _genericMethods.insertAll([aircraft]);
       emit(state.copyWith());
     }
   }
+
 
   Future<void> removeSelectedAircraft(String? icaoCode) async {
     if (icaoCode != null) {
@@ -122,6 +125,7 @@ class AircraftListDataCubit extends Cubit<AircraftListDataState> {
   }
 
   Future<void> initSelectedAircraft(List<AircraftModel> aircraft) async {
+    selectedAircraft.clear();
     selectedAircraft = [...aircraft];
     await _genericMethods.insertAll(aircraft);
     emit(state.copyWith());
