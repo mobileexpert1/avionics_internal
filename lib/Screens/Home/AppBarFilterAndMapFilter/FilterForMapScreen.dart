@@ -21,12 +21,28 @@ class FilterResult {
   FilterResult(this.mapType, this.categories, this.aircraftIcaos);
 }
 
+// class FilterForMapScreen extends StatefulWidget {
+//   final MapType initialMapType;
+//
+//   const FilterForMapScreen({
+//     Key? key,
+//     required this.initialMapType,
+//   }) : super(key: key);
+//
+//   @override
+//   _filterMapScreenState createState() => _filterMapScreenState();
+// }
+
 class FilterForMapScreen extends StatefulWidget {
   final MapType initialMapType;
+  final List<String>? initialCategories;
+  final List<String>? initialAircraftIcaos;
 
   const FilterForMapScreen({
     Key? key,
     required this.initialMapType,
+    this.initialCategories,
+    this.initialAircraftIcaos,
   }) : super(key: key);
 
   @override
@@ -48,10 +64,6 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AircraftListDataCubit>.value(value: aircraftCubit),
-        BlocProvider<FilterMapMainCubit>(
-          create: (_) =>
-          FilterMapMainCubit()..setInitialMapType(widget.initialMapType),
-        ),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -78,14 +90,16 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                 padding: const EdgeInsets.only(right: 16, top: 10),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pop(FilterResult(
-                      state.mapType,
-                      state.selectedCategories,
-                      aircraftCubit.selectedAircraft
-                          .map((a) => a.icaoTypeCode ?? '')
-                          .where((c) => c.isNotEmpty)
-                          .toList(),
-                    ));
+                    Navigator.of(context).pop(
+                      FilterResult(
+                        state.mapType,
+                        state.selectedCategories,
+                        aircraftCubit.selectedAircraft
+                            .map((a) => a.icaoTypeCode ?? '')
+                            .where((c) => c.isNotEmpty)
+                            .toList(),
+                      ),
+                    );
                   },
                   child: Text(
                     state.selectedCategories.isEmpty
@@ -111,9 +125,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
 }
 
 class _FilterContent extends StatelessWidget {
-  const _FilterContent({
-    Key? key,
-  }) : super(key: key);
+  const _FilterContent({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -131,54 +143,53 @@ class _FilterContent extends StatelessWidget {
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [
-                  "CARGO",
-                  "BUSINESS_JETS",
-                  "PASSENGER",
-                  "GLIDERS",
-                ].map((label) {
-                  final isSelected = state.selectedCategories.contains(label);
-                  return GestureDetector(
-                    onTap: () => cubit.toggleCategory(label),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFD2E6FC)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF3E3C55),
-                          width: 2,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.filterCheckMap),
-                            height: 16,
-                            width: 16,
+                children: ["CARGO", "BUSINESS_JETS", "PASSENGER", "GLIDERS"]
+                    .map((label) {
+                      final isSelected = state.selectedCategories.contains(
+                        label,
+                      );
+                      return GestureDetector(
+                        onTap: () => cubit.toggleCategory(label),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
                           ),
-                          const SizedBox(width: 10),
-                          Text(
-                            label,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected
-                                  ? Color(0xFF3E3C55)
-                                  : const Color(0xFF3E3C55),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFFD2E6FC)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF3E3C55),
+                              width: 2,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.filterCheckMap),
+                                height: 16,
+                                width: 16,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                label,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: isSelected
+                                      ? Color(0xFF3E3C55)
+                                      : const Color(0xFF3E3C55),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    })
+                    .toList(),
               ),
             ),
             const SizedBox(height: 50),
