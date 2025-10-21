@@ -2271,6 +2271,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         isComeFromMapSection: true,
         controller: _searchController,
         onFilterTap: () async {
+          final mapCubit = context.read<FlightMapCubit>();
+          final currentMapType = mapCubit.state.mapType;
+          final currentCategories = mapCubit.state.selectedCategories ?? [];
           final filterResult = await showModalBottomSheet<FilterResult>(
             context: context,
             isScrollControlled: true,
@@ -2281,16 +2284,18 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             builder: (context) {
               return BlocProvider(
                 create: (_) => FilterMapMainCubit()
-                  ..setInitialMapType(
-                    context.read<FlightMapCubit>().state.mapType,
-                  ),
+                  ..setInitialMapType(currentMapType)
+                  ..setInitialCategories(currentCategories),
                 child: FractionallySizedBox(
                   heightFactor: 0.84,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(20),
                     ),
-                    child: FilterForMapScreen(initialMapType: state.mapType),
+                    child: FilterForMapScreen(
+                      initialMapType: currentMapType,
+                      initialCategories: currentCategories,
+                    ),
                   ),
                 ),
               );

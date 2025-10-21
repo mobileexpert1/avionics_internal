@@ -74,8 +74,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
     );
   }
 
-
-
-
-
+  void setInitialCategories(List<String> categories) {
+    emit(state.copyWith(selectedCategories: List.from(categories)));
+  }
 }
