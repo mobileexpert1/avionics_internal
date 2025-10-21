@@ -124,7 +124,7 @@
     },
     {
       "name": "google_maps_flutter",
-      "version": "2.12.3",
+      "version": "2.13.1",
       "dependencies": [
         "flutter",
         "google_maps_flutter_android",
@@ -207,7 +207,7 @@
     },
     {
       "name": "flutter_slidable",
-      "version": "4.0.0",
+      "version": "4.0.3",
       "dependencies": [
         "flutter"
       ]
@@ -221,7 +221,7 @@
     },
     {
       "name": "pinput",
-      "version": "5.0.1",
+      "version": "5.0.2",
       "dependencies": [
         "flutter",
         "universal_platform"
@@ -414,7 +414,7 @@
     },
     {
       "name": "connectivity_plus",
-      "version": "6.1.4",
+      "version": "6.1.5",
       "dependencies": [
         "collection",
         "connectivity_plus_platform_interface",
@@ -726,7 +726,7 @@
     },
     {
       "name": "google_maps_flutter_web",
-      "version": "0.5.13",
+      "version": "0.5.14+2",
       "dependencies": [
         "collection",
         "flutter",
@@ -759,7 +759,7 @@
     },
     {
       "name": "google_maps_flutter_android",
-      "version": "2.18.2",
+      "version": "2.18.3",
       "dependencies": [
         "flutter",
         "flutter_plugin_android_lifecycle",
@@ -881,7 +881,7 @@
     },
     {
       "name": "in_app_purchase_storekit",
-      "version": "0.4.3",
+      "version": "0.4.4",
       "dependencies": [
         "collection",
         "flutter",
@@ -899,7 +899,7 @@
     },
     {
       "name": "in_app_purchase_android",
-      "version": "0.4.0+2",
+      "version": "0.4.0+5",
       "dependencies": [
         "collection",
         "flutter",
@@ -913,7 +913,7 @@
     },
     {
       "name": "firebase_core_platform_interface",
-      "version": "6.0.0",
+      "version": "6.0.2",
       "dependencies": [
         "collection",
         "flutter",
@@ -1133,7 +1133,7 @@
     },
     {
       "name": "sqlite3",
-      "version": "2.8.0",
+      "version": "2.9.3",
       "dependencies": [
         "collection",
         "ffi",
@@ -1175,7 +1175,7 @@
     },
     {
       "name": "path_provider_foundation",
-      "version": "2.4.1",
+      "version": "2.4.2",
       "dependencies": [
         "flutter",
         "path_provider_platform_interface"
@@ -1183,7 +1183,7 @@
     },
     {
       "name": "path_provider_android",
-      "version": "2.2.17",
+      "version": "2.2.19",
       "dependencies": [
         "flutter",
         "path_provider_platform_interface"
@@ -1249,7 +1249,7 @@
     },
     {
       "name": "url_launcher_macos",
-      "version": "3.2.2",
+      "version": "3.2.3",
       "dependencies": [
         "flutter",
         "url_launcher_platform_interface"
@@ -1265,7 +1265,7 @@
     },
     {
       "name": "url_launcher_ios",
-      "version": "6.3.3",
+      "version": "6.3.4",
       "dependencies": [
         "flutter",
         "url_launcher_platform_interface"
@@ -1273,7 +1273,7 @@
     },
     {
       "name": "url_launcher_android",
-      "version": "6.3.16",
+      "version": "6.3.20",
       "dependencies": [
         "flutter",
         "url_launcher_platform_interface"
@@ -1359,7 +1359,7 @@
     },
     {
       "name": "shared_preferences_android",
-      "version": "2.4.10",
+      "version": "2.4.13",
       "dependencies": [
         "flutter",
         "shared_preferences_platform_interface"
@@ -1392,7 +1392,7 @@
     },
     {
       "name": "provider",
-      "version": "6.1.5",
+      "version": "6.1.5+1",
       "dependencies": [
         "collection",
         "flutter",
@@ -1401,7 +1401,7 @@
     },
     {
       "name": "bloc",
-      "version": "9.0.0",
+      "version": "9.1.0",
       "dependencies": [
         "meta"
       ]
@@ -1505,7 +1505,7 @@
     },
     {
       "name": "google_maps",
-      "version": "8.1.1",
+      "version": "8.2.0",
       "dependencies": [
         "meta",
         "web"
@@ -1513,7 +1513,7 @@
     },
     {
       "name": "flutter_plugin_android_lifecycle",
-      "version": "2.0.30",
+      "version": "2.0.31",
       "dependencies": [
         "flutter"
       ]
@@ -1592,7 +1592,7 @@
     },
     {
       "name": "xml",
-      "version": "6.5.0",
+      "version": "6.6.1",
       "dependencies": [
         "collection",
         "meta",
@@ -1670,7 +1670,7 @@
     },
     {
       "name": "petitparser",
-      "version": "6.1.0",
+      "version": "7.0.1",
       "dependencies": [
         "collection",
         "meta"

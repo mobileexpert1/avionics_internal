@@ -1,4 +1,5 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -67,7 +68,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         final details = state.airCraftDetails?.results;
         return Scaffold(
           appBar: CustomAppBar(
-            title: "${widget.flightDetail?.callsign ?? 'N/A'}",
+            title: widget.flightDetail?.callsign ?? 'N/A',
             // " , ${widget.flightDetail?.aircraftModel ?? 'N/A'}",
             centerTitle: true,
             leftButton: IconButton(
@@ -103,7 +104,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       vspeed: updatedFlightModel.verticalSpeed,
                       id: updatedFlightModel.id,
 
-
                       firstSeen: updatedFlightModel.firstSeen,
                       lastSeen: updatedFlightModel.lastSeen,
                       flightEnded: updatedFlightModel.flightEnded,
@@ -116,92 +116,106 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           ),
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 1500 : double.infinity,
+                ),
+                child: Stack(
+
                   children: [
-                    _buildTopHeadingDetails(screenHeight),
+                    Column(
 
-                    _buildExpandableSection(
-                      title: "IDENTIFICATION & CLASSIFICATION",
-                      isExpanded: showIdentification,
-                      onToggle: () => setState(
-                        () => showIdentification = !showIdentification,
-                      ),
-                      content: _buildTechnicalData(details?.identification),
-                    ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTopHeadingDetails(screenHeight),
 
-                    _buildExpandableSection(
-                      title: "POWERPLANT & PROPULSION",
-                      isExpanded: showPowerSection,
-                      onToggle: () =>
-                          setState(() => showPowerSection = !showPowerSection),
-                      content: _buildPowerPlantData(details?.powerplant),
-                    ),
+                        _buildExpandableSection(
+                          title: "IDENTIFICATION & CLASSIFICATION",
+                          isExpanded: showIdentification,
+                          onToggle: () => setState(
+                            () => showIdentification = !showIdentification,
+                          ),
+                          content: _buildTechnicalData(details?.identification),
+                        ),
 
-                    _buildExpandableSection(
-                      title: "DIMENSIONS",
-                      isExpanded: showDimensionSection,
-                      onToggle: () => setState(
-                        () => showDimensionSection = !showDimensionSection,
-                      ),
-                      content: _buildDimenionsData(details?.dimensions),
-                    ),
+                        _buildExpandableSection(
+                          title: "POWERPLANT & PROPULSION",
+                          isExpanded: showPowerSection,
+                          onToggle: () => setState(
+                            () => showPowerSection = !showPowerSection,
+                          ),
+                          content: _buildPowerPlantData(details?.powerplant),
+                        ),
 
-                    _buildExpandableSection(
-                      title: "WEIGHTS",
-                      isExpanded: showWeightsSection,
-                      onToggle: () => setState(
-                        () => showWeightsSection = !showWeightsSection,
-                      ),
-                      content: _buildWeightsData(details?.weights),
-                    ),
+                        _buildExpandableSection(
+                          title: "DIMENSIONS",
+                          isExpanded: showDimensionSection,
+                          onToggle: () => setState(
+                            () => showDimensionSection = !showDimensionSection,
+                          ),
+                          content: _buildDimenionsData(details?.dimensions),
+                        ),
 
-                    _buildExpandableSection(
-                      title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
-                      isExpanded: showPerformanceSection,
-                      onToggle: () => setState(
-                        () => showPerformanceSection = !showPerformanceSection,
-                      ),
-                      content: _builPerfomanceOrderedBYsData(
-                        details?.performance,
-                      ),
-                    ),
+                        _buildExpandableSection(
+                          title: "WEIGHTS",
+                          isExpanded: showWeightsSection,
+                          onToggle: () => setState(
+                            () => showWeightsSection = !showWeightsSection,
+                          ),
+                          content: _buildWeightsData(details?.weights),
+                        ),
 
-                    _buildExpandableSection(
-                      title: "OPERATIONAL LIMITATIONS",
-                      isExpanded: showOperationalSection,
-                      onToggle: () => setState(
-                        () => showOperationalSection = !showOperationalSection,
-                      ),
-                      content: _builOperationLimitationsData(
-                        details?.operationalLimitations,
-                      ),
-                    ),
+                        _buildExpandableSection(
+                          title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
+                          isExpanded: showPerformanceSection,
+                          onToggle: () => setState(
+                            () => showPerformanceSection =
+                                !showPerformanceSection,
+                          ),
+                          content: _builPerfomanceOrderedBYsData(
+                            details?.performance,
+                          ),
+                        ),
 
-                    _buildExpandableSection(
-                      title: "LANDING GEAR",
-                      isExpanded: showLandingSection,
-                      onToggle: () => setState(
-                        () => showLandingSection = !showLandingSection,
-                      ),
-                      content: _builLandingGearData(details?.landingGear),
-                    ),
+                        _buildExpandableSection(
+                          title: "OPERATIONAL LIMITATIONS",
+                          isExpanded: showOperationalSection,
+                          onToggle: () => setState(
+                            () => showOperationalSection =
+                                !showOperationalSection,
+                          ),
+                          content: _builOperationLimitationsData(
+                            details?.operationalLimitations,
+                          ),
+                        ),
 
-                    _buildExpandableSection(
-                      title: "CERTIFICATION & ENVIRONMENTAL",
-                      isExpanded: showCertificationSection,
-                      onToggle: () => setState(
-                        () => showCertificationSection =
-                            !showCertificationSection,
-                      ),
-                      content: _builCertificationData(details?.certification),
+                        _buildExpandableSection(
+                          title: "LANDING GEAR",
+                          isExpanded: showLandingSection,
+                          onToggle: () => setState(
+                            () => showLandingSection = !showLandingSection,
+                          ),
+                          content: _builLandingGearData(details?.landingGear),
+                        ),
+
+                        _buildExpandableSection(
+                          title: "CERTIFICATION & ENVIRONMENTAL",
+                          isExpanded: showCertificationSection,
+                          onToggle: () => setState(
+                            () => showCertificationSection =
+                                !showCertificationSection,
+                          ),
+                          content: _builCertificationData(
+                            details?.certification,
+                          ),
+                        ),
+                        const SizedBox(height: 50),
+                      ],
                     ),
-                    const SizedBox(height: 50),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -362,6 +376,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   final fieldColor = const Color(0xFF3E3C55);
+
   Widget _buildTechnicalData(IdentificationClassification? detail) {
     final flight = widget.flightDetail;
     return _buildFieldRows(
@@ -543,8 +558,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildFlightDataSection(BuildContext context) {
-    final flight =widget.flightDetail;
-    final flight1 =_currentFlightDetail;
+    final flight = widget.flightDetail;
+    final flight1 = _currentFlightDetail;
     if (flight == null) return const SizedBox.shrink();
     return Container(
       color: const Color(0xFF3E3C55),
@@ -822,7 +837,13 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   flight.circleDistance?.toString() ?? 'N/A',
                   true,
                 ],
-                ['Flight Duration', (flight.flightTime?.isNotEmpty ?? false) ? flight.flightTime! : 'N/A', true],
+                [
+                  'Flight Duration',
+                  (flight.flightTime?.isNotEmpty ?? false)
+                      ? flight.flightTime!
+                      : 'N/A',
+                  true,
+                ],
                 // ['Time Zone', 'InterGlobe Aviation Ltd',true],
                 [
                   'Carrier Operating',

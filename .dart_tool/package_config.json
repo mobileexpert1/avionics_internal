@@ -21,7 +21,7 @@
     },
     {
       "name": "bloc",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/bloc-9.0.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/bloc-9.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
@@ -93,7 +93,7 @@
     },
     {
       "name": "connectivity_plus",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.4",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.5",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -189,7 +189,7 @@
     },
     {
       "name": "firebase_core_platform_interface",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-6.0.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-6.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -267,7 +267,7 @@
     },
     {
       "name": "flutter_plugin_android_lifecycle",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.30",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.31",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -309,7 +309,7 @@
     },
     {
       "name": "flutter_slidable",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_slidable-4.0.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_slidable-4.0.3",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
@@ -399,19 +399,19 @@
     },
     {
       "name": "google_maps",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps-8.1.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps-8.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "google_maps_flutter",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps_flutter-2.12.3",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps_flutter-2.13.1",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "google_maps_flutter_android",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps_flutter_android-2.18.2",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps_flutter_android-2.18.3",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -429,7 +429,7 @@
     },
     {
       "name": "google_maps_flutter_web",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps_flutter_web-0.5.13",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_maps_flutter_web-0.5.14+2",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -489,9 +489,9 @@
     },
     {
       "name": "in_app_purchase_android",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/in_app_purchase_android-0.4.0+2",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/in_app_purchase_android-0.4.0+5",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "in_app_purchase_platform_interface",
@@ -501,7 +501,7 @@
     },
     {
       "name": "in_app_purchase_storekit",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/in_app_purchase_storekit-0.4.3",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/in_app_purchase_storekit-0.4.4",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
@@ -627,15 +627,15 @@
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/path_provider_android-2.2.19",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.2",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "path_provider_linux",
@@ -699,13 +699,13 @@
     },
     {
       "name": "petitparser",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/petitparser-6.1.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/petitparser-7.0.1",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.8"
     },
     {
       "name": "pinput",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/pinput-5.0.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/pinput-5.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -735,7 +735,7 @@
     },
     {
       "name": "provider",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/provider-6.1.5",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/provider-6.1.5+1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -765,9 +765,9 @@
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.10",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.13",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "shared_preferences_foundation",
@@ -897,7 +897,7 @@
     },
     {
       "name": "sqlite3",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-2.8.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-2.9.3",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -987,15 +987,15 @@
     },
     {
       "name": "url_launcher_android",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.16",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.20",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "url_launcher_ios",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.3",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.4",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.7"
     },
     {
       "name": "url_launcher_linux",
@@ -1005,9 +1005,9 @@
     },
     {
       "name": "url_launcher_macos",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.2",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.3",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.7"
     },
     {
       "name": "url_launcher_platform_interface",
@@ -1095,9 +1095,9 @@
     },
     {
       "name": "xml",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/xml-6.5.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/xml-6.6.1",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.8"
     },
     {
       "name": "avionics_internal",

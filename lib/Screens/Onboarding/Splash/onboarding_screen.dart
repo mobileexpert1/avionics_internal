@@ -157,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
               // --- SmoothPageIndicator ---
               Positioned(
-                bottom: size.height * (isWeb ?  0.06 : 0.115),
+                bottom: size.height * (isWeb ? 0.06 : 0.115),
                 left: 0,
                 right: 0,
                 child: Center(

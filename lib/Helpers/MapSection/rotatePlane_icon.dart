@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -6,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
 
-  final size = 80.0;
+  final size = kIsWeb ? 40.0 :80.0;
   // Draw airplane icon rotated
   final textPainter = TextPainter(
     text: TextSpan(
