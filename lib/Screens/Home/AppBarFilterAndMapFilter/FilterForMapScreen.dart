@@ -21,18 +21,6 @@ class FilterResult {
   FilterResult(this.mapType, this.categories, this.aircraftIcaos);
 }
 
-// class FilterForMapScreen extends StatefulWidget {
-//   final MapType initialMapType;
-//
-//   const FilterForMapScreen({
-//     Key? key,
-//     required this.initialMapType,
-//   }) : super(key: key);
-//
-//   @override
-//   _filterMapScreenState createState() => _filterMapScreenState();
-// }
-
 class FilterForMapScreen extends StatefulWidget {
   final MapType initialMapType;
   final List<String>? initialCategories;
@@ -86,6 +74,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
           title: "",
           rightButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
+              final bool hasSelection = state.selectedCategories.isNotEmpty ||
+                  aircraftCubit.selectedAircraft.isNotEmpty;
+
               return Padding(
                 padding: const EdgeInsets.only(right: 16, top: 10),
                 child: GestureDetector(
@@ -102,18 +93,18 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                     );
                   },
                   child: Text(
-                    state.selectedCategories.isEmpty
-                        ? "Apply"
-                        : "${state.selectedCategories.length} Selected",
-                    style: const TextStyle(
+                    "Apply",
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
+                      color: hasSelection ? Colors.blue : Colors.black,
                     ),
                   ),
                 ),
               );
             },
           ),
+
         ),
         body: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -168,12 +159,12 @@ class _FilterContent extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.filterCheckMap),
-                                height: 16,
-                                width: 16,
-                              ),
-                              const SizedBox(width: 10),
+                              // SvgPicture.asset(
+                              //   CommonUi.setSvgImage(AssetsPath.filterCheckMap),
+                              //   height: 16,
+                              //   width: 16,
+                              // ),
+                              // const SizedBox(width: 10),
                               Text(
                                 label,
                                 style: TextStyle(
@@ -248,10 +239,13 @@ class _FilterContent extends StatelessWidget {
                           ),
                         ),
                       );
+                      // if (result != null) {
+                      //   for (var aircraft in result) {
+                      //     await aircraftCubit.addSelectedAircraft(aircraft);
+                      //   }
+                      // }
                       if (result != null) {
-                        for (var aircraft in result) {
-                          await aircraftCubit.addSelectedAircraft(aircraft);
-                        }
+                        aircraftCubit.setSelectedAircraft(result);
                       }
                     },
                     child: const Padding(

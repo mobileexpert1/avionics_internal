@@ -1,4 +1,8 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
+import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
+import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
+import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
 import 'package:flutter/foundation.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
@@ -135,14 +139,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SettingsListItem(
                       leadingSvgAsset:
                       CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
-                      title: "Units & Measurements",
+                      title: "Formulas",
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => BlocProvider(
-                              create: (_) => UnitSelectionCubit(context),
-                              child: UnitSelectionScreen(),
+                              create: (_) => FormulaCubit(),
+                              child: FormulasScreen(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
+                      title: "Conversions",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider(
+                              create: (_) => ConversionCubit(),
+                              child: ConversionsScreen(),
                             ),
                           ),
                         );

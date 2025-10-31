@@ -136,4 +136,13 @@ class AircraftListDataCubit extends Cubit<AircraftListDataState> {
     emit(state.copyWith());
   }
 
+  void setSelectedAircraft(List<AircraftModel> newList) {
+    selectedAircraft
+      ..clear()
+      ..addAll(newList);
+    emit(state.copyWith(
+      selectedAircraftList: List<AircraftModel>.from(selectedAircraft),
+    ));
+  }
+
 }

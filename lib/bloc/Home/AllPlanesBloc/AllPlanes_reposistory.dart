@@ -61,6 +61,26 @@ class AllPlanesReposistory {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
+          ApiServiceUrlAirplaneConstant.savUnSAvePlane,
+    );
+
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {"aircraft_id": aircraftId},
+      );
+      return BaseDetailResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<BaseDetailResponseModel> setFavOrUnfavPlanFromList1({
+    required String aircraftId,
+  }) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlAirplaneConstant.airplaneService +
           ApiServiceUrlAirplaneConstant.favUnFavPlane,
     );
 

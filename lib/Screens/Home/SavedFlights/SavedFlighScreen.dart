@@ -1,16 +1,22 @@
-import 'package:avionics_internal/Constants/constantImages.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-
+import 'package:flutter_slidable/flutter_slidable.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomTabBar.dart';
+import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import '../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
+import '../../MapSection/MapHelpers/FlightDetailScreen.dart';
+import '../HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class SavedFlighScreen extends StatefulWidget {
   final bool showTabs;
+  final FlightAircraftDetail? flightDetail;
 
-  const SavedFlighScreen({Key? key, this.showTabs = true}) : super(key: key);
+  const SavedFlighScreen({super.key, this.showTabs = true, this.flightDetail});
 
   @override
   State<SavedFlighScreen> createState() => _SavedFlighScreenState();
@@ -19,75 +25,195 @@ class SavedFlighScreen extends StatefulWidget {
 class _SavedFlighScreenState extends State<SavedFlighScreen> {
   int _currentTabIndex = 0;
   final List<String> _tabTitles = ['SAVED', 'FAVORITE'];
-  late final List<Widget> _tabContents;
 
   @override
   void initState() {
     super.initState();
-    _tabContents = [_buildSavedTab(), _buildFavoriteTab()];
-    BlocProvider.of<SavedFlightCubit>(context).loadManufacturers();
+    context.read<SavedFlightCubit>().loadSavedAndFavoriteFlights();
   }
 
-  Widget _buildSavedTab() {
-    return BlocBuilder<SavedFlightCubit, SavedFlightState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  Widget _buildAircraftList(List<dynamic> list, String emptyMessage) {
+    if (list.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.airplanemode_inactive, size: 60, color: Colors.grey),
+            const SizedBox(height: 10),
+            Text(emptyMessage, style: const TextStyle(color: Colors.grey)),
+          ],
+        ),
+      );
+    }
 
-        if (state.savedflight.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return SlidableAutoCloseBehavior(
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          final item = list[index];
+          final isSavedTab = _currentTabIndex == 0;
+          final isFavorite = item.isFavorite == true;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Stack(
               children: [
-                Icon(Icons.bookmark_border, size: 50, color: Colors.grey),
-                SizedBox(height: 10),
-                Text("No saved items yet."),
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isSavedTab
+                          ? AppColors.saveButtonColour
+                          :  AppColors.saveButtonColour,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isSavedTab || isFavorite)
+                          Icon(
+                            Icons.bookmark_remove,
+                            color: Colors.white,
+                            size: kIsWeb ? 22 : 24,
+                          ),
+                        if (isFavorite)
+                          const SizedBox(width: 8),
+                        if (!isSavedTab || isFavorite)
+                          Icon(
+                            Icons.do_disturb_alt_outlined,
+                            color: Colors.white,
+                            size: kIsWeb ? 22 : 24,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                Slidable(
+                  key: ValueKey(item.id),
+                  endActionPane: ActionPane(
+                    motion: const BehindMotion(),
+                    extentRatio: 0.15,
+                    children: [
+                      CustomSlidableAction(
+                        onPressed: (_) async {
+                          final cubit = context.read<AllPlanesCubit>();
+                          if (isSavedTab) {
+                            await cubit.planFavOrUnfav(item.id.toString(), context);
+                          } else {
+                            await cubit.planFavOrUnfav1(item.id.toString(), context);
+                          }
+                          setState(() {
+                            list.removeAt(index);
+                          });
+                        },
+                        backgroundColor: Colors.transparent,
+                        child: const SizedBox.shrink(),
+                      ),
+                    ],
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      if (isSavedTab) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AirCraftDetailScreen(
+                              aircraftId: item.id,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => FlightDetailScreen(
+                              ICAOType: item.icaoTypeCode ?? '',
+                              flightDetail: FlightAircraftDetail(
+                                icaoTypeCode: item.icaoTypeCode,
+                                aircraftModel: item.aircraftModel,
+                                image: item.image,
+                                id: item.id,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 5,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.network(
+                              item.image,
+                              width: 100,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, _, __) => const Icon(
+                                Icons.image_not_supported,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              item.aircraftModel,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
-        }
-
-        return ListView(
-          padding: const EdgeInsets.all(15),
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 15.0),
-              child: Text(
-                _currentTabIndex == 1 ? 'Favorites' : 'Saved',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            ...state.savedflight.map((item) {
-              return Card(
-                color: Colors.white,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ListTile(
-                  leading: SvgPicture.asset(
-                    CommonUi.setSvgImage(item.icon!), // Use your CommonUi
-                    width: 30,
-                    height: 30,
-                  ),
-                  title: Text(item.name),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-                  onTap: () {},
-                ),
-              );
-            }),
-          ],
-        );
-      },
+        },
+      ),
     );
   }
 
-  // This method builds the content for the "FAVORITE" tab
-  Widget _buildFavoriteTab() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [SizedBox(height: 10), Text("Favorite list goes here")],
-      ),
-    );
+  Widget _buildTabContent(SavedFlightState state) {
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.status == CommonApiStatus.failure) {
+      return Center(
+        child: Text(
+          state.errorMessage ?? "Something went wrong",
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    return _currentTabIndex == 0
+        ? _buildAircraftList(state.savedflight, "No saved aircraft found.")
+        : _buildAircraftList(state.favorites, "No favorite aircraft found.");
   }
 
   @override
@@ -100,16 +226,14 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
         elevation: 4,
         shadowColor: Colors.grey.withOpacity(0.5),
         surfaceTintColor: Colors.white,
+        centerTitle: true,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.showTabs)
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 1.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: CustomTabBar(
                 tabTitles: _tabTitles,
                 initialIndex: _currentTabIndex,
@@ -120,7 +244,11 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                 },
               ),
             ),
-          Expanded(child: _tabContents[_currentTabIndex]),
+          Expanded(
+            child: BlocBuilder<SavedFlightCubit, SavedFlightState>(
+              builder: (context, state) => _buildTabContent(state),
+            ),
+          ),
         ],
       ),
     );

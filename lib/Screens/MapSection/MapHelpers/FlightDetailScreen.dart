@@ -320,32 +320,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     );
   }
 
-  // Widget _buildTopHeadingDetails(double screenHeight) {
-  //   final aircraftData = context
-  //       .read<AirCraftDetailCubit>()
-  //       .state
-  //       .airCraftDetails
-  //       ?.results;
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 0),
-  //     child: Container(
-  //       width: double.infinity,
-  //       color: Colors.grey.shade100,
-  //       padding: const EdgeInsets.symmetric(
-  //         horizontal: 15,
-  //         vertical: 15,
-  //       ), // Internal padding
-  //       child: Column(
-  //         children: [
-  //           _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
-  //           const SizedBox(height: 10),
-  //           _buildFlightDataSection(context),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildTopHeadingDetails(double screenHeight) {
     final aircraftData = context
         .read<AirCraftDetailCubit>()
@@ -353,7 +327,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         .airCraftDetails
         ?.results;
 
-    // ✅ Agar backend se image list null ya empty hai to skip image section
     final hasValidImages =
         aircraftData?.images != null && aircraftData!.images!.isNotEmpty;
 
@@ -365,10 +338,10 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         child: Column(
           children: [
-            if (hasValidImages) // ✅ Only show image scroller if images available
-              _buildImageCoverScroller(screenHeight, aircraftData!.images!),
+            if (hasValidImages)
+            _buildFlightDataSection(context),
             if (hasValidImages) const SizedBox(height: 10),
-            _buildFlightDataSection(context), // ✅ Always visible below
+              _buildImageCoverScroller(screenHeight, aircraftData!.images!),
           ],
         ),
       ),
@@ -664,6 +637,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                               ),
                             ],
                           ),
+
                           Expanded(
                             flex: 3,
                             child: Column(
@@ -741,7 +715,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
 
                       const SizedBox(height: 16),
 
-                      // 🧭 Flight Info
                       _buildFieldRows([
                         ['Call Sign', detail?.callsign ?? 'N/A'],
                         ['Flight Code', detail?.flightNumber ?? 'N/A'],

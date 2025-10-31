@@ -27,7 +27,7 @@ class SearchBarWidget extends StatelessWidget {
     this.onChanged,
     this.isComeFromMapSection,
     required this.searchTitle,
-    this.enableGestureMode = false, // default false → normal textfield
+    this.enableGestureMode = false,
     this.onTextTap,
   }) : super(key: key);
 
@@ -89,7 +89,7 @@ class SearchBarWidget extends StatelessWidget {
                                 ),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
-                                vertical: 10,
+                                vertical: 16,
                               ),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(

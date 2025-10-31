@@ -1,16 +1,16 @@
 import '../../home/SavedFlighDetails/savedFlight_model.dart';
 
 class ProfileScreenState  {
-  final List<SavedFlightAndProfileSectionModel> savedflight;
+  // final List<SavedFlightAndProfileSectionModel> savedflight;
   final bool isLoading;
 
   const ProfileScreenState({
-    required this.savedflight,
+    // required this.savedflight,
     this.isLoading = false,
   });
 
   ProfileScreenState copyWith({
-    List<SavedFlightAndProfileSectionModel>? savedflight,
+    // List<SavedFlightAndProfileSectionModel>? savedflight,
     bool? isLoading,
     bool? isProUser,
     String? errorMessage,
@@ -18,13 +18,13 @@ class ProfileScreenState  {
     bool? deleteAccountSuccess,
   }) {
     return ProfileScreenState(
-      savedflight: savedflight ?? this.savedflight,
+      // savedflight: savedflight ?? this.savedflight,
       isLoading: isLoading ?? this.isLoading,
     );
   }
 
   List<Object?> get props => [
-    savedflight,
+    // savedflight,
     isLoading,
   ];
 }

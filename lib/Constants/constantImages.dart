@@ -66,6 +66,7 @@ abstract class AssetsPath {
   static const String editIcon = "EditIcon";
   static const String badgeIcon = "badgeIcon";
   static const String bagdestarIcon = "bagdestarIcon";
+  static const String BadgesIcon = "BadgesIcon";
 
   static const String avtarFirst = "AvtarFirst";
   static const String avtarSecond = "AvtarSecond";

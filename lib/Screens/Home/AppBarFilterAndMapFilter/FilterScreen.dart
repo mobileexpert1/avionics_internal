@@ -32,8 +32,8 @@ class _FilterScreenState extends State<FilterScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text("Filter", style: TextStyle(color: Colors.black)),
-        centerTitle: true,
+          title: const Text("Filter", style: TextStyle(color: Colors.black)),
+          centerTitle: true,
         actions: [
           BlocBuilder<FilterCubit, FilterState>(
             builder: (context, state) {

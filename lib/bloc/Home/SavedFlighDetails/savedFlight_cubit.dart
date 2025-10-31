@@ -1,27 +1,50 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'savedFlight_model.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import 'savedFlight_state.dart';
+import 'savedFlight_repository.dart';
 
 class SavedFlightCubit extends Cubit<SavedFlightState> {
-  SavedFlightCubit() : super(SavedFlightState(savedflight: []));
+  SavedFlightCubit()
+      : super(
+    SavedFlightState(
+      savedflight: [],
+      isLoading: false,
+      isSuccess: false,
+      apiError: null,
+      status: CommonApiStatus.initial,
+      errorMessage: null, favorites: [],
+    ),
+  );
 
-  void loadManufacturers() {
-    emit(state.copyWith(isLoading: true));
+  /// ✅ Fetch Saved and Favorite Flights
+  Future<void> loadSavedAndFavoriteFlights() async {
+    emit(state.copyWith(
+      isLoading: true,
+      status: CommonApiStatus.initial,
+      errorMessage: null,
+    ));
 
-    // Mock data
-    final mockData = [
-      SavedFlightAndProfileSectionModel(name: 'Antonov', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Airbus', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Aquila Aviation', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Adam Aircraft Industries', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Ayres', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'AVRO', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Aero Commander Aircraft', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Air Tractor', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'Agusta / AgustaWestland', icon: 'ManuFirstImage'),
-      SavedFlightAndProfileSectionModel(name: 'American Air Corp', icon: 'ManuFirstImage'),
-    ];
+    try {
+      final response = await SavedFlightRepository().getSavedAndFavoriteAircrafts();
 
-    emit(state.copyWith(savedflight: mockData, isLoading: false));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          isSuccess: true,
+          status: CommonApiStatus.success,
+          savedflight: response.saved,
+          favorites: response.favorite,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          isSuccess: false,
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 }

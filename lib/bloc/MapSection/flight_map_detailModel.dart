@@ -158,7 +158,9 @@ class FlightAircraftDetail extends Equatable {
           ? DateTime.tryParse(json['datetime_landed'])
           : null,
       landingRunway: json['runway_landed'],
-      flightTime: json['flight_time'] == null || json['flight_time'].toString().trim().isEmpty
+      flightTime:
+          json['flight_time'] == null ||
+              json['flight_time'].toString().trim().isEmpty
           ? null
           : json['flight_time'].toString(),
       actualDistance: json['actual_distance']?.toDouble(),
@@ -192,12 +194,14 @@ class FlightAircraftDetail extends Equatable {
           : null,
 
       //Aircports
-      originAirport: json['orig_icao_airport'] != null &&
-          json['orig_icao_airport'] is Map<String, dynamic>
+      originAirport:
+          json['orig_icao_airport'] != null &&
+              json['orig_icao_airport'] is Map<String, dynamic>
           ? AirportModel.fromJson(json['orig_icao_airport'])
           : null,
-      destinationAirport: json['dest_icao_airport'] != null &&
-          json['dest_icao_airport'] is Map<String, dynamic>
+      destinationAirport:
+          json['dest_icao_airport'] != null &&
+              json['dest_icao_airport'] is Map<String, dynamic>
           ? AirportModel.fromJson(json['dest_icao_airport'])
           : null,
     );
@@ -253,11 +257,15 @@ class ManufacturerModel {
   final String id;
   final String companyName;
   final String logo;
+  final String airlineLogo;
+  final String airlineName;
 
   const ManufacturerModel({
     required this.id,
     required this.companyName,
     required this.logo,
+    required this.airlineLogo,
+    required this.airlineName,
   });
 
   factory ManufacturerModel.fromJson(Map<String, dynamic> json) {
@@ -265,11 +273,19 @@ class ManufacturerModel {
       id: json['id'] ?? '',
       companyName: json['company_name'] ?? '',
       logo: json['logo'] ?? '',
+      airlineLogo: json['airline_logo'] ?? '',
+      airlineName: json['airline_name'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'company_name': companyName, 'logo': logo};
+    return {
+      'id': id,
+      'company_name': companyName,
+      'logo': logo,
+      'airline_logo': airlineLogo,
+      'airline_name': airlineName,
+    };
   }
 }
 
@@ -289,10 +305,10 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
     String? source,
     int? vspeed,
     String? flightTime,
-    DateTime? firstSeen,       // new
-    DateTime? lastSeen,        // new
-    bool? flightEnded,         // new
-    DateTime? landingTime,     // new
+    DateTime? firstSeen, // new
+    DateTime? lastSeen, // new
+    bool? flightEnded, // new
+    DateTime? landingTime, // new
   }) {
     return FlightAircraftDetail(
       id: id,
@@ -310,16 +326,16 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
       arrivalIata: arrivalIata,
       actualArrivalIcao: actualArrivalIcao,
       actualArrivalIata: actualArrivalIata,
-      landingTime: landingTime ?? this.landingTime,       // updated
+      landingTime: landingTime ?? this.landingTime, // updated
       landingRunway: landingRunway,
       flightTime: flightTime ?? this.flightTime,
       actualDistance: actualDistance,
       circleDistance: circleDistance,
       category: category,
       hex: hex,
-      firstSeen: firstSeen ?? this.firstSeen,            // updated
-      lastSeen: lastSeen ?? this.lastSeen,               // updated
-      flightEnded: flightEnded ?? this.flightEnded,      // updated
+      firstSeen: firstSeen ?? this.firstSeen, // updated
+      lastSeen: lastSeen ?? this.lastSeen, // updated
+      flightEnded: flightEnded ?? this.flightEnded, // updated
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       track: track ?? this.track,

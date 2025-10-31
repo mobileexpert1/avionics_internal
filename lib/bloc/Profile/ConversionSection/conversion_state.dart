@@ -1,51 +1,38 @@
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import 'gameBadges_model.dart';
+import 'conversion_model.dart';
 
-class BadgesState {
-  final List<BadgeModel> badges;
-  final int totalPoints;
+class ConversionState {
+  final List<ConversionCategory> categories;
   final bool isLoading;
   final bool isSuccess;
   final String? apiError;
   final CommonApiStatus status;
   final String? errorMessage;
-  final String selectedTab;
-  final BadgeResponse? response;
 
-  BadgesState({
-    this.badges = const [],
-    this.totalPoints = 0,
+  ConversionState({
+    this.categories = const [],
     this.isLoading = false,
     this.isSuccess = false,
     this.apiError,
     this.status = CommonApiStatus.initial,
     this.errorMessage,
-    this.selectedTab = "Quiz",
-    this.response,
   });
 
-  BadgesState copyWith({
-    List<BadgeModel>? badges,
-    int? totalPoints,
+  ConversionState copyWith({
+    List<ConversionCategory>? categories,
     bool? isLoading,
     bool? isSuccess,
     String? apiError,
     CommonApiStatus? status,
     String? errorMessage,
-    String? selectedTab,
-    BadgeResponse? response,
-
   }) {
-    return BadgesState(
-      badges: badges ?? this.badges,
-      totalPoints: totalPoints ?? this.totalPoints,
+    return ConversionState(
+      categories: categories ?? this.categories,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,
       apiError: apiError,
       status: status ?? this.status,
       errorMessage: errorMessage,
-      selectedTab: selectedTab ?? this.selectedTab,
-      response: response ?? this.response,
     );
   }
 }

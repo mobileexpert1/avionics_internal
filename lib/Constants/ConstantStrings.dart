@@ -186,6 +186,7 @@ class ApiServiceUrlConstant {
   static const String changeCurrentPassword = 'auth/change-password';
   static const String getAndSetUserDetail = 'user/';
   static const String review = 'user/review';
+  static const String contactSupport = 'user/contact-support';
   static const String setAvtar = 'user/avatar';
   static const String setAvtarWhileSignup = 'auth/avtar';
   static const String delete = 'user/';
@@ -205,6 +206,7 @@ class ApiServiceUrlAirplaneConstant {
   static const String getListManufacturer = 'manufacturer/';
   static const String getListAirbus = 'aircraft/';
   static const String favUnFavPlane = 'aircraft/favorite';
+  static const String savUnSAvePlane = 'aircraft/saved';
   static const compareAircraft = "aircraft/comparison";
 }
 
@@ -220,7 +222,14 @@ class ApiFunctionUrlGamesConstant {
   static const blackBoxSummary = "/blackbox/summary";
   static const blackBoxQuestions = "blackbox/question";
   static const blackBoxSubmit = "blackbox/submit";
+  static const blackBox = "ai-engine/games/blackbox/";
+}
 
+class ApiGameBadges {
+  static const calculationBadges = "badges";
+  static const quizBadges = "badges";
+  static const blackBoxBadges = "badges";
+  static const oneWordBadges = "badges";
 }
 
 class ApiFunctionUrlMapSecitonConstant {

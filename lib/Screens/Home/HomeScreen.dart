@@ -567,7 +567,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) =>
-                                        SavedFlighScreen(showTabs: false),
+                                        SavedFlighScreen(showTabs: true),
                                   ),
                                 ),
                                 child: Text(

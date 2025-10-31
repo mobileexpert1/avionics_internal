@@ -10,6 +10,7 @@ class SimpleAircraftCard extends StatelessWidget {
   final Widget airlineImagePath;
   final String? callSign;
   final VoidCallback? onTap;
+  final bool showArrow;
 
   const SimpleAircraftCard({
     Key? key,
@@ -20,6 +21,7 @@ class SimpleAircraftCard extends StatelessWidget {
     this.airline,
     required this.airlineImagePath,
     this.callSign,
+    this.showArrow = false,
 
     this.onTap,
   }) : super(key: key);
@@ -107,6 +109,9 @@ class SimpleAircraftCard extends StatelessWidget {
               ],
             ),
           ),
+          trailing: showArrow
+              ? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black)
+              : null,
         ),
       ),
     );

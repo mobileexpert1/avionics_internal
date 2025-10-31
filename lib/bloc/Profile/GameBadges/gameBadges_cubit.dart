@@ -1,121 +1,102 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../Constants/constantImages.dart';
-import 'gameBadges_model.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import 'gameBadges_repository.dart';
 import 'gameBadges_state.dart';
+import 'gameBadges_model.dart';
 
 class BadgesCubit extends Cubit<BadgesState> {
-  BadgesCubit() : super(BadgesState());
-
-
-  final Map<String, List<BadgeModel>> _badgeCategories = {
-    "Quiz": [
-      BadgeModel(
-        title: "Cloud Chaser",
-        unlockAfterWins: 10,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-        isUnlocked: true,
-      ),
-      BadgeModel(
-        title: "Jetstream Voyager",
-        unlockAfterWins: 15,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-      BadgeModel(
-        title: "Noctilucent Explorer",
-        unlockAfterWins: 20,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-      BadgeModel(
-        title: "Aurora Sentinel",
-        unlockAfterWins: 25,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-      BadgeModel(
-        title: "Space Shuttle",
-        unlockAfterWins: 30,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-    ],
-    "One Word": [
-      BadgeModel(
-        title: "Word Pilot",
-        unlockAfterWins: 5,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-        isUnlocked: true,
-      ),
-      BadgeModel(
-        title: "Lexicon Ace",
-        unlockAfterWins: 10,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-    ],
-    "Black Box": [
-      BadgeModel(
-        title: "Logic Flyer",
-        unlockAfterWins: 8,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-      BadgeModel(
-        title: "Critical Thinker",
-        unlockAfterWins: 15,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-    ],
-    "Calculations": [
-      BadgeModel(
-        title: "Math Aviator",
-        unlockAfterWins: 10,
-        image: CommonUi.setPngImage(AssetsPath.badgeimg),
-      ),
-    ],
-  };
-
+  BadgesCubit(BuildContext context) : super(BadgesState());
 
   Future<void> loadBadges({
     required int userWins,
     required int totalPoints,
+    String? selectedTab,
+    required BuildContext context,
   }) async {
-    emit(state.copyWith(isLoading: true, status: CommonApiStatus.submitting));
-    try {
-      await Future.delayed(const Duration(milliseconds: 500));
+    if (selectedTab == null || selectedTab.isEmpty) {
+      emit(state.copyWith(
+        isLoading: false,
+        isSuccess: false,
+        badges: [],
+        totalPoints: totalPoints,
+        selectedTab: selectedTab ?? '',
+        status: CommonApiStatus.initial,
+      ));
+      return;
+    }
 
-      final currentBadges = _badgeCategories[state.selectedTab] ?? [];
+    emit(state.copyWith(isLoading: true, status: CommonApiStatus.submitting));
+
+    try {
+      BadgeResponse response;
+
+      switch (selectedTab) {
+        case "Quiz":
+          response = await BadgesRepository().getQuizBadges(
+            userWins: userWins,
+            totalPoints: totalPoints,
+          );
+          break;
+        case "One Word":
+          response = await BadgesRepository().getOneWordBadges();
+          break;
+        case "Black Box":
+          response = await BadgesRepository().getBlackBoxBadges();
+          break;
+        case "Calculations":
+          response = await BadgesRepository().getCalculationBadges();
+          break;
+        default:
+
+          emit(state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            badges: [],
+            totalPoints: totalPoints,
+            selectedTab: selectedTab,
+            status: CommonApiStatus.initial,
+          ));
+          return;
+      }
 
       emit(
         state.copyWith(
           isLoading: false,
           isSuccess: true,
-          badges: currentBadges,
-          totalPoints: totalPoints,
+          badges: response.data,
+          totalPoints: response.totalEarnPoint ?? totalPoints,
+          selectedTab: selectedTab,
           status: CommonApiStatus.success,
         ),
       );
     } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(
           isLoading: false,
           isSuccess: false,
-          errorMessage: "Failed to load badges",
+          errorMessage: e.toString(),
           status: CommonApiStatus.failure,
         ),
       );
     }
   }
 
-  void changeTab(String tab) {
-    if (state.selectedTab == tab) return;
 
-    final currentBadges = _badgeCategories[tab] ?? [];
-
-    emit(
-      state.copyWith(
-        selectedTab: tab,
-        badges: currentBadges,
-        isLoading: false,
-        isSuccess: true,
-        status: CommonApiStatus.success,
-      ),
+  /// Change Tab
+  Future<void> changeTab(
+      String tabName, {
+        required int userWins,
+        required int totalPoints,
+        required BuildContext context,
+      }) async {
+    emit(state.copyWith(selectedTab: tabName));
+    await loadBadges(
+      userWins: userWins,
+      totalPoints: totalPoints,
+      selectedTab: tabName, context: context,
     );
   }
 }

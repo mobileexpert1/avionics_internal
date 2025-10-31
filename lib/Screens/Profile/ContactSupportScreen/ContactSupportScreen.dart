@@ -1,120 +1,205 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../bloc/Profile/ContactSupport/contactsupport_cubit.dart';
+import '../../../bloc/Profile/ContactSupport/contactsupport_state.dart';
+import '../../../bloc/Profile/ManageAccount/manageAcc_repository.dart';
 
-class ContactSupportScreen extends StatelessWidget {
+class ContactSupportScreen extends StatefulWidget {
   const ContactSupportScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    double maxWidth = MediaQuery.of(context).size.width > 1500
-        ? 1500
-        : MediaQuery.of(context).size.width;
+  State<ContactSupportScreen> createState() => _ContactSupportScreenState();
+}
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: ConstantStrings.contactSupport,
-        leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+class _ContactSupportScreenState extends State<ContactSupportScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
+  bool _loadingUser = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserEmail();
+  }
+  Future<void> _loadUserEmail() async {
+    try {
+      final user = await ManageAccountRepository().getUserDetail();
+      if (user.email.isNotEmpty) {
+        emailController.text = user.email;
+        context.read<ContactSupportCubit>().updateEmail(user.email);
+      }
+    } catch (_) {
+    } finally {
+      setState(() {
+        _loadingUser = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    messageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double maxWidth =
+    MediaQuery.of(context).size.width > 1500 ? 1500 : MediaQuery.of(context).size.width;
+
+    return BlocProvider(
+      create: (_) => ContactSupportCubit(),
+      child: Scaffold(
+        appBar: CustomAppBar(
+          title: "Contact Support",
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                _buildCenteredContactBox(
-                  icon: Icons.email_outlined,
-                  text: "Avinoncia@gmail.com",
-                  onTap: () => _launchEmail(context),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: _loadingUser
+              ? const Center(child: CircularProgressIndicator())
+              : Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: BlocListener<ContactSupportCubit, ContactSupportState>(
+                listenWhen: (previous, current) =>
+                current.submissionSuccess && !previous.submissionSuccess,
+                listener: (context, state) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Your message has been sent successfully."),
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+                child: BlocBuilder<ContactSupportCubit, ContactSupportState>(
+                  builder: (context, state) {
+                    final cubit = context.read<ContactSupportCubit>();
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Enter your email",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF3F3D56),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF5F5F5),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: TextField(
+                                controller: emailController,
+                                decoration: const InputDecoration(
+                                  hintText: "Enter your email address",
+                                  border: InputBorder.none,
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (value) =>
+                                    cubit.updateEmail(value.trim()),
+                              ),
+                            ),
+                            if (state.email.isNotEmpty &&
+                                !cubit.isValidEmail(state.email)) ...[
+                              const SizedBox(height: 6),
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Please enter a valid email address",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 12),
+                            const Text(
+                              "Enter description",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF3F3D56),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF5F5F5),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: TextField(
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
+                                ),
+                                controller: messageController,
+                                maxLines: 10,
+                                decoration: const InputDecoration(
+                                  hintText: "Enter your message or details...",
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (value) =>
+                                    cubit.updateMessage(value.trim()),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: CustomBottomButton(
+                                title: state.isSubmitting ? "" : "Submit",
+                                backgroundColor:
+                                const Color.fromRGBO(63, 61, 81, 1.0),
+                                textColor: Colors.white,
+                                icon: state.isSubmitting
+                                    ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    valueColor:
+                                    AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                    : const SizedBox(width: 0),
+                                isEnabled: !state.isSubmitting &&
+                                    cubit.isValidEmail(state.email) &&
+                                    state.message.isNotEmpty,
+                                onPressed: () {
+                                  FocusScope.of(context).unfocus();
+                                  cubit.submitSupport(context);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 16),
-                _buildCenteredContactBox(
-                  icon: Icons.local_phone_outlined,
-                  text: "+91-834 569 9234",
-                  onTap: () => _launchPhone(context),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildCenteredContactBox({
-    required IconData icon,
-    required String text,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: Colors.grey.shade300),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: const Color(0xFF3F3D56)),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: const TextStyle(
-                color: Color(0xFF3F3D56),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _launchEmail(BuildContext context) async {
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: 'Avinoncia@gmail.com',
-      query: Uri.encodeFull('subject=Support Request'),
-    );
-
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri, mode: LaunchMode.externalApplication);
-    } else {
-      _showErrorSnack(context, "Unable to open email app.");
-    }
-  }
-
-  void _launchPhone(BuildContext context) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: '+918345699234');
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    } else {
-      _showErrorSnack(context, "Unable to open phone app.");
-    }
-  }
-
-  void _showErrorSnack(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

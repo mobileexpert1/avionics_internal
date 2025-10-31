@@ -72,6 +72,24 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
+  Future<void> planFavOrUnfav1(String aircraftId, BuildContext context) async {
+    emit(state.copyWith(status: CommonApiStatus.submitting));
+    try {
+      await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
+        aircraftId: aircraftId,
+      );
+      emit(state.copyWith(status: CommonApiStatus.success));
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
   void toggleFavorite(String id, BuildContext context) {
     final updatedList = state.listoFAircraftModels.map((model) {
       if (model.id == id) {

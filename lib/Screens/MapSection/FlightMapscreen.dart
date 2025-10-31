@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../../Constants/AppColors.dart';
 import '../../Helpers/Custom_widget.dart';
+import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
@@ -1697,28 +1700,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                   if (_activeCard == 2 && state.selectedAirport != null)
                     _buildAnimatedAirportDetailsCard(context),
-
-                  // if ((state.selectedCategories?.isNotEmpty ?? false) ||
-                  //     (state.selectedAircraftIcaos?.isNotEmpty ?? false))
-                  //   Positioned(
-                  //     top: 100,
-                  //     left: 10,
-                  //     right: 10,
-                  //     child: SingleChildScrollView(
-                  //       scrollDirection: Axis.horizontal,
-                  //       child: Wrap(
-                  //         spacing: 8.0,
-                  //         children: [
-                  //           ...?state.selectedCategories?.map(
-                  //             (cat) => Chip(label: Text(cat)),
-                  //           ),
-                  //           ...?state.selectedAircraftIcaos?.map(
-                  //             (icao) => Chip(label: Text(icao)),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
                 ],
               );
             }
@@ -2156,6 +2137,186 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     ],
                   ),
                 ),
+                // SliverList(
+                //   delegate: SliverChildBuilderDelegate(
+                //         (context, index) {
+                //       final data = state.flights?[index];
+                //       if (data == null) return const SizedBox.shrink();
+                //
+                //       return Padding(
+                //         key: ValueKey(index),
+                //         padding: EdgeInsets.symmetric(
+                //           vertical: kIsWeb
+                //               ? MediaQuery.of(context).size.width * 0.003
+                //               : MediaQuery.of(context).size.width * 0.017,
+                //           horizontal: 15,
+                //         ),
+                //         child: Stack(
+                //           children: [
+                //             // 🔹 Background container with color + star icon
+                //             Positioned.fill(
+                //               child: Container(
+                //                 decoration: BoxDecoration(
+                //                   color: AppColors.saveButtonColour,
+                //                   borderRadius: BorderRadius.circular(6),
+                //                 ),
+                //                 alignment: Alignment.centerRight,
+                //                 padding: const EdgeInsets.only(right: 15),
+                //                 child: Icon(
+                //                   Icons.star,
+                //                   color: (data.aircraftDetails?.isFavorite == true
+                //                       ? Colors.black
+                //                       : Colors.white),
+                //                   size: kIsWeb ? 22 : 25,
+                //                 ),
+                //               ),
+                //             ),
+                //             Slidable(
+                //               key: ValueKey(data.id),
+                //               closeOnScroll: true,
+                //               endActionPane: ActionPane(
+                //                 motion: const BehindMotion(),
+                //                 extentRatio: 0.15,
+                //                 children: [
+                //                   CustomSlidableAction(
+                //                     onPressed: (_) async {
+                //                       final cubit = context.read<AllPlanesCubit>();
+                //                       await cubit.planFavOrUnfav1(
+                //                         data.aircraftDetails!.aircraftId.toString(),
+                //                         context,
+                //                       );
+                //                     },
+                //                     backgroundColor: Colors.transparent,
+                //                     child: const SizedBox.shrink(),
+                //                   ),
+                //                 ],
+                //               ),
+                //
+                //               child: InkWell(
+                //                 onTap: () {
+                //                   _buildSingleFlightMarker(data).then((marker) {
+                //                     setState(() {
+                //                       isMapViewSelected = true;
+                //                       _isMapListViewShown = false;
+                //                       _singleSearchMarker = marker;
+                //                       selectedFlightId = data.id;
+                //                       context
+                //                           .read<FlightMapCubit>()
+                //                           .setSelectedFlight(data);
+                //                     });
+                //                   });
+                //
+                //                   _mapController?.animateCamera(
+                //                     CameraUpdate.newLatLngZoom(
+                //                       LatLng(data.latitude, data.longitude),
+                //                       8,
+                //                     ),
+                //                   );
+                //
+                //                   _toggleFlightCard(flight: data.id);
+                //
+                //                   _sheetController.animateTo(
+                //                     0.0,
+                //                     duration: const Duration(milliseconds: 400),
+                //                     curve: Curves.easeInOut,
+                //                   );
+                //                 },
+                //
+                //                 child: Container(
+                //                   clipBehavior: Clip.hardEdge,
+                //                   decoration: BoxDecoration(
+                //                     color: Colors.white,
+                //                     borderRadius: BorderRadius.circular(6),
+                //                     boxShadow: [
+                //                       BoxShadow(
+                //                         color: Colors.black.withOpacity(0.08),
+                //                         blurRadius: 5,
+                //                         spreadRadius: 1,
+                //                         offset: const Offset(0, 1),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                   padding: const EdgeInsets.all(10),
+                //                   child: Row(
+                //                     crossAxisAlignment: CrossAxisAlignment.center,
+                //                     children: [
+                //                       ClipRRect(
+                //                         borderRadius: BorderRadius.circular(6),
+                //                         child: (data.aircraftDetails?.image == null ||
+                //                             data.aircraftDetails!.image!.isEmpty)
+                //                             ? Image.asset(
+                //                           CommonUi.setPngImage(
+                //                             AssetsPath.aeroplaneComparison,
+                //                           ),
+                //                           width: 100,
+                //                           height: 50,
+                //                           fit: BoxFit.cover,
+                //                         )
+                //                             : CachedAnyImage(
+                //                           imagePath:
+                //                           data.aircraftDetails!.image ?? "",
+                //                           width: 100,
+                //                           height: 50,
+                //                           contentImage: BoxFit.cover,
+                //                         ),
+                //                       ),
+                //                       const SizedBox(width: 10),
+                //                       Expanded(
+                //                         child: Column(
+                //                           crossAxisAlignment: CrossAxisAlignment.start,
+                //                           mainAxisAlignment: MainAxisAlignment.center,
+                //                           children: [
+                //                             Text(
+                //                               data.aircraftDetails?.aircraftModel ?? "",
+                //                               style: const TextStyle(
+                //                                 fontWeight: FontWeight.w600,
+                //                                 fontSize: 16,
+                //                               ),
+                //                               overflow: TextOverflow.ellipsis,
+                //                             ),
+                //                             const SizedBox(height: 4),
+                //                             if ((data.aircraftDetails?.icaoTypeCode ?? "")
+                //                                 .isNotEmpty)
+                //                               Container(
+                //                                 padding: const EdgeInsets.symmetric(
+                //                                   horizontal: 6,
+                //                                   vertical: 2,
+                //                                 ),
+                //                                 decoration: BoxDecoration(
+                //                                   color: Colors.white,
+                //                                   borderRadius: BorderRadius.circular(4),
+                //                                   boxShadow: const [
+                //                                     BoxShadow(
+                //                                       color: Colors.grey,
+                //                                       spreadRadius: 0.2,
+                //                                     ),
+                //                                   ],
+                //                                 ),
+                //                                 child: Text(
+                //                                   data.aircraftDetails?.icaoTypeCode ?? "",
+                //                                   style: const TextStyle(
+                //                                     fontSize: 12,
+                //                                     fontWeight: FontWeight.w500,
+                //                                   ),
+                //                                 ),
+                //                               ),
+                //                           ],
+                //                         ),
+                //                       ),
+                //                       const Icon(Icons.arrow_forward_ios, size: 16),
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       );
+                //     },
+                //     childCount: state.flights?.length ?? 0,
+                //   ),
+                // ),
+
                 SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final data = state.flights?[index];
@@ -2207,7 +2368,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 height: 120,
                                 contentImage: BoxFit.fill,
                               )),
-                        callSign: data?.callSign ?? "",
+                          callSign: data?.callSign ?? "",
                         onTap: () {
                           _buildSingleFlightMarker(data!).then((marker) {
                             setState(() {
@@ -2266,7 +2427,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             _showInitialTrackingModePopup(context);
           }
         },
-        enableFilter: _isMapListViewShown,
+        // enableFilter: _isMapListViewShown,
+        enableFilter: _isForFlyingInTheArea != 2,
         enableCloseScreen: false,
         isComeFromMapSection: true,
         controller: _searchController,
@@ -2390,9 +2552,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           return FlightCard(
             flightDetail: state.selectedFlightDetail,
             isComeFromLiveTracking: false,
-            callBackForHideFlightCard: () {
-              _resetFlightSelection();
-            },
+            callBackForHideFlightCard: _resetFlightSelection,
             // fromDateTime: state.fromDateTime,
             // toDateTime: state.toDateTime,
           );
@@ -2478,6 +2638,8 @@ class FlightCard extends StatelessWidget {
           final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
           final category = detail?.icaoTypeCode ?? detail?.type ?? "";
           final image = detail?.image ?? "";
+          final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
+          final airlineName = detail?.manufacturer?.airlineName ?? 'N/A';
           final manufacturerLogo = detail?.manufacturer?.logo ?? "";
           final callSign =
               detail?.callsign ?? selectedFlight?.callSign ?? 'N/A';
@@ -2687,24 +2849,38 @@ class FlightCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: (manufacturerLogo == ""
-                              ? Image.asset(
-                                  CommonUi.setPngImage(
-                                    AssetsPath.aeroplaneComparison,
-                                  ),
-                                  width: 100,
-                                  height: 50,
-                                  fit: BoxFit.fill,
-                                )
-                              : CachedAnyImage(
-                                  imagePath: image,
-                                  width: 100,
-                                  height: 50,
-                                  contentImage: BoxFit.fill,
-                                  useCache: false,
-                                )),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: manufacturerLogo.isEmpty
+                                  ? SvgPicture.asset(
+                                CommonUi.setSvgImage(
+                                  AssetsPath.manufacturer,
+                                ),
+                                width: 100,
+                                height: 50,
+                                fit: BoxFit.fill,
+                              )
+                                  : CachedAnyImage(
+                                imagePath: airlineLogo,
+                                width: 100,
+                                height: 20,
+                                contentImage: BoxFit.contain,
+                                useCache: false,
+                              ),
+                            ),
+                            SizedBox(height: 5,),
+                            Text(
+                              airlineName,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: Color(0xFF3F3D56),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
