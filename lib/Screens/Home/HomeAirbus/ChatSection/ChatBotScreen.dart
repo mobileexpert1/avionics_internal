@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +34,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   final ValueNotifier<bool> _isConnected = ValueNotifier(true);
   late stt.SpeechToText _speech;
   bool _isListening = false;
-  bool _isSendingFromSpeech = false;
+  Timer? _speechTimeoutTimer;
 
 
   @override
@@ -54,14 +55,24 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     super.dispose();
   }
 
+
   Future<void> _startListening(BuildContext context) async {
-    final micStatus = await Permission.microphone.request();
-    if (!micStatus.isGranted) return;
+    if (_isListening) return;
+
+    var micStatus = await Permission.microphone.status;
+    if (!micStatus.isGranted) {
+      micStatus = await Permission.microphone.request();
+    }
+    if (!micStatus.isGranted) {
+      debugPrint("Microphone permission not granted");
+      return;
+    }
 
     bool available = await _speech.initialize(
       onStatus: (status) async {
+        debugPrint("Speech status: $status");
         if (status == "done" || status == "notListening") {
-          await _stopListening(context, autoSend: true);
+          await _stopListening(context);
         }
       },
       onError: (error) => debugPrint("Speech error: $error"),
@@ -79,50 +90,38 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             TextPosition(offset: _controller.text.length),
           );
         });
+
+        // reset timeout timer every time new speech result arrives
+        _speechTimeoutTimer?.cancel();
+        _speechTimeoutTimer = Timer(const Duration(seconds: 5), () async {
+          // if no new speech input for 5 sec -> stop listening manually
+          if (_isListening) {
+            debugPrint("Auto-stopping mic after inactivity");
+            await _stopListening(context);
+          }
+        });
       },
     );
+
+    // just in case, stop automatically after 60 sec max
+    _speechTimeoutTimer?.cancel();
+    _speechTimeoutTimer = Timer(const Duration(seconds: 60), () async {
+      if (_isListening) {
+        debugPrint("Force stop after 60s max listening");
+        await _stopListening(context);
+      }
+    });
   }
 
-
-  // Future<void> _stopListening(BuildContext context, {bool autoSend = false}) async {
-  //   if (!_isListening) return;
-  //   await _speech.stop();
-  //   setState(() => _isListening = false);
-  //
-  //   final text = _controller.text.trim();
-  //   if (text.isNotEmpty && autoSend && !_isSendingFromSpeech) {
-  //     _isSendingFromSpeech = true;
-  //
-  //     context.read<ChatCubit>().sendMessage(text);
-  //     _controller.clear();
-  //     _scrollToBottom();
-  //
-  //     Future.delayed(const Duration(milliseconds: 500), () {
-  //       _isSendingFromSpeech = false;
-  //     });
-  //   }
-  // }
-
-  Future<void> _stopListening(BuildContext context, {bool autoSend = false}) async {
+  Future<void> _stopListening(BuildContext context) async {
     if (!_isListening) return;
+
+    _speechTimeoutTimer?.cancel();
+    _speechTimeoutTimer = null;
+
     await _speech.stop();
     setState(() => _isListening = false);
-
-    final text = _controller.text.trim();
-    if (text.isNotEmpty && autoSend && !_isSendingFromSpeech) {
-      _isSendingFromSpeech = true;
-
-      context.read<ChatCubit>().sendMessage(text);
-      // Move clear here but we'll handle reactively via listener below for all cases
-      // _controller.clear();  // Remove this; handle in BlocListener instead
-      _scrollToBottom();
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _isSendingFromSpeech = false;
-      });
-    }
   }
-
 
   void _listenToInternet(ChatCubit cubit) {
     cubit.internetStream.listen((status) {
@@ -263,7 +262,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                         if (message['type'] == 'analyzing') {
                           return const _AnalyzingIndicator();
-                        }
+                          }
 
                         final isUser = message['type'] == 'user';
                         return Align(
@@ -372,8 +371,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                 : null,
 
                             onLongPressEnd: !showSendButton && isConnected
-                                ? (_) => _stopListening(context, autoSend: true)
+                                ? (_) => _stopListening(context)
                                 : null,
+
                             onTap: showSendButton && isConnected
                                 ? () {
                               if (isAnalyzing) return;

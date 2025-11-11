@@ -77,5 +77,9 @@
     <true/>
     <key>GMSApiKey</key>
     <string>AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374</string>
+     <key>NSSpeechRecognitionUsageDescription</key>
+     <string>This app needs access to speech recognition for voice input.</string>
+     <key>NSMicrophoneUsageDescription</key>
+     <string>This app needs access to your microphone to capture voice input.</string>
 </dict>
 </plist>

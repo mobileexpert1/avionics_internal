@@ -119,6 +119,8 @@ class FlightRepository {
         aircraftId: flightDetail.type ?? '',
         origIcao: flightDetail.departureIcao ?? '',
         destIcao: flightDetail.arrivalIcao ?? '',
+        callSign: flightDetail.callsign ?? '',
+
       );
 
       final mergedDetail = mergeFlightAndAircraftDetails(
@@ -213,12 +215,13 @@ class FlightRepository {
     required String aircraftId,
     required String origIcao,
     required String destIcao,
+    required String callSign,
   }) async {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlAirplaneConstant.airplaneService}"
           "${ApiServiceUrlAirplaneConstant.getListAirbus}details"
-          "?aircraft_id=$aircraftId&orig_icao=$origIcao&dest_icao=$destIcao",
+          "?aircraft_id=$aircraftId&orig_icao=$origIcao&dest_icao=$destIcao&callsign=$callSign",
     );
 
     try {
