@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
@@ -180,12 +181,26 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                     extentRatio: 0.15,
                                     children: [
                                       CustomSlidableAction(
+                                        // onPressed: (_) {
+                                        //   context
+                                        //       .read<AllPlanesCubit>()
+                                        //       .toggleFavorite(
+                                        //       model.id, context);
+                                        // },
+
                                         onPressed: (_) {
-                                          context
-                                              .read<AllPlanesCubit>()
-                                              .toggleFavorite(
-                                              model.id, context);
+                                          context.read<AllPlanesCubit>().toggleFavorite(model.id, context);
+
+                                          Fluttertoast.showToast(
+                                            msg: model.isFavorite ? "Bookmark Unsaved" : "Bookmark Saved",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            backgroundColor: Colors.black87,
+                                            textColor: Colors.white,
+                                            fontSize: 14.0,
+                                          );
                                         },
+
                                         backgroundColor: Colors.transparent,
                                         child: const SizedBox.shrink(),
                                       ),
