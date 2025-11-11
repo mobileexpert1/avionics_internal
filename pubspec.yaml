@@ -31,6 +31,7 @@ dependencies:
 
   flutter:
     sdk: flutter
+  fluttertoast:
   speech_to_text:
   permission_handler:
   equatable: ^2.0.5

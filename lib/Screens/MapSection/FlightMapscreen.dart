@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../Constants/AppColors.dart';
 import '../../Helpers/Custom_widget.dart';
@@ -2190,17 +2191,42 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 motion: const BehindMotion(),
                                 extentRatio: 0.15,
                                 children: [
+                                  // CustomSlidableAction(
+                                  //   onPressed: (_) async {
+                                  //     final cubit = context.read<AllPlanesCubit>();
+                                  //     await cubit.planFavOrUnfav1(
+                                  //       aircraft!.aircraftId.toString(),
+                                  //       context,
+                                  //     );
+                                  //   },
+                                  //   backgroundColor: Colors.transparent,
+                                  //   child: const SizedBox.shrink(),
+                                  // ),
                                   CustomSlidableAction(
                                     onPressed: (_) async {
                                       final cubit = context.read<AllPlanesCubit>();
+
+                                      final wasFavorite = aircraft!.isFavorite ?? false; // get current state
+
                                       await cubit.planFavOrUnfav1(
-                                        aircraft!.aircraftId.toString(),
+                                        aircraft.aircraftId.toString(),
                                         context,
+                                      );
+
+                                      // Show toast based on previous favorite state
+                                      Fluttertoast.showToast(
+                                        msg: wasFavorite ? "Airline Favorite" : "Airline UnFavorite",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        backgroundColor: Colors.black87,
+                                        textColor: Colors.white,
+                                        fontSize: 14.0,
                                       );
                                     },
                                     backgroundColor: Colors.transparent,
                                     child: const SizedBox.shrink(),
                                   ),
+
                                 ],
                               ),
                               child: InkWell(

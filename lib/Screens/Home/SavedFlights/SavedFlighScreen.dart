@@ -6,6 +6,7 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomTabBar.dart';
 import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import '../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
@@ -129,18 +130,24 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => FlightDetailScreen(
-                              ICAOType: item.icaoTypeCode ?? '',
-                              flightDetail: FlightAircraftDetail(
-                                icaoTypeCode: item.icaoTypeCode,
-                                aircraftModel: item.aircraftModel,
-                                image: item.image,
-                                id: item.id,
+                            builder: (_) => BlocProvider(
+                              create: (_) => FlightMapCubit(),
+                              child: FlightDetailScreen(
+                                ICAOType: item.icaoTypeCode ?? '',
+                                // flightId: item.flightNumber,
+                                fromSavedFlight: true,
+                                flightDetail: FlightAircraftDetail(
+                                  icaoTypeCode: item.icaoTypeCode,
+                                  aircraftModel: item.aircraftModel,
+                                  image: item.image,
+                                  id: item.id,
+                                ),
                               ),
                             ),
                           ),
                         );
                       }
+
                     },
                     child: Container(
                       clipBehavior: Clip.hardEdge,

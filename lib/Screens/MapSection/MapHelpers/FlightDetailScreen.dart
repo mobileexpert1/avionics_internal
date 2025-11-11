@@ -17,10 +17,15 @@ class FlightDetailScreen extends StatefulWidget {
   final String ICAOType;
   final FlightAircraftDetail? flightDetail;
 
+  final bool fromSavedFlight;
+  final String? flightId;
+
   const FlightDetailScreen({
     super.key,
     required this.ICAOType,
     this.flightDetail,
+    this.fromSavedFlight = false,
+    this.flightId,
   });
 
   @override
@@ -43,15 +48,62 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   bool showTrackingStatus = true;
   FlightAircraftDetail? _currentFlightDetail;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _currentFlightDetail = widget.flightDetail;
+  //   context.read<AirCraftDetailCubit>().fetchAircraftDetailByICAOCode(
+  //     widget.ICAOType,
+  //     context,
+  //   );
+  // }
+
+
   @override
   void initState() {
     super.initState();
     _currentFlightDetail = widget.flightDetail;
+
+    // 1. Always load the static aircraft data
     context.read<AirCraftDetailCubit>().fetchAircraftDetailByICAOCode(
       widget.ICAOType,
       context,
     );
+
+    // 2. **NEW** – refresh live position only when we came from Saved-Flight
+    if (widget.fromSavedFlight && widget.flightDetail != null) {
+      final flightMapCubit = context.read<FlightMapCubit>();
+      flightMapCubit.refreshFlightPosition(
+        flightNumber: widget.ICAOType ?? '',
+        context: context,
+      ).then((_) {
+        // optional: update UI with the fresh data
+        if (mounted) {
+          final updated = flightMapCubit.state.selectedFlight;
+          if (updated != null) {
+            setState(() {
+              _currentFlightDetail = FlightAircraftDetail(
+                flightNumber: updated.flightNumber,
+                latitude: updated.latitude,
+                longitude: updated.longitude,
+                altitude: updated.altitude,
+                groundSpeed: updated.groundSpeed,
+                vspeed: updated.verticalSpeed,
+                id: updated.id,
+                firstSeen: updated.firstSeen,
+                lastSeen: updated.lastSeen,
+                flightEnded: updated.flightEnded,
+                landingTime: updated.landingTime,
+              );
+            });
+          }
+        }
+      });
+    }
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +129,44 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                 Navigator.pop(context);
               },
             ),
+            // rightButton: IconButton(
+            //   icon: const Icon(Icons.refresh, color: Colors.black),
+            //   onPressed: () async {
+            //     final flight = widget.flightDetail;
+            //     if (flight == null) return;
+            //
+            //     final flightMapCubit = context.read<FlightMapCubit>();
+            //
+            //     await flightMapCubit.refreshFlightPosition(
+            //       flightNumber: flight.flightNumber ?? '',
+            //       context: context,
+            //     );
+            //
+            //     if (!mounted) return;
+            //
+            //     final updatedFlightModel = flightMapCubit.state.selectedFlight;
+            //     if (updatedFlightModel != null) {
+            //       setState(() {
+            //         _currentFlightDetail = FlightAircraftDetail(
+            //           flightNumber: updatedFlightModel.flightNumber,
+            //           latitude: updatedFlightModel.latitude,
+            //           longitude: updatedFlightModel.longitude,
+            //           altitude: updatedFlightModel.altitude,
+            //           groundSpeed: updatedFlightModel.groundSpeed,
+            //           vspeed: updatedFlightModel.verticalSpeed,
+            //           id: updatedFlightModel.id,
+            //
+            //           firstSeen: updatedFlightModel.firstSeen,
+            //           lastSeen: updatedFlightModel.lastSeen,
+            //           flightEnded: updatedFlightModel.flightEnded,
+            //           landingTime: updatedFlightModel.landingTime,
+            //         );
+            //       });
+            //     }
+            //   },
+            // ),
+
+
             rightButton: IconButton(
               icon: const Icon(Icons.refresh, color: Colors.black),
               onPressed: () async {
@@ -92,27 +182,42 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
 
                 if (!mounted) return;
 
-                final updatedFlightModel = flightMapCubit.state.selectedFlight;
-                if (updatedFlightModel != null) {
+                final updatedFlight = flightMapCubit.state.selectedFlight;
+                if (updatedFlight != null) {
                   setState(() {
                     _currentFlightDetail = FlightAircraftDetail(
-                      flightNumber: updatedFlightModel.flightNumber,
-                      latitude: updatedFlightModel.latitude,
-                      longitude: updatedFlightModel.longitude,
-                      altitude: updatedFlightModel.altitude,
-                      groundSpeed: updatedFlightModel.groundSpeed,
-                      vspeed: updatedFlightModel.verticalSpeed,
-                      id: updatedFlightModel.id,
-
-                      firstSeen: updatedFlightModel.firstSeen,
-                      lastSeen: updatedFlightModel.lastSeen,
-                      flightEnded: updatedFlightModel.flightEnded,
-                      landingTime: updatedFlightModel.landingTime,
+                      id: updatedFlight.id,
+                      flightNumber: updatedFlight.flightNumber,
+                      callsign: updatedFlight.callSign,
+                      latitude: updatedFlight.latitude,
+                      longitude: updatedFlight.longitude,
+                      altitude: updatedFlight.altitude,
+                      groundSpeed: updatedFlight.groundSpeed,
+                      vspeed: updatedFlight.verticalSpeed,
+                      track: updatedFlight.track,
+                      squawk: updatedFlight.squawk,
+                      // timestamp: updatedFlight.timestamp,
+                      source: updatedFlight.source,
+                      hex: updatedFlight.hex,
+                      aircraftModel: updatedFlight.type,
+                      registration: updatedFlight.registration,
+                      paintedAs: updatedFlight.paintedAs,
+                      operatingAs: updatedFlight.operatingAs,
+                      // originIata: updatedFlight.origIata,
+                      // originIcao: updatedFlight.origIcao,
+                      // destinationIata: updatedFlight.destIata,
+                      // destinationIcao: updatedFlight.destIcao,
+                      eta: updatedFlight.eta,
+                      firstSeen: updatedFlight.firstSeen,
+                      lastSeen: updatedFlight.lastSeen,
+                      flightEnded: updatedFlight.flightEnded,
+                      landingTime: updatedFlight.landingTime,
                     );
                   });
                 }
               },
             ),
+
           ),
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
