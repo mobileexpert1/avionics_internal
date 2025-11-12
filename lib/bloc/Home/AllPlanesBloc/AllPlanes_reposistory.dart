@@ -77,6 +77,9 @@ class AllPlanesReposistory {
 
   Future<BaseDetailResponseModel> setFavOrUnfavPlanFromList1({
     required String aircraftId,
+    required String callSign,
+    required String flightId,
+    required String flightNumber,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -87,7 +90,12 @@ class AllPlanesReposistory {
     try {
       final response = await ApiService.post(
         url: url,
-        body: {"aircraft_id": aircraftId},
+        body: {
+          "aircraft_id": aircraftId,
+          "callsign": callSign,
+          "flight_id": flightId,
+          "flight_number":flightNumber
+        },
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {

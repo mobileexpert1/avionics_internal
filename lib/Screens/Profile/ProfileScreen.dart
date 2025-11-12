@@ -9,6 +9,7 @@ import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
+import '../Home/SavedFlights/SavedFlighScreen.dart';
 import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
@@ -113,6 +114,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+
+                    SettingsListItem(
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.savedIcon),
+                      title: "Saved",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SavedFlighScreen(
+                                showTabs:true
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
 
@@ -136,38 +153,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
-                      title: "Formulas",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => FormulaCubit(),
-                              child: FormulasScreen(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
-                      title: "Conversions",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => ConversionCubit(),
-                              child: ConversionsScreen(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 ),
 
@@ -186,6 +171,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             builder: (context) => BlocProvider(
                               create: (_) => GlossaryCubit(context),
                               child: const GlossaryScreen(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SettingsListItem(
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
+                      title: "Formulas",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider(
+                              create: (_) => FormulaCubit(),
+                              child: FormulasScreen(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SettingsListItem(
+                      leadingSvgAsset:
+                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
+                      title: "Conversions",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider(
+                              create: (_) => ConversionCubit(),
+                              child: ConversionsScreen(),
                             ),
                           ),
                         );

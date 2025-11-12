@@ -12,12 +12,14 @@ import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
+import '../../../bloc/MapSection/flight_map_repository.dart';
 
 class FlightDetailScreen extends StatefulWidget {
   final String ICAOType;
   final FlightAircraftDetail? flightDetail;
-
   final bool fromSavedFlight;
+  final String? flightNumber;
+  final String? callsign;
   final String? flightId;
 
   const FlightDetailScreen({
@@ -25,6 +27,8 @@ class FlightDetailScreen extends StatefulWidget {
     required this.ICAOType,
     this.flightDetail,
     this.fromSavedFlight = false,
+    this.flightNumber,
+    this.callsign,
     this.flightId,
   });
 
@@ -36,7 +40,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   bool showIdentification = true;
   bool showPowerSection = true;
   bool showDimensionSection = true;
-
   bool showWeightsSection = true;
   bool showPerformanceSection = true;
   bool showOperationalSection = true;
@@ -46,64 +49,131 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   bool showIdentificationFlight = true;
   bool showFlightPlan = true;
   bool showTrackingStatus = true;
+
   FlightAircraftDetail? _currentFlightDetail;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _currentFlightDetail = widget.flightDetail;
-  //   context.read<AirCraftDetailCubit>().fetchAircraftDetailByICAOCode(
-  //     widget.ICAOType,
-  //     context,
-  //   );
-  // }
-
+  bool _isLoadingFullDetails = false;
 
   @override
   void initState() {
     super.initState();
     _currentFlightDetail = widget.flightDetail;
 
-    // 1. Always load the static aircraft data
+    // Always load static ICAO aircraft data
     context.read<AirCraftDetailCubit>().fetchAircraftDetailByICAOCode(
       widget.ICAOType,
       context,
     );
 
-    // 2. **NEW** – refresh live position only when we came from Saved-Flight
-    if (widget.fromSavedFlight && widget.flightDetail != null) {
-      final flightMapCubit = context.read<FlightMapCubit>();
-      flightMapCubit.refreshFlightPosition(
-        flightNumber: widget.ICAOType ?? '',
-        context: context,
-      ).then((_) {
-        // optional: update UI with the fresh data
-        if (mounted) {
-          final updated = flightMapCubit.state.selectedFlight;
-          if (updated != null) {
-            setState(() {
-              _currentFlightDetail = FlightAircraftDetail(
-                flightNumber: updated.flightNumber,
-                latitude: updated.latitude,
-                longitude: updated.longitude,
-                altitude: updated.altitude,
-                groundSpeed: updated.groundSpeed,
-                vspeed: updated.verticalSpeed,
-                id: updated.id,
-                firstSeen: updated.firstSeen,
-                lastSeen: updated.lastSeen,
-                flightEnded: updated.flightEnded,
-                landingTime: updated.landingTime,
-              );
-            });
-          }
-        }
-      });
+    // Only from Saved Flight → load full details + live refresh
+    if (widget.fromSavedFlight) {
+      _loadFullFlightDetailsFromSaved();
     }
   }
 
+  /// Fetches full flight details + live position and merges them
+  Future<void> _loadFullFlightDetailsFromSaved() async {
+    if (!widget.fromSavedFlight || _isLoadingFullDetails) return;
+    final flightId = widget.flightNumber ?? widget.flightId;
+    if (flightId == null || flightId.isEmpty) return;
 
+    setState(() => _isLoadingFullDetails = true);
 
+    try {
+      final now = DateTime.now().toUtc();
+      final from = now.subtract(const Duration(hours: 24));
+      final formattedFrom = from.toIso8601String().split('.').first + 'Z';
+      final formattedTo = now.toIso8601String().split('.').first + 'Z';
+
+      final response = await FlightRepository().getFlightDetails(
+        flightId: flightId,
+        fromDateTime: formattedFrom,
+        toDateTime: formattedTo,
+      );
+
+      final fullFlightDetail = response['flightDetail'] as FlightAircraftDetail;
+
+      // Refresh live position
+      final flightMapCubit = context.read<FlightMapCubit>();
+      await flightMapCubit.refreshFlightPosition(
+        flightNumber: flightId,
+        context: context,
+      );
+
+      if (!mounted) return;
+
+      final liveFlight = flightMapCubit.state.selectedFlight;
+      FlightAircraftDetail mergedDetail = fullFlightDetail;
+
+      if (liveFlight != null) {
+        mergedDetail = fullFlightDetail.copyWith(
+          // === LIVE POSITION ===
+          latitude: liveFlight.latitude,
+          longitude: liveFlight.longitude,
+          altitude: liveFlight.altitude,
+          groundSpeed: liveFlight.groundSpeed,
+          vspeed: liveFlight.verticalSpeed,
+          track: liveFlight.track,
+
+          // === LIVE IDENTIFIERS ===
+          callsign: liveFlight.callSign ?? fullFlightDetail.callsign,
+          squawk: liveFlight.squawk ?? fullFlightDetail.squawk,
+          source: liveFlight.source ?? fullFlightDetail.source,
+          hex: liveFlight.hex ?? fullFlightDetail.hex,
+
+          // === LIVE TIMING ===
+          firstSeen: liveFlight.firstSeen ?? fullFlightDetail.firstSeen,
+          lastSeen: liveFlight.lastSeen ?? fullFlightDetail.lastSeen,
+          flightEnded: liveFlight.flightEnded ?? fullFlightDetail.flightEnded,
+          landingTime: liveFlight.landingTime ?? fullFlightDetail.landingTime,
+          eta: liveFlight.eta ?? fullFlightDetail.eta,
+          takeoffTime: liveFlight.takeoffTime ?? fullFlightDetail.takeoffTime,
+          flightTime: liveFlight.flightTime ?? fullFlightDetail.flightTime,
+
+          // // === FULL AIRPORT OBJECTS (CRITICAL!) ===
+          // originAirport: liveFlight.originAirport ?? fullFlightDetail.originAirport,
+          // destinationAirport: liveFlight.destinationAirport ?? fullFlightDetail.destinationAirport,
+
+          // === ICAO/IATA (backup) ===
+          departureIcao:
+          liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
+          departureIata:
+          liveFlight.departureIata ?? fullFlightDetail.departureIata,
+          arrivalIcao: liveFlight.arrivalIcao ?? fullFlightDetail.arrivalIcao,
+          arrivalIata: liveFlight.arrivalIata ?? fullFlightDetail.arrivalIata,
+
+          // === AIRCRAFT INFO ===
+          registration:
+          liveFlight.registration ?? fullFlightDetail.registration,
+          type: liveFlight.type ?? fullFlightDetail.type,
+          paintedAs: liveFlight.paintedAs ?? fullFlightDetail.paintedAs,
+          operatingAs: liveFlight.operatingAs ?? fullFlightDetail.operatingAs,
+
+          // === RUNWAYS & DISTANCE (from full API) ===
+          takeoffRunway: fullFlightDetail.takeoffRunway,
+          landingRunway: fullFlightDetail.landingRunway,
+          actualDistance: fullFlightDetail.actualDistance,
+          circleDistance: fullFlightDetail.circleDistance,
+        );
+      }
+
+      if (mounted) {
+        setState(() {
+          _currentFlightDetail = mergedDetail;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading full flight details: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load full details: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingFullDetails = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,113 +181,78 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
 
     return BlocBuilder<AirCraftDetailCubit, AirCraftDetailState>(
       builder: (context, state) {
+        // Show loading for static aircraft data
         if (state.isLoading) {
           return const Scaffold(
             backgroundColor: Colors.white,
             body: Center(child: CircularProgressIndicator()),
           );
         }
+
+        // // Show loading for full flight data (only from saved flight)
+        // if (_isLoadingFullDetails && widget.fromSavedFlight) {
+        //   return const Scaffold(
+        //     backgroundColor: Colors.white,
+        //     body: Center(child: CircularProgressIndicator()),
+        //   );
+        // }
+
         final details = state.airCraftDetails?.results;
+
         return Scaffold(
           appBar: CustomAppBar(
-            title: widget.flightDetail?.callsign ?? 'N/A',
-            // " , ${widget.flightDetail?.aircraftModel ?? 'N/A'}",
+            title: _currentFlightDetail?.callsign?.isNotEmpty ?? false
+                ? _currentFlightDetail!.callsign!
+                : widget.callsign?.isNotEmpty ?? false
+                ? widget.callsign!
+                : 'N/A',
             centerTitle: true,
             leftButton: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
             ),
-            // rightButton: IconButton(
-            //   icon: const Icon(Icons.refresh, color: Colors.black),
-            //   onPressed: () async {
-            //     final flight = widget.flightDetail;
-            //     if (flight == null) return;
-            //
-            //     final flightMapCubit = context.read<FlightMapCubit>();
-            //
-            //     await flightMapCubit.refreshFlightPosition(
-            //       flightNumber: flight.flightNumber ?? '',
-            //       context: context,
-            //     );
-            //
-            //     if (!mounted) return;
-            //
-            //     final updatedFlightModel = flightMapCubit.state.selectedFlight;
-            //     if (updatedFlightModel != null) {
-            //       setState(() {
-            //         _currentFlightDetail = FlightAircraftDetail(
-            //           flightNumber: updatedFlightModel.flightNumber,
-            //           latitude: updatedFlightModel.latitude,
-            //           longitude: updatedFlightModel.longitude,
-            //           altitude: updatedFlightModel.altitude,
-            //           groundSpeed: updatedFlightModel.groundSpeed,
-            //           vspeed: updatedFlightModel.verticalSpeed,
-            //           id: updatedFlightModel.id,
-            //
-            //           firstSeen: updatedFlightModel.firstSeen,
-            //           lastSeen: updatedFlightModel.lastSeen,
-            //           flightEnded: updatedFlightModel.flightEnded,
-            //           landingTime: updatedFlightModel.landingTime,
-            //         );
-            //       });
-            //     }
-            //   },
-            // ),
-
-
             rightButton: IconButton(
               icon: const Icon(Icons.refresh, color: Colors.black),
               onPressed: () async {
-                final flight = widget.flightDetail;
-                if (flight == null) return;
-
-                final flightMapCubit = context.read<FlightMapCubit>();
-
-                await flightMapCubit.refreshFlightPosition(
-                  flightNumber: flight.flightNumber ?? '',
-                  context: context,
-                );
-
-                if (!mounted) return;
-
-                final updatedFlight = flightMapCubit.state.selectedFlight;
-                if (updatedFlight != null) {
-                  setState(() {
-                    _currentFlightDetail = FlightAircraftDetail(
-                      id: updatedFlight.id,
-                      flightNumber: updatedFlight.flightNumber,
-                      callsign: updatedFlight.callSign,
-                      latitude: updatedFlight.latitude,
-                      longitude: updatedFlight.longitude,
-                      altitude: updatedFlight.altitude,
-                      groundSpeed: updatedFlight.groundSpeed,
-                      vspeed: updatedFlight.verticalSpeed,
-                      track: updatedFlight.track,
-                      squawk: updatedFlight.squawk,
-                      // timestamp: updatedFlight.timestamp,
-                      source: updatedFlight.source,
-                      hex: updatedFlight.hex,
-                      aircraftModel: updatedFlight.type,
-                      registration: updatedFlight.registration,
-                      paintedAs: updatedFlight.paintedAs,
-                      operatingAs: updatedFlight.operatingAs,
-                      // originIata: updatedFlight.origIata,
-                      // originIcao: updatedFlight.origIcao,
-                      // destinationIata: updatedFlight.destIata,
-                      // destinationIcao: updatedFlight.destIcao,
-                      eta: updatedFlight.eta,
-                      firstSeen: updatedFlight.firstSeen,
-                      lastSeen: updatedFlight.lastSeen,
-                      flightEnded: updatedFlight.flightEnded,
-                      landingTime: updatedFlight.landingTime,
+                if (widget.fromSavedFlight) {
+                  await _loadFullFlightDetailsFromSaved();
+                } else {
+                  final flightNumber = widget.flightDetail?.flightNumber ?? '';
+                  if (flightNumber.isNotEmpty) {
+                    await context.read<FlightMapCubit>().refreshFlightPosition(
+                      flightNumber: flightNumber,
+                      context: context,
                     );
-                  });
+                    if (mounted) {
+                      final live = context
+                          .read<FlightMapCubit>()
+                          .state
+                          .selectedFlight;
+                      if (live != null) {
+                        setState(() {
+                          _currentFlightDetail = _currentFlightDetail?.copyWith(
+                            latitude: live.latitude,
+                            longitude: live.longitude,
+                            altitude: live.altitude,
+                            groundSpeed: live.groundSpeed,
+                            vspeed: live.verticalSpeed,
+                            track: live.track,
+                            callsign: live.callSign,
+                            squawk: live.squawk,
+                            source: live.source,
+                            firstSeen: live.firstSeen,
+                            lastSeen: live.lastSeen,
+                            flightEnded: live.flightEnded,
+                            landingTime: live.landingTime,
+                            eta: live.eta,
+                          );
+                        });
+                      }
+                    }
+                  }
                 }
               },
             ),
-
           ),
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
@@ -226,98 +261,87 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                 constraints: BoxConstraints(
                   maxWidth: kIsWeb ? 1500 : double.infinity,
                 ),
-                child: Stack(
-
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
+                    _buildTopHeadingDetails(screenHeight),
 
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildTopHeadingDetails(screenHeight),
-
-                        _buildExpandableSection(
-                          title: "IDENTIFICATION & CLASSIFICATION",
-                          isExpanded: showIdentification,
-                          onToggle: () => setState(
+                    _buildExpandableSection(
+                      title: "IDENTIFICATION & CLASSIFICATION",
+                      isExpanded: showIdentification,
+                      onToggle: () => setState(
                             () => showIdentification = !showIdentification,
-                          ),
-                          content: _buildTechnicalData(details?.identification),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "POWERPLANT & PROPULSION",
-                          isExpanded: showPowerSection,
-                          onToggle: () => setState(
-                            () => showPowerSection = !showPowerSection,
-                          ),
-                          content: _buildPowerPlantData(details?.powerplant),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "DIMENSIONS",
-                          isExpanded: showDimensionSection,
-                          onToggle: () => setState(
-                            () => showDimensionSection = !showDimensionSection,
-                          ),
-                          content: _buildDimenionsData(details?.dimensions),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "WEIGHTS",
-                          isExpanded: showWeightsSection,
-                          onToggle: () => setState(
-                            () => showWeightsSection = !showWeightsSection,
-                          ),
-                          content: _buildWeightsData(details?.weights),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
-                          isExpanded: showPerformanceSection,
-                          onToggle: () => setState(
-                            () => showPerformanceSection =
-                                !showPerformanceSection,
-                          ),
-                          content: _builPerfomanceOrderedBYsData(
-                            details?.performance,
-                          ),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "OPERATIONAL LIMITATIONS",
-                          isExpanded: showOperationalSection,
-                          onToggle: () => setState(
-                            () => showOperationalSection =
-                                !showOperationalSection,
-                          ),
-                          content: _builOperationLimitationsData(
-                            details?.operationalLimitations,
-                          ),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "LANDING GEAR",
-                          isExpanded: showLandingSection,
-                          onToggle: () => setState(
-                            () => showLandingSection = !showLandingSection,
-                          ),
-                          content: _builLandingGearData(details?.landingGear),
-                        ),
-
-                        _buildExpandableSection(
-                          title: "CERTIFICATION & ENVIRONMENTAL",
-                          isExpanded: showCertificationSection,
-                          onToggle: () => setState(
-                            () => showCertificationSection =
-                                !showCertificationSection,
-                          ),
-                          content: _builCertificationData(
-                            details?.certification,
-                          ),
-                        ),
-                        const SizedBox(height: 50),
-                      ],
+                      ),
+                      content: _buildTechnicalData(details?.identification),
                     ),
+
+                    _buildExpandableSection(
+                      title: "POWERPLANT & PROPULSION",
+                      isExpanded: showPowerSection,
+                      onToggle: () =>
+                          setState(() => showPowerSection = !showPowerSection),
+                      content: _buildPowerPlantData(details?.powerplant),
+                    ),
+
+                    _buildExpandableSection(
+                      title: "DIMENSIONS",
+                      isExpanded: showDimensionSection,
+                      onToggle: () => setState(
+                            () => showDimensionSection = !showDimensionSection,
+                      ),
+                      content: _buildDimenionsData(details?.dimensions),
+                    ),
+
+                    _buildExpandableSection(
+                      title: "WEIGHTS",
+                      isExpanded: showWeightsSection,
+                      onToggle: () => setState(
+                            () => showWeightsSection = !showWeightsSection,
+                      ),
+                      content: _buildWeightsData(details?.weights),
+                    ),
+
+                    _buildExpandableSection(
+                      title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
+                      isExpanded: showPerformanceSection,
+                      onToggle: () => setState(
+                            () => showPerformanceSection = !showPerformanceSection,
+                      ),
+                      content: _builPerfomanceOrderedBYsData(
+                        details?.performance,
+                      ),
+                    ),
+
+                    _buildExpandableSection(
+                      title: "OPERATIONAL LIMITATIONS",
+                      isExpanded: showOperationalSection,
+                      onToggle: () => setState(
+                            () => showOperationalSection = !showOperationalSection,
+                      ),
+                      content: _builOperationLimitationsData(
+                        details?.operationalLimitations,
+                      ),
+                    ),
+
+                    _buildExpandableSection(
+                      title: "LANDING GEAR",
+                      isExpanded: showLandingSection,
+                      onToggle: () => setState(
+                            () => showLandingSection = !showLandingSection,
+                      ),
+                      content: _builLandingGearData(details?.landingGear),
+                    ),
+
+                    _buildExpandableSection(
+                      title: "CERTIFICATION & ENVIRONMENTAL",
+                      isExpanded: showCertificationSection,
+                      onToggle: () => setState(
+                            () => showCertificationSection =
+                        !showCertificationSection,
+                      ),
+                      content: _builCertificationData(details?.certification),
+                    ),
+                    const SizedBox(height: 50),
                   ],
                 ),
               ),
@@ -329,12 +353,10 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildImageCoverScroller(
-    double screenHeight,
-    List<AircraftImage> coverImages,
-  ) {
-    if (coverImages.isEmpty) {
-      return const SizedBox.shrink();
-    }
+      double screenHeight,
+      List<AircraftImage> coverImages,
+      ) {
+    if (coverImages.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: screenHeight * 0.18,
       child: ListView.builder(
@@ -350,8 +372,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           final imagePadding = isSingleImage
               ? const EdgeInsets.symmetric(horizontal: 0)
               : const EdgeInsets.only(right: 10);
-
-          final hasCopyright = (image.cc).isNotEmpty;
+          final hasCopyright = image.cc.isNotEmpty;
 
           return Padding(
             padding: imagePadding,
@@ -372,7 +393,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       child: const Icon(Icons.broken_image),
                     ),
                   ),
-
                   if (hasCopyright)
                     Positioned(
                       left: 8,
@@ -431,7 +451,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         .state
         .airCraftDetails
         ?.results;
-
     final hasValidImages =
         aircraftData?.images != null && aircraftData!.images!.isNotEmpty;
 
@@ -443,9 +462,10 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         child: Column(
           children: [
-            if (hasValidImages)
-            _buildFlightDataSection(context),
+            if (hasValidImages && _currentFlightDetail != null)
+              _buildFlightDataSection(context),
             if (hasValidImages) const SizedBox(height: 10),
+            if (hasValidImages)
               _buildImageCoverScroller(screenHeight, aircraftData!.images!),
           ],
         ),
@@ -456,14 +476,19 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   final fieldColor = const Color(0xFF3E3C55);
 
   Widget _buildTechnicalData(IdentificationClassification? detail) {
-    final flight = widget.flightDetail;
     return _buildFieldRows(
       [
-        ['ICAO Type Code', detail?.icaoTypeCode ?? flight?.type ?? 'N/A'],
+        [
+          'ICAO Type Code',
+          detail?.icaoTypeCode ?? _currentFlightDetail?.type ?? 'N/A',
+        ],
         ['Aircraft Manufacturer', detail?.manufacturer ?? 'N/A'],
         ['Aircraft Model', detail?.aircraftModel ?? 'N/A'],
         ['Aircraft Role', detail?.aircraftRole ?? 'N/A'],
-        ['Aircraft Type', detail?.aircraftType ?? flight?.type ?? 'N/A'],
+        [
+          'Aircraft Type',
+          detail?.aircraftType ?? _currentFlightDetail?.type ?? 'N/A',
+        ],
         ['Wake Turbulence Category', detail?.wakeTurbulenceCategory ?? 'N/A'],
         [
           'Civilian / Military / Dual Use',
@@ -636,9 +661,56 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildFlightDataSection(BuildContext context) {
-    final flight = widget.flightDetail;
-    final flight1 = _currentFlightDetail;
+    final flight = _currentFlightDetail;
     if (flight == null) return const SizedBox.shrink();
+
+    // === Extract Data ===
+    final departureCity = flight.originAirport?.city ?? 'N/A';
+    final arrivalCity = flight.destinationAirport?.city ?? 'N/A';
+    final departureIata = flight.departureIcao ?? 'N/A';
+    final arrivalIata = flight.arrivalIcao ?? 'N/A';
+    final groundSpeed = flight.groundSpeed ?? 0;
+    final altitude = flight.altitude ?? 0;
+
+    // === Progress & Time ===
+    DateTime? takeoffTime = flight.takeoffTime;
+    DateTime? eta = flight.eta;
+    String timeSinceTakeoff = 'N/A';
+    String timeToArrival = 'N/A';
+    double progress = 0.0;
+
+    String _formatDuration(Duration d) {
+      final h = d.inHours;
+      final m = d.inMinutes % 60;
+      if (h == 0 && m == 0) return '0 min';
+      if (h == 0) return '$m min';
+      if (m == 0) return '${h}h';
+      return '${h}h ${m}min';
+    }
+
+    if (takeoffTime != null) {
+      final duration = DateTime.now().toUtc().difference(takeoffTime);
+      timeSinceTakeoff = duration.isNegative
+          ? 'N/A'
+          : '${_formatDuration(duration)} ago';
+    }
+
+    if (eta != null) {
+      final duration = eta.difference(DateTime.now().toUtc());
+      timeToArrival = duration.isNegative
+          ? 'Landed'
+          : 'in ${_formatDuration(duration)}';
+    }
+
+    if (takeoffTime != null && eta != null) {
+      final total = eta.difference(takeoffTime).inMilliseconds;
+      final elapsed = DateTime.now()
+          .toUtc()
+          .difference(takeoffTime)
+          .inMilliseconds;
+      if (total > 0) progress = (elapsed / total).clamp(0.0, 1.0);
+    }
+
     return Container(
       color: const Color(0xFF3E3C55),
       child: Column(
@@ -648,199 +720,137 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             title: "IDENTIFICATION & POSITION",
             isExpanded: showIdentificationFlight,
             onTap: () => setState(
-              () => showIdentificationFlight = !showIdentificationFlight,
+                  () => showIdentificationFlight = !showIdentificationFlight,
             ),
             showBlueDot: true,
           ),
           if (showIdentificationFlight)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Builder(
-                builder: (_) {
-                  final detail = widget.flightDetail;
-                  final detail1 = _currentFlightDetail;
-
-                  DateTime? takeoffTime = detail?.takeoffTime;
-                  DateTime? eta = detail?.eta;
-                  String timeSinceTakeoff = 'N/A';
-                  String timeToArrival = 'N/A';
-                  double progress = 0.0;
-
-                  String _formatDuration(Duration duration) {
-                    final hours = duration.inHours;
-                    final minutes = duration.inMinutes.remainder(60);
-                    if (hours == 0 && minutes == 0) return '0 min';
-                    if (hours == 0) return '$minutes min';
-                    if (minutes == 0) return '${hours}h';
-                    return '${hours}h ${minutes}min';
-                  }
-
-                  if (takeoffTime != null) {
-                    final duration = DateTime.now().toUtc().difference(
-                      takeoffTime,
-                    );
-                    timeSinceTakeoff = '${_formatDuration(duration)} ago';
-                  }
-
-                  if (eta != null) {
-                    final duration = eta.difference(DateTime.now().toUtc());
-                    timeToArrival = duration.isNegative
-                        ? 'Landed'
-                        : 'in ${_formatDuration(duration)}';
-                  }
-
-                  if (takeoffTime != null && eta != null) {
-                    final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
-                    final etaMillis = eta.millisecondsSinceEpoch;
-                    final nowMillis = DateTime.now()
-                        .toUtc()
-                        .millisecondsSinceEpoch;
-                    final totalDuration = etaMillis - takeoffMillis;
-                    final elapsed = nowMillis - takeoffMillis;
-                    if (totalDuration > 0) {
-                      progress = (elapsed / totalDuration).clamp(0.0, 1.0);
-                    }
-                  }
-
-                  final departureCity = detail?.originAirport?.city ?? 'N/A';
-                  final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
-                  final departureIata = detail?.departureIcao ?? 'N/A';
-                  final arrivalIata = detail?.arrivalIcao ?? 'N/A';
-                  final groundSpeed = detail1?.groundSpeed ?? 0;
-                  final altitude = detail1?.altitude ?? 0;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                departureCity,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                departureIata,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                timeSinceTakeoff,
-                                style: const TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          Expanded(
-                            flex: 3,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 20),
-                                  child: LinearProgressIndicator(
-                                    value: progress,
-                                    backgroundColor: Colors.grey.shade300,
-                                    color: Colors.blue,
-                                    minHeight: 5,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      groundSpeed == 0
-                                          ? 'N/A'
-                                          : '$groundSpeed km/h',
-                                      style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    const Text(
-                                      "•",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      altitude == 0 ? 'N/A' : '$altitude m',
-                                      style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                          Text(
+                            departureCity,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
                             ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                arrivalCity,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                arrivalIata,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                timeToArrival,
-                                style: const TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            departureIata,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            timeSinceTakeoff,
+                            style: const TextStyle(
+                              color: Colors.white60,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 16),
-
-                      _buildFieldRows([
-                        ['Call Sign', detail?.callsign ?? 'N/A'],
-                        ['Flight Code', detail?.flightNumber ?? 'N/A'],
-                        ['Squawk', detail?.squawk ?? 'N/A', true],
-                        ['ADS-B Hex', detail?.hex ?? 'N/A', true],
-                        [
-                          'Latitude',
-                          detail1?.latitude.toString() ?? 'N/A',
-                          true,
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: LinearProgressIndicator(
+                                value: progress,
+                                backgroundColor: Colors.grey.shade300,
+                                color: Colors.blue,
+                                minHeight: 5,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '$groundSpeed km/h',
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "•",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  '$altitude m',
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            arrivalCity,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                          Text(
+                            arrivalIata,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            timeToArrival,
+                            style: const TextStyle(
+                              color: Colors.white60,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
-                        [
-                          'Longitude',
-                          detail1?.longitude.toString() ?? 'N/A',
-                          true,
-                        ],
-                        ['Registration', detail?.registration ?? 'N/A', true],
-                        ['Data Source', detail?.source ?? 'N/A', true],
-                      ]),
+                      ),
                     ],
-                  );
-                },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFieldRows([
+                    ['Call Sign', flight.callsign ?? 'N/A'],
+                    ['Flight Code', flight.flightNumber ?? 'N/A'],
+                    ['Squawk', flight.squawk ?? 'N/A', true],
+                    ['ADS-B Hex', flight.hex ?? 'N/A', true],
+                    [
+                      'Latitude',
+                      flight.latitude?.toStringAsFixed(6) ?? 'N/A',
+                      true,
+                    ],
+                    [
+                      'Longitude',
+                      flight.longitude?.toStringAsFixed(6) ?? 'N/A',
+                      true,
+                    ],
+                    ['Registration', flight.registration ?? 'N/A', true],
+                    ['Data Source', flight.source ?? 'N/A', true],
+                  ]),
+                ],
               ),
             ),
           const Divider(
@@ -860,15 +870,15 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildFieldRows([
                 ['Track (degree)', flight.track?.toString() ?? 'N/A'],
-                ['Altitude (ft)', flight1?.altitude?.toString() ?? 'N/A'],
+                ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
                 [
                   'Ground Speed (km/h)',
-                  flight1?.groundSpeed?.toString() ?? 'N/A',
+                  flight.groundSpeed?.toString() ?? 'N/A',
                   true,
                 ],
                 [
                   'Vertical Speed (ft/min)',
-                  flight1?.vspeed?.toString() ?? 'N/A',
+                  flight.vspeed?.toString() ?? 'N/A',
                   true,
                 ],
                 [
@@ -915,19 +925,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   flight.circleDistance?.toString() ?? 'N/A',
                   true,
                 ],
-                [
-                  'Flight Duration',
-                  (flight.flightTime?.isNotEmpty ?? false)
-                      ? flight.flightTime!
-                      : 'N/A',
-                  true,
-                ],
-                // ['Time Zone', 'InterGlobe Aviation Ltd',true],
-                [
-                  'Carrier Operating',
-                  flight.operatingAs?.toString() ?? 'N/A',
-                  true,
-                ],
+                ['Flight Duration', flight.flightTime ?? 'N/A', true],
+                ['Carrier Operating', flight.operatingAs ?? 'N/A', true],
               ]),
             ),
           const Divider(
@@ -936,7 +935,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             thickness: 3,
           ),
 
-          // Tracking Status Section
           _buildSectionHeader(
             title: "TRACKING STATUS",
             isExpanded: showTrackingStatus,
@@ -1038,11 +1036,11 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildFieldRows(
-    List<List<dynamic>> fields, {
-    Color labelColor = Colors.white70,
-    Color valueColor = Colors.white,
-    List<int>? showInfoFields,
-  }) {
+      List<List<dynamic>> fields, {
+        Color labelColor = Colors.white70,
+        Color valueColor = Colors.white,
+        List<int>? showInfoFields,
+      }) {
     return Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
         final first = fields[i * 2];
@@ -1059,7 +1057,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   labelColor: labelColor,
                   textColor: valueColor,
                   showInfoIcon:
-                      (first.length > 2 && first[2] == true) ||
+                  (first.length > 2 && first[2] == true) ||
                       (showInfoFields?.contains(i * 2) ?? false),
                 ),
               ),
@@ -1067,14 +1065,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
               Expanded(
                 child: second != null
                     ? customField(
-                        label: second[0],
-                        text: second[1],
-                        labelColor: labelColor,
-                        textColor: valueColor,
-                        showInfoIcon:
-                            (second.length > 2 && second[2] == true) ||
-                            (showInfoFields?.contains(i * 2 + 1) ?? false),
-                      )
+                  label: second[0],
+                  text: second[1],
+                  labelColor: labelColor,
+                  textColor: valueColor,
+                  showInfoIcon:
+                  (second.length > 2 && second[2] == true) ||
+                      (showInfoFields?.contains(i * 2 + 1) ?? false),
+                )
                     : const SizedBox(),
               ),
             ],
@@ -1101,9 +1099,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ),
         isExpanded
             ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: content,
-              )
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: content,
+        )
             : const SizedBox.shrink(),
         const Divider(
           height: 0,

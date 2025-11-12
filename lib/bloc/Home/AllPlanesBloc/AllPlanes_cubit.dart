@@ -72,12 +72,23 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  Future<void> planFavOrUnfav1(String aircraftId, BuildContext context) async {
+  Future<void> planFavOrUnfav1(
+    String aircraftId,
+    String callSign,
+    String flightId,
+    String flightNumber,
+    BuildContext context,
+  ) async {
     emit(state.copyWith(status: CommonApiStatus.submitting));
+
     try {
       await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
         aircraftId: aircraftId,
+        callSign: callSign,
+        flightId: flightId,
+        flightNumber: flightNumber,
       );
+
       emit(state.copyWith(status: CommonApiStatus.success));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
