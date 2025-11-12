@@ -1,7 +1,8 @@
+import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
-import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_repository.dart';
-import '../Quiz_Section/quiz_model.dart';
+
+import '../OneWord_Section/oneWord_repository.dart';
+import '../OneWord_Section/oneWord_state.dart';
 
 class QuizCubit extends Cubit<OneWordTopicState> {
   QuizCubit() : super(OneWordTopicState());

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'blackBox_repository.dart';
 import 'blackBox_state.dart';
@@ -7,9 +8,7 @@ import 'blackBox_state.dart';
 class BlackboxCubit extends Cubit<BlackBoxState> {
   BlackboxCubit() : super(const BlackBoxState());
 
-  Future<void> loadBlackboxSummary({
-    required BuildContext context,
-  }) async {
+  Future<void> loadBlackboxSummary({required BuildContext context}) async {
     emit(
       state.copyWith(
         isLoading: true,
