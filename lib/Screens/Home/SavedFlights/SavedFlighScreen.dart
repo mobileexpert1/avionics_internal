@@ -103,8 +103,15 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                           final cubit = context.read<AllPlanesCubit>();
                           if (isSavedTab) {
                             await cubit.planFavOrUnfav(item.id.toString(), context);
-                          } else {
-                            await cubit.planFavOrUnfav1(item.id.toString(), context);
+                          }
+                          else {
+                            await cubit.planFavOrUnfav1(
+                              item.aircraftId.toString(),
+                              item.callSign ?? '',
+                              item.flightId.toString(),
+                              item.flightNumber.toString(),
+                              context,
+                            );
                           }
                           setState(() {
                             list.removeAt(index);
@@ -134,7 +141,9 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               create: (_) => FlightMapCubit(),
                               child: FlightDetailScreen(
                                 ICAOType: item.icaoTypeCode ?? '',
-                                // flightId: item.flightNumber,
+                                flightNumber: item.flightNumber,
+                                callsign:item.callsign,
+                                flightId:item.flightId,
                                 fromSavedFlight: true,
                                 flightDetail: FlightAircraftDetail(
                                   icaoTypeCode: item.icaoTypeCode,
@@ -180,9 +189,21 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             ),
                           ),
                           const SizedBox(width: 10),
+                          // Expanded(
+                          //   child: Text(
+                          //     item.aircraftModel,
+                          //     style: const TextStyle(
+                          //       fontWeight: FontWeight.w600,
+                          //       fontSize: 16,
+                          //     ),
+                          //     overflow: TextOverflow.ellipsis,
+                          //   ),
+                          // ),
                           Expanded(
                             child: Text(
-                              item.aircraftModel,
+                              _currentTabIndex == 0
+                                  ? (item.aircraftModel ?? 'Unknown Aircraft')
+                                  : (item.callsign?.isNotEmpty == true ? item.callsign! : 'Unknown Flight'),
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
@@ -190,6 +211,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
+
                           const Icon(Icons.arrow_forward_ios, size: 16),
                         ],
                       ),

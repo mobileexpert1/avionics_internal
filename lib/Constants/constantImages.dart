@@ -60,6 +60,7 @@ abstract class AssetsPath {
   static const String reviewsAcc = "Reviews";
   static const String glossaryAcc = "Glossary";
   static const String unitMeasureAcc = "UnitsMeasurments";
+  static const String savedIcon = "savedIcon";
   static const String avtarAcc = "Avatar";
   static const String subsrcitAcc = "Subscriptions";
   static const String manageAccountAcc = "manageAccount";

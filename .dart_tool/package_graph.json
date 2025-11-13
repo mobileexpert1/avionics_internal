@@ -23,7 +23,6 @@
         "flutter_map",
         "flutter_slidable",
         "flutter_svg",
-        "fluttertoast",
         "geocoding",
         "geolocator",
         "google_maps_flutter",
@@ -491,15 +490,6 @@
         "pedantic",
         "speech_to_text_platform_interface",
         "speech_to_text_windows",
-        "web"
-      ]
-    },
-    {
-      "name": "fluttertoast",
-      "version": "9.0.0",
-      "dependencies": [
-        "flutter",
-        "flutter_web_plugins",
         "web"
       ]
     },

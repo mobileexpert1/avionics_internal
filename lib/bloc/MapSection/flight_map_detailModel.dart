@@ -291,60 +291,96 @@ class ManufacturerModel {
 
 extension FlightAircraftDetailCopy on FlightAircraftDetail {
   FlightAircraftDetail copyWith({
+    // ── POSITION ──
     double? latitude,
     double? longitude,
     int? track,
-    int? groundSpeed,
     int? altitude,
-    DateTime? takeoffTime,
-    DateTime? eta,
+    int? groundSpeed,
+    int? vspeed,
+
+    // ── IDENTIFIERS ──
     String? flightNumber,
     String? callsign,
     String? registration,
     String? squawk,
     String? source,
-    int? vspeed,
+    String? hex,
+    String? type,
+    String? paintedAs,
+    String? operatingAs,
+
+    // ── TIMING & STATUS ──
+    DateTime? takeoffTime,
+    DateTime? eta,
     String? flightTime,
-    DateTime? firstSeen, // new
-    DateTime? lastSeen, // new
-    bool? flightEnded, // new
-    DateTime? landingTime, // new
+    DateTime? firstSeen,
+    DateTime? lastSeen,
+    bool? flightEnded,
+    DateTime? landingTime,
+
+    // ── AIRPORTS ──
+    String? departureIcao,
+    String? departureIata,
+    String? arrivalIcao,
+    String? arrivalIata,
+    String? actualArrivalIcao,
+    String? actualArrivalIata,
+    String? takeoffRunway,
+    String? landingRunway,
+
+    // ── DISTANCES ──
+    double? actualDistance,
+    double? circleDistance,
   }) {
     return FlightAircraftDetail(
+      // Required
       id: id,
-      flightNumber: flightNumber ?? this.flightNumber,
-      callsign: callsign ?? this.callsign,
-      operatingAs: operatingAs,
-      paintedAs: paintedAs,
-      type: type,
-      registration: registration ?? this.registration,
-      departureIcao: departureIcao,
-      departureIata: departureIata,
-      takeoffTime: takeoffTime ?? this.takeoffTime,
-      takeoffRunway: takeoffRunway,
-      arrivalIcao: arrivalIcao,
-      arrivalIata: arrivalIata,
-      actualArrivalIcao: actualArrivalIcao,
-      actualArrivalIata: actualArrivalIata,
-      landingTime: landingTime ?? this.landingTime, // updated
-      landingRunway: landingRunway,
-      flightTime: flightTime ?? this.flightTime,
-      actualDistance: actualDistance,
-      circleDistance: circleDistance,
-      category: category,
-      hex: hex,
-      firstSeen: firstSeen ?? this.firstSeen, // updated
-      lastSeen: lastSeen ?? this.lastSeen, // updated
-      flightEnded: flightEnded ?? this.flightEnded, // updated
+
+      // ── POSITION ──
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       track: track ?? this.track,
-      groundSpeed: groundSpeed ?? this.groundSpeed,
       altitude: altitude ?? this.altitude,
-      eta: eta ?? this.eta,
+      groundSpeed: groundSpeed ?? this.groundSpeed,
+      vspeed: vspeed ?? this.vspeed,
+
+      // ── IDENTIFIERS ──
+      flightNumber: flightNumber ?? this.flightNumber,
+      callsign: callsign ?? this.callsign,
+      registration: registration ?? this.registration,
       squawk: squawk ?? this.squawk,
       source: source ?? this.source,
-      vspeed: vspeed ?? this.vspeed,
+      hex: hex ?? this.hex,
+      type: type ?? this.type,
+      paintedAs: paintedAs ?? this.paintedAs,
+      operatingAs: operatingAs ?? this.operatingAs,
+
+      // ── TIMING & STATUS ──
+      takeoffTime: takeoffTime ?? this.takeoffTime,
+      eta: eta ?? this.eta,
+      flightTime: flightTime ?? this.flightTime,
+      firstSeen: firstSeen ?? this.firstSeen,
+      lastSeen: lastSeen ?? this.lastSeen,
+      flightEnded: flightEnded ?? this.flightEnded,
+      landingTime: landingTime ?? this.landingTime,
+
+      // ── AIRPORTS ──
+      departureIcao: departureIcao ?? this.departureIcao,
+      departureIata: departureIata ?? this.departureIata,
+      arrivalIcao: arrivalIcao ?? this.arrivalIcao,
+      arrivalIata: arrivalIata ?? this.arrivalIata,
+      actualArrivalIcao: actualArrivalIcao ?? this.actualArrivalIcao,
+      actualArrivalIata: actualArrivalIata ?? this.actualArrivalIata,
+      takeoffRunway: takeoffRunway ?? this.takeoffRunway,
+      landingRunway: landingRunway ?? this.landingRunway,
+
+      // ── DISTANCES ──
+      actualDistance: actualDistance ?? this.actualDistance,
+      circleDistance: circleDistance ?? this.circleDistance,
+
+      // ── PRESERVE STATIC FIELDS ──
+      category: category,
       aircraftModel: aircraftModel,
       isFavorite: isFavorite,
       icaoTypeCode: icaoTypeCode,
