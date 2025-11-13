@@ -353,6 +353,7 @@
 // }
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -392,7 +393,9 @@ class ConversionsScreen extends StatelessWidget {
                 final horizontalController = ScrollController();
 
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: kIsWeb
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.stretch,
                   children: [
                     Center(
                       child: Text(
@@ -411,18 +414,23 @@ class ConversionsScreen extends StatelessWidget {
                       builder: (context, constraints) {
                         final isSmallDevice = constraints.maxWidth < 600;
                         return Container(
-                          margin: EdgeInsets.only(bottom: isSmallDevice ? 8 : 0),
+                          margin: EdgeInsets.only(
+                            bottom: isSmallDevice ? 8 : 0,
+                          ),
                           child: ScrollbarTheme(
                             data: _scrollbarTheme(context, screenSize.height),
                             child: Scrollbar(
                               controller: horizontalController,
-                              thumbVisibility: true, // ✅ Always visible
+                              thumbVisibility: true,
+                              // ✅ Always visible
                               trackVisibility: true,
                               interactive: true,
                               scrollbarOrientation: ScrollbarOrientation.bottom,
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                  bottom: Platform.isIOS ? 40 : 0, // Only add padding on iOS
+                                  bottom: !kIsWeb && Platform.isIOS
+                                      ? 40
+                                      : 0, // Only add padding on iOS
                                 ),
                                 child: SingleChildScrollView(
                                   controller: horizontalController,
@@ -522,22 +530,20 @@ class ConversionsScreen extends StatelessWidget {
     );
   }
 
-  ScrollbarThemeData _scrollbarTheme(BuildContext context, double screenHeight) {
+  ScrollbarThemeData _scrollbarTheme(
+    BuildContext context,
+    double screenHeight,
+  ) {
     return ScrollbarThemeData(
       thumbColor: WidgetStateProperty.all(
         const Color(0xFF1E80F2), // Blue thumb
       ),
-      trackColor: WidgetStateProperty.all(
-        Colors.transparent,
-      ),
-      trackBorderColor: WidgetStateProperty.all(
-        Colors.transparent,
-      ),
+      trackColor: WidgetStateProperty.all(Colors.transparent),
+      trackBorderColor: WidgetStateProperty.all(Colors.transparent),
       radius: const Radius.circular(6),
       thickness: WidgetStateProperty.all(3),
       crossAxisMargin: screenHeight > 760 ? -16 : -10,
       mainAxisMargin: 4,
     );
   }
-
 }

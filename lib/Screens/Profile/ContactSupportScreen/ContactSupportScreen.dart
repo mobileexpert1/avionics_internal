@@ -18,17 +18,21 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
   final TextEditingController messageController = TextEditingController();
   bool _loadingUser = true;
 
+  late final ContactSupportCubit _cubit;
+
   @override
   void initState() {
     super.initState();
+    _cubit = ContactSupportCubit();
     _loadUserEmail();
   }
+
   Future<void> _loadUserEmail() async {
     try {
       final user = await ManageAccountRepository().getUserDetail();
       if (user.email.isNotEmpty) {
         emailController.text = user.email;
-        context.read<ContactSupportCubit>().updateEmail(user.email);
+        _cubit.updateEmail(user.email);
       }
     } catch (_) {
     } finally {
@@ -42,16 +46,17 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
   void dispose() {
     emailController.dispose();
     messageController.dispose();
+    _cubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double maxWidth =
-    MediaQuery.of(context).size.width > 1500 ? 1500 : MediaQuery.of(context).size.width;
-
-    return BlocProvider(
-      create: (_) => ContactSupportCubit(),
+    double maxWidth = MediaQuery.of(context).size.width > 1500
+        ? 1500
+        : MediaQuery.of(context).size.width;
+    return BlocProvider.value(
+      value: _cubit,
       child: Scaffold(
         appBar: CustomAppBar(
           title: "Contact Support",
@@ -81,10 +86,12 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                 },
                 child: BlocBuilder<ContactSupportCubit, ContactSupportState>(
                   builder: (context, state) {
-                    final cubit = context.read<ContactSupportCubit>();
-
+                    final cubit = _cubit;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 25,
+                        vertical: 30,
+                      ),
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,12 +118,10 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                                   border: InputBorder.none,
                                 ),
                                 keyboardType: TextInputType.emailAddress,
-                                onChanged: (value) =>
-                                    cubit.updateEmail(value.trim()),
+                                onChanged: (value) => cubit.updateEmail(value.trim()),
                               ),
                             ),
-                            if (state.email.isNotEmpty &&
-                                !cubit.isValidEmail(state.email)) ...[
+                            if (state.email.isNotEmpty && !cubit.isValidEmail(state.email)) ...[
                               const SizedBox(height: 6),
                               const Align(
                                 alignment: Alignment.centerLeft,
@@ -156,8 +161,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                                   hintText: "Enter your message or details...",
                                   border: InputBorder.none,
                                 ),
-                                onChanged: (value) =>
-                                    cubit.updateMessage(value.trim()),
+                                onChanged: (value) => cubit.updateMessage(value.trim()),
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -165,27 +169,29 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                               width: double.infinity,
                               child: CustomBottomButton(
                                 title: state.isSubmitting ? "" : "Submit",
-                                backgroundColor:
-                                const Color.fromRGBO(63, 61, 81, 1.0),
+                                backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
                                 textColor: Colors.white,
                                 icon: state.isSubmitting
                                     ? const SizedBox(
                                   height: 24,
                                   width: 24,
                                   child: CircularProgressIndicator(
-                                    valueColor:
-                                    AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                     strokeWidth: 2,
                                   ),
                                 )
                                     : const SizedBox(width: 0),
                                 isEnabled: !state.isSubmitting &&
+                                    state.email.isNotEmpty &&
                                     cubit.isValidEmail(state.email) &&
                                     state.message.isNotEmpty,
                                 onPressed: () {
                                   FocusScope.of(context).unfocus();
-                                  cubit.submitSupport(context);
+                                  if (state.email.isNotEmpty &&
+                                      cubit.isValidEmail(state.email) &&
+                                      state.message.isNotEmpty) {
+                                    cubit.submitSupport(context);
+                                  }
                                 },
                               ),
                             ),

@@ -9,6 +9,7 @@ import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
+import '../Home/SavedFlights/SavedFlighScreen.dart';
 import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
@@ -69,8 +70,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   items: [
                     SettingsListItem(
                       title: "Manage Your Account",
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.manageAccountAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.manageAccountAcc,
+                      ),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -81,14 +83,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage( AssetsPath.badgeIcon),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.badgeIcon,
+                      ),
                       title: "Badges",
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const BadgesScreen(userWins: 10,totalPoints: 510,),
+                            builder: (_) => const BadgesScreen(
+                              userWins: 10,
+                              totalPoints: 510,
+                            ),
                           ),
                         );
                       },
@@ -103,12 +109,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => (defaultTargetPlatform ==
-                                TargetPlatform.iOS
+                            builder: (context) =>
+                                (defaultTargetPlatform == TargetPlatform.iOS
                                 ? AppleSubscriptionScreen(
-                              isComeFromSignup: false,
-                            )
+                                    isComeFromSignup: false,
+                                  )
                                 : ProfileSubscriptionScreen()),
+                          ),
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subsrcitAcc,
+                      ),
+                      title: "Saved",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SavedFlighScreen(showTabs: true),
                           ),
                         );
                       },
@@ -121,8 +142,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "INTERFACE",
                   items: [
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.avtarAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.avtarAcc,
+                      ),
                       title: "Avatar",
                       onTap: () {
                         Navigator.push(
@@ -137,8 +159,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.unitMeasureAcc,
+                      ),
                       title: "Formulas",
                       onTap: () {
                         Navigator.push(
@@ -153,8 +176,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.unitMeasureAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.unitMeasureAcc,
+                      ),
                       title: "Conversions",
                       onTap: () {
                         Navigator.push(
@@ -176,8 +200,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "REFERENCES",
                   items: [
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.glossaryAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.glossaryAcc,
+                      ),
                       title: "Glossary",
                       onTap: () {
                         Navigator.push(
@@ -200,8 +225,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   showBottomDivider: false,
                   items: [
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.reviewsAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.reviewsAcc,
+                      ),
                       title: "Write Review",
                       onTap: () {
                         Navigator.push(
@@ -213,8 +239,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.contactAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.contactAcc,
+                      ),
                       title: "Contact Support",
                       onTap: () {
                         Navigator.push(
@@ -226,16 +253,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.deleteAcc),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.deleteAcc,
+                      ),
                       title: "Logout",
                       onTap: () {
                         showDeleteConfirmation(context, true);
                       },
                     ),
                     SettingsListItem(
-                      leadingSvgAsset:
-                      CommonUi.setSvgImage(AssetsPath.deleteAccSvg),
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.deleteAccSvg,
+                      ),
                       title: "Delete account",
                       onTap: () {
                         showDeleteConfirmation(context, false);
@@ -265,28 +294,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: CustomAppBar(title: ConstantStrings.profileTitle),
       body: kIsWeb
           ? Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: content,
-        ),
-      )
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1500),
+                child: content,
+              ),
+            )
           : content,
     );
   }
 
   Future<void> _clearAllDataAndRedirectToSplashScreen(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     await SharedPrefsHelper.clearAll([], false);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginScreen()),
-          (route) => false,
+      (route) => false,
     );
   }
 
   void showDeleteConfirmation(
-      BuildContext bottomSheetContext,
-      isComeFromLogout,
-      ) {
+    BuildContext bottomSheetContext,
+    isComeFromLogout,
+  ) {
     showModalBottomSheet(
       context: bottomSheetContext,
       backgroundColor: Colors.transparent,
@@ -303,9 +333,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               } else if (state.errorMessage.isNotEmpty) {
                 Navigator.pop(bottomSheetContext);
-                ScaffoldMessenger.of(bottomSheetContext).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage)),
-                );
+                ScaffoldMessenger.of(
+                  bottomSheetContext,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
               }
             },
             child: Builder(
@@ -351,8 +381,9 @@ class InfoBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double maxWidth =
-        constraints.maxWidth > 500 ? 500 : constraints.maxWidth;
+        double maxWidth = constraints.maxWidth > 500
+            ? 500
+            : constraints.maxWidth;
 
         Widget content = Container(
           width: maxWidth,
@@ -360,7 +391,9 @@ class InfoBottomSheet extends StatelessWidget {
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
-                top: Radius.circular(16), bottom: Radius.circular(16)),
+              top: Radius.circular(16),
+              bottom: Radius.circular(16),
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -370,8 +403,10 @@ class InfoBottomSheet extends StatelessWidget {
                     ? "Are you sure you want to logout?"
                     : "Do you want to delete your account?",
                 textAlign: TextAlign.center,
-                style:
-                const TextStyle(fontSize: 21, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 24),
               Row(
@@ -390,8 +425,7 @@ class InfoBottomSheet extends StatelessWidget {
                         ),
                         child: const Text(
                           "Yes",
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 16),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -411,7 +445,9 @@ class InfoBottomSheet extends StatelessWidget {
                         child: const Text(
                           "No",
                           style: TextStyle(
-                              color: Color(0xFF3F3D51), fontSize: 16),
+                            color: Color(0xFF3F3D51),
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
@@ -425,23 +461,18 @@ class InfoBottomSheet extends StatelessWidget {
         // Web -> Center, Mobile -> Bottom
         return kIsWeb
             ? Center(child: content)
-            : Align(
-          alignment: Alignment.bottomCenter,
-          child: content,
-        );
+            : Align(alignment: Alignment.bottomCenter, child: content);
       },
     );
   }
 }
-
-
 
 class SettingsSectionHeader extends StatelessWidget {
   final String title;
   final TextStyle? textStyle;
 
   const SettingsSectionHeader({Key? key, required this.title, this.textStyle})
-      : super(key: key);
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -449,7 +480,8 @@ class SettingsSectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20.0, 24.0, 10.0, 10.0),
       child: Text(
         title,
-        style: textStyle ??
+        style:
+            textStyle ??
             TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,

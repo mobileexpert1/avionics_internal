@@ -233,7 +233,7 @@ class ApiService {
           throw 'Request failed with status: ${response.statusCode}';
       }
     } catch (e) {
-      print('Request Exception: $e');
+      print('Request Exception: ${e.toString()}');
       rethrow;
     }
   }

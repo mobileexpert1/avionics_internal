@@ -383,11 +383,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                               _buildSectionHeader(
                                 title: "PRODUCTS",
                                 isExpanded: showMoreProducts,
-                                onTap: () =>
-                                    setState(
-                                          () =>
-                                      showMoreProducts = !showMoreProducts,
-                                    ),
+                                onTap: () => setState(
+                                  () => showMoreProducts = !showMoreProducts,
+                                ),
                                 isShowMoreLessOption: detail.product.length > 2,
                               ),
 
@@ -490,71 +488,72 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                           ),
                         ),
                       ),
-                    // Positioned(
-                    //   top: screenHeight * 0.21,
-                    //   left: screenWidth * 0.06,
-                    //   child: ClipOval(
-                    //     child: Container(
-                    //       width: screenWidth * 0.22,
-                    //       height: screenWidth * 0.22,
-                    //       color:
-                    //           Colors.grey.shade200, // Background circle color
-                    //       child: Builder(
-                    //         builder: (context) {
-                    //           final logoUrl =
-                    //               '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
-                    //           debugPrint(logoUrl);
-                    //
-                    //           final isSvg = detail.general.logo.contains(
-                    //             ".svg",
-                    //           );
-                    //           final isAsset = detail.general.logo.contains(
-                    //             "assets",
-                    //           );
-                    //
-                    //           if (isAsset) {
-                    //             return Image.asset(
-                    //               detail.general.logo,
-                    //               width: screenWidth * 0.22,
-                    //               height: screenWidth * 0.22,
-                    //               fit: BoxFit.cover,
-                    //             );
-                    //           } else {
-                    //             return isSvg
-                    //                 ? SvgPicture.network(
-                    //                     logoUrl,
-                    //                     fit: BoxFit.contain,
-                    //                     placeholderBuilder: (context) =>
-                    //                         SvgPicture.asset(
-                    //                           CommonUi.setSvgImage(
-                    //                             AssetsPath.manuFirstImage,
-                    //                           ),
-                    //                           height: 10,
-                    //                           width: 10,
-                    //                           fit: BoxFit.contain,
-                    //                         ),
-                    //                   )
-                    //                 : Image.network(
-                    //                     logoUrl,
-                    //                     width: screenWidth * 0.22,
-                    //                     height: screenWidth * 0.22,
-                    //                     fit: BoxFit.contain,
-                    //                     errorBuilder: (_, _, _) =>
-                    //                         SvgPicture.asset(
-                    //                           CommonUi.setSvgImage(
-                    //                             AssetsPath.manuFirstImage,
-                    //                           ),
-                    //                           height: 10,
-                    //                           width: 10,
-                    //                           fit: BoxFit.contain,
-                    //                         ),
-                    //                   );
-                    //           }
-                    //         },
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    if (kIsWeb == false)
+                    Positioned(
+                      top: screenHeight * 0.21,
+                      left: screenWidth * 0.06,
+                      child: ClipOval(
+                        child: Container(
+                          width: screenWidth * 0.22,
+                          height: screenWidth * 0.22,
+                          color:
+                              Colors.grey.shade200, // Background circle color
+                          child: Builder(
+                            builder: (context) {
+                              final logoUrl =
+                                  '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                              debugPrint(logoUrl);
+
+                              final isSvg = detail.general.logo.contains(
+                                ".svg",
+                              );
+                              final isAsset = detail.general.logo.contains(
+                                "assets",
+                              );
+
+                              if (isAsset) {
+                                return Image.asset(
+                                  detail.general.logo,
+                                  width: screenWidth * 0.22,
+                                  height: screenWidth * 0.22,
+                                  fit: BoxFit.cover,
+                                );
+                              } else {
+                                return isSvg
+                                    ? SvgPicture.network(
+                                        logoUrl,
+                                        fit: BoxFit.contain,
+                                        placeholderBuilder: (context) =>
+                                            SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath.manuFirstImage,
+                                              ),
+                                              height: 10,
+                                              width: 10,
+                                              fit: BoxFit.contain,
+                                            ),
+                                      )
+                                    : Image.network(
+                                        logoUrl,
+                                        width: screenWidth * 0.22,
+                                        height: screenWidth * 0.22,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (_, _, _) =>
+                                            SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath.manuFirstImage,
+                                              ),
+                                              height: 10,
+                                              width: 10,
+                                              fit: BoxFit.contain,
+                                            ),
+                                      );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

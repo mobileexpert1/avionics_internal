@@ -62,12 +62,17 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool ikweb =
+        kIsWeb &&
+        (MediaQuery.of(context).size.width > 600 ||
+            MediaQuery.of(context).size.height > 600);
     return BlocProvider(
       create: (_) => BadgesCubit(context)
         ..loadBadges(
           userWins: widget.userWins,
           totalPoints: widget.totalPoints,
-          selectedTab: "Quiz", context: context,
+          selectedTab: "Quiz",
+          context: context,
         ),
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -96,62 +101,93 @@ class _BadgesScreenState extends State<BadgesScreen> {
             return Column(
               children: [
                 _buildTabs(context, state),
+
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.04,
-                    vertical: MediaQuery.of(context).size.height * 0.01,
+                    horizontal:
+                        MediaQuery.of(context).size.width *
+                        (ikweb ? 0.15 : 0.04),
+                    vertical:
+                        MediaQuery.of(context).size.height *
+                        (ikweb ? 0.02 : 0.01),
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.02,
+                      vertical:
+                          MediaQuery.of(context).size.height *
+                          (ikweb ? 0.015 : 0.01),
+                      horizontal:
+                          MediaQuery.of(context).size.width *
+                          (ikweb ? 0.03 : 0.02),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade50),
+                      borderRadius: BorderRadius.circular(ikweb ? 16 : 10),
+                      border: Border.all(color: Colors.grey.shade100),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.shade200,
-                          blurRadius: 10,
+                          blurRadius: ikweb ? 15 : 10,
                           offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: ikweb
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
                             SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.bagdestarIcon),
                               height:
-                                  MediaQuery.of(context).size.height * 0.025,
+                                  MediaQuery.of(context).size.height *
+                                  (ikweb ? 0.03 : 0.025),
                             ),
                             SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.01,
+                              width:
+                                  MediaQuery.of(context).size.width *
+                                  (ikweb ? 0.015 : 0.01),
                             ),
                             Text(
                               "Total Points Earned",
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.037,
+                                    MediaQuery.of(context).size.width *
+                                    (ikweb ? 0.018 : 0.037),
                                 color: const Color(0xFF32377D),
                               ),
                             ),
                           ],
                         ),
-                        Text(
-                          // "${state.response?.totalEarnPoint ?? 0} points",
-                          "${state.totalPoints} points",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.037,
-                            color: const Color(0xFF32377D),
+                        if (!ikweb)
+                          Text(
+                            "${state.totalPoints} points",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width *
+                                  (ikweb ? 0.018 : 0.037),
+                              color: const Color(0xFF32377D),
+                            ),
+                          )
+                        else
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.02,
+                            ),
+                            child: Text(
+                              "${state.totalPoints} points",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.018,
+                                color: const Color(0xFF32377D),
+                              ),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -160,44 +196,38 @@ class _BadgesScreenState extends State<BadgesScreen> {
                 // Badge content area
                 Expanded(
                   child: state.badges.isEmpty
-                      ? Center(child: Text("No badges available."))
+                      ? const Center(child: Text("No badges available."))
                       : LayoutBuilder(
-                          builder: (context, constraints) {
-                            int crossAxisCount = constraints.maxWidth > 600
-                                ? 4
-                                : 2;
-                            return GridView.builder(
-                              padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.02,
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.01,
-                              ),
-                              itemCount: state.badges.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: crossAxisCount,
-                                    crossAxisSpacing:
-                                        MediaQuery.of(context).size.width *
-                                        0.015,
-                                    mainAxisSpacing:
-                                        MediaQuery.of(context).size.height *
-                                        0.015,
-                                    childAspectRatio: constraints.maxWidth > 600
-                                        ? 1.0
-                                        : 0.8,
-                                  ),
-                              itemBuilder: (context, index) {
-                                final badge = state.badges[index];
-                                return _BadgeCard(
-                                  badge: badge,
-                                  onTap: () =>
-                                      _showBadgeDetails(context, badge),
-                                );
-                              },
-                            );
-                          },
+                    builder: (context, constraints) {
+                      final isWide = constraints.maxWidth > 600;
+                      final crossAxisCount = isWide ? 4 : 2;
+
+                      return GridView.builder(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width *
+                              (isWide ? 0.04 : 0.02),
+                          vertical: MediaQuery.of(context).size.height *
+                              (isWide ? 0.02 : 0.01),
                         ),
+                        itemCount: state.badges.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: MediaQuery.of(context).size.width *
+                              (isWide ? 0.03 : 0.015),
+                          mainAxisSpacing: MediaQuery.of(context).size.height *
+                              (isWide ? 0.025 : 0.015),
+                          childAspectRatio: isWide ? 1.0 : 0.8,
+                        ),
+                        itemBuilder: (context, index) {
+                          final badge = state.badges[index];
+                          return _BadgeCard(
+                            badge: badge,
+                            onTap: () => _showBadgeDetails(context, badge),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
             );
@@ -211,61 +241,81 @@ class _BadgesScreenState extends State<BadgesScreen> {
     final tabs = ["Quiz", "One Word", "Black Box", "Calculations"];
     final selectedTab = state.selectedTab ?? tabs[0];
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.06,
-      child: ListView.separated(
-        padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.06,
-        ),
-        scrollDirection: Axis.horizontal,
-        itemCount: tabs.length,
-        separatorBuilder: (_, __) =>
-            SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-        itemBuilder: (context, index) {
-          final isSelected = tabs[index] == selectedTab;
+    final bool ikweb =
+        kIsWeb &&
+        (MediaQuery.of(context).size.width > 600 ||
+            MediaQuery.of(context).size.height > 600);
 
-          return GestureDetector(
-            onTap: () {
-              context.read<BadgesCubit>().changeTab(
-                tabs[index],
-                userWins: widget.userWins,
-                totalPoints: widget.totalPoints, context: context,
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.010,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    tabs[index],
-                    style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? Colors.blue : Colors.grey,
-                      fontSize: MediaQuery.of(context).size.width * 0.040,
-                      letterSpacing: 1.0,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * (ikweb ? 0.07 : 0.06),
+      child: Center(
+        child: ListView.separated(
+          padding: EdgeInsets.symmetric(
+            horizontal:
+                MediaQuery.of(context).size.width * (ikweb ? 0.12 : 0.06),
+          ),
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: tabs.length,
+          separatorBuilder: (_, __) => SizedBox(
+            width: MediaQuery.of(context).size.width * (ikweb ? 0.09 : 0.02),
+          ),
+          itemBuilder: (context, index) {
+            final isSelected = tabs[index] == selectedTab;
+
+            return GestureDetector(
+              onTap: () {
+                context.read<BadgesCubit>().changeTab(
+                  tabs[index],
+                  userWins: widget.userWins,
+                  totalPoints: widget.totalPoints,
+                  context: context,
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      MediaQuery.of(context).size.width *
+                      (ikweb ? 0.015 : 0.010),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      tabs[index],
+                      style: TextStyle(
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: isSelected ? Colors.blue : Colors.grey,
+                        fontSize:
+                            MediaQuery.of(context).size.width *
+                            (ikweb ? 0.018 : 0.040),
+                        letterSpacing: ikweb ? 1.2 : 1.0,
+                      ),
                     ),
-                  ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    height: 2.5,
-                    width: isSelected ? (tabs[index].length * 8.0 + 10) : 0,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(4),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      height: ikweb ? 3.5 : 2.5,
+                      width: isSelected
+                          ? (tabs[index].length * (ikweb ? 10.0 : 8.0) + 10)
+                          : 0,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
+
   void _showBadgeDetails(BuildContext context, BadgeModel badge) {
     showDialog(
       context: context,
@@ -283,9 +333,9 @@ class _BadgesScreenState extends State<BadgesScreen> {
             colorFilter: badge.isEarned
                 ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
                 : ColorFilter.mode(
-              Colors.white.withOpacity(0.2),
-              BlendMode.srcATop,
-            ),
+                    Colors.white.withOpacity(0.2),
+                    BlendMode.srcATop,
+                  ),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.11,
@@ -303,7 +353,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           topRight: Radius.circular(16),
                         ),
                         child: CachedAnyImage(
-                          imagePath: (badge.icon != null && badge.icon!.isNotEmpty)
+                          imagePath:
+                              (badge.icon != null && badge.icon!.isNotEmpty)
                               ? badge.icon!
                               : CommonUi.setPngImage(AssetsPath.badgeimg),
                           width: MediaQuery.of(context).size.width * 0.40,
@@ -394,7 +445,9 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           width: MediaQuery.of(context).size.width * 0.04,
                           height: MediaQuery.of(context).size.width * 0.04,
                         ),
-                        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                        ),
                         Text(
                           "Win: achieving >= 80% Score in a quiz",
                           style: TextStyle(
