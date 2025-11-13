@@ -1,3 +1,5 @@
+import 'ApiClass/KeyVakuesConstants.dart';
+
 class ConstantStrings {
   // ─────────────────────────────
   // App Name
@@ -158,8 +160,7 @@ class SubscriptionTexts {
 }
 
 class ApiBaseUrlConstant {
-  static const String baseUrl = 'https://avionica.csdevhub.com/';
-  //static const String baseUrl = 'http://192.168.10.186:8010/';
+  static const String baseUrl = KeyValuesConstants.baseUrlMain;
 }
 
 class ApiFunctionUrlConstant {
@@ -234,7 +235,7 @@ class ApiGameBadges {
 
 class ApiFunctionUrlMapSecitonConstant {
   static const aircraftFlyingList = "aircraft/flying-area/";
-    static const aircraftStationList = "airport/?";
+  static const aircraftStationList = "airport/?";
 }
 
 class ApiServiceUrlGamesConstant {

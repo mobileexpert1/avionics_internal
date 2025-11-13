@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ApiErrorModel.dart';
+import 'KeyVakuesConstants.dart';
 import 'SessionTokenClass/refresh_accessRepository.dart';
 
 class ApiService {
@@ -15,8 +16,7 @@ class ApiService {
   static final Map<String, String> _headersForTheMapSection = {
     'Accept': 'application/json',
     'Accept-Version': 'v1',
-    'Authorization':
-    'Bearer 0196f4a5-73b4-7219-98bc-7daf81cfc59f|5VQhYisoEAOc9iQwNpOoTviX5ufQUcRABLj9eol711b82e65',
+    'Authorization': 'Bearer ${KeyValuesConstants.googleMapKeyConstant}',
   };
 
   static Future<bool> _hasInternetConnection() async {
