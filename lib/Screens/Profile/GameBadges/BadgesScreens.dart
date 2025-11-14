@@ -144,7 +144,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                               "Total Points Earned",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.018 : 0.037),
+                                fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.013 : 0.037),
                                 color: const Color(0xFF32377D),
                               ),
                             ),
@@ -154,7 +154,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           "${state.totalPoints} points",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.018 : 0.037),
+                            fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.013 : 0.037),
                             color: const Color(0xFF32377D),
                           ),
                         ),
@@ -254,7 +254,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected ? Colors.blue : Colors.grey,
                         fontSize:
-                        MediaQuery.of(context).size.width * (ikweb ? 0.018 : 0.040),
+                        MediaQuery.of(context).size.width * (ikweb ? 0.013 : 0.040),
                         letterSpacing: ikweb ? 1.2 : 1.0,
                       ),
                     ),

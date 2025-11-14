@@ -409,37 +409,46 @@ class ConversionsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // ✅ Unified Scrollbar for both iOS & Android
                     LayoutBuilder(
                       builder: (context, constraints) {
                         final isSmallDevice = constraints.maxWidth < 600;
-                        return Container(
-                          margin: EdgeInsets.only(
-                            bottom: isSmallDevice ? 8 : 0,
-                          ),
-                          child: ScrollbarTheme(
-                            data: _scrollbarTheme(context, screenSize.height),
-                            child: Scrollbar(
-                              controller: horizontalController,
-                              thumbVisibility: true,
-                              // ✅ Always visible
-                              trackVisibility: true,
-                              interactive: true,
-                              scrollbarOrientation: ScrollbarOrientation.bottom,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: !kIsWeb && Platform.isIOS
-                                      ? 40
-                                      : 0, // Only add padding on iOS
-                                ),
-                                child: SingleChildScrollView(
-                                  controller: horizontalController,
-                                  scrollDirection: Axis.horizontal,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      bottom: Radius.circular(8),
+
+                        return Center(
+                          // <-- Ensures perfect center alignment
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              bottom: isSmallDevice ? 8 : 0,
+                            ),
+                            child: ScrollbarTheme(
+                              data: _scrollbarTheme(context, screenSize.height),
+                              child: Scrollbar(
+                                controller: horizontalController,
+                                thumbVisibility: true,
+                                trackVisibility: true,
+                                interactive: true,
+                                scrollbarOrientation:
+                                    ScrollbarOrientation.bottom,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: !kIsWeb && Platform.isIOS ? 40 : 0,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    controller: horizontalController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: IntrinsicWidth(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                bottom: Radius.circular(8),
+                                              ),
+                                          child: _buildConversionTable(
+                                            category,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    child: _buildConversionTable(category),
                                   ),
                                 ),
                               ),
@@ -462,7 +471,9 @@ class ConversionsScreen extends StatelessWidget {
   // ✅ Table layout builder
   Widget _buildConversionTable(category) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 600),
+      constraints: BoxConstraints(
+        minWidth: kIsWeb ? 1200 : 600, // ⬅️ Web width increased
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -473,11 +484,11 @@ class ConversionsScreen extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
             ),
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: const Row(
+            child: Row(
               children: [
                 SizedBox(
-                  width: 200,
-                  child: Text(
+                  width: kIsWeb ? 350 : 200, // ⬅️ larger on web
+                  child: const Text(
                     "From → To",
                     style: TextStyle(
                       color: Colors.white,
@@ -486,8 +497,8 @@ class ConversionsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 200,
-                  child: Text(
+                  width: kIsWeb ? 350 : 200,
+                  child: const Text(
                     "Conversion",
                     style: TextStyle(
                       color: Colors.white,
@@ -496,8 +507,8 @@ class ConversionsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 200,
-                  child: Text(
+                  width: kIsWeb ? 350 : 200,
+                  child: const Text(
                     "Example",
                     style: TextStyle(
                       color: Colors.white,
@@ -513,14 +524,21 @@ class ConversionsScreen extends StatelessWidget {
           ...List.generate(category.items.length, (i) {
             final item = category.items[i];
             final isEven = i % 2 == 0;
+
             return Container(
               color: isEven ? const Color(0xFFF9F9FF) : Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               child: Row(
                 children: [
-                  SizedBox(width: 200, child: Text(item.fromTo)),
-                  SizedBox(width: 200, child: Text(item.formula)),
-                  SizedBox(width: 200, child: Text(item.example)),
+                  SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.fromTo)),
+                  SizedBox(
+                    width: kIsWeb ? 350 : 200,
+                    child: Text(item.formula),
+                  ),
+                  SizedBox(
+                    width: kIsWeb ? 350 : 200,
+                    child: Text(item.example),
+                  ),
                 ],
               ),
             );
