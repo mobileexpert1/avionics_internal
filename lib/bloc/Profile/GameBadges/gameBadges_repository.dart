@@ -27,6 +27,14 @@ class BadgesRepository {
     required int totalPoints,
   }) async {
     try {
+      // final uri = Uri.parse(
+      //   "${ApiBaseUrlConstant.baseUrl}"
+      //       "${ApiFunctionUrlGamesConstant.quiz}"
+      //       "${ApiGameBadges.quizBadges}",
+      // );
+      //
+      // final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      // return BadgeResponse.fromJson(jsonData);
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 800));
 
