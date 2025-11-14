@@ -189,7 +189,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                               (isWide ? 0.03 : 0.015),
                           mainAxisSpacing: MediaQuery.of(context).size.height *
                               (isWide ? 0.025 : 0.015),
-                          childAspectRatio: isWide ? 1.0 : 0.8,
+                          childAspectRatio: isWide ? 1.0 : 0.75,
                         ),
                         itemBuilder: (context, index) {
                           final badge = state.badges[index];
@@ -287,7 +287,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 0),
         content: SingleChildScrollView(
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
@@ -307,6 +307,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Stack(
                         alignment: Alignment.center,
@@ -321,13 +322,13 @@ class _BadgesScreenState extends State<BadgesScreen> {
                                   ? badge.icon!
                                   : CommonUi.setPngImage(AssetsPath.badgeimg),
                               width: 250,
-                              height: 150,
+                              height: 200,
                               contentImage: BoxFit.contain,
                             ),
                           ),
                           if (!badge.isEarned)
                             Positioned(
-                              top: 60,
+                              top: 90,
                               child: SvgPicture.asset(
                                 CommonUi.setSvgImage(AssetsPath.badgesLock),
                                 height: 40,
@@ -455,6 +456,7 @@ class _BadgeCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
+              // color: Colors.pink,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.shade200,
@@ -464,7 +466,7 @@ class _BadgeCard extends StatelessWidget {
               ],
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Stack(
                   alignment: Alignment.center,
@@ -503,19 +505,19 @@ class _BadgeCard extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      const SizedBox(height: 5),
+                      // const SizedBox(height: 4),
                       Text(
                         badge.name,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      // const SizedBox(height: 5),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 6,
@@ -534,10 +536,10 @@ class _BadgeCard extends StatelessWidget {
                               badge.isEarned
                                   ? Icons.check_circle
                                   : Icons.lock_outline,
-                              size: 16,
+                              size: 15,
                               color: badge.isEarned ? Colors.green : Colors.blue,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 3),
                             Flexible(
                               child: Text(
                                 badge.isEarned
