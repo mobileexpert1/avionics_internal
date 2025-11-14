@@ -34,13 +34,12 @@ class _BadgesScreenState extends State<BadgesScreen> {
   void initState() {
     super.initState();
     if (kIsWeb) {
-      _fullScreenSubscription = html.document.onFullscreenChange.listen((
-        event,
-      ) {
-        setState(() {
-          _isFullScreen = html.document.fullscreenElement != null;
-        });
-      });
+      _fullScreenSubscription =
+          html.document.onFullscreenChange.listen((event) {
+            setState(() {
+              _isFullScreen = html.document.fullscreenElement != null;
+            });
+          });
     }
   }
 
@@ -62,10 +61,10 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool ikweb =
-        kIsWeb &&
+    final bool ikweb = kIsWeb &&
         (MediaQuery.of(context).size.width > 600 ||
             MediaQuery.of(context).size.height > 600);
+
     return BlocProvider(
       create: (_) => BadgesCubit(context)
         ..loadBadges(
@@ -84,12 +83,12 @@ class _BadgesScreenState extends State<BadgesScreen> {
           ),
           rightButton: kIsWeb
               ? IconButton(
-                  icon: Icon(
-                    _isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
-                    color: Colors.black,
-                  ),
-                  onPressed: _toggleFullScreen,
-                )
+            icon: Icon(
+              _isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
+              color: Colors.black,
+            ),
+            onPressed: _toggleFullScreen,
+          )
               : null,
         ),
         body: BlocBuilder<BadgesCubit, BadgesState>(
@@ -100,25 +99,23 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
             return Column(
               children: [
+                const SizedBox(height: 10),
                 _buildTabs(context, state),
 
+                /// Total Points Section
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal:
-                        MediaQuery.of(context).size.width *
-                        (ikweb ? 0.15 : 0.04),
+                    MediaQuery.of(context).size.width * (ikweb ? 0.16 : 0.04),
                     vertical:
-                        MediaQuery.of(context).size.height *
-                        (ikweb ? 0.02 : 0.01),
+                    MediaQuery.of(context).size.height * (ikweb ? 0.02 : 0.01),
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       vertical:
-                          MediaQuery.of(context).size.height *
-                          (ikweb ? 0.015 : 0.01),
+                      MediaQuery.of(context).size.height * (ikweb ? 0.014 : 0.01),
                       horizontal:
-                          MediaQuery.of(context).size.width *
-                          (ikweb ? 0.03 : 0.02),
+                      MediaQuery.of(context).size.width * (ikweb ? 0.03 : 0.02),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -133,84 +130,60 @@ class _BadgesScreenState extends State<BadgesScreen> {
                       ],
                     ),
                     child: Row(
-                      mainAxisAlignment: ikweb
-                          ? MainAxisAlignment.center
-                          : MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
                             SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.bagdestarIcon),
                               height:
-                                  MediaQuery.of(context).size.height *
-                                  (ikweb ? 0.03 : 0.025),
+                              MediaQuery.of(context).size.height * (ikweb ? 0.03 : 0.025),
                             ),
-                            SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width *
-                                  (ikweb ? 0.015 : 0.01),
-                            ),
+                            SizedBox(width: MediaQuery.of(context).size.width * (ikweb ? 0.015 : 0.01)),
                             Text(
                               "Total Points Earned",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize:
-                                    MediaQuery.of(context).size.width *
-                                    (ikweb ? 0.018 : 0.037),
+                                fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.018 : 0.037),
                                 color: const Color(0xFF32377D),
                               ),
                             ),
                           ],
                         ),
-                        if (!ikweb)
-                          Text(
-                            "${state.totalPoints} points",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  MediaQuery.of(context).size.width *
-                                  (ikweb ? 0.018 : 0.037),
-                              color: const Color(0xFF32377D),
-                            ),
-                          )
-                        else
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.02,
-                            ),
-                            child: Text(
-                              "${state.totalPoints} points",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.018,
-                                color: const Color(0xFF32377D),
-                              ),
-                            ),
+                        Text(
+                          "${state.totalPoints} points",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.018 : 0.037),
+                            color: const Color(0xFF32377D),
                           ),
+                        ),
                       ],
                     ),
                   ),
                 ),
 
-                // Badge content area
+                SizedBox(height: MediaQuery.of(context).size.width * (ikweb ? 0.015 : 0.01)),
+
+                /// Badge Grid Section
                 Expanded(
                   child: state.badges.isEmpty
                       ? const Center(child: Text("No badges available."))
                       : LayoutBuilder(
                     builder: (context, constraints) {
                       final isWide = constraints.maxWidth > 600;
-                      final crossAxisCount = isWide ? 4 : 2;
+                      final crossAxisCount = isWide ? 5 : 2;
 
                       return GridView.builder(
                         padding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width *
-                              (isWide ? 0.04 : 0.02),
+                              (isWide ? 0.10 : 0.02),
                           vertical: MediaQuery.of(context).size.height *
                               (isWide ? 0.02 : 0.01),
                         ),
                         itemCount: state.badges.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: crossAxisCount,
                           crossAxisSpacing: MediaQuery.of(context).size.width *
                               (isWide ? 0.03 : 0.015),
@@ -241,8 +214,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
     final tabs = ["Quiz", "One Word", "Black Box", "Calculations"];
     final selectedTab = state.selectedTab ?? tabs[0];
 
-    final bool ikweb =
-        kIsWeb &&
+    final bool ikweb = kIsWeb &&
         (MediaQuery.of(context).size.width > 600 ||
             MediaQuery.of(context).size.height > 600);
 
@@ -251,8 +223,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
       child: Center(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
-            horizontal:
-                MediaQuery.of(context).size.width * (ikweb ? 0.12 : 0.06),
+            horizontal: MediaQuery.of(context).size.width * (ikweb ? 0.12 : 0.06),
           ),
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
@@ -262,7 +233,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
           ),
           itemBuilder: (context, index) {
             final isSelected = tabs[index] == selectedTab;
-
             return GestureDetector(
               onTap: () {
                 context.read<BadgesCubit>().changeTab(
@@ -274,23 +244,17 @@ class _BadgesScreenState extends State<BadgesScreen> {
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal:
-                      MediaQuery.of(context).size.width *
-                      (ikweb ? 0.015 : 0.010),
-                ),
+                    horizontal: MediaQuery.of(context).size.width * (ikweb ? 0.015 : 0.010)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       tabs[index],
                       style: TextStyle(
-                        fontWeight: isSelected
-                            ? FontWeight.w700
-                            : FontWeight.w500,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected ? Colors.blue : Colors.grey,
                         fontSize:
-                            MediaQuery.of(context).size.width *
-                            (ikweb ? 0.018 : 0.040),
+                        MediaQuery.of(context).size.width * (ikweb ? 0.018 : 0.040),
                         letterSpacing: ikweb ? 1.2 : 1.0,
                       ),
                     ),
@@ -323,143 +287,143 @@ class _BadgesScreenState extends State<BadgesScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentPadding: EdgeInsets.all(
-          MediaQuery.of(context).size.width * 0.04,
-        ),
-        content: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: badge.isEarned ? 1 : 0.5, // 👈 same as card
-          child: ColorFiltered(
-            colorFilter: badge.isEarned
-                ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
-                : ColorFilter.mode(
-                    Colors.white.withOpacity(0.2),
-                    BlendMode.srcATop,
-                  ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.11,
-                maxHeight: MediaQuery.of(context).size.height * 0.7,
+        contentPadding: const EdgeInsets.all(16),
+        content: SingleChildScrollView(
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: badge.isEarned ? 1 : 0.5,
+            child: ColorFiltered(
+              colorFilter: badge.isEarned
+                  ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
+                  : ColorFilter.mode(
+                Colors.white.withOpacity(0.2),
+                BlendMode.srcATop,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 400,
+                    maxHeight: 600,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                        child: CachedAnyImage(
-                          imagePath:
-                              (badge.icon != null && badge.icon!.isNotEmpty)
-                              ? badge.icon!
-                              : CommonUi.setPngImage(AssetsPath.badgeimg),
-                          width: MediaQuery.of(context).size.width * 0.40,
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          contentImage: BoxFit.fill,
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
+                            child: CachedAnyImage(
+                              imagePath: (badge.icon != null && badge.icon!.isNotEmpty)
+                                  ? badge.icon!
+                                  : CommonUi.setPngImage(AssetsPath.badgeimg),
+                              width: 250,
+                              height: 150,
+                              contentImage: BoxFit.contain,
+                            ),
+                          ),
+                          if (!badge.isEarned)
+                            Positioned(
+                              top: 60,
+                              child: SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.badgesLock),
+                                height: 40,
+                                width: 40,
+                                color: const Color(0xFF1C66C5),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        badge.name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black,
                         ),
                       ),
-                      if (!badge.isEarned)
-                        Positioned(
-                          top: MediaQuery.of(context).size.height * 0.130,
-                          child: SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.badgesLock),
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.height * 0.05,
-                            color: const Color(0xFF1C66C5),
+                      const SizedBox(height: 8),
+                      Text(
+                        badge.isEarned ? "Badge Unlocked!" : "Badge Locked!",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                      if (!badge.isEarned) ...[
+                        const SizedBox(height: 16),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: badge.totalWin / badge.wins,
+                            minHeight: 10,
+                            backgroundColor: Colors.grey.shade200,
+                            color: const Color(0xFF1E80F2),
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Current wins",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              "${badge.totalWin} of ${badge.wins}",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          "${badge.wins - badge.totalWin} more wins required to unlock",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.badgeTrophy),
+                              width: 20,
+                              height: 20,
+                            ),
+                            const SizedBox(width: 6),
+                            const Flexible(
+                              child: Text(
+                                "Win: achieving >= 80% Score in a quiz",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                      ],
                     ],
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  Text(
-                    badge.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width * 0.06,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                  Text(
-                    badge.isEarned ? "Badge Unlocked!" : "Badge Locked!",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: MediaQuery.of(context).size.width * 0.06,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-
-                  // 👇 Progress + Info shown only for locked badges
-                  if (!badge.isEarned) ...[
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: badge.totalWin / badge.wins,
-                        minHeight: 10,
-                        backgroundColor: Colors.grey.shade200,
-                        color: const Color(0xFF1E80F2),
-                      ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Current wins",
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Text(
-                          "${badge.totalWin} of ${badge.wins}",
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                    Text(
-                      "${badge.wins - badge.totalWin} more wins required to unlock",
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.badgeTrophy),
-                          width: MediaQuery.of(context).size.width * 0.04,
-                          height: MediaQuery.of(context).size.width * 0.04,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01,
-                        ),
-                        Text(
-                          "Win: achieving >= 80% Score in a quiz",
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.03,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                  ],
-                ],
+                ),
               ),
             ),
           ),
@@ -477,124 +441,123 @@ class _BadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                  child: Opacity(
-                    opacity: badge.isEarned ? 1 : 0.5,
-                    child: Opacity(
-                      opacity: badge.isEarned ? 1 : 0.5,
-                      child: CachedAnyImage(
-                        imagePath:
-                            (badge.icon != null && badge.icon!.isNotEmpty)
-                            ? badge.icon!
-                            : CommonUi.setPngImage(AssetsPath.badgeimg),
-                        width: kIsWeb
-                            ? MediaQuery.of(context).size.width * 0.15
-                            : MediaQuery.of(context).size.width * 0.3,
-                        height: kIsWeb
-                            ? MediaQuery.of(context).size.width * 0.18
-                            : MediaQuery.of(context).size.height * 0.18,
-                        contentImage: BoxFit.contain,
-                      ),
-                    ),
-                  ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 300, // Max width for web section
+            minWidth: 200,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade200,
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
                 ),
-                if (!badge.isEarned)
-                  Positioned(
-                    top: MediaQuery.of(context).size.height * 0.09,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.badgesLock),
-                        height: MediaQuery.of(context).size.height * 0.0375,
-                        width: MediaQuery.of(context).size.height * 0.0375,
-                        color: const Color(0xFF1C66C5),
-                      ),
-                    ),
-                  ),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.all(
-                MediaQuery.of(context).size.width * 0.015,
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.0075),
-                  Text(
-                    badge.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: MediaQuery.of(context).size.width * 0.035,
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.0075),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.0075,
-                      horizontal: MediaQuery.of(context).size.width * 0.0125,
-                    ),
-                    decoration: BoxDecoration(
-                      color: badge.isEarned
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.blue.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          badge.isEarned
-                              ? Icons.check_circle
-                              : Icons.lock_outline,
-                          size: MediaQuery.of(context).size.width * 0.04,
-                          color: badge.isEarned ? Colors.green : Colors.blue,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                      child: Opacity(
+                        opacity: badge.isEarned ? 1 : 0.5,
+                        child: CachedAnyImage(
+                          imagePath: (badge.icon != null && badge.icon!.isNotEmpty)
+                              ? badge.icon!
+                              : CommonUi.setPngImage(AssetsPath.badgeimg),
+                          width: 150,
+                          height: 180,
+                          contentImage: BoxFit.contain,
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.0075,
-                        ),
-                        Text(
-                          badge.isEarned
-                              ? "Unlocked"
-                              : "Unlock after ${badge.requireWin} wins",
-                          style: TextStyle(
-                            color: badge.isEarned ? Colors.green : Colors.blue,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.02875,
+                      ),
+                    ),
+                    if (!badge.isEarned)
+                      Positioned(
+                        top: 75,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.badgesLock),
+                            height: 40,
+                            width: 40,
+                            color: const Color(0xFF1C66C5),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 5),
+                      Text(
+                        badge.name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: badge.isEarned
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.blue.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              badge.isEarned
+                                  ? Icons.check_circle
+                                  : Icons.lock_outline,
+                              size: 16,
+                              color: badge.isEarned ? Colors.green : Colors.blue,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                badge.isEarned
+                                    ? "Unlocked"
+                                    : "Unlock after ${badge.requireWin} wins",
+                                style: TextStyle(
+                                  color: badge.isEarned ? Colors.green : Colors.blue,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
