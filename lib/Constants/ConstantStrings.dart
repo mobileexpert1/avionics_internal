@@ -1,5 +1,3 @@
-import 'ApiClass/KeyVakuesConstants.dart';
-
 class ConstantStrings {
   // ─────────────────────────────
   // App Name
@@ -160,7 +158,7 @@ class SubscriptionTexts {
 }
 
 class ApiBaseUrlConstant {
-  static const String baseUrl = KeyValuesConstants.baseUrlMain;
+  static const String baseUrl = "https://avionica.csdevhub.com/";
 }
 
 class ApiFunctionUrlConstant {
@@ -168,7 +166,9 @@ class ApiFunctionUrlConstant {
 }
 
 class ApiServiceUrlConstant {
+  static const String authFetchMapKey = 'auth/secret/avioflaiopenai';
   static const String authRefreshToken = 'auth/refresh';
+
   static const String checkEmail = 'auth/check-email';
   static const String authSignup = 'auth/sign-up';
   static const String verifyOtp = 'auth/verify-otp';

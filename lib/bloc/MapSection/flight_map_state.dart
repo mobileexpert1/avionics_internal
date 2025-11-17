@@ -7,6 +7,7 @@ import '../Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'flight_map_model.dart';
 
 class FlightMapState {
+  final String? openAiKey;
   final CommonApiStatus status;
   final bool isLoading;
   final bool isSuccess;
@@ -33,6 +34,7 @@ class FlightMapState {
   final int activeCard;
 
   FlightMapState({
+    this.openAiKey,
     this.status = CommonApiStatus.initial,
     this.isLoading = false,
     this.isSuccess = false,
@@ -57,6 +59,7 @@ class FlightMapState {
   });
 
   FlightMapState copyWith({
+    String? openAiKey,
     CommonApiStatus? status,
     bool? isLoading,
     bool? isSuccess,
@@ -81,6 +84,7 @@ class FlightMapState {
     List<String>? selectedAircraftIcaos,
   }) {
     return FlightMapState(
+      openAiKey: openAiKey ?? this.openAiKey,
       status: status ?? this.status,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,

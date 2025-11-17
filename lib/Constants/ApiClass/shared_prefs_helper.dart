@@ -7,6 +7,7 @@ class SharedPrefsHelper {
   static const String _isUserAccessTokenKey = 'UserAccessTokenKey';
   static const String _isUserRefreshTokenKey = 'UserRefreshTokenKey';
   static const String _isAvtarForProfileKey = 'AvtarForProfileKey';
+  static const String isMapKeyValues = 'MapKeyValues';
 
   static Future<void> saveEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
@@ -66,6 +67,16 @@ class SharedPrefsHelper {
   static Future<String> getAvtarUserType() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_isAvtarForProfileKey) ?? 'student';
+  }
+
+  static Future<void> seMapKeyValuesFromServer(String mapKeyValue) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(isMapKeyValues, mapKeyValue);
+  }
+
+  static Future<String> getMapKeyValuesForApi() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(isMapKeyValues) ?? '';
   }
 
   static Future<void> clearAll(

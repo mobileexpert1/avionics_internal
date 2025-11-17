@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ApiErrorModel.dart';
-import 'KeyVakuesConstants.dart';
 import 'SessionTokenClass/refresh_accessRepository.dart';
 
 class ApiService {
@@ -13,11 +13,24 @@ class ApiService {
     'Content-Type': 'application/json',
   };
 
-  static final Map<String, String> _headersForTheMapSection = {
-    'Accept': 'application/json',
-    'Accept-Version': 'v1',
-    'Authorization': 'Bearer ${KeyValuesConstants.googleMapKeyConstant}',
-  };
+  static Future<Map<String, String>> headersForTheMapSection({
+    required String inputUrl,
+    required String mapKeyValues,
+  }) async {
+    if (inputUrl.toLowerCase().contains("avioflaiopenai")) {
+      return {
+        'Accept': 'application/json',
+        'access-token':
+        'EwkiTKL4oecbj860tb1EvsVfH2z3Cppq6Va6LFfwwTxz1sQvTE6HUhdGYyHGm0FC',
+      };
+    } else {
+      return {
+        'Accept': 'application/json',
+        'Accept-Version': 'v1',
+        'Authorization': 'Bearer $mapKeyValues',
+      };
+    }
+  }
 
   static Future<bool> _hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -130,9 +143,15 @@ class ApiService {
     }
 
     final token = await _getBearerToken();
+    final mapKeyValues = await SharedPrefsHelper.getMapKeyValuesForApi();
 
     final requestHeaders = {
-      ...(isForFlightRadar == true ? _headersForTheMapSection : defaultHeaders),
+      ...(isForFlightRadar == true
+          ? await headersForTheMapSection(
+        inputUrl: url.toString(),
+        mapKeyValues: mapKeyValues,
+      )
+          : defaultHeaders),
       if (isForFlightRadar == false) ...{
         if (headers != null) ...headers,
         if (token != null) 'Authorization': 'Bearer $token',
@@ -143,6 +162,7 @@ class ApiService {
 
     print('[$method] URL: $url');
     print('Bearer Token: $token');
+    print('Header Token: $requestHeaders');
     if (encodedBody != null) print('Request Body: $encodedBody');
 
     try {
