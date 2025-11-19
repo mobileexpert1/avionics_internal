@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Helpers/Games/tooltip_helper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../Constants/constantImages.dart';
@@ -15,7 +16,7 @@ class LockGameCard extends StatefulWidget {
     required this.title,
     required this.isLocked,
     required this.infoMessage,
-    this.onTap, // Kept for compatibility, but not used
+    this.onTap,
     this.onInfoTap,
   });
 
@@ -28,98 +29,112 @@ class _LockGameCardState extends State<LockGameCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: 180,
-          height: 180,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: Colors.grey.shade300, width: 0),
-            color: Colors.white,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: widget.isLocked
-                      ? Colors.grey
-                      : const Color(0xFF3F3D56),
-                ),
-              ),
-              const SizedBox(height: 46),
-              ElevatedButton(
-                onPressed: widget.isLocked ? null : widget.onTap, // Only button triggers navigation
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(120, 40),
-                  backgroundColor: widget.isLocked
-                      ? Colors.grey.shade300
-                      : const Color(0xFF3F3D56),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = kIsWeb;
+
+    double getResponsiveFont(double mobile, double web) => isWeb ? web : mobile;
+    double getButtonWidth() => isWeb ? screenWidth * 0.15 : 120;
+    double getIconSize() => isWeb ? 60 : 40;
+    double getPadding() => isWeb ? screenWidth * 0.02 : 8;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: Colors.grey.shade300, width: 0.8),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: getPadding()),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: isWeb ? 30 : 20),
+                  // Title
+                  Text(
+                    widget.title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: getResponsiveFont(15, 22),
+                      fontWeight: FontWeight.bold,
+                      color: widget.isLocked ? Colors.grey : const Color(0xFF3F3D56),
+                    ),
                   ),
-                ),
-                child: Text(
-                  'Play game',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: widget.isLocked ? Colors.grey : Colors.white,
+
+                  SizedBox(height: isWeb ? 60 : 40),
+
+                  // Play Button
+                  ElevatedButton(
+                    onPressed: widget.isLocked ? null : widget.onTap,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(getButtonWidth(), isWeb ? 50 : 40),
+                      backgroundColor:
+                      widget.isLocked ? Colors.grey.shade300 : const Color(0xFF3F3D56),
+                      padding: EdgeInsets.symmetric(horizontal: isWeb ? 24 : 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Play game',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: getResponsiveFont(14, 18),
+                        color: widget.isLocked ? Colors.grey : Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (widget.isLocked)
-          Positioned(
-            top: 50,
-            left: 0,
-            right: 5,
-            child: Center(
-              child: SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.LockIcon),
-                height: 40,
-                width: 40,
-                color: const Color(0xFF1E80F2),
+                ],
               ),
             ),
           ),
-        Positioned(
-          top: 6,
-          right: 6,
-          child: GestureDetector(
-            key: _infoIconKey,
-            onTap: () {
-              showInfoTooltip(
-                context: context,
-                key: _infoIconKey,
-                message: widget.infoMessage.isNotEmpty
-                    ? widget.infoMessage.map((item) => "• $item").toList()
-                    : ["No info available"],
-                position: TooltipPosition.below,
-              );
-              if (widget.onInfoTap != null) widget.onInfoTap!();
-            },
-            child: Semantics(
-              label: 'Show info tooltip',
-              child: const Icon(
+
+          // LOCK ICON (if locked)
+          if (widget.isLocked)
+            Positioned(
+              top: isWeb ? 60 : 46,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.LockIcon),
+                  height: getIconSize(),
+                  width: getIconSize(),
+                  color: const Color(0xFF1E80F2),
+                ),
+              ),
+            ),
+
+          // INFO ICON (top-right)
+          Positioned(
+            top: isWeb ? 12 : 6,
+            right: isWeb ? 12 : 6,
+            child: GestureDetector(
+              key: _infoIconKey,
+              onTap: () {
+                showInfoTooltip(
+                  context: context,
+                  key: _infoIconKey,
+                  message: widget.infoMessage.isNotEmpty
+                      ? widget.infoMessage.map((item) => "• $item").toList()
+                      : ["No info available"],
+                  position: TooltipPosition.below,
+                );
+                if (widget.onInfoTap != null) widget.onInfoTap!();
+              },
+              child: Icon(
                 Icons.info_outline_rounded,
-                size: 18,
+                size: getResponsiveFont(18, 24),
                 color: Colors.black,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

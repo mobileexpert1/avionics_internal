@@ -79,6 +79,11 @@ class SharedPrefsHelper {
     return prefs.getString(isMapKeyValues) ?? '';
   }
 
+  static Future<void> removeMapApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(isMapKeyValues);
+  }
+
   static Future<void> clearAll(
     List<String> keysToRemove,
     bool isComeFromAllClear,

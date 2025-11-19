@@ -14,10 +14,10 @@ class GamesScreen extends StatelessWidget {
 
   int getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width >= 1200) return 5;
-    if (width >= 900) return 4;
-    if (width >= 600) return 3;
-    return 2;
+    if (width >= 1400) return 4;
+    if (width >= 1100) return 4;
+    if (width >= 800) return 3;
+    return 2; // Mobile
   }
 
   @override
@@ -30,70 +30,79 @@ class GamesScreen extends StatelessWidget {
         body: BlocBuilder<GamesCubit, GamesState>(
           builder: (context, state) {
             if (state is GamesLoaded) {
-              return Padding(
-                padding: const EdgeInsets.all(12),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: getCrossAxisCount(context),
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: state.games.length,
-                  itemBuilder: (context, index) {
-                    final game = state.games[index];
-                    return GameCard(
-                      item: game,
-                      onTap: () {
-                        switch (game.id) {
-                          case 'quiz':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    QuizDetailScreen(gameId: game.id),
-                              ),
-                            );
-                            break;
-                          case 'calculation':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    CalculationDetailScreen(gameId: game.id),
-                              ),
-                            );
-                            break;
-                          case 'one_word':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    OneWordDetailScreen(gameId: game.id),
-                              ),
-                            );
-                            break;
-                          case 'black_box':
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    BlackBoxStartScreen(gameId: game.id),
-                              ),
-                            );
-                            break;
-                          default:
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Screen not available for ${game.title}',
-                                ),
-                              ),
-                            );
-                        }
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1500),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 40,
+                    ),
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: getCrossAxisCount(context),
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        childAspectRatio: 0.85,
+                      ),
+                      itemCount: state.games.length,
+                      itemBuilder: (context, index) {
+                        final game = state.games[index];
+                        return GameCard(
+                          item: game,
+                          onTap: () {
+                            switch (game.id) {
+                              case 'quiz':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        QuizDetailScreen(gameId: game.id),
+                                  ),
+                                );
+                                break;
+                              case 'calculation':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CalculationDetailScreen(
+                                      gameId: game.id,
+                                    ),
+                                  ),
+                                );
+                                break;
+                              case 'one_word':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        OneWordDetailScreen(gameId: game.id),
+                                  ),
+                                );
+                                break;
+                              case 'black_box':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        BlackBoxStartScreen(gameId: game.id),
+                                  ),
+                                );
+                                break;
+                              default:
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Screen not available for ${game.title}',
+                                    ),
+                                  ),
+                                );
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
               );
             }

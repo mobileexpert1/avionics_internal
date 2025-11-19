@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../Helpers/AircraftCard.dart';
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    SharedPrefsHelper.removeMapApiKey();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
   }
@@ -525,7 +527,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           //     'No flights found in this area.',
                           //     screenWidth,
                           //   ),
-
                           const Divider(
                             height: 0,
                             thickness: 3,

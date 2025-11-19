@@ -17,15 +17,15 @@ class FlightKeyValuesModel {
 }
 
 class KeyData {
-  final String openai;
+  final String fr24;
 
-  KeyData({required this.openai});
+  KeyData({required this.fr24});
 
   factory KeyData.fromJson(Map<String, dynamic> json) {
-    return KeyData(openai: json['openai'] as String);
+    return KeyData(fr24: json['fr24'] as String);
   }
 
   Map<String, dynamic> toJson() {
-    return {'openai': openai};
+    return {'fr24': fr24};
   }
 }

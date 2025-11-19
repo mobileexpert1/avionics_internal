@@ -1,5 +1,6 @@
 import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_cubit.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -11,6 +12,14 @@ class OneWordTopicScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = kIsWeb;
+
+    double getResponsiveFont(double mobile, double web) => isWeb ? web : mobile;
+    double getPadding() => isWeb ? screenWidth * 0.02 : 16;
+    int getCrossAxisCount() => isWeb ? 4 : 2; // More columns on web
+    double getChildAspectRatio() => isWeb ? 0.9 : 0.8;
+
     return BlocProvider(
       create: (_) => OnewordCubit()..loadOneWordTopics(),
       child: Scaffold(
@@ -18,76 +27,79 @@ class OneWordTopicScreen extends StatelessWidget {
         appBar: CustomAppBar(
           title: 'One word game',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: isWeb ? 28 : 20),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Choose your topic to begin the game",
-                style: TextStyle(
-                  height: 2,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Expanded(
-                child: BlocBuilder<OnewordCubit, OneWordTopicState>(
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: Padding(
+              padding: EdgeInsets.all(getPadding()),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Choose your topic to begin the game",
+                    style: TextStyle(
+                      height: 2,
+                      fontSize: getResponsiveFont(16, 22),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: isWeb ? 20 : 14),
+                  Expanded(
+                    child: BlocBuilder<OnewordCubit, OneWordTopicState>(
+                      builder: (context, state) {
+                        if (state.isLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
 
-                    if (state.errorMessage != null) {
-                      return Center(child: Text(state.errorMessage!)); // Error
-                    }
+                        if (state.errorMessage != null) {
+                          return Center(child: Text(state.errorMessage!));
+                        }
 
-                    if (state.games.isEmpty) {
-                      return const Center(child: Text("No games available."));
-                    }
-                    return GridView.builder(
-                      itemCount: state.games.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 0,
-                            childAspectRatio: 0.8,
+                        if (state.games.isEmpty) {
+                          return const Center(child: Text("No games available."));
+                        }
+
+                        return GridView.builder(
+                          itemCount: state.games.length,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: getCrossAxisCount(),
+                            crossAxisSpacing: isWeb ? 20 : 12,
+                            mainAxisSpacing: isWeb ? 20 : 12,
+                            childAspectRatio: getChildAspectRatio(),
                           ),
-                      itemBuilder: (context, index) {
-                        final game = state.games[index];
-                        return LockGameCard(
-                          title: game.title,
-                          isLocked: false,
-                          infoMessage: game.info,
-                          onTap: () {
-                            //if (!game.isLocked) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => QuizQuestionScreen(
-                                  sectionId: game.gameNumber,
-                                  sectionTitle: game.title,
-                                  gameId: "one_word",
-                                ),
-                              ),
+                          itemBuilder: (context, index) {
+                            final game = state.games[index];
+                            return LockGameCard(
+                              title: game.title,
+                              isLocked: false,
+                              infoMessage: game.info,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => QuizQuestionScreen(
+                                      sectionId: game.gameNumber,
+                                      sectionTitle: game.title,
+                                      gameId: "one_word",
+                                    ),
+                                  ),
+                                );
+                              },
+                              onInfoTap: () {},
                             );
-                            // }
                           },
-                          onInfoTap: () {},
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

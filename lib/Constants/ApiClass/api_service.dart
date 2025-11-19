@@ -17,11 +17,11 @@ class ApiService {
     required String inputUrl,
     required String mapKeyValues,
   }) async {
-    if (inputUrl.toLowerCase().contains("avioflaiopenai")) {
+    if (inputUrl.toLowerCase().contains("avioflai")) {
       return {
         'Accept': 'application/json',
         'access-token':
-        'EwkiTKL4oecbj860tb1EvsVfH2z3Cppq6Va6LFfwwTxz1sQvTE6HUhdGYyHGm0FC',
+            'EwkiTKL4oecbj860tb1EvsVfH2z3Cppq6Va6LFfwwTxz1sQvTE6HUhdGYyHGm0FC',
       };
     } else {
       return {
@@ -148,9 +148,9 @@ class ApiService {
     final requestHeaders = {
       ...(isForFlightRadar == true
           ? await headersForTheMapSection(
-        inputUrl: url.toString(),
-        mapKeyValues: mapKeyValues,
-      )
+              inputUrl: url.toString(),
+              mapKeyValues: mapKeyValues,
+            )
           : defaultHeaders),
       if (isForFlightRadar == false) ...{
         if (headers != null) ...headers,
@@ -255,6 +255,7 @@ class ApiService {
     } catch (e) {
       print('Request Exception: ${e.toString()}');
       rethrow;
+
     }
   }
 }

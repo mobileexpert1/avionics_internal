@@ -3,6 +3,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Constants/constantImages.dart';
@@ -31,6 +32,7 @@ bool isNeedToShowOrNot = false;
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -117,7 +119,9 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
             return Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kIsWeb ? 200 : 10,
+                  ),
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     child: Column(
@@ -150,15 +154,22 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                                 state.showAnswer) {
                               quizCubit.submitQuestion(context);
 
-                              Future.delayed(const Duration(milliseconds: 300), () {
-                                if (_scrollController.hasClients) {
-                                  _scrollController.animateTo(
-                                    _scrollController.position.maxScrollExtent,
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeOut,
-                                  );
-                                }
-                              });
+                              Future.delayed(
+                                const Duration(milliseconds: 300),
+                                () {
+                                  if (_scrollController.hasClients) {
+                                    _scrollController.animateTo(
+                                      _scrollController
+                                          .position
+                                          .maxScrollExtent,
+                                      duration: const Duration(
+                                        milliseconds: 400,
+                                      ),
+                                      curve: Curves.easeOut,
+                                    );
+                                  }
+                                },
+                              );
                             }
                           },
                         ),

@@ -67,9 +67,9 @@ class FlightRepository {
           final responseKeyValue = await FlightRepository()
               .getMapKeyValueFromServer();
           if (responseKeyValue?.data != null &&
-              responseKeyValue.data.openai.isNotEmpty) {
+              responseKeyValue.data.fr24.isNotEmpty) {
             await SharedPrefsHelper.seMapKeyValuesFromServer(
-              responseKeyValue.data.openai,
+              responseKeyValue.data.fr24,
             );
           }
         } catch (e) {

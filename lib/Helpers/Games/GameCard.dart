@@ -19,9 +19,10 @@ class GameCard extends StatelessWidget {
       builder: (context, constraints) {
         final isLarge = constraints.maxWidth > 200;
         final iconSize = isLarge ? 70.0 : 55.0;
-        final titleFont = isLarge ? 16.0 : 14.0;
-        final subtitleFont = isLarge ? 13.0 : 11.0;
+        final titleFont = isLarge ? 21.0 : 14.0;
+        final subtitleFont = isLarge ? 17.0 : 11.0;
         final padding = isLarge ? 20.0 : 12.0;
+
 
         return InkWell(
           onTap: onTap,

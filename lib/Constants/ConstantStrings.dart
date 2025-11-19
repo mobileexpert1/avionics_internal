@@ -166,7 +166,7 @@ class ApiFunctionUrlConstant {
 }
 
 class ApiServiceUrlConstant {
-  static const String authFetchMapKey = 'auth/secret/avioflaiopenai';
+  static const String authFetchMapKey = 'auth/secret/avioflai/fr24';
   static const String authRefreshToken = 'auth/refresh';
 
   static const String checkEmail = 'auth/check-email';

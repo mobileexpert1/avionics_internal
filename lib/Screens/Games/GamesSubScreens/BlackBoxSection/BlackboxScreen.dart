@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +12,7 @@ class BlackBoxStartScreen extends StatelessWidget {
   final String gameId;
 
   const BlackBoxStartScreen({super.key, required this.gameId});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -38,15 +38,24 @@ class BlackBoxStartScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: GameDetailCardBlackBox(
-            onStartGame: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const OverviewAndClueDeckScreen()),
-              );
-            },
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 1500, // ← gives equal L/R spacing on Web
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GameDetailCardBlackBox(
+                onStartGame: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const OverviewAndClueDeckScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),

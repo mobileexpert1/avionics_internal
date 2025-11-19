@@ -30,7 +30,7 @@ class BadgesRepository {
       final uri = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"
         "${ApiFunctionUrlGamesConstant.quiz}"
-        "${ApiGameBadges.quizBadges}",
+        "${ApiGameBadges.quizBadges}/",
       );
 
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
