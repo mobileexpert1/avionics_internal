@@ -50,23 +50,29 @@ class _BlackBoxResultScreenState extends State<BlackBoxResultScreen> {
           title: "Result",
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+            onPressed: () =>
+                Navigator.of(context).popUntil((route) => route.isFirst),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: BlocBuilder<GameResultCubit, GameResultState>(
-            builder: (context, state) {
-              return GameResultCard(
-                title: state.title,
-                score: state.score,
-                total: state.total,
-                totalPoints: state.totalPoints,
-                correctPoints: state.correctPoints,
-                bonusPoints: state.bonusPoints,
-                badgeText: null,
-              );
-            },
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: BlocBuilder<GameResultCubit, GameResultState>(
+                builder: (context, state) {
+                  return GameResultCard(
+                    title: state.title,
+                    score: state.score,
+                    total: state.total,
+                    totalPoints: state.totalPoints,
+                    correctPoints: state.correctPoints,
+                    bonusPoints: state.bonusPoints,
+                    badgeText: null,
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),
