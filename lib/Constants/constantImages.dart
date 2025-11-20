@@ -42,6 +42,7 @@ abstract class AssetsPath {
   static const String carFollowImage = "CarFollowIcon";
   static const String LockIcon = "LockIcon";
   static const String badgesLock = "badgesLock";
+  static const String lockIconBadge = "lockIconBadge";
   static const String badgeTrophy = "badgeTrophy";
   static const String resultIcon = "resultIcon";
   static const String Tik = "TickIcon";
