@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,12 +34,13 @@ class _BadgesScreenState extends State<BadgesScreen> {
   void initState() {
     super.initState();
     if (kIsWeb) {
-      _fullScreenSubscription =
-          html.document.onFullscreenChange.listen((event) {
-            setState(() {
-              _isFullScreen = html.document.fullscreenElement != null;
-            });
-          });
+      _fullScreenSubscription = html.document.onFullscreenChange.listen((
+        event,
+      ) {
+        setState(() {
+          _isFullScreen = html.document.fullscreenElement != null;
+        });
+      });
     }
   }
 
@@ -61,7 +62,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool ikweb = kIsWeb &&
+    final bool ikweb =
+        kIsWeb &&
         (MediaQuery.of(context).size.width > 600 ||
             MediaQuery.of(context).size.height > 600);
 
@@ -81,15 +83,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          rightButton: kIsWeb
-              ? IconButton(
-            icon: Icon(
-              _isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
-              color: Colors.black,
-            ),
-            onPressed: _toggleFullScreen,
-          )
-              : null,
         ),
         body: BlocBuilder<BadgesCubit, BadgesState>(
           builder: (context, state) {
@@ -106,16 +99,20 @@ class _BadgesScreenState extends State<BadgesScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal:
-                    MediaQuery.of(context).size.width * (ikweb ? 0.16 : 0.04),
+                        MediaQuery.of(context).size.width *
+                        (ikweb ? 0.16 : 0.04),
                     vertical:
-                    MediaQuery.of(context).size.height * (ikweb ? 0.02 : 0.01),
+                        MediaQuery.of(context).size.height *
+                        (ikweb ? 0.02 : 0.01),
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       vertical:
-                      MediaQuery.of(context).size.height * (ikweb ? 0.014 : 0.01),
+                          MediaQuery.of(context).size.height *
+                          (ikweb ? 0.014 : 0.01),
                       horizontal:
-                      MediaQuery.of(context).size.width * (ikweb ? 0.03 : 0.02),
+                          MediaQuery.of(context).size.width *
+                          (ikweb ? 0.03 : 0.02),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -137,14 +134,21 @@ class _BadgesScreenState extends State<BadgesScreen> {
                             SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.bagdestarIcon),
                               height:
-                              MediaQuery.of(context).size.height * (ikweb ? 0.03 : 0.025),
+                                  MediaQuery.of(context).size.height *
+                                  (ikweb ? 0.03 : 0.025),
                             ),
-                            SizedBox(width: MediaQuery.of(context).size.width * (ikweb ? 0.015 : 0.01)),
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width *
+                                  (ikweb ? 0.015 : 0.01),
+                            ),
                             Text(
                               "Total Points Earned",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.013 : 0.037),
+                                fontSize:
+                                    MediaQuery.of(context).size.width *
+                                    (ikweb ? 0.013 : 0.037),
                                 color: const Color(0xFF32377D),
                               ),
                             ),
@@ -154,7 +158,9 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           "${state.totalPoints} points",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * (ikweb ? 0.013 : 0.037),
+                            fontSize:
+                                MediaQuery.of(context).size.width *
+                                (ikweb ? 0.013 : 0.037),
                             color: const Color(0xFF32377D),
                           ),
                         ),
@@ -163,44 +169,53 @@ class _BadgesScreenState extends State<BadgesScreen> {
                   ),
                 ),
 
-                SizedBox(height: MediaQuery.of(context).size.width * (ikweb ? 0.015 : 0.01)),
+                SizedBox(
+                  height:
+                      MediaQuery.of(context).size.width *
+                      (ikweb ? 0.015 : 0.01),
+                ),
 
                 /// Badge Grid Section
                 Expanded(
                   child: state.badges.isEmpty
                       ? const Center(child: Text("No badges available."))
                       : LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isWide = constraints.maxWidth > 600;
-                      final crossAxisCount = isWide ? 5 : 2;
+                          builder: (context, constraints) {
+                            final isWide = constraints.maxWidth > 600;
+                            final crossAxisCount = isWide ? 5 : 2;
 
-                      return GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width *
-                              (isWide ? 0.10 : 0.02),
-                          vertical: MediaQuery.of(context).size.height *
-                              (isWide ? 0.02 : 0.01),
+                            return GridView.builder(
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width *
+                                    (isWide ? 0.10 : 0.02),
+                                vertical:
+                                    MediaQuery.of(context).size.height *
+                                    (isWide ? 0.02 : 0.01),
+                              ),
+                              itemCount: state.badges.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: crossAxisCount,
+                                    crossAxisSpacing:
+                                        MediaQuery.of(context).size.width *
+                                        (isWide ? 0.03 : 0.015),
+                                    mainAxisSpacing:
+                                        MediaQuery.of(context).size.height *
+                                        (isWide ? 0.025 : 0.015),
+                                    childAspectRatio: isWide ? 1.0 : 0.75,
+                                  ),
+                              itemBuilder: (context, index) {
+                                final badge = state.badges[index];
+                                return _BadgeCard(
+                                  badge: badge,
+                                  onTap: () =>
+                                      _showBadgeDetails(context, badge),
+                                );
+                              },
+                            );
+                          },
                         ),
-                        itemCount: state.badges.length,
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: MediaQuery.of(context).size.width *
-                              (isWide ? 0.03 : 0.015),
-                          mainAxisSpacing: MediaQuery.of(context).size.height *
-                              (isWide ? 0.025 : 0.015),
-                          childAspectRatio: isWide ? 1.0 : 0.75,
-                        ),
-                        itemBuilder: (context, index) {
-                          final badge = state.badges[index];
-                          return _BadgeCard(
-                            badge: badge,
-                            onTap: () => _showBadgeDetails(context, badge),
-                          );
-                        },
-                      );
-                    },
-                  ),
                 ),
               ],
             );
@@ -214,7 +229,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
     final tabs = ["Quiz", "One Word", "Black Box", "Calculations"];
     final selectedTab = state.selectedTab ?? tabs[0];
 
-    final bool ikweb = kIsWeb &&
+    final bool ikweb =
+        kIsWeb &&
         (MediaQuery.of(context).size.width > 600 ||
             MediaQuery.of(context).size.height > 600);
 
@@ -223,7 +239,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
       child: Center(
         child: ListView.separated(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * (ikweb ? 0.12 : 0.06),
+            horizontal:
+                MediaQuery.of(context).size.width * (ikweb ? 0.12 : 0.06),
           ),
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
@@ -244,17 +261,23 @@ class _BadgesScreenState extends State<BadgesScreen> {
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * (ikweb ? 0.015 : 0.010)),
+                  horizontal:
+                      MediaQuery.of(context).size.width *
+                      (ikweb ? 0.015 : 0.010),
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       tabs[index],
                       style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                         color: isSelected ? Colors.blue : Colors.grey,
                         fontSize:
-                        MediaQuery.of(context).size.width * (ikweb ? 0.013 : 0.040),
+                            MediaQuery.of(context).size.width *
+                            (ikweb ? 0.013 : 0.040),
                         letterSpacing: ikweb ? 1.2 : 1.0,
                       ),
                     ),
@@ -287,38 +310,42 @@ class _BadgesScreenState extends State<BadgesScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
         content: SingleChildScrollView(
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
             opacity: badge.isEarned ? 1 : 0.5,
-            child: ColorFiltered(
-              colorFilter: badge.isEarned
-                  ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
-                  : ColorFilter.mode(
-                Colors.white.withOpacity(0.2),
-                BlendMode.srcATop,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 400,
-                    maxHeight: 600,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ClipRRect(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 400,
+                  maxHeight: 600,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        /// 🔵 Only the image is ColorFiltered
+                        ColorFiltered(
+                          colorFilter: badge.isEarned
+                              ? const ColorFilter.mode(
+                                  Colors.transparent,
+                                  BlendMode.dst,
+                                )
+                              : ColorFilter.mode(
+                                  Colors.white.withOpacity(0.2),
+                                  BlendMode.srcATop,
+                                ),
+                          child: ClipRRect(
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(16),
                               topRight: Radius.circular(16),
                             ),
                             child: CachedAnyImage(
-                              imagePath: (badge.icon != null && badge.icon!.isNotEmpty)
+                              imagePath:
+                                  (badge.icon != null && badge.icon!.isNotEmpty)
                                   ? badge.icon!
                                   : CommonUi.setPngImage(AssetsPath.badgeimg),
                               width: 250,
@@ -326,104 +353,105 @@ class _BadgesScreenState extends State<BadgesScreen> {
                               contentImage: BoxFit.contain,
                             ),
                           ),
-                          if (!badge.isEarned)
-                            Positioned(
-                              top: 90,
-                              child: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.badgesLock),
-                                height: 40,
-                                width: 40,
-                                color: const Color(0xFF1C66C5),
-                              ),
+                        ),
+
+                        if (!badge.isEarned)
+                          Positioned(
+                            top: 90,
+                            child: SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.badgesLock),
+                              width: 40,
+                              height: 40,
+                              color: const Color(0xFF1C66C5),
                             ),
-                        ],
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+                    Text(
+                      badge.name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black,
                       ),
+                    ),
+
+                    const SizedBox(height: 8),
+                    Text(
+                      badge.isEarned ? "Badge Unlocked!" : "Badge Locked!",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+
+                    if (!badge.isEarned) ...[
                       const SizedBox(height: 16),
-                      Text(
-                        badge.name,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: badge.totalWin / badge.wins,
+                          minHeight: 10,
+                          backgroundColor: Colors.grey.shade200,
+                          color: const Color(0xFF1E80F2),
                         ),
                       ),
                       const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Current wins",
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                          Text(
+                            "${badge.totalWin} of ${badge.wins}",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
                       Text(
-                        badge.isEarned ? "Badge Unlocked!" : "Badge Locked!",
+                        "${badge.wins - badge.totalWin} more wins required to unlock",
                         style: const TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          color: Colors.black,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
                       ),
-                      if (!badge.isEarned) ...[
-                        const SizedBox(height: 16),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: badge.totalWin / badge.wins,
-                            minHeight: 10,
-                            backgroundColor: Colors.grey.shade200,
-                            color: const Color(0xFF1E80F2),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.badgeTrophy),
+                            width: 20,
+                            height: 20,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Current wins",
+                          const SizedBox(width: 6),
+                          const Flexible(
+                            child: Text(
+                              "Win: achieving >= 80% Score in a quiz",
                               style: TextStyle(
                                 color: Colors.grey,
-                                fontSize: 14,
+                                fontSize: 12,
                               ),
+                              textAlign: TextAlign.center,
                             ),
-                            Text(
-                              "${badge.totalWin} of ${badge.wins}",
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          "${badge.wins - badge.totalWin} more wins required to unlock",
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.badgeTrophy),
-                              width: 20,
-                              height: 20,
-                            ),
-                            const SizedBox(width: 6),
-                            const Flexible(
-                              child: Text(
-                                "Win: achieving >= 80% Score in a quiz",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                      ],
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                     ],
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -442,125 +470,124 @@ class _BadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
+    final bool ikweb =
+        kIsWeb &&
+        (MediaQuery.of(context).size.width > 600 ||
+            MediaQuery.of(context).size.height > 600);
     return GestureDetector(
       onTap: onTap,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 300, // Max width for web section
-            minWidth: 200,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
-              // color: Colors.pink,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
+      child: Stack(
+        children: [
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: badge.isEarned ? 1 : 0.5,
+            child: ColorFiltered(
+              colorFilter: badge.isEarned
+                  ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
+                  : ColorFilter.mode(
+                      Colors.white.withOpacity(0.2),
+                      BlendMode.srcATop,
+                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade200,
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
+                child: Column(
                   children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
-                      child: Opacity(
-                        opacity: badge.isEarned ? 1 : 0.5,
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
                         child: CachedAnyImage(
-                          imagePath: (badge.icon != null && badge.icon!.isNotEmpty)
+                          imagePath: badge.icon?.isNotEmpty == true
                               ? badge.icon!
                               : CommonUi.setPngImage(AssetsPath.badgeimg),
-                          width: 150,
-                          height: 180,
+                          width: double.infinity,
+                          height: double.infinity,
                           contentImage: BoxFit.contain,
                         ),
                       ),
                     ),
-                    if (!badge.isEarned)
-                      Positioned(
-                        top: 75,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.badgesLock),
-                            height: 40,
-                            width: 40,
-                            color: const Color(0xFF1C66C5),
-                          ),
-                        ),
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      badge.name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
                       ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: badge.isEarned
+                            ? Colors.green.withOpacity(0.1)
+                            : Colors.blue.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            badge.isEarned
+                                ? Icons.check_circle
+                                : Icons.lock_outline,
+                            size: 15,
+                            color: badge.isEarned ? Colors.green : Colors.blue,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            badge.isEarned
+                                ? "Unlocked"
+                                : "Unlock after ${badge.requireWin} wins",
+                            style: TextStyle(
+                              color: badge.isEarned
+                                  ? Colors.green
+                                  : Colors.blue,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      // const SizedBox(height: 4),
-                      Text(
-                        badge.name,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                      // const SizedBox(height: 5),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: badge.isEarned
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.blue.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              badge.isEarned
-                                  ? Icons.check_circle
-                                  : Icons.lock_outline,
-                              size: 15,
-                              color: badge.isEarned ? Colors.green : Colors.blue,
-                            ),
-                            const SizedBox(width: 3),
-                            Flexible(
-                              child: Text(
-                                badge.isEarned
-                                    ? "Unlocked"
-                                    : "Unlock after ${badge.requireWin} wins",
-                                style: TextStyle(
-                                  color: badge.isEarned ? Colors.green : Colors.blue,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (!badge.isEarned)
+            Positioned.fill(
+              child: Align(
+                alignment: const Alignment(0, -0.22),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.badgesLock),
+                  width: ikweb ? 45 : 35,
+                  height: ikweb ? 45 : 35,
+                  color: const Color(0xFF1C66C5),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

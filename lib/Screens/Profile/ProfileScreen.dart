@@ -121,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.subsrcitAcc,
+                        AssetsPath.savedIcon,
                       ),
                       title: "Saved",
                       onTap: () {
