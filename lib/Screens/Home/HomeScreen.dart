@@ -87,47 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-
-        //
-        // appBar: PreferredSize(
-        //   preferredSize: Size.fromHeight(kIsWeb ? 120 : 110),
-        //   child: SafeArea(
-        //     child: Column(
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-        //         // SearchBarWidget(
-        //         //   enableBackArrow: false,
-        //         //   enableFilter: true,
-        //         //   enableCloseScreen: false,
-        //         //   controller: searchController,
-        //         //   onFilterTap: () {
-        //         //     showModalBottomSheet(
-        //         //       context: context,
-        //         //       isScrollControlled: true,
-        //         //       shape: const RoundedRectangleBorder(
-        //         //         borderRadius: BorderRadius.vertical(
-        //         //           top: Radius.circular(20),
-        //         //         ),
-        //         //       ),
-        //         //       backgroundColor: Colors.transparent,
-        //         //       builder: (context) => FractionallySizedBox(
-        //         //         heightFactor: 0.9,
-        //         //         child: ClipRRect(
-        //         //           borderRadius: const BorderRadius.vertical(
-        //         //             top: Radius.circular(20),
-        //         //           ),
-        //         //           child: FilterScreen(),
-        //         //         ),
-        //         //       ),
-        //         //     );
-        //         //   },
-        //         //   searchTitle: 'Search...',
-        //         // ),
-        //         //
-        //       ],
-        //     ),
-        //   ),
-        // ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading) {
@@ -270,6 +229,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     isNetwork: true,
                                   ),
                                 ),
+
+                            SizedBox(
+                              height: kIsWeb
+                                  ? screenWidth * 0.01
+                                  : screenWidth * 0.045,
+                            ),
                             Center(
                               child: TextButton(
                                 onPressed: () => Navigator.push(
@@ -298,6 +263,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               'No manufacturers available yet.',
                               screenWidth,
                             ),
+
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.01
+                                : screenWidth * 0.045,
+                          ),
 
                           const Divider(
                             height: 0,
@@ -379,12 +350,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fit: BoxFit.contain,
                                         ),
                                         const SizedBox(width: 12),
-                                        const Expanded(
+                                        Expanded(
                                           child: Text(
                                             "Flying in the Area",
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 16,
+                                              fontSize: kIsWeb
+                                                  ? screenWidth * 0.016
+                                                  : screenWidth * 0.04,
                                             ),
                                           ),
                                         ),
@@ -456,12 +429,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fit: BoxFit.fitWidth,
                                         ),
                                         const SizedBox(width: 12),
-                                        const Expanded(
+                                         Expanded(
                                           child: Text(
                                             "Track a Flight",
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 16,
+                                              fontSize: kIsWeb
+                                                  ? screenWidth * 0.016
+                                                  : screenWidth * 0.04,
                                             ),
                                           ),
                                         ),
@@ -493,40 +468,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? screenWidth * 0.02
                                 : screenWidth * 0.045,
                           ),
-
-                          // if (state.flights.isNotEmpty) ...[
-                          //   ...state.flights
-                          //       .take(2)
-                          //       .map(
-                          //         (f) => AircraftCard.buildAircraftCard(
-                          //           imagePath: (f.image ?? ''),
-                          //           model: f.model,
-                          //           badge: f.code,
-                          //           manufacturer: f.companyName,
-                          //           manufacturerLogoPath: f.logo ?? '',
-                          //           registrationNumber: f.flightId,
-                          //         ),
-                          //       ),
-                          //   Center(
-                          //     child: TextButton(
-                          //       onPressed: () {},
-                          //       child: Text(
-                          //         'See All',
-                          //         style: TextStyle(
-                          //           fontSize: kIsWeb
-                          //               ? screenWidth * 0.02
-                          //               : screenWidth * 0.04,
-                          //           fontWeight: FontWeight.w600,
-                          //           color: AppColors.textColour,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ] else
-                          //   _emptyRow(
-                          //     'No flights found in this area.',
-                          //     screenWidth,
-                          //   ),
                           const Divider(
                             height: 0,
                             thickness: 3,
@@ -582,6 +523,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
+                            ),
+                            SizedBox(
+                              height: kIsWeb
+                                  ? screenWidth * 0.02
+                                  : screenWidth * 0.045,
                             ),
                           ] else
                             _emptyRow('No favourites saved yet.', screenWidth),

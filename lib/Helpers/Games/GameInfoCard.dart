@@ -33,12 +33,16 @@ class GameDetailCard extends StatelessWidget {
                 ),
               ],
             ),
+
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 14),
+
                 game.iconWidget,
+
                 const SizedBox(height: 14),
+
                 Text(
                   game.title,
                   style: const TextStyle(
@@ -57,9 +61,11 @@ class GameDetailCard extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
+
+
+                if (!kIsWeb) ...[
+                  // ---------------- MOBILE LAYOUT ----------------
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       buildInfo(
@@ -78,17 +84,6 @@ class GameDetailCard extends StatelessWidget {
                         CommonUi.setSvgImage(AssetsPath.Tik),
                         '+2 points for correct answers',
                       ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: kIsWeb
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
                       buildInfo(
                         CommonUi.setSvgImage(AssetsPath.Tik),
                         '+3 points for all correct answers',
@@ -101,32 +96,98 @@ class GameDetailCard extends StatelessWidget {
                         CommonUi.setSvgImage(AssetsPath.Trophy),
                         'Score 80% or more = 1 win',
                       ),
-                    ],
-                  ),
-                ),
-
-                //const SizedBox(height: 20),
-
-                // ----------------------------------------------------
-                // CENTER ITEM (last item)
-                // ----------------------------------------------------
-                SizedBox(
-                  width: double.infinity, // take full width
-                  child: Column(
-                    crossAxisAlignment: kIsWeb
-                        ? CrossAxisAlignment
-                              .center // Web: left
-                        : CrossAxisAlignment.start, // Mobile: force left
-                    children: [
                       buildInfo(
                         CommonUi.setPngImage(AssetsPath.carFollowImage),
                         'Need a route to the right answer? Follow Me!',
                       ),
                     ],
                   ),
+                ] else ...[
+                  // ---------------- WEB LAYOUT (TWO COLUMNS) ----------------
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.clock),
+                              '40 seconds per question',
+                            ),
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.Trophy),
+                              '${game.questions} ${game.questionType}',
+                            ),
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.Tik),
+                              game.moduleType,
+                            ),
+
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.Tik),
+                              '+2 points for correct answers',
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                          ],
+                        ),
+                      ),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                          ],
+                        ),
+                      ),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.Tik),
+                              '+3 points for all correct answers',
+                            ),
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.clock),
+                              '+1 point if answered under 20s',
+                            ),
+                            buildInfo(
+                              CommonUi.setSvgImage(AssetsPath.Trophy),
+                              'Score 80% or more = 1 win',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+
+                if (kIsWeb)
+                Align(
+                  alignment: Alignment.center,
+                  child: buildInfo(
+                    CommonUi.setPngImage(AssetsPath.carFollowImage),
+                    'Need a route to the right answer? Follow Me!',
+                  ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 Center(
                   child: SizedBox(
@@ -152,9 +213,6 @@ class GameDetailCard extends StatelessWidget {
     );
   }
 
-  // -----------------------------------------
-  // INFO ITEM BUILDER
-  // -----------------------------------------
   Widget buildInfo(String assetPath, String text) {
     final String path = assetPath.toLowerCase();
     final bool isSvg = path.endsWith('.svg');
@@ -176,12 +234,8 @@ class GameDetailCard extends StatelessWidget {
             const SizedBox(width: 20, height: 20),
 
           const SizedBox(width: 12),
-          Flexible(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: kIsWeb ? 16 : 14),
-            ),
-          ),
+
+          Flexible(child: Text(text, style: const TextStyle(fontSize: 14))),
         ],
       ),
     );
@@ -213,7 +267,6 @@ class GameDetailCardBlackBox extends StatelessWidget {
               ],
             ),
 
-            // ✅ Added scrollable column
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
@@ -238,9 +291,10 @@ class GameDetailCardBlackBox extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
+                  // ------------------ MOBILE / WEB INFO ------------------
+                  if (!kIsWeb) ...[
+                    // MOBILE: single column
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildInfo(
@@ -263,18 +317,6 @@ class GameDetailCardBlackBox extends StatelessWidget {
                           CommonUi.setSvgImage(AssetsPath.Tik),
                           '+3 points for full-case accuracy',
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: kIsWeb ? 15 : 10),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: kIsWeb
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
-                      children: [
                         buildInfo(
                           CommonUi.setSvgImage(AssetsPath.Tik),
                           'Interpret sequences and identify causal factors',
@@ -295,26 +337,98 @@ class GameDetailCardBlackBox extends StatelessWidget {
                           CommonUi.setPngImage(AssetsPath.carFollowImage),
                           'Need a route to the right answer? Follow Me!',
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: kIsWeb ? 15 : 10),
-
-                  SizedBox(
-                    width: double.infinity, // take full width
-                    child: Column(
-                      crossAxisAlignment: kIsWeb
-                          ? CrossAxisAlignment
-                                .center // Web: left
-                          : CrossAxisAlignment.start, // Mobile: force left
-                      children: [
                         buildInfo(
                           CommonUi.setSvgImage(AssetsPath.Tik),
                           'You’ll learn Real investigative reasoning, human-factor analysis, and system-failure interpretation—exactly as used in real crash investigations.',
                         ),
                       ],
                     ),
-                  ),
+                  ] else ...[
+                    // WEB: two columns
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.clock),
+                                '60 seconds per question',
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Trophy),
+                                'Review factual clue cards and cockpit data',
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Tik),
+                                game.moduleType,
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Tik),
+                                '+2/4 points for each correct answer',
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Tik),
+                                '+3 points for full-case accuracy',
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 40),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+
+                            ],
+                          ),
+                        ),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Tik),
+                                'Interpret sequences and identify causal factors',
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Tik),
+                                'Includes MCQs, sequencing, and multi-factor analysis',
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Trophy),
+                                'Score ≥80% to achieve Investigator Pass',
+                              ),
+                              buildInfo(
+                                CommonUi.setSvgImage(AssetsPath.Trophy),
+                                'Play more cases to unlock new badges and scenarios',
+                              ),
+                              buildInfo(
+                                CommonUi.setPngImage(AssetsPath.carFollowImage),
+                                'Need a route to the right answer? Follow Me!',
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+
+                  const SizedBox(height: kIsWeb ? 15 : 10),
+
+                  if (kIsWeb)
+                    Align(
+                      alignment: Alignment.center,
+                      child: buildInfo(
+                        CommonUi.setSvgImage(AssetsPath.Tik),
+                        'You’ll learn Real investigative reasoning, human-factor analysis, and system-failure interpretation—exactly as used in real crash investigations.',
+                      ),
+                    ),
+
                   const SizedBox(height: kIsWeb ? 15 : 10),
 
                   Center(
@@ -329,7 +443,7 @@ class GameDetailCardBlackBox extends StatelessWidget {
                         icon: const SizedBox(width: 0),
                         onPressed: onStartGame,
                       ),
-                     ),
+                    ),
                   ),
                   const SizedBox(height: kIsWeb ? 15 : 10),
                 ],
@@ -346,8 +460,8 @@ class GameDetailCardBlackBox extends StatelessWidget {
     final bool isSvg = path.endsWith('.svg');
     final bool isImg =
         path.endsWith('.png') ||
-        path.endsWith('.jpg') ||
-        path.endsWith('.jpeg');
+            path.endsWith('.jpg') ||
+            path.endsWith('.jpeg');
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -365,7 +479,7 @@ class GameDetailCardBlackBox extends StatelessWidget {
           Flexible(
             child: Text(
               text,
-              style: const TextStyle(fontSize: kIsWeb ? 16 : 14),
+              style: TextStyle(fontSize: kIsWeb ? 16 : 14),
             ),
           ),
         ],
@@ -373,3 +487,4 @@ class GameDetailCardBlackBox extends StatelessWidget {
     );
   }
 }
+

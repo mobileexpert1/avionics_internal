@@ -53,41 +53,42 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
             onPressed: () async {
               final shouldExit = await showDialog<bool>(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Exit Quiz?"),
-                  backgroundColor: Colors.white,
-                  content: const Text(
-                    "Are you sure you want to exit? Your progress will be lost.",
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(
-                          Colors.black,
-                        ),
+                builder: (context) =>
+                    AlertDialog(
+                      title: const Text("Exit Quiz?"),
+                      backgroundColor: Colors.white,
+                      content: const Text(
+                        "Are you sure you want to exit? Your progress will be lost.",
                       ),
-                      child: const Text("Cancel"),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isNeedToShowOrNot = false;
-                        });
-                        Navigator.of(context).pop(true);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.blue,
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              Colors.black,
+                            ),
+                          ),
+                          child: const Text("Cancel"),
                         ),
-                        foregroundColor: MaterialStateProperty.all<Color>(
-                          AppColors.sepratorColourAppBar,
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isNeedToShowOrNot = false;
+                            });
+                            Navigator.of(context).pop(true);
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.blue,
+                            ),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.sepratorColourAppBar,
+                            ),
+                          ),
+                          child: const Text("Yes, Exit"),
                         ),
-                      ),
-                      child: const Text("Yes, Exit"),
+                      ],
                     ),
-                  ],
-                ),
               );
               if (shouldExit ?? false) {
                 Navigator.pop(context);
@@ -156,7 +157,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                               Future.delayed(
                                 const Duration(milliseconds: 300),
-                                () {
+                                    () {
                                   if (_scrollController.hasClients) {
                                     _scrollController.animateTo(
                                       _scrollController
@@ -386,18 +387,26 @@ class QuizQuestionCard extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: CustomBottomButton(
-                      title: isShowAnswers == false
-                          ? ConstantStrings.submitTitle
-                          : ConstantStrings.next,
-                      backgroundColor: AppColors.customBottomEnabledColour,
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      isEnabled: selectedOption != null,
-                      onPressed: onNext ?? () {},
+
+                  Center(
+                    child: SizedBox(
+                      width: kIsWeb
+                          ? MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.5
+                          : double.infinity,
+                      height: 48,
+                      child: CustomBottomButton(
+                        title: isShowAnswers == false
+                            ? ConstantStrings.submitTitle
+                            : ConstantStrings.next,
+                        backgroundColor: AppColors.customBottomEnabledColour,
+                        textColor: Colors.white,
+                        icon: const SizedBox(width: 0),
+                        isEnabled: selectedOption != null,
+                        onPressed: onNext ?? () {},
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Constants/constantImages.dart';
@@ -89,7 +90,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
               : 'Question';
 
           final currentQuestionName =
-          state.currentQuestion.name?.isNotEmpty == true
+              state.currentQuestion.name?.isNotEmpty == true
               ? state.currentQuestion.name!
               : '';
           print("Current Question Name-----------------: $currentQuestionName");
@@ -147,66 +148,12 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                 },
               ),
             ),
-
-            //Animation App bar
-            // appBar: AppBar(
-            //   backgroundColor: Colors.white,
-            //   automaticallyImplyLeading: false,
-            //   surfaceTintColor: Colors.white,
-            //   elevation: 0,
-            //   leading: IconButton(
-            //     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            //     onPressed: () async {
-            //       final shouldExit = await showDialog<bool>(
-            //         context: context,
-            //         builder: (context) => AlertDialog(
-            //           title: const Text("Exit BlackBox?"),
-            //           backgroundColor: Colors.white,
-            //           content: const Text(
-            //             "Are you sure you want to exit? Your progress will be lost.",
-            //           ),
-            //           actions: [
-            //             TextButton(
-            //               onPressed: () => Navigator.of(context).pop(false),
-            //               child: const Text(
-            //                 "Cancel",
-            //                 style: TextStyle(color: Colors.black),
-            //               ),
-            //             ),
-            //             TextButton(
-            //               onPressed: () {
-            //                 Navigator.of(context).pushAndRemoveUntil(
-            //                   MaterialPageRoute(
-            //                     builder: (context) => const BlackBoxStartScreen(
-            //                       gameId: 'black_box',
-            //                     ),
-            //                   ),
-            //                   (route) => false,
-            //                 );
-            //               },
-            //               style: TextButton.styleFrom(
-            //                 backgroundColor: Colors.blue,
-            //                 foregroundColor: Colors.white,
-            //               ),
-            //               child: const Text("Yes, Exit"),
-            //             ),
-            //           ],
-            //         ),
-            //       );
-            //       if (shouldExit ?? false) {
-            //         Navigator.pop(context);
-            //       }
-            //     },
-            //   ),
-            //   centerTitle: true,
-            //   title: AnimatedTitle(
-            //     text: currentQuestionTitle,
-            //   ),
-            // ),
             body: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kIsWeb ? 200 : 10,
+                  ),
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     child: Column(
@@ -240,7 +187,8 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                           onMultipleOptionSelected: (index, selected) {
                             blackBoxCubit.toggleMultipleOption(index, selected);
                           },
-                          correctOptionList: state.currentQuestion.correctOptionList,
+                          correctOptionList:
+                              state.currentQuestion.correctOptionList,
                           selectedOptionList: state.selectedIndices ?? [],
                           onTrueFalseSelected: (isTrue) {
                             if (state.timer.toInt() != 0 && !state.showAnswer) {
@@ -270,18 +218,26 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                               blackBoxCubit.nextQuestion(context);
                             } else if (state.selectedIndex != null ||
                                 state.selectedSequence != null ||
-                                state.selectedAnswer != null || state.selectedIndices?.isNotEmpty == true) {
+                                state.selectedAnswer != null ||
+                                state.selectedIndices?.isNotEmpty == true) {
                               blackBoxCubit.submitQuestion(context);
 
-                              Future.delayed(const Duration(milliseconds: 300), () {
-                                if (_scrollController.hasClients) {
-                                  _scrollController.animateTo(
-                                    _scrollController.position.maxScrollExtent,
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeOut,
-                                  );
-                                }
-                              });
+                              Future.delayed(
+                                const Duration(milliseconds: 300),
+                                () {
+                                  if (_scrollController.hasClients) {
+                                    _scrollController.animateTo(
+                                      _scrollController
+                                          .position
+                                          .maxScrollExtent,
+                                      duration: const Duration(
+                                        milliseconds: 400,
+                                      ),
+                                      curve: Curves.easeOut,
+                                    );
+                                  }
+                                },
+                              );
                             }
                           },
                         ),
@@ -322,6 +278,7 @@ class BlackBoxCard extends StatelessWidget {
   final Function(bool) onTrueFalseSelected;
   final Function(int) onOptionSelected;
   final Function(List<String>) onSequenceReordered;
+
   // final Function(String) onShortAnswerChanged;
   final Function(int, bool)? onMultipleOptionSelected;
   final VoidCallback? onNext;
@@ -457,18 +414,23 @@ class BlackBoxCard extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: CustomBottomButton(
-                      title: isShowAnswers == false
-                          ? ConstantStrings.submitTitle
-                          : ConstantStrings.next,
-                      backgroundColor: AppColors.customBottomEnabledColour,
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      isEnabled: _isSubmitEnabled(),
-                      onPressed: onNext ?? () {},
+
+                  Center(
+                    child: SizedBox(
+                      width: kIsWeb
+                          ? MediaQuery.of(context).size.width * 0.5
+                          : double.infinity,
+                      height: 48,
+                      child: CustomBottomButton(
+                        title: isShowAnswers == false
+                            ? ConstantStrings.submitTitle
+                            : ConstantStrings.next,
+                        backgroundColor: AppColors.customBottomEnabledColour,
+                        textColor: Colors.white,
+                        icon: const SizedBox(width: 0),
+                        isEnabled: _isSubmitEnabled(),
+                        onPressed: onNext ?? () {},
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -734,7 +696,6 @@ class BlackBoxCard extends StatelessWidget {
     );
   }
 
-
   // Widget _buildMultipleCorrectOptions() {
   //   return Column(
   //     children: List.generate(options.length, (index) {
@@ -826,12 +787,19 @@ class BlackBoxCard extends StatelessWidget {
                 ? AppColors.customColourOfTimeExpired
                 : Colors.green.shade100;
             borderColor = timeTaken == 0 ? Colors.blue : Colors.green;
-            trailingIcon = const Icon(Icons.check_circle,
-                color: Colors.green, size: 20);
+            trailingIcon = const Icon(
+              Icons.check_circle,
+              color: Colors.green,
+              size: 20,
+            );
           } else if (isSelected && !isCorrect) {
             backgroundColor = Colors.red.shade100;
             borderColor = Colors.red;
-            trailingIcon = const Icon(Icons.cancel, color: Colors.red, size: 20);
+            trailingIcon = const Icon(
+              Icons.cancel,
+              color: Colors.red,
+              size: 20,
+            );
           }
         } else if (isSelected) {
           backgroundColor = Colors.grey.shade300;
@@ -866,12 +834,15 @@ class BlackBoxCard extends StatelessWidget {
                   //       ? (val) => onMultipleOptionSelected?.call(index, val!)
                   //       : null,
                   // ),
-
                   Checkbox(
                     value: isSelected,
-                    activeColor: Colors.blue, // keeps the fill always blue
-                    checkColor: Colors.white, // tick color
-                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                    activeColor: Colors.blue,
+                    // keeps the fill always blue
+                    checkColor: Colors.white,
+                    // tick color
+                    fillColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
                       if (states.contains(MaterialState.selected)) {
                         return Colors.blue; // blue even after submit
                       }
@@ -1002,6 +973,7 @@ class BlackBoxProgressCard extends StatelessWidget {
 
 class AnimatedTitle extends StatefulWidget {
   final String text;
+
   const AnimatedTitle({super.key, required this.text});
 
   @override
