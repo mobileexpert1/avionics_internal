@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'chat_implementation.dart';
 import 'chat_model.dart';
 
@@ -20,7 +20,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
-  StreamSubscription<InternetConnectionStatus>? _internetSub;
+  dynamic _internetSub; // Changed to dynamic for web compatibility
   final _internetStatusController = StreamController<bool>.broadcast();
   bool _isConnected = true;
 
@@ -92,8 +92,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   void _startInternetListener() {
-    _internetSub = InternetConnectionChecker().onStatusChange.listen((status) {
-      final connected = status == InternetConnectionStatus.connected;
+    _internetSub = Connectivity().onConnectivityChanged.listen((result) {
+      final connected = result != ConnectivityResult.none;
       if (connected != _isConnected) {
         _isConnected = connected;
         _internetStatusController.add(_isConnected);

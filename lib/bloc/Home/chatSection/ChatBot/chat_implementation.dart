@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:uuid/uuid.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../../Database/auth_storage.dart';
 import '../../../../Database/generic_methods.dart';
 import 'chat_model.dart';
@@ -31,30 +30,9 @@ class ChatRepositoryImpl implements ChatRepository {
   String? _lastSystem;
   String? _pendingUserMessage;
   ChatMessage? _pendingUserMessageObject;
-  StreamSubscription<InternetConnectionStatus>? _internetStatusSub;
-  bool _wasOffline = false;
 
   void startInternetMonitoring() {
-    _internetStatusSub = InternetConnectionChecker().onStatusChange.listen((
-      status,
-    ) {
-      if (status == InternetConnectionStatus.disconnected && !_wasOffline) {
-        _wasOffline = true;
-        _pushSystem(
-          "Internet is disconnected. Kindly check your connection.🚫",
-        );
-      } else if (status == InternetConnectionStatus.connected && _wasOffline) {
-        _wasOffline = false;
-
-        _pushSystem("reconnecting...");
-
-        Future.delayed(const Duration(seconds: 2), () {
-          _pushSystem(
-            "Connection established. you may now ask me for any queries..✅",
-          );
-        });
-      }
-    });
+    // Handled in ChatCubit using connectivity_plus
   }
 
   @override
@@ -71,7 +49,7 @@ class ChatRepositoryImpl implements ChatRepository {
 
     final isNewSession = existingSessionId == null || existingSessionId.isEmpty;
 
-    // 🟢 Only load local messages if it's NOT a new session
+    // Load local messages if not a new session
     if (!isNewSession && _sessionId != null && _sessionId!.isNotEmpty) {
       final localMsgs = await getMessagesForSession(_sessionId!);
       for (var msg in localMsgs) {
@@ -82,7 +60,6 @@ class ChatRepositoryImpl implements ChatRepository {
     }
 
     await _openSocket();
-    startInternetMonitoring();
   }
 
   Future<void> _openSocket() async {
@@ -98,10 +75,8 @@ class ChatRepositoryImpl implements ChatRepository {
 
     print('[WebSocket] Connecting to: $endpoint');
 
-    _channel = IOWebSocketChannel.connect(
-      Uri.parse(endpoint),
-      pingInterval: const Duration(seconds: 25),
-    );
+    // Platform agnostic WebSocket for Web & Mobile
+    _channel = WebSocketChannel.connect(Uri.parse(endpoint));
 
     _socketSub = _channel!.stream.listen(
       _onData,
@@ -116,6 +91,7 @@ class ChatRepositoryImpl implements ChatRepository {
       });
     }
   }
+
   void _onData(dynamic data) async {
     print('[WebSocket] Received: $data');
     final decoded = jsonDecode(data as String);
@@ -152,31 +128,15 @@ class ChatRepositoryImpl implements ChatRepository {
         sessionId: _sessionId ?? '',
       );
       _controller.add(msg);
-       _saveChatMessage(msg);
+      _saveChatMessage(msg);
       _pendingUserMessage = null;
       _pendingUserMessageObject = null;
-    } else {
-      print('[WebSocket] No "answer" in response');
     }
   }
 
-
-
   void _onError(Object error) {
     print('[WebSocket] Error: $error');
-
-    final errorString = error.toString();
-    if (errorString.contains('502')) {
-      _pushSystem("Server gateway issue detected. Please try again later. ❌");
-    } else if (errorString.contains('500') ||
-        errorString.contains('504') ||
-        errorString.contains('Internal Server Error') ||
-        errorString.contains('Gateway Timeout') ||
-        errorString.contains('403')) {
-      _pushSystem("Internal Server Error. Please try again later. ❌");
-    } else {
-      _pushSystem("Unexpected error occurred. Please try again later. ⚠️");
-    }
+    _pushSystem("Unexpected error occurred. Please try again later. ⚠️");
   }
 
   void _onDone() {
@@ -193,7 +153,7 @@ class ChatRepositoryImpl implements ChatRepository {
     });
   }
 
-   void send(String text) {
+  void send(String text) {
     print('[WebSocket] Sending: $text');
     _channel?.sink.add(jsonEncode({'query': text}));
 
@@ -206,11 +166,10 @@ class ChatRepositoryImpl implements ChatRepository {
     _pendingUserMessage = text;
     _pendingUserMessageObject = msg;
     _controller.add(msg);
-    _saveChatMessage(msg); // Save immediately
-    print('Saved initial message: ${msg.text}, id: ${msg.id}, sessionId: ${msg.sessionId}');
+    _saveChatMessage(msg);
 
     if (_sessionId != null && _sessionId!.isNotEmpty) {
-      _pendingUserMessage = null; // Clear if session is already established
+      _pendingUserMessage = null;
     }
   }
 
@@ -254,7 +213,6 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   Future<void> dispose() async {
     _closing = true;
-    await _internetStatusSub?.cancel();
     await _socketSub?.cancel();
     await _channel?.sink.close(status.normalClosure);
     await _controller.close();

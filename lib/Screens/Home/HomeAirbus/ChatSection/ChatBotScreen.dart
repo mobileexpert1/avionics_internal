@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -36,7 +37,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   bool _isListening = false;
   Timer? _speechTimeoutTimer;
 
-
   @override
   void initState() {
     super.initState();
@@ -54,7 +54,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     _speech.stop();
     super.dispose();
   }
-
 
   Future<void> _startListening(BuildContext context) async {
     if (_isListening) return;
@@ -91,10 +90,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           );
         });
 
-        // reset timeout timer every time new speech result arrives
         _speechTimeoutTimer?.cancel();
         _speechTimeoutTimer = Timer(const Duration(seconds: 5), () async {
-          // if no new speech input for 5 sec -> stop listening manually
           if (_isListening) {
             debugPrint("Auto-stopping mic after inactivity");
             await _stopListening(context);
@@ -103,7 +100,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
       },
     );
 
-    // just in case, stop automatically after 60 sec max
     _speechTimeoutTimer?.cancel();
     _speechTimeoutTimer = Timer(const Duration(seconds: 60), () async {
       if (_isListening) {
@@ -142,8 +138,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return BlocProvider(
       create: (_) {
         final cubit = ChatCubit(
@@ -161,15 +155,14 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           leftButton: widget.isComeFromTab == true
               ? const SizedBox()
               : IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Color(0xFF32377D),
-            ),
-            // onPressed: () => Navigator.pop(context),
-            onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-          ),
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Color(0xFF32377D),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                ),
           rightButton: Padding(
             padding: const EdgeInsets.only(right: 12),
             child: InkWell(
@@ -216,99 +209,113 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         ),
         body: BlocListener<ChatCubit, List<Map<String, String>>>(
           listener: (_, _) => _scrollToBottom(),
-          child: Column(
-            children: [
-              Expanded(
-                child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
-                  builder: (context, messages) {
-                    return ListView.builder(
-                      controller: _scrollCtrl,
-                      padding: const EdgeInsets.all(16),
-                      itemCount: messages.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          return Column(
-                            children: [
-                              const SizedBox(height: 18),
-
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: Container(
-                                    width: screenWidth * 0.25,
-                                    height: screenWidth * 0.25,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.transparent,
-                                    ),
-                                    child: ClipOval(
-                                      child: SvgPicture.asset(
-                                        CommonUi.setSvgImage(
-                                          AssetsPath.ChatIcon,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1500),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
+                      builder: (context, messages) {
+                        final screenWidth = MediaQuery.of(context).size.width;
+                        return ListView.builder(
+                          controller: _scrollCtrl,
+                          padding: const EdgeInsets.all(16),
+                          itemCount: messages.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 18),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                      ),
+                                      child: Container(
+                                        width:
+                                            screenWidth *
+                                            (kIsWeb ?  0.06 : 0.25),
+                                        height:
+                                            screenWidth *
+                                            (kIsWeb ?  0.06 : 0.25),
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.transparent,
                                         ),
-                                        width: screenWidth * 0.25,
-                                        height: screenWidth * 0.25,
-                                        fit: BoxFit.contain,
+                                        child: ClipOval(
+                                          child: SvgPicture.asset(
+                                            CommonUi.setSvgImage(
+                                              AssetsPath.ChatIcon,
+                                            ),
+                                            width:
+                                                screenWidth *
+                                                (kIsWeb ? 0.025 : 0.25),
+                                            height:
+                                                screenWidth *
+                                                (kIsWeb ?  0.025 : 0.025),
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
+                                ],
+                              );
+                            }
+                            final message = messages[index - 1];
+
+                            if (message['type'] == 'analyzing') {
+                              return const _AnalyzingIndicator();
+                            }
+
+                            final isUser = message['type'] == 'user';
+                            return Align(
+                              alignment: isUser
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(
+                                  isUser ? 0 : 24,
+                                  isUser ? 8 : 7,
+                                  isUser ? 10 : 0,
+                                  isUser ? 8 : 7,
+                                ),
+                                padding: EdgeInsets.all(isUser ? 12 : 7),
+                                constraints: BoxConstraints(
+                                  maxWidth: screenWidth * 0.8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isUser
+                                      ? const Color(0xFF3F3D56)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  message['text'] ?? '',
+                                  style: TextStyle(
+                                    color: isUser ? Colors.white : Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
-                            ],
-                          );
-                        }
-                        final message = messages[index - 1];
-
-                        if (message['type'] == 'analyzing') {
-                          return const _AnalyzingIndicator();
-                          }
-
-                        final isUser = message['type'] == 'user';
-                        return Align(
-                          alignment: isUser
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: Container(
-                            margin: EdgeInsets.fromLTRB(
-                              isUser ? 0 : 24,
-                              isUser ? 8 : 7,
-                              isUser ? 10 : 0,
-                              isUser ? 8 : 7,
-                            ),
-                            padding: EdgeInsets.all(isUser ? 12 : 7),
-                            constraints: BoxConstraints(
-                              maxWidth: screenWidth * 0.8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isUser
-                                  ? const Color(0xFF3F3D56)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              message['text'] ?? '',
-                              style: TextStyle(
-                                color: isUser ? Colors.white : Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                  Builder(builder: (innerCtx) => _chatInput(innerCtx)),
+                ],
               ),
-              Builder(builder: (innerCtx) => _chatInput(innerCtx)),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
-
 
   Widget _chatInput(BuildContext context) {
     return Column(
@@ -321,18 +328,20 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // ✏️ Text Field
                 Expanded(
                   child: BlocListener<ChatCubit, List<Map<String, String>>>(
                     listener: (ctx, messages) {
-
-                      if (messages.isNotEmpty && messages.last['type'] == 'user') {
+                      if (messages.isNotEmpty &&
+                          messages.last['type'] == 'user') {
                         _controller.clear();
                         _scrollToBottom();
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 13,
+                        vertical: 13,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F8F9),
                         borderRadius: BorderRadius.circular(15),
@@ -356,75 +365,75 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 const SizedBox(width: 10),
                 BlocBuilder<ChatCubit, List<Map<String, String>>>(
                   builder: (context, state) {
-                    final isAnalyzing =
-                    state.any((msg) => msg['type'] == 'analyzing');
+                    final isAnalyzing = state.any(
+                      (msg) => msg['type'] == 'analyzing',
+                    );
                     return ValueListenableBuilder<bool>(
                       valueListenable: _isConnected,
                       builder: (_, isConnected, __) {
                         final hasText = _controller.text.trim().isNotEmpty;
                         final showSendButton = hasText || isAnalyzing;
 
-                        return
-                          GestureDetector(
-                            onLongPressStart: !showSendButton && isConnected
-                                ? (_) => _startListening(context)
-                                : null,
-
-                            onLongPressEnd: !showSendButton && isConnected
-                                ? (_) => _stopListening(context)
-                                : null,
-
-                            onTap: showSendButton && isConnected
-                                ? () {
-                              if (isAnalyzing) return;
-                              final text = _controller.text.trim();
-                              if (text.isNotEmpty) {
-                                context
-                                    .read<ChatCubit>()
-                                    .sendMessage(text);
-                                _controller.clear();
-                                _scrollToBottom();
-                              }
-                            }
-                                : null,
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              height: 44,
-                              width: 44,
-                              decoration: BoxDecoration(
-                                color: isConnected
-                                    ? const Color(0xFF3F3D56)
-                                    : const Color(0xFF9E9E9E),
-                                shape: BoxShape.circle,
-                                boxShadow: _isListening
-                                    ? [
-                                  BoxShadow(
-                                    color: Colors.purple.withOpacity(0.4),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
-                                  )
-                                ]
-                                    : [],
-                              ),
-                              child: Center(
-                                child: showSendButton
-                                    ? (isAnalyzing
-                                    ? const Icon(Icons.stop,
-                                    color: Colors.white, size: 22)
-                                    : SvgPicture.asset(
-                                  CommonUi.setSvgImage(
-                                      AssetsPath.SendIcon),
-                                ))
-                                    : Icon(
-                                  _isListening
-                                      ? Icons.mic_none_rounded
-                                      : Icons.mic_rounded,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              ),
+                        return GestureDetector(
+                          onLongPressStart: !showSendButton && isConnected
+                              ? (_) => _startListening(context)
+                              : null,
+                          onLongPressEnd: !showSendButton && isConnected
+                              ? (_) => _stopListening(context)
+                              : null,
+                          onTap: showSendButton && isConnected
+                              ? () {
+                                  if (isAnalyzing) return;
+                                  final text = _controller.text.trim();
+                                  if (text.isNotEmpty) {
+                                    context.read<ChatCubit>().sendMessage(text);
+                                    _controller.clear();
+                                    _scrollToBottom();
+                                  }
+                                }
+                              : null,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              color: isConnected
+                                  ? const Color(0xFF3F3D56)
+                                  : const Color(0xFF9E9E9E),
+                              shape: BoxShape.circle,
+                              boxShadow: _isListening
+                                  ? [
+                                      BoxShadow(
+                                        color: Colors.purple.withOpacity(0.4),
+                                        blurRadius: 10,
+                                        spreadRadius: 2,
+                                      ),
+                                    ]
+                                  : [],
                             ),
-                          );
+                            child: Center(
+                              child: showSendButton
+                                  ? (isAnalyzing
+                                        ? const Icon(
+                                            Icons.stop,
+                                            color: Colors.white,
+                                            size: 22,
+                                          )
+                                        : SvgPicture.asset(
+                                            CommonUi.setSvgImage(
+                                              AssetsPath.SendIcon,
+                                            ),
+                                          ))
+                                  : Icon(
+                                      _isListening
+                                          ? Icons.mic_none_rounded
+                                          : Icons.mic_rounded,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                            ),
+                          ),
+                        );
                       },
                     );
                   },
@@ -437,7 +446,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     );
   }
 }
-
 
 class _AnalyzingIndicator extends StatefulWidget {
   const _AnalyzingIndicator();
@@ -470,7 +478,6 @@ class _AnalyzingIndicatorState extends State<_AnalyzingIndicator>
           alignment: Alignment.centerLeft,
           child: Container(
             margin: const EdgeInsets.fromLTRB(24, 6, 12, 6),
-            // ⬅️ More space on the left
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
