@@ -29,90 +29,21 @@ class _LockGameCardState extends State<LockGameCard> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     final isWeb = kIsWeb;
 
-    double getResponsiveFont(double mobile, double web) => isWeb ? web : mobile;
-    double getButtonWidth() => isWeb ? screenWidth * 0.15 : 120;
-    double getIconSize() => isWeb ? 60 : 40;
-    double getPadding() => isWeb ? screenWidth * 0.02 : 8;
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(6),
-      child: Stack(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, width: 0.9),
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.grey.shade300, width: 0.8),
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: getPadding()),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: isWeb ? 30 : 20),
-                  // Title
-                  Text(
-                    widget.title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: getResponsiveFont(15, 22),
-                      fontWeight: FontWeight.bold,
-                      color: widget.isLocked ? Colors.grey : const Color(0xFF3F3D56),
-                    ),
-                  ),
-
-                  SizedBox(height: isWeb ? 60 : 40),
-
-                  // Play Button
-                  ElevatedButton(
-                    onPressed: widget.isLocked ? null : widget.onTap,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(getButtonWidth(), isWeb ? 50 : 40),
-                      backgroundColor:
-                      widget.isLocked ? Colors.grey.shade300 : const Color(0xFF3F3D56),
-                      padding: EdgeInsets.symmetric(horizontal: isWeb ? 24 : 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Play game',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: getResponsiveFont(14, 18),
-                        color: widget.isLocked ? Colors.grey : Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // LOCK ICON (if locked)
-          if (widget.isLocked)
-            Positioned(
-              top: isWeb ? 60 : 46,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.LockIcon),
-                  height: getIconSize(),
-                  width: getIconSize(),
-                  color: const Color(0xFF1E80F2),
-                ),
-              ),
-            ),
-
-          // INFO ICON (top-right)
-          Positioned(
-            top: isWeb ? 12 : 6,
-            right: isWeb ? 12 : 6,
+          // INFO ICON
+          Align(
+            alignment: Alignment.topRight,
             child: GestureDetector(
               key: _infoIconKey,
               onTap: () {
@@ -124,12 +55,72 @@ class _LockGameCardState extends State<LockGameCard> {
                       : ["No info available"],
                   position: TooltipPosition.below,
                 );
-                if (widget.onInfoTap != null) widget.onInfoTap!();
+                widget.onInfoTap?.call();
               },
-              child: Icon(
-                Icons.info_outline_rounded,
-                size: getResponsiveFont(18, 24),
-                color: Colors.black,
+              child: Icon(Icons.info_outline_rounded, size: isWeb ? 22 : 20),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // TITLE
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              widget.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isWeb ? 20 : 16,
+                fontWeight: FontWeight.bold,
+                color: widget.isLocked ? Colors.grey : const Color(0xFF3F3D56),
+              ),
+            ),
+          ),
+
+          // WEB & MOBILE DIFFERENT MIDDLE SPACING
+
+          // if (!isWeb) const Spacer(),
+          //
+          SizedBox(
+            height: (widget.isLocked
+                ? MediaQuery.of(context).size.width * 0.03
+                : MediaQuery.of(context).size.width * 0.048),
+          ),
+
+          // LOCK ICON
+          if (widget.isLocked)
+            SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.LockIcon),
+              height: isWeb ? 45 : 36,
+              color: const Color(0xFF1E80F2),
+            ),
+
+          SizedBox(
+            height: (widget.isLocked
+                ? MediaQuery.of(context).size.width * 0.03
+                : MediaQuery.of(context).size.width * 0.057),
+          ),
+
+          // PLAY BUTTON
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: ElevatedButton(
+              onPressed: widget.isLocked ? null : widget.onTap,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                backgroundColor: widget.isLocked
+                    ? Colors.grey.shade300
+                    : const Color(0xFF3F3D56),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'Play game',
+                style: TextStyle(
+                  fontSize: isWeb ? 18 : 14,
+                  color: widget.isLocked ? Colors.grey : Colors.white,
+                ),
               ),
             ),
           ),

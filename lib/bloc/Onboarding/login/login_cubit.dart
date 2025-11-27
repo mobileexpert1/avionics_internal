@@ -99,7 +99,6 @@ class LoginCubit extends Cubit<LoginState> {
       await _auth.signOut();
 
       if (kIsWeb) {
-
         final userCred = await _auth.signInWithPopup(GoogleAuthProvider());
         if (userCred.user == null) return;
 
@@ -260,6 +259,10 @@ class LoginCubit extends Cubit<LoginState> {
     LoginResponseModel result,
   ) async {
     if (result.userDetails != null) {
+      // On Hold Avtar Model
+      await SharedPrefsHelper.setAvtarUserType(
+        result.userDetails?.userType ?? '',
+      );
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);

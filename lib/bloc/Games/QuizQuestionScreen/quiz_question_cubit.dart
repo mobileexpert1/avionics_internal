@@ -851,28 +851,39 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       };
 
       try {
-        await QuizQuestionRepository().submitResult(payload, gameId);
+        final response = await QuizQuestionRepository().submitResult(
+          payload,
+          gameId,
+        );
+
+        if (response.detail.toLowerCase() ==
+            "quiz answer submitted successfully".toLowerCase()) {
+          final percent = (state.correctAnswers / maxQuestions) * 100;
+          final winAchieved = percent >= 80;
+          Future.delayed(const Duration(milliseconds: 100), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CalculationResultScreen(
+                  correctedAnswer: state.correctAnswers,
+                  totalQuestion: maxQuestions,
+                  score: finalScore,
+                  winAchieved: winAchieved,
+                  bonusPoints: state.bonusPoints,
+                ),
+              ),
+            );
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Result submit failed. Try again.")));
+          emit(
+            state.copyWith(errorMessage: "Result submit failed. Try again."),
+          );
+        }
       } catch (e) {
+        ScaffoldMessenger.of(context,).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
         emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
       }
-      // Navigate to result screen
-      final percent = (state.correctAnswers / maxQuestions) * 100;
-      final winAchieved = percent >= 80;
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CalculationResultScreen(
-              correctedAnswer: state.correctAnswers,
-              totalQuestion: maxQuestions,
-              score: finalScore,
-              winAchieved: winAchieved,
-              bonusPoints: state.bonusPoints,
-            ),
-          ),
-        );
-      });
     }
     // If loading more
     else if (state.isLoading) {

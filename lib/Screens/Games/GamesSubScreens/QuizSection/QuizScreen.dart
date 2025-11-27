@@ -41,7 +41,11 @@ class QuizDetailScreen extends StatelessWidget {
         appBar: CustomAppBar(
           title: 'Quiz',
           leftButton: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: isWeb ? 28 : 20),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+              size: isWeb ? 28 : 20,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -56,9 +60,7 @@ class QuizDetailScreen extends StatelessWidget {
                 onStartGame: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const QuizLockScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const QuizLockScreen()),
                   );
                 },
               ),

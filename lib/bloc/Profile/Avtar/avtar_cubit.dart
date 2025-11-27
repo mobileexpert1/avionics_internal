@@ -79,10 +79,11 @@ class AvtarCubit extends Cubit<AvtarState> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-              (defaultTargetPlatform == TargetPlatform.iOS ? AppleSubscriptionScreen(isComeFromSignup: true) : SubscriptionScreen(
-                isComeFromSocialLogin: isComeFromSocialLogin,
-              )),
+              builder: (context) => (defaultTargetPlatform == TargetPlatform.iOS
+                  ? AppleSubscriptionScreen(isComeFromSignup: true)
+                  : SubscriptionScreen(
+                      isComeFromSocialLogin: isComeFromSocialLogin,
+                    )),
             ),
           );
         }
