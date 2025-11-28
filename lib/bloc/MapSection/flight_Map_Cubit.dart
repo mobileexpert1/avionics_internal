@@ -320,13 +320,22 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
+      ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('Error fetching flight details: ${e.toString()}'),
+        ),
+      );
       emit(
         state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: 'Error fetching flight details: ${e.toString()}',
           isLoading: false,
         ),
       );
+      // emit(
+      //   state.copyWith(
+      //     status: CommonApiStatus.failure,
+      //     errorMessage: 'Error fetching flight details: ${e.toString()}',
+      //     isLoading: false,
+      //   ),
+      // );
     }
   }
 
