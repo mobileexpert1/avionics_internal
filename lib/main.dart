@@ -48,20 +48,13 @@ Future<void> main() async {
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
 
-  // ✅ Crashlytics setup (ONLY for mobile)
-  if (!kIsWeb) {
-    FlutterError.onError =
-        FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // ✅ Crashlytics setup
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-  } else {
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.dumpErrorToConsole(details);
-    };
-  }
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   if (!kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.windows ||
@@ -80,7 +73,6 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

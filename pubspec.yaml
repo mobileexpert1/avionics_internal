@@ -70,6 +70,7 @@ dependencies:
   geocoding:
   intl:
   universal_html:
+  animated_text_kit: ^4.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

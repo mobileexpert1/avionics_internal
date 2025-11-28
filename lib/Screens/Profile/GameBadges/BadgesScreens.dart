@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:avionics_internal/RootDecider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,15 +12,18 @@ import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../bloc/Profile/GameBadges/gameBadges_cubit.dart';
 import '../../../bloc/Profile/GameBadges/gameBadges_state.dart';
 import '../../../bloc/Profile/GameBadges/gameBadges_model.dart';
+import '../../Home/HomeScreen.dart';
 
 class BadgesScreen extends StatefulWidget {
   final int userWins;
   final int totalPoints;
+  final bool fromResultScreen;
 
   const BadgesScreen({
     super.key,
     required this.userWins,
     required this.totalPoints,
+    this.fromResultScreen = false,
   });
 
   @override
@@ -79,10 +83,25 @@ class _BadgesScreenState extends State<BadgesScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Badges',
+          // leftButton: IconButton(
+          //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          //   onPressed: () => Navigator.of(context).pop(),
+          // ),
+
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              if (widget.fromResultScreen) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootDecider()),
+                );
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
           ),
+
         ),
         body: BlocBuilder<BadgesCubit, BadgesState>(
           builder: (context, state) {

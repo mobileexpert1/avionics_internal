@@ -7,6 +7,7 @@
       "name": "avionics_internal",
       "version": "1.0.0+1",
       "dependencies": [
+        "animated_text_kit",
         "cached_network_image",
         "cloud_firestore",
         "connectivity_plus",
@@ -86,6 +87,14 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "animated_text_kit",
+      "version": "4.3.0",
+      "dependencies": [
+        "characters",
+        "flutter"
       ]
     },
     {
