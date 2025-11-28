@@ -57,12 +57,14 @@ class _LockGameCardState extends State<LockGameCard> {
                 );
                 widget.onInfoTap?.call();
               },
-              child: Icon(Icons.info_outline_rounded, size: isWeb ? 22 : 20),
+              child: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.infoIcon2),
+                width: isWeb ? 22 : 20,
+                height: isWeb ? 22 : 20,
+              ),
             ),
           ),
-
           const SizedBox(height: 10),
-
           // TITLE
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),

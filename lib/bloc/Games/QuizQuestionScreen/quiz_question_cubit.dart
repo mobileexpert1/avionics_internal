@@ -858,18 +858,18 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
         if (response.detail.toLowerCase() ==
             "quiz answer submitted successfully".toLowerCase()) {
-          final percent = (state.correctAnswers / maxQuestions) * 100;
-          final winAchieved = percent >= 80;
+          final data = response.data;
           Future.delayed(const Duration(milliseconds: 100), () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => CalculationResultScreen(
-                  correctedAnswer: state.correctAnswers,
-                  totalQuestion: maxQuestions,
-                  score: finalScore,
-                  winAchieved: winAchieved,
-                  bonusPoints: state.bonusPoints,
+                  correctedAnswer: data.correctAnswers,
+                  totalQuestion: data.totalQuestions,
+                  score: data.earnedPoints,
+                  bonusPoints: data.additionalPoints,
+                  isEarnedBadge: data.isEarnedBadge,
+                  badgeName: data.badgeName,
                 ),
               ),
             );

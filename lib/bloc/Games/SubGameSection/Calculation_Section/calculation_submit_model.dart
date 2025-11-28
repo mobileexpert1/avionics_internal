@@ -1,6 +1,6 @@
 class SubmitCalculationResultResponse {
   final String detail;
-  final Map<String, dynamic> data;
+  final SubmitCalculationResultData data;
 
   SubmitCalculationResultResponse({
     required this.detail,
@@ -10,13 +10,13 @@ class SubmitCalculationResultResponse {
   factory SubmitCalculationResultResponse.fromJson(Map<String, dynamic> json) {
     return SubmitCalculationResultResponse(
       detail: json['detail'] ?? 'No detail provided',
-      data: json['data'] is Map<String, dynamic> ? json['data'] : {},
+      data: SubmitCalculationResultData.fromJson(json['data'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() => {
     'detail': detail,
-    'data': data,
+    'data': data.toJson(),
   };
 }
 
@@ -27,6 +27,8 @@ class SubmitCalculationResultData {
   final int correctPoints;
   final int earnedPoints;
   final int additionalPoints;
+  final bool isEarnedBadge;
+  final String badgeName;
 
   SubmitCalculationResultData({
     required this.percentage,
@@ -35,6 +37,8 @@ class SubmitCalculationResultData {
     required this.correctPoints,
     required this.earnedPoints,
     required this.additionalPoints,
+    required this.isEarnedBadge,
+    required this.badgeName,
   });
 
   factory SubmitCalculationResultData.fromJson(Map<String, dynamic> json) {
@@ -45,6 +49,19 @@ class SubmitCalculationResultData {
       correctPoints: json['correct_points'] ?? 0,
       earnedPoints: json['earned_points'] ?? 0,
       additionalPoints: json['additional_points'] ?? 0,
+      isEarnedBadge: json['is_earned_badge'] ?? false,
+      badgeName: json['badge_name'] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'percentage': percentage,
+    'total_questions': totalQuestions,
+    'correct_answers': correctAnswers,
+    'correct_points': correctPoints,
+    'earned_points': earnedPoints,
+    'additional_points': additionalPoints,
+    'is_earned_badge': isEarnedBadge,
+    'badge_name': badgeName,
+  };
 }

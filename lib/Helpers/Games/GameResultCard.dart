@@ -44,8 +44,22 @@ class GameResultCard extends StatelessWidget {
           ),
           child: Column(
             children: [
+              // const SizedBox(height: 12),
+              // SvgPicture.asset(
+              //   CommonUi.setSvgImage(AssetsPath.resultIcon),
+              //   height: 100,
+              //   width: 100,
+              // ),
+              // const SizedBox(height: 12),
+
               const SizedBox(height: 12),
-              SvgPicture.asset(
+              (score / total) >= 0.8
+                  ? Image.asset(
+                'assets/svg_images/result.gif',
+                height: 120,
+                width: 120,
+              )
+                  : SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.resultIcon),
                 height: 100,
                 width: 100,

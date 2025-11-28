@@ -11,14 +11,16 @@ class CalculationResultScreen extends StatefulWidget {
     required this.totalQuestion,
     required this.correctedAnswer,
     required this.score,
-    required this.winAchieved,
+    required this.isEarnedBadge,
+    required this.badgeName,
     required this.bonusPoints,
   });
 
   final int totalQuestion;
   final int correctedAnswer;
   final int score;
-  final bool winAchieved;
+  final bool isEarnedBadge;
+  final String badgeName;
   final int bonusPoints;
 
   @override
@@ -41,7 +43,9 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
             if (widget.bonusPoints > 0)
               '+${widget.bonusPoints} point${widget.bonusPoints == 1 ? '' : 's'} for time bonus',
           ],
-          badgeText: widget.winAchieved ? 'Aviation Master Badge Earned' : null,
+          badgeText: widget.isEarnedBadge
+              ? '${widget.badgeName} badge earned'
+              : null,
         ),
       child: Scaffold(
         backgroundColor: Colors.white,
