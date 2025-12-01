@@ -218,8 +218,10 @@ class ApiFunctionUrlGamesConstant {
   static const oneWordQuestions = "ai-engine/games/one-word/questions/";
   static const calculationSubmit = "ai-engine/games/calculation/";
   static const oneWordSubmit = "ai-engine/games/one-word/";
-  static const quiz = "ai-engine/games/quiz/";
-  static const quizQuestions = "ai-engine/games/quiz/questions/";
+  //static const quiz = "ai-engine/games/quiz/";
+  //static const quizQuestions = "ai-engine/games/quiz/questions/";
+  static const quiz = "quiz/"; // New Url Changed By Mohan Sir...
+  static const quizQuestions = "quiz/questions/";
   static const blackBoxSummary = "/blackbox/summary";
   static const blackBoxQuestions = "blackbox/question";
   static const blackBoxSubmit = "blackbox/submit";
