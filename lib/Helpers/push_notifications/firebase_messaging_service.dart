@@ -11,8 +11,16 @@ class FirebaseMessagingService {
     // Initialize local notifications
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings iosSettings =
+    DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
     const InitializationSettings initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid);
+    InitializationSettings(android: initializationSettingsAndroid,iOS: iosSettings);
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
@@ -33,6 +41,27 @@ class FirebaseMessagingService {
     });
   }
 
+  // Future<void> _showNotification(RemoteMessage message) async {
+  //   const AndroidNotificationDetails androidDetails =
+  //   AndroidNotificationDetails(
+  //     'channel_id',
+  //     'channel_name',
+  //     channelDescription: 'channel_description',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //   );
+  //
+  //   const NotificationDetails platformDetails =
+  //   NotificationDetails(android: androidDetails);
+  //
+  //   await _flutterLocalNotificationsPlugin.show(
+  //     message.hashCode,
+  //     message.notification?.title,
+  //     message.notification?.body,
+  //     platformDetails,
+  //   );
+  // }
+
   Future<void> _showNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidDetails =
     AndroidNotificationDetails(
@@ -43,14 +72,24 @@ class FirebaseMessagingService {
       priority: Priority.high,
     );
 
-    const NotificationDetails platformDetails =
-    NotificationDetails(android: androidDetails);
+    // iOS
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     await _flutterLocalNotificationsPlugin.show(
       message.hashCode,
-      message.notification?.title,
-      message.notification?.body,
+      message.notification?.title ?? 'Notification',
+      message.notification?.body ?? '',
       platformDetails,
     );
   }
+
 }
