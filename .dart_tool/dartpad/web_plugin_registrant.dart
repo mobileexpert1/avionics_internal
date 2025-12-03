@@ -8,8 +8,10 @@
 
 import 'package:cloud_firestore_web/cloud_firestore_web.dart';
 import 'package:connectivity_plus/src/connectivity_plus_web.dart';
+import 'package:device_info_plus/src/device_info_plus_web.dart';
 import 'package:firebase_auth_web/firebase_auth_web.dart';
 import 'package:firebase_core_web/firebase_core_web.dart';
+import 'package:firebase_messaging_web/firebase_messaging_web.dart';
 import 'package:flutter_facebook_auth_web/flutter_facebook_auth_web.dart';
 import 'package:flutter_secure_storage_web/flutter_secure_storage_web.dart';
 import 'package:geolocator_web/geolocator_web.dart';
@@ -26,8 +28,10 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   final Registrar registrar = pluginRegistrar ?? webPluginRegistrar;
   FirebaseFirestoreWeb.registerWith(registrar);
   ConnectivityPlusWebPlugin.registerWith(registrar);
+  DeviceInfoPlusWebPlugin.registerWith(registrar);
   FirebaseAuthWeb.registerWith(registrar);
   FirebaseCoreWeb.registerWith(registrar);
+  FirebaseMessagingWeb.registerWith(registrar);
   FlutterFacebookAuthPlugin.registerWith(registrar);
   FlutterSecureStorageWeb.registerWith(registrar);
   GeolocatorPlugin.registerWith(registrar);

@@ -8,6 +8,21 @@ class SharedPrefsHelper {
   static const String _isUserRefreshTokenKey = 'UserRefreshTokenKey';
   static const String _isAvtarForProfileKey = 'AvtarForProfileKey';
   static const String isMapKeyValues = 'MapKeyValues';
+  static const String fcmTokenKey = 'fcm_token_key';
+
+
+  static Future<void> saveFCMToken(String deviceId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(fcmTokenKey, deviceId);
+  }
+  static Future<String?> getFCMToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(fcmTokenKey);
+  }
+  static Future<void> clearFCMToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(fcmTokenKey);
+  }
 
   static Future<void> saveEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();

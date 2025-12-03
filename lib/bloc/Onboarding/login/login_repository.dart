@@ -1,7 +1,9 @@
 import '../../../Constants/ApiClass/api_service.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Database/auth_storage.dart';
 import '../../../Database/generic_methods.dart';
+import '../../../Helpers/DeviceInfo.dart';
 import 'login_response_model.dart';
 
 class LoginRepository {
@@ -17,13 +19,25 @@ class LoginRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
+
           ApiServiceUrlConstant.signIn,
     );
 
     try {
+
+      String? fcmToken = await SharedPrefsHelper.getFCMToken();
+      final deviceDetails = await DeviceInfoHelper.getDeviceDetails();
+      final Map<String, dynamic> body = {
+        "email": email,
+        "password": password,
+        "fcm": {
+          "token": fcmToken ?? "",
+          ...deviceDetails,
+        }
+      };
       final user = await ApiService.post(
         url: url,
-        body: {"email": email, "password": password},
+        body:body,
       );
       final response = LoginResponseModel.fromJson(user);
 
