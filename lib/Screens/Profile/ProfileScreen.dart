@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
 import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
+import 'package:avionics_internal/Screens/Profile/VideoPlayer/VideoPlayerScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
 import 'package:flutter/foundation.dart';
@@ -224,6 +225,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "FEEDBACK",
                   showBottomDivider: false,
                   items: [
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.reviewsAcc,
+                      ),
+                      title: "Tutorial Screen",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VideoPlayerScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.reviewsAcc,

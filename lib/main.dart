@@ -56,13 +56,17 @@ Future<void> main() async {
   FirebaseMessagingService().initialize();
   FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
 
-  // ✅ Crashlytics setup
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  if (!kIsWeb) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } else {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details);
+    };
+  }
 
   if (!kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.windows ||
@@ -79,10 +83,23 @@ Future<void> main() async {
     await DBHelper.database;
   }
 
-  if (!kIsWeb) {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        debugPrint("FCM Token: $token");
+        await SharedPrefsHelper.saveFCMToken(token);
+      } else {
+        debugPrint("⚠️ FCM token not ready yet.");
+      }
+    } catch (e) {
+      debugPrint("⚠️ FCM token not ready yet: $e");
+    }
+  } else {
+    // Android & Web
     String? token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
-      print("fcm token------------- $token");
+      debugPrint("FCM Token: $token");
       await SharedPrefsHelper.saveFCMToken(token);
     }
   }
