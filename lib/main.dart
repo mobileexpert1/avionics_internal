@@ -3,11 +3,15 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/bla
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'Constants/ApiClass/shared_prefs_helper.dart';
 import 'Database/db_helper.dart';
+import 'Helpers/push_notifications/firebase_message_handler.dart';
+import 'Helpers/push_notifications/firebase_messaging_service.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -48,6 +52,10 @@ Future<void> main() async {
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
 
+  // Push Notification
+  FirebaseMessagingService().initialize();
+  FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
+
   // ✅ Crashlytics setup
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
@@ -69,6 +77,14 @@ Future<void> main() async {
   if (!kIsWeb) {
     await printDbPath();
     await DBHelper.database;
+  }
+
+  if (!kIsWeb) {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      print("fcm token------------- $token");
+      await SharedPrefsHelper.saveFCMToken(token);
+    }
   }
 
   runApp(const MyApp());

@@ -380,6 +380,7 @@
 // }
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
@@ -793,9 +794,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       final categories = state.categorizedQuestions.entries.map((entry) {
         final categoryName = entry.key; // category.name
-        final questions = entry.value
-            .where((q) => state.questions.contains(q))
-            .toList();
+        // final questions = entry.value
+        //     .where((q) => state.questions.contains(q))
+        //     .toList();
+        final questions = entry.value;
         final categoryType =
             categoryTypeMap[categoryName] ??
             categoryName; // Use numeric type or fallback
