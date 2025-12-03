@@ -81,5 +81,17 @@
      <string>This app needs access to speech recognition for voice input.</string>
      <key>NSMicrophoneUsageDescription</key>
      <string>This app needs access to your microphone to capture voice input.</string>
+
+     	<key>FirebaseAppDelegateProxyEnabled</key>
+     	<true/>
+     	<key>NSUserNotificationAlertStyle</key>
+     	<string>alert</string>
+     	<key>UNUserNotificationCenterDelegate</key>
+     	<true/>
+     	<key>UIBackgroundModes</key>
+     	<array>
+     		<string>remote-notification</string>
+     		<string>fetch</string>
+     	</array>
 </dict>
 </plist>
