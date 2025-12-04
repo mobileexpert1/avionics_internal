@@ -81,7 +81,8 @@ class AvtarCubit extends Cubit<AvtarState> {
             MaterialPageRoute(
               builder: (context) => (defaultTargetPlatform == TargetPlatform.iOS
                   ? AppleSubscriptionScreen(isComeFromSignup: true)
-                  : SubscriptionScreen(
+                  : AppleSubscriptionScreen(
+                      isComeFromSignup: true,
                       isComeFromSocialLogin: isComeFromSocialLogin,
                     )),
             ),

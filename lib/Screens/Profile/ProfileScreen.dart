@@ -115,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? AppleSubscriptionScreen(
                                     isComeFromSignup: false,
                                   )
-                                : ProfileSubscriptionScreen()),
+                                :  AppleSubscriptionScreen(isComeFromSignup: false)),
                           ),
                         );
                       },

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,8 +15,9 @@ import '../../../Home/RootTabbar/RootTabbarScreen.dart';
 
 class AppleSubscriptionScreen extends StatefulWidget {
   final bool? isComeFromSignup;
+  final bool? isComeFromSocialLogin;
 
-  const AppleSubscriptionScreen({super.key, this.isComeFromSignup});
+  const AppleSubscriptionScreen({super.key, this.isComeFromSignup, this.isComeFromSocialLogin});
 
   @override
   _AppleSubscriptionScreenState createState() =>
@@ -307,7 +310,7 @@ class _SubscriptionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product.title,
+                   product.title,
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 13,
