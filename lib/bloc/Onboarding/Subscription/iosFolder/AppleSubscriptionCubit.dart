@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,10 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     'premium_subscription_monthly_iOS_Seven_Free_Days',
     'premium_subscription_yearly_iOS_Seven_Free_Days',
   };
+  // static const _androidProductIds = {
+  //   'premium-monthly',
+  //   'premium-yearly',
+  // };
 
   StreamSubscription<List<PurchaseDetails>>? _subscription;
 
@@ -68,6 +73,11 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       emit(state.copyWith(loading: true));
       final response = await _iap.queryProductDetails(_productIds);
 
+      // final response = await _iap.queryProductDetails(Platform.isIOS?_productIds:_androidProductIds);
+      // print("Querying products: $_androidProductIds");
+      // print("Response error: ${response.error}");
+      // print("Unavailable: ${response.notFoundIDs}");
+      // print("Products fetched: ${response.productDetails}");
       if (response.error != null) {
         emit(state.copyWith(loading: false, error: response.error!.message));
         return;

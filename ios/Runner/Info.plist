@@ -84,10 +84,6 @@
 
      	<key>FirebaseAppDelegateProxyEnabled</key>
      	<true/>
-     	<key>NSUserNotificationAlertStyle</key>
-     	<string>alert</string>
-     	<key>UNUserNotificationCenterDelegate</key>
-     	<true/>
      	<key>UIBackgroundModes</key>
      	<array>
      		<string>remote-notification</string>
