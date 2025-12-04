@@ -52,14 +52,8 @@ Future<void> main() async {
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
 
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    FirebaseMessagingService().initialize();
-    FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
-  });
-
-  // Push Notification
-  // FirebaseMessagingService().initialize();
-  // FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
+  FirebaseMessagingService().initialize();
+  FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
 
   if (!kIsWeb) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
