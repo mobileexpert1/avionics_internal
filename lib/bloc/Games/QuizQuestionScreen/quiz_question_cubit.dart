@@ -399,6 +399,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   bool isNoMoreQuestionArrived = false;
   final String gameId;
   int _totalDuration = 40;
+  int _quizTypesId = 0;
   DateTime? _startTime;
 
   QuizQuestionCubit(
@@ -410,6 +411,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
        super(QuizQuestionState.initial()) {
     const gameDurations = {"quiz": 120, "calculation": 40, "one_word": 40};
 
+    _quizTypesId = sectionId;
     _totalDuration = gameDurations[gameId] ?? 40;
     loadQuestions(sectionId, context);
   }
@@ -850,6 +852,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "level": state.level,
         "difficulty": state.difficulty,
         "categories": categories,
+        "game_number":_quizTypesId
       };
 
       try {

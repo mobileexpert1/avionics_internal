@@ -65,7 +65,7 @@ class QuizLockScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => QuizQuestionScreen(
-                                  sectionId: 1,
+                                  sectionId: game.gameNumber,
                                   sectionTitle: ConstantStrings.aviationQuizTitle,
                                   gameId: "quiz",
                                 ),

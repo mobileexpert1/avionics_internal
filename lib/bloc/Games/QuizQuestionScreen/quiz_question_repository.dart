@@ -162,10 +162,9 @@ class QuizQuestionRepository {
     // }
 
     final gameNumber = payload['game_number'] ?? 1;
-    if (!gameNoAssign.containsKey(gameNumber)) {
-      throw "Invalid game number in payload: $gameNumber";
-    }
-
+    // if (!gameNoAssign.containsKey(gameNumber)) {
+    //   throw "Invalid game number in payload: $gameNumber";
+    // }
     // Select the appropriate submit URL based on gameId
     String submitUrl;
     if (gameId == "calculation") {
