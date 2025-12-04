@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/startExploringScreen.dart';
 import 'package:avionics_internal/Screens/Onboarding/Splash/widgets/OnboardingPages.dart';
@@ -45,6 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   fit: BoxFit.fill,
                 ),
               ),
+        videoUrl: "",
       ),
       OnboardingInfo(
         title: ConstantStrings.title2,
@@ -60,6 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
+        videoUrl: "",
       ),
       OnboardingInfo(
         title: ConstantStrings.title3,
@@ -78,6 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   fit: BoxFit.fill,
                 ),
               ),
+        videoUrl: "",
       ),
       OnboardingInfo(
         title: ConstantStrings.title4,
@@ -96,6 +101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
+        videoUrl: "",
       ),
       OnboardingInfo(
         title: ConstantStrings.title5,
@@ -113,6 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
+        videoUrl: "",
       ),
       OnboardingInfo(
         title: ConstantStrings.title6,
@@ -131,6 +138,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
+        videoUrl: "",
+      ),
+
+      OnboardingInfo(
+        title: "",
+        description: "",
+        imageWidget: Wrap(),
+        videoUrl:
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
       ),
     ];
 
@@ -144,15 +160,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              PageView.builder(
-                controller: _controller,
-                itemCount: pages.length,
-                onPageChanged: (index) {
-                  setState(() => onLastPage = index == pages.length - 1);
-                },
-                itemBuilder: (context, index) {
-                  return OnboardingPage(info: pages[index]);
-                },
+              ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.trackpad,
+                  },
+                ),
+                child: PageView.builder(
+                  controller: _controller,
+                  itemCount: pages.length,
+                  onPageChanged: (index) {
+                    setState(() => onLastPage = index == pages.length - 1);
+                  },
+                  itemBuilder: (context, index) {
+                    return OnboardingPage(info: pages[index]);
+                  },
+                ),
               ),
 
               // --- SmoothPageIndicator ---

@@ -2,8 +2,10 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
 import '../../../../bloc/home/chatSection/ChatHistory/chat_history_state.dart';
 import 'ChatBotScreen.dart';
@@ -51,47 +53,80 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           return ListView(
             padding: const EdgeInsets.all(15),
             children: state.chatList.map((item) {
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(
-                    color: Colors.grey, // set your border color here
-                    width: 0.2, // set your border width here
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: ListTile(
-                  title: Text(
-                    item.title,
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 15.0),
-                  onTap: () async {
-                    final token =
-                        await SharedPrefsHelper.getUserAccessToken() ?? '';
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AskWilcoScreen(
-                          accessToken: token,
-                          isComeFromTab: false,
-                          sessionId: item.id,
-                          title: item.title,
-                        ),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Slidable(
+                  key: ValueKey(item.id),
+                  endActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (_) {
+                          AppSnackBar.custom(
+                            context,
+                            message: "Bookmark Saved",
+                            svgAsset: "",
+                          );
+                        },
+                        backgroundColor: Colors.blueAccent,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit_note,
+                        label: 'Edit',
                       ),
-                      (route) =>
-                          route.settings.name == 'HomeScreen' || route.isFirst,
-                    );
-                  },
+                      SlidableAction(
+                        onPressed: (_) {
+                          AppSnackBar.custom(
+                            context,
+                            message: "Bookmark Saved",
+                            svgAsset: "",
+                          );
+                        },
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Delete',
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.grey, width: 0.2),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 8,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        item.title,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 15.0),
+                      onTap: () async {
+                        final token =
+                            await SharedPrefsHelper.getUserAccessToken() ?? '';
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AskWilcoScreen(
+                              accessToken: token,
+                              isComeFromTab: false,
+                              sessionId: item.id,
+                              title: item.title,
+                            ),
+                          ),
+                          (route) =>
+                              route.settings.name == 'HomeScreen' ||
+                              route.isFirst,
+                        );
+                      },
+                    ),
+                  ),
                 ),
               );
             }).toList(),

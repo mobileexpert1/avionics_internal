@@ -7,7 +7,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
   Future<void> initialize() async {
     final String urlVideo =
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4";
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
 
     final controller = VideoPlayerController.networkUrl(Uri.parse(urlVideo));
 
