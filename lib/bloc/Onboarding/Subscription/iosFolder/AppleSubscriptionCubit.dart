@@ -21,6 +21,10 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   //   'premium-yearly',
   // };
 
+  final Set<String> _androidProductIds = {
+    'avioflai_premium',
+  };
+
   StreamSubscription<List<PurchaseDetails>>? _subscription;
 
   AppleSubscriptionCubit() : super(AppleSubscriptionState()) {
@@ -71,13 +75,9 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   Future<void> _loadProducts() async {
     try {
       emit(state.copyWith(loading: true));
-      final response = await _iap.queryProductDetails(_productIds);
+      //final response = await _iap.queryProductDetails(_productIds);
+      final response = await _iap.queryProductDetails(Platform.isIOS?_productIds:_androidProductIds);
 
-      // final response = await _iap.queryProductDetails(Platform.isIOS?_productIds:_androidProductIds);
-      // print("Querying products: $_androidProductIds");
-      // print("Response error: ${response.error}");
-      // print("Unavailable: ${response.notFoundIDs}");
-      // print("Products fetched: ${response.productDetails}");
       if (response.error != null) {
         emit(state.copyWith(loading: false, error: response.error!.message));
         return;
@@ -151,8 +151,8 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             await AppleSubscriptionRepository().postSubscriptionApi(
               token: purchase.verificationData.serverVerificationData,
               selectedSubscritionId: purchase.productID,
-              platform: "ios",
-              packageName: "",
+              platform: Platform.isIOS ? "ios" : "android",
+              packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
             );
 
             emit(

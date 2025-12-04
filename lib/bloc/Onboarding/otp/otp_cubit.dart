@@ -42,7 +42,7 @@ class OtpCubit extends Cubit<OtpState> {
           builder: (_) => (isFromSignup == true)
               ? (defaultTargetPlatform == TargetPlatform.iOS
                     ? AppleSubscriptionScreen(isComeFromSignup: true)
-                    : SubscriptionScreen())
+                    : AppleSubscriptionScreen(isComeFromSignup: true))
               : CreateNewPasswordScreen(email: email),
         ),
       );

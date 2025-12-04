@@ -51,38 +51,23 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
-
-  FirebaseMessagingService().initialize();
-  FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
-
   if (!kIsWeb) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-  } else {
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.dumpErrorToConsole(details);
-    };
-  }
+    FirebaseMessagingService().initialize();
+    FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
 
-  if (!kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.windows ||
-          defaultTargetPlatform == TargetPlatform.linux ||
-          defaultTargetPlatform == TargetPlatform.macOS)) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
+    if (!kIsWeb) {
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    } else {
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.dumpErrorToConsole(details);
+      };
+    }
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  if (!kIsWeb) {
-    await printDbPath();
-    await DBHelper.database;
-  }
-
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
     try {
       String? token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
@@ -92,17 +77,24 @@ Future<void> main() async {
         debugPrint("⚠️ FCM token not ready yet.");
       }
     } catch (e) {
-      debugPrint("⚠️ FCM token not ready yet: $e");
-    }
-  } else {
-    // Android & Web
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token != null) {
-      debugPrint("FCM Token: $token");
-      await SharedPrefsHelper.saveFCMToken(token);
+      debugPrint("⚠️ Error fetching FCM token: $e");
     }
   }
 
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    if (!kIsWeb) {
+      await printDbPath();
+      await DBHelper.database;
+    }
   runApp(const MyApp());
 }
 
