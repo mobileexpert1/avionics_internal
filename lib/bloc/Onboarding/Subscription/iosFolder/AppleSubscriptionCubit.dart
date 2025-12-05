@@ -23,6 +23,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
   final Set<String> _androidProductIds = {
     'avioflai_premium',
+    'avioflai_premium_yearly',
   };
 
   StreamSubscription<List<PurchaseDetails>>? _subscription;
@@ -93,6 +94,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       emit(state.copyWith(loading: false, error: "Error loading products: $e"));
     }
   }
+
 
   /// User selects a plan
   void selectPlan(ProductDetails product) {
