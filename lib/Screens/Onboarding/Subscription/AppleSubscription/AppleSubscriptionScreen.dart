@@ -80,6 +80,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
         builder: (context, state) {
           final selectedProduct = state.selectedProduct;
           final products = state.products;
+          print("products==> ${products}");
 
           return Stack(
             children: [
@@ -288,9 +289,15 @@ class _SubscriptionCard extends StatelessWidget {
     required this.trialText,
     required this.onTap,
   });
-
+  String cleanTitle(String title) {
+    if (title.contains("(")) {
+      return title.substring(0, title.indexOf("(")).trim();
+    }
+    return title;
+  }
   @override
   Widget build(BuildContext context) {
+print(product.description);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -310,7 +317,7 @@ class _SubscriptionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                   product.title,
+                  cleanTitle(product.title),
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 13,
