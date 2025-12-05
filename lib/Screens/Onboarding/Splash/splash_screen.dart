@@ -1,3 +1,5 @@
+import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _navigateAfterDelay();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.splashScreen);
   }
 
   Future<void> _navigateAfterDelay() async {

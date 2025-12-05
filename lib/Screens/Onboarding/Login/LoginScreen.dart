@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -25,6 +27,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.loginScreen,
+    );
+  }
 
   @override
   void dispose() {
@@ -131,6 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (context) => ForgotScreen(),
                                   ),
                                 );
+                                AnalyticsService.instance.buttonPressed(FirebaseEvents.forgotButton, FirebaseEvents.loginScreen);
                               },
                               child: Text(
                                 ConstantStrings.forgotPassword,
@@ -212,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (context) => SignupScreen(),
                                   ),
                                 );
+                                AnalyticsService.instance.buttonPressed(FirebaseEvents.signupButton, FirebaseEvents.loginScreen);
                               },
                               child: Text(
                                 ConstantStrings.signUpPrompt,

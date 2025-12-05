@@ -34,9 +34,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
         HomeScreen(),
         BlocProvider(
           create: (context) => FlightMapCubit(),
-          child: FlightMapScreen(
-            onGoToFirstTab: () => onItemTapped(0),
-          ),
+          child: FlightMapScreen(onGoToFirstTab: () => onItemTapped(0)),
         ),
         GamesScreen(),
         token != null && token.isNotEmpty

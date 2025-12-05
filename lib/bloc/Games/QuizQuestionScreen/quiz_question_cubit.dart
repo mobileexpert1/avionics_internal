@@ -852,7 +852,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "level": state.level,
         "difficulty": state.difficulty,
         "categories": categories,
-        "game_number":_quizTypesId
+        "game_number": _quizTypesId,
       };
 
       try {
@@ -880,13 +880,17 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             );
           });
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Result submit failed. Try again.")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Result submit failed. Try again.")),
+          );
           emit(
             state.copyWith(errorMessage: "Result submit failed. Try again."),
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context,).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
         emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
       }
     }

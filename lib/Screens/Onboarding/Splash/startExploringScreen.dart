@@ -1,6 +1,8 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../Login/LoginScreen.dart';
@@ -21,7 +23,20 @@ class StartExploringApp extends StatelessWidget {
   }
 }
 
-class StartExploringScreen extends StatelessWidget {
+class StartExploringScreen extends StatefulWidget {
+  @override
+  State<StartExploringScreen> createState() => _StartExploringScreenState();
+}
+
+class _StartExploringScreenState extends State<StartExploringScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.startExploringScreen,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;

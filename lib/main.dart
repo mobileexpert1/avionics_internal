@@ -2,6 +2,7 @@ import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackbox_cubit.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -81,25 +82,37 @@ Future<void> main() async {
     }
   }
 
-    if (!kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.windows ||
-            defaultTargetPlatform == TargetPlatform.linux ||
-            defaultTargetPlatform == TargetPlatform.macOS)) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-    }
+  if (!kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux ||
+          defaultTargetPlatform == TargetPlatform.macOS)) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
 
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    if (!kIsWeb) {
-      await printDbPath();
-      await DBHelper.database;
-    }
+  if (!kIsWeb) {
+    await printDbPath();
+    await DBHelper.database;
+  }
   runApp(const MyApp());
+
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,17 +144,17 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => MapSearchAircraftListCubit()),
         BlocProvider(create: (_) => BlackboxCubit()),
       ],
-      //Responsive test case
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue),
-            home: SplashScreen(),
+            home: const SplashScreen(),
           );
         },
       ),
     );
   }
 }
+

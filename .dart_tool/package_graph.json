@@ -15,6 +15,7 @@
         "device_info_plus",
         "equatable",
         "firebase",
+        "firebase_analytics",
         "firebase_auth",
         "firebase_core",
         "firebase_crashlytics",
@@ -91,6 +92,17 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "firebase_analytics",
+      "version": "11.6.0",
+      "dependencies": [
+        "firebase_analytics_platform_interface",
+        "firebase_analytics_web",
+        "firebase_core",
+        "firebase_core_platform_interface",
+        "flutter"
       ]
     },
     {
@@ -727,6 +739,40 @@
       ]
     },
     {
+      "name": "firebase_core_platform_interface",
+      "version": "6.0.2",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "flutter_test",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "firebase_analytics_web",
+      "version": "0.5.10+16",
+      "dependencies": [
+        "_flutterfire_internals",
+        "firebase_analytics_platform_interface",
+        "firebase_core",
+        "firebase_core_web",
+        "flutter",
+        "flutter_web_plugins"
+      ]
+    },
+    {
+      "name": "firebase_analytics_platform_interface",
+      "version": "4.4.3",
+      "dependencies": [
+        "_flutterfire_internals",
+        "firebase_core",
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
       "name": "video_player_web",
       "version": "2.4.0",
       "dependencies": [
@@ -844,17 +890,6 @@
         "_flutterfire_internals",
         "firebase_core",
         "flutter",
-        "meta",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "firebase_core_platform_interface",
-      "version": "6.0.2",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "flutter_test",
         "meta",
         "plugin_platform_interface"
       ]

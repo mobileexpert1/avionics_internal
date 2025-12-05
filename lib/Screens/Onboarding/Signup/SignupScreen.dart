@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -25,6 +27,12 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.signupScreen);
+  }
 
   @override
   void dispose() {
@@ -184,9 +192,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                   textColor: Colors.white,
                                   icon: const SizedBox(width: 0),
                                   isEnabled: state.isButtonEnabled,
-                                  onPressed: () => context
-                                      .read<SignupCubit>()
-                                      .verifyEmailRegisteredOrNot(context),
+                                  onPressed: () {
+                                    context
+                                        .read<SignupCubit>()
+                                        .verifyEmailRegisteredOrNot(context);
+                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.signupButton, FirebaseEvents.signupScreen);
+                                  },
                                 );
                               },
                             ),
@@ -202,6 +213,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       builder: (context) => LoginScreen(),
                                     ),
                                   );
+                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.loginButton, FirebaseEvents.signupScreen);
                                 },
                                 child: Text(
                                   ConstantStrings.loginPrompt,

@@ -7,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
@@ -20,6 +22,14 @@ class ForgotScreen extends StatefulWidget {
 
 class _ForgotScreenState extends State<ForgotScreen> {
   final TextEditingController emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.forgotScreen,
+    );
+  }
 
   @override
   void dispose() {

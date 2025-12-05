@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/onboarding_model.dart';
@@ -21,6 +23,12 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   bool onLastPage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.onBoardingScreen);
+  }
 
   @override
   Widget build(BuildContext context) {
