@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_cubit.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_state.dart';
 
-class FeedbackScreen extends StatelessWidget {
-  final TextEditingController controller = TextEditingController();
+class FeedbackScreen extends StatefulWidget {
+  @override
+  State<FeedbackScreen> createState() => _FeedbackScreenState();
+}
+
+class _FeedbackScreenState extends State<FeedbackScreen> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.feedbackScreen);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +43,7 @@ class FeedbackScreen extends StatelessWidget {
           title: ConstantStrings.reviewTitle,
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
           ),
         ),
         backgroundColor: Colors.white,
@@ -39,7 +57,8 @@ class FeedbackScreen extends StatelessWidget {
                 current.submissionSuccess && !previous.submissionSuccess,
                 listener: (context, state) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Review submitted successfully.")),
+                    const SnackBar(
+                        content: Text("Review submitted successfully.")),
                   );
                   Navigator.pop(context);
                 },
@@ -54,6 +73,7 @@ class FeedbackScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            /// Rating Stars
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(5, (index) {
@@ -66,12 +86,12 @@ class FeedbackScreen extends StatelessWidget {
                                         : Colors.grey[300],
                                   ),
                                   onPressed: () {
-                                    final currentRating = context
-                                        .read<FeedbackCubit>()
-                                        .state
-                                        .rating;
+                                    final currentRating = state.rating;
                                     final tappedRating = index + 1;
-                                    context.read<FeedbackCubit>().updateRating(
+
+                                    context
+                                        .read<FeedbackCubit>()
+                                        .updateRating(
                                       currentRating == tappedRating
                                           ? 0
                                           : tappedRating,
@@ -82,6 +102,7 @@ class FeedbackScreen extends StatelessWidget {
                             ),
 
                             const SizedBox(height: 30),
+
                             const Text(
                               "Please leave your feedback about the app",
                               style: TextStyle(
@@ -93,43 +114,50 @@ class FeedbackScreen extends StatelessWidget {
 
                             const SizedBox(height: 20),
 
+                            /// Text Field
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF5F5F5),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: TextField(
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 12,
-                                ),
                                 controller: controller,
                                 maxLines: 14,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
+                                ),
                                 decoration: const InputDecoration(
-                                  hintText: "Enter some suggestions for us...",
+                                  hintText:
+                                  "Enter some suggestions for us...",
                                   border: InputBorder.none,
                                 ),
-                                onChanged: (value) => context
+                                onChanged: context
                                     .read<FeedbackCubit>()
-                                    .updateComment(value),
+                                    .updateComment,
                               ),
                             ),
 
                             const SizedBox(height: 20),
 
+                            /// Submit Button
                             SizedBox(
                               width: double.infinity,
                               child: CustomBottomButton(
-                                title: state.isSubmitting ? "" : "Submit",
-                                backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                                title:
+                                state.isSubmitting ? "" : "Submit",
+                                backgroundColor:
+                                const Color.fromRGBO(63, 61, 81, 1.0),
                                 textColor: Colors.white,
                                 icon: state.isSubmitting
                                     ? const SizedBox(
                                   height: 24,
                                   width: 24,
                                   child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                    valueColor:
+                                    AlwaysStoppedAnimation<Color>(
                                       Colors.white,
                                     ),
                                     strokeWidth: 2,
@@ -142,6 +170,10 @@ class FeedbackScreen extends StatelessWidget {
                                   context
                                       .read<FeedbackCubit>()
                                       .submitFeedback(context);
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.submitReviewsButton,
+                                    FirebaseEvents.feedbackScreen,
+                                  );
                                 },
                               ),
                             ),

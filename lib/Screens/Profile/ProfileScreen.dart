@@ -5,6 +5,8 @@ import 'package:avionics_internal/Screens/Profile/VideoPlayer/VideoPlayerScreen.
 import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
 import 'package:flutter/foundation.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
@@ -45,6 +47,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -115,7 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? AppleSubscriptionScreen(
                                     isComeFromSignup: false,
                                   )
-                                :  AppleSubscriptionScreen(isComeFromSignup: false)),
+                                : AppleSubscriptionScreen(
+                                    isComeFromSignup: false,
+                                  )),
                           ),
                         );
                       },
@@ -366,8 +376,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         svgAsset: CommonUi.setSvgImage(AssetsPath.logoutIcon),
                       );
                       _clearAllDataAndRedirectToSplashScreen(context);
+                      AnalyticsService.instance.buttonPressed(
+                        FirebaseEvents.logoutPressedButton,
+                        FirebaseEvents.profileScreen,
+                      );
                     } else {
                       innerContext.read<DeleteCubit>().delete(context);
+                      AnalyticsService.instance.buttonPressed(
+                        FirebaseEvents.deleteAccountButton,
+                        FirebaseEvents.profileScreen,
+                      );
                     }
                   },
                   onNo: () => Navigator.pop(innerContext),

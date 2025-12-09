@@ -5,12 +5,36 @@ import 'package:avionics_internal/Screens/Games/GamesSubScreens/OneWordSection/O
 import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Helpers/Games/GameCard.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
 
-class GamesScreen extends StatelessWidget {
+class GamesScreen extends StatefulWidget {
   const GamesScreen({super.key});
+
+  @override
+  State<GamesScreen> createState() => _GamesScreenState();
+}
+
+class _GamesScreenState extends State<GamesScreen> {
+  late GamesCubit _gamesCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _gamesCubit = GamesCubit();
+    _gamesCubit.loadGames();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.gamesScreen);
+  }
+
+  @override
+  void dispose() {
+    _gamesCubit.close(); // VERY IMPORTANT
+    super.dispose();
+  }
 
   int getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -22,8 +46,8 @@ class GamesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GamesCubit()..loadGames(),
+    return BlocProvider.value(
+      value: _gamesCubit,
       child: Scaffold(
         appBar: CustomAppBar(title: 'Games'),
         backgroundColor: const Color(0xFF35314B),
@@ -71,6 +95,7 @@ class GamesScreen extends StatelessWidget {
                                   ),
                                 );
                                 break;
+
                               case 'one_word':
                                 Navigator.push(
                                   context,
@@ -80,6 +105,7 @@ class GamesScreen extends StatelessWidget {
                                   ),
                                 );
                                 break;
+
                               case 'black_box':
                                 Navigator.push(
                                   context,
@@ -89,6 +115,7 @@ class GamesScreen extends StatelessWidget {
                                   ),
                                 );
                                 break;
+
                               default:
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -106,6 +133,7 @@ class GamesScreen extends StatelessWidget {
                 ),
               );
             }
+
             return const Center(child: CircularProgressIndicator());
           },
         ),

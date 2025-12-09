@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomTextField.dart';
@@ -17,7 +19,8 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController oldPasswordController = TextEditingController();
   final TextEditingController namePasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -25,6 +28,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     namePasswordController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.changePasswordScreen,
+    );
   }
 
   @override
@@ -56,7 +68,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 body: LayoutBuilder(
                   builder: (context, constraints) {
-                    double maxWidth = constraints.maxWidth > 1500 ? 1500 : constraints.maxWidth;
+                    double maxWidth = constraints.maxWidth > 1500
+                        ? 1500
+                        : constraints.maxWidth;
 
                     return SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
@@ -68,7 +82,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               const SizedBox(height: 20),
-                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, String?>(
+                              BlocSelector<
+                                ChangePasswordCubit,
+                                ChangeNewPasswordState,
+                                String?
+                              >(
                                 selector: (state) => state.oldPasswordError,
                                 builder: (context, oldPasswordError) {
                                   return CustomTextField(
@@ -76,13 +94,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     label: ConstantStrings.oldPasswordLabel,
                                     controller: oldPasswordController,
                                     errorText: oldPasswordError,
-                                    onChanged: (val) =>
-                                        context.read<ChangePasswordCubit>().oldPasswordChanged(val),
+                                    onChanged: (val) => context
+                                        .read<ChangePasswordCubit>()
+                                        .oldPasswordChanged(val),
                                   );
                                 },
                               ),
                               const SizedBox(height: 15),
-                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, String?>(
+                              BlocSelector<
+                                ChangePasswordCubit,
+                                ChangeNewPasswordState,
+                                String?
+                              >(
                                 selector: (state) => state.passwordError,
                                 builder: (context, passwordError) {
                                   return CustomTextField(
@@ -90,13 +113,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     label: ConstantStrings.newPasswordLabel,
                                     controller: namePasswordController,
                                     errorText: passwordError,
-                                    onChanged: (val) =>
-                                        context.read<ChangePasswordCubit>().newPasswordChanged(val),
+                                    onChanged: (val) => context
+                                        .read<ChangePasswordCubit>()
+                                        .newPasswordChanged(val),
                                   );
                                 },
                               ),
                               const SizedBox(height: 15),
-                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, String?>(
+                              BlocSelector<
+                                ChangePasswordCubit,
+                                ChangeNewPasswordState,
+                                String?
+                              >(
                                 selector: (state) => state.confirmPasswordError,
                                 builder: (context, confirmPasswordError) {
                                   return CustomTextField(
@@ -104,13 +132,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     label: ConstantStrings.confirmPasswordLabel,
                                     controller: confirmPasswordController,
                                     errorText: confirmPasswordError,
-                                    onChanged: (val) =>
-                                        context.read<ChangePasswordCubit>().confirmPasswordChanged(val),
+                                    onChanged: (val) => context
+                                        .read<ChangePasswordCubit>()
+                                        .confirmPasswordChanged(val),
                                   );
                                 },
                               ),
                               const SizedBox(height: 30),
-                              BlocSelector<ChangePasswordCubit, ChangeNewPasswordState, bool>(
+                              BlocSelector<
+                                ChangePasswordCubit,
+                                ChangeNewPasswordState,
+                                bool
+                              >(
                                 selector: (state) => state.isButtonEnabled,
                                 builder: (context, isButtonEnabled) {
                                   return CustomBottomButton(
@@ -122,7 +155,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     icon: const SizedBox(width: 0),
                                     isEnabled: isButtonEnabled,
                                     onPressed: () {
-                                      context.read<ChangePasswordCubit>().submitIfValid(context);
+                                      context
+                                          .read<ChangePasswordCubit>()
+                                          .submitIfValid(context);
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.changePasswordButton,
+                                        FirebaseEvents.changePasswordScreen,
+                                      );
                                     },
                                   );
                                 },

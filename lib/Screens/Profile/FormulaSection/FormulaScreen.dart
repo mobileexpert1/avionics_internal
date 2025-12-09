@@ -1,16 +1,39 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../bloc/Profile/FormulaSection/formula_cubit.dart';
 import '../../../bloc/Profile/FormulaSection/formula_state.dart';
 
-class FormulasScreen extends StatelessWidget {
+class FormulasScreen extends StatefulWidget {
   const FormulasScreen({super.key});
 
   @override
+  State<FormulasScreen> createState() => _FormulasScreenState();
+}
+
+class _FormulasScreenState extends State<FormulasScreen> {
+  late FormulaCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = FormulaCubit();
+    _cubit.loadFormulas();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.formulaScreen);
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => FormulaCubit()..loadFormulas(),
+    return BlocProvider.value(
+      value: _cubit,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -36,7 +59,7 @@ class FormulasScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final category = state.categories[index];
                 return Card(
-                  color:Colors.white,
+                  color: Colors.white,
                   elevation: 2,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -59,8 +82,8 @@ class FormulasScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ...List.generate(category.formulas.length, (index) {
-                          final formula = category.formulas[index];
+                        ...List.generate(category.formulas.length, (i) {
+                          final formula = category.formulas[i];
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -72,11 +95,11 @@ class FormulasScreen extends StatelessWidget {
                                   style: const TextStyle(
                                     fontSize: 13,
                                     color: Colors.black,
-                                    fontWeight: FontWeight.w500
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
-                              if (index != category.formulas.length - 1)
+                              if (i != category.formulas.length - 1)
                                 const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 8.0),
                                   child: Divider(
@@ -87,7 +110,6 @@ class FormulasScreen extends StatelessWidget {
                             ],
                           );
                         }),
-
                       ],
                     ),
                   ),

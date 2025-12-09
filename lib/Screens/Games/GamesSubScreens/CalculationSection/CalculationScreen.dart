@@ -5,14 +5,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
-class CalculationDetailScreen extends StatelessWidget {
+class CalculationDetailScreen extends StatefulWidget {
   final String gameId;
 
   const CalculationDetailScreen({super.key, required this.gameId});
+
+  @override
+  State<CalculationDetailScreen> createState() =>
+      _CalculationDetailScreenState();
+}
+
+class _CalculationDetailScreenState extends State<CalculationDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.calculationsListScreen,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +62,7 @@ class CalculationDetailScreen extends StatelessWidget {
         ),
         body: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 1500,
-            ),
+            constraints: const BoxConstraints(maxWidth: 1500),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: GameDetailCard(
@@ -53,6 +72,10 @@ class CalculationDetailScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => const CalculationLockScreen(),
                     ),
+                  );
+                  AnalyticsService.instance.buttonPressed(
+                    FirebaseEvents.calculationsListButton,
+                    FirebaseEvents.blackBoxListScreen,
                   );
                 },
               ),

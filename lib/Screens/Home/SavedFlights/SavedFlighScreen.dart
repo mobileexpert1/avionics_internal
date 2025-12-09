@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomTabBar.dart';
 import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -31,6 +33,9 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
   void initState() {
     super.initState();
     context.read<SavedFlightCubit>().loadSavedAndFavoriteFlights();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.savedFlightScreen,
+    );
   }
 
   Widget _buildAircraftList(List<dynamic> list, String emptyMessage) {

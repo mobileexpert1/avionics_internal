@@ -2,24 +2,35 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+import '../../../Database/auth_storage.dart';
+
 class AnalyticsService {
   AnalyticsService._();
 
   static final AnalyticsService instance = AnalyticsService._();
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
+  final String _userId = "";
+
   // ---------------------------
-  // Initialize (safe for Web)
+  // Initialize
   // ---------------------------
   Future<void> init() async {
-    await _analytics.setUserId(id: _generateUserId());
+    await _analytics.setUserId(id: _userId);
   }
 
-  String _generateUserId() {
+  Future<String> _generateUserId() async {
+    final storedId = await AuthStorage.read();
+    final uid = storedId ?? "";
     if (kIsWeb) {
-      return "web_user_${DateTime.now().millisecondsSinceEpoch}";
+      return "web_user_$uid";
     }
-    return "mobile_user_${DateTime.now().millisecondsSinceEpoch}";
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        return "mobile_user_$uid";
+      }
+    } catch (_) {}
+    return "unknown_platform_$uid";
   }
 
   // ---------------------------
@@ -27,8 +38,15 @@ class AnalyticsService {
   // ---------------------------
   Future<void> logVisibleScreen(String screenName) async {
     await _analytics.logScreenView(
-      screenClass: screenName,
       screenName: screenName,
+      screenClass: screenName,
+      parameters: {
+        'currentUserId': await _generateUserId(),
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
+    print(
+      "Uploaded Parameters: ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
     );
   }
 
@@ -38,17 +56,40 @@ class AnalyticsService {
   Future<void> buttonPressed(String buttonName, String screenName) async {
     await _analytics.logEvent(
       name: buttonName,
-      parameters: {'screenName': screenName},
+      parameters: {
+        'screenName': screenName,
+        'currentUserId': await _generateUserId(),
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
+    print(
+      "Uploaded Parameters: ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
     );
   }
 
   // ---------------------------
   // Generic Event
   // ---------------------------
-  Future<void> logEvent(
-    String eventName, {
-    Map<String, Object>? parameters,
-  }) async {
-    await _analytics.logEvent(name: eventName, parameters: parameters);
+  // Future<void> logEvent(
+  //   String eventName, {
+  //   Map<String, Object?>? parameters,
+  // }) async {
+  //   await _analytics.logEvent(
+  //     name: eventName,
+  //     parameters: {
+  //       'currentUserId': await _generateUserId(),
+  //       'timestamp': DateTime.now().toIso8601String(),
+  //       ..._nonNullParams(parameters),
+  //     },
+  //   );
+  //   print(
+  //     "Uploaded Parameters: ${{'currentUserId': _userId, 'timestamp': DateTime.now().toIso8601String()}}",
+  //   );
+  // }
+
+  // Helper to remove null values
+  Map<String, Object> _nonNullParams(Map<String, Object?>? params) {
+    if (params == null) return {};
+    return params.map((key, value) => MapEntry(key, value ?? ""));
   }
 }

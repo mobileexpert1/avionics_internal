@@ -5,14 +5,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 
-class OneWordDetailScreen extends StatelessWidget {
+class OneWordDetailScreen extends StatefulWidget {
   final String gameId;
 
   const OneWordDetailScreen({super.key, required this.gameId});
+
+  @override
+  State<OneWordDetailScreen> createState() => _OneWordDetailScreenState();
+}
+
+class _OneWordDetailScreenState extends State<OneWordDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.oneWordListScreen,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +61,7 @@ class OneWordDetailScreen extends StatelessWidget {
         ),
         body: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 1500,
-            ),
+            constraints: const BoxConstraints(maxWidth: 1500),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: GameDetailCard(
@@ -53,6 +71,10 @@ class OneWordDetailScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => const OneWordTopicScreen(),
                     ),
+                  );
+                  AnalyticsService.instance.buttonPressed(
+                    FirebaseEvents.oneWordListButton,
+                    FirebaseEvents.blackBoxListScreen,
                   );
                 },
               ),

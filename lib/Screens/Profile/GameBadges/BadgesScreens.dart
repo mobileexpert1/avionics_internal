@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:universal_html/html.dart' as html;
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
@@ -46,6 +48,10 @@ class _BadgesScreenState extends State<BadgesScreen> {
         });
       });
     }
+
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.badgesScreen,
+    );
   }
 
   @override

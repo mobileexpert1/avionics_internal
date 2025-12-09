@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -45,6 +47,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
       widget.isComeFromSignupScreen,
       widget.isComeFromSocialLogin,
     );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.avtarScreen);
   }
 
   @override
@@ -106,6 +109,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                           {},
                         );
                       }
+                      AnalyticsService.instance.buttonPressed(FirebaseEvents.avtarScreen,FirebaseEvents.updatedAvtarButtonTap);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(

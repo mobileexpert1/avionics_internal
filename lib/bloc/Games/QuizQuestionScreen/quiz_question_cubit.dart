@@ -388,6 +388,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
@@ -877,6 +879,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                   badgeName: data.badgeName,
                 ),
               ),
+            );
+
+            AnalyticsService.instance.buttonPressed(
+              FirebaseEvents.calculationsListButton,
+              FirebaseEvents.calculationResultScreen,
             );
           });
         } else {

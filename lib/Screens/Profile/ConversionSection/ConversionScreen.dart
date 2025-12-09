@@ -356,20 +356,44 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Profile/ConversionSection/conversion_cubit.dart';
 import '../../../bloc/Profile/ConversionSection/conversion_state.dart';
 
-class ConversionsScreen extends StatelessWidget {
+class ConversionsScreen extends StatefulWidget {
   const ConversionsScreen({super.key});
+
+  @override
+  State<ConversionsScreen> createState() => _ConversionsScreenState();
+}
+
+class _ConversionsScreenState extends State<ConversionsScreen> {
+  late ConversionCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = ConversionCubit();
+    _cubit.loadConversions();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.conversionScreen);
+
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     print("screenSize : ${screenSize.height}");
 
-    return BlocProvider(
-      create: (_) => ConversionCubit()..loadConversions(),
+    return BlocProvider.value(
+      value: _cubit,
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F5F7),
         appBar: CustomAppBar(
@@ -414,7 +438,6 @@ class ConversionsScreen extends StatelessWidget {
                         final isSmallDevice = constraints.maxWidth < 600;
 
                         return Center(
-                          // <-- Ensures perfect center alignment
                           child: Container(
                             margin: EdgeInsets.only(
                               bottom: isSmallDevice ? 8 : 0,
@@ -427,7 +450,7 @@ class ConversionsScreen extends StatelessWidget {
                                 trackVisibility: true,
                                 interactive: true,
                                 scrollbarOrientation:
-                                    ScrollbarOrientation.bottom,
+                                ScrollbarOrientation.bottom,
                                 child: Padding(
                                   padding: EdgeInsets.only(
                                     bottom: !kIsWeb && Platform.isIOS ? 40 : 0,
@@ -440,9 +463,9 @@ class ConversionsScreen extends StatelessWidget {
                                       child: IntrinsicWidth(
                                         child: ClipRRect(
                                           borderRadius:
-                                              const BorderRadius.vertical(
-                                                bottom: Radius.circular(8),
-                                              ),
+                                          const BorderRadius.vertical(
+                                            bottom: Radius.circular(8),
+                                          ),
                                           child: _buildConversionTable(
                                             category,
                                           ),
@@ -468,16 +491,16 @@ class ConversionsScreen extends StatelessWidget {
     );
   }
 
-  // ✅ Table layout builder
+  // --- Table UI unchanged ---
+
   Widget _buildConversionTable(category) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        minWidth: kIsWeb ? 1200 : 600, // ⬅️ Web width increased
+        minWidth: kIsWeb ? 1200 : 600,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER
           Container(
             decoration: const BoxDecoration(
               color: Color(0xFF1E80F2),
@@ -487,40 +510,36 @@ class ConversionsScreen extends StatelessWidget {
             child: Row(
               children: [
                 SizedBox(
-                  width: kIsWeb ? 350 : 200, // ⬅️ larger on web
-                  child: const Text(
-                    "From → To",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                    width: kIsWeb ? 350 : 200,
+                    child: const Text(
+                      "From → To",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
                 SizedBox(
-                  width: kIsWeb ? 350 : 200,
-                  child: const Text(
-                    "Conversion",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                    width: kIsWeb ? 350 : 200,
+                    child: const Text(
+                      "Conversion",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
                 SizedBox(
-                  width: kIsWeb ? 350 : 200,
-                  child: const Text(
-                    "Example",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                    width: kIsWeb ? 350 : 200,
+                    child: const Text(
+                      "Example",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
               ],
             ),
           ),
 
-          // BODY
           ...List.generate(category.items.length, (i) {
             final item = category.items[i];
             final isEven = i % 2 == 0;
@@ -531,14 +550,8 @@ class ConversionsScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.fromTo)),
-                  SizedBox(
-                    width: kIsWeb ? 350 : 200,
-                    child: Text(item.formula),
-                  ),
-                  SizedBox(
-                    width: kIsWeb ? 350 : 200,
-                    child: Text(item.example),
-                  ),
+                  SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.formula)),
+                  SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.example)),
                 ],
               ),
             );
@@ -549,13 +562,9 @@ class ConversionsScreen extends StatelessWidget {
   }
 
   ScrollbarThemeData _scrollbarTheme(
-    BuildContext context,
-    double screenHeight,
-  ) {
+      BuildContext context, double screenHeight) {
     return ScrollbarThemeData(
-      thumbColor: WidgetStateProperty.all(
-        const Color(0xFF1E80F2), // Blue thumb
-      ),
+      thumbColor: WidgetStateProperty.all(const Color(0xFF1E80F2)),
       trackColor: WidgetStateProperty.all(Colors.transparent),
       trackBorderColor: WidgetStateProperty.all(Colors.transparent),
       radius: const Radius.circular(6),

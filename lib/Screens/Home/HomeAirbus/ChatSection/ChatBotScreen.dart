@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import 'ChatHistoryScreen.dart';
@@ -45,6 +47,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     _controller.addListener(() {
       setState(() {});
     });
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.askChatScreen);
   }
 
   @override
@@ -389,6 +392,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                     context.read<ChatCubit>().sendMessage(text);
                                     _controller.clear();
                                     _scrollToBottom();
+                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.chatSendButton,FirebaseEvents.askChatScreen);
                                   }
                                 }
                               : null,

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -1579,6 +1581,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     });
 
     _sheetController.addListener(_sheetListener);
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
   }
 
   @override

@@ -2,21 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Profile/VideoPlayer/video_player_cubit.dart';
 import '../../../bloc/Profile/VideoPlayer/video_player_state.dart';
 
-class VideoPlayerScreen extends StatelessWidget {
+class VideoPlayerScreen extends StatefulWidget {
   const VideoPlayerScreen({super.key});
 
   @override
+  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
+}
+
+class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
+  late VideoPlayerCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = VideoPlayerCubit();
+    _cubit.initialize();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.videoPlayerScreen);
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => VideoPlayerCubit()..initialize(),
+    return BlocProvider.value(
+      value: _cubit,
       child: BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
         builder: (context, state) {
           final cubit = context.read<VideoPlayerCubit>();
+
+          // --- Loading State ---
           if (state.controller == null ||
               !state.controller!.value.isInitialized) {
             return Scaffold(
@@ -31,6 +56,8 @@ class VideoPlayerScreen extends StatelessWidget {
               body: const Center(child: CircularProgressIndicator()),
             );
           }
+
+          // --- Video Player UI ---
           return Scaffold(
             backgroundColor: Colors.black,
             appBar: CustomAppBar(
@@ -49,21 +76,25 @@ class VideoPlayerScreen extends StatelessWidget {
                       child: Stack(
                         children: [
                           VideoPlayer(state.controller!),
+
                           if (state.isBuffering)
                             const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.white,
                               ),
                             ),
+
                           _controls(context, state, cubit),
                         ],
                       ),
                     ),
                   ),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: _progressBar(context, state, cubit),
                   ),
+
                   const SizedBox(height: 8),
                 ],
               ),
@@ -74,6 +105,9 @@ class VideoPlayerScreen extends StatelessWidget {
     );
   }
 
+  // ------------------------------
+  // CONTROLS
+  // ------------------------------
   Widget _controls(
     BuildContext context,
     VideoPlayerState state,
@@ -119,6 +153,9 @@ class VideoPlayerScreen extends StatelessWidget {
     );
   }
 
+  // ------------------------------
+  // PROGRESS BAR
+  // ------------------------------
   Widget _progressBar(
     BuildContext context,
     VideoPlayerState state,

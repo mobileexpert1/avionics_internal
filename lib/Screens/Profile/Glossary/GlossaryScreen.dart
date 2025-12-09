@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../../bloc/Profile/Glossary/glossary_model.dart';
@@ -23,6 +25,8 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     super.initState();
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.glossaryScreen);
+
   }
 
   void _onSearchChanged() {

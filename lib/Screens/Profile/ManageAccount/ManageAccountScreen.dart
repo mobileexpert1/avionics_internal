@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +32,15 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   bool isSocialLogin = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.manageAccountScreen,
+    );
+  }
+
+  @override
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
@@ -48,7 +59,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             lastNameController.text = state.lastName;
             emailController.text = state.email;
 
-            isSocialLogin = (state.authType == "apple" ||
+            isSocialLogin =
+                (state.authType == "apple" ||
                 state.authType == "facebook" ||
                 state.authType == "google");
           } else if (state.status == CommonApiStatus.failure) {
@@ -76,27 +88,29 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
               ),
               rightButton: isRightButtonShow
                   ? Padding(
-                padding: const EdgeInsets.all(15),
-                child: GestureDetector(
-                  child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.editIcon),
-                    width: 20,
-                    height: 20,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isTextfiledEnabled = true;
-                      isRightButtonShow = false;
-                      buttonBottomTitle = ConstantStrings.saveTitle;
-                    });
-                  },
-                ),
-              )
+                      padding: const EdgeInsets.all(15),
+                      child: GestureDetector(
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.editIcon),
+                          width: 20,
+                          height: 20,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            isTextfiledEnabled = true;
+                            isRightButtonShow = false;
+                            buttonBottomTitle = ConstantStrings.saveTitle;
+                          });
+                        },
+                      ),
+                    )
                   : null,
             ),
             body: LayoutBuilder(
               builder: (context, constraints) {
-                double maxWidth = constraints.maxWidth > 1500 ? 1500 : constraints.maxWidth;
+                double maxWidth = constraints.maxWidth > 1500
+                    ? 1500
+                    : constraints.maxWidth;
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
@@ -111,8 +125,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             label: ConstantStrings.firstNameLabel,
                             controller: firstNameController,
                             errorText: state.firstNameError,
-                            onChanged: (val) =>
-                                context.read<ManageaccCubit>().firstNameChanged(val),
+                            onChanged: (val) => context
+                                .read<ManageaccCubit>()
+                                .firstNameChanged(val),
                             enabled: isTextfiledEnabled,
                           ),
                           const SizedBox(height: 15),
@@ -120,8 +135,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             label: ConstantStrings.lastNameLabel,
                             controller: lastNameController,
                             errorText: state.lastNameError,
-                            onChanged: (val) =>
-                                context.read<ManageaccCubit>().lastNameChanged(val),
+                            onChanged: (val) => context
+                                .read<ManageaccCubit>()
+                                .lastNameChanged(val),
                             enabled: isTextfiledEnabled,
                           ),
                           const SizedBox(height: 15),
@@ -139,26 +155,35 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                 : AppColors.customBottomDisableColour,
                             textColor: Colors.white,
                             icon: const SizedBox(width: 0),
-                            isEnabled: (buttonBottomTitle == ConstantStrings.saveTitle)
+                            isEnabled:
+                                (buttonBottomTitle == ConstantStrings.saveTitle)
                                 ? state.isButtonEnabled
                                 : !isSocialLogin && state.isButtonEnabled,
                             onPressed: () async {
-                              if (buttonBottomTitle == ConstantStrings.changePassword) {
+                              if (buttonBottomTitle ==
+                                  ConstantStrings.changePassword) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChangePasswordScreen(),
+                                    builder: (context) =>
+                                        ChangePasswordScreen(),
                                   ),
                                 );
-                              } else if (buttonBottomTitle == ConstantStrings.saveTitle) {
+                              } else if (buttonBottomTitle ==
+                                  ConstantStrings.saveTitle) {
                                 final cubit = context.read<ManageaccCubit>();
                                 if (cubit.validateFields()) {
                                   await cubit.updateUserDetails(context);
                                   setState(() {
                                     isTextfiledEnabled = false;
                                     isRightButtonShow = true;
-                                    buttonBottomTitle = ConstantStrings.changePassword;
+                                    buttonBottomTitle =
+                                        ConstantStrings.changePassword;
                                   });
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.saveProfileInfoButton,
+                                    FirebaseEvents.manageAccountScreen,
+                                  );
                                 }
                               }
                             },
@@ -170,8 +195,6 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                 );
               },
             ),
-
-
           );
         },
       ),

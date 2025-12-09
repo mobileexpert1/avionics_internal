@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -17,7 +19,11 @@ class AppleSubscriptionScreen extends StatefulWidget {
   final bool? isComeFromSignup;
   final bool? isComeFromSocialLogin;
 
-  const AppleSubscriptionScreen({super.key, this.isComeFromSignup, this.isComeFromSocialLogin});
+  const AppleSubscriptionScreen({
+    super.key,
+    this.isComeFromSignup,
+    this.isComeFromSocialLogin,
+  });
 
   @override
   _AppleSubscriptionScreenState createState() =>
@@ -26,8 +32,9 @@ class AppleSubscriptionScreen extends StatefulWidget {
 
 class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   String getTrialText(String description) {
-    if (description.toLowerCase().contains('7 days'))
+    if (description.toLowerCase().contains('7 days')) {
       return "+ 7 days free trial";
+    }
     return "";
   }
 
@@ -39,6 +46,9 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
         context.read<AppleSubscriptionCubit>().restorePastPurchases();
       });
     }
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.subscriptionScreen,
+    );
   }
 
   @override
@@ -186,6 +196,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                                   context
                                       .read<AppleSubscriptionCubit>()
                                       .buySelected(context);
+                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.goPremiumSubscriptionButton);
                                 }
                               },
                             ),
@@ -205,6 +216,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                                 context
                                     .read<AppleSubscriptionCubit>()
                                     .restorePastPurchases();
+                                AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.restoreSubscriptionButton);
                               },
                             ),
                             const SizedBox(height: 40),
@@ -220,6 +232,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                                   context
                                       .read<AppleSubscriptionCubit>()
                                       .buySelected(context);
+                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.goPremiumSubscriptionButton);
                                 }
                               },
                             ),
@@ -289,15 +302,17 @@ class _SubscriptionCard extends StatelessWidget {
     required this.trialText,
     required this.onTap,
   });
+
   String cleanTitle(String title) {
     if (title.contains("(")) {
       return title.substring(0, title.indexOf("(")).trim();
     }
     return title;
   }
+
   @override
   Widget build(BuildContext context) {
-print(product.description);
+    print(product.description);
     return GestureDetector(
       onTap: onTap,
       child: Container(

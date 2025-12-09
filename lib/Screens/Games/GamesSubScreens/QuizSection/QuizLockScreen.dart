@@ -6,18 +6,44 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
 import 'QuizQuestionScreen.dart';
 
-class QuizLockScreen extends StatelessWidget {
+class QuizLockScreen extends StatefulWidget {
   const QuizLockScreen({super.key});
+
+  @override
+  State<QuizLockScreen> createState() => _QuizLockScreenState();
+}
+
+class _QuizLockScreenState extends State<QuizLockScreen> {
+  late QuizCubit quizCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    quizCubit = QuizCubit();
+    quizCubit.loadQuizTopics(context);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.quizLockListScreen,
+    );
+  }
+
+  @override
+  void dispose() {
+    quizCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QuizCubit()..loadQuizTopics(context),
+      create: (_) => quizCubit,
       child: Scaffold(
         backgroundColor: Colors.white,
+
         appBar: CustomAppBar(
           title: 'Quiz',
           leftButton: IconButton(
@@ -55,6 +81,7 @@ class QuizLockScreen extends StatelessWidget {
                     ),
                     itemBuilder: (context, index) {
                       final game = state.games[index];
+
                       return LockGameCard(
                         title: game.title,
                         isLocked: game.isLocked,
@@ -66,10 +93,16 @@ class QuizLockScreen extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (_) => QuizQuestionScreen(
                                   sectionId: game.gameNumber,
-                                  sectionTitle: ConstantStrings.aviationQuizTitle,
+                                  sectionTitle:
+                                      ConstantStrings.aviationQuizTitle,
                                   gameId: "quiz",
                                 ),
                               ),
+                            );
+
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.quizListLockButton,
+                              FirebaseEvents.quizLockListScreen,
                             );
                           }
                         },
