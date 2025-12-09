@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import '../../../../Constants/ApiClass/api_service.dart';
+import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Database/generic_methods.dart';
 import '../ChatBot/chat_model.dart';
 import 'chat_history_model.dart';
@@ -49,4 +51,20 @@ class ChatHistoryRepository {
       throw 'Failed to fetch chat history from local DB: $e';
     }
   }
+
+  Future<ChatSessionResponse> fetchChatHistory1() async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlChatConstant.chatService
+    );
+
+    try {
+      final response = await ApiService.get(url: url);
+
+      return ChatSessionResponse.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
 }

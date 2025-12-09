@@ -196,6 +196,13 @@ class ApiServiceUrlConstant {
   static const String chatHistorySession = 'ai-engine/wilco/session';
 }
 
+
+
+//Ask Wilco
+class ApiFunctionUrlChatConstant {
+  static const String chatService = 'ai-engine/wilco/session';
+}
+
 class ApiFunctionUrlAirplaneConstant {
   static const String airplaneService = 'airplane-service/';
   static const String airCraftDetail = 'aircraft/details/';
