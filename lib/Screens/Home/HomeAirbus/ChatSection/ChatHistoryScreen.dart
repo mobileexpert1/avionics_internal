@@ -21,7 +21,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
+    // BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
+    BlocProvider.of<ChatHistoryCubit>(context).loadChatHistory(context);
   }
 
   @override
