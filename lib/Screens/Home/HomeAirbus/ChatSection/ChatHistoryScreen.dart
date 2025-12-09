@@ -64,7 +64,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         onPressed: (_) {
                           AppSnackBar.custom(
                             context,
-                            message: "Bookmark Saved",
+                            message: "Edit Successfully",
                             svgAsset: "",
                           );
                         },
@@ -77,7 +77,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         onPressed: (_) {
                           AppSnackBar.custom(
                             context,
-                            message: "Bookmark Saved",
+                            message: "Delete Successfully",
                             svgAsset: "",
                           );
                         },

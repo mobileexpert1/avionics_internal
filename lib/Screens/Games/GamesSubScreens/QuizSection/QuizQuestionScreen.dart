@@ -6,9 +6,12 @@ import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_st
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Home/HomeAirbus/ChatSection/ChatHistoryScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -48,47 +51,58 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: widget.sectionTitle,
+          rightButton: isNeedToShowOrNot == false
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.flag, color: Colors.black),
+                  onPressed: () async {
+                    AppSnackBar.custom(
+                      context,
+                      message: "Question Report Successfully",
+                      svgAsset: "",
+                    );
+                  },
+                ),
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () async {
               final shouldExit = await showDialog<bool>(
                 context: context,
-                builder: (context) =>
-                    AlertDialog(
-                      title: const Text("Exit Quiz?"),
-                      backgroundColor: Colors.white,
-                      content: const Text(
-                        "Are you sure you want to exit? Your progress will be lost.",
+                builder: (context) => AlertDialog(
+                  title: const Text("Exit Quiz?"),
+                  backgroundColor: Colors.white,
+                  content: const Text(
+                    "Are you sure you want to exit? Your progress will be lost.",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                          Colors.black,
+                        ),
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all<Color>(
-                              Colors.black,
-                            ),
-                          ),
-                          child: const Text("Cancel"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              isNeedToShowOrNot = false;
-                            });
-                            Navigator.of(context).pop(true);
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.blue,
-                            ),
-                            foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.sepratorColourAppBar,
-                            ),
-                          ),
-                          child: const Text("Yes, Exit"),
-                        ),
-                      ],
+                      child: const Text("Cancel"),
                     ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isNeedToShowOrNot = false;
+                        });
+                        Navigator.of(context).pop(true);
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.blue,
+                        ),
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.sepratorColourAppBar,
+                        ),
+                      ),
+                      child: const Text("Yes, Exit"),
+                    ),
+                  ],
+                ),
               );
               if (shouldExit ?? false) {
                 Navigator.pop(context);
@@ -157,7 +171,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                               Future.delayed(
                                 const Duration(milliseconds: 300),
-                                    () {
+                                () {
                                   if (_scrollController.hasClients) {
                                     _scrollController.animateTo(
                                       _scrollController
@@ -391,10 +405,7 @@ class QuizQuestionCard extends StatelessWidget {
                   Center(
                     child: SizedBox(
                       width: kIsWeb
-                          ? MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.5
+                          ? MediaQuery.of(context).size.width * 0.5
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(

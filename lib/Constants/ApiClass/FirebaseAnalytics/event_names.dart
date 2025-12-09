@@ -1,6 +1,6 @@
 class FirebaseEvents {
-  // Screen views
 
+  // Screen views
   static const splashScreen = 'splash_Screen';
   static const onBoardingScreen = 'onBoarding_Screen';
   static const startExploringScreen = 'start_Exploring_Screen';
