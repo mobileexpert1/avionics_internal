@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
@@ -28,6 +30,14 @@ class BlackBoxResultScreen extends StatefulWidget {
 }
 
 class _BlackBoxResultScreenState extends State<BlackBoxResultScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.blackBoxCalculationResultScreen,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

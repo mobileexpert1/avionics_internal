@@ -75,7 +75,7 @@ class _CalculationDetailScreenState extends State<CalculationDetailScreen> {
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.calculationsListButton,
-                    FirebaseEvents.blackBoxListScreen,
+                    FirebaseEvents.calculationsListScreen,
                   );
                 },
               ),

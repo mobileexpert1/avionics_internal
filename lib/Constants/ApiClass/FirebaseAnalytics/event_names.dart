@@ -20,7 +20,9 @@ class FirebaseEvents {
   static const calculationsListScreen = 'calculations_List_Screen';
   static const quizLockListScreen = 'quiz_Lock_List_Screen';
   static const quizMainQuestionScreen = 'quiz_Main_Question_Screen';
+  static const calculationsLockListScreen = 'calculations_Lock_List_Screen';
   static const calculationResultScreen = 'calculation_Result_Screen';
+  static const blackBoxCalculationResultScreen = 'blackBox_calculation_Result_Screen';
 
   ////--------========-------==========---- Profile Subs Screen Names
   static const manageAccountScreen = 'manage_Account_Screen';
@@ -51,9 +53,18 @@ class FirebaseEvents {
   static const quizListButton = 'quiz_List_Button';
   static const oneWordListButton = 'oneWord_List_Button';
   static const blackBoxListButton = 'blackBox_List_Button';
-  static const calculationsListButton = 'calculations_List_Button';
+  static const calculationsListButton = 'calculations_Button';
+  static const blackBoxCalculationsListButton = 'blackBox_calculations_Button';
   static const quizListLockButton = 'quiz_List_Lock_Button';
 
+  static const oneWordTopicScreen = 'oneWord_Topic_Button';
+  static const oneWordTopicButton = 'oneWord_Topic_Button';
+  static const calculationsLockButton = 'calculations_Lock_Button';
+
+
+  static const blackBoxOverViewClueScreen = 'blackBox_OverView_Clue_Screen';
+  static const blackBoxMainQuestionScreen = 'blackBox_Main_Question_Screen';
+  static const blackBoxOverViewClueButton = 'blackBox_OverView_Clue_Button';
 
   ////--------========-------==========---- All Buttons
   static const loginButton = 'login_Button';
@@ -61,6 +72,5 @@ class FirebaseEvents {
   static const forgotButton = 'forgot_Button';
   static const googleButton = 'google_Button';
   static const facebookButton = 'facebook_Button';
-
   static const chatSendButton = 'chat_Send_Button';
 }

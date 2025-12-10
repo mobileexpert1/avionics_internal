@@ -4,6 +4,8 @@ import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -36,6 +38,9 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.blackBoxMainQuestionScreen,
+    );
     isNeedToShowOrNot = false;
   }
 

@@ -74,7 +74,7 @@ class _OneWordDetailScreenState extends State<OneWordDetailScreen> {
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.oneWordListButton,
-                    FirebaseEvents.blackBoxListScreen,
+                    FirebaseEvents.oneWordListScreen,
                   );
                 },
               ),

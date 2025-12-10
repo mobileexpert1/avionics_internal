@@ -4,32 +4,60 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/Calculation_Section/
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/LockedGameCard.dart';
 
-class CalculationLockScreen extends StatelessWidget {
+class CalculationLockScreen extends StatefulWidget {
   const CalculationLockScreen({super.key});
+
+  @override
+  State<CalculationLockScreen> createState() => _CalculationLockScreenState();
+}
+
+class _CalculationLockScreenState extends State<CalculationLockScreen> {
+  late CalculationCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = CalculationCubit();
+    _cubit.loadCalculationLocks();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.calculationsLockListScreen,
+    );
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isWeb = kIsWeb;
 
-    // Responsive helpers
     double getResponsiveFont(double mobile, double web) => isWeb ? web : mobile;
     double getPadding() => isWeb ? screenWidth * 0.02 : 16;
-    int getCrossAxisCount() => isWeb ? 4 : 2; // 4 columns on web
+    int getCrossAxisCount() => isWeb ? 4 : 2;
     double getChildAspectRatio() => isWeb ? 0.9 : 0.8;
 
-    return BlocProvider(
-      create: (_) => CalculationCubit()..loadCalculationLocks(),
+    return BlocProvider.value(
+      value: _cubit,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: ConstantStrings.calculationsTitle,
           leftButton: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: isWeb ? 28 : 20),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+              size: isWeb ? 28 : 20,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -62,6 +90,7 @@ class CalculationLockScreen extends StatelessWidget {
                     ),
                     itemBuilder: (context, index) {
                       final game = state.games[index];
+
                       return LockGameCard(
                         title: game.title,
                         isLocked: game.isLocked,
@@ -73,10 +102,15 @@ class CalculationLockScreen extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (_) => QuizQuestionScreen(
                                   sectionId: game.gameNumber,
-                                  sectionTitle: ConstantStrings.calculationsTitle,
+                                  sectionTitle:
+                                      ConstantStrings.calculationsTitle,
                                   gameId: "calculation",
                                 ),
                               ),
+                            );
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.calculationsLockButton,
+                              FirebaseEvents.calculationsLockListScreen,
                             );
                           }
                         },

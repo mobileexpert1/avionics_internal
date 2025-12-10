@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart'
     hide CommonApiStatus;
@@ -24,6 +26,15 @@ class OverviewAndClueDeckScreen extends StatefulWidget {
 class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+
+
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.blackBoxOverViewClueScreen,
+    );
+  }
 
   @override
   void dispose() {
@@ -261,6 +272,10 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                       setState(() => _currentPage = 0);
                                     }
                                   });
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.blackBoxOverViewClueScreen,
+                                    FirebaseEvents.blackBoxOverViewClueButton,
+                                  );
                                 }
                               },
                             ),
