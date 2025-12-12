@@ -18,12 +18,15 @@ class ChatHistoryScreen extends StatefulWidget {
 }
 
 class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
+
   @override
   void initState() {
     super.initState();
-    // BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
-    BlocProvider.of<ChatHistoryCubit>(context).loadChatHistory(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatHistoryCubit>().loadChatHistory(context: context);
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +65,69 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     motion: const ScrollMotion(),
                     children: [
                       SlidableAction(
-                        onPressed: (_) {
-                          AppSnackBar.custom(
-                            context,
-                            message: "Edit Successfully",
-                            svgAsset: "",
+                        onPressed: (_) async {
+                          final updatedTitle = await showDialog<String>(
+                            context: context,
+                            builder: (context) {
+                              final TextEditingController controller =
+                              TextEditingController(text: item.title);
+
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                title: const Text(
+                                  "Edit Title",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                content: TextField(
+                                  controller: controller,
+                                  decoration: const InputDecoration(
+                                    hintText: "Enter title",
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Cancel"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, controller.text.trim());
+                                    },
+                                    child: const Text("Update"),
+                                  ),
+                                ],
+                              );
+                            },
                           );
+
+                          if (updatedTitle != null && updatedTitle.isNotEmpty) {
+                            final cubit = context.read<ChatHistoryCubit>();
+                            await cubit.updateSessionTitle(
+                              context,
+                              sessionId: item.id,
+                              newTitle: updatedTitle,
+                            );
+                            AppSnackBar.custom(
+                              context,
+                              message: "Title Updated Successfully",
+                              svgAsset: "",
+                            );
+                          }
                         },
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
                         icon: Icons.edit_note,
                         label: 'Edit',
                       ),
+
                       SlidableAction(
                         onPressed: (_) {
+                          final chatId = item.id;
+                          context.read<ChatHistoryCubit>().deleteSession(context, chatId);
                           AppSnackBar.custom(
                             context,
                             message: "Delete Successfully",

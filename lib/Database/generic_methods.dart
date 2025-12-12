@@ -101,4 +101,42 @@ class GenericMethods<T extends BaseModel> {
     );
     return rows.map(_fromMap).toList();
   }
+
+  Future<int> deleteBySessionId(String table, String sessionId) async {
+    final uid = await AuthStorage.read();
+    return _db.delete(
+      table,
+      where: 'session_id = ? AND user_id = ?',
+      whereArgs: [sessionId, uid],
+    );
+  }
+
+  Future<void> insertChatMessageSafe(T item) async {
+    final uid = await AuthStorage.read();
+    if (uid == null) return;
+
+    item.userId = uid;
+
+    await _db.insert(
+      item.table,
+      item.toMap(),
+      algo: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<void> insertChatMessagesSafe(List<T> items) async {
+    final uid = await AuthStorage.read();
+    if (uid == null) return;
+
+    for (final item in items) {
+      item.userId = uid;
+
+      await _db.insert(
+        item.table,
+        item.toMap(),
+        algo: ConflictAlgorithm.ignore,
+      );
+    }
+  }
+
 }
