@@ -20,7 +20,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
-  dynamic _internetSub; // Changed to dynamic for web compatibility
+  dynamic _internetSub;
   final _internetStatusController = StreamController<bool>.broadcast();
   bool _isConnected = true;
 
@@ -30,28 +30,65 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   Future<void> _init(String token, String sessionId, bool isNewSession) async {
     if (!isNewSession && sessionId.isNotEmpty) {
-      await _loadOldMessages(sessionId);
+      await _loadCompleteHistory(sessionId);
+      // await _loadOldMessages(sessionId);
     }
     await _repo.connect(accessToken: token, existingSessionId: sessionId);
     _sub = _repo.messages.listen(_onSocketMessage);
   }
 
-  Future<void> _loadOldMessages(String sessionId) async {
-    final oldMessages = await _repo.getMessagesForSession(sessionId);
+  // Future<void> _loadOldMessages(String sessionId) async {
+  //   final oldMessages = await _repo.getMessagesForSession(sessionId);
+  //
+  //   final history = oldMessages
+  //       .map(
+  //         (msg) => {
+  //       'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+  //       'text': msg.text,
+  //     },
+  //   )
+  //       .toList();
+  //
+  //   final currentState = List<Map<String, String>>.from(state);
+  //   final updatedState = [...currentState, ...history];
+  //   emit(updatedState);
+  // }
 
-    final history = oldMessages
-        .map(
-          (msg) => {
+
+  Future<void> _loadCompleteHistory(String sessionId) async {
+    List<Map<String, String>> greeting = [
+      {'type': 'bot', 'text': 'Hey there!'},
+      {'type': 'bot', 'text': 'I’m your AskWILCO, How can I help you?'},
+    ];
+    emit(greeting);
+    final localMessages = await _repo.getMessagesForSession(sessionId);
+    final serverMessages = await _repo.fetchFullServerHistory(sessionId);
+
+    final converted = serverMessages.map(
+          (s) => _repo.serverToLocal(
+        api: s,
+        sessionId: sessionId,
+        userId: null,
+      ),
+    );
+    await _repo.insertOrIgnoreLocalMessages(converted.toList());
+    final merged = await _repo.getMessagesForSession(sessionId);
+
+    final uiList = merged.map((msg) {
+      return {
         'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
         'text': msg.text,
-      },
-    )
-        .toList();
+      };
+    }).toList();
+    final cleanList = removeDuplicates(uiList);
+    final finalList = [
+      ...greeting,
+      ...cleanList,
+    ];
 
-    final currentState = List<Map<String, String>>.from(state);
-    final updatedState = [...currentState, ...history];
-    emit(updatedState);
+    emit(removeDuplicates(finalList));
   }
+
 
   void sendMessage(String text) {
     if (!_isConnected) return;
@@ -65,6 +102,47 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     _repo.send(text);
   }
 
+  // void _onSocketMessage(ChatMessage msg) {
+  //   final next = List<Map<String, String>>.from(state);
+  //
+  //   if (msg.author == ChatAuthor.bot) {
+  //     next.removeWhere((m) => m['type'] == 'analyzing');
+  //   }
+  //
+  //   final mapped = {
+  //     'type': msg.author == ChatAuthor.user ? 'user' : 'bot',
+  //     'text': msg.text,
+  //   };
+  //
+  //   final nonTypingLast = next.lastWhere(
+  //         (m) => m['type'] != 'analyzing',
+  //     orElse: () => {},
+  //   );
+  //   final isDuplicate =
+  //       nonTypingLast.isNotEmpty &&
+  //           nonTypingLast['type'] == mapped['type'] &&
+  //           (nonTypingLast['text'] ?? '').trim() == (mapped['text'] ?? '').trim();
+  //
+  //   if (!isDuplicate) next.add(mapped);
+  //
+  //   emit(next);
+  // }
+
+  List<Map<String, String>> removeDuplicates(List<Map<String, String>> items) {
+    final seen = <String>{};
+    final filtered = <Map<String, String>>[];
+
+    for (final m in items) {
+      final key = "${m['type']}|${m['text']?.trim()}";
+      if (!seen.contains(key)) {
+        seen.add(key);
+        filtered.add(m);
+      }
+    }
+
+    return filtered;
+  }
+
   void _onSocketMessage(ChatMessage msg) {
     final next = List<Map<String, String>>.from(state);
 
@@ -74,22 +152,21 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
     final mapped = {
       'type': msg.author == ChatAuthor.user ? 'user' : 'bot',
-      'text': msg.text,
+      'text': msg.text.trim(),
     };
 
-    final nonTypingLast = next.lastWhere(
-          (m) => m['type'] != 'analyzing',
-      orElse: () => {},
-    );
-    final isDuplicate =
-        nonTypingLast.isNotEmpty &&
-            nonTypingLast['type'] == mapped['type'] &&
-            (nonTypingLast['text'] ?? '').trim() == (mapped['text'] ?? '').trim();
+    // FIX: check entire list, not only last element
+    final isDuplicate = next.any((m) =>
+    m['type'] == mapped['type'] &&
+        (m['text'] ?? '').trim() == mapped['text']);
 
-    if (!isDuplicate) next.add(mapped);
+    if (!isDuplicate) {
+      next.add(mapped);
+    }
 
     emit(next);
   }
+
 
   void _startInternetListener() {
     _internetSub = Connectivity().onConnectivityChanged.listen((result) {

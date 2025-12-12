@@ -5,8 +5,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../../../../Constants/ApiClass/api_service.dart';
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../CustomFiles/Custom_Pagination.dart';
 import '../../../../Database/auth_storage.dart';
 import '../../../../Database/generic_methods.dart';
+import '../ChatHistory/chat_messageModel.dart';
 import 'chat_model.dart';
 import 'chat_repository.dart';
 
@@ -127,7 +131,7 @@ class ChatRepositoryImpl implements ChatRepository {
         text: answer,
         sessionId: _sessionId ?? '',
       );
-      _controller.add(msg);
+      // _controller.add(msg);
       _saveChatMessage(msg);
       _pendingUserMessage = null;
       _pendingUserMessageObject = null;
@@ -165,7 +169,7 @@ class ChatRepositoryImpl implements ChatRepository {
     );
     _pendingUserMessage = text;
     _pendingUserMessageObject = msg;
-    _controller.add(msg);
+    // _controller.add(msg);
     _saveChatMessage(msg);
 
     if (_sessionId != null && _sessionId!.isNotEmpty) {
@@ -199,7 +203,9 @@ class ChatRepositoryImpl implements ChatRepository {
     msg.userId = await AuthStorage.read();
     msg.sessionId = _sessionId ?? '';
     try {
-      await _chatDb.insertAll([msg]);
+      // await _chatDb.insertAll([msg]);
+      await _chatDb.insertChatMessageSafe(msg);
+      _controller.add(msg);
       print('Saved message: ${msg.text}, id: ${msg.id}, sessionId: ${msg.sessionId}, userId: ${msg.userId}');
     } catch (e) {
       print('Error saving message: $e');
@@ -216,5 +222,54 @@ class ChatRepositoryImpl implements ChatRepository {
     await _socketSub?.cancel();
     await _channel?.sink.close(status.normalClosure);
     await _controller.close();
+  }
+
+
+  Future<List<ChatMessageModel>> fetchFullServerHistory(String sessionId) async {
+    List<ChatMessageModel> all = [];
+    int page = 1;
+    while (true) {
+      final uri = Uri.parse(
+        "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlChatConstant.chatService}/$sessionId",
+      );
+
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final results = (jsonData['results'] as List<dynamic>)
+          .map((item) => ChatMessageModel.fromApi(item, sessionId))
+          .toList();
+
+      all.addAll(results);
+
+      final totalPages = jsonData['total_pages'] as int? ?? 1;
+      if (page >= totalPages) break;
+      page++;
+    }
+    return all;
+  }
+
+  /// Convert server model → local ChatMessage
+  ChatMessage serverToLocal({
+    required ChatMessageModel api,
+    required String sessionId,
+    String? userId,
+  }) {
+    return ChatMessage(
+      id: api.id,
+      author: api.role.toLowerCase() == 'user' ? ChatAuthor.user : ChatAuthor.bot,
+      text: api.content,
+      sessionId: sessionId,
+      userId: userId,
+    );
+  }
+
+  /// Insert messages into local DB, ignore duplicates by id
+  Future<void> insertOrIgnoreLocalMessages(List<ChatMessage> messages) async {
+    final existing = await _chatDb.getAll(ChatMessage.tableName);
+    final existingIds = existing.map((e) => e.id).toSet();
+
+    final toInsert = messages.where((m) => !existingIds.contains(m.id)).toList();
+    if (toInsert.isNotEmpty) {
+      await _chatDb.insertAll(toInsert);
+    }
   }
 }

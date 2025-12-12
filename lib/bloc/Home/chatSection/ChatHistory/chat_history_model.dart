@@ -28,6 +28,15 @@ class ChatHistoryModel {
     return ChatHistoryModel(id: json['id'] ?? '', title: json['title'] ?? '');
   }
 
+  ChatHistoryModel copyWith({
+    String? id,
+    String? title,
+  }) {
+    return ChatHistoryModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+    );
+  }
   // Map<String, dynamic> toJson() => {'id': id, 'title': title};
 
   Map<String, dynamic> toJson() {
