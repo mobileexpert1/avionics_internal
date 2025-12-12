@@ -176,7 +176,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedAirport: airportModel));
   }
 
-
   LatLngBounds? _previousBounds;
 
   Future<void> fetchFlightsByBounds({
@@ -188,40 +187,41 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     try {
       _previousBounds = bounds;
 
-      debugPrint("🌍 Fetching flights for bounds: $bounds");
-
       final boundsString =
           "${bounds.northeast.latitude},${bounds.southwest.latitude},"
           "${bounds.southwest.longitude},${bounds.northeast.longitude}";
 
-      // ✅ Determine if filters applied
       final hasAircraftFilter =
-          state.selectedAircraftIcaos != null && state.selectedAircraftIcaos!.isNotEmpty;
+          state.selectedAircraftIcaos != null &&
+          state.selectedAircraftIcaos!.isNotEmpty;
       final hasCategoryFilter =
-          state.selectedCategories != null && state.selectedCategories!.isNotEmpty;
+          state.selectedCategories != null &&
+          state.selectedCategories!.isNotEmpty;
 
-      // ✅ Pass filters only if applied
       final flights = await FlightRepository().getFlights(
         bounds: boundsString,
-        aircraft: hasAircraftFilter ? state.selectedAircraftIcaos!.join(',') : null,
+        aircraft: hasAircraftFilter
+            ? state.selectedAircraftIcaos!.join(',')
+            : null,
         categories: hasCategoryFilter
-            ? state.selectedCategories!.map((cat) => _getCategoryCode(cat)).join(',')
+            ? state.selectedCategories!
+                  .map((cat) => _getCategoryCode(cat))
+                  .join(',')
             : null,
       );
 
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
-        longitude: currentCenterLatLong.longitude.toString(),
-        latitude: currentCenterLatLong.latitude.toString(),
-      );
-
+            longitude: currentCenterLatLong.longitude.toString(),
+            latitude: currentCenterLatLong.latitude.toString(),
+          );
 
       //https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=32.252355981477805,28.99138728132285,75.73254201561213,77.71007940173149&limit=20&aircraft=AN2,AN24&altitude_ranges=0-46000&categories=C,C
 
       // https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=32.252355981477805,28.99138728132285,75.73254201561213,77.71007940173149&limit=20&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000&categories=C,P
       debugPrint(
-        "✅ Flights fetched: ${flights.length}\n"
-            "🛬 Airport list count: ${airportList.data.length}",
+        "Flights fetched: ${flights.length}\n"
+        "Airport list count: ${airportList.data.length}",
       );
 
       emit(
@@ -262,13 +262,15 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-
   void setFilters(List<String> categories, List<String> aircraftIcaos) {
-    emit(state.copyWith(
-      selectedCategories: categories,
-      selectedAircraftIcaos: aircraftIcaos,
-    ));
+    emit(
+      state.copyWith(
+        selectedCategories: categories,
+        selectedAircraftIcaos: aircraftIcaos,
+      ),
+    );
   }
+
   Future<List<FlightModel>> mergeFlightsWithDetails(
     List<FlightModel> flights,
     List<AircraftModel> aircraftDetails,
@@ -321,14 +323,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('Error fetching flight details: ${e.toString()}'),
+        SnackBar(
+          content: Text('Error fetching flight details: ${e.toString()}'),
         ),
       );
-      emit(
-        state.copyWith(
-          isLoading: false,
-        ),
-      );
+      emit(state.copyWith(isLoading: false));
       // emit(
       //   state.copyWith(
       //     status: CommonApiStatus.failure,
@@ -416,7 +415,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedFlightDetail: null));
   }
 
-
   Future<void> refreshFlightPosition({
     required String flightNumber,
     required BuildContext context,
@@ -424,30 +422,37 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(isLoading: true));
 
     try {
-      final response = await FlightRepository().getFlightPositions(flightNumber);
+      final response = await FlightRepository().getFlightPositions(
+        flightNumber,
+      );
       if (response?.flights != null && response!.flights.isNotEmpty) {
         final updatedFlight = response.flights.first;
 
-        emit(state.copyWith(
-          selectedFlight: updatedFlight,
-          isLoading: false,
-          status: CommonApiStatus.success,
-        ));
+        emit(
+          state.copyWith(
+            selectedFlight: updatedFlight,
+            isLoading: false,
+            status: CommonApiStatus.success,
+          ),
+        );
       } else {
-        emit(state.copyWith(
-          isLoading: false,
-          status: CommonApiStatus.failure,
-          errorMessage: "No flight position data found.",
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            status: CommonApiStatus.failure,
+            errorMessage: "No flight position data found.",
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        status: CommonApiStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
       SessionCommonTokenError.handleUnauthorizedError(context, e);
     }
   }
-
 }

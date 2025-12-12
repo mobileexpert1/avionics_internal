@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
@@ -21,8 +23,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    // BlocProvider.of<ChatHistoryCubit>(context).fetchChatHistory(context);
     BlocProvider.of<ChatHistoryCubit>(context).loadChatHistory(context);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.chatHistoryScreen,
+    );
   }
 
   @override
@@ -63,6 +67,11 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     children: [
                       SlidableAction(
                         onPressed: (_) {
+                          AnalyticsService.instance.buttonPressed(
+                            FirebaseEvents.chatHistoryEditButton,
+                            FirebaseEvents.chatHistoryScreen,
+                          );
+
                           AppSnackBar.custom(
                             context,
                             message: "Edit Successfully",
@@ -76,6 +85,11 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                       ),
                       SlidableAction(
                         onPressed: (_) {
+                          AnalyticsService.instance.buttonPressed(
+                            FirebaseEvents.chatHistoryDeleteButton,
+                            FirebaseEvents.chatHistoryScreen,
+                          );
+
                           AppSnackBar.custom(
                             context,
                             message: "Delete Successfully",
@@ -111,6 +125,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                       onTap: () async {
                         final token =
                             await SharedPrefsHelper.getUserAccessToken() ?? '';
+                        AnalyticsService.instance.buttonPressed(
+                          FirebaseEvents.openAskWilcoChatButton,
+                          FirebaseEvents.chatHistoryScreen,
+                        );
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

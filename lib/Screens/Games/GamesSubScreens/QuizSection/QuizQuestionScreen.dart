@@ -6,14 +6,12 @@ import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_st
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../Home/HomeAirbus/ChatSection/ChatHistoryScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -34,6 +32,7 @@ class QuizQuestionScreen extends StatefulWidget {
 }
 
 bool isNeedToShowOrNot = false;
+bool isNeedToShowFlagOptions = false;
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   final ScrollController _scrollController = ScrollController();
@@ -42,8 +41,36 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   void initState() {
     super.initState();
     isNeedToShowOrNot = false;
+    isNeedToShowFlagOptions = false;
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.quizMainQuestionScreen,
+    );
+  }
+
+  void _showRadioPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => RadioPopup(
+        onSelected: (selectedIndex) {
+          setState(() {
+            isNeedToShowFlagOptions = false;
+          });
+          AppSnackBar.custom(
+            context,
+            // message:
+            //     "Question Report Successfully, Selected Option: ${selectedIndex + 1}",
+            message: "Question Report Successfully",
+            svgAsset: "",
+          );
+        },
+        title: 'Report',
+        options: [
+          'Incorrect Answer / Wrong Information',
+          'Question is Not Clear',
+          'Offensive or Inappropriate Content',
+          'Other Issue',
+        ],
+      ),
     );
   }
 
@@ -56,18 +83,14 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: widget.sectionTitle,
-          rightButton: isNeedToShowOrNot == false
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.flag, color: Colors.black),
-                  onPressed: () async {
-                    AppSnackBar.custom(
-                      context,
-                      message: "Question Report Successfully",
-                      svgAsset: "",
-                    );
-                  },
-                ),
+          // rightButton: isNeedToShowFlagOptions == false
+          //     ? null
+          //     : IconButton(
+          //         icon: const Icon(Icons.flag, color: Colors.black),
+          //         onPressed: () async {
+          //           _showRadioPopup(context);
+          //         },
+          //       ),
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () async {
@@ -93,6 +116,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       onPressed: () {
                         setState(() {
                           isNeedToShowOrNot = false;
+                          isNeedToShowFlagOptions = false;
                         });
                         Navigator.of(context).pop(true);
                       },
@@ -125,6 +149,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
             if (state.isTimerEnded && !isNeedToShowOrNot) {
               Future.delayed(const Duration(milliseconds: 50), () {
                 setState(() {
+                  isNeedToShowFlagOptions = true;
                   isNeedToShowOrNot = true;
                 });
               });
@@ -134,6 +159,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 state.showAnswer == false &&
                 state.isTimerEnded == false) {
               isNeedToShowOrNot = false;
+              isNeedToShowFlagOptions = false;
             }
 
             return Stack(
@@ -167,6 +193,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                           onNext: () {
                             if (state.isTimerEnded) {
                               setState(() {
+                                isNeedToShowFlagOptions = false;
                                 isNeedToShowOrNot = false;
                               });
                               quizCubit.nextQuestion(context);
@@ -512,6 +539,136 @@ class QuizProgressCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
         ],
+      ),
+    );
+  }
+}
+
+class RadioPopup extends StatefulWidget {
+  final String title;
+  final List<String> options;
+  final void Function(int selectedIndex) onSelected;
+
+  const RadioPopup({
+    super.key,
+    required this.title,
+    required this.options,
+    required this.onSelected,
+  });
+
+  @override
+  State<RadioPopup> createState() => _RadioPopupState();
+}
+
+class _RadioPopupState extends State<RadioPopup> {
+  int? _selectedOption;
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width * 0.76;
+    if (width > 400) width = 400;
+
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      insetPadding: const EdgeInsets.all(20),
+      child: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: width),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Icon(Icons.close, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Divider below title
+              const Divider(thickness: 1, height: 1),
+
+              // Options with divider
+              ...widget.options.asMap().entries.map((entry) {
+                int idx = entry.key;
+                String option = entry.value;
+                return Column(
+                  children: [
+                    RadioListTile<int>(
+                      value: idx,
+                      groupValue: _selectedOption,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedOption = value;
+                        });
+                      },
+                      title: Text(option),
+                    ),
+                  ],
+                );
+              }).toList(),
+
+              const Divider(thickness: 1, height: 1),
+              // Footer buttons
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.grey),
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    // Report Button
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: _selectedOption == null
+                            ? null
+                            : () {
+                                widget.onSelected(_selectedOption!);
+                                Navigator.of(context).pop();
+                              },
+                        child: const Text(
+                          'Report',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

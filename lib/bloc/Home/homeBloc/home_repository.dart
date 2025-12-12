@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:avionics_internal/Database/generic_methods.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import '../../MapSection/flight_key_values_model.dart';
 import '../manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
@@ -12,6 +14,20 @@ class HomeRepository {
       : _manufacturers = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap);
 
   final GenericMethods<ManufacturerListModel> _manufacturers;
+
+  Future<FlightKeyValuesModel> getMapKeyValueFromServer() async {
+    final uri = Uri.parse(
+      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchMapKey,
+    );
+    try {
+      final jsonData = await ApiService.get(url: uri, isForFlightRadar: true) as Map<String, dynamic>;
+      final modelResponse =  FlightKeyValuesModel.fromJson(jsonData);
+      await const MethodChannel('com.app/google_maps').invokeMethod("setGoogleMapsKey", {"key": "AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374"});
+      return modelResponse;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {
     final uri = Uri.parse(

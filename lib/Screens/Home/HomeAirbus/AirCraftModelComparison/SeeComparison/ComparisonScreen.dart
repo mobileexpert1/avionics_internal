@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../CustomFiles/CustomTabBar.dart';
@@ -42,6 +44,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       aircraft1Id: widget.model1,
       aircraft2Id: widget.model2,
     );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.comparisonScreen);
   }
 
   @override

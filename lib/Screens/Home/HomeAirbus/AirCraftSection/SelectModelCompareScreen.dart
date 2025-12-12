@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -33,9 +35,17 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.modelCompareScreen,
+    );
   }
 
   void _navigateAndSelectModel(int modelNumber) async {
+    AnalyticsService.instance.buttonPressed(
+      FirebaseEvents.aircraftComparisonScreen,
+      FirebaseEvents.comparisonScreen,
+    );
+
     final result = await Navigator.push<AircraftModel>(
       context,
       MaterialPageRoute(
@@ -180,6 +190,10 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                                     isEnabled: isButtonEnabled,
                                     onPressed: () {
                                       if (!isButtonEnabled) return;
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.comparedbuttons,
+                                        FirebaseEvents.modelCompareScreen,
+                                      );
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -289,6 +303,11 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                                 isEnabled: isButtonEnabled,
                                 onPressed: () {
                                   if (!isButtonEnabled) return;
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.comparedbuttons,
+                                    FirebaseEvents.comparisonScreen,
+                                  );
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

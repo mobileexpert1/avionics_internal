@@ -23,19 +23,13 @@ import UserNotifications
     // Register for APNs
     application.registerForRemoteNotifications()
 
-    // Google Maps API
-    GMSServices.provideAPIKey("AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374")
-
     //Get FlutterViewController
     guard let controller = window?.rootViewController as? FlutterViewController else {
         fatalError("rootViewController is not type FlutterViewController")
     }
 
     // Method channel for receipt
-    let receiptChannel = FlutterMethodChannel(
-        name: "com.avioflai.aviation/receipt",
-        binaryMessenger: controller.binaryMessenger
-    )
+    let receiptChannel = FlutterMethodChannel(name:"com.avioflai.aviation/receipt",binaryMessenger:controller.binaryMessenger)
 
     receiptChannel.setMethodCallHandler { call, result in
         if call.method == "getReceiptData" {
@@ -44,14 +38,29 @@ import UserNotifications
                 result(FlutterError(code: "NO_RECEIPT", message: "Receipt not found", details: nil))
                 return
             }
-
             let base64Receipt = receiptData.base64EncodedString()
             result(base64Receipt)
         } else {
             result(FlutterMethodNotImplemented)
         }
     }
-
+    
+      let channel = FlutterMethodChannel(name: "com.app/google_maps",binaryMessenger: controller.binaryMessenger)
+      channel.setMethodCallHandler { call, result in
+          if call.method == "setGoogleMapsKey" {
+              if let args = call.arguments as? [String: Any],
+                  let key = args["key"] as? String{
+                  //Google Maps API
+                  GMSServices.provideAPIKey(key)
+                  print("Google Maps key initialized: \(key)")
+                  result(true)
+              } else {
+                  result(FlutterError(code: "INVALID_KEY",message: "Key missing",details: nil))
+              }
+          } else {
+              result(FlutterMethodNotImplemented)
+          }
+      }
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

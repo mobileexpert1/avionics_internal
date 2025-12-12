@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
@@ -45,6 +47,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       context: context,
       query: widget.manufacturerDetailId,
     );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.manufacturerDetailScreen);
   }
 
   @override

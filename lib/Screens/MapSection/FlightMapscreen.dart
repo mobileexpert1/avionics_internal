@@ -1803,6 +1803,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               _singleSearchMarker = null;
               _isMapListViewShown = true;
               _isForFlyingInTheArea = 1;
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.flyingInTheAreaButton,
+                FirebaseEvents.trackScreen,
+              );
             });
             _resetFlightSelection();
             Navigator.pop(context);
@@ -1813,6 +1817,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               _singleSearchMarker = null;
               _isMapListViewShown = false;
               _isForFlyingInTheArea = 2;
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.trackAFlightButton,
+                FirebaseEvents.trackScreen,
+              );
             });
             Navigator.pop(context);
             _handleTextTap(context);
@@ -2041,6 +2049,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Future<void> _handleTextTap(BuildContext context) async {
     handleToggle(true);
+
+    AnalyticsService.instance.buttonPressed(
+      FirebaseEvents.trackAndSearchFlight,
+      FirebaseEvents.trackScreen,
+    );
+
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -2180,7 +2194,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 padding: const EdgeInsets.only(right: 15),
                                 child: Icon(
                                   Icons.star,
-                                  color: isFavorite ? Colors.black : Colors.white,
+                                  color: isFavorite
+                                      ? Colors.black
+                                      : Colors.white,
                                   size: kIsWeb ? 24 : 22,
                                 ),
                               ),
@@ -2194,7 +2210,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 children: [
                                   CustomSlidableAction(
                                     onPressed: (_) async {
-                                      final cubit = context.read<AllPlanesCubit>();
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.favOrUnFavFlightButton,
+                                        FirebaseEvents.trackScreen,
+                                      );
+
+                                      final cubit = context
+                                          .read<AllPlanesCubit>();
                                       await cubit.planFavOrUnfav1(
                                         aircraft!.aircraftId.toString(),
                                         data.callSign ?? '',
@@ -2204,14 +2226,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       );
                                       AppSnackBar.custom(
                                         context,
-                                        message: isFavorite ? "Airline Unfavorite" : "Airline Favorite",
+                                        message: isFavorite
+                                            ? "Airline Unfavorite"
+                                            : "Airline Favorite",
                                         svgAsset: "",
                                       );
                                     },
                                     backgroundColor: Colors.transparent,
                                     child: const SizedBox.shrink(),
                                   ),
-
                                 ],
                               ),
                               child: InkWell(
@@ -2223,7 +2246,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       _isMapListViewShown = false;
                                       _singleSearchMarker = marker;
                                       selectedFlightId = data.id;
-                                      context.read<FlightMapCubit>().setSelectedFlight(data);
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .setSelectedFlight(data);
                                     });
                                   });
 
@@ -2244,7 +2269,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
-                                    final isWide = constraints.maxWidth > 600; // breakpoint
+                                    final isWide =
+                                        constraints.maxWidth >
+                                        600; // breakpoint
 
                                     return Container(
                                       clipBehavior: Clip.hardEdge,
@@ -2253,7 +2280,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.08),
+                                            color: Colors.black.withOpacity(
+                                              0.08,
+                                            ),
                                             blurRadius: 5,
                                             spreadRadius: 1,
                                             offset: const Offset(0, 2),
@@ -2262,30 +2291,35 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       ),
                                       padding: EdgeInsets.all(isWide ? 14 : 10),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           ClipRRect(
-                                            borderRadius: BorderRadius.circular(6),
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
                                             child: (image.isEmpty)
                                                 ? Image.asset(
-                                              CommonUi.setPngImage(
-                                                AssetsPath.aeroplaneComparison,
-                                              ),
-                                              width: isWide ? 120 : 90,
-                                              height: isWide ? 60 : 45,
-                                              fit: BoxFit.cover,
-                                            )
+                                                    CommonUi.setPngImage(
+                                                      AssetsPath
+                                                          .aeroplaneComparison,
+                                                    ),
+                                                    width: isWide ? 120 : 90,
+                                                    height: isWide ? 60 : 45,
+                                                    fit: BoxFit.cover,
+                                                  )
                                                 : CachedAnyImage(
-                                              imagePath: image,
-                                              width: isWide ? 120 : 90,
-                                              height: isWide ? 60 : 45,
-                                              contentImage: BoxFit.cover,
-                                            ),
+                                                    imagePath: image,
+                                                    width: isWide ? 120 : 90,
+                                                    height: isWide ? 60 : 45,
+                                                    contentImage: BoxFit.cover,
+                                                  ),
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
@@ -2293,32 +2327,47 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                       child: Text(
                                                         model,
                                                         style: TextStyle(
-                                                          fontWeight: FontWeight.w700,
-                                                          fontSize: isWide ? 17 : 15,
-                                                          color: const Color(0xFF3F3D55),
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontSize: isWide
+                                                              ? 17
+                                                              : 15,
+                                                          color: const Color(
+                                                            0xFF3F3D55,
+                                                          ),
                                                         ),
-                                                        overflow: TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
                                                     const SizedBox(width: 6),
                                                     if (icaoCode.isNotEmpty)
                                                       Container(
-                                                        padding: const EdgeInsets.symmetric(
-                                                          horizontal: 6,
-                                                          vertical: 2,
-                                                        ),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 6,
+                                                              vertical: 2,
+                                                            ),
                                                         decoration: BoxDecoration(
                                                           color: Colors.white,
-                                                          borderRadius: BorderRadius.circular(6),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                6,
+                                                              ),
                                                           border: Border.all(
-                                                            color: Colors.grey.shade300,
+                                                            color: Colors
+                                                                .grey
+                                                                .shade300,
                                                           ),
                                                         ),
                                                         child: Text(
                                                           icaoCode,
                                                           style: TextStyle(
-                                                            fontSize: isWide ? 12 : 10,
-                                                            fontWeight: FontWeight.w600,
+                                                            fontSize: isWide
+                                                                ? 12
+                                                                : 10,
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                           ),
                                                         ),
                                                       ),
@@ -2326,55 +2375,90 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                 ),
                                                 const SizedBox(height: 6),
                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Row(
                                                       children: [
                                                         ClipRRect(
-                                                          borderRadius: BorderRadius.circular(4),
-                                                          child: manufacturerLogo.isEmpty
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                4,
+                                                              ),
+                                                          child:
+                                                              manufacturerLogo
+                                                                  .isEmpty
                                                               ? SvgPicture.asset(
-                                                            CommonUi.setSvgImage(
-                                                              AssetsPath.manufacturer,
-                                                            ),
-                                                            width: isWide ? 26 : 18,
-                                                            height: isWide ? 26 : 18,
-                                                            fit: BoxFit.contain,
-                                                          )
+                                                                  CommonUi.setSvgImage(
+                                                                    AssetsPath
+                                                                        .manufacturer,
+                                                                  ),
+                                                                  width: isWide
+                                                                      ? 26
+                                                                      : 18,
+                                                                  height: isWide
+                                                                      ? 26
+                                                                      : 18,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                )
                                                               : CachedAnyImage(
-                                                            imagePath: manufacturerLogo,
-                                                            width: isWide ? 40 : 28,
-                                                            height: isWide ? 20 : 16,
-                                                            contentImage: BoxFit.contain,
-                                                            useCache: true,
-                                                          ),
+                                                                  imagePath:
+                                                                      manufacturerLogo,
+                                                                  width: isWide
+                                                                      ? 40
+                                                                      : 28,
+                                                                  height: isWide
+                                                                      ? 20
+                                                                      : 16,
+                                                                  contentImage:
+                                                                      BoxFit
+                                                                          .contain,
+                                                                  useCache:
+                                                                      true,
+                                                                ),
                                                         ),
-                                                        const SizedBox(width: 6),
+                                                        const SizedBox(
+                                                          width: 6,
+                                                        ),
                                                         Text(
                                                           manufacturer,
                                                           style: TextStyle(
                                                             color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: isWide ? 14 : 12,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: isWide
+                                                                ? 14
+                                                                : 12,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                     Container(
-                                                      padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4,
-                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4,
+                                                          ),
                                                       decoration: BoxDecoration(
-                                                        color: const Color(0xFF3F3D55),
-                                                        borderRadius: BorderRadius.circular(6),
+                                                        color: const Color(
+                                                          0xFF3F3D55,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              6,
+                                                            ),
                                                       ),
                                                       child: Text(
                                                         flightCode,
                                                         style: TextStyle(
                                                           color: Colors.white,
-                                                          fontSize: isWide ? 13 : 11,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontSize: isWide
+                                                              ? 13
+                                                              : 11,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                     ),
@@ -2649,6 +2733,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             final token = prefs.getString('UserAccessTokenKey');
 
             if (token != null && token.isNotEmpty) {
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.openAskWilcoChatButton,
+                FirebaseEvents.trackScreen,
+              );
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -2955,6 +3044,13 @@ class FlightCard extends StatelessWidget {
                                                 .stopTrackingFlight();
                                             Navigator.pop(context, flightId);
                                           } else {
+                                            AnalyticsService.instance
+                                                .buttonPressed(
+                                                  FirebaseEvents
+                                                      .trackAFlightButton,
+                                                  FirebaseEvents.trackScreen,
+                                                );
+
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -3148,6 +3244,12 @@ class FlightCard extends StatelessWidget {
                                   detail?.flightTime ??
                                   selectedFlight?.flightTime,
                             );
+
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.flightDetailScreen,
+                              FirebaseEvents.trackScreen,
+                            );
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(

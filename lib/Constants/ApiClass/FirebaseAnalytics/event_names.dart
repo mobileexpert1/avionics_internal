@@ -12,6 +12,7 @@ class FirebaseEvents {
   static const trackScreen = 'track_Screen';
   static const gamesScreen = 'games_Screen';
   static const askChatScreen = 'ask_Chat_Screen';
+  static const chatHistoryScreen = 'chat_History_Screen';
   static const profileScreen = 'profile_Screen';
 
   static const quizListScreen = 'quiz_List_Screen';
@@ -22,13 +23,15 @@ class FirebaseEvents {
   static const quizMainQuestionScreen = 'quiz_Main_Question_Screen';
   static const calculationsLockListScreen = 'calculations_Lock_List_Screen';
   static const calculationResultScreen = 'calculation_Result_Screen';
-  static const blackBoxCalculationResultScreen = 'blackBox_calculation_Result_Screen';
+  static const blackBoxCalculationResultScreen =
+      'blackBox_calculation_Result_Screen';
 
   ////--------========-------==========---- Profile Subs Screen Names
   static const manageAccountScreen = 'manage_Account_Screen';
   static const badgesScreen = 'badges_Screen';
   static const subscriptionScreen = 'subscription_Screen';
   static const savedFlightScreen = 'saved_Flight_Screen';
+
   static const avtarScreen = 'avtar_Screen';
   static const formulaScreen = 'formula_Screen';
   static const conversionScreen = 'conversion_Screen';
@@ -61,10 +64,43 @@ class FirebaseEvents {
   static const oneWordTopicButton = 'oneWord_Topic_Button';
   static const calculationsLockButton = 'calculations_Lock_Button';
 
-
   static const blackBoxOverViewClueScreen = 'blackBox_OverView_Clue_Screen';
   static const blackBoxMainQuestionScreen = 'blackBox_Main_Question_Screen';
   static const blackBoxOverViewClueButton = 'blackBox_OverView_Clue_Button';
+  static const flightDetailScreen = 'flight_Detail_Screen';
+  static const trackAndSearchFlight = 'track_search_Flight';
+  static const flightTrackScreen = 'flight_Track_Screen';
+
+  static const flyingInTheAreaButton = 'flying_In_The_Area_Button';
+  static const favOrUnFavFlightButton = 'fav_Or_UnFavFlight_Button';
+  static const trackAFlightButton = 'track_A_Flight_Button';
+  static const openAskWilcoChatButton = 'openAsk_Wilco_Chat_Button';
+  static const chatHistoryEditButton = 'chatHistoryEditButton';
+  static const chatHistoryDeleteButton = 'chatHistoryEditButton';
+  static const selectModelCompareScreen = 'select_Model_Compare_Screen';
+
+  static const manufacturerDetailScreen = 'manufacturer_Detail_Screen';
+
+  static const allPlanesListScreen = 'all_Planes_List_Screen';
+
+  static const airCraftDetailScreen = 'airCraft_Detail_Screen';
+
+  static const flightAircraftDetail = 'flight_Aircraft_Detail';
+
+
+
+
+  static const manufacturerScreen = 'manufacturer_Screen';
+  static const manufacturerListItemButton = 'manufacturer_List_Item_Button';
+  static const allAirbusModelsButton = 'all_Airbus_Models_Button';
+  static const flightMapScreen = 'flightMap_Screen';
+  static const savedFlighScreen = 'saved_Fligh_Screen';
+
+  static const modelCompareScreen = 'modelCompareScreen';
+  static const comparedbuttons = 'compare_buttons';
+
+  static const aircraftComparisonScreen = 'aircraft_Comparison_Screen';
+  static const comparisonScreen = 'comparison_Screen';
 
   ////--------========-------==========---- All Buttons
   static const loginButton = 'login_Button';

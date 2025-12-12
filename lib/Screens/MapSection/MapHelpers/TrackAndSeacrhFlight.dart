@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
@@ -22,6 +24,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackAndSearchFlight);
   }
 
   void _onSearch(String value) {

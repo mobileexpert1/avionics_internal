@@ -26,8 +26,10 @@ class AnalyticsService {
       return "web_user_$uid";
     }
     try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        return "mobile_user_$uid";
+      if (Platform.isAndroid) {
+        return "mobile_user_Android_$uid";
+      } else if (Platform.isIOS) {
+        return "mobile_user_IOS_$uid";
       }
     } catch (_) {}
     return "unknown_platform_$uid";
@@ -46,7 +48,7 @@ class AnalyticsService {
       },
     );
     print(
-      "Uploaded Parameters: ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
+      "Uploaded Visible Parameters: screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
     );
   }
 
@@ -63,7 +65,7 @@ class AnalyticsService {
       },
     );
     print(
-      "Uploaded Parameters: ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
+      "Uploaded Button Parameters:screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
     );
   }
 

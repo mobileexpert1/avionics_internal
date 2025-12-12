@@ -44,7 +44,11 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.airplanemode_inactive, size: 60, color: Colors.grey),
+            const Icon(
+              Icons.airplanemode_inactive,
+              size: 60,
+              color: Colors.grey,
+            ),
             const SizedBox(height: 10),
             Text(emptyMessage, style: const TextStyle(color: Colors.grey)),
           ],
@@ -70,7 +74,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                     decoration: BoxDecoration(
                       color: isSavedTab
                           ? AppColors.saveButtonColour
-                          :  AppColors.saveButtonColour,
+                          : AppColors.saveButtonColour,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     alignment: Alignment.centerRight,
@@ -85,8 +89,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             color: Colors.white,
                             size: kIsWeb ? 22 : 24,
                           ),
-                        if (isFavorite)
-                          const SizedBox(width: 8),
+                        if (isFavorite) const SizedBox(width: 8),
                         if (!isSavedTab || isFavorite)
                           Icon(
                             Icons.do_disturb_alt_outlined,
@@ -107,9 +110,11 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                         onPressed: (_) async {
                           final cubit = context.read<AllPlanesCubit>();
                           if (isSavedTab) {
-                            await cubit.planFavOrUnfav(item.id.toString(), context);
-                          }
-                          else {
+                            await cubit.planFavOrUnfav(
+                              item.id.toString(),
+                              context,
+                            );
+                          } else {
                             await cubit.planFavOrUnfav1(
                               item.aircraftId.toString(),
                               item.callSign ?? '',
@@ -130,15 +135,22 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                   child: InkWell(
                     onTap: () {
                       if (isSavedTab) {
+                        AnalyticsService.instance.buttonPressed(
+                          FirebaseEvents.airCraftDetailScreen,
+                          FirebaseEvents.savedFlightScreen,
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => AirCraftDetailScreen(
-                              aircraftId: item.id,
-                            ),
+                            builder: (_) =>
+                                AirCraftDetailScreen(aircraftId: item.id),
                           ),
                         );
                       } else {
+                        AnalyticsService.instance.buttonPressed(
+                          FirebaseEvents.flightAircraftDetail,
+                          FirebaseEvents.savedFlightScreen,
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -147,8 +159,8 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               child: FlightDetailScreen(
                                 ICAOType: item.icaoTypeCode ?? '',
                                 flightNumber: item.flightNumber,
-                                callsign:item.callsign,
-                                flightId:item.flightId,
+                                callsign: item.callsign,
+                                flightId: item.flightId,
                                 fromSavedFlight: true,
                                 flightDetail: FlightAircraftDetail(
                                   icaoTypeCode: item.icaoTypeCode,
@@ -161,7 +173,6 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                           ),
                         );
                       }
-
                     },
                     child: Container(
                       clipBehavior: Clip.hardEdge,
@@ -208,7 +219,9 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             child: Text(
                               _currentTabIndex == 0
                                   ? (item.aircraftModel ?? 'Unknown Aircraft')
-                                  : (item.callsign?.isNotEmpty == true ? item.callsign! : 'Unknown Flight'),
+                                  : (item.callsign?.isNotEmpty == true
+                                        ? item.callsign!
+                                        : 'Unknown Flight'),
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,

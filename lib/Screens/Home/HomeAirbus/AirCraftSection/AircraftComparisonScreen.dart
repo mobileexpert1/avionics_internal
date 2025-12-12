@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Helpers/AppText.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SelectableAircraftCard.dart';
@@ -35,6 +37,9 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
     super.initState();
     _cubit = AircraftComparisonCubit()..loadAircraftModels(context: context);
     _scrollController.addListener(_onScroll);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.aircraftComparisonScreen,
+    );
   }
 
   void _onScroll() {

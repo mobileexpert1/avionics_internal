@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_detailModel.dart';
@@ -66,6 +68,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         defaultTargetPlatform == TargetPlatform.iOS) {
       WidgetsBinding.instance.addObserver(this);
     }
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.flightTrackScreen);
   }
 
   @override

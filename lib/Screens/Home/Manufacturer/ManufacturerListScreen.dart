@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
@@ -27,6 +29,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         context: context,
       );
     });
+
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.manufacturerScreen);
   }
 
   void _onScroll() {
@@ -211,6 +215,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     size: kIsWeb ? 30 : 15,
                                   ),
                                   onTap: () {
+                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.allAirbusModelsButton,FirebaseEvents.manufacturerScreen);
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

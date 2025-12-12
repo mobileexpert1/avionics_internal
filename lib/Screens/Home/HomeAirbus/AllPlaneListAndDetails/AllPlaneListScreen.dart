@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
@@ -40,6 +42,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
         context: context,
       );
     });
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.airCraftDetailScreen);
   }
 
   void _onScroll() {
@@ -202,6 +205,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                   ),
                                   child: InkWell(
                                     onTap: () {
+
+
+                                      AnalyticsService.instance.buttonPressed(FirebaseEvents.manufacturerListItemButton,FirebaseEvents.allPlanesListScreen);
+
+
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

@@ -16,6 +16,7 @@ import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
+import '../MapSection/MapHelpers/FlightDetailScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPrefsHelper.removeMapApiKey();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
+    homeCubit.repository.getMapKeyValueFromServer();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.exploreScreen);
   }
 
@@ -55,8 +57,12 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               final token = prefs.getString('UserAccessTokenKey');
-
               if (token != null && token.isNotEmpty) {
+                AnalyticsService.instance.buttonPressed(
+                  FirebaseEvents.openAskWilcoChatButton,
+                  FirebaseEvents.exploreScreen,
+                );
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -165,12 +171,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             imagePath: CommonUi.setSvgImage(
                               AssetsPath.selectModel,
                             ),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => SelectModelCompareScreen(),
-                              ),
-                            ),
+                            onTap: () {
+                              AnalyticsService.instance.buttonPressed(
+                                FirebaseEvents.selectModelCompareScreen,
+                                FirebaseEvents.exploreScreen,
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => SelectModelCompareScreen(),
+                                ),
+                              );
+                            },
                             isSvg: true,
                           ),
 
@@ -210,6 +223,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     title: m.companyName,
                                     imagePath: (m.icon ?? ''),
                                     onTap: () {
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.manufacturerDetailScreen,
+                                        FirebaseEvents.exploreScreen,
+                                      );
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -234,15 +252,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Center(
                               child: TextButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BlocProvider(
-                                      create: (_) => ManufacturerCubit(),
-                                      child: ManufacturerScreen(),
+                                onPressed: () {
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.manufacturerScreen,
+                                    FirebaseEvents.exploreScreen,
+                                  );
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
+                                        create: (_) => ManufacturerCubit(),
+                                        child: ManufacturerScreen(),
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                                 child: Text(
                                   'See All',
                                   style: TextStyle(
@@ -303,6 +328,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // Flying in the Area Button
                                 GestureDetector(
                                   onTap: () {
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.flightMapScreen,
+                                      FirebaseEvents.exploreScreen,
+                                    );
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -382,6 +412,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // Track a Flight Button
                                 GestureDetector(
                                   onTap: () {
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.trackAndSearchFlight,
+                                      FirebaseEvents.exploreScreen,
+                                    );
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -426,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fit: BoxFit.fitWidth,
                                         ),
                                         const SizedBox(width: 12),
-                                         Expanded(
+                                        Expanded(
                                           child: Text(
                                             "Track a Flight",
                                             style: TextStyle(
@@ -495,20 +530,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                   (f) => AppListTileCard(
                                     title: f.aircraftModel,
                                     imagePath: (f.image),
-                                    onTap: () {},
+                                    onTap: () {
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.flightAircraftDetail,
+                                        FirebaseEvents.savedFlightScreen,
+                                      );
+                                      // Pending Details From Backend side
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (_) => BlocProvider(
+                                      //       create: (_) => FlightMapCubit(),
+                                      //       child: FlightDetailScreen(
+                                      //         ICAOType: f.iCAOCode ?? '',
+                                      //         flightNumber: f.,
+                                      //         callsign: f.callsign,
+                                      //         flightId: f.flightId,
+                                      //         fromSavedFlight: true,
+                                      //         flightDetail: FlightAircraftDetail(
+                                      //           icaoTypeCode: item.icaoTypeCode,
+                                      //           aircraftModel: item.aircraftModel,
+                                      //           image: item.image,
+                                      //           id: item.id,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    },
                                     isSvg: (f.image).contains(".svg"),
                                     isNetwork: true,
                                   ),
                                 ),
                             Center(
                               child: TextButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        SavedFlighScreen(showTabs: true),
-                                  ),
-                                ),
+                                onPressed: () {
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.savedFlighScreen,
+                                    FirebaseEvents.exploreScreen,
+                                  );
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          SavedFlighScreen(showTabs: true),
+                                    ),
+                                  );
+                                },
                                 child: Text(
                                   'See All',
                                   style: TextStyle(

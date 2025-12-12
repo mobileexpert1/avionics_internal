@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Helpers/Custom_widget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
@@ -39,6 +41,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
       widget.aircraftId,
       context,
     );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.allPlanesListScreen);
   }
 
   @override

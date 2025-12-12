@@ -10,6 +10,8 @@ import '../../../../Helpers/Custom_widget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/MapSection/flight_map_repository.dart';
@@ -68,6 +70,10 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     if (widget.fromSavedFlight) {
       _loadFullFlightDetailsFromSaved();
     }
+
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.flightDetailScreen,
+    );
   }
 
   /// Fetches full flight details + live position and merges them
@@ -135,15 +141,15 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
 
           // === ICAO/IATA (backup) ===
           departureIcao:
-          liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
+              liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
           departureIata:
-          liveFlight.departureIata ?? fullFlightDetail.departureIata,
+              liveFlight.departureIata ?? fullFlightDetail.departureIata,
           arrivalIcao: liveFlight.arrivalIcao ?? fullFlightDetail.arrivalIcao,
           arrivalIata: liveFlight.arrivalIata ?? fullFlightDetail.arrivalIata,
 
           // === AIRCRAFT INFO ===
           registration:
-          liveFlight.registration ?? fullFlightDetail.registration,
+              liveFlight.registration ?? fullFlightDetail.registration,
           type: liveFlight.type ?? fullFlightDetail.type,
           paintedAs: liveFlight.paintedAs ?? fullFlightDetail.paintedAs,
           operatingAs: liveFlight.operatingAs ?? fullFlightDetail.operatingAs,
@@ -270,7 +276,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "IDENTIFICATION & CLASSIFICATION",
                       isExpanded: showIdentification,
                       onToggle: () => setState(
-                            () => showIdentification = !showIdentification,
+                        () => showIdentification = !showIdentification,
                       ),
                       content: _buildTechnicalData(details?.identification),
                     ),
@@ -287,7 +293,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "DIMENSIONS",
                       isExpanded: showDimensionSection,
                       onToggle: () => setState(
-                            () => showDimensionSection = !showDimensionSection,
+                        () => showDimensionSection = !showDimensionSection,
                       ),
                       content: _buildDimenionsData(details?.dimensions),
                     ),
@@ -296,7 +302,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "WEIGHTS",
                       isExpanded: showWeightsSection,
                       onToggle: () => setState(
-                            () => showWeightsSection = !showWeightsSection,
+                        () => showWeightsSection = !showWeightsSection,
                       ),
                       content: _buildWeightsData(details?.weights),
                     ),
@@ -305,7 +311,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "PERFORMANCE (ORDERED BY FLIGHT SEQUENCE)",
                       isExpanded: showPerformanceSection,
                       onToggle: () => setState(
-                            () => showPerformanceSection = !showPerformanceSection,
+                        () => showPerformanceSection = !showPerformanceSection,
                       ),
                       content: _builPerfomanceOrderedBYsData(
                         details?.performance,
@@ -316,7 +322,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "OPERATIONAL LIMITATIONS",
                       isExpanded: showOperationalSection,
                       onToggle: () => setState(
-                            () => showOperationalSection = !showOperationalSection,
+                        () => showOperationalSection = !showOperationalSection,
                       ),
                       content: _builOperationLimitationsData(
                         details?.operationalLimitations,
@@ -327,7 +333,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "LANDING GEAR",
                       isExpanded: showLandingSection,
                       onToggle: () => setState(
-                            () => showLandingSection = !showLandingSection,
+                        () => showLandingSection = !showLandingSection,
                       ),
                       content: _builLandingGearData(details?.landingGear),
                     ),
@@ -336,8 +342,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                       title: "CERTIFICATION & ENVIRONMENTAL",
                       isExpanded: showCertificationSection,
                       onToggle: () => setState(
-                            () => showCertificationSection =
-                        !showCertificationSection,
+                        () => showCertificationSection =
+                            !showCertificationSection,
                       ),
                       content: _builCertificationData(details?.certification),
                     ),
@@ -353,9 +359,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildImageCoverScroller(
-      double screenHeight,
-      List<AircraftImage> coverImages,
-      ) {
+    double screenHeight,
+    List<AircraftImage> coverImages,
+  ) {
     if (coverImages.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: screenHeight * 0.18,
@@ -720,7 +726,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             title: "IDENTIFICATION & POSITION",
             isExpanded: showIdentificationFlight,
             onTap: () => setState(
-                  () => showIdentificationFlight = !showIdentificationFlight,
+              () => showIdentificationFlight = !showIdentificationFlight,
             ),
             showBlueDot: true,
           ),
@@ -1036,11 +1042,11 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   }
 
   Widget _buildFieldRows(
-      List<List<dynamic>> fields, {
-        Color labelColor = Colors.white70,
-        Color valueColor = Colors.white,
-        List<int>? showInfoFields,
-      }) {
+    List<List<dynamic>> fields, {
+    Color labelColor = Colors.white70,
+    Color valueColor = Colors.white,
+    List<int>? showInfoFields,
+  }) {
     return Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
         final first = fields[i * 2];
@@ -1057,7 +1063,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   labelColor: labelColor,
                   textColor: valueColor,
                   showInfoIcon:
-                  (first.length > 2 && first[2] == true) ||
+                      (first.length > 2 && first[2] == true) ||
                       (showInfoFields?.contains(i * 2) ?? false),
                 ),
               ),
@@ -1065,14 +1071,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
               Expanded(
                 child: second != null
                     ? customField(
-                  label: second[0],
-                  text: second[1],
-                  labelColor: labelColor,
-                  textColor: valueColor,
-                  showInfoIcon:
-                  (second.length > 2 && second[2] == true) ||
-                      (showInfoFields?.contains(i * 2 + 1) ?? false),
-                )
+                        label: second[0],
+                        text: second[1],
+                        labelColor: labelColor,
+                        textColor: valueColor,
+                        showInfoIcon:
+                            (second.length > 2 && second[2] == true) ||
+                            (showInfoFields?.contains(i * 2 + 1) ?? false),
+                      )
                     : const SizedBox(),
               ),
             ],
@@ -1099,9 +1105,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ),
         isExpanded
             ? Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: content,
-        )
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: content,
+              )
             : const SizedBox.shrink(),
         const Divider(
           height: 0,
