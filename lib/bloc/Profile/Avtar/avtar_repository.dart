@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
+import 'avtar_model.dart';
 
 class AvtarRepository {
   Future<BaseDetailResponseModel> setAvtarForProfile({
@@ -43,4 +44,21 @@ class AvtarRepository {
       throw e.toString();
     }
   }
+
+
+  Future<AvatarListResponseModel> loadAvatars() async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlConstant.userService +
+          ApiServiceUrlConstant.fetchAvatars,
+    );
+
+    try {
+      final response = await ApiService.get(url: url);
+      return AvatarListResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
 }

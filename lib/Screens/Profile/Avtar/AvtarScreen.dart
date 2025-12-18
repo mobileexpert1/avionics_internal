@@ -10,6 +10,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
 import '../../../bloc/Profile/Avtar/avtar_state.dart';
 import '../../Onboarding/Login/LoginScreen.dart';
@@ -31,21 +32,21 @@ class AvtarScreen extends StatefulWidget {
 }
 
 class _AvtarScreenState extends State<AvtarScreen> {
-  final List<String> titles = ['Pilot', 'ATCO', 'Student', 'Enthusiasts'];
-  final List<String> userTypes = ['pilot', 'atco', 'student', 'enthusiast'];
-  final List<String> icons = [
-    AssetsPath.avtarFirst,
-    AssetsPath.avtarSecond,
-    AssetsPath.avtarThird,
-    AssetsPath.avtarFouth,
-  ];
+  // final List<String> titles = ['Pilot', 'ATCO', 'Student', 'Enthusiasts'];
+  // final List<String> userTypes = ['pilot', 'atco', 'student', 'enthusiast'];
+  // final List<String> icons = [
+  //   AssetsPath.avtarFirst,
+  //   AssetsPath.avtarSecond,
+  //   AssetsPath.avtarThird,
+  //   AssetsPath.avtarFouth,
+  // ];
 
   @override
   void initState() {
     super.initState();
-    context.read<AvtarCubit>().loadAvatarFromPrefs(
-      widget.isComeFromSignupScreen,
-      widget.isComeFromSocialLogin,
+    context.read<AvtarCubit>().loadAvatars(
+      // widget.isComeFromSignupScreen,
+      // widget.isComeFromSocialLogin,
     );
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.avtarScreen);
   }
@@ -64,9 +65,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => LoginScreen()),
-                (route) => false,
-          )
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
+                )
               : Navigator.pop(context)),
         ),
       ),
@@ -82,34 +83,50 @@ class _AvtarScreenState extends State<AvtarScreen> {
           }
         },
         builder: (context, state) {
+          if (state.status == CommonApiStatus.initial) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.avatars.isEmpty) {
+            return const Center(child: Text('No avatars found'));
+          }
           return Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                itemCount: titles.length,
-                separatorBuilder: (context, index) =>
-                const Divider(height: 0.1, color: Colors.grey, thickness: 0.1),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 20,
+                ),
+                itemCount: state.avatars.length,
+                separatorBuilder: (context, index) => const Divider(
+                  height: 0.1,
+                  color: Colors.grey,
+                  thickness: 0.1,
+                ),
                 itemBuilder: (context, index) {
-                  final userType = userTypes[index];
-                  final isSelected = state.selectedUserType == userType;
+                  final userType = state.avatars[index];
+                  final isSelected = state.selectedUserType == userType.key;
 
                   return GestureDetector(
                     onTap: () {
                       final cubit = context.read<AvtarCubit>();
                       if (widget.isComeFromSignupScreen ||
                           widget.isComeFromSocialLogin) {
-                        cubit.selectAvatarTypeOnly(userType);
+                        cubit.selectAvatarTypeOnly(userType.key);
                       } else {
                         cubit.selectAvatar(
-                          userType,
+                          userType.key,
                           widget.isComeFromSignupScreen,
                           widget.isComeFromSocialLogin,
                           context,
                           {},
                         );
                       }
-                      AnalyticsService.instance.buttonPressed(FirebaseEvents.avtarScreen,FirebaseEvents.updatedAvtarButtonTap);
+                      AnalyticsService.instance.buttonPressed(
+                        FirebaseEvents.avtarScreen,
+                        FirebaseEvents.updatedAvtarButtonTap,
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -127,15 +144,29 @@ class _AvtarScreenState extends State<AvtarScreen> {
                           ),
                           child: Row(
                             children: [
-                              SvgPicture.asset(
-                                CommonUi.setSvgImage(icons[index]),
-                                height: 40,
-                                width: 40,
+                              (userType.logo.isNotEmpty)
+                                  ? SvgPicture.network(
+                                userType.logo,
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.contain,
+                                placeholderBuilder: (context) =>
+                                const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                                  : SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.avtarSecond),
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.contain,
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Text(
-                                  titles[index],
+                                  userType.name,
                                   style: const TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.w600,
@@ -162,41 +193,41 @@ class _AvtarScreenState extends State<AvtarScreen> {
         },
       ),
       bottomNavigationBar:
-      (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
+          (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
           ? SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 12,
-            horizontal: 20,
-          ),
-          child: BlocSelector<AvtarCubit, AvtarState, bool>(
-            selector: (state) =>
-            state.selectedUserType != null &&
-                state.selectedUserType!.isNotEmpty,
-            builder: (context, isButtonEnabled) {
-              return CustomBottomButton(
-                title: ConstantStrings.submitTitle,
-                backgroundColor: AppColors.customBottomEnabledColour,
-                textColor: Colors.white,
-                icon: const SizedBox(width: 0),
-                isEnabled: isButtonEnabled,
-                onPressed: () {
-                  final selectedUserType =
-                      context.read<AvtarCubit>().state.selectedUserType ??
-                          '';
-                  context.read<AvtarCubit>().selectAvatar(
-                    selectedUserType,
-                    widget.isComeFromSignupScreen,
-                    widget.isComeFromSocialLogin,
-                    context,
-                    widget.signupData,
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      )
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 20,
+                ),
+                child: BlocSelector<AvtarCubit, AvtarState, bool>(
+                  selector: (state) =>
+                      state.selectedUserType != null &&
+                      state.selectedUserType!.isNotEmpty,
+                  builder: (context, isButtonEnabled) {
+                    return CustomBottomButton(
+                      title: ConstantStrings.submitTitle,
+                      backgroundColor: AppColors.customBottomEnabledColour,
+                      textColor: Colors.white,
+                      icon: const SizedBox(width: 0),
+                      isEnabled: isButtonEnabled,
+                      onPressed: () {
+                        final selectedUserType =
+                            context.read<AvtarCubit>().state.selectedUserType ??
+                            '';
+                        context.read<AvtarCubit>().selectAvatar(
+                          selectedUserType,
+                          widget.isComeFromSignupScreen,
+                          widget.isComeFromSocialLogin,
+                          context,
+                          widget.signupData,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
           : const SizedBox.shrink(),
     );
   }

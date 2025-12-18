@@ -58,7 +58,7 @@ class AvtarCubit extends Cubit<AvtarState> {
         await AvtarRepository().setAvtarForProfile(userType: userType);
       }
 
-      await SharedPrefsHelper.setAvtarUserType(userType);
+       await SharedPrefsHelper.setAvtarUserType(userType);
       emit(state.copyWith(status: CommonApiStatus.success));
 
       if (isComeFromSignup) {
@@ -99,22 +99,39 @@ class AvtarCubit extends Cubit<AvtarState> {
       );
     }
   }
+  //
+  // Future<void> loadAvatarFromPrefs(
+  //   bool isComeFromSignup,
+  //   bool isComeFromSocialLogin,
+  // ) async {
+  //   var userType = await SharedPrefsHelper.getAvtarUserType();
+  //   if (isComeFromSignup == true || isComeFromSocialLogin == true) {
+  //     userType = '';
+  //   }
+  //   emit(
+  //     state.copyWith(
+  //       selectedUserType: userType,
+  //       status: CommonApiStatus.initial,
+  //       errorMessage: null,
+  //     ),
+  //   );
+  // }
 
-  Future<void> loadAvatarFromPrefs(
-    bool isComeFromSignup,
-    bool isComeFromSocialLogin,
-  ) async {
-    var userType = await SharedPrefsHelper.getAvtarUserType();
-    if (isComeFromSignup == true || isComeFromSocialLogin == true) {
-      userType = '';
+  Future<void> loadAvatars() async {
+    emit(state.copyWith(status: CommonApiStatus.initial, errorMessage: null));
+    try {
+      final response = await AvtarRepository().loadAvatars();
+      emit(
+        state.copyWith(status: CommonApiStatus.success, avatars: response.data),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
-    emit(
-      state.copyWith(
-        selectedUserType: userType,
-        status: CommonApiStatus.initial,
-        errorMessage: null,
-      ),
-    );
   }
 
   void resetStatus() {

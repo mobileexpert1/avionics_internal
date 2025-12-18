@@ -16,6 +16,10 @@
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374"></script>
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
+
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -32,6 +36,34 @@
 
 <!-- ✅ Flutter app loader -->
 <script src="flutter_bootstrap.js" async></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDOqBpCG6dcyADfM90PnBJMfTiAzPXoV1Q",
+    authDomain: "avioflai-app-934cc.firebaseapp.com",
+    projectId: "avioflai-app-934cc",
+    storageBucket: "avioflai-app-934cc.appspot.com",
+    messagingSenderId: "951110180167",
+    appId: "1:951110180167:web:741708ee5aac580a084062"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const messaging = firebase.messaging();
+
+  // ✅ FOREGROUND NOTIFICATION (TAB OPEN)
+  messaging.onMessage(function (payload) {
+    console.log('[WEB] Foreground message:', payload);
+
+    if (Notification.permission === 'granted') {
+      new Notification(payload.notification?.title ?? 'Notification', {
+        body: payload.notification?.body ?? '',
+        icon: '/icons/Icon-192.png'
+      });
+    }
+  });
+</script>
+
 
 </body>
 </html>

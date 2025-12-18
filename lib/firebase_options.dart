@@ -9,30 +9,9 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-              'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -40,13 +19,36 @@ class DefaultFirebaseOptions {
     }
   }
 
+  //  Web
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDOqBpCG6dcyADfM90PnBJMfTiAzPXoV1Q',
-    authDomain: 'avioflai-app-934cc.firebaseapp.com',
-    projectId: 'avioflai-app-934cc',
-    storageBucket: 'avioflai-app-934cc.firebasestorage.app',
+    appId: '1:951110180167:web:26416f66ce2a7d3f084062',
     messagingSenderId: '951110180167',
-    appId: '1:951110180167:web:741708ee5aac580a084062',
-    measurementId: 'G-HK4HYRLVB7',
+    projectId: 'avioflai-app-934cc',
+    authDomain: 'avioflai-app-934cc.firebaseapp.com',
+    storageBucket: 'avioflai-app-934cc.firebasestorage.app',
+    measurementId: 'G-LFZFTH2PY1',
   );
+
+  //  Android
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyB2dlWvWP-wLhZHzTjsyIVSoDdvwgNawNc',
+    appId: '1:951110180167:android:747cb971947acb26084062',
+    messagingSenderId: '951110180167',
+    projectId: 'avioflai-app-934cc',
+    storageBucket: 'avioflai-app-934cc.appspot.com',
+  );
+
+  //  iOS
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCvCyWPkuK4Z6h5yg0YQAtz-6Hgoj-qTvI',
+    appId: '1:951110180167:ios:a846f5aa45e2abdf084062',
+    messagingSenderId: '951110180167',
+    projectId: 'avioflai-app-934cc',
+    storageBucket: 'avioflai-app-934cc.appspot.com',
+    iosBundleId: 'com.avioflai.aviation',
+    iosClientId: '951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com',
+  );
+
+
 }

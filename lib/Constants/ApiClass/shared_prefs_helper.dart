@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsHelper {
@@ -8,25 +9,36 @@ class SharedPrefsHelper {
   static const String _isUserRefreshTokenKey = 'UserRefreshTokenKey';
   static const String _isAvtarForProfileKey = 'AvtarForProfileKey';
   static const String isMapKeyValues = 'MapKeyValues';
-  static const String fcmTokenKey = 'fcm_token_key';
-
+  static const String _fcmTokenKey = 'fcm_token_key';
 
   static Future<void> saveFCMToken(String deviceId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(fcmTokenKey, deviceId);
+    await prefs.setString(_fcmTokenKey, deviceId);
   }
+
   static Future<String?> getFCMToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(fcmTokenKey);
+    return prefs.getString(_fcmTokenKey);
   }
+
   static Future<void> clearFCMToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(fcmTokenKey);
+    await prefs.remove(_fcmTokenKey);
   }
 
   static Future<void> saveEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_emailKey, email);
+  }
+
+  static Future<String?> refreshAndUpdateFCMToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await FirebaseMessaging.instance.deleteToken();
+    final String? newToken = await FirebaseMessaging.instance.getToken();
+    if (newToken != null && newToken.isNotEmpty) {
+      await prefs.setString(_fcmTokenKey, newToken);
+    }
+    return newToken;
   }
 
   static Future<String?> getEmail() async {
@@ -106,6 +118,7 @@ class SharedPrefsHelper {
     final prefs = await SharedPreferences.getInstance();
     if (isComeFromAllClear == true) {
       await prefs.clear();
+      await FirebaseMessaging.instance.deleteToken();
     } else {
       final keys = [
         _emailKey,
@@ -113,6 +126,7 @@ class SharedPrefsHelper {
         _isUserAccessTokenKey,
         _isUserRefreshTokenKey,
         _isAvtarForProfileKey,
+        _fcmTokenKey
       ];
       for (final key in keys) {
         await prefs.remove(key);

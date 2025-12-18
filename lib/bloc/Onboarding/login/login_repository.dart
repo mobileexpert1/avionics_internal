@@ -24,8 +24,7 @@ class LoginRepository {
     );
 
     try {
-
-      String? fcmToken = await SharedPrefsHelper.getFCMToken();
+      String? fcmToken = await SharedPrefsHelper.refreshAndUpdateFCMToken();
       final deviceDetails = await DeviceInfoHelper.getDeviceDetails();
       final Map<String, dynamic> body = {
         "email": email,

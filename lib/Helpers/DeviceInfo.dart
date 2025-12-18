@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class DeviceInfoHelper {
@@ -6,7 +6,17 @@ class DeviceInfoHelper {
 
   static Future<Map<String, dynamic>> getDeviceDetails() async {
     try {
-      if (Platform.isAndroid) {
+      if (kIsWeb) {
+        final web = await deviceInfo.webBrowserInfo;
+        return {
+          "device_type": "web",
+          "model": web.browserName.name,
+          "brand": "Browser",
+          "os": web.platform ?? "",
+        };
+      }
+
+      if (defaultTargetPlatform == TargetPlatform.android) {
         final android = await deviceInfo.androidInfo;
         return {
           "device_type": "android",
@@ -14,7 +24,9 @@ class DeviceInfoHelper {
           "brand": android.brand,
           "os": "Android ${android.version.release}",
         };
-      } else if (Platform.isIOS) {
+      }
+
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
         final ios = await deviceInfo.iosInfo;
         return {
           "device_type": "ios",
@@ -23,9 +35,21 @@ class DeviceInfoHelper {
           "os": "${ios.systemName} ${ios.systemVersion}",
         };
       }
-    } catch (e) {}
 
-    // Fallback (web, desktop, etc.)
+      if (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.macOS ||
+          defaultTargetPlatform == TargetPlatform.linux) {
+        return {
+          "device_type": "desktop",
+          "model": defaultTargetPlatform.name,
+          "brand": "",
+          "os": defaultTargetPlatform.name,
+        };
+      }
+    } catch (e) {
+      debugPrint("DeviceInfo error: $e");
+    }
+
     return {
       "device_type": "unknown",
       "model": "",

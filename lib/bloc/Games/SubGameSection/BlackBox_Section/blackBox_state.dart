@@ -1,3 +1,4 @@
+import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_model.dart';
 import 'package:equatable/equatable.dart';
 import 'blackBox_model.dart';
 import 'blackBox_question_model.dart';
@@ -36,6 +37,7 @@ class BlackBoxState extends Equatable {
   final List<int>? selectedSequence;
   final List<String>? selectedSequenceItems;
   final List<int>? selectedIndices;
+  final List<quizItem> games;
 
   const BlackBoxState({
     this.isLoading = false,
@@ -69,6 +71,7 @@ class BlackBoxState extends Equatable {
     this.selectedSequence,
     this.selectedSequenceItems,
     this.selectedIndices = const [],
+    this.games = const [],
   });
 
   BlackBoxState copyWith({
@@ -103,6 +106,7 @@ class BlackBoxState extends Equatable {
     List<int>? selectedSequence,
     List<String>? selectedSequenceItems,
     List<int>? selectedIndices,
+    List<quizItem>? games,
   }) {
     return BlackBoxState(
       isLoading: isLoading ?? this.isLoading,
@@ -136,6 +140,7 @@ class BlackBoxState extends Equatable {
       selectedSequence: selectedSequence ?? this.selectedSequence,
       selectedSequenceItems: selectedSequenceItems ?? this.selectedSequenceItems,
       selectedIndices: selectedIndices ?? this.selectedIndices,
+      games: games ?? this.games,
     );
   }
 
