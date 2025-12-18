@@ -20,6 +20,6 @@ messaging.onBackgroundMessage(function (payload) {
 
   self.registration.showNotification(title, {
     body: body,
-    icon: '/icons/Icon-192.png',
+    icon: '/icons/notification.png',
   });
 });
