@@ -229,7 +229,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ConstantStrings.skip,
                         style: TextStyle(
                           color: AppColors.skip,
-                          fontSize: isWeb ? 20 : 13,
+                          fontSize: isWeb ? 20 : 15,
                         ),
                       ),
                     ),
@@ -253,7 +253,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ConstantStrings.next,
                         style: TextStyle(
                           color: AppColors.next,
-                          fontSize: isWeb ? 20 : 13,
+                          fontSize: isWeb ? 20 : 15,
                         ),
                       ),
                     ),

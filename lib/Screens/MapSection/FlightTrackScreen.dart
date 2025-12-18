@@ -36,14 +36,21 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   GoogleMapController? _mapController;
   Marker? _flightMarker;
+  final Set<Marker> _markers = {};
+
   LatLng? _currentFlightPosition;
   AnimationController? _animationController;
   Animation<LatLng>? _positionAnimation;
 
   // for queued animations
   LatLng? _pendingTarget;
-
   bool _alertShown = false;
+  bool _alertShownOfTrackingStopped = false;
+
+  LatLng? _flightTrailStart;
+  final Set<Polyline> _staticPolyline = {};
+  final List<LatLng> _flightNextCoordinatesPoints = [];
+  Set<Polyline> _flightNextLocationCoordinates = {};
 
   @override
   void initState() {
@@ -55,7 +62,15 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         widget.initialFlight!.latitude,
         widget.initialFlight!.longitude,
       );
+      _flightNextCoordinatesPoints.add(_currentFlightPosition!);
+
+      if (widget.initialFlightDetail?.destinationAirport?.latitude != null &&
+          widget.initialFlightDetail?.destinationAirport?.longitude != null) {
+        _setupStaticFlightPath(_currentFlightPosition!);
+      }
     }
+
+    _addStaticAirportMarkers();
 
     // start flight tracking
     context.read<FlightMapCubit>().startTrackingFlight(
@@ -68,20 +83,77 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         defaultTargetPlatform == TargetPlatform.iOS) {
       WidgetsBinding.instance.addObserver(this);
     }
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.flightTrackScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.flightTrackScreen,
+    );
   }
 
   @override
   void dispose() {
     _mapController?.dispose();
     _animationController?.dispose();
-
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       WidgetsBinding.instance.removeObserver(this);
     }
-
     super.dispose();
+  }
+
+  void _addStaticAirportMarkers() {
+    _markers.removeWhere(
+      (m) => m.markerId.value == 'origin' || m.markerId.value == 'destination',
+    );
+
+    if (widget.initialFlightDetail?.originAirport != null) {
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('origin'),
+          position: LatLng(
+            widget.initialFlightDetail!.originAirport!.latitude,
+            widget.initialFlightDetail!.originAirport!.longitude,
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueGreen,
+          ),
+          infoWindow: InfoWindow(
+            title: widget.initialFlightDetail!.originAirport!.name,
+          ),
+        ),
+      );
+    }
+
+    if (widget.initialFlightDetail?.destinationAirport != null) {
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('destination'),
+          position: LatLng(
+            widget.initialFlightDetail!.destinationAirport!.latitude,
+            widget.initialFlightDetail!.destinationAirport!.longitude,
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          infoWindow: InfoWindow(
+            title: widget.initialFlightDetail!.destinationAirport!.name,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _setupStaticFlightPath(LatLng currentLatLong) {
+    _staticPolyline.add(
+      Polyline(
+        polylineId: const PolylineId("static_route"),
+        color: Colors.orange,
+        width: 1,
+        points: [
+          currentLatLong,
+          LatLng(
+            widget.initialFlightDetail!.destinationAirport!.latitude,
+            widget.initialFlightDetail!.destinationAirport!.longitude,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -112,8 +184,8 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text("Tracking Stopped"),
-        content: const Text(
+        title: Text("Tracking Stopped"),
+        content: Text(
           "You’ve become inactive. Flight tracking has been stopped.",
         ),
         actions: [
@@ -123,7 +195,33 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
               Navigator.of(ctx).pop();
               Navigator.of(context).pop();
             },
-            child: const Text("OK"),
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFlightLandedDialog() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text("Tracking Temporarily Unavailable"),
+        content: Text(
+          "Tracking data for ${widget.flightNumber} (Call sign: ${widget.initialFlight?.callSign ?? "N/A"}) is currently unavailable on Avioflai. This usually happens when the aircraft is outside coverage or the flight has ended.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _alertShownOfTrackingStopped = false;
+              context.read<FlightMapCubit>().stopTrackingFlight();
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
+            },
+            child: Text("OK"),
           ),
         ],
       ),
@@ -149,6 +247,59 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     return (bearing + 360) % 360;
   }
 
+  void _appendFlightNextCoordinates(LatLng newPoint) {
+    // Lock first point once
+    if (_flightTrailStart == null) {
+      _flightTrailStart = newPoint;
+      _flightNextCoordinatesPoints.clear();
+
+      if (widget.initialFlightDetail?.originAirport?.latitude != null &&
+          widget.initialFlightDetail?.originAirport?.longitude != null) {
+        _flightNextCoordinatesPoints.add(
+          LatLng(
+            widget.initialFlightDetail!.originAirport!.latitude,
+            widget.initialFlightDetail!.originAirport!.longitude,
+          ),
+        );
+        _flightNextCoordinatesPoints.add(_flightTrailStart!);
+      } else {
+        // ✅ ENSURE list is not empty
+        _flightNextCoordinatesPoints.add(_flightTrailStart!);
+      }
+      return;
+    }
+
+    // ✅ SAFETY CHECK (THIS FIXES THE CRASH)
+    if (_flightNextCoordinatesPoints.isEmpty) {
+      _flightNextCoordinatesPoints.add(newPoint);
+      return;
+    }
+
+    final last = _flightNextCoordinatesPoints.last;
+
+    const double minDistance = 0.00005;
+    if ((last.latitude - newPoint.latitude).abs() < minDistance &&
+        (last.longitude - newPoint.longitude).abs() < minDistance) {
+      return;
+    }
+
+    _flightNextCoordinatesPoints.add(newPoint);
+
+    if (widget.initialFlightDetail?.destinationAirport?.latitude != null &&
+        widget.initialFlightDetail?.destinationAirport?.longitude != null) {
+      _setupStaticFlightPath(newPoint);
+    }
+
+    _flightNextLocationCoordinates = {
+      Polyline(
+        polylineId: const PolylineId("flight_trail"),
+        color: Colors.blue,
+        width: 2,
+        points: List.unmodifiable(_flightNextCoordinatesPoints),
+      ),
+    };
+  }
+
   void _animateFlight(LatLng from, LatLng to) async {
     if (_animationController != null && _animationController!.isAnimating) {
       _pendingTarget = to;
@@ -169,7 +320,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
 
     _positionAnimation = tween.animate(_animationController!);
 
-    // Direction auto calculate
+    // Calculate direction
     final calculatedTrack = _calculateBearing(from, to);
     final icon = await _getFlightMarkerIcon(calculatedTrack);
 
@@ -180,12 +331,14 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
       infoWindow: InfoWindow(
         title: widget.initialFlight?.callSign ?? 'Flight',
         snippet:
-        '${widget.initialFlightDetail?.departureIata ?? 'N/A'} → ${widget.initialFlightDetail?.arrivalIata ?? 'N/A'}',
+            '${widget.initialFlightDetail?.departureIata ?? 'N/A'} → ${widget.initialFlightDetail?.arrivalIata ?? 'N/A'}',
       ),
     );
 
     setState(() {
-      _flightMarker = movingMarker;
+      //_flightMarker = movingMarker;
+      _markers.removeWhere((m) => m.markerId.value == widget.flightNumber);
+      _markers.add(movingMarker);
     });
 
     _positionAnimation!.addListener(() {
@@ -193,8 +346,10 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
       final pos = _positionAnimation!.value;
       movingMarker = movingMarker.copyWith(positionParam: pos);
 
+      _appendFlightNextCoordinates(pos);
       setState(() {
-        _flightMarker = movingMarker;
+        _markers.removeWhere((m) => m.markerId.value == widget.flightNumber);
+        _markers.add(movingMarker);
       });
     });
 
@@ -203,15 +358,15 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         _currentFlightPosition = to;
         _mapController?.animateCamera(CameraUpdate.newLatLng(to));
 
-        // process queued update if available
+        // Process queued update
         if (_pendingTarget != null) {
           final nextTarget = _pendingTarget!;
           _pendingTarget = null;
-          debugPrint("Starting queued animation to: $nextTarget");
           _animateFlight(_currentFlightPosition!, nextTarget);
         }
       }
     });
+
     _animationController!.forward();
   }
 
@@ -220,6 +375,15 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     return Scaffold(
       body: BlocListener<FlightMapCubit, FlightMapState>(
         listener: (context, state) async {
+          if (state.status == CommonApiStatus.success &&
+              state.isLoading == false &&
+              state.isFlightLanded == true) {
+            if (_alertShownOfTrackingStopped == false) {
+              _showFlightLandedDialog();
+              _alertShownOfTrackingStopped = true;
+            }
+          }
+
           if (state.status == CommonApiStatus.failure) {
             if (!mounted) return;
             print(state.errorMessage ?? 'Failed to fetch flight details');
@@ -284,13 +448,16 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
                         mapType: state.mapType,
+                        polylines: _staticPolyline.union(
+                          _flightNextLocationCoordinates,
+                        ),
                         zoomGesturesEnabled: true,
                         initialCameraPosition: CameraPosition(
                           target: flightLatLng,
                           zoom: 8,
                         ),
                         myLocationEnabled: true,
-                        markers: _flightMarker != null ? {_flightMarker!} : {},
+                        markers: _markers,
                         onMapCreated: (GoogleMapController controller) {
                           _mapController = controller;
                           _mapController?.animateCamera(
@@ -330,7 +497,6 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 }
-
 
 class LatLngTween extends Tween<LatLng> {
   LatLngTween({required LatLng begin, required LatLng end})

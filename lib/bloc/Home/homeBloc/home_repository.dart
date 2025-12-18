@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:avionics_internal/Database/generic_methods.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../MapSection/flight_key_values_model.dart';
 import '../manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
@@ -15,18 +16,23 @@ class HomeRepository {
 
   final GenericMethods<ManufacturerListModel> _manufacturers;
 
-  Future<FlightKeyValuesModel> getMapKeyValueFromServer() async {
-    final uri = Uri.parse(
-      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchMapKey,
-    );
-    try {
-      final jsonData = await ApiService.get(url: uri, isForFlightRadar: true) as Map<String, dynamic>;
-      final modelResponse =  FlightKeyValuesModel.fromJson(jsonData);
-      await const MethodChannel('com.app/google_maps').invokeMethod("setGoogleMapsKey", {"key": "AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374"});
-      return modelResponse;
-    } catch (e) {
-      throw e.toString();
+  Future<FlightKeyValuesModel?> getMapKeyValueFromServer() async {
+    bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
+    if (apiTokenSever == null || apiTokenSever == false) {
+      final uri = Uri.parse(
+        ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchMapKey,
+      );
+      try {
+        final jsonData = await ApiService.get(url: uri, isForFlightRadar: true) as Map<String, dynamic>;
+        final modelResponse =  FlightKeyValuesModel.fromJson(jsonData);
+        await const MethodChannel('com.app/google_maps').invokeMethod("setGoogleMapsKey", {"key": "AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374"});
+        await SharedPrefsHelper.saveApiFetchKeyFromSever(true);
+        return modelResponse;
+      } catch (e) {
+        throw e.toString();
+      }
     }
+    return null;
   }
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {

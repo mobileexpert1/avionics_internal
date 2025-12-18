@@ -8,8 +8,9 @@ import 'flight_map_model.dart';
 
 class FlightMapState {
   final String? openAiKey;
-  final CommonApiStatus status;
   final bool isLoading;
+  final bool isFlightLanded;
+  final CommonApiStatus status;
   final bool isSuccess;
   final String? errorMessage;
   final Position? position;
@@ -37,6 +38,7 @@ class FlightMapState {
     this.openAiKey,
     this.status = CommonApiStatus.initial,
     this.isLoading = false,
+    this.isFlightLanded = false,
     this.isSuccess = false,
     this.errorMessage,
     this.position,
@@ -62,6 +64,7 @@ class FlightMapState {
     String? openAiKey,
     CommonApiStatus? status,
     bool? isLoading,
+    bool? isFlightLanded,
     bool? isSuccess,
     String? errorMessage,
     Position? position,
@@ -87,6 +90,7 @@ class FlightMapState {
       openAiKey: openAiKey ?? this.openAiKey,
       status: status ?? this.status,
       isLoading: isLoading ?? this.isLoading,
+      isFlightLanded: isFlightLanded ?? this.isFlightLanded,
       isSuccess: isSuccess ?? this.isSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
       position: position ?? this.position,

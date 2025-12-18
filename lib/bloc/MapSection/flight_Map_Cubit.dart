@@ -389,6 +389,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             flights: state.flights,
           ),
         );
+      } else {
+        if (flights.isEmpty) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.success,
+              isLoading: false,
+              flights: state.flights,
+              isFlightLanded: true,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (isClosed) return;
@@ -408,7 +419,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       _trackingTimer?.cancel();
       _trackingTimer = null;
     }
-    emit(state.copyWith(isTracking: false));
+    emit(state.copyWith(isTracking: false,isFlightLanded:false));
   }
 
   void clearSelectedFlightDetail() {

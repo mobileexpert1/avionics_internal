@@ -150,9 +150,10 @@ class OnboardingPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildTitle(info.title, 24),
-                  SizedBox(height: size.height * 0.015),
-                  buildDescription(info.description, 14),
+                  SizedBox(height: size.height * 0.020),
+                  buildTitle(info.title, 28),
+                  SizedBox(height: size.height * 0.020),
+                  buildDescription(info.description, 15),
                 ],
               ),
             ),

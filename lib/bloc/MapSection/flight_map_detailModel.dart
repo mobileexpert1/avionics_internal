@@ -193,7 +193,7 @@ class FlightAircraftDetail extends Equatable {
           ? ManufacturerModel.fromJson(json['Manufacturer'])
           : null,
 
-      //Aircports
+      //Airports
       originAirport:
           json['orig_icao_airport'] != null &&
               json['orig_icao_airport'] is Map<String, dynamic>
@@ -398,6 +398,8 @@ class AirportModel {
   final String city;
   final String state;
   final String country;
+  final double longitude;
+  final double latitude;
 
   const AirportModel({
     required this.id,
@@ -405,6 +407,8 @@ class AirportModel {
     required this.city,
     required this.state,
     required this.country,
+    required this.longitude,
+    required this.latitude,
   });
 
   factory AirportModel.fromJson(Map<String, dynamic> json) {
@@ -414,6 +418,8 @@ class AirportModel {
       city: json['city'] ?? '',
       state: json['state'] ?? '',
       country: json['country'] ?? '',
+      longitude: json['longitude_deg'] ?? '',
+      latitude: json['latitude_deg'] ?? '',
     );
   }
 
@@ -424,6 +430,8 @@ class AirportModel {
       'city': city,
       'state': state,
       'country': country,
+      'longitude_deg': country,
+      'latitude_deg': country,
     };
   }
 }

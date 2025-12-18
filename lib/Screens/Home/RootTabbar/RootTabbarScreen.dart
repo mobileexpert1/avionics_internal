@@ -2,6 +2,7 @@ import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapscreen.dart';
@@ -26,6 +27,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
   }
 
   Future<void> _loadTokenAndInitPages() async {
+    await SharedPrefsHelper.clearApiFetchServer();
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('UserAccessTokenKey');
 

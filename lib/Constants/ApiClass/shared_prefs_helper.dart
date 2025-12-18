@@ -9,16 +9,34 @@ class SharedPrefsHelper {
   static const String _isAvtarForProfileKey = 'AvtarForProfileKey';
   static const String isMapKeyValues = 'MapKeyValues';
   static const String fcmTokenKey = 'fcm_token_key';
+  static const String apiFetchKeyFromSever = 'api_Fetch_Key_From_Sever';
 
+
+  static Future<void> saveApiFetchKeyFromSever(bool isSet) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(apiFetchKeyFromSever, isSet);
+  }
+
+  static Future<bool?> getApiFetchKeyFromSever() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(apiFetchKeyFromSever);
+  }
+
+  static Future<void> clearApiFetchServer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(apiFetchKeyFromSever);
+  }
 
   static Future<void> saveFCMToken(String deviceId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(fcmTokenKey, deviceId);
   }
+
   static Future<String?> getFCMToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(fcmTokenKey);
   }
+
   static Future<void> clearFCMToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(fcmTokenKey);
