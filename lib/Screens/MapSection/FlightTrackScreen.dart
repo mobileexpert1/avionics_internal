@@ -288,16 +288,16 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     if (widget.initialFlightDetail?.destinationAirport?.latitude != null &&
         widget.initialFlightDetail?.destinationAirport?.longitude != null) {
       _setupStaticFlightPath(newPoint);
-    }
 
-    _flightNextLocationCoordinates = {
-      Polyline(
-        polylineId: const PolylineId("flight_trail"),
-        color: Colors.blue,
-        width: 2,
-        points: List.unmodifiable(_flightNextCoordinatesPoints),
-      ),
-    };
+      _flightNextLocationCoordinates = {
+        Polyline(
+          polylineId: const PolylineId("flight_trail"),
+          color: Colors.blue,
+          width: 2,
+          points: List.unmodifiable(_flightNextCoordinatesPoints),
+        ),
+      };
+    }
   }
 
   void _animateFlight(LatLng from, LatLng to) async {
