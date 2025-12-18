@@ -76,6 +76,7 @@ dependencies:
   device_info_plus: ^12.3.0
   video_player: ^2.9.1
   firebase_analytics: ^11.0.0
+  flutter_dotenv:
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -105,6 +106,7 @@ flutter:
     - assets/jpg_images/
     - assets/png_images/
     - 'assets/svg_images/airportsIcon.svg'
+    - .env
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

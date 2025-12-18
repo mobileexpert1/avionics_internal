@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 
@@ -14,8 +15,7 @@ class FirebaseMessagingService {
     if (kIsWeb) {
       await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
-      const vapidKey =
-          "BDktUeLlhGc9PGln6Xsdn5FHvmEvYDLFKv8EyQP8ogyAKrmGlH6xvMuAH9lH_7pLxxsJSsknF3jxVSqI1Rtrv1I";
+      final vapidKey = dotenv.env['FIREBASE_WEB_VAPID_KEY'];
 
       final token = await _messaging.getToken(vapidKey: vapidKey);
       if (token != null) await SharedPrefsHelper.saveFCMToken(token);

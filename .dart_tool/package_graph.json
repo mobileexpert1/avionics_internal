@@ -23,6 +23,7 @@
         "flutter",
         "flutter_bloc",
         "flutter_cache_manager",
+        "flutter_dotenv",
         "flutter_facebook_auth",
         "flutter_local_notifications",
         "flutter_map",
@@ -92,6 +93,13 @@
         "test_api",
         "vector_math",
         "vm_service"
+      ]
+    },
+    {
+      "name": "flutter_dotenv",
+      "version": "6.0.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

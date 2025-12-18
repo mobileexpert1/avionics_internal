@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -19,35 +20,34 @@ class DefaultFirebaseOptions {
     }
   }
 
-  //  Web
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDOqBpCG6dcyADfM90PnBJMfTiAzPXoV1Q',
-    appId: '1:951110180167:web:26416f66ce2a7d3f084062',
-    messagingSenderId: '951110180167',
-    projectId: 'avioflai-app-934cc',
-    authDomain: 'avioflai-app-934cc.firebaseapp.com',
-    storageBucket: 'avioflai-app-934cc.firebasestorage.app',
-    measurementId: 'G-LFZFTH2PY1',
+  static FirebaseOptions get web => FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_WEB_API_KEY']!,
+    appId: dotenv.env['FIREBASE_WEB_APP_ID']!,
+    messagingSenderId:
+    dotenv.env['FIREBASE_WEB_MESSAGING_SENDER_ID']!,
+    projectId: dotenv.env['FIREBASE_WEB_PROJECT_ID']!,
+    authDomain: dotenv.env['FIREBASE_WEB_AUTH_DOMAIN'],
+    storageBucket: dotenv.env['FIREBASE_WEB_STORAGE_BUCKET'],
+    measurementId: dotenv.env['FIREBASE_WEB_MEASUREMENT_ID'],
   );
 
-  //  Android
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB2dlWvWP-wLhZHzTjsyIVSoDdvwgNawNc',
-    appId: '1:951110180167:android:747cb971947acb26084062',
-    messagingSenderId: '951110180167',
-    projectId: 'avioflai-app-934cc',
-    storageBucket: 'avioflai-app-934cc.appspot.com',
+  static FirebaseOptions get android => FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_ANDROID_API_KEY']!,
+    appId: dotenv.env['FIREBASE_ANDROID_APP_ID']!,
+    messagingSenderId:
+    dotenv.env['FIREBASE_ANDROID_MESSAGING_SENDER_ID']!,
+    projectId: dotenv.env['FIREBASE_ANDROID_PROJECT_ID']!,
+    storageBucket: dotenv.env['FIREBASE_ANDROID_STORAGE_BUCKET'],
   );
 
-  //  iOS
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCvCyWPkuK4Z6h5yg0YQAtz-6Hgoj-qTvI',
-    appId: '1:951110180167:ios:a846f5aa45e2abdf084062',
-    messagingSenderId: '951110180167',
-    projectId: 'avioflai-app-934cc',
-    storageBucket: 'avioflai-app-934cc.appspot.com',
-    iosBundleId: 'com.avioflai.aviation',
-    iosClientId:
-        '951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com',
+  static FirebaseOptions get ios => FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_IOS_API_KEY']!,
+    appId: dotenv.env['FIREBASE_IOS_APP_ID']!,
+    messagingSenderId:
+    dotenv.env['FIREBASE_IOS_MESSAGING_SENDER_ID']!,
+    projectId: dotenv.env['FIREBASE_IOS_PROJECT_ID']!,
+    storageBucket: dotenv.env['FIREBASE_IOS_STORAGE_BUCKET'],
+    iosBundleId: dotenv.env['FIREBASE_IOS_BUNDLE_ID'],
+    iosClientId: dotenv.env['FIREBASE_IOS_CLIENT_ID'],
   );
 }
