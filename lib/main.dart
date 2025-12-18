@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'Constants/ApiClass/shared_prefs_helper.dart';
 import 'Database/db_helper.dart';
 import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
@@ -45,41 +44,27 @@ import 'firebase_options.dart';
 //   await deleteDatabase(path);
 //   debugPrint('🗑️  Old database deleted at $path');
 // }
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
+
+  FirebaseMessagingService().initialize(navigatorKey: navigatorKey);
+  FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
+
   if (!kIsWeb) {
-    FirebaseMessagingService().initialize();
-    FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
-
-    if (!kIsWeb) {
-      FlutterError.onError =
-          FirebaseCrashlytics.instance.recordFlutterFatalError;
-      PlatformDispatcher.instance.onError = (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-        return true;
-      };
-    } else {
-      FlutterError.onError = (FlutterErrorDetails details) {
-        FlutterError.dumpErrorToConsole(details);
-      };
-    }
-
-    try {
-      String? token = await FirebaseMessaging.instance.getToken();
-      if (token != null) {
-        debugPrint("FCM Token: $token");
-        await SharedPrefsHelper.saveFCMToken(token);
-      } else {
-        debugPrint("⚠️ FCM token not ready yet.");
-      }
-    } catch (e) {
-      debugPrint("⚠️ Error fetching FCM token: $e");
-    }
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } else {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details);
+    };
   }
 
   if (!kIsWeb &&
@@ -97,7 +82,6 @@ Future<void> main() async {
     await DBHelper.database;
   }
   runApp(const MyApp());
-
 }
 
 class MyApp extends StatefulWidget {
@@ -157,4 +141,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-

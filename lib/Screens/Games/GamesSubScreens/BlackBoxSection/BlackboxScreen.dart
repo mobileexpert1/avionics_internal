@@ -1,5 +1,6 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -68,12 +69,10 @@ class _BlackBoxStartScreenState extends State<BlackBoxStartScreen> {
                 onStartGame: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const OverviewAndClueDeckScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const BlackBoxLockScreen()),
                   );
                   AnalyticsService.instance.buttonPressed(
-                    FirebaseEvents.blackBoxListButton,
+                    FirebaseEvents.quizListButton,
                     FirebaseEvents.blackBoxListScreen,
                   );
                 },
