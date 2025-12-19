@@ -411,7 +411,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     QuizQuestionRepository? repository,
   }) : _repository = repository ?? QuizQuestionRepository(),
        super(QuizQuestionState.initial()) {
-    const gameDurations = {"quiz": 120, "calculation": 40, "one_word": 40};
+    const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40};
 
     _quizTypesId = sectionId;
     _totalDuration = gameDurations[gameId] ?? 40;
@@ -765,10 +765,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       if (gameId == "quiz") {
         switch (state.currentIndex) {
           case 10:
-            _totalDuration = 90;
+            _totalDuration = 150;
             break;
           case 14:
-            _totalDuration = 40;
+            _totalDuration = 90;
             break;
         }
         _timer?.cancel();
