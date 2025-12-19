@@ -64,65 +64,25 @@ class BlackboxCubit extends Cubit<BlackBoxState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      // 🔹 Static BlackBox game topics
-      final List<quizItem> gameList = [
-        quizItem(
-          title: 'Black Box Basics',
-          isLocked: false,
-          gameNumber: 1,
-          info: [
-            'Introduction to aircraft black box and its purpose',
-          ],
-        ),
-        quizItem(
-          title: 'Cockpit Voice Recorder (CVR)',
-          isLocked: false,
-          gameNumber: 2,
-          info: [
-            'Understand how CVR records cockpit communications',
-          ],
-        ),
-        quizItem(
-          title: 'Flight Data Recorder (FDR)',
-          isLocked: true,
-          gameNumber: 3,
-          info: [
-            'Learn how flight parameters are stored in FDR',
-          ],
-        ),
-        quizItem(
-          title: 'Accident Investigation',
-          isLocked: true,
-          gameNumber: 4,
-          info: [
-            'Role of black box in aircraft accident investigation',
-          ],
-        ),
-        quizItem(
-          title: 'Survivability & Recovery',
-          isLocked: true,
-          gameNumber: 5,
-          info: [
-            'How black boxes survive crashes and are recovered',
-          ],
-        ),
-      ];
+      final response = await BlackboxRepository().getBlackBoxTopic();
 
+      if (response == null || response.data.isEmpty) {
+        emit(state.copyWith(isLoading: false, games: []));
+        return;
+      }
+      final List<quizItem> gameList = response.data.map((game) {
+        return quizItem(
+          title: game.name,
+          gameNumber: game.gameNumber,
+          isLocked: !game.isEnable,
+          info: game.info,
+        );
+      }).toList();
 
-      emit(
-        state.copyWith(
-          games: gameList,
-          isLoading: false,
-        ),
-      );
+      emit(state.copyWith(games: gameList, isLoading: false));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: e.toString(),
-        ),
-      );
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 }

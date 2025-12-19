@@ -129,3 +129,68 @@ class BlackBoxSubmitData {
     };
   }
 }
+
+
+
+
+class BlackBoxTopicResponse {
+  final String detail;
+  final List<BlackBoxTopicModel> data;
+
+  BlackBoxTopicResponse({
+    required this.detail,
+    required this.data,
+  });
+
+  factory BlackBoxTopicResponse.fromJson(Map<String, dynamic> json) {
+    return BlackBoxTopicResponse(
+      detail: json['detail'] ?? '',
+      data: (json['data'] as List<dynamic>? ?? [])
+          .map((e) => BlackBoxTopicModel.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'detail': detail,
+      'data': data.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class BlackBoxTopicModel {
+  final String id;
+  final String name;
+  final int gameNumber;
+  final bool isEnable;
+  final List<String> info;
+
+  BlackBoxTopicModel({
+    required this.id,
+    required this.name,
+    required this.gameNumber,
+    required this.isEnable,
+    required this.info,
+  });
+
+  factory BlackBoxTopicModel.fromJson(Map<String, dynamic> json) {
+    return BlackBoxTopicModel(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      gameNumber: json['game_number'] ?? 0,
+      isEnable: json['is_enable'] ?? false,
+      info: List<String>.from(json['info'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'game_number': gameNumber,
+      'is_enable': isEnable,
+      'info': info,
+    };
+  }
+}
