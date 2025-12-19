@@ -388,8 +388,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
@@ -418,10 +420,33 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     loadQuestions(sectionId, context);
   }
 
+  Future<void> reportQuestionPostMethod(
+    String reason,
+    QuizQuestionCubit quizCubit,
+  ) async {
+    //emit(state.copyWith(isLoading: true));
+    try {
+      print(
+        "setId:-${quizCubit.state.setId},questionId:-${quizCubit.state.questions[quizCubit.state.currentIndex].questionId},,question:-${quizCubit.state.questions[quizCubit.state.currentIndex].question},reason:-$reason",
+      );
+      //emit(state.copyWith(isLoading: false));
+      return;
+      // await _repository.reportQuestionPostMethod(
+      //   setId: setId,
+      //   questionId: questionId,
+      //   reason: reason,
+      // );
+      emit(state.copyWith(isLoading: false));
+    } catch (e) {
+      //SessionCommonTokenError.handleUnauthorizedError(context, e);
+      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    }
+  }
+
   QuizQuestion _mapQuestion(Question q) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
     print(
-      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex',
+      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
     );
     if (correctIndex == -1) {
       print(
@@ -433,6 +458,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       options: q.options.map((o) => o.value).toList(),
       correctIndex: correctIndex,
       hint: q.explanation,
+      questionId: q.questionId,
     );
   }
 
@@ -529,6 +555,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           level: gameData.level,
           difficulty: gameData.difficulty,
           categoryTypes: gameData.categoryTypes,
+          setId: gameData.setId,
         ),
       );
 
