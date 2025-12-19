@@ -3,7 +3,9 @@ import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Database/generic_methods.dart';
 import 'blackBox_model.dart';
 import 'blackBox_question_model.dart';
+
 String questionNo = "";
+
 class BlackboxRepository {
   Future<List<BlackBoxSummaryModel>?> getBlackboxSummary() async {
     // Not Working in Web Section
@@ -61,7 +63,9 @@ class BlackboxRepository {
     }
   }
 
-  Future<BlackBoxSubmitResponse?> submitBlackBoxAnswers(Map<String, dynamic> payload) async {
+  Future<BlackBoxSubmitResponse?> submitBlackBoxAnswers(
+    Map<String, dynamic> payload,
+  ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
@@ -74,6 +78,24 @@ class BlackboxRepository {
       return BlackBoxSubmitResponse.fromJson(response);
     } catch (e) {
       throw e.toString();
+    }
+  }
+
+  Future<BlackBoxTopicResponse?> getBlackBoxTopic() async {
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlGamesConstant.blackBoxTopic}",
+    );
+
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+
+      if (jsonData.containsKey('data')) {
+        return BlackBoxTopicResponse.fromJson(jsonData);
+      }
+      return null;
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }

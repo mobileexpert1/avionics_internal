@@ -236,6 +236,7 @@ class ApiFunctionUrlGamesConstant {
   static const blackBoxSubmit = "blackbox/submit";
   static const blackBox = "ai-engine/games/blackbox/";
   static const reportQuestion = "report";
+  static const blackBoxTopic = "blackbox/";
 }
 
 class ApiGameBadges {
