@@ -1,386 +1,4 @@
-// import 'dart:async';
-// import 'dart:convert';
-// import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
-// import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
-// import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
-// import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
-// import '../SubGameSection/Calculation_Section/calculation_model.dart';
-//
-// class QuizQuestionCubit extends Cubit<QuizQuestionState> {
-//   Timer? _timer;
-//   final QuizQuestionRepository _repository;
-//   static const int maxQuestions = 20;
-//
-//   QuizQuestionCubit(int sectionId, BuildContext context, {QuizQuestionRepository? repository})
-//       : _repository = repository ?? QuizQuestionRepository(),
-//         super(QuizQuestionState.initial()) {
-//     loadQuestions(sectionId, context);
-//   }
-//
-//   Future<void> loadQuestions(int sectionId, BuildContext context) async {
-//     try {
-//       emit(state.copyWith(isLoading: true));
-//
-//       final calculationData = await _repository.getCalculationData(sectionId,1);
-//
-//       if (calculationData == null) {
-//         emit(
-//           state.copyWith(
-//             isLoading: false,
-//             errorMessage: 'No internet or no data',
-//           ),
-//         );
-//         return;
-//       }
-//
-//       // Map initial questions by category
-//       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
-//       for (var category in calculationData.categoryTypes) {
-//         categorizedQuestions[category.type] = category.questions
-//             .map((q) => QuizQuestion(
-//           question: q.question,
-//           options: q.options.map((o) => o.value).toList(),
-//           correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-//           hint: q.explanation,
-//         ))
-//             .toList();
-//       }
-//
-//       // Combine initial questions for quiz progression, capped at maxQuestions
-//       final allQuestions = calculationData.categoryTypes
-//           .expand((category) => category.questions)
-//           .map((q) => QuizQuestion(
-//         question: q.question,
-//         options: q.options.map((o) => o.value).toList(),
-//         correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-//         hint: q.explanation,
-//       ))
-//           .take(maxQuestions)
-//           .toList();
-//
-//       // Initialize results and timePerQuestion for maxQuestions
-//       final initialResults = List<QuestionResult>.generate(
-//         maxQuestions,
-//             (index) => QuestionResult(
-//           userAnswerIndex: null,
-//           correctPoint: 0,
-//           bonusPoint: 0,
-//           timeTakenSeconds: 0,
-//         ),
-//       );
-//
-//       // Update state with initial questions, start timer, keep isLoading true
-//       emit(
-//         state.copyWith(
-//           isLoading: false, // Keep loading until 20 questions or background fetches complete
-//           questions: allQuestions,
-//           currentIndex: 0,
-//           selectedIndex: null,
-//           showAnswer: false,
-//           timer: 40,
-//           score: 0,
-//           correctAnswers: 0,
-//           wrongAnswers: 0,
-//           pointsEarned: 0,
-//           bonusPoints: 0,
-//           timeTaken: 0,
-//           questionResults: initialResults,
-//           timePerQuestion: List<int>.filled(maxQuestions, 0),
-//           categorizedQuestions: categorizedQuestions,
-//         ),
-//       );
-//
-//       // Start the timer to allow immediate quiz interaction
-//       startTimer(context);
-//
-//       // Start background fetches if fewer than 20 questions
-//       if (allQuestions.length < maxQuestions) {
-//         _fetchAndAppendBackgroundQuestions(sectionId, context);
-//       } else {
-//         emit(state.copyWith(isLoading: false));
-//       }
-//     } catch (e) {
-//       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
-//     }
-//   }
-//
-//   Future<void> _fetchAndAppendBackgroundQuestions(int sectionId, BuildContext context) async {
-//     for (int actionNumber = 2; actionNumber <= 3; actionNumber++) {
-//       if (state.questions.length >= maxQuestions) {
-//         break; // Stop if we have 20 questions
-//       }
-//       final additionalData = await _repository.fetchAdditionalQuestions(sectionId, actionNumber);
-//       if (additionalData != null) {
-//         await appendQuestions(additionalData);
-//       }
-//     }
-//
-//     // Stop loading after all background fetches complete or 20 questions reached
-//     emit(state.copyWith(isLoading: false));
-//   }
-//
-//   Future<void> appendQuestions(CalculationGameModel additionalData) async {
-//     if (state.questions.length >= maxQuestions) {
-//       return; // No need to append if already at max
-//     }
-//
-//     // Map new questions by category
-//     final Map<String, List<QuizQuestion>> newCategorizedQuestions = {};
-//     for (var category in additionalData.categoryTypes) {
-//       newCategorizedQuestions[category.type] = category.questions
-//           .map((q) => QuizQuestion(
-//         question: q.question,
-//         options: q.options.map((o) => o.value).toList(),
-//         correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-//         hint: q.explanation,
-//       ))
-//           .toList();
-//     }
-//
-//     // Merge with existing categorized questions
-//     final updatedCategorizedQuestions = Map<String, List<QuizQuestion>>.from(state.categorizedQuestions);
-//     newCategorizedQuestions.forEach((type, newQuestions) {
-//       updatedCategorizedQuestions.update(
-//         type,
-//             (existing) => [...existing, ...newQuestions].take(maxQuestions).toList(),
-//         ifAbsent: () => newQuestions.take(maxQuestions).toList(),
-//       );
-//     });
-//
-//     // Combine new questions, capped at remaining capacity
-//     final newQuestions = additionalData.categoryTypes
-//         .expand((category) => category.questions)
-//         .map((q) => QuizQuestion(
-//       question: q.question,
-//       options: q.options.map((o) => o.value).toList(),
-//       correctIndex: q.options.indexWhere((o) => o.label == q.answer),
-//       hint: q.explanation,
-//     ))
-//         .take(maxQuestions - state.questions.length)
-//         .toList();
-//
-//     // Append to existing questions
-//     final updatedQuestions = [...state.questions, ...newQuestions].take(maxQuestions).toList();
-//
-//     // Update state only if new questions were added
-//     if (newQuestions.isNotEmpty) {
-//       emit(
-//         state.copyWith(
-//           questions: updatedQuestions,
-//           categorizedQuestions: updatedCategorizedQuestions,
-//         ),
-//       );
-//     }
-//   }
-//
-//   DateTime? _startTime;
-//   final int _totalDuration = 40;
-//
-//   void startTimer(BuildContext context) {
-//     _startTime = DateTime.now();
-//     emit(state.copyWith(timer: _totalDuration));
-//     _timer?.cancel();
-//     print("Timer Start");
-//     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-//       final elapsed = DateTime.now().difference(_startTime!).inSeconds;
-//       final remaining = _totalDuration - elapsed;
-//
-//       if (remaining >= 0) {
-//         emit(
-//           state.copyWith(
-//             timer: remaining,
-//             selectedIndex: state.selectedIndex,
-//           ),
-//         );
-//         // print("Pending time $remaining");
-//       } else {
-//         print("Time out");
-//         _timer?.cancel();
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           const SnackBar(content: Text('Times Up')),
-//         );
-//
-//         Future.delayed(const Duration(seconds: 2), () {
-//           emit(state.copyWith(
-//             showAnswer: true,
-//             isTimerEnded: true,
-//             selectedIndex: state.currentQuestion.correctIndex,
-//           ));
-//         });
-//       }
-//     });
-//   }
-//
-//   void selectOption(int index) {
-//     emit(state.copyWith(selectedIndex: index, showAnswer: false));
-//   }
-//
-//   void submitQuestion(BuildContext context) {
-//     _timer?.cancel();
-//
-//     final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
-//     int timeBonus = isCorrect && state.timer >= 20 ? 1 : 0;
-//
-//     int pointsThisQuestion = isCorrect ? 2 : 0;
-//     int bonusPointsThisQuestion = timeBonus;
-//
-//     final timeSpentThisQuestion = 40 - state.timer;
-//     final updatedResults = List<QuestionResult>.from(state.questionResults);
-//     final updatedTimePerQuestion = List<int>.from(state.timePerQuestion);
-//
-//     updatedResults[state.currentIndex] = QuestionResult(
-//       userAnswerIndex: state.selectedIndex,
-//       correctPoint: pointsThisQuestion,
-//       bonusPoint: bonusPointsThisQuestion,
-//       timeTakenSeconds: timeSpentThisQuestion,
-//     );
-//     updatedTimePerQuestion[state.currentIndex] = timeSpentThisQuestion;
-//
-//     final newPointsEarned = state.pointsEarned + pointsThisQuestion;
-//     final newBonusPoints = state.bonusPoints + bonusPointsThisQuestion;
-//     final newScore = state.score + pointsThisQuestion + bonusPointsThisQuestion;
-//     final newTimeTaken = state.timeTaken + timeSpentThisQuestion;
-//
-//     emit(
-//       state.copyWith(
-//         questionResults: updatedResults,
-//         timePerQuestion: updatedTimePerQuestion,
-//         selectedIndex: state.selectedIndex,
-//         showAnswer: true,
-//         correctAnswers: isCorrect ? state.correctAnswers + 1 : state.correctAnswers,
-//         wrongAnswers: !isCorrect ? state.wrongAnswers + 1 : state.wrongAnswers,
-//         score: newScore,
-//         pointsEarned: newPointsEarned,
-//         bonusPoints: newBonusPoints,
-//         timeTaken: newTimeTaken,
-//         isTimerEnded: true,
-//         totalBonusPoints: state.totalBonusPoints + timeBonus,
-//       ),
-//     );
-//   }
-//
-//   Future<void> nextQuestion(BuildContext context) async {
-//     final isLast = state.currentIndex == maxQuestions - 1;
-//
-//     if (!isLast) {
-//       emit(
-//         state.copyWith(
-//           currentIndex: state.currentIndex + 1,
-//           selectedIndex: null,
-//           showAnswer: false,
-//           timer: 40,
-//           isTimerEnded: false,
-//         ),
-//       );
-//       startTimer(context);
-//     } else if (!state.isLoading && state.questions.length >= maxQuestions) {
-//       // Only navigate to result screen if background fetches are complete and 20 questions are loaded
-//       _timer?.cancel();
-//
-//       String formatTime(int seconds) {
-//         return "${seconds}s";
-//       }
-//
-//       String indexToLetter(int? index) {
-//         if (index == null) return "";
-//         return String.fromCharCode(65 + index); // 65 = 'A'
-//       }
-//
-//       // Build category-specific question results
-//       buildCategoryQuestions(List<QuizQuestion> questions, String categoryType) {
-//         return questions.map((q) {
-//           final resultIndex = state.questions.indexOf(q);
-//           return {
-//             "question": q.question,
-//             "options": List.generate(q.options.length, (optIndex) {
-//               return {
-//                 "label": String.fromCharCode(65 + optIndex),
-//                 "value": q.options[optIndex],
-//               };
-//             }),
-//             "answer": indexToLetter(q.correctIndex),
-//             "explanation": q.hint,
-//             "user_answered": indexToLetter(state.questionResults[resultIndex].userAnswerIndex),
-//             "correct_point": state.questionResults[resultIndex].correctPoint,
-//             "bonus_point": state.questionResults[resultIndex].bonusPoint,
-//             "time_taken": formatTime(state.questionResults[resultIndex].timeTakenSeconds),
-//           };
-//         }).toList();
-//       }
-//
-//       // Build payload with categorized questions
-//       final data = state.categorizedQuestions.map((categoryType, questions) {
-//         return MapEntry(categoryType, buildCategoryQuestions(questions, categoryType));
-//       });
-//
-//       // Final totals
-//       final allCorrectBonus = (state.correctAnswers == maxQuestions) ? 3 : 0;
-//       final finalScore = state.score + allCorrectBonus;
-//
-//       // Build payload
-//       final payload = {
-//         "total_questions": maxQuestions,
-//         "correct_answers": state.correctAnswers,
-//         "correct_points": state.pointsEarned,
-//         "earned_points": finalScore,
-//         "additional_points": state.bonusPoints,
-//         "total_time": formatTime(state.timeTaken),
-//         "data": data,
-//       };
-//
-//       void debugPrintFull(dynamic data) {
-//         const int chunkSize = 800;
-//         final jsonStr = jsonEncode(data);
-//         for (var i = 0; i < jsonStr.length; i += chunkSize) {
-//           debugPrint(jsonStr.substring(i, i + chunkSize > jsonStr.length ? jsonStr.length : i + chunkSize));
-//         }
-//       }
-//
-//       debugPrintFull(payload);
-//
-//       // try {
-//       //   await _repository.submitCalculationResult(payload);
-//       // } catch (e) {
-//       //   print("Submit API failed: $e");
-//       // }
-//
-//       final percent = (state.correctAnswers / maxQuestions) * 100;
-//       final winAchieved = percent >= 80;
-//
-//       Future.delayed(const Duration(milliseconds: 100), () {
-//         Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//             builder: (_) => CalculationResultScreen(
-//               correctedAnswer: state.correctAnswers,
-//               totalQuestion: maxQuestions,
-//               score: finalScore,
-//               winAchieved: winAchieved,
-//               bonusPoints: state.bonusPoints,
-//             ),
-//           ),
-//         );
-//       });
-//     } else {
-//       // If isLoading is true or fewer than 20 questions, show a message to wait
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Please wait, more questions are loading...')),
-//       );
-//     }
-//   }
-//
-//   @override
-//   Future<void> close() {
-//     _timer?.cancel();
-//     return super.close();
-//   }
-// }
-
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
@@ -388,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
-import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
@@ -423,27 +41,35 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> reportQuestionPostMethod(
     String reason,
     QuizQuestionCubit quizCubit,
+    BuildContext context,
   ) async {
-    //emit(state.copyWith(isLoading: true));
     try {
+      final currentQuestion = quizCubit.state.currentQuestion;
+
       print(
-        "setId:-${quizCubit.state.setId},questionId:-${quizCubit.state.questions[quizCubit.state.currentIndex].questionId},,question:-${quizCubit.state.questions[quizCubit.state.currentIndex].question},reason:-$reason",
+        "setId:-${currentQuestion.setId}, "
+        "questionId:-${currentQuestion.questionId}"
+        "question:-${currentQuestion.question}, "
+        "reason:-$reason",
       );
-      //emit(state.copyWith(isLoading: false));
-      return;
-      // await _repository.reportQuestionPostMethod(
-      //   setId: setId,
-      //   questionId: questionId,
-      //   reason: reason,
-      // );
-      emit(state.copyWith(isLoading: false));
+      await _repository.reportQuestionPostMethod(
+        setId: currentQuestion.setId,
+        questionId: currentQuestion.questionId,
+        reason: reason,
+      );
+
+      AppSnackBar.custom(
+        context,
+        message: "Question Report Successfully",
+        svgAsset: "",
+      );
     } catch (e) {
-      //SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      AppSnackBar.custom(context, message: e.toString(), svgAsset: "");
     }
   }
 
-  QuizQuestion _mapQuestion(Question q) {
+  QuizQuestion _mapQuestion(Question q, String setId) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
     print(
       'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
@@ -459,6 +85,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       correctIndex: correctIndex,
       hint: q.explanation,
       questionId: q.questionId,
+      setId: setId,
     );
   }
 
@@ -500,14 +127,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       // Map initial questions by category name
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
       for (var category in gameData.categoryTypes) {
-        var questions = category.questions.map(_mapQuestion).toList();
+        var questions = category.questions
+            .map((q) => _mapQuestion(q, gameData!.setId))
+            .toList();
         categorizedQuestions[category.name] = questions;
       }
 
       // Initial questions capped at maxQuestions
       final allQuestions = gameData.categoryTypes
           .expand((category) => category.questions)
-          .map(_mapQuestion)
+          .map((q) => _mapQuestion(q, gameData!.setId))
           .take(maxQuestions)
           .toList();
 
@@ -642,7 +271,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
     final newQuestions = additionalData.categoryTypes
         .expand((category) => category.questions)
-        .map(_mapQuestion)
+        .map((q) => _mapQuestion(q, additionalData.setId))
         .take(
           maxQuestions - (state.questions.length + _bufferedQuestions.length),
         )

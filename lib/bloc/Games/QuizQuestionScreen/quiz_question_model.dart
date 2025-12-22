@@ -4,6 +4,7 @@ class QuizQuestion {
   final int correctIndex;
   final String hint;
   final String questionId;
+  final String setId;
 
   QuizQuestion({
     required this.question,
@@ -11,5 +12,6 @@ class QuizQuestion {
     required this.correctIndex,
     required this.hint,
     required this.questionId,
+    required this.setId,
   });
 }

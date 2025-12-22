@@ -48,23 +48,19 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   }
 
   void _showRadioPopup(BuildContext context) {
+    final quizCubit = context.read<QuizQuestionCubit>();
+
     showDialog(
       context: context,
-      builder: (context) => RadioPopup(
+      builder: (_) => RadioPopup(
         onSelected: (selectedIndex) {
+          quizCubit.reportQuestionPostMethod(selectedIndex, quizCubit, context);
           setState(() {
             isNeedToShowFlagOptions = false;
           });
-          AppSnackBar.custom(
-            context,
-            // message:
-            //     "Question Report Successfully, Selected Option: ${selectedIndex + 1}",
-            message: "Question Report Successfully",
-            svgAsset: "",
-          );
         },
         title: 'Report',
-        options: [
+        options: const [
           'Incorrect Answer / Wrong Information',
           'Question is Not Clear',
           'Offensive or Inappropriate Content',
@@ -79,161 +75,166 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
     return BlocProvider(
       create: (_) =>
           QuizQuestionCubit(widget.sectionId, context, gameId: widget.gameId),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          title: widget.sectionTitle,
-          // rightButton: isNeedToShowFlagOptions == false
-          //     ? null
-          //     : IconButton(
-          //         icon: const Icon(Icons.flag, color: Colors.black),
-          //         onPressed: () async {
-          //           _showRadioPopup(context);
-          //         },
-          //       ),
-          leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () async {
-              final shouldExit = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Exit Quiz?"),
-                  backgroundColor: Colors.white,
-                  content: const Text(
-                    "Are you sure you want to exit? Your progress will be lost.",
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(
-                          Colors.black,
-                        ),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: CustomAppBar(
+              title: widget.sectionTitle,
+              rightButton: isNeedToShowFlagOptions == false
+                  ? null
+                  : IconButton(
+                icon: const Icon(Icons.flag, color: Colors.black),
+                onPressed: () async {
+                  _showRadioPopup(context);
+                },
+              ),
+              leftButton: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                onPressed: () async {
+                  final shouldExit = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Exit Quiz?"),
+                      backgroundColor: Colors.white,
+                      content: const Text(
+                        "Are you sure you want to exit? Your progress will be lost.",
                       ),
-                      child: const Text("Cancel"),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isNeedToShowOrNot = false;
-                          isNeedToShowFlagOptions = false;
-                        });
-                        Navigator.of(context).pop(true);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.blue,
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              Colors.black,
+                            ),
+                          ),
+                          child: const Text("Cancel"),
                         ),
-                        foregroundColor: MaterialStateProperty.all<Color>(
-                          AppColors.sepratorColourAppBar,
-                        ),
-                      ),
-                      child: const Text("Yes, Exit"),
-                    ),
-                  ],
-                ),
-              );
-              if (shouldExit ?? false) {
-                Navigator.pop(context);
-              }
-            },
-          ),
-        ),
-        body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
-          builder: (context, state) {
-            final quizCubit = context.read<QuizQuestionCubit>();
-
-            if (state.questions.isEmpty && state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state.isTimerEnded && !isNeedToShowOrNot) {
-              Future.delayed(const Duration(milliseconds: 50), () {
-                setState(() {
-                  isNeedToShowFlagOptions = true;
-                  isNeedToShowOrNot = true;
-                });
-              });
-            }
-
-            if (state.selectedIndex == null &&
-                state.showAnswer == false &&
-                state.isTimerEnded == false) {
-              isNeedToShowOrNot = false;
-              isNeedToShowFlagOptions = false;
-            }
-
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kIsWeb ? 200 : 10,
-                  ),
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 24),
-                        QuizQuestionCard(
-                          timeTaken: state.timeTaken,
-                          hintText: state.currentQuestion.hint,
-                          question: state.currentQuestion.question,
-                          options: state.currentQuestion.options,
-                          selectedOption: state.selectedIndex,
-                          correctOption: state.currentQuestion.correctIndex,
-                          isNeedToShowOrNot: isNeedToShowOrNot,
-                          isShowAnswers: state.showAnswer,
-                          currentQuestion: state.currentIndex + 1,
-                          totalQuestions: 20,
-                          secondsRemaining: state.timer,
-                          onOptionSelected: (index) {
-                            if (state.timer.toInt() != 0 && !state.showAnswer) {
-                              quizCubit.selectOption(index);
-                            }
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isNeedToShowOrNot = false;
+                              isNeedToShowFlagOptions = false;
+                            });
+                            Navigator.of(context).pop(true);
                           },
-                          onNext: () {
-                            if (state.isTimerEnded) {
-                              setState(() {
-                                isNeedToShowFlagOptions = false;
-                                isNeedToShowOrNot = false;
-                              });
-                              quizCubit.nextQuestion(context);
-                            } else if (state.selectedIndex != null ||
-                                state.showAnswer) {
-                              quizCubit.submitQuestion(context);
-
-                              Future.delayed(
-                                const Duration(milliseconds: 300),
-                                () {
-                                  if (_scrollController.hasClients) {
-                                    _scrollController.animateTo(
-                                      _scrollController
-                                          .position
-                                          .maxScrollExtent,
-                                      duration: const Duration(
-                                        milliseconds: 400,
-                                      ),
-                                      curve: Curves.easeOut,
-                                    );
-                                  }
-                                },
-                              );
-                            }
-                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.blue,
+                            ),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              AppColors.sepratorColourAppBar,
+                            ),
+                          ),
+                          child: const Text("Yes, Exit"),
                         ),
-                        const SizedBox(height: 20),
                       ],
                     ),
-                  ),
-                ),
-                if (state.isLoading)
-                  Container(
-                    color: Colors.black.withOpacity(0.3),
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-              ],
-            );
-          },
-        ),
+                  );
+                  if (shouldExit ?? false) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            ),
+            body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
+              builder: (context, state) {
+                final quizCubit = context.read<QuizQuestionCubit>();
+
+                if (state.questions.isEmpty && state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state.isTimerEnded && !isNeedToShowOrNot) {
+                  Future.delayed(const Duration(milliseconds: 50), () {
+                    setState(() {
+                      isNeedToShowFlagOptions = true;
+                      isNeedToShowOrNot = true;
+                    });
+                  });
+                }
+
+                if (state.selectedIndex == null &&
+                    state.showAnswer == false &&
+                    state.isTimerEnded == false) {
+                  isNeedToShowOrNot = false;
+                  isNeedToShowFlagOptions = false;
+                }
+
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kIsWeb ? 200 : 10,
+                      ),
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 24),
+                            QuizQuestionCard(
+                              timeTaken: state.timeTaken,
+                              hintText: state.currentQuestion.hint,
+                              question: state.currentQuestion.question,
+                              options: state.currentQuestion.options,
+                              selectedOption: state.selectedIndex,
+                              correctOption: state.currentQuestion.correctIndex,
+                              isNeedToShowOrNot: isNeedToShowOrNot,
+                              isShowAnswers: state.showAnswer,
+                              currentQuestion: state.currentIndex + 1,
+                              totalQuestions: 20,
+                              secondsRemaining: state.timer,
+                              onOptionSelected: (index) {
+                                if (state.timer.toInt() != 0 &&
+                                    !state.showAnswer) {
+                                  quizCubit.selectOption(index);
+                                }
+                              },
+                              onNext: () {
+                                if (state.isTimerEnded) {
+                                  setState(() {
+                                    isNeedToShowFlagOptions = false;
+                                    isNeedToShowOrNot = false;
+                                  });
+                                  quizCubit.nextQuestion(context);
+                                } else if (state.selectedIndex != null ||
+                                    state.showAnswer) {
+                                  quizCubit.submitQuestion(context);
+
+                                  Future.delayed(
+                                    const Duration(milliseconds: 300),
+                                        () {
+                                      if (_scrollController.hasClients) {
+                                        _scrollController.animateTo(
+                                          _scrollController
+                                              .position
+                                              .maxScrollExtent,
+                                          duration: const Duration(
+                                            milliseconds: 400,
+                                          ),
+                                          curve: Curves.easeOut,
+                                        );
+                                      }
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (state.isLoading)
+                      Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                  ],
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -547,7 +548,7 @@ class QuizProgressCard extends StatelessWidget {
 class RadioPopup extends StatefulWidget {
   final String title;
   final List<String> options;
-  final void Function(int selectedIndex) onSelected;
+  final void Function(String selectedIndex) onSelected;
 
   const RadioPopup({
     super.key,
@@ -596,7 +597,7 @@ class _RadioPopupState extends State<RadioPopup> {
                     ),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.close, color: Colors.red),
+                      child: const Icon(Icons.close, color: AppColors.customBottomEnabledColour),
                     ),
                   ],
                 ),
@@ -635,7 +636,7 @@ class _RadioPopupState extends State<RadioPopup> {
                     Expanded(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.grey),
+                          side: const BorderSide(color: AppColors.customBottomEnabledColour),
                         ),
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text(
@@ -649,14 +650,16 @@ class _RadioPopupState extends State<RadioPopup> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.customBottomEnabledColour,
                         ),
                         onPressed: _selectedOption == null
                             ? null
                             : () {
-                                widget.onSelected(_selectedOption!);
-                                Navigator.of(context).pop();
-                              },
+                          widget.onSelected(
+                            widget.options[_selectedOption!],
+                          );
+                          Navigator.of(context).pop();
+                        },
                         child: const Text(
                           'Report',
                           style: TextStyle(color: Colors.white),
@@ -673,3 +676,4 @@ class _RadioPopupState extends State<RadioPopup> {
     );
   }
 }
+

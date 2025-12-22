@@ -24,8 +24,8 @@ class QuizQuestionState {
   final int bonusPoints;
   final int timeTaken;
   final Map<String, List<QuizQuestion>> categorizedQuestions;
-  final String game; // New field
-  final String level; // New field
+  final String game;
+  final String level;
   final String difficulty;
   final String setId;
   final List<CategoryType> categoryTypes;
@@ -36,7 +36,7 @@ class QuizQuestionState {
     this.currentIndex = 0,
     this.selectedIndex,
     this.showAnswer = false,
-    this.timer = 40, // ⏱ Default timer is 40 seconds
+    this.timer = 40,
     this.isTimerEnded = false,
     this.correctAnswers = 0,
     this.wrongAnswers = 0,

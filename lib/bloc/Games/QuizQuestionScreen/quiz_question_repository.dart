@@ -21,7 +21,7 @@ class QuizQuestionRepository {
     try {
       final response = await ApiService.post(
         url: url,
-        body: {"set_id": setId, "reason": reason, "question_id": ""},
+        body: {"set_id": setId, "reason": reason, "question_id": questionId},
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {

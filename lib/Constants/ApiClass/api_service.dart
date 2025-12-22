@@ -161,7 +161,7 @@ class ApiService {
     final encodedBody = body != null ? jsonEncode(body) : null;
 
     print('[$method] URL: $url');
-    print('Bearer Token: $token');
+    //print('Bearer Token: $token');
     print('Header Token: $requestHeaders');
     if (encodedBody != null) print('Request Body: $encodedBody');
 
@@ -204,9 +204,9 @@ class ApiService {
           throw 'Unsupported HTTP method: $method';
       }
 
-      print('Response Code: ${response.statusCode}');
+      //print('Response Code: ${response.statusCode}');
       final decodedBody = utf8.decode(response.bodyBytes);
-      print('Response Body: $decodedBody');
+      //print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);
 
       switch (response.statusCode) {
@@ -255,7 +255,6 @@ class ApiService {
     } catch (e) {
       print('Request Exception: ${e.toString()}');
       rethrow;
-
     }
   }
 }

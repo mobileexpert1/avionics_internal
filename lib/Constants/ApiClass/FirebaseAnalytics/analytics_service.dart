@@ -47,9 +47,9 @@ class AnalyticsService {
         'timestamp': DateTime.now().toIso8601String(),
       },
     );
-    print(
-      "Uploaded Visible Parameters: screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
-    );
+    // print(
+    //   "Uploaded Visible Parameters: screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
+    // );
   }
 
   // ---------------------------
@@ -64,30 +64,10 @@ class AnalyticsService {
         'timestamp': DateTime.now().toIso8601String(),
       },
     );
-    print(
-      "Uploaded Button Parameters:screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
-    );
+    // print(
+    //   "Uploaded Button Parameters:screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
+    // );
   }
-
-  // ---------------------------
-  // Generic Event
-  // ---------------------------
-  // Future<void> logEvent(
-  //   String eventName, {
-  //   Map<String, Object?>? parameters,
-  // }) async {
-  //   await _analytics.logEvent(
-  //     name: eventName,
-  //     parameters: {
-  //       'currentUserId': await _generateUserId(),
-  //       'timestamp': DateTime.now().toIso8601String(),
-  //       ..._nonNullParams(parameters),
-  //     },
-  //   );
-  //   print(
-  //     "Uploaded Parameters: ${{'currentUserId': _userId, 'timestamp': DateTime.now().toIso8601String()}}",
-  //   );
-  // }
 
   // Helper to remove null values
   Map<String, Object> _nonNullParams(Map<String, Object?>? params) {

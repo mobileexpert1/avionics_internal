@@ -986,35 +986,46 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      if (showBlueDot)
-                        Container(
-                          width: 8,
-                          height: 8,
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: const BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (showBlueDot)
+                          Container(
+                            width: 8,
+                            height: 8,
+                            margin: const EdgeInsets.only(right: 8, top: 4),
+                            decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        Expanded(
+                          child: Text(
+                            title.toUpperCase(),
+                            softWrap: true,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: textColor,
+                            ),
                           ),
                         ),
-                      Text(
-                        title.toUpperCase(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: textColor,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+
+                  const SizedBox(width: 8),
+
+                  /// RIGHT SIDE (UNCHANGED ALIGNMENT)
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         isExpanded ? "Show Less" : "Show More",
-                        style: TextStyle(fontSize: 13, color: textColor),
+                        style: TextStyle(fontSize: 14, color: textColor),
                       ),
                       Icon(
                         isExpanded
@@ -1040,6 +1051,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
       ],
     );
   }
+
+
 
   Widget _buildFieldRows(
     List<List<dynamic>> fields, {
