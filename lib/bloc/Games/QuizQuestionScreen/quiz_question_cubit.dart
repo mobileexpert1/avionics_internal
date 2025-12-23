@@ -412,10 +412,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         ),
       );
 
-      print(
-        "Current Quesiton correctIndex:- ${state.currentQuestion.correctIndex}",
-      );
-
       startTimer(context);
 
       if (gameId == "quiz") {
@@ -511,6 +507,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "difficulty": state.difficulty,
         "categories": categories,
         "game_number": _quizTypesId,
+        "set_Id": state.setId,
       };
 
       try {

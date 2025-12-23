@@ -224,10 +224,6 @@ class QuizQuestionRepository {
 
     try {
       final response = await ApiService.post(url: uri, body: payload);
-      // Treat response as a Map<String, dynamic>
-      print(
-        'Submit response for $gameId game $gameNumber: ${response['data']}',
-      );
       return SubmitCalculationResultResponse.fromJson(response);
     } catch (e) {
       print('Failed to submit result for $gameId game $gameNumber: $e');
