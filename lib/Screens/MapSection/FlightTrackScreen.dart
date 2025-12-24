@@ -217,7 +217,10 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
           TextButton(
             onPressed: () {
               _alertShownOfTrackingStopped = false;
-              context.read<FlightMapCubit>().stopTrackingFlight();
+              context.read<FlightMapCubit>().stopTrackingFlight(
+                flightNumber: widget.flightNumber,
+                destination: widget.initialFlightDetail?.destinationAirport?.name,
+              );
               Navigator.of(ctx).pop();
               Navigator.of(context).pop();
             },

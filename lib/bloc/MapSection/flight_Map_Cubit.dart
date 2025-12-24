@@ -6,6 +6,7 @@ import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     hide Position;
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
 import 'FilterMap/filter_Map_Cubit.dart';
@@ -414,12 +416,30 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  void stopTrackingFlight() {
+  // void stopTrackingFlight() {
+  //   if (_trackingTimer != null) {
+  //     _trackingTimer?.cancel();
+  //     _trackingTimer = null;
+  //   }
+  //   emit(state.copyWith(isTracking: false,isFlightLanded:false));
+  // }
+
+  void stopTrackingFlight({String? flightNumber, String? destination}) {
     if (_trackingTimer != null) {
       _trackingTimer?.cancel();
       _trackingTimer = null;
     }
-    emit(state.copyWith(isTracking: false,isFlightLanded:false));
+
+    emit(state.copyWith(isTracking: false, isFlightLanded: false));
+
+    if (!kIsWeb && flightNumber != null) {
+      LocalNotificationHelper.show(
+        title: "Flight landed",
+        body: destination != null
+            ? "$flightNumber has landed at $destination."
+            : "$flightNumber has landed.",
+      );
+    }
   }
 
   void clearSelectedFlightDetail() {
