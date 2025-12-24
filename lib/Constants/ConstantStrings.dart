@@ -221,11 +221,16 @@ class ApiServiceUrlAirplaneConstant {
 }
 
 class ApiFunctionUrlGamesConstant {
-  static const calculationQuestions = "ai-engine/games/calculation/questions/";
-  static const calculation = "ai-engine/games/calculation/";
+  // static const calculationQuestions = "ai-engine/games/calculation/questions/";
+  // static const calculation = "ai-engine/games/calculation/";
+
+  static const calculationQuestions = "calculation/questions/";
+  static const calculation = "calculation/";
+
   static const oneWord = "ai-engine/games/one-word/";
   static const oneWordQuestions = "ai-engine/games/one-word/questions/";
-  static const calculationSubmit = "ai-engine/games/calculation/";
+  //static const calculationSubmit = "ai-engine/games/calculation/";
+  static const calculationSubmit = "calculation/";
   static const oneWordSubmit = "ai-engine/games/one-word/";
   //static const quiz = "ai-engine/games/quiz/";
   //static const quizQuestions = "ai-engine/games/quiz/questions/";

@@ -54,7 +54,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
       context: context,
       builder: (_) => RadioPopup(
         onSelected: (selectedIndex) {
-          quizCubit.reportQuestionPostMethod(selectedIndex, quizCubit, context);
+          quizCubit.reportQuestionPostMethod(selectedIndex, quizCubit, context,widget.gameId);
           setState(() {
             isNeedToShowFlagOptions = false;
           });

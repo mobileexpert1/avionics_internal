@@ -41,7 +41,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> reportQuestionPostMethod(
     String reason,
     QuizQuestionCubit quizCubit,
-    BuildContext context,
+    BuildContext context, String isForType
   ) async {
     try {
       final currentQuestion = quizCubit.state.currentQuestion;
@@ -56,6 +56,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         setId: currentQuestion.setId,
         questionId: currentQuestion.questionId,
         reason: reason,
+        isForType: isForType
       );
 
       AppSnackBar.custom(
@@ -507,7 +508,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "difficulty": state.difficulty,
         "categories": categories,
         "game_number": _quizTypesId,
-        "set_Id": state.setId,
+        "set_id": state.setId,
       };
 
       try {

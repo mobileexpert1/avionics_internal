@@ -12,15 +12,38 @@ class QuizQuestionRepository {
     required String setId,
     required String questionId,
     required String reason,
+    required String isForType,
   }) async {
-    final url = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlGamesConstant.quiz +
-          ApiFunctionUrlGamesConstant.reportQuestion,
-    );
+    Uri? url;
+    //Type 1 for quiz, and second for calculations
+    switch (isForType) {
+      case "quiz":
+        url = Uri.parse(
+          ApiBaseUrlConstant.baseUrl +
+              ApiFunctionUrlGamesConstant.quiz +
+              ApiFunctionUrlGamesConstant.reportQuestion,
+        );
+        break;
+      case "one_word":
+        url = Uri.parse(
+          ApiBaseUrlConstant.baseUrl +
+              ApiFunctionUrlGamesConstant.quiz +
+              ApiFunctionUrlGamesConstant.reportQuestion,
+        );
+      case "calculation":
+        url = Uri.parse(
+          ApiBaseUrlConstant.baseUrl +
+              ApiFunctionUrlGamesConstant.calculation +
+              ApiFunctionUrlGamesConstant.reportQuestion,
+        );
+        break;
+      default:
+        url = null;
+    }
+
     try {
       final response = await ApiService.post(
-        url: url,
+        url: url!,
         body: {"set_id": setId, "reason": reason, "question_id": questionId},
       );
       return BaseDetailResponseModel.fromJson(response);
