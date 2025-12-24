@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'AppleSubscriptionRepository.dart';
 import 'AppleSubscriptionState.dart';
 
@@ -167,12 +169,28 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
                 activeProductId: purchase.productID,
               ),
             );
+
+            if (!kIsWeb) {
+              LocalNotificationHelper.show(
+                title: "Subscription active",
+                body:
+                    "Your subscription is now active. All premium features are unlocked.",
+              );
+            }
           } catch (e) {
             emit(state.copyWith(loading: false, error: e.toString()));
           }
           break;
 
         case PurchaseStatus.error:
+          if (!kIsWeb) {
+            LocalNotificationHelper.show(
+              title: "Subscription failed",
+              body:
+                  "We couldn’t complete your subscription. Please check your payment method.",
+            );
+          }
+
           emit(
             state.copyWith(
               loading: false,

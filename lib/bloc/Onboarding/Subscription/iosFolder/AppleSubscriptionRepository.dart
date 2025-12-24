@@ -1,14 +1,13 @@
 import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../subscriptionResponseModel.dart';
 
 class AppleSubscriptionRepository {
   Future<BaseDetailResponseModel> postSubscriptionApi({
-    required String token,
-    required String selectedSubscritionId,
-    required String platform,
-    required String packageName,
+    required token,
+    required selectedSubscritionId,
+    required platform,
+    required packageName,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -30,18 +29,5 @@ class AppleSubscriptionRepository {
       throw e.toString();
     }
   }
-
-  Future<SubscriptionResponseModel> getSubscriptionDetails() async {
-    final uri = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.getSubscritionList,
-    );
-    try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-      return SubscriptionResponseModel.fromJson(jsonData);
-    } catch (e) {
-      throw e.toString();
-    }
-  }
 }
+
