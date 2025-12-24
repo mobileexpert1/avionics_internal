@@ -73,7 +73,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       try {
         await AppleSubscriptionRepository().postSubscriptionApi(
           token: "0ZSI6MTc1",
-          selectedSubscriptionId:
+          selectedSubscritionId:
               "premium_subscription_yearly_iOS_Seven_Free_Days",
           platform: "android",
           packageName: "xyz",

@@ -154,7 +154,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             // Call API regardless of flow
             await AppleSubscriptionRepository().postSubscriptionApi(
               token: purchase.verificationData.serverVerificationData,
-              selectedSubscriptionId: purchase.productID,
+              selectedSubscritionId: purchase.productID,
               platform: Platform.isIOS ? "ios" : "android",
               packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
             );

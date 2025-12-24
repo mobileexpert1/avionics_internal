@@ -6,7 +6,7 @@ import '../subscriptionResponseModel.dart';
 class AppleSubscriptionRepository {
   Future<BaseDetailResponseModel> postSubscriptionApi({
     required String token,
-    required String selectedSubscriptionId,
+    required String selectedSubscritionId,
     required String platform,
     required String packageName,
   }) async {
@@ -20,7 +20,7 @@ class AppleSubscriptionRepository {
         url: url,
         body: {
           "platform": platform,
-          "product_id": selectedSubscriptionId,
+          "product_id": selectedSubscritionId,
           "package_name": packageName,
           "token": token,
         },
