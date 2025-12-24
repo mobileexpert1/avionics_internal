@@ -1,23 +1,17 @@
 import 'package:in_app_purchase/in_app_purchase.dart';
+
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../subscriptionResponseModel.dart';
 
 class AppleSubscriptionState {
   final bool storeAvailable;
   final bool loading;
-
-  // Apple IAP
   final List<ProductDetails> products;
   final ProductDetails? selectedProduct;
   final bool purchased;
-
-  // Backend subscription (data only)
-  final SubscriptionData? subscription;
-  final bool hasActiveSubscription;
-
   final String? error;
   final CommonApiStatus status;
   final String? activeProductId;
+
 
   AppleSubscriptionState({
     this.storeAvailable = false,
@@ -25,8 +19,6 @@ class AppleSubscriptionState {
     this.products = const [],
     this.selectedProduct,
     this.purchased = false,
-    this.subscription,
-    this.hasActiveSubscription = false,
     this.error,
     this.status = CommonApiStatus.initial,
     this.activeProductId,
@@ -38,8 +30,6 @@ class AppleSubscriptionState {
     List<ProductDetails>? products,
     ProductDetails? selectedProduct,
     bool? purchased,
-    SubscriptionData? subscription,
-    bool? hasActiveSubscription,
     String? error,
     CommonApiStatus? status,
     String? activeProductId,
@@ -50,12 +40,10 @@ class AppleSubscriptionState {
       products: products ?? this.products,
       selectedProduct: selectedProduct ?? this.selectedProduct,
       purchased: purchased ?? this.purchased,
-      subscription: subscription ?? this.subscription,
-      hasActiveSubscription:
-      hasActiveSubscription ?? this.hasActiveSubscription,
       error: error,
-      status: status ?? this.status,
-      activeProductId: activeProductId ?? this.activeProductId,
+      status: status ?? CommonApiStatus.initial,
+      activeProductId: activeProductId,
     );
   }
 }
+

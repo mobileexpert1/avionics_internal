@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:intl/intl.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,7 +43,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     super.initState();
     if (widget.isComeFromSignup == false) {
       Future.delayed(Duration.zero, () {
-        context.read<AppleSubscriptionCubit>().restorePurchases();
+        context.read<AppleSubscriptionCubit>().restorePastPurchases();
       });
     }
     AnalyticsService.instance.logVisibleScreen(
@@ -57,7 +57,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
       create: (_) => AppleSubscriptionCubit(),
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
-            (prev.error != curr.error && curr.error != null) ||
+        (prev.error != curr.error && curr.error != null) ||
             (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
           if (state.error != null) {
@@ -76,42 +76,44 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             );
 
             (widget.isComeFromSignup == false ||
-                    widget.isComeFromSignup == null)
+                widget.isComeFromSignup == null)
                 ? () {
-                    //Navigator.of(context).pop();
-                  }()
+              //Navigator.of(context).pop();
+            }()
                 : Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                    (route) => false,
-                  );
+              context,
+              MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+                  (route) => false,
+            );
           }
         },
         builder: (context, state) {
           final selectedProduct = state.selectedProduct;
           final products = state.products;
+          print("products==> ${products}");
+
           return Stack(
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title:
-                      ((widget.isComeFromSignup == false ||
-                          widget.isComeFromSignup == null)
+                  ((widget.isComeFromSignup == false ||
+                      widget.isComeFromSignup == null)
                       ? SubscriptionTexts.currentSubTitle
                       : ConstantStrings.startSubscription),
                   leftButton:
-                      ((widget.isComeFromSignup == false ||
-                          widget.isComeFromSignup == null)
+                  ((widget.isComeFromSignup == false ||
+                      widget.isComeFromSignup == null)
                       ? IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
                       : Wrap()),
                 ),
 
@@ -155,40 +157,24 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           ),
                           text: "Track the aircrafts",
                         ),
-
                         const SizedBox(height: 20),
+
                         // Subscription Cards
-                        ...products.map((product) {
-                          // Get subscription data if this is the active product
-                          String? startDate;
-                          String? expiryDate;
-
-                          if (product.id == state.activeProductId &&
-                              state.subscription != null) {
-                            startDate = formatDate(
-                              state.subscription?.startDate,
-                            );
-                            expiryDate = formatDate(
-                              state.subscription?.expiryDate,
-                            );
-                          }
-
-                          return Padding(
+                        ...products.map(
+                              (product) => Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: _SubscriptionCard(
                               product: product,
                               isSelected:
-                                  product == selectedProduct ||
+                              product == selectedProduct ||
                                   product.id == state.activeProductId,
                               trialText: getTrialText(product.description),
-                              startDate: startDate,
-                              expiryDate: expiryDate,
                               onTap: () => context
                                   .read<AppleSubscriptionCubit>()
                                   .selectPlan(product),
                             ),
-                          );
-                        }),
+                          ),
+                        ),
 
                         const SizedBox(height: 40),
                         ...[
@@ -210,10 +196,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                                   context
                                       .read<AppleSubscriptionCubit>()
                                       .buySelected(context);
-                                  AnalyticsService.instance.buttonPressed(
-                                    FirebaseEvents.subscriptionScreen,
-                                    FirebaseEvents.goPremiumSubscriptionButton,
-                                  );
+                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.goPremiumSubscriptionButton);
                                 }
                               },
                             ),
@@ -232,11 +215,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                               onPressed: () {
                                 context
                                     .read<AppleSubscriptionCubit>()
-                                    .restorePurchases();
-                                AnalyticsService.instance.buttonPressed(
-                                  FirebaseEvents.subscriptionScreen,
-                                  FirebaseEvents.restoreSubscriptionButton,
-                                );
+                                    .restorePastPurchases();
+                                AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.restoreSubscriptionButton);
                               },
                             ),
                             const SizedBox(height: 40),
@@ -252,10 +232,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                                   context
                                       .read<AppleSubscriptionCubit>()
                                       .buySelected(context);
-                                  AnalyticsService.instance.buttonPressed(
-                                    FirebaseEvents.subscriptionScreen,
-                                    FirebaseEvents.goPremiumSubscriptionButton,
-                                  );
+                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.goPremiumSubscriptionButton);
                                 }
                               },
                             ),
@@ -317,8 +294,6 @@ class _SubscriptionCard extends StatelessWidget {
   final ProductDetails product;
   final bool isSelected;
   final String trialText;
-  final String? startDate;
-  final String? expiryDate;
   final VoidCallback onTap;
 
   const _SubscriptionCard({
@@ -326,8 +301,6 @@ class _SubscriptionCard extends StatelessWidget {
     required this.isSelected,
     required this.trialText,
     required this.onTap,
-    this.startDate,
-    this.expiryDate,
   });
 
   String cleanTitle(String title) {
@@ -339,6 +312,7 @@ class _SubscriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(product.description);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -350,64 +324,44 @@ class _SubscriptionCard extends StatelessWidget {
             width: 1.2,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Title and trial
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Left side
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      cleanTitle(product.title),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (trialText.isNotEmpty)
-                      Text(
-                        trialText,
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 12,
-                        ),
-                      ),
-                  ],
+                Text(
+                  cleanTitle(product.title),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      product.price,
-                      style: const TextStyle(color: Colors.black, fontSize: 13),
-                    ),
-                    const SizedBox(width: 10),
-                    if (isSelected)
-                      SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.tickIcon),
-                        fit: BoxFit.fill,
-                      ),
-                  ],
-                ),
+                if (trialText.isNotEmpty)
+                  Text(
+                    trialText,
+                    style: const TextStyle(color: Colors.black87, fontSize: 12),
+                  ),
               ],
             ),
 
-            // Start / Expiry dates for active subscription
-            if (startDate != null && expiryDate != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 6.0),
-                child: Text(
-                  "Active from $startDate to $expiryDate",
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
+            // Right side
+            Row(
+              children: [
+                Text(
+                  product.price,
+                  style: const TextStyle(color: Colors.black, fontSize: 13),
                 ),
-              ),
+                const SizedBox(width: 10),
+                if (isSelected)
+                  SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.tickIcon),
+                    fit: BoxFit.fill,
+                  ),
+              ],
+            ),
           ],
         ),
       ),
@@ -415,14 +369,3 @@ class _SubscriptionCard extends StatelessWidget {
   }
 }
 
-String formatDate(String? dateStr) {
-  if (dateStr == null || dateStr.isEmpty) return "-";
-
-  try {
-    final inputFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
-    final dateTime = inputFormat.parse(dateStr, true).toLocal();
-    return DateFormat('dd MMM yyyy').format(dateTime);
-  } catch (e) {
-    return "-";
-  }
-}
