@@ -1324,22 +1324,28 @@ class FlightCard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 6,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
-                                  Text(
-                                    aircraftType,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF3F3D56),
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 220, // prevents touching logo
+                                    ),
+                                    child: Text(
+                                      aircraftType,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF3F3D56),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 25),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                       borderRadius: BorderRadius.circular(4),
@@ -1355,6 +1361,7 @@ class FlightCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
+
                               const SizedBox(height: 4),
                               Wrap(
                                 crossAxisAlignment: WrapCrossAlignment.center,

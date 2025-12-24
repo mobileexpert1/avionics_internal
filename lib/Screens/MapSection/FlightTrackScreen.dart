@@ -287,14 +287,17 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         widget.initialFlightDetail?.destinationAirport?.longitude != null) {
       _setupStaticFlightPath(newPoint);
 
-      _flightNextLocationCoordinates = {
-        Polyline(
-          polylineId: const PolylineId("flight_trail"),
-          color: Colors.blue,
-          width: 2,
-          points: List.unmodifiable(_flightNextCoordinatesPoints),
-        ),
-      };
+      if (widget.initialFlightDetail?.originAirport?.latitude != null &&
+          widget.initialFlightDetail?.originAirport?.longitude != null) {
+        _flightNextLocationCoordinates = {
+          Polyline(
+            polylineId: const PolylineId("flight_trail"),
+            color: Colors.blue,
+            width: 2,
+            points: List.unmodifiable(_flightNextCoordinatesPoints),
+          ),
+        };
+      }
     }
   }
 
