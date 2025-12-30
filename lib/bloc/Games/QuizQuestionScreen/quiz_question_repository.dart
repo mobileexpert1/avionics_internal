@@ -27,7 +27,7 @@ class QuizQuestionRepository {
       case "one_word":
         url = Uri.parse(
           ApiBaseUrlConstant.baseUrl +
-              ApiFunctionUrlGamesConstant.quiz +
+              ApiFunctionUrlGamesConstant.oneWord +
               ApiFunctionUrlGamesConstant.reportQuestion,
         );
       case "calculation":

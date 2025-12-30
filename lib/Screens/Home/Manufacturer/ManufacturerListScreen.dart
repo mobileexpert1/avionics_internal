@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
@@ -30,7 +32,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       );
     });
 
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.manufacturerScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.manufacturerScreen,
+    );
   }
 
   void _onScroll() {
@@ -192,7 +196,18 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                             contentImage: BoxFit.contain,
                                           ),
                                         )
-                                      : const Icon(Icons.image_not_supported),
+                                      : SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.manuFirstImage,
+                                          ),
+                                          width: kIsWeb
+                                              ? screenWidth * 0.06
+                                              : screenWidth * 0.15,
+                                          height: kIsWeb
+                                              ? screenWidth * 0.07
+                                              : screenWidth * 0.15,
+                                          fit: BoxFit.contain,
+                                        ),
                                   title: Align(
                                     alignment: kIsWeb
                                         ? Alignment.center
@@ -215,7 +230,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     size: kIsWeb ? 30 : 15,
                                   ),
                                   onTap: () {
-                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.allAirbusModelsButton,FirebaseEvents.manufacturerScreen);
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.allAirbusModelsButton,
+                                      FirebaseEvents.manufacturerScreen,
+                                    );
 
                                     Navigator.push(
                                       context,

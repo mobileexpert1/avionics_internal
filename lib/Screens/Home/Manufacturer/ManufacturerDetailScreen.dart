@@ -353,7 +353,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 () => showMoreHistory = !showMoreHistory,
                               ),
                               isShowMoreLessOption:
-                                  detail.company.companyHistory.length > 100,
+                                  detail.company.companyHistory.isNotEmpty,
                             ),
 
                             Padding(
@@ -389,7 +389,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 onTap: () => setState(
                                   () => showMoreProducts = !showMoreProducts,
                                 ),
-                                isShowMoreLessOption: detail.product.length > 2,
+                                isShowMoreLessOption: detail.product.isNotEmpty,
                               ),
 
                             Padding(
@@ -408,11 +408,15 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          product.series,
-                                          style: const TextStyle(fontSize: 15),
-                                        ),
-                                        const SizedBox(height: 4),
+                                        if (product.series.isNotEmpty)
+                                          Text(
+                                            product.series,
+                                            style: const TextStyle(
+                                                fontSize: 15),
+
+                                          ),
+                                         SizedBox(height: 4),
+
                                         Text(
                                           product.description,
                                           style: const TextStyle(height: 1.5),

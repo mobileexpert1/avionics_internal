@@ -4,11 +4,13 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/Custom_widget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
@@ -41,7 +43,9 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
       widget.aircraftId,
       context,
     );
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.allPlanesListScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.allPlanesListScreen,
+    );
   }
 
   @override
@@ -184,18 +188,15 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   }
 
   Widget _buildImageCoverScroller(
-      double screenHeight,
-      List<AircraftImage> coverImages,
-      ) {
+    double screenHeight,
+    List<AircraftImage> coverImages,
+  ) {
     return SizedBox(
       height: screenHeight * 0.18,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior().copyWith(
-          scrollbars: true, // show scrollbar on web
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse, // allow mouse dragging on web
-          },
+          scrollbars: true,
+          dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
         ),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -203,14 +204,22 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           itemBuilder: (context, index) {
             final image = coverImages[index];
             final isSingleImage = coverImages.length == 1;
+
             final imageWidth = isSingleImage
                 ? MediaQuery.of(context).size.width
                 : 300.0;
+
             final imagePadding = isSingleImage
                 ? EdgeInsets.zero
                 : const EdgeInsets.only(right: 10);
 
-            final hasCopyright = (image.cc).isNotEmpty;
+            final hasCopyright = image.cc.isNotEmpty;
+
+            final imageUrl =
+                '${image.url}?v=${DateTime.now().millisecondsSinceEpoch}';
+
+            final isSvg = image.url.toLowerCase().endsWith('.svg');
+            final isAsset = image.url.contains('assets');
 
             return Padding(
               padding: imagePadding,
@@ -218,33 +227,56 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 behavior: HitTestBehavior.translucent,
                 onTap: hasCopyright
                     ? () async {
-                  final uri = Uri.tryParse(image.source);
-                  if (uri != null && await canLaunchUrl(uri)) {
-                    await launchUrl(uri,
-                        mode: LaunchMode.externalApplication);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Could not open URL.')),
-                    );
-                  }
-                }
+                        final uri = Uri.tryParse(image.source);
+                        if (uri != null && await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Could not open URL.'),
+                            ),
+                          );
+                        }
+                      }
                     : null,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: Stack(
                     children: [
-                      Image.network(
-                        image.url,
+                      /// ✅ IMAGE HANDLING FIXED
+                      SizedBox(
                         width: imageWidth,
                         height: screenHeight * 0.18,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: imageWidth,
-                          height: screenHeight * 0.18,
-                          color: Colors.grey.shade300,
-                          alignment: Alignment.center,
-                          child: const Icon(Icons.broken_image),
-                        ),
+                        child: isAsset
+                            ? Image.asset(image.url, fit: BoxFit.cover)
+                            : isSvg
+                            ? SvgPicture.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                placeholderBuilder: (_) => SvgPicture.asset(
+                                  CommonUi.setSvgImage(
+                                    AssetsPath.manuFirstImage,
+                                  ),
+                                  fit: BoxFit.contain,
+                                ),
+                              )
+                            : Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  debugPrint('Image load error: ${image.url}');
+                                  debugPrint(error.toString());
+                                  return SvgPicture.asset(
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.manuFirstImage,
+                                    ),
+                                    fit: BoxFit.contain,
+                                  );
+                                },
+                              ),
                       ),
                       if (hasCopyright)
                         Positioned(
