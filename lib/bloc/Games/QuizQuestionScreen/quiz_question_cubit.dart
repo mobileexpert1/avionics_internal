@@ -41,7 +41,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> reportQuestionPostMethod(
     String reason,
     QuizQuestionCubit quizCubit,
-    BuildContext context, String isForType
+    BuildContext context,
+    String isForType,
   ) async {
     try {
       final currentQuestion = quizCubit.state.currentQuestion;
@@ -56,7 +57,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         setId: currentQuestion.setId,
         questionId: currentQuestion.questionId,
         reason: reason,
-        isForType: isForType
+        isForType: isForType,
       );
 
       AppSnackBar.custom(
@@ -198,12 +199,22 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
     } catch (e, stackTrace) {
       print('Error loading questions: $e, StackTrace: $stackTrace');
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: 'Failed to load questions: $e',
-        ),
+      AppSnackBar.custom(
+        context,
+        message:
+            "Please wait while more questions are loading. Try again later.",
+        svgAsset: "",
       );
+      Future.delayed(const Duration(seconds: 4), () {
+        Navigator.pop(context);
+      });
+
+      // emit(
+      //   state.copyWith(
+      //     isLoading: false,
+      //     errorMessage: 'Failed to load questions: $e',
+      //   ),
+      // );
     }
   }
 

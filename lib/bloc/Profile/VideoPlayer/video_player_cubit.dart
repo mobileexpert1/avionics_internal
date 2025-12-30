@@ -39,31 +39,26 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   void playPause() {
     final controller = state.controller;
     if (controller == null) return;
-
     controller.value.isPlaying ? controller.pause() : controller.play();
   }
 
   void seekForward() {
     final controller = state.controller;
     if (controller == null) return;
-
     controller.seekTo(controller.value.position + const Duration(seconds: 10));
   }
 
   void seekBackward() {
     final controller = state.controller;
     if (controller == null) return;
-
     controller.seekTo(controller.value.position - const Duration(seconds: 10));
   }
 
   void toggleMute() {
     final controller = state.controller;
     if (controller == null) return;
-
     final muted = !state.isMuted;
     controller.setVolume(muted ? 0 : 1);
-
     emit(state.copyWith(isMuted: muted));
   }
 
