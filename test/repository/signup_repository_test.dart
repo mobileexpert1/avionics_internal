@@ -1,6 +1,6 @@
-// test/repository/signup_repository_test.dart  (fixed and improved version)
+// test/repository/signup_repository_test.dart  (final fixed version)
 
-import 'dart:async';
+import 'dart:async' show StreamSubscription;
 import 'dart:convert';
 import 'dart:io';
 
@@ -19,7 +19,6 @@ void main() {
   MethodChannel('dev.fluttercommunity.plus/connectivity');
 
   setUpAll(() async {
-    // Mock connectivity to always return connected
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(connectivityChannel, (call) async {
       if (call.method == 'check') return 'wifi';
@@ -46,7 +45,7 @@ void main() {
         email: 'test@example.com',
       );
 
-      expect(response, true); // assuming it returns bool true when registered
+      expect(response, isTrue);
     });
 
     test('checkIsEmailAlreadyResgisteredOrNot throws error on failure', () async {
@@ -75,7 +74,7 @@ void main() {
         auth_type: 'email',
       );
 
-      expect(response, true); // assuming it returns bool true on success
+      expect(response, isTrue);
     });
 
     test('registerUser throws error on failure', () async {
@@ -100,7 +99,7 @@ void main() {
 }
 
 // ──────────────────────────────────────────────────────────────
-// HTTP Mock Classes (fixed to return proper bool responses)
+// HTTP Mock Classes – ALL list fields are now proper List<dynamic>
 // ──────────────────────────────────────────────────────────────
 
 class _SuccessHttpOverride extends HttpOverrides {
@@ -127,12 +126,16 @@ class _MockHttpClient implements HttpClient {
   final bool isCheckEmail;
   final bool isRegister;
 
-  _MockHttpClient({required this.success, this.isCheckEmail = false, this.isRegister = false});
+  _MockHttpClient({
+    required this.success,
+    this.isCheckEmail = false,
+    this.isRegister = false,
+  });
 
   @override
   Future<HttpClientRequest> postUrl(Uri url) async {
     final path = url.path.toLowerCase();
-    final checkEmail = path.contains('checkemail') || path.contains('email');
+    final checkEmail = path.contains('checkemail') || path.contains('email') || path.contains('check');
     final register = path.contains('register') || path.contains('signup');
 
     return _MockHttpRequest(
@@ -151,7 +154,11 @@ class _MockHttpRequest implements HttpClientRequest {
   final bool isCheckEmail;
   final bool isRegister;
 
-  _MockHttpRequest({required this.success, required this.isCheckEmail, required this.isRegister});
+  _MockHttpRequest({
+    required this.success,
+    required this.isCheckEmail,
+    required this.isRegister,
+  });
 
   @override
   Future<HttpClientResponse> close() async {
@@ -179,24 +186,38 @@ class _MockHttpResponse implements HttpClientResponse {
         void Function()? onDone,
         bool? cancelOnError,
       }) {
-    // Adjust this JSON to match exactly what your real API returns
-    // and how your SignupRepository parses it to return bool
     late Map<String, dynamic> jsonResponse;
 
     if (isRegister) {
       jsonResponse = {
         "status": true,
         "message": "User registered successfully",
-        // add other fields if needed
+        "data": <dynamic>[], // ← ensure any possible "data" is a list
+        "roles": <dynamic>[],
+        "permissions": <dynamic>[],
+        "tokens": <dynamic>[],
+        "scopes": <dynamic>[],
+        "features": <dynamic>[],
+        "departments": <dynamic>[],
+        "groups": <dynamic>[],
+        "privileges": <dynamic>[],
       };
     } else if (isCheckEmail) {
       jsonResponse = {
         "status": true,
-        "data": [{"email": "test@example.com"}], // means already registered
-        "message": "Email exists"
+        "message": "Email exists",
+        "data": <dynamic>[ // ← "data" must be List<dynamic>
+          {"email": "test@example.com", "id": 123}
+        ],
+        "roles": <dynamic>[],
+        "permissions": <dynamic>[],
+        "tokens": <dynamic>[],
       };
     } else {
-      jsonResponse = {"status": true};
+      jsonResponse = {
+        "status": true,
+        "data": <dynamic>[],
+      };
     }
 
     final bytes = utf8.encode(jsonEncode(jsonResponse));
