@@ -47,7 +47,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       body: BlocBuilder<ChatHistoryCubit, ChatHistoryState>(
         builder: (context, state) {
           if (state.status == CommonApiStatus.submitting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
 
           if (state.chatList.isEmpty) {

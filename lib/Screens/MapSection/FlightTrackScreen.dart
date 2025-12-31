@@ -219,7 +219,8 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
               _alertShownOfTrackingStopped = false;
               context.read<FlightMapCubit>().stopTrackingFlight(
                 flightNumber: widget.flightNumber,
-                destination: widget.initialFlightDetail?.destinationAirport?.name,
+                destination:
+                    widget.initialFlightDetail?.destinationAirport?.name,
               );
               Navigator.of(ctx).pop();
               Navigator.of(context).pop();
@@ -432,7 +433,10 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                     ),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Scaffold(
+                          backgroundColor: Colors.white,
+                          body: Center(child: CircularProgressIndicator()),
+                        );
                       }
                       _flightMarker ??= Marker(
                         markerId: MarkerId(

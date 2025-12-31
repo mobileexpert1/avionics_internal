@@ -20,12 +20,12 @@ class HomeRepository {
     bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
     if (apiTokenSever == null || apiTokenSever == false) {
       final uri = Uri.parse(
-        ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchMapKey,
+        ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchGoogleKey,
       );
       try {
         final jsonData = await ApiService.get(url: uri, isForFlightRadar: true) as Map<String, dynamic>;
         final modelResponse =  FlightKeyValuesModel.fromJson(jsonData);
-        await const MethodChannel('com.app/google_maps').invokeMethod("setGoogleMapsKey", {"key": "AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374"});
+        await const MethodChannel('com.app/google_maps').invokeMethod("googleMapsKey", {"key": modelResponse.data.googleMapsKey});
         await SharedPrefsHelper.saveApiFetchKeyFromSever(true);
         return modelResponse;
       } catch (e) {
@@ -78,4 +78,5 @@ class HomeRepository {
     );
   }
 }
+
 

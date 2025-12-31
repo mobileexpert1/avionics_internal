@@ -132,7 +132,10 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                   child: BlocBuilder<AllPlanesCubit, AllPlanesState>(
                     builder: (context, state) {
                       if (state.isLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Scaffold(
+                          backgroundColor: Colors.white,
+                          body: Center(child: CircularProgressIndicator()),
+                        );
                       }
 
                       if (state.listoFAircraftModels.isEmpty) {
@@ -249,6 +252,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             width: imageWidth,
                                             height: imageHeight,
                                             contentImage: BoxFit.cover,
+                                            isForPlaneList: true,
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(

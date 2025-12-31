@@ -17,15 +17,26 @@ class FlightKeyValuesModel {
 }
 
 class KeyData {
-  final String fr24;
+  final String? fr24;
+  final String? googleMapsKey;
 
-  KeyData({required this.fr24});
+  KeyData({this.fr24, this.googleMapsKey});
 
   factory KeyData.fromJson(Map<String, dynamic> json) {
-    return KeyData(fr24: json['fr24'] as String);
+    return KeyData(
+      fr24: json['fr24'] != null && json['fr24'] is String && (json['fr24'] as String).isNotEmpty
+          ? json['fr24'] as String
+          : null,
+      googleMapsKey: json['avioflai-google-maps'] != null && json['avioflai-google-maps'] is String && (json['avioflai-google-maps'] as String).isNotEmpty
+          ? json['avioflai-google-maps'] as String
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    return {'fr24': fr24};
+    return {
+      if (fr24 != null) 'fr24': fr24,
+      if (googleMapsKey != null) 'avioflai-google-maps': googleMapsKey,
+    };
   }
 }

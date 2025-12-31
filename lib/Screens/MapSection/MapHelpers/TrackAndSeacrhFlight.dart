@@ -83,8 +83,9 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                             });
                           }
                           if (state.isLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                            return const Scaffold(
+                              backgroundColor: Colors.white,
+                              body: Center(child: CircularProgressIndicator()),
                             );
                           }
 

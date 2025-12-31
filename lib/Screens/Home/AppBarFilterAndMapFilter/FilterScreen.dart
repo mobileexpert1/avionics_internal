@@ -75,7 +75,10 @@ class _FilterScreenState extends State<FilterScreen> {
       body: BlocBuilder<FilterCubit, FilterState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
 
           return Column(

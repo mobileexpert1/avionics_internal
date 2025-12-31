@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../Quiz_Section/quiz_model.dart';
 import 'blackBox_repository.dart';
 import 'blackBox_state.dart';
@@ -9,7 +10,10 @@ import 'blackBox_state.dart';
 class BlackboxCubit extends Cubit<BlackBoxState> {
   BlackboxCubit() : super(const BlackBoxState());
 
-  Future<void> loadBlackboxSummary({required BuildContext context}) async {
+  Future<void> loadBlackboxSummary({
+    required BuildContext context,
+    required int gameNo,
+  }) async {
     emit(
       state.copyWith(
         isLoading: true,
@@ -22,7 +26,9 @@ class BlackboxCubit extends Cubit<BlackBoxState> {
     );
 
     try {
-      final blackboxModels = await BlackboxRepository().getBlackboxSummary();
+      final blackboxModels = await BlackboxRepository().getBlackboxSummary(
+        gameNo,
+      );
       if (blackboxModels != null) {
         emit(
           state.copyWith(
@@ -46,17 +52,32 @@ class BlackboxCubit extends Cubit<BlackBoxState> {
         );
       }
     } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      if (e.toString().contains('Sorry no more')) {
+        AppSnackBar.custom(
+          context,
+          message:
+              'Please wait while more questions are loading. Try again later.',
+          svgAsset: '',
+        );
 
-      emit(
-        state.copyWith(
-          isLoading: false,
-          isSuccess: false,
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-          apiError: 'Failed to fetch data',
-        ),
-      );
+        Future.delayed(const Duration(seconds: 4), () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        });
+      } else {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+            apiError: 'Failed to fetch data',
+          ),
+        );
+      }
     }
   }
 

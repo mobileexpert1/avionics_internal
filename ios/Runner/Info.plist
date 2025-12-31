@@ -76,7 +76,7 @@
 	<key>io.flutter.embedded_views_preview</key>
     <true/>
     <key>GMSApiKey</key>
-    <string>AIzaSyCJFZK5Vtm_lizL49vynGz3L7i5Z8nZ374</string>
+    <string>AIzaSyCgCkZkU5x5LrPm8nnK0MX82tFOhJLRA2M</string>
      <key>NSSpeechRecognitionUsageDescription</key>
      <string>This app needs access to speech recognition for voice input.</string>
      <key>NSMicrophoneUsageDescription</key>

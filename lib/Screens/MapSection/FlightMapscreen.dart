@@ -129,7 +129,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         child: BlocBuilder<FlightMapCubit, FlightMapState>(
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Scaffold(
+                backgroundColor: Colors.white,
+                body: Center(child: CircularProgressIndicator()),
+              );
             }
 
             if (state.status == CommonApiStatus.failure) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
@@ -199,22 +200,27 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
     } catch (e, stackTrace) {
       print('Error loading questions: $e, StackTrace: $stackTrace');
-      AppSnackBar.custom(
-        context,
-        message:
-            "Please wait while more questions are loading. Try again later.",
-        svgAsset: "",
-      );
-      Future.delayed(const Duration(seconds: 4), () {
-        Navigator.pop(context);
-      });
+      if (e.toString().contains('Sorry no more')) {
+        AppSnackBar.custom(
+          context,
+          message:
+              'Please wait while more questions are loading. Try again later.',
+          svgAsset: '',
+        );
 
-      // emit(
-      //   state.copyWith(
-      //     isLoading: false,
-      //     errorMessage: 'Failed to load questions: $e',
-      //   ),
-      // );
+        Future.delayed(const Duration(seconds: 4), () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        });
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Failed to load questions: ${e.toString()}',
+          ),
+        );
+      }
     }
   }
 
@@ -597,4 +603,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     _timer?.cancel();
     return super.close();
   }
+}
+
+void debugPrintPayload(Map<String, dynamic> payload) {
+  const encoder = JsonEncoder.withIndent('  ');
+  final prettyPayload = encoder.convert(payload);
+  debugPrint(prettyPayload);
 }

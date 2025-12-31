@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxResultScreen.dart';
+import '../../QuizQuestionScreen/quiz_question_repository.dart';
 import 'blackBox_repository.dart';
 import 'blackBox_question_model.dart';
 import 'blackBox_state.dart';
@@ -13,21 +17,56 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   Timer? _timer;
   final BlackboxRepository _repository;
   final String gameId;
+  final String questionNo;
   int _totalDuration = 60;
   DateTime? _startTime;
   bool? selectedAnswer; // default is null, do NOT initialize as false
   bool showAnswer = false;
 
   BlackBoxQuestionCubit(
-    int sectionId,
     BuildContext context, {
     required this.gameId,
+    required this.questionNo,
     BlackboxRepository? repository,
   }) : _repository = repository ?? BlackboxRepository(),
        super(BlackBoxState()) {
     const gameDurations = {"blackbox": 60};
     _totalDuration = gameDurations[gameId] ?? 60;
-    loadQuestions(sectionId, context);
+    loadQuestions(context, questionNo);
+  }
+
+  Future<void> reportQuestionPostMethod(
+    String reason,
+    BlackBoxQuestionCubit quizCubit,
+    BuildContext context,
+    String isForType,
+  ) async {
+    try {
+      final currentQuestion = quizCubit.state.currentQuestion;
+
+      print(
+        "setId:- ${quizCubit.state.questionSetId}, "
+        "questionId:- ${currentQuestion.questionId}"
+        "question:- ${currentQuestion.question}, "
+        "reason:- $reason",
+      );
+
+      await QuizQuestionRepository().reportQuestionPostMethod(
+        setId: quizCubit.state.questionSetId ?? "",
+        questionId: currentQuestion.questionId ?? "",
+        reason: reason,
+        isForType: isForType,
+      );
+
+      AppSnackBar.custom(
+        context,
+        message: "Question Report Successfully",
+        svgAsset: "",
+      );
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      AppSnackBar.custom(context, message: e.toString(), svgAsset: "");
+    }
   }
 
   BlackBoxQuestion _mapQuestion(
@@ -154,13 +193,14 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       correctOptionList: correctOptionList,
       title: q.title ?? 'Question',
       name: name,
+      questionId: q.questionId,
     );
   }
 
-  Future<void> loadQuestions(int sectionId, BuildContext context) async {
+  Future<void> loadQuestions(BuildContext context, String questionNo) async {
     try {
       emit(state.copyWith(isLoading: true));
-      final gameData = await _repository.getBlackBoxQuestions();
+      final gameData = await _repository.getBlackBoxQuestions(questionNo);
 
       if (gameData == null ||
           gameData.categoryTypes == null ||
@@ -260,6 +300,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           game: gameData.game,
           level: gameData.level,
           difficulty: gameData.difficulty,
+          questionSetId: gameData.questionSetId,
           categoryTypes: gameData.categoryTypes ?? <CategoryTypes>[],
           selectedIndices: [],
         ),
@@ -484,6 +525,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           ? (List<String>.from(nextQuestion.sequenceItems!)..shuffle())
           : null;
 
+
       emit(
         state.copyWith(
           currentIndex: state.currentIndex + 1,
@@ -663,10 +705,14 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         "additional_points": bonusPoints,
         "total_time": formatTime(state.timeTaken),
         "game": state.game,
+        "set_id": state.questionSetId,
         "level": state.level,
         "difficulty": state.difficulty,
         "categories": categories,
       };
+
+      debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
+      debugPrint(const JsonEncoder.withIndent('  ').convert(payload));
 
       void printFullPayload(dynamic object) {
         const int chunkSize = 800;

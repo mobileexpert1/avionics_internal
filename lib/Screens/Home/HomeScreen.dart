@@ -93,7 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Scaffold(
+                backgroundColor: Colors.white,
+                body: Center(child: CircularProgressIndicator()),
+              );
             } else if (state is HomeError) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is HomeLoaded) {

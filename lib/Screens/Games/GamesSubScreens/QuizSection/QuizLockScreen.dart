@@ -60,7 +60,10 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
               child: BlocBuilder<QuizCubit, OneWordTopicState>(
                 builder: (context, state) {
                   if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Scaffold(
+                      backgroundColor: Colors.white,
+                      body: Center(child: CircularProgressIndicator()),
+                    );
                   }
 
                   if (state.errorMessage != null) {

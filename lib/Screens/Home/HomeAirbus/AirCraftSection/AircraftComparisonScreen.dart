@@ -114,7 +114,10 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                   }).toList();
 
                   if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Scaffold(
+                      backgroundColor: Colors.white,
+                      body: Center(child: CircularProgressIndicator()),
+                    );
                   }
 
                   return Column(

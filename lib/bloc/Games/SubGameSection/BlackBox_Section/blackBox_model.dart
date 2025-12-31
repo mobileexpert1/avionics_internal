@@ -1,13 +1,13 @@
 class BlackBoxSummaryModel {
   String? detail;
-  String? questionNo;
+  String? summarySetId;
   List<Data>? data;
 
-  BlackBoxSummaryModel({this.detail, this.questionNo, this.data});
+  BlackBoxSummaryModel({this.detail, this.summarySetId, this.data});
 
   BlackBoxSummaryModel.fromJson(Map<String, dynamic> json) {
     detail = json['detail'];
-    questionNo = json['question_no'];
+    summarySetId = json['set_id'];
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
@@ -22,7 +22,7 @@ class BlackBoxSummaryModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['detail'] = detail;
-    data['question_no'] = questionNo;
+    data['set_id'] = summarySetId;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -52,10 +52,6 @@ class Data {
     return data;
   }
 }
-
-
-
-
 
 class BlackBoxSubmitResponse {
   final String detail;
@@ -129,9 +125,6 @@ class BlackBoxSubmitData {
     };
   }
 }
-
-
-
 
 class BlackBoxTopicResponse {
   final String detail;

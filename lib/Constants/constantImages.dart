@@ -1,5 +1,7 @@
 abstract class AssetsPath {
   /// svg Images
+  ///
+  static const String tutorialVideo = "TutorialVideo";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";
   static const String mapLayers = "MpaLayes";
   static const String blueAeroPlane = "BlueAeroPlane";

@@ -1,4 +1,5 @@
 class BlackBoxQuestionModel {
+  String? questionSetId;
   String? game;
   String? level;
   String? difficulty;
@@ -8,6 +9,7 @@ class BlackBoxQuestionModel {
       {this.game, this.level, this.difficulty, this.categoryTypes});
 
   BlackBoxQuestionModel.fromJson(Map<String, dynamic> json) {
+    questionSetId = json['set_id'];
     game = json['game'];
     level = json['level'];
     difficulty = json['difficulty'];
@@ -21,6 +23,7 @@ class BlackBoxQuestionModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['set_id'] = this.questionSetId;
     data['game'] = this.game;
     data['level'] = this.level;
     data['difficulty'] = this.difficulty;
@@ -67,9 +70,10 @@ class Questions {
   String? title;
   List<Options>? options;
   String? answer;
+  String? questionId;
 
   Questions(
-      {this.question, this.explanation, this.title, this.options, this.answer});
+      {this.question, this.explanation, this.title, this.options, this.answer, this.questionId});
 
   Questions.fromJson(Map<String, dynamic> json) {
     question = json['question'];
@@ -82,6 +86,7 @@ class Questions {
       });
     }
     answer = json['answer'];
+    questionId = json['question_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -93,6 +98,7 @@ class Questions {
       data['options'] = this.options!.map((v) => v.toJson()).toList();
     }
     data['answer'] = this.answer;
+    data['question_id'] = this.questionId;
     return data;
   }
 }

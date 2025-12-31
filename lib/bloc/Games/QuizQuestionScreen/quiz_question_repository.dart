@@ -37,6 +37,13 @@ class QuizQuestionRepository {
               ApiFunctionUrlGamesConstant.reportQuestion,
         );
         break;
+        case "black_box":
+      url = Uri.parse(
+        ApiBaseUrlConstant.baseUrl +
+            ApiFunctionUrlGamesConstant.blackBoxTopic +
+            ApiFunctionUrlGamesConstant.reportQuestion,
+      );
+      break;
       default:
         url = null;
     }

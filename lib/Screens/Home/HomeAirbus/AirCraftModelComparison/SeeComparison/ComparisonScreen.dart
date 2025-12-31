@@ -112,7 +112,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 previous.isApplied != current.isApplied,
             builder: (context, filterState) {
               if (state.isLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Scaffold(
+                  backgroundColor: Colors.white,
+                  body: Center(child: CircularProgressIndicator()),
+                );
               }
 
               final model = state.comparisonModel;

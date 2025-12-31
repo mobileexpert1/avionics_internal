@@ -6,6 +6,7 @@ import 'blackBox_question_model.dart';
 enum CommonApiStatus { initial, submitting, success, failure }
 
 class BlackBoxState extends Equatable {
+  final String? questionSetId;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
@@ -40,6 +41,7 @@ class BlackBoxState extends Equatable {
   final List<quizItem> games;
 
   const BlackBoxState({
+    this.questionSetId,
     this.isLoading = false,
     this.isSuccess = false,
     this.errorMessage,
@@ -75,6 +77,7 @@ class BlackBoxState extends Equatable {
   });
 
   BlackBoxState copyWith({
+    String? questionSetId,
     bool? isLoading,
     bool? isSuccess,
     String? errorMessage,
@@ -109,6 +112,7 @@ class BlackBoxState extends Equatable {
     List<quizItem>? games,
   }) {
     return BlackBoxState(
+      questionSetId: questionSetId ?? this.questionSetId,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -138,25 +142,28 @@ class BlackBoxState extends Equatable {
       difficulty: difficulty ?? this.difficulty,
       categoryTypes: categoryTypes ?? this.categoryTypes,
       selectedSequence: selectedSequence ?? this.selectedSequence,
-      selectedSequenceItems: selectedSequenceItems ?? this.selectedSequenceItems,
+      selectedSequenceItems:
+      selectedSequenceItems ?? this.selectedSequenceItems,
       selectedIndices: selectedIndices ?? this.selectedIndices,
       games: games ?? this.games,
     );
   }
 
-  BlackBoxQuestion get currentQuestion => questions.isNotEmpty ? questions[currentIndex] : BlackBoxQuestion(
+  BlackBoxQuestion get currentQuestion => questions.isNotEmpty
+      ? questions[currentIndex]
+      : BlackBoxQuestion(
     question: '',
     options: [],
     correctIndex: -1,
     hint: '',
     type: '',
     title: 'Question',
-    name: ''
+    name: '',
   );
-
 
   @override
   List<Object?> get props => [
+    questionSetId,
     isLoading,
     isSuccess,
     errorMessage,
@@ -181,14 +188,19 @@ class BlackBoxState extends Equatable {
     bonusPoints,
     timeTaken,
     categorizedQuestions,
+    questionSetId,
     game,
     level,
     difficulty,
     categoryTypes,
     selectedSequence,
+    selectedSequenceItems,
     selectedIndices,
+    games,
   ];
 }
+
+// ------------------ BlackBoxQuestion Model ------------------
 
 class BlackBoxQuestion {
   final String question;
@@ -202,6 +214,8 @@ class BlackBoxQuestion {
   final String? title;
   final String? name;
   final List<int>? correctOptionList;
+  final String? questionId; // Added question_id field
+  final String? explanation; // optional explanation from API
 
   BlackBoxQuestion({
     required this.question,
@@ -215,8 +229,40 @@ class BlackBoxQuestion {
     this.title,
     this.name,
     this.correctOptionList,
+    this.questionId,
+    this.explanation,
   });
+
+  /// Optional: Helper factory for parsing from JSON
+  factory BlackBoxQuestion.fromJson(Map<String, dynamic> json) {
+    return BlackBoxQuestion(
+      question: json['question'] ?? '',
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => e['value'] as String)
+          .toList() ??
+          [],
+      correctIndex: json['answer'] != null
+          ? _computeCorrectIndex(json['answer'], json['options'])
+          : -1,
+      hint: json['explanation'] ?? '',
+      type: json['type'] ?? '',
+      title: json['title'],
+      questionId: json['question_id'],
+    );
+  }
+
+  static int _computeCorrectIndex(String answer, List<dynamic>? options) {
+    if (options == null || options.isEmpty) return -1;
+    for (int i = 0; i < options.length; i++) {
+      if (options[i]['label'] == answer || options[i]['value'] == answer) {
+        return i;
+      }
+    }
+    return -1;
+  }
 }
+
+// ------------------ BlackBoxQuestionResult Model ------------------
 
 class BlackBoxQuestionResult {
   final int? userAnswerIndex;

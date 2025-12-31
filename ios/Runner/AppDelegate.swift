@@ -47,7 +47,7 @@ import UserNotifications
     
       let channel = FlutterMethodChannel(name: "com.app/google_maps",binaryMessenger: controller.binaryMessenger)
       channel.setMethodCallHandler { call, result in
-          if call.method == "setGoogleMapsKey" {
+          if call.method == "googleMapsKey" {
               if let args = call.arguments as? [String: Any],
                   let key = args["key"] as? String{
                   //Google Maps API

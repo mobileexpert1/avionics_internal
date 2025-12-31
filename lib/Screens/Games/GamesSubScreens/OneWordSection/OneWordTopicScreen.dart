@@ -82,8 +82,9 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                     child: BlocBuilder<OnewordCubit, OneWordTopicState>(
                       builder: (context, state) {
                         if (state.isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return const Scaffold(
+                            backgroundColor: Colors.white,
+                            body: Center(child: CircularProgressIndicator()),
                           );
                         }
 

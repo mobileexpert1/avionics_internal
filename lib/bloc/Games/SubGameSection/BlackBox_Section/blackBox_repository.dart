@@ -1,75 +1,43 @@
-import '../../../../Constants/ApiClass/api_service.dart';
-import '../../../../Constants/ConstantStrings.dart';
-import '../../../../Database/generic_methods.dart';
 import 'blackBox_model.dart';
 import 'blackBox_question_model.dart';
-
-String questionNo = "";
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Constants/ApiClass/api_service.dart';
 
 class BlackboxRepository {
-  Future<List<BlackBoxSummaryModel>?> getBlackboxSummary() async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
 
+  Future<List<BlackBoxSummaryModel>?> getBlackboxSummary(int gameNo) async {
     final uri = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxSummary}",
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxSummary}?game_no=$gameNo",
     );
 
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-      print('API Response: $jsonData'); // Debug
-
-      // Parse the response as a single BlackBoxSummaryModel
       final model = BlackBoxSummaryModel.fromJson(jsonData);
-      questionNo = model.questionNo.toString();
-      print('Parsed Model: $model'); // Debug
-      print('Parsed Model Data: ${model.data}'); // Debug
-
-      // Return a list containing the single model
       return model.data != null && model.data!.isNotEmpty ? [model] : [];
     } catch (e) {
-      print('Error fetching blackbox summary: $e'); // Debug
-      throw Exception('Failed to fetch blackbox summary: $e');
+      throw e.toString();
     }
   }
 
-  // Future<BlackBoxQuestionModel?> getBlackBoxQuestions(String question_no) async {
-  Future<BlackBoxQuestionModel?> getBlackBoxQuestions() async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
-
+  Future<BlackBoxQuestionModel?> getBlackBoxQuestions(String questionNo) async {
     final uri = Uri.parse(
-      // "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxQuestions}/$question_no",
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxQuestions}/$questionNo",
     );
-
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-      print('API Response: $jsonData');
       if (jsonData.isEmpty) {
-        print('Empty response data');
         return null;
       }
       final model = BlackBoxQuestionModel.fromJson(jsonData);
-      print('Parsed Model: $model');
       return model;
     } catch (e) {
-      print('Error fetching blackbox questions: $e');
-      throw Exception('Failed to fetch blackbox questions: $e');
+      throw e.toString();
     }
   }
 
   Future<BlackBoxSubmitResponse?> submitBlackBoxAnswers(
     Map<String, dynamic> payload,
   ) async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxSubmit}",
     );
@@ -86,16 +54,14 @@ class BlackboxRepository {
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlGamesConstant.blackBoxTopic}",
     );
-
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-
       if (jsonData.containsKey('data')) {
         return BlackBoxTopicResponse.fromJson(jsonData);
       }
       return null;
     } catch (e) {
-      throw Exception(e.toString());
+      throw e.toString();
     }
   }
 }

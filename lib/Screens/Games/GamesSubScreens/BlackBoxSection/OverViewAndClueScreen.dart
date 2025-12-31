@@ -16,7 +16,9 @@ import '../../../../Constants/ConstantStrings.dart';
 import 'BlackBoxQuestionScreen.dart';
 
 class OverviewAndClueDeckScreen extends StatefulWidget {
-  const OverviewAndClueDeckScreen({super.key});
+  final int gameNo;
+
+  const OverviewAndClueDeckScreen({super.key, required this.gameNo});
 
   @override
   State<OverviewAndClueDeckScreen> createState() =>
@@ -26,7 +28,6 @@ class OverviewAndClueDeckScreen extends StatefulWidget {
 class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-
 
   @override
   void initState() {
@@ -45,7 +46,9 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => BlackboxCubit()..loadBlackboxSummary(context: context),
+      create: (_) =>
+          BlackboxCubit()
+            ..loadBlackboxSummary(context: context, gameNo: widget.gameNo),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
@@ -107,6 +110,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                           .read<BlackboxCubit>()
                                           .loadBlackboxSummary(
                                             context: context,
+                                            gameNo: widget.gameNo,
                                           );
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -263,7 +267,8 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                     MaterialPageRoute(
                                       builder: (context) => BlackBoxScreen(
                                         gameId: 'black_box',
-                                        sectionId: 1,
+                                        summarySetId:
+                                            state.blackboxModels!.single.summarySetId!,
                                       ),
                                     ),
                                   ).then((reset) {

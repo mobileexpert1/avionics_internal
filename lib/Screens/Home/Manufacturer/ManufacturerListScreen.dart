@@ -138,8 +138,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                     child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
                       builder: (context, state) {
                         if (state.isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return const Scaffold(
+                            backgroundColor: Colors.white,
+                            body: Center(child: CircularProgressIndicator()),
                           );
                         }
 

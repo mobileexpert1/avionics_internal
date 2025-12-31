@@ -11,19 +11,18 @@ import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_questioncubit.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
+import '../QuizSection/QuizQuestionScreen.dart';
 import 'BlackboxScreen.dart';
-
-final GlobalKey _iconKey = GlobalKey();
 
 class BlackBoxScreen extends StatefulWidget {
   const BlackBoxScreen({
     super.key,
-    required this.sectionId,
     required this.gameId,
+    required this.summarySetId,
   });
 
-  final int sectionId;
   final String gameId;
+  final String summarySetId;
 
   @override
   _BlackBoxScreenState createState() => _BlackBoxScreenState();
@@ -34,6 +33,7 @@ bool isNeedToShowOrNot = false;
 class _BlackBoxScreenState extends State<BlackBoxScreen> {
   final ScrollController _scrollController = ScrollController();
   bool isNeedToShowOrNot = false;
+  bool isNeedToShowFlagOptions = false;
 
   @override
   void initState() {
@@ -42,6 +42,30 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
       FirebaseEvents.blackBoxMainQuestionScreen,
     );
     isNeedToShowOrNot = false;
+    isNeedToShowFlagOptions = false;
+  }
+
+  void _showRadioPopup(BuildContext context) {
+    final quizCubit = context.read<BlackBoxQuestionCubit>();
+
+    showDialog(
+      context: context,
+      builder: (_) => RadioPopup(
+        onSelected: (selectedIndex) {
+          quizCubit.reportQuestionPostMethod(selectedIndex, quizCubit, context,widget.gameId);
+          setState(() {
+            isNeedToShowFlagOptions = false;
+          });
+        },
+        title: 'Report',
+        options: const [
+          'Incorrect Answer / Wrong Information',
+          'Question is Not Clear',
+          'Offensive or Inappropriate Content',
+          'Other Issue',
+        ],
+      ),
+    );
   }
 
   @override
@@ -54,29 +78,35 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => BlackBoxQuestionCubit(
-        widget.sectionId,
         context,
         gameId: widget.gameId,
+        questionNo: widget.summarySetId,
       ),
       child: BlocBuilder<BlackBoxQuestionCubit, BlackBoxState>(
         builder: (context, state) {
           final blackBoxCubit = context.read<BlackBoxQuestionCubit>();
-
           if (state.questions.isEmpty && state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
+
           if (state.errorMessage != null) {
             return Center(child: Text(state.errorMessage!));
           }
+
           if (state.isTimerEnded && !isNeedToShowOrNot) {
             Future.delayed(const Duration(milliseconds: 50), () {
               if (mounted) {
                 setState(() {
                   isNeedToShowOrNot = true;
+                  isNeedToShowFlagOptions = true;
                 });
               }
             });
           }
+
 
           if (state.selectedIndex == null &&
               state.selectedSequence == null &&
@@ -86,6 +116,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
             if (isNeedToShowOrNot) {
               setState(() {
                 isNeedToShowOrNot = false;
+                isNeedToShowFlagOptions = false;
               });
             }
           }
@@ -131,6 +162,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                           onPressed: () {
                             setState(() {
                               isNeedToShowOrNot = false;
+                              isNeedToShowFlagOptions = false;
                             });
                             Navigator.of(context).pop(true);
                           },
@@ -150,6 +182,14 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                   if (shouldExit ?? false) {
                     Navigator.pop(context, true);
                   }
+                },
+              ),
+              rightButton: isNeedToShowFlagOptions == false
+                  ? null
+                  : IconButton(
+                icon: const Icon(Icons.flag, color: Colors.black),
+                onPressed: () async {
+                  //_showRadioPopup(context);
                 },
               ),
             ),
@@ -219,6 +259,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                             if (state.isTimerEnded || state.showAnswer) {
                               setState(() {
                                 isNeedToShowOrNot = false;
+                                isNeedToShowFlagOptions = false;
                               });
                               blackBoxCubit.nextQuestion(context);
                             } else if (state.selectedIndex != null ||
@@ -631,6 +672,8 @@ class BlackBoxCard extends StatelessWidget {
           context.read<BlackBoxQuestionCubit>().updateSequence(newList);
         }
       },
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: displaySequence.map((item) {
         final optionIndex = options.indexOf(item);
 
@@ -696,8 +739,6 @@ class BlackBoxCard extends StatelessWidget {
           ),
         );
       }).toList(),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
     );
   }
 

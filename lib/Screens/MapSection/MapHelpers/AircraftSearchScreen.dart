@@ -160,7 +160,10 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                       .toList();
 
                   if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Scaffold(
+                      backgroundColor: Colors.white,
+                      body: Center(child: CircularProgressIndicator()),
+                    );
                   }
 
                   if (selected.isEmpty && filtered.isEmpty) {

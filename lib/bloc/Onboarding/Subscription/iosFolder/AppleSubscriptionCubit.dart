@@ -224,6 +224,30 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     }
   }
 
+  Future<void> getSubscriptionsFromBackendServer(String activeProductId) async {
+    emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
+
+    try {
+      final response = await AppleSubscriptionRepository()
+          .getSubscriptionDetails();
+      final subscriptionData = response.data;
+
+      emit(
+        state.copyWith(
+          subscription: subscriptionData,
+          loading: false,
+          status: CommonApiStatus.success,
+          purchased: subscriptionData?.status == "active",
+          activeProductId: activeProductId,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CommonApiStatus.failure, error: e.toString()),
+      );
+    }
+  }
+
   @override
   Future<void> close() {
     _subscription?.cancel();

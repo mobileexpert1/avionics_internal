@@ -195,14 +195,6 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           );
         }
 
-        // // Show loading for full flight data (only from saved flight)
-        // if (_isLoadingFullDetails && widget.fromSavedFlight) {
-        //   return const Scaffold(
-        //     backgroundColor: Colors.white,
-        //     body: Center(child: CircularProgressIndicator()),
-        //   );
-        // }
-
         final details = state.airCraftDetails?.results;
 
         return Scaffold(

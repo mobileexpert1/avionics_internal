@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../Constants/constantImages.dart';
 import 'CustomCacheManager.dart';
 
 class CachedAnyImage extends StatelessWidget {
@@ -10,6 +11,7 @@ class CachedAnyImage extends StatelessWidget {
   final double height;
   final BoxFit contentImage;
   final bool useCache;
+  final bool isForPlaneList;
 
   const CachedAnyImage({
     super.key,
@@ -18,84 +20,100 @@ class CachedAnyImage extends StatelessWidget {
     required this.height,
     required this.contentImage,
     this.useCache = true,
+    this.isForPlaneList = false,
   });
 
-  bool get _isNetwork => imagePath.startsWith("http");
-  bool get _isSvg => imagePath.toLowerCase().endsWith(".svg");
+  bool get _isNetwork => imagePath.startsWith('http');
+  bool get _isSvg => imagePath.toLowerCase().endsWith('.svg');
 
   @override
   Widget build(BuildContext context) {
     if (imagePath.isEmpty) {
-      return _errorIcon();
+      return _errorIcon(isForPlaneList);
     }
 
-    // --- Network Images (SVG + PNG/JPG) ---
+    /// ================= NETWORK IMAGES =================
     if (_isNetwork) {
+      /// -------- SVG NETWORK IMAGE --------
       if (_isSvg) {
+        if (!useCache) {
+          return _fixedBox(
+            SvgPicture.network(
+              imagePath,
+              fit: contentImage,
+            ),
+          );
+        }
+
         return FutureBuilder<File>(
-          future: useCache
-              ? CustomCacheManager.instance.getSingleFile(imagePath)
-              : null,
+          future: CustomCacheManager.instance.getSingleFile(imagePath),
           builder: (context, snapshot) {
-            if (useCache &&
-                snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return _loader();
             }
-            if (snapshot.hasError) {
-              return _errorIcon();
+
+            if (snapshot.hasError || !snapshot.hasData) {
+              return _errorIcon(isForPlaneList);
             }
 
-            if (!useCache || snapshot.hasData) {
-              final file = useCache ? snapshot.data! : null;
-              return _fixedBox(
-                /// Comment Because Web Not working with this code.
-                // useCache
-                //     ? SvgPicture.file(file!, fit: contentImage)
-                //     : SvgPicture.network(imagePath, fit: contentImage),
-                SvgPicture.network(imagePath, fit: contentImage),
-              );
-            }
-            return _errorIcon();
+            return _fixedBox(
+              SvgPicture.file(
+                snapshot.data!,
+                fit: contentImage,
+                clipBehavior: Clip.hardEdge,
+              ),
+            );
           },
         );
-      } else {
-        return _fixedBox(
-          useCache
-              ? CachedNetworkImage(
-                  cacheManager: CustomCacheManager.instance,
-                  imageUrl: imagePath,
-                  fit: contentImage,
-                  placeholder: (context, url) => _loader(),
-                  errorWidget: (context, url, error) => _errorIcon(),
-                )
-              : Image.network(
-                  imagePath,
-                  fit: contentImage,
-                  errorBuilder: (c, e, s) => _errorIcon(),
-                ),
-        );
       }
-    }
 
-    // --- Local Assets (SVG + PNG/JPG) ---
-    if (_isSvg) {
-      return _fixedBox(SvgPicture.asset(imagePath, fit: contentImage));
-    } else {
+      /// -------- PNG / JPG NETWORK IMAGE --------
       return _fixedBox(
-        Image.asset(
+        useCache
+            ? CachedNetworkImage(
+          cacheManager: CustomCacheManager.instance,
+          imageUrl: imagePath,
+          fit: contentImage,
+          placeholder: (context, url) => _loader(),
+          errorWidget: (context, url, error) =>
+              _errorIcon(isForPlaneList),
+        )
+            : Image.network(
           imagePath,
           fit: contentImage,
-          errorBuilder: (context, error, stackTrace) => _errorIcon(),
+          errorBuilder: (context, error, stackTrace) =>
+              _errorIcon(isForPlaneList),
         ),
       );
     }
+
+    /// ================= LOCAL ASSETS =================
+    if (_isSvg) {
+      return _fixedBox(
+        SvgPicture.asset(
+          imagePath,
+          fit: contentImage,
+        ),
+      );
+    }
+
+    return _fixedBox(
+      Image.asset(
+        imagePath,
+        fit: contentImage,
+        errorBuilder: (context, error, stackTrace) =>
+            _errorIcon(isForPlaneList),
+      ),
+    );
   }
+
+  /// ================= UI HELPERS =================
 
   Widget _fixedBox(Widget child) => SizedBox(
     width: width,
     height: height,
     child: ClipRRect(
-      borderRadius: BorderRadius.circular(6), // optional rounded corners
+      borderRadius: BorderRadius.circular(6),
       child: child,
     ),
   );
@@ -103,12 +121,25 @@ class CachedAnyImage extends StatelessWidget {
   Widget _loader() => SizedBox(
     width: width,
     height: height,
-    child: const Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
+    child: const Center(
+      child: CircularProgressIndicator(strokeWidth: 1.5),
+    ),
   );
 
-  Widget _errorIcon() => SizedBox(
+  Widget _errorIcon(bool isComeFromPlayList) => SizedBox(
     width: width,
     height: height,
-    child: const Center(child: Icon(Icons.error, color: Colors.red)),
+    child: isComeFromPlayList
+        ? Center(
+      child: SvgPicture.asset(
+        CommonUi.setSvgImage(AssetsPath.Plane1),
+        height: height,
+        width: width,
+        fit: BoxFit.cover,
+      ),
+    )
+        : const Center(
+      child: Icon(Icons.error, color: Colors.red),
+    ),
   );
 }

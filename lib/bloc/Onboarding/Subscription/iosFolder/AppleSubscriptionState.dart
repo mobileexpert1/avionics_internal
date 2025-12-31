@@ -1,6 +1,7 @@
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../subscriptionResponseModel.dart';
 
 class AppleSubscriptionState {
   final bool storeAvailable;
@@ -11,7 +12,7 @@ class AppleSubscriptionState {
   final String? error;
   final CommonApiStatus status;
   final String? activeProductId;
-
+  final SubscriptionData? subscription;
 
   AppleSubscriptionState({
     this.storeAvailable = false,
@@ -22,6 +23,7 @@ class AppleSubscriptionState {
     this.error,
     this.status = CommonApiStatus.initial,
     this.activeProductId,
+    this.subscription,
   });
 
   AppleSubscriptionState copyWith({
@@ -33,8 +35,10 @@ class AppleSubscriptionState {
     String? error,
     CommonApiStatus? status,
     String? activeProductId,
+    SubscriptionData? subscription,
   }) {
     return AppleSubscriptionState(
+      subscription: subscription ?? this.subscription,
       storeAvailable: storeAvailable ?? this.storeAvailable,
       loading: loading ?? this.loading,
       products: products ?? this.products,
@@ -46,4 +50,3 @@ class AppleSubscriptionState {
     );
   }
 }
-

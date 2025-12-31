@@ -84,7 +84,10 @@ class _AvtarScreenState extends State<AvtarScreen> {
         },
         builder: (context, state) {
           if (state.status == CommonApiStatus.initial) {
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
 
           if (state.avatars.isEmpty) {

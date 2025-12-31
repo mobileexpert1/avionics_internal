@@ -235,9 +235,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "FEEDBACK",
                   showBottomDivider: false,
                   items: [
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.reviewsAcc,
+                        AssetsPath.tutorialVideo,
                       ),
                       title: "Tutorial Screen",
                       onTap: () {

@@ -58,7 +58,10 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
               child: BlocBuilder<BlackboxCubit, BlackBoxState>(
                 builder: (context, state) {
                   if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Scaffold(
+                      backgroundColor: Colors.white,
+                      body: Center(child: CircularProgressIndicator()),
+                    );
                   }
 
                   if (state.errorMessage != null) {
@@ -89,7 +92,7 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => OverviewAndClueDeckScreen(),
+                                builder: (_) => OverviewAndClueDeckScreen(gameNo: game.gameNumber),
                               ),
                             );
 
