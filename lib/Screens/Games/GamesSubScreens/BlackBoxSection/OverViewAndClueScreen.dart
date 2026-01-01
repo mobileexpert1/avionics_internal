@@ -269,6 +269,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                         gameId: 'black_box',
                                         summarySetId:
                                             state.blackboxModels!.single.summarySetId!,
+                                        summaryGameNumber: widget.gameNo,
                                       ),
                                     ),
                                   ).then((reset) {

@@ -19,10 +19,12 @@ class BlackBoxScreen extends StatefulWidget {
     super.key,
     required this.gameId,
     required this.summarySetId,
+    required this.summaryGameNumber,
   });
 
   final String gameId;
   final String summarySetId;
+  final int summaryGameNumber;
 
   @override
   _BlackBoxScreenState createState() => _BlackBoxScreenState();
@@ -52,7 +54,12 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
       context: context,
       builder: (_) => RadioPopup(
         onSelected: (selectedIndex) {
-          quizCubit.reportQuestionPostMethod(selectedIndex, quizCubit, context,widget.gameId);
+          quizCubit.reportQuestionPostMethod(
+            selectedIndex,
+            quizCubit,
+            context,
+            widget.gameId,
+          );
           setState(() {
             isNeedToShowFlagOptions = false;
           });
@@ -106,7 +113,6 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
               }
             });
           }
-
 
           if (state.selectedIndex == null &&
               state.selectedSequence == null &&
@@ -187,11 +193,11 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
               rightButton: isNeedToShowFlagOptions == false
                   ? null
                   : IconButton(
-                icon: const Icon(Icons.flag, color: Colors.black),
-                onPressed: () async {
-                  //_showRadioPopup(context);
-                },
-              ),
+                      icon: const Icon(Icons.flag, color: Colors.black),
+                      onPressed: () async {
+                        _showRadioPopup(context);
+                      },
+                    ),
             ),
             body: Stack(
               children: [
@@ -261,7 +267,10 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                                 isNeedToShowOrNot = false;
                                 isNeedToShowFlagOptions = false;
                               });
-                              blackBoxCubit.nextQuestion(context);
+                              blackBoxCubit.nextQuestion(
+                                context,
+                                widget.summaryGameNumber,
+                              );
                             } else if (state.selectedIndex != null ||
                                 state.selectedSequence != null ||
                                 state.selectedAnswer != null ||

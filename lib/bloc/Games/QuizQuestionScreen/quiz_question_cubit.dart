@@ -528,14 +528,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "set_id": state.setId,
       };
 
+      debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
+      debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+
       try {
         final response = await QuizQuestionRepository().submitResult(
           payload,
           gameId,
         );
 
-        if (response.detail.toLowerCase() ==
-            "quiz answer submitted successfully".toLowerCase()) {
+        if (response.detail.toLowerCase() == "quiz answer submitted successfully".toLowerCase()) {
           final data = response.data;
           Future.delayed(const Duration(milliseconds: 100), () {
             Navigator.push(

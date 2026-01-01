@@ -152,11 +152,10 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         );
       }
     } else if (type == '4') {
-      // ✅ Multiple correct answers
+      // Multiple correct answers
       if (q.answer != null && q.options != null && q.options!.isNotEmpty) {
         final answerLabels = q.answer!.split(',').map((e) => e.trim()).toList();
         correctOptionList = [];
-
         for (var label in answerLabels) {
           final index = q.options!.indexWhere((o) => o.label == label);
           if (index >= 0) {
@@ -169,9 +168,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         }
 
         if (correctOptionList.isEmpty) {
-          print(
-            'Warning: No valid answers for multiple_correct question "${q.question}"',
-          );
           correctOptionList = null;
         }
       } else {
@@ -512,11 +508,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     );
   }
 
-  Future<void> nextQuestion(BuildContext context) async {
-    print("before emit");
-    print("selected Index ----------------- ${state.selectedIndex}");
-    print("selected answer ----------------- ${state.selectedAnswer}");
-
+  Future<void> nextQuestion(BuildContext context,int gameNumber) async {
     if (state.currentIndex + 1 < state.questions.length) {
       final nextQuestion = state.questions[state.currentIndex + 1];
 
@@ -524,7 +516,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           nextQuestion.type == '1' && nextQuestion.sequenceItems != null
           ? (List<String>.from(nextQuestion.sequenceItems!)..shuffle())
           : null;
-
 
       emit(
         state.copyWith(
@@ -539,11 +530,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           selectedIndices: [],
         ),
       );
-      print("after emit");
-      print("selected Index ----------------- ${state.selectedIndex}");
-      print("selected answer ----------------- ${state.selectedAnswer}");
-      print("selected answer ----------------- ${state.selectedSequence}");
-
       startTimer(context);
     } else {
       _timer?.cancel();
@@ -565,8 +551,10 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         final categoryType = questions.isNotEmpty ? questions[0].type : '3';
         final categoryName = categoryNameMap[categoryKey] ?? categoryKey;
 
+        print(categoryType.toString());
+
         return {
-          "category_type": categoryType?.toString() ?? '3',
+          "category_type": categoryType.toString(),
           "category_name": categoryName,
           "questions": questions.map((q) {
             int resultIndex = state.questions.indexWhere(
@@ -712,53 +700,51 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       };
 
       debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
-      debugPrint(const JsonEncoder.withIndent('  ').convert(payload));
-
-      void printFullPayload(dynamic object) {
-        const int chunkSize = 800;
-        final jsonString = object is String ? object : object.toString();
-        for (var i = 0; i < jsonString.length; i += chunkSize) {
-          final end = (i + chunkSize < jsonString.length)
-              ? i + chunkSize
-              : jsonString.length;
-          debugPrint(jsonString.substring(i, end));
-        }
-      }
-
-      printFullPayload('Submission Payload: $payload');
+      debugPrint(JsonEncoder.withIndent('  ').convert(payload));
 
       try {
-        await _repository.submitBlackBoxAnswers(payload);
-        debugPrint('Results submitted successfully!');
-      } catch (e) {
-        debugPrint('Failed to submit results: $e');
-        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
-      }
+        await _repository.submitBlackBoxAnswers(payload,gameNumber);
 
-      final percent = (correctAnswers / state.questions.length) * 100;
-      final winAchieved = percent >= 80;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => BlackBoxResultScreen(
-            correctedAnswer: correctAnswers,
-            correctPoints: correctPoints,
-            totalQuestion: state.questions.length,
-            score: finalScore,
-            winAchieved: winAchieved,
-            bonusPoints: bonusPoints,
+        if (!context.mounted) return;
+
+        final total = state.questions.length;
+        final percent = total == 0 ? 0 : (correctAnswers / total) * 100;
+        final winAchieved = percent >= 80;
+
+        AnalyticsService.instance.buttonPressed(
+          FirebaseEvents.blackBoxCalculationsListButton,
+          FirebaseEvents.blackBoxCalculationResultScreen,
+        );
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BlackBoxResultScreen(
+              correctedAnswer: correctAnswers,
+              correctPoints: correctPoints,
+              totalQuestion: total,
+              score: finalScore,
+              winAchieved: winAchieved,
+              bonusPoints: bonusPoints,
+            ),
           ),
-        ),
-      );
-      AnalyticsService.instance.buttonPressed(
-        FirebaseEvents.blackBoxCalculationsListButton,
-        FirebaseEvents.blackBoxCalculationResultScreen,
-      );
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to submit results'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
-    @override
-    Future<void> close() {
-      _timer?.cancel();
-      return super.close();
-    }
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }

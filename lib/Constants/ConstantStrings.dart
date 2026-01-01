@@ -136,6 +136,7 @@ class SubscriptionTexts {
   static const String restoreSubTitle = 'Restore Subscription';
   static const String currentSubTitle = 'Current Subscription';
   static const String currentPlanTitle = 'Current Plan';
+  static const String cancelTitle = 'Cancel Subscription';
 
   // ─────────────────────────────
   // Monthly Plan
@@ -168,7 +169,8 @@ class ApiFunctionUrlConstant {
 
 class ApiServiceUrlConstant {
   static const String authFetchMapKey = 'auth/secret/avioflai/fr24';
-  static const String authFetchGoogleKey = 'auth/secret/avioflai-google-maps-key';
+  static const String authFetchGoogleKey =
+      'auth/secret/avioflai-google-maps-key';
   static const String authRefreshToken = 'auth/refresh';
 
   static const String checkEmail = 'auth/check-email';
@@ -197,8 +199,6 @@ class ApiServiceUrlConstant {
   static const String getGlossary = 'user/glossary';
   static const String chatHistorySession = 'ai-engine/wilco/session';
 }
-
-
 
 //Ask Wilco
 class ApiFunctionUrlChatConstant {
@@ -235,6 +235,7 @@ class ApiFunctionUrlGamesConstant {
   static const oneWord = "one-word/";
   static const oneWordQuestions = "one-word/questions/";
   static const oneWordSubmit = "one-word/";
+
   //static const calculationSubmit = "ai-engine/games/calculation/";
   static const calculationSubmit = "calculation/";
 
@@ -244,20 +245,21 @@ class ApiFunctionUrlGamesConstant {
   static const quizQuestions = "quiz/questions/";
   static const blackBoxSummary = "/blackbox/summary";
   static const blackBoxQuestions = "blackbox/question";
-  static const blackBoxSubmit = "blackbox/submit";
-  static const blackBox = "ai-engine/games/blackbox/";
+  static const blackBoxSubmit = "/submit";
+  //static const blackBox = "ai-engine/games/blackbox/";
+  static const blackBox = "blackbox/";
   static const reportQuestion = "report";
   static const blackBoxTopic = "blackbox/";
 }
 
 class ApiGameBadges {
-  static const calculationBadges = "badges";
+  static const calculationBadges = "badges/";
   static const quizBadges = "badges";
-  static const blackBoxBadges = "badges";
+  static const blackBoxBadges = "badges/";
   static const oneWordBadges = "badges";
 }
 
-class ApiFunctionUrlMapSecitonConstant {
+class ApiFunctionUrlMapSectionConstant {
   static const aircraftFlyingList = "aircraft/flying-area/";
   static const aircraftStationList = "airport/?";
 }

@@ -45,7 +45,7 @@ class AppleSubscriptionState {
       selectedProduct: selectedProduct ?? this.selectedProduct,
       purchased: purchased ?? this.purchased,
       error: error,
-      status: status ?? CommonApiStatus.initial,
+      status: status ?? this.status,
       activeProductId: activeProductId,
     );
   }

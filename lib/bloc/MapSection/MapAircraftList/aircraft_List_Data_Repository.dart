@@ -11,7 +11,7 @@ class AircraftListDataRepository {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-      "${ApiFunctionUrlMapSecitonConstant.aircraftFlyingList}",
+      "${ApiFunctionUrlMapSectionConstant.aircraftFlyingList}",
     );
 
     try {

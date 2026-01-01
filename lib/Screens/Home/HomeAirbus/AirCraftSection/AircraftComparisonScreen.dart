@@ -223,6 +223,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                             width: imageWidth,
                                             height: imageHeight,
                                             contentImage: BoxFit.cover,
+                                            isForPlaneList: true,
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
@@ -275,6 +276,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                           width: 40,
                                                           height: 40,
                                                           contentImage: BoxFit.contain,
+                                                          isForPlaneList: true,
                                                         ),
                                                       ),
                                                     ),
@@ -307,7 +309,9 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                       width: screenWidth * 0.15,
                                       height: screenWidth * 0.15,
                                       contentImage: BoxFit.fill,
+                                      isForPlaneList: true,
                                     ),
+
                                     model: model.aircraftModel,
                                     badge: model.icaoTypeCode,
                                     callSign: "",
@@ -318,6 +322,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                       width: screenWidth * 0.05,
                                       height: screenWidth * 0.05,
                                       contentImage: BoxFit.fill,
+                                      isForPlaneList: true,
                                     ),
                                     onTap: () {
                                       Navigator.pop(context, model);

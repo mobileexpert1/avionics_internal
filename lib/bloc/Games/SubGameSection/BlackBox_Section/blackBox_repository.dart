@@ -37,9 +37,10 @@ class BlackboxRepository {
 
   Future<BlackBoxSubmitResponse?> submitBlackBoxAnswers(
     Map<String, dynamic> payload,
+      int gameNumber,
   ) async {
     final uri = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxSubmit}",
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.blackBoxTopic}$gameNumber${ApiFunctionUrlGamesConstant.blackBoxSubmit}",
     );
     try {
       final response = await ApiService.post(url: uri, body: payload);

@@ -24,6 +24,7 @@ class LocalNotificationHelper {
   static Future<void> show({
     required String title,
     required String body,
+    String? screenName,
   }) async {
     const AndroidNotificationDetails androidDetails =
     AndroidNotificationDetails(
@@ -48,6 +49,7 @@ class LocalNotificationHelper {
       title,
       body,
       details,
+      payload: screenName,
     );
   }
 }

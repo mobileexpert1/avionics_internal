@@ -436,8 +436,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       LocalNotificationHelper.show(
         title: "Flight landed",
         body: destination != null
-            ? "$flightNumber has landed at $destination."
-            : "$flightNumber has landed.",
+            ? "Flight Number $flightNumber has landed at $destination."
+            : "Flight Number $flightNumber has landed.",
+        screenName: "flightDetails",
       );
     }
   }

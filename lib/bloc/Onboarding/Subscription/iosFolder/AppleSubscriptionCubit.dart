@@ -1,87 +1,82 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Helpers/push_notifications/LocalNotificationHelper.dart';
+import '../subscriptionResponseModel.dart';
 import 'AppleSubscriptionRepository.dart';
 import 'AppleSubscriptionState.dart';
 
+const Set<String> iosProductIds = {
+  'premium_subscription_monthly_iOS_Seven_Free_Days',
+  'premium_subscription_yearly_iOS_Seven_Free_Days',
+};
+
+const Set<String> androidProductIds = {
+  'avioflai_premium',
+  'avioflai_premium_yearly',
+};
+
 class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   final InAppPurchase _iap = InAppPurchase.instance;
-  static const _productIds = {
-    'premium_subscription_monthly_iOS_Seven_Free_Days',
-    'premium_subscription_yearly_iOS_Seven_Free_Days',
-  };
 
-  // static const _androidProductIds = {
-  //   'premium-monthly',
-  //   'premium-yearly',
-  // };
+  StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
-  final Set<String> _androidProductIds = {
-    'avioflai_premium',
-    'avioflai_premium_yearly',
-  };
+  // Debounce timer for purchase updates
+  Timer? _debounceTimer;
+  List<PurchaseDetails> _pendingPurchases = [];
+  bool _notificationShown = false;
 
-  StreamSubscription<List<PurchaseDetails>>? _subscription;
-
-  AppleSubscriptionCubit() : super(AppleSubscriptionState()) {
-    _initStore();
+  AppleSubscriptionCubit({bool autoRestore = false})
+      : super(AppleSubscriptionState()) {
+    _initStore(autoRestore: autoRestore);
   }
 
-  /// Initialize Store + Product Loading
-  Future<void> _initStore() async {
-    emit(state.copyWith(loading: true));
-    final isAvailable = await _iap.isAvailable();
-    print("App Store Available: $isAvailable");
+  // ---------------- INIT ----------------
 
+  Future<void> _initStore({bool autoRestore = false}) async {
+    _notificationShown = false;
+    emit(state.copyWith(loading: true));
+
+    final isAvailable = await _iap.isAvailable();
     emit(state.copyWith(storeAvailable: isAvailable));
 
     if (!isAvailable) {
-      emit(state.copyWith(loading: false, error: "App Store is not available"));
+      emit(state.copyWith(loading: false));
       return;
     }
 
-    _subscription = _iap.purchaseStream.listen(
-      _onPurchaseUpdate,
-      onError: (err) {
+    _purchaseSubscription = _iap.purchaseStream.listen(
+      _onPurchaseUpdated,
+      onError: (error) {
         emit(
-          state.copyWith(loading: false, error: "Purchase stream error: $err"),
+          state.copyWith(
+            loading: false,
+            error: "Purchase stream error: $error",
+          ),
         );
       },
     );
 
-    emit(state.copyWith(loading: true));
     await _loadProducts();
-  }
 
-  Future<void> restorePastPurchases() async {
-    emit(state.copyWith(loading: true));
-    try {
-      await InAppPurchase.instance.restorePurchases();
-    } catch (e) {
-      emit(
-        state.copyWith(
-          loading: false,
-          error: 'Failed to restore purchases: $e',
-        ),
-      );
+    if (autoRestore) {
+      await restorePurchases();
     }
   }
 
-  /// Load available products from App Store
+  // ---------------- PRODUCTS ----------------
+
   Future<void> _loadProducts() async {
     try {
-      emit(state.copyWith(loading: true));
-      //final response = await _iap.queryProductDetails(_productIds);
       final response = await _iap.queryProductDetails(
-        Platform.isIOS ? _productIds : _androidProductIds,
+        Platform.isIOS ? iosProductIds : androidProductIds,
       );
 
       if (response.error != null) {
@@ -90,139 +85,263 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       }
 
       if (response.productDetails.isEmpty) {
-        emit(state.copyWith(loading: false, error: "No products found."));
+        emit(state.copyWith(loading: false, error: "No subscriptions found"));
         return;
       }
 
       emit(state.copyWith(loading: false, products: response.productDetails));
     } catch (e) {
-      emit(state.copyWith(loading: false, error: "Error loading products: $e"));
+      emit(
+        state.copyWith(
+          loading: false,
+          error: "Failed to load subscriptions: $e",
+        ),
+      );
     }
   }
 
-  /// User selects a plan
+  // ---------------- PLAN SELECTION ----------------
+
   void selectPlan(ProductDetails product) {
     emit(state.copyWith(selectedProduct: product));
   }
 
-  void buySelected(BuildContext context) async {
-    final selected = state.selectedProduct;
-    if (selected == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("No subscription selected")));
+  // ---------------- BUY ----------------
+
+  Future<void> buySelected() async {
+    final product = state.selectedProduct;
+
+    if (product == null) {
+      emit(state.copyWith(error: "No subscription selected"));
       return;
     }
 
-    final purchaseParam = PurchaseParam(productDetails: selected);
-    print("Initiating purchase for: ${selected.id}");
+    emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
+
+    final purchaseParam = PurchaseParam(productDetails: product);
+
     try {
       await _iap.buyNonConsumable(purchaseParam: purchaseParam);
     } on PlatformException catch (e) {
-      final isCancelled = e.code == 'storekit2_purchase_cancelled';
-      final message = isCancelled
-          ? "Purchase cancelled by user."
-          : "Purchase failed: ${e.message}";
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      final cancelled = e.code == 'storekit2_purchase_cancelled';
+
+      emit(
+        state.copyWith(
+          loading: false,
+          error: cancelled
+              ? "Purchase cancelled by user"
+              : "Purchase failed: ${e.message}",
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Unexpected error: $e")));
+      emit(
+        state.copyWith(loading: false, error: "Unexpected purchase error: $e"),
+      );
     }
   }
 
-  void _onPurchaseUpdate(List<PurchaseDetails> purchases) async {
-    for (final purchase in purchases) {
-      print(
-        "Purchase update: ${purchase.productID}, Status: ${purchase.status}",
-      );
+  // ---------------- PURCHASE STREAM (DEBOUNCED) ----------------
 
-      switch (purchase.status) {
-        case PurchaseStatus.purchased:
-        case PurchaseStatus.restored:
-          try {
-            _iap.completePurchase(purchase);
+  void _onPurchaseUpdated(List<PurchaseDetails> purchases) {
+    _pendingPurchases.addAll(purchases);
 
-            print(
-              "Server verification data: ${purchase.verificationData.serverVerificationData}",
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () async {
+      final pending = List<PurchaseDetails>.from(_pendingPurchases);
+      _pendingPurchases.clear();
+
+      for (final purchase in pending) {
+        // Skip already processed purchase
+        if (state.activeProductId == purchase.productID &&
+            (purchase.status == PurchaseStatus.purchased ||
+                purchase.status == PurchaseStatus.restored)) {
+          continue;
+        }
+
+        switch (purchase.status) {
+          case PurchaseStatus.purchased:
+          case PurchaseStatus.restored:
+            await _handleSuccess(purchase);
+            break;
+
+          case PurchaseStatus.pending:
+            emit(
+              state.copyWith(loading: true, status: CommonApiStatus.initial),
             );
-            print(
-              "Local verification data: ${purchase.verificationData.localVerificationData}",
-            );
-            print("Source: ${purchase.verificationData.source}");
+            break;
 
-            // Call API regardless of flow
-            await AppleSubscriptionRepository().postSubscriptionApi(
-              token: purchase.verificationData.serverVerificationData,
-              selectedSubscritionId: purchase.productID,
-              platform: Platform.isIOS ? "ios" : "android",
-              packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
-            );
-
+          case PurchaseStatus.error:
             emit(
               state.copyWith(
-                purchased: true,
                 loading: false,
-                status: CommonApiStatus.success,
-                activeProductId: purchase.productID,
+                error: purchase.error?.message ?? "Purchase failed",
               ),
             );
+            break;
 
-            if (!kIsWeb) {
-              LocalNotificationHelper.show(
-                title: "Subscription active",
-                body:
-                    "Your subscription is now active. All premium features are unlocked.",
-              );
-            }
-          } catch (e) {
-            emit(state.copyWith(loading: false, error: e.toString()));
-          }
-          break;
-
-        case PurchaseStatus.error:
-          if (!kIsWeb) {
-            LocalNotificationHelper.show(
-              title: "Subscription failed",
-              body:
-                  "We couldn’t complete your subscription. Please check your payment method.",
-            );
-          }
-
-          emit(
-            state.copyWith(
-              loading: false,
-              error: purchase.error?.message ?? "Purchase failed.",
-            ),
-          );
-          break;
-
-        case PurchaseStatus.pending:
-          emit(
-            state.copyWith(
-              loading: false,
-              error: "Purchase pending confirmation from the server.",
-            ),
-          );
-          break;
-
-        default:
-          break;
+          default:
+            break;
+        }
       }
+    });
+  }
+
+  // ---------------- SUCCESS HANDLING ----------------
+
+  Future<void> _handleSuccess(PurchaseDetails purchase) async {
+    try {
+      if (purchase.pendingCompletePurchase) {
+        await _iap.completePurchase(purchase);
+      }
+
+      // Prevent duplicate backend calls
+      if (state.activeProductId == purchase.productID) return;
+
+      await AppleSubscriptionRepository().postSubscriptionApi(
+        token: purchase.verificationData.serverVerificationData,
+        selectedSubscritionId: purchase.productID,
+        platform: Platform.isIOS ? "ios" : "android",
+        packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
+      );
+
+      final backendResponse = await AppleSubscriptionRepository()
+          .getSubscriptionDetails();
+
+      final resolvedProductId = _resolveActiveProductId(
+        appleProductId: purchase.productID,
+        backendSubscription: backendResponse.data,
+      );
+
+      //  if (!kIsWeb) {
+      if (!_notificationShown &&
+          purchase.status == PurchaseStatus.purchased &&
+          !kIsWeb) {
+        _notificationShown = true;
+        LocalNotificationHelper.show(
+          title: "Subscription Active",
+          body: "All premium features are unlocked",
+        );
+      }
+
+      emit(
+        state.copyWith(
+          purchased: backendResponse.data?.status == "active",
+          loading: false,
+          status: CommonApiStatus.success,
+          activeProductId: resolvedProductId,
+          subscription: backendResponse.data,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          loading: false,
+          error: "Subscription verification failed: $e",
+        ),
+      );
     }
   }
 
-  /// Restore previous purchases (manual trigger)
+  String _resolveActiveProductId({
+    String? appleProductId,
+    SubscriptionData? backendSubscription,
+  }) {
+    if (backendSubscription?.productId != null &&
+        backendSubscription!.productId.isNotEmpty) {
+      return backendSubscription.productId;
+    }
+    return appleProductId ?? "";
+  }
+
+  // ---------------- RESTORE ----------------
+
   Future<void> restorePurchases() async {
-    print("Restoring purchases...");
+    emit(state.copyWith(loading: true));
     try {
       await _iap.restorePurchases();
     } catch (e) {
-      emit(state.copyWith(error: "Restore failed: $e"));
+      emit(state.copyWith(loading: false, error: "Restore failed: $e"));
+    } finally {
+      emit(state.copyWith(loading: false));
     }
   }
+
+  // ---------------- CANCEL SUBSCRIPTION ----------------
+  Future<void> guideUserToCancelSubscription() async {
+    if (state.activeProductId == null) {
+      emit(state.copyWith(error: "No active subscription to cancel"));
+      return;
+    }
+
+    try {
+      if (Platform.isIOS) {
+        // Open Apple subscriptions page
+        const url = 'https://apps.apple.com/account/subscriptions';
+        if (await canLaunchUrl(Uri.parse(url))) {
+          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+        } else {
+          emit(
+            state.copyWith(error: "Cannot open App Store subscriptions page"),
+          );
+        }
+      } else if (Platform.isAndroid) {
+        // Open Google Play subscriptions page
+        const url = 'https://play.google.com/store/account/subscriptions';
+        if (await canLaunchUrl(Uri.parse(url))) {
+          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+        } else {
+          emit(
+            state.copyWith(error: "Cannot open Play Store subscriptions page"),
+          );
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(error: "Failed to open subscription page: $e"));
+    }
+  }
+
+  Future<void> cancelSubscription() async {
+    if (state.activeProductId != null) {
+      emit(state.copyWith(error: "No active subscription to cancel"));
+      return;
+    }
+
+    emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
+
+    try {
+      // await AppleSubscriptionRepository().cancelSubscriptionApi(
+      //   productId: state.activeProductId,
+      //   platform: Platform.isIOS ? "ios" : "android",
+      // );
+      // Update Cubit state after cancellation
+      emit(
+        state.copyWith(
+          purchased: false,
+          activeProductId: "",
+          subscription: null,
+          loading: false,
+          status: CommonApiStatus.success,
+        ),
+      );
+
+      if (!kIsWeb) {
+        LocalNotificationHelper.show(
+          title: "Subscription Cancelled",
+          body: "Your subscription has been cancelled successfully.",
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          loading: false,
+          status: CommonApiStatus.failure,
+          error: "Failed to cancel subscription: $e",
+        ),
+      );
+    }
+  }
+
+  // ---------------- BACKEND SYNC ----------------
 
   Future<void> getSubscriptionsFromBackendServer(String activeProductId) async {
     emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
@@ -230,27 +349,33 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     try {
       final response = await AppleSubscriptionRepository()
           .getSubscriptionDetails();
-      final subscriptionData = response.data;
 
       emit(
         state.copyWith(
-          subscription: subscriptionData,
+          subscription: response.data,
+          purchased: response.data?.status == "active",
+          activeProductId: activeProductId,
           loading: false,
           status: CommonApiStatus.success,
-          purchased: subscriptionData?.status == "active",
-          activeProductId: activeProductId,
         ),
       );
     } catch (e) {
       emit(
-        state.copyWith(status: CommonApiStatus.failure, error: e.toString()),
+        state.copyWith(
+          loading: false,
+          status: CommonApiStatus.failure,
+          error: "Failed to fetch subscription: $e",
+        ),
       );
     }
   }
 
+  // ---------------- CLEANUP ----------------
+
   @override
   Future<void> close() {
-    _subscription?.cancel();
+    _purchaseSubscription?.cancel();
+    _debounceTimer?.cancel();
     return super.close();
   }
 }

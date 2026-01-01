@@ -44,6 +44,7 @@ class FirebaseEvents {
   ////--------========-------==========---- Profile Subs Screen Names
   static const updatedAvtarButtonTap = 'updated_Avtar_Button_Tap';
   static const restoreSubscriptionButton = 'restore_Subscription_Button';
+  static const cancelSubscriptionButton = 'cancel_Subscription_Button';
   static const goPremiumSubscriptionButton = 'goPremium_Subscription_Button';
   static const saveProfileInfoButton = 'save_Profile_Info_Button';
   static const changePasswordButton = 'changePasswordButton';

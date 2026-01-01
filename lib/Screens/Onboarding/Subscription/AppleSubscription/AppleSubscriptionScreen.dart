@@ -41,11 +41,11 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.isComeFromSignup == false) {
-      Future.delayed(Duration.zero, () {
-        context.read<AppleSubscriptionCubit>().restorePastPurchases();
-      });
-    }
+    // if (widget.isComeFromSignup == false) {
+    //   Future.delayed(Duration.zero, () {
+    //     context.read<AppleSubscriptionCubit>().restorePurchases();
+    //   });
+    // }
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
@@ -54,16 +54,16 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AppleSubscriptionCubit(),
+      create: (_) =>
+          AppleSubscriptionCubit(autoRestore: widget.isComeFromSignup == false),
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
         (prev.error != curr.error && curr.error != null) ||
             (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
           if (state.error != null) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.error!)));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.error!)));
           }
 
           if (state.purchased) {
@@ -75,35 +75,44 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
               svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
             );
 
-            (widget.isComeFromSignup == false ||
-                widget.isComeFromSignup == null)
-                ? () {
-              //Navigator.of(context).pop();
-            }()
-                : Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                  (route) => false,
-            );
+            if (widget.isComeFromSignup == true) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+                    (route) => false,
+              );
+            }
           }
         },
         builder: (context, state) {
-          final selectedProduct = state.selectedProduct;
           final products = state.products;
-          print("products==> ${products}");
+
+          // -------------------------------
+          // Determine selected product:
+          // - Use state.selectedProduct if user tapped
+          // - Otherwise fallback to active plan
+          ProductDetails? selected;
+          if (state.selectedProduct != null) {
+            selected = state.selectedProduct;
+          } else {
+            final activePlans = state.products.where(
+                  (p) =>
+              p.id == state.subscription?.productId &&
+                  state.subscription?.status == "active",
+            );
+            selected = activePlans.isNotEmpty ? activePlans.first : null;
+          }
 
           return Stack(
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
-                  title:
-                  ((widget.isComeFromSignup == false ||
+                  title: (widget.isComeFromSignup == false ||
                       widget.isComeFromSignup == null)
                       ? SubscriptionTexts.currentSubTitle
-                      : ConstantStrings.startSubscription),
-                  leftButton:
-                  ((widget.isComeFromSignup == false ||
+                      : ConstantStrings.startSubscription,
+                  leftButton: (widget.isComeFromSignup == false ||
                       widget.isComeFromSignup == null)
                       ? IconButton(
                     icon: const Icon(
@@ -114,9 +123,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                       Navigator.pop(context);
                     },
                   )
-                      : Wrap()),
+                      : Wrap(),
                 ),
-
                 body: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SingleChildScrollView(
@@ -137,7 +145,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                             height: 25,
                             width: 25,
                           ),
-                          text: "Save your Favorites Aircrafts",
+                          text: "Save your Favorites Aircraft",
                         ),
                         const Divider(color: Color(0xFFF6F6F6), height: 3),
                         _buildFeatureRow(
@@ -155,94 +163,113 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                             height: 25,
                             width: 25,
                           ),
-                          text: "Track the aircrafts",
+                          text: "Track the aircraft",
                         ),
                         const SizedBox(height: 20),
 
-                        // Subscription Cards
-                        ...products.map(
-                              (product) => Padding(
+                        // Subscription Plans
+                        ...products.map((product) {
+                          final bool isActive = state.subscription?.productId ==
+                              product.id &&
+                              state.subscription?.status == "active";
+
+                          final bool isSelected = selected?.id == product.id;
+
+                          return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: _SubscriptionCard(
                               product: product,
-                              isSelected:
-                              product == selectedProduct ||
-                                  product.id == state.activeProductId,
+                              isSelected: isSelected,
+                              isActive: isActive,
+                              startDate: state.subscription?.startDate,
+                              endDate: state.subscription?.expiryDate,
                               trialText: getTrialText(product.description),
-                              onTap: () => context
-                                  .read<AppleSubscriptionCubit>()
-                                  .selectPlan(product),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 40),
-                        ...[
-                          if (widget.isComeFromSignup == false ||
-                              widget.isComeFromSignup == null) ...[
-                            CustomBottomButton(
-                              backgroundColor: const Color.fromRGBO(
-                                63,
-                                61,
-                                81,
-                                1.0,
-                              ),
-                              textColor: Colors.white,
-                              title: SubscriptionTexts.changeSubPlanTitle,
-                              icon: const SizedBox(),
-                              isEnabled: selectedProduct != null,
-                              onPressed: () {
-                                if (selectedProduct != null) {
-                                  context
-                                      .read<AppleSubscriptionCubit>()
-                                      .buySelected(context);
-                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.goPremiumSubscriptionButton);
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            CustomBottomButton(
-                              backgroundColor: const Color.fromRGBO(
-                                30,
-                                128,
-                                242,
-                                1.0,
-                              ),
-                              textColor: Colors.white,
-                              title: SubscriptionTexts.restoreSubTitle,
-                              icon: const SizedBox(),
-                              isEnabled: true,
-                              onPressed: () {
+                              onTap: () {
                                 context
                                     .read<AppleSubscriptionCubit>()
-                                    .restorePastPurchases();
-                                AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.restoreSubscriptionButton);
+                                    .selectPlan(product);
                               },
                             ),
-                            const SizedBox(height: 40),
-                          ] else ...[
-                            CustomBottomButton(
-                              backgroundColor: const Color(0xFF3F3D51),
-                              textColor: Colors.white,
-                              title: "Go Premium",
-                              icon: const SizedBox(),
-                              isEnabled: selectedProduct != null,
-                              onPressed: () async {
-                                if (selectedProduct != null) {
-                                  context
-                                      .read<AppleSubscriptionCubit>()
-                                      .buySelected(context);
-                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.subscriptionScreen,FirebaseEvents.goPremiumSubscriptionButton);
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 40),
-                          ],
+                          );
+                        }),
+
+                        const SizedBox(height: 20),
+
+                        // Bottom Buttons
+                        if (widget.isComeFromSignup == false ||
+                            widget.isComeFromSignup == null) ...[
+                          CustomBottomButton(
+                            backgroundColor: const Color.fromRGBO(63, 61, 81, 1.0),
+                            textColor: Colors.white,
+                            title: SubscriptionTexts.changeSubPlanTitle,
+                            icon: const SizedBox(),
+                            isEnabled: selected != null,
+                            onPressed: () {
+                              if (selected != null) {
+                                context.read<AppleSubscriptionCubit>().buySelected();
+                                AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.subscriptionScreen,
+                                  FirebaseEvents.goPremiumSubscriptionButton,
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          CustomBottomButton(
+                            backgroundColor: const Color.fromRGBO(30, 128, 242, 1.0),
+                            textColor: Colors.white,
+                            title: SubscriptionTexts.restoreSubTitle,
+                            icon: const SizedBox(),
+                            isEnabled: true,
+                            onPressed: () {
+                              context.read<AppleSubscriptionCubit>().restorePurchases();
+                              AnalyticsService.instance.buttonPressed(
+                                FirebaseEvents.subscriptionScreen,
+                                FirebaseEvents.restoreSubscriptionButton,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          CustomBottomButton(
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            title: SubscriptionTexts.cancelTitle,
+                            icon: const SizedBox(),
+                            isEnabled: true,
+                            onPressed: () {
+                              context
+                                  .read<AppleSubscriptionCubit>()
+                                  .guideUserToCancelSubscription();
+                              AnalyticsService.instance.buttonPressed(
+                                FirebaseEvents.subscriptionScreen,
+                                FirebaseEvents.cancelSubscriptionButton,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ] else ...[
+                          CustomBottomButton(
+                            backgroundColor: const Color(0xFF3F3D51),
+                            textColor: Colors.white,
+                            title: "Go Premium",
+                            icon: const SizedBox(),
+                            isEnabled: selected != null,
+                            onPressed: () async {
+                              if (selected != null) {
+                                context.read<AppleSubscriptionCubit>().buySelected();
+                                AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.subscriptionScreen,
+                                  FirebaseEvents.goPremiumSubscriptionButton,
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
                         ],
 
-                        if (selectedProduct != null)
+                        if (selected != null)
                           Text(
-                            "Free for 7 days then ${selectedProduct.price}\nCancel anytime.",
+                            "Free for 7 days then ${selected.price}\nCancel anytime.",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Color(0xFF626262),
@@ -266,7 +293,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             ],
           );
         },
-      ),
+      )
+      ,
     );
   }
 
@@ -292,15 +320,21 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 
 class _SubscriptionCard extends StatelessWidget {
   final ProductDetails product;
-  final bool isSelected;
+  final bool isSelected; // tapped by user
+  final bool isActive; // actually active subscription
   final String trialText;
   final VoidCallback onTap;
+  final String? startDate;
+  final String? endDate;
 
   const _SubscriptionCard({
     required this.product,
     required this.isSelected,
+    required this.isActive,
     required this.trialText,
     required this.onTap,
+    this.startDate,
+    this.endDate,
   });
 
   String cleanTitle(String title) {
@@ -310,57 +344,94 @@ class _SubscriptionCard extends StatelessWidget {
     return title;
   }
 
+  String formatDate(String? isoDate) {
+    if (isoDate == null) return "-";
+    final date = DateTime.tryParse(isoDate);
+    if (date == null) return "-";
+
+    const monthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+
+    return "${date.day.toString().padLeft(2, '0')}-${monthNames[date.month - 1]}-${date.year}";
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(product.description);
+    final showActiveDates = isActive && isSelected;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
+          color: showActiveDates ? Colors.blue.shade50 : Colors.white,
           border: Border.all(
             color: isSelected ? Colors.black : Colors.grey.shade300,
-            width: 1.2,
+            width: 2,
           ),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: isSelected
+              ? [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ]
+              : [],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Left side
+            /// LEFT SIDE
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   cleanTitle(product.title),
                   style: const TextStyle(
-                    color: Colors.black,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 if (trialText.isNotEmpty)
-                  Text(
-                    trialText,
-                    style: const TextStyle(color: Colors.black87, fontSize: 12),
-                  ),
+                  Text(trialText, style: const TextStyle(fontSize: 12)),
+                if (showActiveDates && startDate != null && endDate != null) ...[
+                  const SizedBox(height: 6),
+                  Text("Start: ${formatDate(startDate)}", style: const TextStyle(fontSize: 12)),
+                  Text("End: ${formatDate(endDate)}", style: const TextStyle(fontSize: 12)),
+                ],
               ],
             ),
 
-            // Right side
-            Row(
-              children: [
-                Text(
-                  product.price,
-                  style: const TextStyle(color: Colors.black, fontSize: 13),
-                ),
-                const SizedBox(width: 10),
-                if (isSelected)
-                  SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.tickIcon),
-                    fit: BoxFit.fill,
+            /// RIGHT SIDE (PRICE + tick)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.blue.shade100 : Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    product.price,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-              ],
+                  const SizedBox(width: 6),
+                  if (isSelected)
+                    SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.tickIcon),
+                      height: 16,
+                      width: 16,
+                      color: Colors.black,
+                    ),
+                ],
+              ),
             ),
           ],
         ),
@@ -368,4 +439,3 @@ class _SubscriptionCard extends StatelessWidget {
     );
   }
 }
-

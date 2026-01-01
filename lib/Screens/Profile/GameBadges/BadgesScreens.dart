@@ -89,11 +89,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Badges',
-          // leftButton: IconButton(
-          //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          //   onPressed: () => Navigator.of(context).pop(),
-          // ),
-
           leftButton: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
