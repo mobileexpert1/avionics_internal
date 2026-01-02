@@ -1543,30 +1543,36 @@ class FlightCard extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    groundSpeed == 0
-                                        ? 'N/A'
-                                        : '$groundSpeed km/h',
-                                    style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.w400,
+                                  Flexible(
+                                    child: Text(
+                                      groundSpeed == 0 ? 'N/A' : '$groundSpeed km/h',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 3),
                                   const Text(
                                     "•",
                                     style: TextStyle(color: Colors.grey),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    altitude == 0 ? 'N/A' : '$altitude m',
-                                    style: const TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.w500,
+                                  const SizedBox(width: 3),
+                                  Flexible(
+                                    child: Text(
+                                      altitude == 0 ? 'N/A' : '$altitude m',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ],
-                              ),
+                              )
                             ],
                           ),
                         ),

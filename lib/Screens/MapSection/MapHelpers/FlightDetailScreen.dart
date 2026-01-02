@@ -1044,7 +1044,52 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     );
   }
 
+  void showAutoDismissDialog(
+    BuildContext context,
+    String title,
+    String content,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) {
+        // Future.delayed(const Duration(seconds: 3), () {
+        //   if (Navigator.of(context).canPop()) {
+        //     Navigator.of(context).pop();
+        //   }
+        // });
 
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18, // 👈 CUSTOM TITLE FONT SIZE
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  content,
+                  style: TextStyle(fontSize: 13, color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildFieldRows(
     List<List<dynamic>> fields, {
@@ -1070,6 +1115,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                   showInfoIcon:
                       (first.length > 2 && first[2] == true) ||
                       (showInfoFields?.contains(i * 2) ?? false),
+                  onInfoTap: () {
+                    showAutoDismissDialog(context, first[0], first[1]);
+                  },
                 ),
               ),
               const SizedBox(width: 15),
@@ -1083,6 +1131,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                         showInfoIcon:
                             (second.length > 2 && second[2] == true) ||
                             (showInfoFields?.contains(i * 2 + 1) ?? false),
+                        onInfoTap: () {
+                          showAutoDismissDialog(context, second[0], second[1]);
+                        },
                       )
                     : const SizedBox(),
               ),

@@ -1,7 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 Widget customField({
   required String label,
@@ -12,6 +12,9 @@ Widget customField({
   bool isDarkDivider = false,
   Color labelColor = Colors.white70,
   Color textColor = Colors.white,
+
+  /// NEW
+  VoidCallback? onInfoTap,
 }) {
   return SizedBox(
     width: width,
@@ -40,14 +43,28 @@ Widget customField({
                 ),
               ),
             ),
+
             if (showInfoIcon)
-              SvgPicture.asset(CommonUi.setSvgImage(AssetsPath.infoIcon2))
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onInfoTap,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.infoIcon2),
+                    width: 16,
+                    height: 16,
+                  ),
+                ),
+              ),
           ],
         ),
 
         Divider(
           height: 10,
-          color: isDarkDivider == false ? AppColors.sepratorColourAppBar : AppColors.darkSepratorColourAppBar,
+          color: isDarkDivider == false
+              ? AppColors.sepratorColourAppBar
+              : AppColors.darkSepratorColourAppBar,
           thickness: 2,
         ),
       ],
