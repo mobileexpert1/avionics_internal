@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -32,68 +31,42 @@ class CachedAnyImage extends StatelessWidget {
       return _errorIcon(isForPlaneList);
     }
 
-    /// ================= NETWORK IMAGES =================
+    /// ================= NETWORK =================
     if (_isNetwork) {
-      /// -------- SVG NETWORK IMAGE --------
       if (_isSvg) {
-        if (!useCache) {
-          return _fixedBox(
-            SvgPicture.network(
-              imagePath,
-              fit: contentImage,
-            ),
-          );
-        }
-
-        return FutureBuilder<File>(
-          future: CustomCacheManager.instance.getSingleFile(imagePath),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _loader();
-            }
-
-            if (snapshot.hasError || !snapshot.hasData) {
-              return _errorIcon(isForPlaneList);
-            }
-
-            return _fixedBox(
-              SvgPicture.file(
-                snapshot.data!,
-                fit: contentImage,
-                clipBehavior: Clip.hardEdge,
-              ),
-            );
-          },
+        return _fixedBox(
+          useCache
+              ? CachedSvgImage(
+            imageUrl: imagePath,
+            fit: contentImage,
+          )
+              : SvgPicture.network(imagePath, fit: contentImage),
         );
       }
 
-      /// -------- PNG / JPG NETWORK IMAGE --------
       return _fixedBox(
         useCache
             ? CachedNetworkImage(
           cacheManager: CustomCacheManager.instance,
           imageUrl: imagePath,
           fit: contentImage,
-          placeholder: (context, url) => _loader(),
-          errorWidget: (context, url, error) =>
+          placeholder: (_, __) => _loader(),
+          errorWidget: (_, __, ___) =>
               _errorIcon(isForPlaneList),
         )
             : Image.network(
           imagePath,
           fit: contentImage,
-          errorBuilder: (context, error, stackTrace) =>
+          errorBuilder: (_, __, ___) =>
               _errorIcon(isForPlaneList),
         ),
       );
     }
 
-    /// ================= LOCAL ASSETS =================
+    /// ================= ASSETS =================
     if (_isSvg) {
       return _fixedBox(
-        SvgPicture.asset(
-          imagePath,
-          fit: contentImage,
-        ),
+        SvgPicture.asset(imagePath, fit: contentImage),
       );
     }
 
@@ -101,13 +74,13 @@ class CachedAnyImage extends StatelessWidget {
       Image.asset(
         imagePath,
         fit: contentImage,
-        errorBuilder: (context, error, stackTrace) =>
+        errorBuilder: (_, __, ___) =>
             _errorIcon(isForPlaneList),
       ),
     );
   }
 
-  /// ================= UI HELPERS =================
+  /// ================= HELPERS =================
 
   Widget _fixedBox(Widget child) => SizedBox(
     width: width,
@@ -118,18 +91,14 @@ class CachedAnyImage extends StatelessWidget {
     ),
   );
 
-  Widget _loader() => SizedBox(
-    width: width,
-    height: height,
-    child: const Center(
-      child: CircularProgressIndicator(strokeWidth: 1.5),
-    ),
+  Widget _loader() => const Center(
+    child: CircularProgressIndicator(strokeWidth: 1.5),
   );
 
-  Widget _errorIcon(bool isComeFromPlayList) => SizedBox(
+  Widget _errorIcon(bool isPlaneList) => SizedBox(
     width: width,
     height: height,
-    child: isComeFromPlayList
+    child: isPlaneList
         ? Center(
       child: SvgPicture.asset(
         CommonUi.setSvgImage(AssetsPath.Plane1),
@@ -143,3 +112,23 @@ class CachedAnyImage extends StatelessWidget {
     ),
   );
 }
+
+class CachedSvgImage extends StatelessWidget {
+  final String imageUrl;
+  final BoxFit fit;
+
+  const CachedSvgImage({
+    super.key,
+    required this.imageUrl,
+    required this.fit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.network(
+      imageUrl,
+      fit: fit,
+    );
+  }
+}
+
