@@ -51,6 +51,14 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     );
   }
 
+  String _cleanProductTitle(ProductDetails product) {
+    final title = product.title;
+    if (title.contains("(")) {
+      return title.substring(0, title.indexOf("(")).trim().toLowerCase();
+    }
+    return title.toLowerCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -85,8 +93,9 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
           }
         },
         builder: (context, state) {
-          final products = state.products;
-
+          final products = [...state.products]
+            ..sort((a, b) =>
+                _cleanProductTitle(a).compareTo(_cleanProductTitle(b)));
           // -------------------------------
           // Determine selected product:
           // - Use state.selectedProduct if user tapped
