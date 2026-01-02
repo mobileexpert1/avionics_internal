@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../../Screens/Profile/GameBadges/BadgesScreens.dart';
+//import 'local_notification_storage.dart';
 
 final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -13,128 +17,154 @@ class FirebaseMessagingService {
 
   /// Initialize Firebase Messaging & Local Notifications
   Future<void> initialize({required GlobalKey<NavigatorState> navigatorKey}) async {
-    if (kIsWeb) {
-      await _messaging.requestPermission(alert: true, badge: true, sound: true);
-
-      final vapidKey = dotenv.env['FIREBASE_WEB_VAPID_KEY'];
-      final token = await _messaging.getToken(vapidKey: vapidKey);
-      if (token != null) await SharedPrefsHelper.saveFCMToken(token);
-
-      FirebaseMessaging.onMessage.listen((message) {
-        if (navigatorKey.currentContext != null) {
-          ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-            SnackBar(
-              content: Text(
-                "${message.notification?.title ?? 'Notification'}: ${message.notification?.body ?? ''}",
-              ),
-            ),
-          );
-        }
-      });
-
-      FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        final screen = message.data['screen'];
-        if (screen != null) {
-          _navigateToScreen(screen, navigatorKey);
-        }
-      });
-
-      return;
-    }
-
-    // Request permission for mobile platforms
+    // Request permissions
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    // Local notifications initialization
-    const AndroidInitializationSettings androidInit =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
-
-    const InitializationSettings initSettings =
-    InitializationSettings(android: androidInit, iOS: iosInit);
+    // Local notifications setup
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosSettings = DarwinInitializationSettings();
+    const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
 
     await _flutterLocalNotificationsPlugin.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
+      onDidReceiveNotificationResponse: (response) {
         final screen = response.payload;
         if (screen != null) {
-          _navigateToScreen(screen, navigatorKey);
+          _handleNotification(screen, navigatorKey: navigatorKey);
         }
       },
     );
 
-    // Get FCM token
+    // Save FCM token
     final token = await _messaging.getToken();
     if (token != null) await SharedPrefsHelper.saveFCMToken(token);
 
-    // Foreground notifications
+    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((message) {
       _showNotification(message);
-      if (navigatorKey.currentContext != null) {
-        ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-          SnackBar(
-            content: Text(
-              "${message.notification?.title ?? 'Notification'}: ${message.notification?.body ?? ''}",
-            ),
-          ),
-        );
-      }
+      _showSnackBar(navigatorKey, message);
     });
 
-    // Background / terminated tap
+    // Handle background / user taps
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      final screen = message.data['screen'];
-      if (screen != null) {
-        _navigateToScreen(screen, navigatorKey);
-      }
+      _handleNotification(
+        message.data['screen'] ?? '',
+        title: message.notification?.title,
+        body: message.notification?.body,
+        navigatorKey: navigatorKey,
+      );
     });
+
+    // Handle terminated app launch
+    final initialMessage = await _messaging.getInitialMessage();
+    if (initialMessage != null) {
+      Future.delayed(const Duration(seconds: 3), () {
+        _handleNotification(
+          initialMessage.data['screen'] ?? '',
+          title: initialMessage.notification?.title,
+          body: initialMessage.notification?.body,
+          navigatorKey: navigatorKey,
+        );
+      });
+    }
   }
 
   /// Show local notification
   static Future<void> _showNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const androidDetails = AndroidNotificationDetails(
       'high_priority_channel',
       'High Priority',
       importance: Importance.max,
       priority: Priority.high,
     );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
 
-    const NotificationDetails details =
-    NotificationDetails(android: androidDetails, iOS: iosDetails);
+    const details = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     await _flutterLocalNotificationsPlugin.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
       message.notification?.title ?? '',
       message.notification?.body ?? '',
       details,
-      payload: message.data['screen'], // used for redirection
+      payload: message.data['screen'],
     );
   }
 
-  /// Navigate to screen based on payload
-  static void _navigateToScreen(String screen, GlobalKey<NavigatorState> navigatorKey) {
-    switch (screen) {
-      case 'flightDetails':
-        navigatorKey.currentState!.pushNamed('/FlightMapScreen');
-        break;
-      case 'subscription':
-        navigatorKey.currentState!.pushNamed('/subscriptionScreen');
-        break;
-      case 'home':
-        navigatorKey.currentState!.pushNamed('/homeScreen');
-        break;
-      case 'profile':
-        navigatorKey.currentState!.pushNamed('/profileScreen');
-        break;
-      default:
-        navigatorKey.currentState!.pushNamed('/homeScreen');
+  /// Show SnackBar
+  static void _showSnackBar(GlobalKey<NavigatorState> navigatorKey, RemoteMessage message) {
+    if (navigatorKey.currentContext != null) {
+      ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          content: Text(
+            "${message.notification?.title ?? 'Notification'}: ${message.notification?.body ?? ''}",
+          ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
     }
+  }
+
+  /// Handle tab switch + sub-screen navigation
+  static Future<void> _handleNotification(
+      String screen, {
+        String? title,
+        String? body,
+        GlobalKey<NavigatorState>? navigatorKey,
+      }) async {
+
+    // Delay to ensure RootTabbarscreen is ready
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final rootTabState = RootTabbarscreen.globalKey.currentState;
+      if (rootTabState == null) return;
+
+      int tabIndex;
+      Widget? nextScreen;
+
+      // Determine tab index
+      switch (screen.toLowerCase()) {
+        case 'home':
+          tabIndex = 0;
+          break;
+        case 'trackFlight':
+          tabIndex = 1;
+          break;
+        case 'games':
+          tabIndex = 2;
+          break;
+        case 'askWilco':
+          tabIndex = 3;
+          break;
+        case 'profile':
+          tabIndex = 4;
+          break;
+        case 'profiless': // Subscription
+          tabIndex = 4;
+          nextScreen = AppleSubscriptionScreen(isComeFromSignup: false);
+          break;
+        case 'badgess':
+          tabIndex = 4;
+          nextScreen = const BadgesScreen();
+          break;
+        default:
+          tabIndex = 0;
+      }
+
+      // Switch tab
+      rootTabState.onItemTapped(tabIndex);
+
+      // Push sub-screen if exists
+      if (nextScreen != null) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.of(rootTabState.context).push(
+            MaterialPageRoute(builder: (_) => nextScreen!),
+          );
+        });
+      }
+    });
   }
 }

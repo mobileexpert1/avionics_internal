@@ -93,8 +93,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
     return BlocProvider(
       create: (_) => BadgesCubit(context)
         ..loadBadges(
-          userWins: widget.userWins,
-          totalPoints: widget.totalPoints,
           selectedTab: "Quiz",
           context: context,
         ),
@@ -257,8 +255,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
               onTap: () {
                 context.read<BadgesCubit>().changeTab(
                   tabs[index],
-                  userWins: widget.userWins,
-                  totalPoints: widget.totalPoints,
                   context: context,
                 );
               },

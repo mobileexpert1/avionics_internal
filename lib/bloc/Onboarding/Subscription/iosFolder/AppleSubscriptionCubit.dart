@@ -34,7 +34,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   bool _notificationShown = false;
 
   AppleSubscriptionCubit({bool autoRestore = false})
-      : super(AppleSubscriptionState()) {
+    : super(AppleSubscriptionState()) {
     _initStore(autoRestore: autoRestore);
   }
 
@@ -220,6 +220,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         LocalNotificationHelper.show(
           title: "Subscription Active",
           body: "All premium features are unlocked",
+          screenName: "profileSS",
         );
       }
 
@@ -328,6 +329,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         LocalNotificationHelper.show(
           title: "Subscription Cancelled",
           body: "Your subscription has been cancelled successfully.",
+          screenName: "profileSS",
         );
       }
     } catch (e) {

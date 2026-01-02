@@ -331,6 +331,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   void startTimer(BuildContext context) {
+    print(
+      "Current Quesiton correctIndex:- ${state.currentQuestion.correctIndex}",
+    );
+
     _startTime = DateTime.now();
     emit(state.copyWith(timer: _totalDuration));
     _timer?.cancel();

@@ -10,20 +10,19 @@ class BadgesCubit extends Cubit<BadgesState> {
   BadgesCubit(BuildContext context) : super(BadgesState());
 
   Future<void> loadBadges({
-    required int userWins,
-    required int totalPoints,
     String? selectedTab,
     required BuildContext context,
   }) async {
     if (selectedTab == null || selectedTab.isEmpty) {
-      emit(state.copyWith(
-        isLoading: false,
-        isSuccess: false,
-        badges: [],
-        totalPoints: totalPoints,
-        selectedTab: selectedTab ?? '',
-        status: CommonApiStatus.initial,
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          isSuccess: false,
+          badges: [],
+          selectedTab: selectedTab ?? '',
+          status: CommonApiStatus.initial,
+        ),
+      );
       return;
     }
 
@@ -34,10 +33,7 @@ class BadgesCubit extends Cubit<BadgesState> {
 
       switch (selectedTab) {
         case "Quiz":
-          response = await BadgesRepository().getQuizBadges(
-            userWins: userWins,
-            totalPoints: totalPoints,
-          );
+          response = await BadgesRepository().getQuizBadges();
           break;
         case "One Word":
           response = await BadgesRepository().getOneWordBadges();
@@ -49,15 +45,16 @@ class BadgesCubit extends Cubit<BadgesState> {
           response = await BadgesRepository().getCalculationBadges();
           break;
         default:
-
-          emit(state.copyWith(
-            isLoading: false,
-            isSuccess: false,
-            badges: [],
-            totalPoints: totalPoints,
-            selectedTab: selectedTab,
-            status: CommonApiStatus.initial,
-          ));
+          emit(
+            state.copyWith(
+              isLoading: false,
+              isSuccess: false,
+              badges: [],
+              selectedTab: selectedTab,
+              totalPoints: 0,
+              status: CommonApiStatus.initial,
+            ),
+          );
           return;
       }
 
@@ -66,8 +63,8 @@ class BadgesCubit extends Cubit<BadgesState> {
           isLoading: false,
           isSuccess: true,
           badges: response.data,
-          totalPoints: response.totalEarnPoint ?? totalPoints,
           selectedTab: selectedTab,
+          totalPoints: response.totalEarnPoint,
           status: CommonApiStatus.success,
         ),
       );
@@ -84,19 +81,12 @@ class BadgesCubit extends Cubit<BadgesState> {
     }
   }
 
-
   /// Change Tab
   Future<void> changeTab(
-      String tabName, {
-        required int userWins,
-        required int totalPoints,
-        required BuildContext context,
-      }) async {
+    String tabName, {
+    required BuildContext context,
+  }) async {
     emit(state.copyWith(selectedTab: tabName));
-    await loadBadges(
-      userWins: userWins,
-      totalPoints: totalPoints,
-      selectedTab: tabName, context: context,
-    );
+    await loadBadges(selectedTab: tabName, context: context);
   }
 }

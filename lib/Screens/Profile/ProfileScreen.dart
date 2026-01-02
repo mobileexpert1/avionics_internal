@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
+import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
@@ -97,10 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const BadgesScreen(
-                              userWins: 10,
-                              totalPoints: 510,
-                            ),
+                            builder: (_) => const BadgesScreen(),
                           ),
                         );
                       },

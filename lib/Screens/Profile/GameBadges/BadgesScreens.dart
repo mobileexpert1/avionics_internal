@@ -17,16 +17,9 @@ import '../../../bloc/Profile/GameBadges/gameBadges_model.dart';
 import '../../Home/HomeScreen.dart';
 
 class BadgesScreen extends StatefulWidget {
-  final int userWins;
-  final int totalPoints;
   final bool fromResultScreen;
 
-  const BadgesScreen({
-    super.key,
-    required this.userWins,
-    required this.totalPoints,
-    this.fromResultScreen = false,
-  });
+  const BadgesScreen({super.key, this.fromResultScreen = false});
 
   @override
   _BadgesScreenState createState() => _BadgesScreenState();
@@ -49,9 +42,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
       });
     }
 
-    AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.badgesScreen,
-    );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.badgesScreen);
   }
 
   @override
@@ -80,8 +71,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
     return BlocProvider(
       create: (_) => BadgesCubit(context)
         ..loadBadges(
-          userWins: widget.userWins,
-          totalPoints: widget.totalPoints,
+          //totalPoints: widget.totalPoints,
           selectedTab: "Quiz",
           context: context,
         ),
@@ -102,7 +92,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
               }
             },
           ),
-
         ),
         body: BlocBuilder<BadgesCubit, BadgesState>(
           builder: (context, state) {
@@ -274,8 +263,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
               onTap: () {
                 context.read<BadgesCubit>().changeTab(
                   tabs[index],
-                  userWins: widget.userWins,
-                  totalPoints: widget.totalPoints,
                   context: context,
                 );
               },

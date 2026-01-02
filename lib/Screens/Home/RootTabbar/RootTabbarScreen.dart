@@ -11,6 +11,11 @@ import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
 import '../HomeScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
+  static final GlobalKey<RootTabbarScreenState> globalKey =
+  GlobalKey<RootTabbarScreenState>();
+
+  RootTabbarscreen({Key? key}) : super(key: globalKey);
+
   @override
   State<RootTabbarscreen> createState() => RootTabbarScreenState();
 }

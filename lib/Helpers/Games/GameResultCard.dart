@@ -189,7 +189,6 @@
 //   }
 // }
 
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
@@ -241,15 +240,15 @@ class GameResultCard extends StatelessWidget {
 
                 (score / total) >= 0.8
                     ? Image.asset(
-                  'assets/svg_images/result.gif',
-                  height: 120,
-                  width: 120,
-                )
+                        'assets/svg_images/result.gif',
+                        height: 120,
+                        width: 120,
+                      )
                     : SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.resultIcon),
-                  height: 100,
-                  width: 100,
-                ),
+                        CommonUi.setSvgImage(AssetsPath.resultIcon),
+                        height: 100,
+                        width: 100,
+                      ),
 
                 const SizedBox(height: 12),
 
@@ -270,7 +269,10 @@ class GameResultCard extends StatelessWidget {
                       ? MediaQuery.of(context).size.width * 0.45
                       : double.infinity,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.blue.shade100),
                       borderRadius: BorderRadius.circular(12),
@@ -306,17 +308,20 @@ class GameResultCard extends StatelessWidget {
 
                 correctPoints != 0
                     ? Text(
-                  "$correctPoints points for correct answers",
-                  style: const TextStyle(fontSize: 15),
-                )
+                        "$correctPoints points for correct answers",
+                        style: const TextStyle(fontSize: 15),
+                      )
                     : const SizedBox.shrink(),
 
                 ...bonusPoints.map(
-                      (b) => Padding(
+                  (b) => Padding(
                     padding: const EdgeInsets.only(bottom: 6.0),
                     child: Text(
                       b,
-                      style: const TextStyle(fontSize: 15, color: Colors.orange),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.orange,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -335,7 +340,9 @@ class GameResultCard extends StatelessWidget {
                       textColor: Colors.white,
                       icon: const SizedBox(width: 0),
                       onPressed: () {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        Navigator.of(
+                          context,
+                        ).popUntil((route) => route.isFirst);
                       },
                     ),
                   ),
@@ -379,17 +386,15 @@ class GameResultCard extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BadgesScreen(
-                      userWins: 10,
-                      totalPoints: 510,
-                      fromResultScreen: true,
-                    ),
+                    builder: (context) => BadgesScreen(fromResultScreen: true),
                   ),
                 );
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.black,
-                textStyle: const TextStyle(decoration: TextDecoration.underline),
+                textStyle: const TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
               ),
               child: const Text("See in Badges"),
             ),
@@ -399,4 +404,3 @@ class GameResultCard extends StatelessWidget {
     );
   }
 }
-
