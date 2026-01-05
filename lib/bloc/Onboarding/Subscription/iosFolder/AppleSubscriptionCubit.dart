@@ -153,12 +153,29 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             );
             print("Source: ${purchase.verificationData.source}");
 
+            final product = state.products.firstWhere(
+                  (p) => p.id == purchase.productID,
+            );
+
+            String? startDate;
+            if (purchase.transactionDate != null) {
+              startDate = DateTime.fromMillisecondsSinceEpoch(
+                int.parse(purchase.transactionDate!),
+              ).toIso8601String();
+            }
             // Call API regardless of flow
             await AppleSubscriptionRepository().postSubscriptionApi(
               token: purchase.verificationData.serverVerificationData,
               selectedSubscritionId: purchase.productID,
               platform: Platform.isIOS ? "ios" : "android",
               packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
+              originalTransactionId: purchase.purchaseID,
+              appTransactionId: purchase.purchaseID,
+              type: "subscription",
+              currency: product.currencyCode,
+              price: product.price,
+              startDate: startDate,
+              expiryDate: "",
             );
 
             emit(

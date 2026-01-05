@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
@@ -19,12 +21,18 @@ class LoginRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-
           ApiServiceUrlConstant.signIn,
     );
 
     try {
-      String? fcmToken = await SharedPrefsHelper.refreshAndUpdateFCMToken();
+      String? fcmToken;
+      try {
+        fcmToken = await SharedPrefsHelper.refreshAndUpdateFCMToken();
+      } catch (e) {
+        debugPrint("⚠️ FCM ignored during login: $e");
+        fcmToken = null;
+      }
+      // String? fcmToken = await SharedPrefsHelper.refreshAndUpdateFCMToken();
       final deviceDetails = await DeviceInfoHelper.getDeviceDetails();
       final Map<String, dynamic> body = {
         "email": email,
