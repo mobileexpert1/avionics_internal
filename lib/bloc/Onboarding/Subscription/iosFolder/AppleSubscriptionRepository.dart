@@ -9,6 +9,13 @@ class AppleSubscriptionRepository {
     required selectedSubscritionId,
     required platform,
     required packageName,
+    String? originalTransactionId,
+    String? appTransactionId,
+    String? type,
+    String? currency,
+    String? price,
+    String? startDate,
+    String? expiryDate,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -23,6 +30,13 @@ class AppleSubscriptionRepository {
           "product_id": selectedSubscritionId,
           "package_name": packageName,
           "token": token,
+          "original_transaction_id": originalTransactionId,
+          "app_transaction_id": appTransactionId,
+          "type": type,
+          "currency": currency,
+          "price": price,
+          "start_date": startDate,
+          "expiry_date": expiryDate,
         },
       );
       return BaseDetailResponseModel.fromJson(response);

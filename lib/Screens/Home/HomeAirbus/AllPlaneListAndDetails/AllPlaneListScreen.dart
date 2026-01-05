@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,6 +68,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
       page: 1,
       selectedAirbusId: widget.selectedAirbusId,
     );
+  }
+  String normalizeWikiImage(String url) {
+    if (!url.contains('upload.wikimedia.org')) return url;
+
+    final fileName = url.split('/').last;
+    return 'https://commons.wikimedia.org/wiki/Special:FilePath/$fileName';
   }
 
   @override
@@ -247,6 +254,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                         children: [
+                                          /// CODE 1
                                           CachedAnyImage(
                                             imagePath: model.image,
                                             width: imageWidth,
@@ -254,6 +262,30 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             contentImage: BoxFit.cover,
                                             isForPlaneList: true,
                                           ),
+                                          /// CODE 2
+                                          // CachedNetworkImage(
+                                          //   imageUrl: model.image ?? '',
+                                          //   width: imageWidth,
+                                          //   height: imageHeight,
+                                          //   fit: BoxFit.cover,
+                                          //   httpHeaders: const {
+                                          //     'User-Agent': 'Mozilla/5.0',
+                                          //     'Accept': 'image/*',
+                                          //   },
+                                          //   placeholder: (context, url) =>
+                                          //   const Center(child: CircularProgressIndicator()),
+                                          //   errorWidget: (context, url, error) =>
+                                          //   const Icon(Icons.broken_image),
+                                          // )
+                                          /// CODE 3
+                                          // CachedNetworkImage(
+                                          //   imageUrl: normalizeWikiImage(model.image ?? ''),
+                                          //   width: imageWidth,
+                                          //   height: imageHeight,
+                                          //   fit: BoxFit.cover,
+                                          //   placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
+                                          //   errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
+                                          // ),
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(
