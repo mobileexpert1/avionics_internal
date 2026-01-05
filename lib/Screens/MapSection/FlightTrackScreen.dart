@@ -90,7 +90,9 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
 
   @override
   void dispose() {
-    _mapController?.dispose();
+    if (!kIsWeb) {
+      _mapController?.dispose();
+    }
     _animationController?.dispose();
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {

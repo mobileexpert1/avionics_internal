@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:avionics_internal/Constants/ApiClass/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +30,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
   // Debounce timer for purchase updates
+  bool _webRedirectDone = false;
   Timer? _debounceTimer;
   List<PurchaseDetails> _pendingPurchases = [];
   bool _notificationShown = false;
@@ -40,34 +42,56 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
   // ---------------- INIT ----------------
 
-  Future<void> _initStore({bool autoRestore = false}) async {
-    _notificationShown = false;
-    emit(state.copyWith(loading: true));
-
-    final isAvailable = await _iap.isAvailable();
-    emit(state.copyWith(storeAvailable: isAvailable));
-
-    if (!isAvailable) {
-      emit(state.copyWith(loading: false));
-      return;
+  Future<void> handleWebRedirectionIfNeeded() async {
+    if (!kIsWeb || _webRedirectDone) return;
+    _webRedirectDone = true;
+    final token = await ApiService.getBearerToken();
+    if (token != null) {
+      print(
+        "https://avionica.csdevhub.com/user-service/subscription/choose/$token",
+      );
     }
+    final url =
+        "https://avionica.csdevhub.com/user-service/subscription/choose/$token";
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
-    _purchaseSubscription = _iap.purchaseStream.listen(
-      _onPurchaseUpdated,
-      onError: (error) {
-        emit(
-          state.copyWith(
-            loading: false,
-            error: "Purchase stream error: $error",
-          ),
-        );
-      },
-    );
+  Future<void> _initStore({bool autoRestore = false}) async {
+    emit(state.copyWith(loading: true));
+    if (!kIsWeb) {
+      _notificationShown = false;
+      emit(state.copyWith(loading: true));
 
-    await _loadProducts();
+      final isAvailable = await _iap.isAvailable();
+      emit(state.copyWith(storeAvailable: isAvailable));
 
-    if (autoRestore) {
-      await restorePurchases();
+      if (!isAvailable) {
+        emit(state.copyWith(loading: false));
+        return;
+      }
+
+      _purchaseSubscription = _iap.purchaseStream.listen(
+        _onPurchaseUpdated,
+        onError: (error) {
+          emit(
+            state.copyWith(
+              loading: false,
+              error: "Purchase stream error: $error",
+            ),
+          );
+        },
+      );
+
+      await _loadProducts();
+
+      if (autoRestore) {
+        await restorePurchases();
+      }
+    } else {
+      handleWebRedirectionIfNeeded();
     }
   }
 

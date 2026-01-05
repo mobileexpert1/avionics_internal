@@ -124,7 +124,7 @@ class ApiService {
   }
 
   // Get bearer token from SharedPreferences
-  static Future<String?> _getBearerToken() async {
+  static Future<String?> getBearerToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('UserAccessTokenKey');
   }
@@ -142,7 +142,7 @@ class ApiService {
       throw 'No internet connection. Please check your network.';
     }
 
-    final token = await _getBearerToken();
+    final token = await getBearerToken();
     final mapKeyValues = await SharedPrefsHelper.getMapKeyValuesForApi();
 
     final requestHeaders = {
@@ -204,9 +204,9 @@ class ApiService {
           throw 'Unsupported HTTP method: $method';
       }
 
-      //print('Response Code: ${response.statusCode}');
+      print('Response Code: ${response.statusCode}');
       final decodedBody = utf8.decode(response.bodyBytes);
-      //print('Response Body: $decodedBody');
+      print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);
 
       switch (response.statusCode) {

@@ -218,9 +218,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             latitude: currentCenterLatLong.latitude.toString(),
           );
 
-      //https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=32.252355981477805,28.99138728132285,75.73254201561213,77.71007940173149&limit=20&aircraft=AN2,AN24&altitude_ranges=0-46000&categories=C,C
-
-      // https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=32.252355981477805,28.99138728132285,75.73254201561213,77.71007940173149&limit=20&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000&categories=C,P
       debugPrint(
         "Flights fetched: ${flights.length}\n"
         "Airport list count: ${airportList.data.length}",

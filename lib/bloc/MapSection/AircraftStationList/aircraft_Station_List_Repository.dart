@@ -18,7 +18,7 @@ class AircraftStationListRepository {
       final jsonData = await ApiService.get(url: url) as Map<String, dynamic>;
       return AircraftStationListResponse.fromJson(jsonData);
     } catch (e) {
-      throw Exception(e);
+      throw e.toString();
     }
   }
 }

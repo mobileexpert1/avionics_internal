@@ -12,6 +12,7 @@ import '../../Constants/constantImages.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
@@ -539,27 +540,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                         FirebaseEvents.savedFlightScreen,
                                       );
                                       // Pending Details From Backend side
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (_) => BlocProvider(
-                                      //       create: (_) => FlightMapCubit(),
-                                      //       child: FlightDetailScreen(
-                                      //         ICAOType: f.iCAOCode ?? '',
-                                      //         flightNumber: f.,
-                                      //         callsign: f.callsign,
-                                      //         flightId: f.flightId,
-                                      //         fromSavedFlight: true,
-                                      //         flightDetail: FlightAircraftDetail(
-                                      //           icaoTypeCode: item.icaoTypeCode,
-                                      //           aircraftModel: item.aircraftModel,
-                                      //           image: item.image,
-                                      //           id: item.id,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider(
+                                            create: (_) => FlightMapCubit(),
+                                            child: FlightDetailScreen(
+                                              ICAOType: f.iCAOCode,
+                                              flightNumber: "",
+                                              callsign: "",
+                                              flightId: f.id,
+                                              fromSavedFlight: true,
+                                              flightDetail:
+                                                  FlightAircraftDetail(
+                                                    icaoTypeCode: f.iCAOCode,
+                                                    aircraftModel:
+                                                        f.aircraftModel,
+                                                    image: f.image,
+                                                    id: f.id,
+                                                  ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
                                     },
                                     isSvg: (f.image).contains(".svg"),
                                     isNetwork: true,

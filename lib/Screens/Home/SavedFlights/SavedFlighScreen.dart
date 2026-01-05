@@ -116,10 +116,10 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             );
                           } else {
                             await cubit.planFavOrUnfav1(
-                              item.aircraftId.toString(),
-                              item.callSign ?? '',
-                              item.flightId.toString(),
-                              item.flightNumber.toString(),
+                              item.id,
+                              item.callsign,
+                              item.flightId,
+                              item.flightNumber,
                               context,
                             );
                           }

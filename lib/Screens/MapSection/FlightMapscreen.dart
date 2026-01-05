@@ -115,7 +115,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     _debounce?.cancel();
     _singleSearchMarker = null;
     _searchController.dispose();
-    _mapController?.dispose();
+    if (!kIsWeb) {
+      _mapController?.dispose();
+    }
     _sheetController.dispose();
     selectedFlightId = null;
     super.dispose();
@@ -193,6 +195,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             onMapCreated:
                                 (GoogleMapController controller) async {
                                   _mapController = controller;
+                                  
                                   if (state.isTracking &&
                                       state.selectedFlight != null) {
                                     _mapController!.animateCamera(
@@ -446,38 +449,53 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Future<Set<Marker>> _buildAirportMarkers() async {
     final markers = <Marker>{};
-    final airports = _mapCubit.state.airports;
 
-    double currentZoom = await _mapController!.getZoomLevel();
-    double iconSize = getIconSize(currentZoom);
+    // 🔐 SAFETY GUARDS
+    if (_mapController == null) return markers;
+
+    final airports = _mapCubit.state.airports;
+    if (airports == null || airports.isEmpty) return markers;
+
+    double currentZoom;
+    try {
+      currentZoom = await _mapController!.getZoomLevel();
+    } catch (_) {
+      return markers;
+    }
+
+    final iconSize = getIconSize(currentZoom);
 
     final customIcon = await _getBitmapDescriptorFromSvgAsset(
       assetName: 'assets/svg_images/Airport1.svg',
       size: iconSize,
       color: Colors.blue,
     );
-    if (airports == null) return markers;
 
     for (final airport in airports) {
-      final marker = Marker(
-        markerId: MarkerId(airport.iataCode),
-        position: LatLng(airport.latitude, airport.longitude),
-        infoWindow: InfoWindow(
-          title: airport.name,
-          snippet: "${airport.city}, ${airport.country}",
+      // 🔐 Avoid bad backend data
+      if (airport.latitude == null || airport.longitude == null) continue;
+
+      markers.add(
+        Marker(
+          markerId: MarkerId(airport.iataCode ?? airport.icao ?? UniqueKey().toString()),
+          position: LatLng(airport.latitude, airport.longitude),
+          infoWindow: InfoWindow(
+            title: airport.name ?? 'N/A',
+            snippet: "${airport.city ?? ''}, ${airport.country ?? ''}",
+          ),
+          icon: customIcon,
+          onTap: () {
+            _isMapListViewShown = false;
+            _mapCubit.setSelectedAirport(airport);
+            _resetFlightSelection();
+            setState(() {
+              _activeCard = 2;
+            });
+          },
         ),
-        icon: customIcon,
-        onTap: () {
-          _isMapListViewShown = false;
-          _mapCubit.setSelectedAirport(airport);
-          _resetFlightSelection();
-          setState(() {
-            _activeCard = 2;
-          });
-        },
       );
-      markers.add(marker);
     }
+
     return markers;
   }
 

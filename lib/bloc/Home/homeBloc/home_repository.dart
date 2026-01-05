@@ -12,7 +12,9 @@ import '../../../../Constants/ConstantStrings.dart';
 
 class HomeRepository {
   HomeRepository()
-      : _manufacturers = GenericMethods<ManufacturerListModel>(ManufacturerListModel.fromMap);
+    : _manufacturers = GenericMethods<ManufacturerListModel>(
+        ManufacturerListModel.fromMap,
+      );
 
   final GenericMethods<ManufacturerListModel> _manufacturers;
 
@@ -20,16 +22,27 @@ class HomeRepository {
     bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
     if (apiTokenSever == null || apiTokenSever == false) {
       final uri = Uri.parse(
-        ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchGoogleKey,
+        ApiBaseUrlConstant.baseUrl +
+            ApiFunctionUrlConstant.userService +
+            ApiServiceUrlConstant.authFetchGoogleKey,
       );
       try {
-        final jsonData = await ApiService.get(url: uri, isForFlightRadar: true) as Map<String, dynamic>;
-        final modelResponse =  FlightKeyValuesModel.fromJson(jsonData);
-        await const MethodChannel('com.app/google_maps').invokeMethod("googleMapsKey", {"key": modelResponse.data.googleMapsKey});
+        final jsonData =
+            await ApiService.get(url: uri, isForFlightRadar: true)
+                as Map<String, dynamic>;
+        final modelResponse = FlightKeyValuesModel.fromJson(jsonData);
+        if (!kIsWeb) {
+          await const MethodChannel('com.app/google_maps').invokeMethod(
+            "googleMapsKey",
+            {"key": modelResponse.data.googleMapsKey},
+          );
+        }
         await SharedPrefsHelper.saveApiFetchKeyFromSever(true);
         return modelResponse;
       } catch (e) {
-        throw e.toString();
+        print(e.toString());
+        //throw e.toString();
+        return null;
       }
     }
     return null;
@@ -52,7 +65,7 @@ class HomeRepository {
       final homeData = HomeResponse.fromJson(json);
 
       await _manufacturers.insertAll(homeData.manufacturers);
-     // await _favorites.insertAll(homeData.favourites);
+      // await _favorites.insertAll(homeData.favourites);
 
       return homeData;
     } on HttpStatusException catch (e) {
@@ -78,5 +91,3 @@ class HomeRepository {
     );
   }
 }
-
-

@@ -62,7 +62,7 @@ class _LockGameCardState extends State<LockGameCard> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 5),
           Text(
             widget.title,
             textAlign: TextAlign.center,

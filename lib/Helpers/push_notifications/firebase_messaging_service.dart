@@ -1,3 +1,7 @@
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizLockScreen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -124,6 +128,7 @@ class FirebaseMessagingService {
 
       int tabIndex;
       Widget? nextScreen;
+      Widget? nextToNextScreen;
 
       // Determine tab index
       switch (screen.toLowerCase()) {
@@ -146,9 +151,25 @@ class FirebaseMessagingService {
           tabIndex = 4;
           nextScreen = AppleSubscriptionScreen(isComeFromSignup: false);
           break;
-        case 'badgess':
-          tabIndex = 4;
-          nextScreen = const BadgesScreen();
+        case 'badgess_quiz':
+          tabIndex = 2;
+          //nextScreen = const BadgesScreen();
+          nextScreen = const QuizLockScreen();
+          break;
+        case 'badgess_oneword':
+          tabIndex = 2;
+          //nextScreen = const BadgesScreen();
+          nextScreen = const OneWordTopicScreen();
+          break;
+        case 'badgess_black':
+          tabIndex = 2;
+          //nextScreen = const BadgesScreen();
+          nextScreen = const BlackBoxLockScreen();
+          break;
+        case 'badgess_calculation':
+          tabIndex = 2;
+          //nextScreen = const BadgesScreen();
+          nextScreen = const CalculationLockScreen();
           break;
         default:
           tabIndex = 0;
