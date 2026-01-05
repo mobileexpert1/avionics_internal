@@ -221,11 +221,28 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       // Prevent duplicate backend calls
       if (state.activeProductId == purchase.productID) return;
 
+      final product = state.products.firstWhere(
+        (p) => p.id == purchase.productID,
+      );
+
+      String? startDate;
+      if (purchase.transactionDate != null) {
+        startDate = DateTime.fromMillisecondsSinceEpoch(
+          int.parse(purchase.transactionDate!),
+        ).toIso8601String();
+      }
       await AppleSubscriptionRepository().postSubscriptionApi(
         token: purchase.verificationData.serverVerificationData,
         selectedSubscritionId: purchase.productID,
         platform: Platform.isIOS ? "ios" : "android",
         packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
+        originalTransactionId: purchase.purchaseID,
+        appTransactionId: purchase.purchaseID,
+        type: "subscription",
+        currency: product.currencyCode,
+        price: product.price,
+        startDate: startDate,
+        expiryDate: "",
       );
 
       final backendResponse = await AppleSubscriptionRepository()
