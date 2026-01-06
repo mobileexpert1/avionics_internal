@@ -1,4 +1,3 @@
-import 'package:avionics_internal/Screens/Onboarding/Subscription/AppleSubscription/WebSubscriptionScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,10 +45,11 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     //     context.read<AppleSubscriptionCubit>().restorePurchases();
     //   });
     // }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppleSubscriptionCubit>().handleWebRedirectionIfNeeded();
-    });
-
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<AppleSubscriptionCubit>().handleWebRedirectionIfNeeded();
+      });
+    }
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
@@ -65,9 +65,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-     //if (kIsWeb) {
-      //return WebSubscriptionScreen( widget.isComeFromSignup, widget.isComeFromSocialLogin);
-    //} else {
     return BlocProvider(
       create: (_) =>
           AppleSubscriptionCubit(autoRestore: widget.isComeFromSignup == false),
@@ -331,7 +328,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
         },
       ),
     );
-     //}
   }
 
   Widget _buildFeatureRow({required Widget iconWidget, required String text}) {

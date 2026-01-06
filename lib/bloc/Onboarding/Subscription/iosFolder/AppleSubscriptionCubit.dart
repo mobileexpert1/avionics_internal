@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:avionics_internal/Constants/ApiClass/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../subscriptionResponseModel.dart';
@@ -30,7 +28,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
   // Debounce timer for purchase updates
-  bool _webRedirectDone = false;
+  bool _globalWebRedirectDone = false;
   Timer? _debounceTimer;
   List<PurchaseDetails> _pendingPurchases = [];
   bool _notificationShown = false;
@@ -41,24 +39,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- INIT ----------------
-
-  Future<void> handleWebRedirectionIfNeeded() async {
-    if (!kIsWeb || _webRedirectDone) return;
-    _webRedirectDone = true;
-    final token = await ApiService.getBearerToken();
-    if (token != null) {
-      print(
-        "https://avionica.csdevhub.com/user-service/subscription/choose/$token",
-      );
-    }
-    final url =
-        "https://avionica.csdevhub.com/user-service/subscription/choose/$token";
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
   Future<void> _initStore({bool autoRestore = false}) async {
     emit(state.copyWith(loading: true));
     if (!kIsWeb) {
@@ -90,8 +70,27 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       if (autoRestore) {
         await restorePurchases();
       }
+    }
+  }
+
+  Future<void> handleWebRedirectionIfNeeded() async {
+    if (_globalWebRedirectDone) return;
+    _globalWebRedirectDone = true;
+
+    final token = await ApiService.getBearerToken();
+    if (token == null || token.isEmpty) return;
+
+    final callback = Uri.encodeComponent(Uri.base.toString());
+
+    final url =
+        "https://avionica.csdevhub.com/user-service/subscription/choose/$token"
+        "?callback=$callback";
+
+    final uri = Uri.parse(url);
+    if (kIsWeb) {
+      await launchUrl(uri, webOnlyWindowName: '_self');
     } else {
-      handleWebRedirectionIfNeeded();
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 

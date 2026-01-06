@@ -435,7 +435,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         body: destination != null
             ? "Flight Number $flightNumber has landed at $destination."
             : "Flight Number $flightNumber has landed.",
-        screenName: "flightDetails",
+        screenName: "trackFlight",
       );
     }
   }
