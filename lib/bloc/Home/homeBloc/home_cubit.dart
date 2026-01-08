@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/ApiClass/SessionTokenClass/session_C
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'home_state.dart';
@@ -22,6 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
       final data = await repository.getHomeData();
 
       if (data.isActiveSubscription == false) {
+        await SharedPrefsHelper.saveApiFetchKeyFromSever(true);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
@@ -30,7 +32,10 @@ class HomeCubit extends Cubit<HomeState> {
           ),
         );
         return;
+      }else{
+        await SharedPrefsHelper.saveApiFetchKeyFromSever(false);
       }
+
       final top2Manufacturers = data.manufacturers.take(2).toList();
       emit(
         HomeLoaded(

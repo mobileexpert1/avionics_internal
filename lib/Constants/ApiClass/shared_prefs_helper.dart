@@ -11,6 +11,17 @@ class SharedPrefsHelper {
   static const String isMapKeyValues = 'MapKeyValues';
   static const String _fcmTokenKey = 'fcm_token_key';
   static const String apiFetchKeyFromSever = 'api_Fetch_Key_From_Sever';
+  static const String fetchSubsIsTrueKey = 'fetchSubsIsTrue';
+
+  static Future<void> saveApiFetchSubsIsTrueKey(bool isSet) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(fetchSubsIsTrueKey, isSet);
+  }
+
+  static Future<bool?> getApiFetchSubsIsTrueKey() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(fetchSubsIsTrueKey);
+  }
 
   static Future<void> saveApiFetchKeyFromSever(bool isSet) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

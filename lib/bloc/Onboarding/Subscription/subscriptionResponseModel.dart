@@ -82,3 +82,16 @@ class SubscriptionData {
   }
 }
 
+class WebSessionResponseModel {
+  final String detail;
+  final String session;
+
+  WebSessionResponseModel({required this.detail, required this.session});
+
+  factory WebSessionResponseModel.fromJson(Map<String, dynamic> json) {
+    return WebSessionResponseModel(
+      detail: json['detail'] ?? '',
+      session: json['session'] ?? '',
+    );
+  }
+}

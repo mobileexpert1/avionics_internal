@@ -185,6 +185,7 @@ class ApiServiceUrlConstant {
   static const String postSubscrition = 'subscription/user';
   static const String verfiyPostSubscrition = 'subscription/verify';
   static const String fetchAvatars = 'user/avatar';
+  static const String checkoutSession = 'checkout-session';
 
   //Profile
   static const String getUnitselection = 'user/measurement';

@@ -28,7 +28,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
   // Debounce timer for purchase updates
-  bool _globalWebRedirectDone = false;
+  bool globalWebRedirectDone = false;
   Timer? _debounceTimer;
   List<PurchaseDetails> _pendingPurchases = [];
   bool _notificationShown = false;
@@ -74,17 +74,20 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   Future<void> handleWebRedirectionIfNeeded() async {
-    if (_globalWebRedirectDone) return;
-    _globalWebRedirectDone = true;
+    if (globalWebRedirectDone) return;
+    globalWebRedirectDone = true;
 
-    final token = await ApiService.getBearerToken();
-    if (token == null || token.isEmpty) return;
+    final webSessionToken = await AppleSubscriptionRepository()
+        .getSubscriptionSessionToken();
+
+    if (webSessionToken.session.isEmpty) return;
 
     final callback = Uri.encodeComponent(Uri.base.toString());
 
     final url =
-        "https://avionica.csdevhub.com/user-service/subscription/choose/$token"
-        "?callback=$callback";
+        "https://avionica.csdevhub.com/user-service/subscription/choose/${webSessionToken.session}?callback=$callback";
+
+    print(url);
 
     final uri = Uri.parse(url);
     if (kIsWeb) {
@@ -220,28 +223,11 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       // Prevent duplicate backend calls
       if (state.activeProductId == purchase.productID) return;
 
-      final product = state.products.firstWhere(
-        (p) => p.id == purchase.productID,
-      );
-
-      String? startDate;
-      if (purchase.transactionDate != null) {
-        startDate = DateTime.fromMillisecondsSinceEpoch(
-          int.parse(purchase.transactionDate!),
-        ).toIso8601String();
-      }
       await AppleSubscriptionRepository().postSubscriptionApi(
         token: purchase.verificationData.serverVerificationData,
         selectedSubscritionId: purchase.productID,
         platform: Platform.isIOS ? "ios" : "android",
         packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
-        originalTransactionId: purchase.purchaseID,
-        appTransactionId: purchase.purchaseID,
-        type: "subscription",
-        currency: product.currencyCode,
-        price: product.price,
-        startDate: startDate,
-        expiryDate: "",
       );
 
       final backendResponse = await AppleSubscriptionRepository()

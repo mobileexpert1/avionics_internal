@@ -55,6 +55,12 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    context.read<AppleSubscriptionCubit>().globalWebRedirectDone = false;
+  }
+
   String _cleanProductTitle(ProductDetails product) {
     final title = product.title;
     if (title.contains("(")) {

@@ -12,7 +12,7 @@ import '../HomeScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
   static final GlobalKey<RootTabbarScreenState> globalKey =
-  GlobalKey<RootTabbarScreenState>();
+      GlobalKey<RootTabbarScreenState>();
 
   RootTabbarscreen({Key? key}) : super(key: globalKey);
 
@@ -58,11 +58,28 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
     });
   }
 
-  void onItemTapped(int index) {
+  Future<void> onItemTapped(int index) async {
+    // final bool isRestrictedTab = index == 1 || index == 2 || index == 3;
+    // if (isRestrictedTab) {
+    //   final bool? apiTokenServer =
+    //   await SharedPrefsHelper.getApiFetchKeyFromSever();
+    //   final bool shouldShowPopup =
+    //      apiTokenServer == null || apiTokenServer == true; // for testing
+    //   if (shouldShowPopup) {
+    //     AlertHelperForSubsPopup.showSubscriptionEndAlert(
+    //       context: context,
+    //       title: "Subscription Required",
+    //       message: "This feature requires a subscription. You don’t have an active plan right now. Go to the subscription screen to choose and buy a plan.",
+    //       navigateTo: const AppleSubscriptionScreen(),
+    //     );
+    //     return;
+    //   }
+    // }
     setState(() {
       _selectedIndex = index;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
