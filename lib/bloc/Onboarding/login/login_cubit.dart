@@ -153,34 +153,40 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> signInWithFacebook(BuildContext context) async {
     try {
-      final result = await FacebookAuth.instance.login(
-        permissions: ['email', 'public_profile'],
-        loginBehavior: LoginBehavior.dialogOnly,
-      );
+      UserCredential userCredential;
+      String backendToken = '';
 
-      if (result.status != LoginStatus.success) return;
+      if (kIsWeb) {
+        final facebookProvider = FacebookAuthProvider();
+        userCredential = await _auth.signInWithPopup(facebookProvider);
+        backendToken = await userCredential.user?.getIdToken() ?? '';
+        debugPrint('WEB → Firebase ID Token: $backendToken');
+      } else {
+        final result = await FacebookAuth.instance.login(
+          permissions: ['email', 'public_profile'],
+        );
+        if (result.status != LoginStatus.success) {
+          throw Exception('Facebook login cancelled');
+        }
 
-      final accessToken = result.accessToken!;
-      final credential = FacebookAuthProvider.credential(accessToken.token);
-      final userCredential = await _auth.signInWithCredential(credential);
+        final accessToken = result.accessToken!;
+        backendToken = accessToken.token;
+        debugPrint('MOBILE → Facebook Access Token: $backendToken');
+        final credential = FacebookAuthProvider.credential(accessToken.token);
+        userCredential = await _auth.signInWithCredential(credential);
+      }
 
-      debugPrint('userCredential User: ${userCredential.user?.displayName}');
-      debugPrint('credential User: $credential');
-      debugPrint('accessToken: $accessToken');
-
+      debugPrint('User: ${userCredential.user?.displayName}');
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
       final resultResponse = await LoginRepository()
           .loginUserWithSocialPlatform(
-            token: accessToken.token,
+            token: backendToken,
             provider: 'facebook',
           );
-
       emit(state.copyWith(status: CommonApiStatus.success));
       await _navigateAfterLogin(context, resultResponse);
-      debugPrint('Facebook User: ${userCredential.user?.displayName}');
     } catch (e) {
-      print(e.toString());
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -189,6 +195,46 @@ class LoginCubit extends Cubit<LoginState> {
       );
     }
   }
+
+  // Future<void> signInWithFacebook(BuildContext context) async {
+  //   try {
+  //
+  //     final result = await FacebookAuth.instance.login(
+  //       permissions: ['email', 'public_profile'],
+  //       loginBehavior: LoginBehavior.dialogOnly,
+  //     );
+  //
+  //     if (result.status != LoginStatus.success) return;
+  //
+  //     final accessToken = result.accessToken!;
+  //     final credential = FacebookAuthProvider.credential(accessToken.token);
+  //     final userCredential = await _auth.signInWithCredential(credential);
+  //
+  //     debugPrint('userCredential User: ${userCredential.user?.displayName}');
+  //     debugPrint('credential User: $credential');
+  //     debugPrint('accessToken: $accessToken');
+  //
+  //     emit(state.copyWith(status: CommonApiStatus.submitting));
+  //
+  //     final resultResponse = await LoginRepository()
+  //         .loginUserWithSocialPlatform(
+  //           token: accessToken.token,
+  //           provider: 'facebook',
+  //         );
+  //
+  //     emit(state.copyWith(status: CommonApiStatus.success));
+  //     await _navigateAfterLogin(context, resultResponse);
+  //     debugPrint('Facebook User: ${userCredential.user?.displayName}');
+  //   } catch (e) {
+  //     print(e.toString());
+  //     emit(
+  //       state.copyWith(
+  //         status: CommonApiStatus.failure,
+  //         errorMessage: e.toString(),
+  //       ),
+  //     );
+  //   }
+  // }
 
   Future<void> signInWithApple(BuildContext context) async {
     try {
@@ -286,7 +332,10 @@ class LoginCubit extends Cubit<LoginState> {
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
                 ? AppleSubscriptionScreen(isComeFromSignup: true)
-                : AppleSubscriptionScreen(isComeFromSignup: true,isComeFromSocialLogin: true)),
+                : AppleSubscriptionScreen(
+                    isComeFromSignup: true,
+                    isComeFromSocialLogin: true,
+                  )),
           ),
         );
       } else {
