@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../MapSection/FlightMapscreen.dart';
+import '../../MapSection/FlightMapScreen.dart';
 import '../../Profile/ProfileScreen.dart';
 import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
 import '../HomeScreen.dart';
