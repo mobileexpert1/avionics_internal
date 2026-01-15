@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -53,6 +55,10 @@ class FlightMapScreen extends StatefulWidget {
 }
 
 class _FlightMapscreenState extends State<FlightMapScreen> {
+
+  final Set<Polygon> _polygons = {};
+  bool _loading = true;
+
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
 
   Timer? _debounce;
@@ -103,11 +109,160 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           _showInitialTrackingModePopup(context);
         }
       }
+
+      _loadPolygons();
+      //_loadGeoJson();
     });
 
     _sheetController.addListener(_sheetListener);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
   }
+
+  Future<void> _loadPolygons() async {
+    try {
+      final jsonStr =
+      await rootBundle.loadString('mapFiles/GeoPolygonMap.json');
+      final topo = jsonDecode(jsonStr);
+
+      final arcs = topo['arcs'];
+      final transform = topo['transform'];
+      final scale = transform['scale'];
+      final translate = transform['translate'];
+
+      final objects = topo['objects']['data']['geometries'];
+
+      int id = 1;
+
+      for (final geo in objects) {
+        if (geo['type'] != 'Polygon') continue;
+
+        final List<dynamic> arcIndexes = geo['arcs'][0];
+
+        final points =
+        _decodePolygon(arcIndexes, arcs, scale, translate);
+
+        if (points.length < 3) continue;
+
+        _polygons.add(
+          Polygon(
+            polygonId: PolygonId('poly_$id'),
+            points: points,
+            strokeWidth: 1,
+            strokeColor:_getRandomColor(),
+            fillColor: _getRandomColor().withOpacity(0.2),
+            consumeTapEvents: true,
+            onTap: () {
+              final name = geo['properties']['name'] ?? 'Unknown FIR';
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(name)),
+              );
+            },
+          ),
+        );
+
+        id++;
+      }
+
+      setState(() => _loading = false);
+    } catch (e) {
+      debugPrint('Error loading polygons: $e');
+    }
+  }
+
+  final Random _random = Random();
+
+
+  Color _getRandomColor({double opacity = 0.3}) {
+    return Color.fromARGB(
+      (opacity * 255).toInt(),
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+    );
+  }
+
+  Future<void> _loadGeoJson() async {
+    final String jsonStr =
+    await rootBundle.loadString("assets/mapFiles/GeoPolygonMap.json");
+
+    final Map<String, dynamic> data = jsonDecode(jsonStr);
+
+    final List features = data['features'];
+
+    int id = 1;
+
+    for (final feature in features) {
+      final geometry = feature['geometry'];
+      if (geometry['type'] != 'Polygon') continue;
+
+      final String name = feature['properties']['name'] ?? 'FIR';
+
+      // GeoJSON → [ [ [lng,lat], ... ] ]
+      final List rings = geometry['coordinates'];
+
+      final List<LatLng> points = [];
+
+      for (final coord in rings[0]) {
+        final double lng = (coord[0] as num).toDouble();
+        final double lat = (coord[1] as num).toDouble();
+        points.add(LatLng(lat, lng));
+      }
+
+
+      _polygons.add(
+        Polygon(
+          polygonId: PolygonId('fir_$id'),
+          points: points,
+          strokeWidth: 2,
+          strokeColor:_getRandomColor(),
+          fillColor: _getRandomColor().withOpacity(0.2),
+          consumeTapEvents: true,
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(name)),
+            );
+          },
+        ),
+      );
+
+      id++;
+    }
+
+    setState(() => _loading = false);
+  }
+  // =============================
+  // TOPOJSON → LATLNG
+  // =============================
+  List<LatLng> _decodePolygon(
+      List<dynamic> arcIndexes,
+      List<dynamic> arcs,
+      List<dynamic> scale,
+      List<dynamic> translate,
+      ) {
+    double x = 0, y = 0;
+    final List<LatLng> result = [];
+
+    for (var arcIndex in arcIndexes) {
+      final bool reverse = arcIndex < 0;
+      final int index = arcIndex < 0 ? ~arcIndex : arcIndex;
+
+      final List arc = arcs[index];
+      final List points = reverse ? arc.reversed.toList() : arc;
+
+      for (final p in points) {
+        x += p[0];
+        y += p[1];
+
+        final double lon = x * scale[0] + translate[0];
+        final double lat = y * scale[1] + translate[1];
+
+        result.add(LatLng(lat, lon));
+      }
+    }
+
+    return result;
+  }
+
 
   @override
   void dispose() {
@@ -122,6 +277,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     selectedFlightId = null;
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -161,11 +318,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         ),
                         builder: (context, snapshot) {
                           return GoogleMap(
-                            minMaxZoomPreference: MinMaxZoomPreference(7, 12),
+                            minMaxZoomPreference: const MinMaxZoomPreference(3, 18),
+                            //minMaxZoomPreference: MinMaxZoomPreference(7, 12),
                             zoomControlsEnabled: false,
                             myLocationButtonEnabled: false,
                             rotateGesturesEnabled: false,
                             mapType: state.mapType,
+                            polygons: _polygons,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                 state.position!.latitude,
@@ -190,12 +349,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               if (snapshot.hasData) ...snapshot.data!,
                             },
                             onCameraIdle: () async {
-                              _fetchFlightsWithDebounce(constraints);
+                              //_fetchFlightsWithDebounce(constraints);
                             },
                             onMapCreated:
                                 (GoogleMapController controller) async {
                                   _mapController = controller;
-                                  
+
                                   if (state.isTracking &&
                                       state.selectedFlight != null) {
                                     _mapController!.animateCamera(
@@ -1616,6 +1775,7 @@ class FlightCard extends StatelessWidget {
                         ),
                       ),
                       child: Material(
+
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {

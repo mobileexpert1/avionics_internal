@@ -23,7 +23,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
   void initState() {
     super.initState();
     _cubit = OnewordCubit();
-    _cubit.loadOneWordTopics();
+    _cubit.loadOneWordTopics(context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.oneWordTopicScreen,
     );

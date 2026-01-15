@@ -235,21 +235,21 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 
-  final Map<int, BitmapDescriptor> _iconCache = {};
-
-  Future<BitmapDescriptor> _getCachedFlightIcon(double track) async {
-    final key = (track / 10).round() * 10;
-
-    if (_iconCache.containsKey(key)) return _iconCache[key]!;
-
-    final icon = await getRotatedPlaneIcon(key.toDouble(), color: Colors.red);
-    _iconCache[key] = icon;
-    return icon;
-  }
-
-  // Future<BitmapDescriptor> _getFlightMarkerIcon(double track) async {
-  //   return await getRotatedPlaneIcon(track, color: Colors.red);
+  // final Map<int, BitmapDescriptor> _iconCache = {};
+  //
+  // Future<BitmapDescriptor> _getCachedFlightIcon(double track) async {
+  //   final key = (track / 10).round() * 10;
+  //
+  //   if (_iconCache.containsKey(key)) return _iconCache[key]!;
+  //
+  //   final icon = await getRotatedPlaneIcon(key.toDouble(), color: Colors.red);
+  //   _iconCache[key] = icon;
+  //   return icon;
   // }
+
+  Future<BitmapDescriptor> _getFlightMarkerIcon(double track) async {
+    return await getRotatedPlaneIcon(track, color: Colors.red);
+  }
 
   double _calculateBearing(LatLng from, LatLng to) {
     final lat1 = from.latitude * (pi / 180);
@@ -342,7 +342,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
 
     // Calculate direction
     final calculatedTrack = _calculateBearing(from, to);
-    final icon = await _getCachedFlightIcon(calculatedTrack);
+    final icon = await _getFlightMarkerIcon(calculatedTrack);
 
     var movingMarker = Marker(
       markerId: MarkerId(widget.flightNumber),
@@ -443,7 +443,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
               children: [
                 if (flightLatLng != null)
                   FutureBuilder<BitmapDescriptor>(
-                    future: _getCachedFlightIcon(
+                    future: _getFlightMarkerIcon(
                       _calculateBearing(flightLatLng, flightLatLng),
                     ),
                     builder: (context, snapshot) {
