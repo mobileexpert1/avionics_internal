@@ -55,10 +55,6 @@ class FlightMapScreen extends StatefulWidget {
 }
 
 class _FlightMapscreenState extends State<FlightMapScreen> {
-
-  final Set<Polygon> _polygons = {};
-  bool _loading = true;
-
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
 
   Timer? _debounce;
@@ -76,7 +72,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
-  DraggableScrollableController();
+      DraggableScrollableController();
 
   @override
   void initState() {
@@ -109,160 +105,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           _showInitialTrackingModePopup(context);
         }
       }
-
-      _loadPolygons();
-      //_loadGeoJson();
     });
 
     _sheetController.addListener(_sheetListener);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
   }
-
-  Future<void> _loadPolygons() async {
-    try {
-      final jsonStr =
-      await rootBundle.loadString('mapFiles/GeoPolygonMap.json');
-      final topo = jsonDecode(jsonStr);
-
-      final arcs = topo['arcs'];
-      final transform = topo['transform'];
-      final scale = transform['scale'];
-      final translate = transform['translate'];
-
-      final objects = topo['objects']['data']['geometries'];
-
-      int id = 1;
-
-      for (final geo in objects) {
-        if (geo['type'] != 'Polygon') continue;
-
-        final List<dynamic> arcIndexes = geo['arcs'][0];
-
-        final points =
-        _decodePolygon(arcIndexes, arcs, scale, translate);
-
-        if (points.length < 3) continue;
-
-        _polygons.add(
-          Polygon(
-            polygonId: PolygonId('poly_$id'),
-            points: points,
-            strokeWidth: 1,
-            strokeColor:_getRandomColor(),
-            fillColor: _getRandomColor().withOpacity(0.2),
-            consumeTapEvents: true,
-            onTap: () {
-              final name = geo['properties']['name'] ?? 'Unknown FIR';
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(name)),
-              );
-            },
-          ),
-        );
-
-        id++;
-      }
-
-      setState(() => _loading = false);
-    } catch (e) {
-      debugPrint('Error loading polygons: $e');
-    }
-  }
-
-  final Random _random = Random();
-
-
-  Color _getRandomColor({double opacity = 0.3}) {
-    return Color.fromARGB(
-      (opacity * 255).toInt(),
-      _random.nextInt(256),
-      _random.nextInt(256),
-      _random.nextInt(256),
-    );
-  }
-
-  Future<void> _loadGeoJson() async {
-    final String jsonStr =
-    await rootBundle.loadString("assets/mapFiles/GeoPolygonMap.json");
-
-    final Map<String, dynamic> data = jsonDecode(jsonStr);
-
-    final List features = data['features'];
-
-    int id = 1;
-
-    for (final feature in features) {
-      final geometry = feature['geometry'];
-      if (geometry['type'] != 'Polygon') continue;
-
-      final String name = feature['properties']['name'] ?? 'FIR';
-
-      // GeoJSON → [ [ [lng,lat], ... ] ]
-      final List rings = geometry['coordinates'];
-
-      final List<LatLng> points = [];
-
-      for (final coord in rings[0]) {
-        final double lng = (coord[0] as num).toDouble();
-        final double lat = (coord[1] as num).toDouble();
-        points.add(LatLng(lat, lng));
-      }
-
-
-      _polygons.add(
-        Polygon(
-          polygonId: PolygonId('fir_$id'),
-          points: points,
-          strokeWidth: 2,
-          strokeColor:_getRandomColor(),
-          fillColor: _getRandomColor().withOpacity(0.2),
-          consumeTapEvents: true,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(name)),
-            );
-          },
-        ),
-      );
-
-      id++;
-    }
-
-    setState(() => _loading = false);
-  }
-  // =============================
-  // TOPOJSON → LATLNG
-  // =============================
-  List<LatLng> _decodePolygon(
-      List<dynamic> arcIndexes,
-      List<dynamic> arcs,
-      List<dynamic> scale,
-      List<dynamic> translate,
-      ) {
-    double x = 0, y = 0;
-    final List<LatLng> result = [];
-
-    for (var arcIndex in arcIndexes) {
-      final bool reverse = arcIndex < 0;
-      final int index = arcIndex < 0 ? ~arcIndex : arcIndex;
-
-      final List arc = arcs[index];
-      final List points = reverse ? arc.reversed.toList() : arc;
-
-      for (final p in points) {
-        x += p[0];
-        y += p[1];
-
-        final double lon = x * scale[0] + translate[0];
-        final double lat = y * scale[1] + translate[1];
-
-        result.add(LatLng(lat, lon));
-      }
-    }
-
-    return result;
-  }
-
 
   @override
   void dispose() {
@@ -277,8 +124,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     selectedFlightId = null;
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -318,13 +163,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         ),
                         builder: (context, snapshot) {
                           return GoogleMap(
-                            minMaxZoomPreference: const MinMaxZoomPreference(3, 18),
-                            //minMaxZoomPreference: MinMaxZoomPreference(7, 12),
+                            minMaxZoomPreference: MinMaxZoomPreference(7, 12),
                             zoomControlsEnabled: false,
                             myLocationButtonEnabled: false,
                             rotateGesturesEnabled: false,
                             mapType: state.mapType,
-                            polygons: _polygons,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                 state.position!.latitude,
@@ -353,20 +196,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                             },
                             onMapCreated:
                                 (GoogleMapController controller) async {
-                              _mapController = controller;
+                                  _mapController = controller;
 
-                              if (state.isTracking &&
-                                  state.selectedFlight != null) {
-                                _mapController!.animateCamera(
-                                  CameraUpdate.newLatLng(
-                                    LatLng(
-                                      state.selectedFlight!.latitude,
-                                      state.selectedFlight!.longitude,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
+                                  if (state.isTracking &&
+                                      state.selectedFlight != null) {
+                                    _mapController!.animateCamera(
+                                      CameraUpdate.newLatLng(
+                                        LatLng(
+                                          state.selectedFlight!.latitude,
+                                          state.selectedFlight!.longitude,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                           );
                         },
                       );
@@ -402,8 +245,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       ),
       floatingActionButton: (_activeCard == 1)
           ? (_activeCard == 2
-          ? _buildChatFloatingButton(context)
-          : SizedBox.shrink())
+                ? _buildChatFloatingButton(context)
+                : SizedBox.shrink())
           : SizedBox.shrink(),
     );
   }
@@ -554,9 +397,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Future<Set<Marker>> _buildFlightMarkers(
-      List<FlightModel> flights,
-      bool isHideMapColour,
-      ) async {
+    List<FlightModel> flights,
+    bool isHideMapColour,
+  ) async {
     final markers = <Marker>{};
     if (_isForFlyingInTheArea == 1) {
       for (final flight in flights) {
@@ -636,7 +479,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
       markers.add(
         Marker(
-          markerId: MarkerId(airport.iataCode ?? airport.icao ?? UniqueKey().toString()),
+          markerId: MarkerId(
+            airport.iataCode ?? airport.icao ?? UniqueKey().toString(),
+          ),
           position: LatLng(airport.latitude, airport.longitude),
           infoWindow: InfoWindow(
             title: airport.name ?? 'N/A',
@@ -805,9 +650,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Widget _buildFlightsDraggableSheet(
-      BuildContext context,
-      FlightMapState state,
-      ) {
+    BuildContext context,
+    FlightMapState state,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
       child: DraggableScrollableSheet(
@@ -872,7 +717,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         aircraft?.manufacturer?.companyName ?? "";
                     final isFavorite = aircraft?.isFavorite ?? false;
                     final flightCode =
-                    (data?.callSign != null && data!.callSign!.isNotEmpty)
+                        (data?.callSign != null && data!.callSign!.isNotEmpty)
                         ? data.callSign!
                         : "N/A";
                     final manufacturerLogo = aircraft?.manufacturer?.logo ?? "";
@@ -977,7 +822,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                   builder: (context, constraints) {
                                     final isWide =
                                         constraints.maxWidth >
-                                            600; // breakpoint
+                                        600; // breakpoint
 
                                     return Container(
                                       clipBehavior: Clip.hardEdge,
@@ -998,7 +843,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       padding: EdgeInsets.all(isWide ? 14 : 10),
                                       child: Row(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                         children: [
                                           ClipRRect(
                                             borderRadius: BorderRadius.circular(
@@ -1006,26 +851,26 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                             ),
                                             child: (image.isEmpty)
                                                 ? Image.asset(
-                                              CommonUi.setPngImage(
-                                                AssetsPath
-                                                    .aeroplaneComparison,
-                                              ),
-                                              width: isWide ? 120 : 90,
-                                              height: isWide ? 60 : 45,
-                                              fit: BoxFit.cover,
-                                            )
+                                                    CommonUi.setPngImage(
+                                                      AssetsPath
+                                                          .aeroplaneComparison,
+                                                    ),
+                                                    width: isWide ? 120 : 90,
+                                                    height: isWide ? 60 : 45,
+                                                    fit: BoxFit.cover,
+                                                  )
                                                 : CachedAnyImage(
-                                              imagePath: image,
-                                              width: isWide ? 120 : 90,
-                                              height: isWide ? 60 : 45,
-                                              contentImage: BoxFit.cover,
-                                            ),
+                                                    imagePath: image,
+                                                    width: isWide ? 120 : 90,
+                                                    height: isWide ? 60 : 45,
+                                                    contentImage: BoxFit.cover,
+                                                  ),
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
@@ -1034,7 +879,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                         model,
                                                         style: TextStyle(
                                                           fontWeight:
-                                                          FontWeight.w700,
+                                                              FontWeight.w700,
                                                           fontSize: isWide
                                                               ? 17
                                                               : 15,
@@ -1050,16 +895,16 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                     if (icaoCode.isNotEmpty)
                                                       Container(
                                                         padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 6,
-                                                          vertical: 2,
-                                                        ),
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 6,
+                                                              vertical: 2,
+                                                            ),
                                                         decoration: BoxDecoration(
                                                           color: Colors.white,
                                                           borderRadius:
-                                                          BorderRadius.circular(
-                                                            6,
-                                                          ),
+                                                              BorderRadius.circular(
+                                                                6,
+                                                              ),
                                                           border: Border.all(
                                                             color: Colors
                                                                 .grey
@@ -1073,7 +918,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                                 ? 12
                                                                 : 10,
                                                             fontWeight:
-                                                            FontWeight.w600,
+                                                                FontWeight.w600,
                                                           ),
                                                         ),
                                                       ),
@@ -1082,48 +927,48 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                 const SizedBox(height: 6),
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     Row(
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                          BorderRadius.circular(
-                                                            4,
-                                                          ),
+                                                              BorderRadius.circular(
+                                                                4,
+                                                              ),
                                                           child:
-                                                          manufacturerLogo
-                                                              .isEmpty
+                                                              manufacturerLogo
+                                                                  .isEmpty
                                                               ? SvgPicture.asset(
-                                                            CommonUi.setSvgImage(
-                                                              AssetsPath
-                                                                  .manufacturer,
-                                                            ),
-                                                            width: isWide
-                                                                ? 26
-                                                                : 18,
-                                                            height: isWide
-                                                                ? 26
-                                                                : 18,
-                                                            fit: BoxFit
-                                                                .contain,
-                                                          )
+                                                                  CommonUi.setSvgImage(
+                                                                    AssetsPath
+                                                                        .manufacturer,
+                                                                  ),
+                                                                  width: isWide
+                                                                      ? 26
+                                                                      : 18,
+                                                                  height: isWide
+                                                                      ? 26
+                                                                      : 18,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                )
                                                               : CachedAnyImage(
-                                                            imagePath:
-                                                            manufacturerLogo,
-                                                            width: isWide
-                                                                ? 40
-                                                                : 28,
-                                                            height: isWide
-                                                                ? 20
-                                                                : 16,
-                                                            contentImage:
-                                                            BoxFit
-                                                                .contain,
-                                                            useCache:
-                                                            true,
-                                                          ),
+                                                                  imagePath:
+                                                                      manufacturerLogo,
+                                                                  width: isWide
+                                                                      ? 40
+                                                                      : 28,
+                                                                  height: isWide
+                                                                      ? 20
+                                                                      : 16,
+                                                                  contentImage:
+                                                                      BoxFit
+                                                                          .contain,
+                                                                  useCache:
+                                                                      true,
+                                                                ),
                                                         ),
                                                         const SizedBox(
                                                           width: 6,
@@ -1133,7 +978,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                           style: TextStyle(
                                                             color: Colors.grey,
                                                             fontWeight:
-                                                            FontWeight.w500,
+                                                                FontWeight.w500,
                                                             fontSize: isWide
                                                                 ? 14
                                                                 : 12,
@@ -1143,18 +988,18 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                     ),
                                                     Container(
                                                       padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4,
-                                                      ),
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4,
+                                                          ),
                                                       decoration: BoxDecoration(
                                                         color: const Color(
                                                           0xFF3F3D55,
                                                         ),
                                                         borderRadius:
-                                                        BorderRadius.circular(
-                                                          6,
-                                                        ),
+                                                            BorderRadius.circular(
+                                                              6,
+                                                            ),
                                                       ),
                                                       child: Text(
                                                         flightCode,
@@ -1164,7 +1009,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                                               ? 13
                                                               : 11,
                                                           fontWeight:
-                                                          FontWeight.w600,
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                     ),
@@ -1431,7 +1276,7 @@ class FlightCard extends StatelessWidget {
           final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
 
           final airlineName =
-          (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
+              (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
               ? detail!.manufacturer!.airlineName!
               : 'N/A';
 
@@ -1525,7 +1370,10 @@ class FlightCard extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                       borderRadius: BorderRadius.circular(4),
@@ -1552,20 +1400,20 @@ class FlightCard extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(6),
                                     child: manufacturerLogo.isEmpty
                                         ? SvgPicture.asset(
-                                      CommonUi.setSvgImage(
-                                        AssetsPath.manufacturer,
-                                      ),
-                                      width: 22,
-                                      height: 16,
-                                      fit: BoxFit.fill,
-                                    )
+                                            CommonUi.setSvgImage(
+                                              AssetsPath.manufacturer,
+                                            ),
+                                            width: 22,
+                                            height: 16,
+                                            fit: BoxFit.fill,
+                                          )
                                         : CachedAnyImage(
-                                      imagePath: manufacturerLogo,
-                                      width: 22,
-                                      height: 16,
-                                      contentImage: BoxFit.contain,
-                                      useCache: false,
-                                    ),
+                                            imagePath: manufacturerLogo,
+                                            width: 22,
+                                            height: 16,
+                                            contentImage: BoxFit.contain,
+                                            useCache: false,
+                                          ),
                                   ),
                                   Text(
                                     manufacturer,
@@ -1612,10 +1460,10 @@ class FlightCard extends StatelessWidget {
                                           } else {
                                             AnalyticsService.instance
                                                 .buttonPressed(
-                                              FirebaseEvents
-                                                  .trackAFlightButton,
-                                              FirebaseEvents.trackScreen,
-                                            );
+                                                  FirebaseEvents
+                                                      .trackAFlightButton,
+                                                  FirebaseEvents.trackScreen,
+                                                );
 
                                             Navigator.push(
                                               context,
@@ -1624,15 +1472,15 @@ class FlightCard extends StatelessWidget {
                                                     BlocProvider.value(
                                                       value: context
                                                           .read<
-                                                          FlightMapCubit
-                                                      >(),
+                                                            FlightMapCubit
+                                                          >(),
                                                       child: TrackFlightScreen(
                                                         flightNumber:
-                                                        flightNumber,
+                                                            flightNumber,
                                                         initialFlight:
-                                                        selectedFlight,
+                                                            selectedFlight,
                                                         initialFlightDetail:
-                                                        detail,
+                                                            detail,
                                                         flightId: flightId,
                                                       ),
                                                     ),
@@ -1645,10 +1493,10 @@ class FlightCard extends StatelessWidget {
                                           child: state.isTracking
                                               ? const LiveBadge()
                                               : const Icon(
-                                            Icons.my_location,
-                                            color: Colors.blue,
-                                            size: 20,
-                                          ),
+                                                  Icons.my_location,
+                                                  color: Colors.blue,
+                                                  size: 20,
+                                                ),
                                         ),
                                       ),
                                     ],
@@ -1665,20 +1513,20 @@ class FlightCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(6),
                               child: airlineLogo.isEmpty
                                   ? SvgPicture.asset(
-                                CommonUi.setSvgImage(
-                                  AssetsPath.airbusplane,
-                                ),
-                                width: 100,
-                                height: 30,
-                                fit: BoxFit.fill,
-                              )
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.airbusplane,
+                                      ),
+                                      width: 100,
+                                      height: 30,
+                                      fit: BoxFit.fill,
+                                    )
                                   : CachedAnyImage(
-                                imagePath: airlineLogo,
-                                width: 100,
-                                height: 20,
-                                contentImage: BoxFit.contain,
-                                useCache: false,
-                              ),
+                                      imagePath: airlineLogo,
+                                      width: 100,
+                                      height: 20,
+                                      contentImage: BoxFit.contain,
+                                      useCache: false,
+                                    ),
                             ),
                             SizedBox(height: 5),
                             Text(
@@ -1722,7 +1570,9 @@ class FlightCard extends StatelessWidget {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      groundSpeed == 0 ? 'N/A' : '$groundSpeed km/h',
+                                      groundSpeed == 0
+                                          ? 'N/A'
+                                          : '$groundSpeed km/h',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
@@ -1749,7 +1599,7 @@ class FlightCard extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -1775,46 +1625,45 @@ class FlightCard extends StatelessWidget {
                         ),
                       ),
                       child: Material(
-
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {
                             final combinedDetail = detail?.copyWith(
                               latitude:
-                              (detail?.latitude != null &&
-                                  detail!.latitude != 0.0)
+                                  (detail?.latitude != null &&
+                                      detail!.latitude != 0.0)
                                   ? detail.latitude
                                   : selectedFlight?.latitude,
                               longitude:
-                              (detail?.longitude != null &&
-                                  detail!.longitude != 0.0)
+                                  (detail?.longitude != null &&
+                                      detail!.longitude != 0.0)
                                   ? detail.longitude
                                   : selectedFlight?.longitude,
                               groundSpeed:
-                              detail?.groundSpeed ??
+                                  detail?.groundSpeed ??
                                   selectedFlight?.groundSpeed,
                               altitude:
-                              detail?.altitude ?? selectedFlight?.altitude,
+                                  detail?.altitude ?? selectedFlight?.altitude,
                               takeoffTime:
-                              detail?.takeoffTime ??
+                                  detail?.takeoffTime ??
                                   selectedFlight?.takeoffTime,
                               eta: detail?.eta ?? selectedFlight?.eta,
                               flightNumber:
-                              detail?.flightNumber ??
+                                  detail?.flightNumber ??
                                   selectedFlight?.flightNumber,
                               registration:
-                              detail?.registration ??
+                                  detail?.registration ??
                                   selectedFlight?.registration,
                               callsign:
-                              detail?.callsign ?? selectedFlight?.callSign,
+                                  detail?.callsign ?? selectedFlight?.callSign,
                               track: detail?.track ?? selectedFlight?.track,
                               vspeed:
-                              detail?.vspeed ??
+                                  detail?.vspeed ??
                                   selectedFlight?.verticalSpeed,
                               source: detail?.source ?? selectedFlight?.source,
                               squawk: detail?.squawk ?? selectedFlight?.squawk,
                               flightTime:
-                              detail?.flightTime ??
+                                  detail?.flightTime ??
                                   selectedFlight?.flightTime,
                             );
 

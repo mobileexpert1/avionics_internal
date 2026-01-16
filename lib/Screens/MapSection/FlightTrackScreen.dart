@@ -235,18 +235,6 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     );
   }
 
-  // final Map<int, BitmapDescriptor> _iconCache = {};
-  //
-  // Future<BitmapDescriptor> _getCachedFlightIcon(double track) async {
-  //   final key = (track / 10).round() * 10;
-  //
-  //   if (_iconCache.containsKey(key)) return _iconCache[key]!;
-  //
-  //   final icon = await getRotatedPlaneIcon(key.toDouble(), color: Colors.red);
-  //   _iconCache[key] = icon;
-  //   return icon;
-  // }
-
   Future<BitmapDescriptor> _getFlightMarkerIcon(double track) async {
     return await getRotatedPlaneIcon(track, color: Colors.red);
   }
