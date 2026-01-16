@@ -27,6 +27,7 @@ class OnboardingPage extends StatelessWidget {
         fontSize: responsiveFontSize(baseSize),
         fontWeight: FontWeight.w600,
         color: const Color(0xFF2E2E3A),
+
       ),
     );
 
@@ -106,34 +107,46 @@ class OnboardingPage extends StatelessWidget {
 
     // ---------------- WEB ----------------
     if (kIsWeb) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (info.videoUrl == "") ...[
-            SizedBox(
-              width: double.infinity,
-              height: size.height * 0.65,
-              child: info.imageWidget,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 75),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildTitle(info.title, 30),
-                    const SizedBox(height: 20),
-                    buildDescription(info.description, 20),
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final maxH = constraints.maxHeight;
+
+          return SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: maxH),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (info.videoUrl == "") ...[
+                    SizedBox(
+                      width: double.infinity,
+                      height: maxH * 0.60,
+                      child: info.imageWidget,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 75),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 500),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildTitle(info.title, 30),
+                            const SizedBox(height: 20),
+                            buildDescription(info.description, 20),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
-                ),
+                  if (info.videoUrl != "") ...[
+                    buildVideo(maxH * 0.88),
+                  ],
+                ],
               ),
             ),
-          ],
-          if (info.videoUrl != "") ...[
-            buildVideo(size.height * 0.88),
-          ],
-        ],
+          );
+        },
       );
     }
 
