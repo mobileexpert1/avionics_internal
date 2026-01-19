@@ -43,10 +43,6 @@
             tools:replace="android:exported"
             tools:node="merge" />
 
-<!--        <meta-data android:name="com.google.android.geo.API_KEY"-->
-<!--            android:value="AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao"/>-->
-
-
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCgCkZkU5x5LrPm8nnK0MX82tFOhJLRA2M"/>
 
