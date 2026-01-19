@@ -231,18 +231,26 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
           int.parse(purchase.transactionDate!),
         ).toIso8601String();
       }
+      // await AppleSubscriptionRepository().postSubscriptionApi(
+      //   token: purchase.verificationData.serverVerificationData,
+      //   selectedSubscritionId: purchase.productID,
+      //   platform: Platform.isIOS ? "ios" : "android",
+      //   packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
+      //   originalTransactionId: purchase.purchaseID,
+      //   appTransactionId: purchase.purchaseID,
+      //   type: "subscription",
+      //   currency: product.currencyCode,
+      //   price: product.price,
+      //   startDate: startDate,
+      //   expiryDate: "",
+      // );
+
+      // Call API regardless of flow
       await AppleSubscriptionRepository().postSubscriptionApi(
         token: purchase.verificationData.serverVerificationData,
         selectedSubscritionId: purchase.productID,
         platform: Platform.isIOS ? "ios" : "android",
         packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
-        originalTransactionId: purchase.purchaseID,
-        appTransactionId: purchase.purchaseID,
-        type: "subscription",
-        currency: product.currencyCode,
-        price: product.price,
-        startDate: startDate,
-        expiryDate: "",
       );
 
       final backendResponse = await AppleSubscriptionRepository()
