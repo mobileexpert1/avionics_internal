@@ -192,7 +192,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               if (snapshot.hasData) ...snapshot.data!,
                             },
                             onCameraIdle: () async {
-                              //_fetchFlightsWithDebounce(constraints);
+                              _fetchFlightsWithDebounce(constraints);
                             },
                             onMapCreated:
                                 (GoogleMapController controller) async {
