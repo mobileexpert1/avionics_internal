@@ -24,6 +24,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   final _internetStatusController = StreamController<bool>.broadcast();
   bool _isConnected = true;
 
+  bool _isStopped = false;
+
   /// Expose current connection status and stream
   bool get isConnected => _isConnected;
   Stream<bool> get internetStream => _internetStatusController.stream;
@@ -92,7 +94,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   void sendMessage(String text) {
     if (!_isConnected) return;
-
+    _isStopped = false;
     final next = List<Map<String, String>>.from(state)
       ..removeWhere((m) => m['type'] == 'analyzing');
 
@@ -144,6 +146,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   void _onSocketMessage(ChatMessage msg) {
+    if (_isStopped) return;
     final next = List<Map<String, String>>.from(state);
 
     if (msg.author == ChatAuthor.bot) {
@@ -177,6 +180,19 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       }
     });
   }
+
+  /// Stop
+  void stopResponse() {
+    _isStopped = true;
+
+    final next = List<Map<String, String>>.from(state)
+      ..removeWhere((m) => m['type'] == 'analyzing');
+
+    emit(next);
+    // for backend (optional, safe)
+    // _repo.stopStreaming();
+  }
+
 
   @override
   Future<void> close() async {

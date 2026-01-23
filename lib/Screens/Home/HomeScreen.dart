@@ -532,7 +532,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .take(2)
                                 .map(
                                   (f) => AppListTileCard(
-                                    title: f.aircraftModel,
+                                    title: f.callSign,
                                     imagePath: (f.image),
                                     onTap: () {
                                       AnalyticsService.instance.buttonPressed(

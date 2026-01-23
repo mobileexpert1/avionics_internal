@@ -239,10 +239,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                       child: Container(
                                         width:
                                             screenWidth *
-                                            (kIsWeb ?  0.06 : 0.25),
+                                            (kIsWeb ? 0.06 : 0.25),
                                         height:
                                             screenWidth *
-                                            (kIsWeb ?  0.06 : 0.25),
+                                            (kIsWeb ? 0.06 : 0.25),
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.transparent,
@@ -257,7 +257,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                                 (kIsWeb ? 0.025 : 0.25),
                                             height:
                                                 screenWidth *
-                                                (kIsWeb ?  0.025 : 0.025),
+                                                (kIsWeb ? 0.025 : 0.025),
                                             fit: BoxFit.contain,
                                           ),
                                         ),
@@ -386,13 +386,19 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                               : null,
                           onTap: showSendButton && isConnected
                               ? () {
-                                  if (isAnalyzing) return;
+                                  if (isAnalyzing) {
+                                    context.read<ChatCubit>().stopResponse();
+                                    return;
+                                  }
                                   final text = _controller.text.trim();
                                   if (text.isNotEmpty) {
                                     context.read<ChatCubit>().sendMessage(text);
                                     _controller.clear();
                                     _scrollToBottom();
-                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.chatSendButton,FirebaseEvents.askChatScreen);
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.chatSendButton,
+                                      FirebaseEvents.askChatScreen,
+                                    );
                                   }
                                 }
                               : null,
