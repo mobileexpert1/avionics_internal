@@ -2,6 +2,7 @@ import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackbox_cubit.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_Map_Cubit.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -132,6 +133,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => ComparisonFilterCubit1()),
         BlocProvider(create: (_) => MapSearchAircraftListCubit()),
         BlocProvider(create: (_) => BlackboxCubit()),
+        BlocProvider(create: (_) => FlightMapCubit()),
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {

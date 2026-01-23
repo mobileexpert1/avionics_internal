@@ -151,11 +151,12 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                           FirebaseEvents.flightAircraftDetail,
                           FirebaseEvents.savedFlightScreen,
                         );
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => FlightMapCubit(),
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<FlightMapCubit>(),
                               child: FlightDetailScreen(
                                 ICAOType: item.icaoTypeCode ?? '',
                                 flightNumber: item.flightNumber,

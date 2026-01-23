@@ -392,7 +392,11 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                               : null,
                           onTap: showSendButton && isConnected
                               ? () {
-                                  if (isAnalyzing) return;
+                                  if (isAnalyzing) {
+                                    context.read<ChatCubit>().stopResponse();
+                                    return;
+                                  }
+
                                   final text = _controller.text.trim();
                                   if (text.isNotEmpty) {
                                     context.read<ChatCubit>().sendMessage(text);

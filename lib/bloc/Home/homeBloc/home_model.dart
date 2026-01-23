@@ -108,12 +108,14 @@ class Favourite extends BaseModel {
   final String aircraftModel;
   final String iCAOCode;
   final String image;
+  final String callSign;
 
   Favourite({
     required this.id,
     required this.aircraftModel,
     required this.iCAOCode,
     required this.image,
+    required this.callSign,
   });
 
   factory Favourite.fromJson(Map<String, dynamic> json) => Favourite(
@@ -121,6 +123,7 @@ class Favourite extends BaseModel {
     aircraftModel: json['Aircraft_Model'] ?? '',
     iCAOCode: json['ICAO_Type_Code'],
     image: json['Image'],
+    callSign: json['callsign'] ?? '',
   );
 
   factory Favourite.fromMap(Map<String, dynamic> m) => Favourite(
@@ -128,6 +131,7 @@ class Favourite extends BaseModel {
     aircraftModel: m['Aircraft_Model'] ?? '',
     iCAOCode: m['ICAO_Type_Code'],
     image: m['Image'],
+    callSign: m['callsign'] ?? '',
   );
 
   @override
