@@ -31,9 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.loginScreen,
-    );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.loginScreen);
   }
 
   @override
@@ -109,6 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onChanged: (val) => context
                                       .read<LoginCubit>()
                                       .passwordChanged(val),
+                                  onEnterPressed: (val) => context
+                                      .read<LoginCubit>()
+                                      .passwordChanged(val),
                                 );
                               },
                             ),
@@ -141,7 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (context) => ForgotScreen(),
                                   ),
                                 );
-                                AnalyticsService.instance.buttonPressed(FirebaseEvents.forgotButton, FirebaseEvents.loginScreen);
+                                AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.forgotButton,
+                                  FirebaseEvents.loginScreen,
+                                );
                               },
                               child: Text(
                                 ConstantStrings.forgotPassword,
@@ -223,7 +227,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (context) => SignupScreen(),
                                   ),
                                 );
-                                AnalyticsService.instance.buttonPressed(FirebaseEvents.signupButton, FirebaseEvents.loginScreen);
+                                AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.signupButton,
+                                  FirebaseEvents.loginScreen,
+                                );
                               },
                               child: Text(
                                 ConstantStrings.signUpPrompt,

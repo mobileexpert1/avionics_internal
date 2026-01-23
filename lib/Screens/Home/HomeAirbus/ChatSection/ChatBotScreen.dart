@@ -221,91 +221,97 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
                       builder: (context, messages) {
                         final screenWidth = MediaQuery.of(context).size.width;
-                        return ListView.builder(
-                          controller: _scrollCtrl,
-                          padding: const EdgeInsets.all(16),
-                          itemCount: messages.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return Column(
-                                children: [
-                                  const SizedBox(height: 18),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 12,
-                                      ),
-                                      child: Container(
-                                        width:
-                                            screenWidth *
-                                            (kIsWeb ?  0.06 : 0.25),
-                                        height:
-                                            screenWidth *
-                                            (kIsWeb ?  0.06 : 0.25),
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.transparent,
+                        return SelectableRegion(
+                          focusNode: FocusNode(),
+                          selectionControls: MaterialTextSelectionControls(),
+                          child: ListView.builder(
+                            controller: _scrollCtrl,
+                            padding: const EdgeInsets.all(16),
+                            itemCount: messages.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == 0) {
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 18),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12,
                                         ),
-                                        child: ClipOval(
-                                          child: SvgPicture.asset(
-                                            CommonUi.setSvgImage(
-                                              AssetsPath.ChatIcon,
+                                        child: Container(
+                                          width:
+                                              screenWidth *
+                                              (kIsWeb ? 0.06 : 0.25),
+                                          height:
+                                              screenWidth *
+                                              (kIsWeb ? 0.06 : 0.25),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.transparent,
+                                          ),
+                                          child: ClipOval(
+                                            child: SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath.ChatIcon,
+                                              ),
+                                              width:
+                                                  screenWidth *
+                                                  (kIsWeb ? 0.025 : 0.25),
+                                              height:
+                                                  screenWidth *
+                                                  (kIsWeb ? 0.025 : 0.025),
+                                              fit: BoxFit.contain,
                                             ),
-                                            width:
-                                                screenWidth *
-                                                (kIsWeb ? 0.025 : 0.25),
-                                            height:
-                                                screenWidth *
-                                                (kIsWeb ?  0.025 : 0.025),
-                                            fit: BoxFit.contain,
                                           ),
                                         ),
                                       ),
                                     ),
+                                  ],
+                                );
+                              }
+                              final message = messages[index - 1];
+
+                              if (message['type'] == 'analyzing') {
+                                return const _AnalyzingIndicator();
+                              }
+
+                              final isUser = message['type'] == 'user';
+                              return Align(
+                                alignment: isUser
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(
+                                    isUser ? 0 : 24,
+                                    isUser ? 8 : 7,
+                                    isUser ? 10 : 0,
+                                    isUser ? 8 : 7,
                                   ),
-                                ],
+                                  padding: EdgeInsets.all(isUser ? 12 : 7),
+                                  constraints: BoxConstraints(
+                                    maxWidth: screenWidth * 0.8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isUser
+                                        ? const Color(0xFF3F3D56)
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: SelectableText(
+                                    message['text'] ?? '',
+                                    style: TextStyle(
+                                      color: isUser
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
                               );
-                            }
-                            final message = messages[index - 1];
-
-                            if (message['type'] == 'analyzing') {
-                              return const _AnalyzingIndicator();
-                            }
-
-                            final isUser = message['type'] == 'user';
-                            return Align(
-                              alignment: isUser
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(
-                                  isUser ? 0 : 24,
-                                  isUser ? 8 : 7,
-                                  isUser ? 10 : 0,
-                                  isUser ? 8 : 7,
-                                ),
-                                padding: EdgeInsets.all(isUser ? 12 : 7),
-                                constraints: BoxConstraints(
-                                  maxWidth: screenWidth * 0.8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isUser
-                                      ? const Color(0xFF3F3D56)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  message['text'] ?? '',
-                                  style: TextStyle(
-                                    color: isUser ? Colors.white : Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                            },
+                          ),
                         );
                       },
                     ),
@@ -392,7 +398,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                     context.read<ChatCubit>().sendMessage(text);
                                     _controller.clear();
                                     _scrollToBottom();
-                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.chatSendButton,FirebaseEvents.askChatScreen);
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.chatSendButton,
+                                      FirebaseEvents.askChatScreen,
+                                    );
                                   }
                                 }
                               : null,

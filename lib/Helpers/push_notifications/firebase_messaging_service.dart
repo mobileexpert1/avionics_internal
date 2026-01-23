@@ -128,20 +128,19 @@ class FirebaseMessagingService {
 
       int tabIndex;
       Widget? nextScreen;
-      Widget? nextToNextScreen;
 
       // Determine tab index
       switch (screen.toLowerCase()) {
         case 'home':
           tabIndex = 0;
           break;
-        case 'trackFlight':
+        case 'trackflight':
           tabIndex = 1;
           break;
         case 'games':
           tabIndex = 2;
           break;
-        case 'askWilco':
+        case 'askwilco':
           tabIndex = 3;
           break;
         case 'profile':
@@ -153,22 +152,18 @@ class FirebaseMessagingService {
           break;
         case 'badgess_quiz':
           tabIndex = 2;
-          //nextScreen = const BadgesScreen();
           nextScreen = const QuizLockScreen();
           break;
         case 'badgess_oneword':
           tabIndex = 2;
-          //nextScreen = const BadgesScreen();
-          nextScreen = const OneWordTopicScreen();
+           nextScreen = const OneWordTopicScreen();
           break;
         case 'badgess_black':
           tabIndex = 2;
-          //nextScreen = const BadgesScreen();
           nextScreen = const BlackBoxLockScreen();
           break;
         case 'badgess_calculation':
           tabIndex = 2;
-          //nextScreen = const BadgesScreen();
           nextScreen = const CalculationLockScreen();
           break;
         default:

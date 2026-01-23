@@ -160,6 +160,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                               ? [state.selectedFlight!]
                               : state.flights ?? [],
                           false,
+
                         ),
                         builder: (context, snapshot) {
                           return GoogleMap(
@@ -761,28 +762,34 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 children: [
                                   CustomSlidableAction(
                                     onPressed: (_) async {
+                                      if (aircraft == null || data.id == null) {
+                                        debugPrint("❌ Aircraft or Flight data is null");
+                                        return;
+                                      }
+
                                       AnalyticsService.instance.buttonPressed(
                                         FirebaseEvents.favOrUnFavFlightButton,
                                         FirebaseEvents.trackScreen,
                                       );
 
-                                      final cubit = context
-                                          .read<AllPlanesCubit>();
+                                      final cubit = context.read<AllPlanesCubit>();
+
                                       await cubit.planFavOrUnfav1(
-                                        aircraft!.aircraftId.toString(),
-                                        data.callSign,
-                                        data.flightNumber.toString(),
-                                        data.id.toString(),
+                                        aircraft.aircraftId?.toString() ?? "",
+                                        data.callSign ?? "",
+                                        data.flightNumber?.toString() ?? "",
+                                        data.id!.toString(),
                                         context,
                                       );
+
                                       AppSnackBar.custom(
                                         context,
-                                        message: isFavorite
-                                            ? "Airline Unfavorite"
-                                            : "Airline Favorite",
+                                        message: isFavorite ? "Airline Unfavorite" : "Airline Favorite",
                                         svgAsset: "",
                                       );
-                                    },
+                                    }
+
+                                    ,
                                     backgroundColor: Colors.transparent,
                                     child: const SizedBox.shrink(),
                                   ),
@@ -1465,7 +1472,7 @@ class FlightCard extends StatelessWidget {
                                                   FirebaseEvents.trackScreen,
                                                 );
 
-                                            Navigator.push(
+                                              Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (_) =>

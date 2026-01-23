@@ -43,7 +43,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     emit(state.copyWith(loading: true));
     if (!kIsWeb) {
       _notificationShown = false;
-      emit(state.copyWith(loading: true));
 
       final isAvailable = await _iap.isAvailable();
       emit(state.copyWith(storeAvailable: isAvailable));
@@ -101,9 +100,13 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
   Future<void> _loadProducts() async {
     try {
-      final response = await _iap.queryProductDetails(
-        Platform.isIOS ? iosProductIds : androidProductIds,
-      );
+      final productIds = kIsWeb
+          ? <String>{}
+          : Platform.isIOS
+          ? iosProductIds
+          : androidProductIds;
+
+      final response = await _iap.queryProductDetails(productIds);
 
       if (response.error != null) {
         emit(state.copyWith(loading: false, error: response.error!.message));
@@ -328,7 +331,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   Future<void> cancelSubscription() async {
-    if (state.activeProductId != null) {
+    if (state.activeProductId == null || state.activeProductId!.isEmpty) {
       emit(state.copyWith(error: "No active subscription to cancel"));
       return;
     }

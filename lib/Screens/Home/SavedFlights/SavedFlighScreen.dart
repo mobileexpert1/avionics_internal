@@ -278,28 +278,33 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
         surfaceTintColor: Colors.white,
         centerTitle: true,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.showTabs)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: CustomTabBar(
-                tabTitles: _tabTitles,
-                initialIndex: _currentTabIndex,
-                onTabSelected: (index) {
-                  setState(() {
-                    _currentTabIndex = index;
-                  });
-                },
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1500),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (widget.showTabs)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  child: CustomTabBar(
+                    tabTitles: _tabTitles,
+                    initialIndex: _currentTabIndex,
+                    onTabSelected: (index) {
+                      setState(() {
+                        _currentTabIndex = index;
+                      });
+                    },
+                  ),
+                ),
+              Expanded(
+                child: BlocBuilder<SavedFlightCubit, SavedFlightState>(
+                  builder: (context, state) => _buildTabContent(state),
+                ),
               ),
-            ),
-          Expanded(
-            child: BlocBuilder<SavedFlightCubit, SavedFlightState>(
-              builder: (context, state) => _buildTabContent(state),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
