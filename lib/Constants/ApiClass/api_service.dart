@@ -203,11 +203,12 @@ class ApiService {
           throw 'Unsupported HTTP method: $method';
       }
 
-      print(
-        '[$method] URL: $url '
-        'Response Code: ${response.statusCode}',
-      );
       final decodedBody = utf8.decode(response.bodyBytes);
+
+      print(
+        "[$method] URL: $url "
+        '\nResponse Code: ${response.statusCode}, \nHeader Token: $requestHeaders,\nResponse Body: $decodedBody',
+      );
       //print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);
 
