@@ -15,6 +15,8 @@ class AircraftListDataRepository {
     );
 
     try {
+      final body = {"aircraft_id": aircraftIds};
+      print("Request body: $body");
       final jsonData =
           await ApiService.post(url: url, body: {"aircraft_id": aircraftIds})
               as Map<String, dynamic>;

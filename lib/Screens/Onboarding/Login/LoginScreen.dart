@@ -107,9 +107,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onChanged: (val) => context
                                       .read<LoginCubit>()
                                       .passwordChanged(val),
-                                  onEnterPressed: (val) => context
-                                      .read<LoginCubit>()
-                                      .passwordChanged(val),
+                                  // onEnterPressed: (val) => context
+                                  //     .read<LoginCubit>()
+                                  //     .passwordChanged(val),
+                                  onEnterPressed: (val) {
+                                    context.read<LoginCubit>().passwordChanged(
+                                      val,
+                                    );
+                                    if (kIsWeb) {
+                                      context
+                                          .read<LoginCubit>()
+                                          .validateAndLogin(context);
+                                    }
+                                  },
                                 );
                               },
                             ),

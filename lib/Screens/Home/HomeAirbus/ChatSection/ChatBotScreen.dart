@@ -361,6 +361,27 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                         maxLines: 5,
                         style: const TextStyle(fontSize: 14),
                         textInputAction: TextInputAction.done,
+
+                        onSubmitted: (val) {
+                          if (!kIsWeb) return;
+
+                          final text = val.trim();
+                          if (text.isEmpty) return;
+
+                          final cubit = context.read<ChatCubit>();
+
+                          final isAnalyzing = cubit.state.any(
+                                (msg) => msg['type'] == 'analyzing',
+                          );
+
+                          if (!isAnalyzing) {
+                            cubit.sendMessage(text);
+                            _controller.clear();
+                            _stopListening(context);
+                            _scrollToBottom();
+                          }
+                        },
+
                         decoration: InputDecoration(
                           isCollapsed: true,
                           hintText: 'Type your message here…',

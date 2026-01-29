@@ -120,6 +120,26 @@ class AircraftModel implements BaseModel {
     this.userId,
   });
 
+  AircraftModel copyWith({
+    String? aircraftId,
+    String? aircraftModel,
+    bool? isFavorite,
+    String? icaoTypeCode,
+    String? image,
+    ManufacturerModel? manufacturer,
+    String? userId,
+  }) {
+    return AircraftModel(
+      aircraftId: aircraftId ?? this.aircraftId,
+      aircraftModel: aircraftModel ?? this.aircraftModel,
+      isFavorite: isFavorite ?? this.isFavorite,
+      icaoTypeCode: icaoTypeCode ?? this.icaoTypeCode,
+      image: image ?? this.image,
+      manufacturer: manufacturer ?? this.manufacturer,
+      userId: userId ?? this.userId,
+    );
+  }
+
   factory AircraftModel.fromJson(Map<String, dynamic> json) {
     return AircraftModel(
       aircraftId: json['id']?.toString() ?? '',

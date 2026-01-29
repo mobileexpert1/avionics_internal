@@ -175,6 +175,16 @@ class _SignupScreenState extends State<SignupScreen> {
                                   onChanged: (val) => context
                                       .read<SignupCubit>()
                                       .confirmPasswordChanged(val),
+
+                                  onEnterPressed: (val) {
+                                    context.read<SignupCubit>().confirmPasswordChanged(val);
+
+                                    if (kIsWeb) {
+                                      context
+                                          .read<SignupCubit>()
+                                          .verifyEmailRegisteredOrNot(context);
+                                    }
+                                  },
                                 );
                               },
                             ),

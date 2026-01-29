@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,6 +41,29 @@ class _HomeScreenState extends State<HomeScreen> {
     homeCubit.fetchHomeData(context);
     homeCubit.repository.getMapKeyValueFromServer();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.exploreScreen);
+  }
+
+  Future<void> _GetFr24Key() async {
+    final localKey =
+    await SharedPrefsHelper.getMapKeyValuesForApi();
+
+    if (localKey.isNotEmpty) {
+      return;
+    }
+
+    try {
+      final response =
+      await FlightRepository().getMapKeyValueFromServer();
+
+      if (response.data.fr24 != null &&
+          response.data.fr24!.isNotEmpty) {
+        await SharedPrefsHelper.seMapKeyValuesFromServer(
+          response.data.fr24!,
+        );
+      }
+    } catch (e) {
+      debugPrint("FR24 key fetch failed: $e");
+    }
   }
 
   @override
@@ -534,22 +558,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                   (f) => AppListTileCard(
                                     title: f.callSign,
                                     imagePath: (f.image),
-                                    onTap: () {
+                                    onTap: () async {
                                       AnalyticsService.instance.buttonPressed(
                                         FirebaseEvents.flightAircraftDetail,
                                         FirebaseEvents.savedFlightScreen,
                                       );
+                                      await _GetFr24Key();
                                       // Pending Details From Backend side
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
-                                            create: (_) => FlightMapCubit(),
+                                          builder: (_) => BlocProvider.value(
+                                            value: context.read<FlightMapCubit>(),
                                             child: FlightDetailScreen(
                                               ICAOType: f.iCAOCode,
-                                              flightNumber: "",
+                                              flightNumber: f.flightNumber,
                                               callsign: "",
-                                              flightId: f.id,
+                                              flightId: f.flightId,
                                               fromSavedFlight: true,
                                               flightDetail:
                                                   FlightAircraftDetail(
