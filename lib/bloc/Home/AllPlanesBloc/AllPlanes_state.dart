@@ -1,4 +1,5 @@
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_model.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_model.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../home/manufacturer/Manufacturer_detail_model.dart';
@@ -14,6 +15,7 @@ class AllPlanesState {
   final String? apiError;
   final CommonApiStatus status;
   final String? errorMessage;
+  final List<FlightModel>? flights;
 
   const AllPlanesState({
     required this.listoFAircraftModels,
@@ -26,6 +28,7 @@ class AllPlanesState {
     this.apiError,
     this.status = CommonApiStatus.initial,
     this.errorMessage,
+    this.flights,
   });
 
   AllPlanesState copyWith({
@@ -39,6 +42,7 @@ class AllPlanesState {
     String? apiError,
     CommonApiStatus? status,
     String? errorMessage,
+    List<FlightModel>? flights,
   }) {
     return AllPlanesState(
       listoFAircraftModels: listoFAircraftModels ?? this.listoFAircraftModels,
@@ -51,6 +55,7 @@ class AllPlanesState {
       apiError: apiError ?? this.apiError,
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
+      flights: flights ?? this.flights,
     );
   }
 }

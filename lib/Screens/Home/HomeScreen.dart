@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -534,22 +535,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                   (f) => AppListTileCard(
                                     title: f.callSign,
                                     imagePath: (f.image),
-                                    onTap: () {
+                                    onTap: () async {
                                       AnalyticsService.instance.buttonPressed(
                                         FirebaseEvents.flightAircraftDetail,
                                         FirebaseEvents.savedFlightScreen,
                                       );
+
+                                      await homeCubit.repository.getFlightKeyValueFromServer();
                                       // Pending Details From Backend side
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
-                                            create: (_) => FlightMapCubit(),
+                                          builder: (_) => BlocProvider.value(
+                                            value: context.read<FlightMapCubit>(),
                                             child: FlightDetailScreen(
                                               ICAOType: f.iCAOCode,
-                                              flightNumber: "",
+                                              flightNumber: f.flightNumber,
                                               callsign: "",
-                                              flightId: f.id,
+                                              flightId: f.flightId,
                                               fromSavedFlight: true,
                                               flightDetail:
                                                   FlightAircraftDetail(

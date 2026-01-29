@@ -88,7 +88,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         flightId: flightId,
         flightNumber: flightNumber,
       );
-
+      updateFlightFavoriteByCallSign(callSign);
       emit(state.copyWith(status: CommonApiStatus.success));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
@@ -118,4 +118,20 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     planFavOrUnfav(id, context);
     emit(state.copyWith(listoFAircraftModels: updatedList));
   }
+
+  void updateFlightFavoriteByCallSign(String callSign) {
+    final updatedFlights = state.flights?.map((flight) {
+      if (flight.callSign == callSign) {
+        return flight.copyWith(
+          aircraftDetails: flight.aircraftDetails?.copyWith(
+            isFavorite: !(flight.aircraftDetails?.isFavorite ?? false),
+          ),
+        );
+      }
+      return flight;
+    }).toList();
+
+    emit(state.copyWith(flights: updatedFlights));
+  }
+
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../MapSection/flight_key_values_model.dart';
+import '../../MapSection/flight_map_repository.dart';
 import '../manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
@@ -46,6 +47,22 @@ class HomeRepository {
       }
     }
     return null;
+  }
+
+  Future<void> getFlightKeyValueFromServer() async {
+    final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
+    if (localKey.isNotEmpty) {
+      return;
+    }
+    try {
+      final response = await FlightRepository().getMapKeyValueFromServer();
+      if (response.data.fr24 != null && response.data.fr24!.isNotEmpty) {
+        await SharedPrefsHelper.seMapKeyValuesFromServer(response.data.fr24!);
+      }
+    } catch (e) {
+      print(e.toString());
+      return;
+    }
   }
 
   Future<HomeResponse> getHomeData({VoidCallback? onUnauthorized}) async {

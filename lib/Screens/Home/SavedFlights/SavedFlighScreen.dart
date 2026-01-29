@@ -1,3 +1,5 @@
+import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,6 +38,29 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.savedFlightScreen,
     );
+  }
+
+  Future<void> _GetFr24Key() async {
+    final localKey =
+    await SharedPrefsHelper.getMapKeyValuesForApi();
+
+    if (localKey.isNotEmpty) {
+      return;
+    }
+
+    try {
+      final response =
+      await FlightRepository().getMapKeyValueFromServer();
+
+      if (response.data.fr24 != null &&
+          response.data.fr24!.isNotEmpty) {
+        await SharedPrefsHelper.seMapKeyValuesFromServer(
+          response.data.fr24!,
+        );
+      }
+    } catch (e) {
+      debugPrint("FR24 key fetch failed: $e");
+    }
   }
 
   Widget _buildAircraftList(List<dynamic> list, String emptyMessage) {
@@ -133,7 +158,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                     ],
                   ),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (isSavedTab) {
                         AnalyticsService.instance.buttonPressed(
                           FirebaseEvents.airCraftDetailScreen,
@@ -151,7 +176,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                           FirebaseEvents.flightAircraftDetail,
                           FirebaseEvents.savedFlightScreen,
                         );
-
+                        await _GetFr24Key();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
