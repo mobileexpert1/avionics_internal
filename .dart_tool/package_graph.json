@@ -1133,7 +1133,7 @@
     },
     {
       "name": "objective_c",
-      "version": "9.2.4",
+      "version": "9.2.5",
       "dependencies": [
         "code_assets",
         "collection",
@@ -1351,7 +1351,7 @@
     },
     {
       "name": "json_annotation",
-      "version": "4.9.0",
+      "version": "4.10.0",
       "dependencies": [
         "meta"
       ]
