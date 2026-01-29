@@ -54,7 +54,12 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
       context: context,
       builder: (_) => RadioPopup(
         onSelected: (selectedIndex) {
-          quizCubit.reportQuestionPostMethod(selectedIndex, quizCubit, context,widget.gameId);
+          quizCubit.reportQuestionPostMethod(
+            selectedIndex,
+            quizCubit,
+            context,
+            widget.gameId,
+          );
           setState(() {
             isNeedToShowFlagOptions = false;
           });
@@ -84,11 +89,11 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               rightButton: isNeedToShowFlagOptions == false
                   ? null
                   : IconButton(
-                icon: const Icon(Icons.flag, color: Colors.black),
-                onPressed: () async {
-                  _showRadioPopup(context);
-                },
-              ),
+                      icon: const Icon(Icons.flag, color: Colors.black),
+                      onPressed: () async {
+                        _showRadioPopup(context);
+                      },
+                    ),
               leftButton: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
                 onPressed: () async {
@@ -202,7 +207,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                                   Future.delayed(
                                     const Duration(milliseconds: 300),
-                                        () {
+                                    () {
                                       if (_scrollController.hasClients) {
                                         _scrollController.animateTo(
                                           _scrollController
@@ -562,12 +567,22 @@ class RadioPopup extends StatefulWidget {
 }
 
 class _RadioPopupState extends State<RadioPopup> {
+  String? _errorText;
   int? _selectedOption;
+  final TextEditingController _otherIssueController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.76;
     if (width > 400) width = 400;
+
+    final bool isOtherSelected =
+        _selectedOption == widget.options.indexOf('Other Issue');
+
+    final bool canSubmit =
+        _selectedOption != null &&
+        (!isOtherSelected || _otherIssueController.text.trim().isNotEmpty) &&
+        _errorText == null;
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -597,7 +612,10 @@ class _RadioPopupState extends State<RadioPopup> {
                     ),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.close, color: AppColors.customBottomEnabledColour),
+                      child: const Icon(
+                        Icons.close,
+                        color: AppColors.customBottomEnabledColour,
+                      ),
                     ),
                   ],
                 ),
@@ -618,8 +636,16 @@ class _RadioPopupState extends State<RadioPopup> {
                       onChanged: (value) {
                         setState(() {
                           _selectedOption = value;
+
+                          // Clear text if user switches away from "Other Issue"
+                          if (_selectedOption !=
+                              widget.options.indexOf('Other Issue')) {
+                            _otherIssueController.clear();
+                            _errorText = null;
+                          }
                         });
                       },
+
                       title: Text(option),
                     ),
                   ],
@@ -627,6 +653,58 @@ class _RadioPopupState extends State<RadioPopup> {
               }).toList(),
 
               const Divider(thickness: 1, height: 1),
+
+              if (isOtherSelected) ...[
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: TextField(
+                    controller: _otherIssueController,
+                    maxLength: 20,
+                    onChanged: (value) {
+                      setState(() {
+                        _errorText = value.length == 20
+                            ? 'Maximum 20 characters allowed'
+                            : null;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Describe issue',
+                      errorText: _errorText,
+                      counterText: '',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: AppColors.customBottomEnabledColour,
+                          width: 1.5,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.red),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+
+              if (!isOtherSelected) Divider(thickness: 1, height: 1),
+
               // Footer buttons
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -636,7 +714,9 @@ class _RadioPopupState extends State<RadioPopup> {
                     Expanded(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: AppColors.customBottomEnabledColour),
+                          side: const BorderSide(
+                            color: AppColors.customBottomEnabledColour,
+                          ),
                         ),
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text(
@@ -650,16 +730,21 @@ class _RadioPopupState extends State<RadioPopup> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.customBottomEnabledColour,
+                          backgroundColor: canSubmit
+                              ? AppColors.customBottomEnabledColour
+                              : Colors.grey,
                         ),
-                        onPressed: _selectedOption == null
-                            ? null
-                            : () {
-                          widget.onSelected(
-                            widget.options[_selectedOption!],
-                          );
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: canSubmit
+                            ? () {
+                                widget.onSelected(
+                                  _selectedOption ==
+                                          widget.options.indexOf('Other Issue')
+                                      ? _otherIssueController.text.trim()
+                                      : widget.options[_selectedOption!],
+                                );
+                                Navigator.of(context).pop();
+                              }
+                            : null,
                         child: const Text(
                           'Report',
                           style: TextStyle(color: Colors.white),
@@ -676,4 +761,3 @@ class _RadioPopupState extends State<RadioPopup> {
     );
   }
 }
-

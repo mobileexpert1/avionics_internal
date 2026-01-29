@@ -214,6 +214,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           }
         });
       } else {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(
           state.copyWith(
             isLoading: false,
@@ -541,7 +542,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           gameId,
         );
 
-        if (response.detail.toLowerCase() == "quiz answer submitted successfully".toLowerCase()) {
+        if (response.detail.toLowerCase() ==
+            "quiz answer submitted successfully".toLowerCase()) {
           final data = response.data;
           Future.delayed(const Duration(milliseconds: 100), () {
             Navigator.push(
@@ -564,6 +566,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             );
           });
         } else {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Result submit failed. Try again.")),
           );
@@ -572,6 +576,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           );
         }
       } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
