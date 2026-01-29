@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -467,7 +468,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                         rotateGesturesEnabled: false,
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
-                        mapType: state.mapType,
+                        mapType: context.read<FlightMapCubit>().state.mapType.toGoogleMapType(),
                         polylines: _staticPolyline.union(
                           _flightNextLocationCoordinates,
                         ),

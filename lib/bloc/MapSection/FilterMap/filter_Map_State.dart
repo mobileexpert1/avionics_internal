@@ -1,13 +1,35 @@
-// filter_Map_State.dart
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+enum CustomMapType {
+  standard,
+  satellite,
+  hybrid,
+  polygon, // new type
+}
+
+extension CustomMapTypeExtension on CustomMapType {
+  MapType toGoogleMapType() {
+    switch (this) {
+      case CustomMapType.standard:
+        return MapType.normal;
+      case CustomMapType.satellite:
+        return MapType.satellite;
+      case CustomMapType.hybrid:
+        return MapType.hybrid;
+      case CustomMapType.polygon:
+        return MapType
+            .normal;
+    }
+  }
+}
 
 class FilterMapState extends Equatable {
   final List<String> selectedCategories;
   final bool showCategories;
   final bool showMap;
   final bool showAircraftLabels;
-  final MapType mapType;
+  final CustomMapType mapType;
   final List<String> categories;
 
   const FilterMapState({
@@ -25,7 +47,8 @@ class FilterMapState extends Equatable {
       showCategories: true,
       showMap: true,
       showAircraftLabels: true,
-      mapType: MapType.normal,
+      mapType: CustomMapType.standard,
+      // default
       categories: const ["Commercial", "Cargo", "Business", "Other"],
     );
   }
@@ -35,7 +58,7 @@ class FilterMapState extends Equatable {
     bool? showCategories,
     bool? showMap,
     bool? showAircraftLabels,
-    MapType? mapType,
+    CustomMapType? mapType,
     List<String>? categories,
   }) {
     return FilterMapState(
@@ -58,4 +81,3 @@ class FilterMapState extends Equatable {
     categories,
   ];
 }
-

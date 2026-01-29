@@ -1,12 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'filter_Map_State.dart';
 
 class FilterMapMainCubit extends Cubit<FilterMapState> {
   FilterMapMainCubit() : super(FilterMapState.initial());
 
-  void setInitialMapType(MapType type) {
+  void setInitialMapType(CustomMapType type) {
     emit(state.copyWith(mapType: type));
   }
 
@@ -31,29 +29,30 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
   void changeMapTypeByName(String val) {
     switch (val) {
       case 'Standard':
-        emit(state.copyWith(mapType: MapType.normal));
+        emit(state.copyWith(mapType: CustomMapType.standard));
         break;
       case 'Satellite':
-        emit(state.copyWith(mapType: MapType.satellite));
+        emit(state.copyWith(mapType: CustomMapType.satellite));
         break;
       case 'Hybrid':
-        emit(state.copyWith(mapType: MapType.hybrid));
+        emit(state.copyWith(mapType: CustomMapType.hybrid));
+        break;
+      case 'Polygon':
+        emit(state.copyWith(mapType: CustomMapType.polygon));
         break;
     }
   }
 
   String getMapTypeName() {
     switch (state.mapType) {
-      case MapType.normal:
+      case CustomMapType.standard:
         return "Standard";
-      case MapType.satellite:
+      case CustomMapType.satellite:
         return "Satellite";
-      case MapType.hybrid:
+      case CustomMapType.hybrid:
         return "Hybrid";
-      case MapType.none:
-        return "Standard";
-      case MapType.terrain:
-        return "Standard";
+      case CustomMapType.polygon:
+        return "Polygon";
     }
   }
 
@@ -61,7 +60,6 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
     emit(state.copyWith(showAircraftLabels: !state.showAircraftLabels));
   }
 
-  // Reset all filters
   void resetFilter() {
     emit(
       state.copyWith(
@@ -69,7 +67,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
         showCategories: true,
         showMap: true,
         showAircraftLabels: true,
-        mapType: MapType.normal,
+        mapType: CustomMapType.standard, // reset to default
       ),
     );
   }

@@ -207,7 +207,7 @@ class ApiService {
 
       print(
         "[$method] URL: $url "
-        '\nResponse Code: ${response.statusCode}, \nHeader Token: $requestHeaders,\nResponse Body: $decodedBody',
+        '\nResponse Code: ${response.statusCode}, \nHeader Token: $requestHeaders',
       );
       //print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);

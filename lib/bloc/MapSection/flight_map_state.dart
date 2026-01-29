@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../Home/AircraftComparison/AircraftComparisonModel.dart';
+import 'FilterMap/filter_Map_State.dart';
 import 'flight_map_model.dart';
 
 class FlightMapState {
@@ -16,7 +17,7 @@ class FlightMapState {
   final Position? position;
   final List<FlightModel>? flights;
   final List<AircraftModel>? flightsListDetails;
-  final MapType mapType;
+  final CustomMapType mapType;
   final List<FlightAircraftDetail>? flightDetail;
   final FlightAircraftDetail? selectedFlightDetail;
   final AircraftModel? selectedAircraftDetails;
@@ -44,7 +45,7 @@ class FlightMapState {
     this.position,
     this.flights,
     this.flightsListDetails,
-    this.mapType = MapType.normal,
+    this.mapType = CustomMapType.standard,
     this.flightDetail,
     this.selectedFlightDetail,
     this.selectedAircraftDetails,
@@ -70,7 +71,7 @@ class FlightMapState {
     Position? position,
     List<FlightModel>? flights,
     List<AircraftModel>? flightsListDetails,
-    MapType? mapType,
+    CustomMapType? mapType,
     List<FlightAircraftDetail>? flightDetail,
     FlightAircraftDetail? selectedFlightDetail,
     AircraftModel? selectedAircraftDetails,

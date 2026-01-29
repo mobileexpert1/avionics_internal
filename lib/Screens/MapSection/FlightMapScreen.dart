@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/AppColors.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -79,9 +81,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final hasPermission = await context
-          .read<FlightMapCubit>()
-          .getCurrentLocation(context);
+      final hasPermission = await _mapCubit.getCurrentLocation(context);
 
       if (hasPermission) {
         if (widget.skipInitialPopup && widget.openMode != null) {
@@ -163,11 +163,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                         ),
                         builder: (context, snapshot) {
                           return GoogleMap(
-                            minMaxZoomPreference: MinMaxZoomPreference(7, 12),
+                            //minMaxZoomPreference: MinMaxZoomPreference(7, 12),
                             zoomControlsEnabled: false,
                             myLocationButtonEnabled: false,
                             rotateGesturesEnabled: false,
-                            mapType: state.mapType,
+                            mapType: _mapCubit.state.mapType.toGoogleMapType(),
+                            polygons:
+                                _mapCubit.state.mapType == CustomMapType.polygon
+                                ? _mapCubit.polygons
+                                : {},
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                 state.position!.latitude,
@@ -474,7 +478,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     );
 
     for (final airport in airports) {
-      // 🔐 Avoid bad backend data
+      // avoid bad backend data
       if (airport.latitude == null || airport.longitude == null) continue;
 
       markers.add(
@@ -775,15 +779,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                                       final cubit = context
                                           .read<AllPlanesCubit>();
-
                                       await cubit.planFavOrUnfav1(
-                                        aircraft.aircraftId?.toString() ?? "",
-                                        data.callSign ?? "",
-                                        data.flightNumber?.toString() ?? "",
-                                        data.id!.toString(),
+                                        aircraft.aircraftId.toString(),
+                                        data.callSign,
+                                        data.flightNumber.toString(),
+                                        data.id.toString(),
                                         context,
                                       );
-
                                       AppSnackBar.custom(
                                         context,
                                         message: isFavorite
@@ -806,9 +808,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                       _isMapListViewShown = false;
                                       _singleSearchMarker = marker;
                                       selectedFlightId = data.id;
-                                      context
-                                          .read<FlightMapCubit>()
-                                          .setSelectedFlight(data);
+                                      _mapCubit.setSelectedFlight(data);
                                     });
                                   });
 
@@ -1072,9 +1072,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         isComeFromMapSection: true,
         controller: _searchController,
         onFilterTap: () async {
-          final mapCubit = context.read<FlightMapCubit>();
-          final currentMapType = mapCubit.state.mapType;
-          final currentCategories = mapCubit.state.selectedCategories ?? [];
+          final currentMapType = _mapCubit.state.mapType;
+          final currentCategories = _mapCubit.state.selectedCategories ?? [];
           final filterResult = await showModalBottomSheet<FilterResult>(
             context: context,
             isScrollControlled: true,

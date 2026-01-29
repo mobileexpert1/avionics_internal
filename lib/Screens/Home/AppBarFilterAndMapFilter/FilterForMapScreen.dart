@@ -14,7 +14,7 @@ import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
 
 class FilterResult {
-  final MapType mapType;
+  final CustomMapType mapType;
   final List<String> categories;
   final List<String> aircraftIcaos;
 
@@ -22,7 +22,7 @@ class FilterResult {
 }
 
 class FilterForMapScreen extends StatefulWidget {
-  final MapType initialMapType;
+  final CustomMapType initialMapType;
   final List<String>? initialCategories;
   final List<String>? initialAircraftIcaos;
 
@@ -210,7 +210,7 @@ class _FilterContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   SegmentedControl(
-                    options: const ['Standard', 'Satellite', 'Hybrid'],
+                    options: const ['Standard', 'Satellite', 'Hybrid','Polygon'],
                     selectedValue: cubit.getMapTypeName(),
                     onChanged: cubit.changeMapTypeByName,
                   ),
