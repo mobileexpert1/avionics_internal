@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
@@ -31,13 +32,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final bool isWeb = kIsWeb;
 
-    //Space reserved for buttons + indicator
     final double bottomControlsHeight = isWeb ? 60 : 100;
-
     final double imageHeight = isWeb ? size.height : size.height * 0.45;
 
     final List<OnboardingInfo> pages = [
@@ -47,16 +52,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         imageWidget: isWeb
             ? _buildImage(AssetsPath.undraw_aircraft_fbvl, imageHeight)
             : Padding(
-          padding: EdgeInsets.only(
-            top: size.width * 0.15,
-            bottom: size.width * 0.08,
-            left: size.width * 0.02,
-          ),
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.undraw_aircraft_fbvl),
-            fit: BoxFit.fill,
-          ),
-        ),
+                padding: EdgeInsets.only(
+                  top: size.width * 0.15,
+                  bottom: size.width * 0.08,
+                  left: size.width * 0.02,
+                ),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.undraw_aircraft_fbvl),
+                  fit: BoxFit.fill,
+                ),
+              ),
         videoUrl: "",
       ),
       OnboardingInfo(
@@ -64,15 +69,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         description: ConstantStrings.description2,
         imageWidget: isWeb
             ? _buildImage(AssetsPath.map, imageHeight)
-            : Padding(
-          padding: EdgeInsets.zero,
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.map),
-            width: size.width,
-            height: size.height * 0.7,
-            fit: BoxFit.cover,
-          ),
-        ),
+            : SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.map),
+                width: size.width,
+                height: size.height * 0.7,
+                fit: BoxFit.cover,
+              ),
         videoUrl: "",
       ),
       OnboardingInfo(
@@ -81,17 +83,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         imageWidget: isWeb
             ? _buildImage(AssetsPath.compare, imageHeight)
             : Padding(
-          padding: EdgeInsets.only(
-            top: size.width * 0.30,
-            bottom: size.width * 0.08,
-            left: size.width * 0.08,
-          ),
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.compare),
-            height: size.height * 0.40,
-            fit: BoxFit.fill,
-          ),
-        ),
+                padding: EdgeInsets.only(
+                  top: size.width * 0.30,
+                  bottom: size.width * 0.08,
+                  left: size.width * 0.08,
+                ),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.compare),
+                  height: size.height * 0.40,
+                  fit: BoxFit.fill,
+                ),
+              ),
         videoUrl: "",
       ),
       OnboardingInfo(
@@ -100,17 +102,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         imageWidget: isWeb
             ? _buildImage(AssetsPath.filter, imageHeight)
             : Padding(
-          padding: EdgeInsets.only(
-            top: size.width * 0.30,
-            bottom: size.width * 0.08,
-            left: size.width * 0.08,
-          ),
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.filter),
-            height: size.height * 0.40,
-            fit: BoxFit.contain,
-          ),
-        ),
+                padding: EdgeInsets.only(
+                  top: size.width * 0.30,
+                  bottom: size.width * 0.08,
+                  left: size.width * 0.08,
+                ),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.filter),
+                  height: size.height * 0.40,
+                  fit: BoxFit.contain,
+                ),
+              ),
         videoUrl: "",
       ),
       OnboardingInfo(
@@ -119,16 +121,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         imageWidget: isWeb
             ? _buildImage(AssetsPath.instantAI, imageHeight)
             : Padding(
-          padding: EdgeInsets.only(
-            top: size.width * 0.35,
-            bottom: size.width * 0.08,
-          ),
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.instantAI),
-            height: size.height * 0.40,
-            fit: BoxFit.contain,
-          ),
-        ),
+                padding: EdgeInsets.only(
+                  top: size.width * 0.35,
+                  bottom: size.width * 0.08,
+                ),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.instantAI),
+                  height: size.height * 0.40,
+                  fit: BoxFit.contain,
+                ),
+              ),
         videoUrl: "",
       ),
       OnboardingInfo(
@@ -137,25 +139,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         imageWidget: isWeb
             ? _buildImage(AssetsPath.Quiz, imageHeight)
             : Padding(
-          padding: EdgeInsets.only(
-            top: size.width * 0.35,
-            bottom: size.width * 0.08,
-            left: size.width * 0.04,
-          ),
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.Quiz),
-            height: size.height * 0.40,
-            fit: BoxFit.contain,
-          ),
-        ),
+                padding: EdgeInsets.only(
+                  top: size.width * 0.35,
+                  bottom: size.width * 0.08,
+                  left: size.width * 0.04,
+                ),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.Quiz),
+                  height: size.height * 0.40,
+                  fit: BoxFit.contain,
+                ),
+              ),
         videoUrl: "",
       ),
       OnboardingInfo(
         title: "",
         description: "",
-        imageWidget: const Wrap(),
+        imageWidget: Wrap(),
         videoUrl:
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
       ),
     ];
 
@@ -183,7 +185,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     controller: _controller,
                     itemCount: pages.length,
                     onPageChanged: (index) {
-                      setState(() => onLastPage = index == pages.length - 1);
+                      if (!mounted) return;
+                      setState(() {
+                        onLastPage = index == pages.length - 1;
+                      });
                     },
                     itemBuilder: (context, index) {
                       return OnboardingPage(info: pages[index]);
@@ -192,27 +197,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
 
-              // --- SmoothPageIndicator ---
+              // --- Indicator ---
               Positioned(
                 bottom: size.height * (isWeb ? 0.06 : 0.115),
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: SmoothPageIndicator(
-                    controller: _controller,
-                    count: pages.length,
-                    effect: WormEffect(
-                      spacing: isWeb ? 10 : 10,
-                      activeDotColor: Colors.black,
-                      dotColor: Colors.grey.shade300,
-                      dotHeight: isWeb ? 12 : 10,
-                      dotWidth: isWeb ? 12 : 10,
-                    ),
+                child: SmoothPageIndicator(
+                  controller: _controller,
+                  count: pages.length,
+                  effect: WormEffect(
+                    activeDotColor: Colors.black,
+                    dotColor: Colors.grey.shade300,
+                    dotHeight: isWeb ? 12 : 10,
+                    dotWidth: isWeb ? 12 : 10,
                   ),
                 ),
               ),
 
-              // --- Skip & Next Buttons ---
+              // --- Buttons ---
               Positioned(
                 bottom: size.height * (isWeb ? 0.06 : 0.09),
                 left: isWeb ? 60 : 30,
@@ -222,6 +222,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     TextButton(
                       onPressed: () {
+                        if (!mounted) return;
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -239,6 +240,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     TextButton(
                       onPressed: () {
+                        if (!mounted) return;
+
                         if (onLastPage) {
                           Navigator.pushReplacement(
                             context,

@@ -11,10 +11,13 @@ class ForgotCubit extends Cubit<ForgotState> {
   ForgotCubit() : super(ForgotState());
 
   void emailChanged(String email) {
-    emit(state.copyWith(
-      email: email,
-      isButtonEnabled: email.isNotEmpty,
-    ));
+    emit(
+      state.copyWith(
+        email: email,
+        isButtonEnabled: email.isNotEmpty,
+        emailError: null,
+      ),
+    );
   }
 
   Future<void> validateAndSubmit(BuildContext context) async {
@@ -25,17 +28,23 @@ class ForgotCubit extends Cubit<ForgotState> {
       return;
     }
 
-    await forgotUserApi(context);
+    await _forgotUserApi(context);
   }
 
-  Future<void> forgotUserApi(BuildContext context) async {
+  Future<void> _forgotUserApi(BuildContext context) async {
     emit(
-      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+      state.copyWith(
+        status: CommonApiStatus.submitting,
+        errorMessage: null,
+      ),
     );
+
     try {
       await ForgotRepository().forgotUserApi(email: state.email);
 
       emit(state.copyWith(status: CommonApiStatus.success));
+
+      if (!context.mounted) return;
 
       Navigator.push(
         context,
@@ -45,7 +54,10 @@ class ForgotCubit extends Cubit<ForgotState> {
         ),
       );
     } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      if (context.mounted) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+      }
+
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,

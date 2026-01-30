@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
@@ -9,21 +10,25 @@ import '../Login/LoginScreen.dart';
 import '../Signup/SignupScreen.dart';
 
 void main() {
-  runApp(StartExploringApp());
+  runApp(const StartExploringApp());
 }
 
 class StartExploringApp extends StatelessWidget {
+  const StartExploringApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: ConstantStrings.exploring,
-      home: StartExploringScreen(),
       debugShowCheckedModeBanner: false,
+      home: const StartExploringScreen(),
     );
   }
 }
 
 class StartExploringScreen extends StatefulWidget {
+  const StartExploringScreen({super.key});
+
   @override
   State<StartExploringScreen> createState() => _StartExploringScreenState();
 }
@@ -40,6 +45,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
     double logoWidth = screenWidth * 0.4;
     double textFontSize = screenWidth < 360
         ? 24
@@ -121,10 +127,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                 ),
                               ),
                               onPressed: () {
+                                if (!mounted) return;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SignupScreen(),
+                                    builder: (_) => SignupScreen(),
                                   ),
                                 );
                               },
@@ -156,10 +163,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                 ),
                               ),
                               onPressed: () {
+                                if (!mounted) return;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => LoginScreen(),
+                                    builder: (_) => const LoginScreen(),
                                   ),
                                 );
                               },

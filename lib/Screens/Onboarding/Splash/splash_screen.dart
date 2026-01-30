@@ -1,9 +1,10 @@
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+
 import '../../../Constants/constantImages.dart';
 import '../../../RootDecider.dart';
 import 'onboarding_screen.dart';
@@ -25,10 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateAfterDelay() async {
     await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
     final isFirst = await SharedPrefsHelper.isFirstLaunch();
-
+    if (!mounted) return;
     if (!isFirst) {
       await SharedPrefsHelper.setFirstLaunchDone();
+      if (!mounted) return;
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => OnboardingScreen()));
@@ -43,12 +46,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // Adjust sizes based on screen width
     double logoWidth = screenWidth * 0.4;
     double textFontSize = screenWidth < 600 ? 13 : 16;
 
     return Scaffold(
-      backgroundColor: Color(0xFF3F3D56),
+      backgroundColor: const Color(0xFF3F3D56),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -59,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 Center(
                   child: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.splashLogo),
-                    width: logoWidth.clamp(100, 300), // limit range
+                    width: logoWidth.clamp(100, 300),
                     fit: BoxFit.contain,
                   ),
                 ),

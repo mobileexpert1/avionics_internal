@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
@@ -16,8 +17,10 @@ import '../../../bloc/Onboarding/signup/signup_state.dart';
 import '../Login/LoginScreen.dart';
 
 class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
@@ -26,7 +29,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
+    // ✅ RELEASE MEMORY
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
@@ -51,9 +55,13 @@ class _SignupScreenState extends State<SignupScreen> {
       child: BlocConsumer<SignupCubit, SignupState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
+          if (!mounted) return;
+
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage ?? 'Signup failed')),
+              SnackBar(
+                content: Text(state.errorMessage ?? 'Signup failed'),
+              ),
             );
           }
         },
@@ -70,9 +78,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       color: Color(0xFF151A6A),
                     ),
                     onPressed: () {
+                      if (!mounted) return;
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => LoginScreen()),
-                        (route) => false,
+                        MaterialPageRoute(
+                          builder: (_) => const LoginScreen(),
+                        ),
+                            (route) => false,
                       );
                     },
                   ),
@@ -91,21 +102,23 @@ class _SignupScreenState extends State<SignupScreen> {
                             const SizedBox(height: 20),
                             Center(
                               child: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.logoMain),
+                                CommonUi.setSvgImage(
+                                  AssetsPath.logoMain,
+                                ),
                                 height: 80,
                                 fit: BoxFit.contain,
                               ),
                             ),
                             const SizedBox(height: 30),
 
-                            // First Name
+                            // -------- First Name --------
                             BlocSelector<SignupCubit, SignupState, String?>(
                               selector: (state) => state.firstNameError,
-                              builder: (context, firstNameError) {
+                              builder: (_, error) {
                                 return CustomTextField(
                                   label: ConstantStrings.firstNameLabel,
                                   controller: firstNameController,
-                                  errorText: state.firstNameError,
+                                  errorText: error,
                                   onChanged: (val) => context
                                       .read<SignupCubit>()
                                       .firstNameChanged(val),
@@ -114,14 +127,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // Last Name
+                            // -------- Last Name --------
                             BlocSelector<SignupCubit, SignupState, String?>(
                               selector: (state) => state.lastNameError,
-                              builder: (context, lastNameError) {
+                              builder: (_, error) {
                                 return CustomTextField(
                                   label: ConstantStrings.lastNameLabel,
                                   controller: lastNameController,
-                                  errorText: state.lastNameError,
+                                  errorText: error,
                                   onChanged: (val) => context
                                       .read<SignupCubit>()
                                       .lastNameChanged(val),
@@ -130,14 +143,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // Email
+                            // -------- Email --------
                             BlocSelector<SignupCubit, SignupState, String?>(
                               selector: (state) => state.emailError,
-                              builder: (context, emailError) {
+                              builder: (_, error) {
                                 return CustomTextField(
                                   label: ConstantStrings.emailLabel,
                                   controller: emailController,
-                                  errorText: state.emailError,
+                                  errorText: error,
                                   onChanged: (val) => context
                                       .read<SignupCubit>()
                                       .emailChanged(val),
@@ -146,14 +159,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // Password
+                            // -------- Password --------
                             BlocSelector<SignupCubit, SignupState, String?>(
                               selector: (state) => state.passwordError,
-                              builder: (context, passwordError) {
+                              builder: (_, error) {
                                 return CustomTextField(
                                   label: ConstantStrings.passwordLabel,
                                   controller: passwordController,
-                                  errorText: state.passwordError,
+                                  errorText: error,
                                   obscureText: true,
                                   onChanged: (val) => context
                                       .read<SignupCubit>()
@@ -163,26 +176,32 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // Confirm Password
+                            // -------- Confirm Password --------
                             BlocSelector<SignupCubit, SignupState, String?>(
-                              selector: (state) => state.confirmPasswordError,
-                              builder: (context, confirmPasswordError) {
+                              selector: (state) =>
+                              state.confirmPasswordError,
+                              builder: (_, error) {
                                 return CustomTextField(
-                                  label: ConstantStrings.confirmPasswordLabel,
-                                  controller: confirmPasswordController,
-                                  errorText: state.confirmPasswordError,
+                                  label:
+                                  ConstantStrings.confirmPasswordLabel,
+                                  controller:
+                                  confirmPasswordController,
+                                  errorText: error,
                                   obscureText: true,
                                   onChanged: (val) => context
                                       .read<SignupCubit>()
                                       .confirmPasswordChanged(val),
-
                                   onEnterPressed: (val) {
-                                    context.read<SignupCubit>().confirmPasswordChanged(val);
+                                    context
+                                        .read<SignupCubit>()
+                                        .confirmPasswordChanged(val);
 
-                                    if (kIsWeb) {
+                                    if (kIsWeb && mounted) {
                                       context
                                           .read<SignupCubit>()
-                                          .verifyEmailRegisteredOrNot(context);
+                                          .verifyEmailRegisteredOrNot(
+                                        context,
+                                      );
                                     }
                                   },
                                 );
@@ -190,40 +209,57 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             const SizedBox(height: 30),
 
-                            // Submit Button
+                            // -------- Submit Button --------
                             BlocSelector<SignupCubit, SignupState, bool>(
                               selector: (state) => state.isButtonEnabled,
-                              builder: (context, isButtonEnabled) {
+                              builder: (_, enabled) {
                                 return CustomBottomButton(
                                   title: ConstantStrings.next,
-                                  backgroundColor: state.isButtonEnabled
-                                      ? AppColors.customBottomEnabledColour
-                                      : AppColors.customBottomDisableColour,
+                                  backgroundColor: enabled
+                                      ? AppColors
+                                      .customBottomEnabledColour
+                                      : AppColors
+                                      .customBottomDisableColour,
                                   textColor: Colors.white,
                                   icon: const SizedBox(width: 0),
-                                  isEnabled: state.isButtonEnabled,
+                                  isEnabled: enabled,
                                   onPressed: () {
+                                    if (!mounted) return;
+
                                     context
                                         .read<SignupCubit>()
-                                        .verifyEmailRegisteredOrNot(context);
-                                    AnalyticsService.instance.buttonPressed(FirebaseEvents.signupButton, FirebaseEvents.signupScreen);
+                                        .verifyEmailRegisteredOrNot(
+                                      context,
+                                    );
+
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.signupButton,
+                                      FirebaseEvents.signupScreen,
+                                    );
                                   },
                                 );
                               },
                             ),
                             const SizedBox(height: 10),
 
-                            // Login Redirect
+                            // -------- Login Redirect --------
                             Center(
                               child: TextButton(
                                 onPressed: () {
+                                  if (!mounted) return;
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => LoginScreen(),
+                                      builder: (_) =>
+                                      const LoginScreen(),
                                     ),
                                   );
-                                  AnalyticsService.instance.buttonPressed(FirebaseEvents.loginButton, FirebaseEvents.signupScreen);
+
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.loginButton,
+                                    FirebaseEvents.signupScreen,
+                                  );
                                 },
                                 child: Text(
                                   ConstantStrings.loginPrompt,
@@ -241,10 +277,14 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
+
+              // -------- Loader Overlay --------
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
             ],
           );

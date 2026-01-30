@@ -16,8 +16,10 @@ import '../../../bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import '../../../bloc/Onboarding/forgotPassword/forgot_state.dart';
 
 class ForgotScreen extends StatefulWidget {
+  const ForgotScreen({super.key});
+
   @override
-  _ForgotScreenState createState() => _ForgotScreenState();
+  State<ForgotScreen> createState() => _ForgotScreenState();
 }
 
 class _ForgotScreenState extends State<ForgotScreen> {
@@ -49,17 +51,18 @@ class _ForgotScreenState extends State<ForgotScreen> {
     final contentMaxWidth = isWeb ? 420.0 : double.infinity;
     final buttonWidth = isWeb ? 280.0 : double.infinity;
 
-    final topSpacerHeight = isWeb ? 50.0 : 0.0;
-
     return BlocProvider(
       create: (_) => ForgotCubit(),
       child: BlocConsumer<ForgotCubit, ForgotState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
+          if (!mounted) return;
+
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Forgot email failed'),
+                content:
+                Text(state.errorMessage ?? 'Forgot email failed'),
               ),
             );
           }
@@ -72,60 +75,90 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 appBar: CustomAppBar(
                   title: ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
                 body: Align(
                   alignment: Alignment.topCenter,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: contentMaxWidth),
+                    constraints:
+                    BoxConstraints(maxWidth: contentMaxWidth),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: topPadding),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: topPadding,
+                      ),
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment:
+                          CrossAxisAlignment.center,
                           children: [
-                            //SizedBox(height: topSpacerHeight),
                             SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.logoMain),
+                              CommonUi.setSvgImage(
+                                AssetsPath.logoMain,
+                              ),
                               width: logoWidth,
                               fit: BoxFit.contain,
                             ),
+
                             SizedBox(height: spacingAfterLogo),
 
-                            // --- Email Field ---
-                            BlocSelector<ForgotCubit, ForgotState, String?>(
-                              selector: (state) => state.emailError,
+                            // -------- Email --------
+                            BlocSelector<ForgotCubit, ForgotState,
+                                String?>(
+                              selector: (state) =>
+                              state.emailError,
                               builder: (context, emailError) {
                                 return CustomTextField(
-                                  label: ConstantStrings.emailLabel,
+                                  label:
+                                  ConstantStrings.emailLabel,
                                   controller: emailController,
                                   errorText: emailError,
-                                  onChanged: (val) =>
-                                      context.read<ForgotCubit>().emailChanged(val),
+                                  onChanged: (val) => context
+                                      .read<ForgotCubit>()
+                                      .emailChanged(val),
                                 );
                               },
                             ),
+
                             const SizedBox(height: 30),
 
-                            // --- Submit Button ---
-                            BlocSelector<ForgotCubit, ForgotState, bool>(
-                              selector: (state) => state.isButtonEnabled,
-                              builder: (context, isButtonEnabled) {
+                            // -------- Submit Button --------
+                            BlocSelector<ForgotCubit, ForgotState,
+                                bool>(
+                              selector: (state) =>
+                              state.isButtonEnabled,
+                              builder:
+                                  (context, isButtonEnabled) {
                                 return SizedBox(
                                   width: buttonWidth,
                                   child: CustomBottomButton(
-                                    title: ConstantStrings.sendEmailButton,
-                                    backgroundColor: isButtonEnabled
-                                        ? AppColors.customBottomEnabledColour
-                                        : AppColors.customBottomDisableColour,
+                                    title: ConstantStrings
+                                        .sendEmailButton,
+                                    backgroundColor:
+                                    isButtonEnabled
+                                        ? AppColors
+                                        .customBottomEnabledColour
+                                        : AppColors
+                                        .customBottomDisableColour,
                                     textColor: Colors.white,
-                                    icon: const SizedBox.shrink(),
+                                    icon:
+                                    const SizedBox.shrink(),
                                     isEnabled: isButtonEnabled,
-                                    onPressed: () => context
-                                        .read<ForgotCubit>()
-                                        .validateAndSubmit(context),
+                                    onPressed: () {
+                                      if (!mounted) return;
+                                      context
+                                          .read<ForgotCubit>()
+                                          .validateAndSubmit(
+                                          context);
+                                    },
                                   ),
                                 );
                               },
@@ -138,11 +171,14 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 ),
               ),
 
-              // --- Loading Overlay ---
-              if (state.status == CommonApiStatus.submitting)
+              // -------- Loader --------
+              if (state.status ==
+                  CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
             ],
           );

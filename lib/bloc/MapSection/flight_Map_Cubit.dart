@@ -165,7 +165,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             polygonId: PolygonId('fir_$id'),
             points: points,
             strokeWidth: 2,
-            strokeColor: AppColors.goBack,
+            strokeColor: Colors.red,
             fillColor: Colors.transparent,
             consumeTapEvents: true,
             onTap: () {

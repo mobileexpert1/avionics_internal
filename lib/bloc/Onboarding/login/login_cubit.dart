@@ -72,6 +72,7 @@ class LoginCubit extends Cubit<LoginState> {
         password: state.password,
       );
       emit(state.copyWith(status: CommonApiStatus.success));
+      if (!context.mounted) return;
       await _navigateAfterLogin(context, result);
     } catch (e) {
       emit(
@@ -304,8 +305,9 @@ class LoginCubit extends Cubit<LoginState> {
     BuildContext context,
     LoginResponseModel result,
   ) async {
+    if (!context.mounted) return;
+
     if (result.userDetails != null) {
-      // On Hold Avtar Model
       await SharedPrefsHelper.setAvtarUserType(
         result.userDetails?.userType ?? '',
       );
@@ -313,9 +315,10 @@ class LoginCubit extends Cubit<LoginState> {
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);
 
-      // For Social Login Checks
-      if (result.userDetails?.userType == '' ||
-          result.userDetails?.userType == null) {
+      if (!context.mounted) return;
+
+      if (result.userDetails?.userType == null ||
+          result.userDetails?.userType == '') {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => AvtarScreen(
@@ -324,33 +327,38 @@ class LoginCubit extends Cubit<LoginState> {
               isComeFromSocialLogin: true,
             ),
           ),
-          (route) => false,
+          (_) => false,
         );
-      } else if (result.userDetails?.isActiveSubscription == null ||
-          result.userDetails?.isActiveSubscription == false) {
+        return;
+      }
+
+      if (result.userDetails?.isActiveSubscription != true) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
+            builder: (_) => defaultTargetPlatform == TargetPlatform.iOS
                 ? AppleSubscriptionScreen(isComeFromSignup: true)
                 : AppleSubscriptionScreen(
                     isComeFromSignup: true,
                     isComeFromSocialLogin: true,
-                  )),
+                  ),
           ),
         );
-      } else {
-        AppSnackBar.custom(
-          context,
-          message: 'Login Successfully',
-          svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
-        );
-
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-          (route) => false,
-        );
+        return;
       }
+
+      AppSnackBar.custom(
+        context,
+        message: 'Login Successfully',
+        svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
+      );
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+        (_) => false,
+      );
     } else if (result.isVerified == false) {
+      if (!context.mounted) return;
+
       AppSnackBar.custom(
         context,
         message: 'OTP sent successfully! Please verify your email.',
@@ -364,13 +372,16 @@ class LoginCubit extends Cubit<LoginState> {
         ),
       );
     } else if (result.isAvatar == false) {
-      final signupData = {'email': state.email};
+      if (!context.mounted) return;
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (_) =>
-              AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
+          builder: (_) => AvtarScreen(
+            isComeFromSignupScreen: true,
+            signupData: {'email': state.email},
+          ),
         ),
-        (route) => false,
+        (_) => false,
       );
     }
   }

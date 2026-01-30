@@ -20,6 +20,7 @@ class SignupCubit extends Cubit<SignupState> {
           state.password,
           state.confirmPassword,
         ),
+        firstNameError: null,
       ),
     );
   }
@@ -35,6 +36,7 @@ class SignupCubit extends Cubit<SignupState> {
           state.password,
           state.confirmPassword,
         ),
+        lastNameError: null,
       ),
     );
   }
@@ -50,6 +52,7 @@ class SignupCubit extends Cubit<SignupState> {
           state.password,
           state.confirmPassword,
         ),
+        emailError: null,
       ),
     );
   }
@@ -65,6 +68,7 @@ class SignupCubit extends Cubit<SignupState> {
           value,
           state.confirmPassword,
         ),
+        passwordError: null,
       ),
     );
   }
@@ -80,6 +84,7 @@ class SignupCubit extends Cubit<SignupState> {
           state.password,
           value,
         ),
+        confirmPasswordError: null,
       ),
     );
   }
@@ -138,6 +143,8 @@ class SignupCubit extends Cubit<SignupState> {
       );
 
       emit(state.copyWith(status: CommonApiStatus.success));
+
+      if (!context.mounted) return;
 
       final signupData = {
         'first_name': state.firstName,
