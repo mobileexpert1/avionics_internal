@@ -79,6 +79,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     String flightNumber,
     BuildContext context,
   ) async {
+    updateFlightFavoriteByCallSign(callSign);
     emit(state.copyWith(status: CommonApiStatus.submitting));
 
     try {
@@ -88,9 +89,10 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         flightId: flightId,
         flightNumber: flightNumber,
       );
-      updateFlightFavoriteByCallSign(callSign);
+      // updateFlightFavoriteByCallSign(callSign);
       emit(state.copyWith(status: CommonApiStatus.success));
     } catch (e) {
+      updateFlightFavoriteByCallSign(callSign);
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         state.copyWith(

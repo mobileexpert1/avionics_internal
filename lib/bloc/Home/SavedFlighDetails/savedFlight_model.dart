@@ -22,6 +22,18 @@ class SavedFlightResponse {
           [],
     );
   }
+
+  SavedFlightResponse copyWith({
+    String? detail,
+    List<AircraftItem>? favorite,
+    List<AircraftItem>? saved,
+  }) {
+    return SavedFlightResponse(
+      detail: detail ?? this.detail,
+      favorite: favorite ?? this.favorite,
+      saved: saved ?? this.saved,
+    );
+  }
 }
 
 class AircraftItem {

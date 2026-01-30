@@ -55,6 +55,7 @@ class FlightModel {
   final DateTime? landingTime;
 
   final AircraftModel? aircraftDetails;
+  final bool isFavorite;
 
   FlightModel({
     required this.id,
@@ -86,6 +87,7 @@ class FlightModel {
     this.flightEnded,
     this.landingTime,
     this.aircraftDetails,
+    this.isFavorite = false,
   });
 
   FlightModel copyWith({
@@ -118,6 +120,7 @@ class FlightModel {
     bool? flightEnded,
     DateTime? landingTime,
     AircraftModel? aircraftDetails,
+    bool? isFavorite,
   }) {
     return FlightModel(
       id: id ?? this.id,
@@ -149,6 +152,7 @@ class FlightModel {
       flightEnded: flightEnded ?? this.flightEnded,
       landingTime: landingTime ?? this.landingTime,
       aircraftDetails: aircraftDetails ?? this.aircraftDetails,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
@@ -202,6 +206,7 @@ class FlightModel {
       lastSeen: _parseDate(json['last_seen']),
       flightEnded: json['flight_ended'] as bool?,
       landingTime: _parseDate(json['datetime_landed']),
+      isFavorite: false,
     );
   }
 
