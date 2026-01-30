@@ -715,7 +715,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     final icaoCode = aircraft?.icaoTypeCode ?? "";
                     final manufacturer =
                         aircraft?.manufacturer?.companyName ?? "";
-                    final isFavorite = aircraft?.isFavorite ?? false;
+                    final isFavorite = data.isFavorite ?? false;
                     final flightCode =
                         (data?.callSign != null && data!.callSign!.isNotEmpty)
                         ? data.callSign!
@@ -775,6 +775,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                                       final cubit = context
                                           .read<AllPlanesCubit>();
+
 
                                       await cubit.planFavOrUnfav1(
                                         aircraft.aircraftId?.toString() ?? "",

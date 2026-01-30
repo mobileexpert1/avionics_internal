@@ -18,4 +18,10 @@ class SavedFlightRepository {
       throw Exception("Failed to fetch saved/favorite aircrafts: $e");
     }
   }
+
+
+  Future<List<AircraftItem>> getOnlyFavoriteFlights() async {
+    final response = await getSavedAndFavoriteAircrafts();
+    return response.favorite;
+  }
 }

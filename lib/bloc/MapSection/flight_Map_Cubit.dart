@@ -16,6 +16,8 @@ import 'package:intl/intl.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
+import '../Home/SavedFlighDetails/savedFlight_model.dart';
+import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
 import 'FilterMap/filter_Map_Cubit.dart';
@@ -29,6 +31,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
 
   Timer? _trackingTimer;
+
+  Map<String, AircraftItem> buildFavoriteMap(List<AircraftItem> favorites) {
+    return {
+      for (final item in favorites)
+        if (item.callsign != null) item.callsign!: item,
+    };
+  }
 
   Future<bool> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -212,6 +221,19 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             : null,
       );
 
+      final savedResponse = await SavedFlightRepository()
+          .getSavedAndFavoriteAircrafts();
+
+      final favoriteMap = buildFavoriteMap(savedResponse.favorite);
+
+      // 3️⃣ Merge fav flag
+      final updatedFlights = flights.map((flight) {
+        final isFav =
+            flight.callSign != null && favoriteMap.containsKey(flight.callSign);
+
+        return flight.copyWith(isFavorite: isFav);
+      }).toList();
+
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
             longitude: currentCenterLatLong.longitude.toString(),
@@ -225,7 +247,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       emit(
         state.copyWith(
-          flights: flights,
+          flights: updatedFlights,
           airports: airportList.data,
           status: CommonApiStatus.success,
           isSuccess: true,

@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../Home/AircraftComparison/AircraftComparisonModel.dart';
+import '../Home/SavedFlighDetails/savedFlight_model.dart';
 import 'flight_map_model.dart';
 
 class FlightMapState {
@@ -34,6 +35,8 @@ class FlightMapState {
 
   final int activeCard;
 
+  final SavedFlightResponse? savedFlights;
+
   FlightMapState({
     this.openAiKey,
     this.status = CommonApiStatus.initial,
@@ -58,6 +61,9 @@ class FlightMapState {
 
     this.selectedCategories,
     this.selectedAircraftIcaos,
+
+    this.savedFlights
+
   });
 
   FlightMapState copyWith({
@@ -85,6 +91,7 @@ class FlightMapState {
 
     List<String>? selectedCategories,
     List<String>? selectedAircraftIcaos,
+    SavedFlightResponse? savedFlights,
   }) {
     return FlightMapState(
       openAiKey: openAiKey ?? this.openAiKey,
@@ -111,6 +118,7 @@ class FlightMapState {
 
       selectedCategories: selectedCategories ?? this.selectedCategories,
       selectedAircraftIcaos: selectedAircraftIcaos ?? this.selectedAircraftIcaos,
+      savedFlights: savedFlights ?? this.savedFlights,
     );
   }
 }
