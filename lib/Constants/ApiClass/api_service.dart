@@ -205,10 +205,10 @@ class ApiService {
 
       final decodedBody = utf8.decode(response.bodyBytes);
 
-      print(
-        "[$method] URL: $url "
-        '\nResponse Code: ${response.statusCode}, \nHeader Token: $requestHeaders',
-      );
+      // print(
+      //   "[$method] URL: $url "
+      //   '\nResponse Code: ${response.statusCode}, \nHeader Token: $requestHeaders',
+      // );
       //print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);
 

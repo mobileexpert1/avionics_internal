@@ -28,9 +28,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.forgotScreen,
-    );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.forgotScreen);
   }
 
   @override
@@ -61,8 +59,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content:
-                Text(state.errorMessage ?? 'Forgot email failed'),
+                content: Text(state.errorMessage ?? 'Forgot email failed'),
               ),
             );
           }
@@ -75,10 +72,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 appBar: CustomAppBar(
                   title: ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.black,
-                    ),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
                     onPressed: () {
                       if (!mounted) return;
                       Navigator.pop(context);
@@ -88,8 +82,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 body: Align(
                   alignment: Alignment.topCenter,
                   child: ConstrainedBox(
-                    constraints:
-                    BoxConstraints(maxWidth: contentMaxWidth),
+                    constraints: BoxConstraints(maxWidth: contentMaxWidth),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
@@ -97,13 +90,10 @@ class _ForgotScreenState extends State<ForgotScreen> {
                       ),
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                AssetsPath.logoMain,
-                              ),
+                              CommonUi.setSvgImage(AssetsPath.logoMain),
                               width: logoWidth,
                               fit: BoxFit.contain,
                             ),
@@ -111,14 +101,11 @@ class _ForgotScreenState extends State<ForgotScreen> {
                             SizedBox(height: spacingAfterLogo),
 
                             // -------- Email --------
-                            BlocSelector<ForgotCubit, ForgotState,
-                                String?>(
-                              selector: (state) =>
-                              state.emailError,
+                            BlocSelector<ForgotCubit, ForgotState, String?>(
+                              selector: (state) => state.emailError,
                               builder: (context, emailError) {
                                 return CustomTextField(
-                                  label:
-                                  ConstantStrings.emailLabel,
+                                  label: ConstantStrings.emailLabel,
                                   controller: emailController,
                                   errorText: emailError,
                                   onChanged: (val) => context
@@ -131,33 +118,24 @@ class _ForgotScreenState extends State<ForgotScreen> {
                             const SizedBox(height: 30),
 
                             // -------- Submit Button --------
-                            BlocSelector<ForgotCubit, ForgotState,
-                                bool>(
-                              selector: (state) =>
-                              state.isButtonEnabled,
-                              builder:
-                                  (context, isButtonEnabled) {
+                            BlocSelector<ForgotCubit, ForgotState, bool>(
+                              selector: (state) => state.isButtonEnabled,
+                              builder: (context, isButtonEnabled) {
                                 return SizedBox(
                                   width: buttonWidth,
                                   child: CustomBottomButton(
-                                    title: ConstantStrings
-                                        .sendEmailButton,
-                                    backgroundColor:
-                                    isButtonEnabled
-                                        ? AppColors
-                                        .customBottomEnabledColour
-                                        : AppColors
-                                        .customBottomDisableColour,
+                                    title: ConstantStrings.sendEmailButton,
+                                    backgroundColor: isButtonEnabled
+                                        ? AppColors.customBottomEnabledColour
+                                        : AppColors.customBottomDisableColour,
                                     textColor: Colors.white,
-                                    icon:
-                                    const SizedBox.shrink(),
+                                    icon: const SizedBox.shrink(),
                                     isEnabled: isButtonEnabled,
                                     onPressed: () {
                                       if (!mounted) return;
                                       context
                                           .read<ForgotCubit>()
-                                          .validateAndSubmit(
-                                          context);
+                                          .validateAndSubmit(context);
                                     },
                                   ),
                                 );
@@ -172,13 +150,10 @@ class _ForgotScreenState extends State<ForgotScreen> {
               ),
 
               // -------- Loader --------
-              if (state.status ==
-                  CommonApiStatus.submitting)
+              if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
           );

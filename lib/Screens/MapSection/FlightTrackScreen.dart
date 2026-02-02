@@ -91,14 +91,30 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
 
   @override
   void dispose() {
-    if (!kIsWeb) {
-      _mapController?.dispose();
-    }
+    // 1. Stop and dispose animation
+    _animationController?.stop();
     _animationController?.dispose();
+    _animationController = null;
+
+    // 2. Remove lifecycle observer
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       WidgetsBinding.instance.removeObserver(this);
     }
+
+    // 3. Clear heavy data collections
+    _markers.clear();
+    _staticPolyline.clear();
+    _flightNextCoordinatesPoints.clear();
+    _flightNextLocationCoordinates.clear();
+
+    // 4. Dispose Map Controller
+    if (!kIsWeb) {
+      _mapController?.dispose();
+    }
+    _mapController = null;
+
+    PaintingBinding.instance.imageCache.clear();
     super.dispose();
   }
 

@@ -34,7 +34,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
 
   Timer? _trackingTimer;
-  final Set<Polygon> polygons = {};
 
   Map<String, AircraftItem> buildFavoriteMap(List<AircraftItem> favorites) {
     return {
@@ -121,8 +120,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      _loadGeoJson(context);
-
       emit(
         state.copyWith(
           position: position,
@@ -142,54 +139,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         ),
       );
       return false;
-    }
-  }
-
-  Future<void> _loadGeoJson(BuildContext context) async {
-    try {
-      final String jsonStr = await rootBundle.loadString(
-        "assets/mapFiles/GeoPolygonMap.json",
-      );
-
-      final Map<String, dynamic> data = jsonDecode(jsonStr);
-      final List features = data['features'];
-
-      int id = 1;
-
-      for (final feature in features) {
-        final geometry = feature['geometry'];
-        if (geometry['type'] != 'Polygon') continue;
-
-        final List rings = geometry['coordinates'];
-        final List<LatLng> points = [];
-
-        for (final coord in rings[0]) {
-          final double lng = (coord[0] as num).toDouble();
-          final double lat = (coord[1] as num).toDouble();
-          points.add(LatLng(lat, lng));
-        }
-
-        polygons.add(
-          Polygon(
-            polygonId: PolygonId('fir_$id'),
-            points: points,
-            strokeWidth: 2,
-            strokeColor: Colors.red,
-            fillColor: Colors.transparent,
-            consumeTapEvents: true,
-            onTap: () {
-              final name = feature['properties']['name'] ?? 'Unknown FIR';
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(name)));
-            },
-          ),
-        );
-        id++;
-      }
-    } catch (e, st) {
-      debugPrint("GeoJSON load failed: $e");
-      debugPrint("$st");
     }
   }
 

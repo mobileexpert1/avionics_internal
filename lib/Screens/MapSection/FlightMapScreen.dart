@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../Constants/AppColors.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -39,6 +37,75 @@ import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
 import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
+
+class FlightGoogleMapWidget extends StatelessWidget {
+  final CameraPosition initialCameraPosition;
+
+  final GoogleMapController? mapController;
+  final void Function(GoogleMapController controller)? onMapCreated;
+  final VoidCallback? onCameraIdle;
+
+  final MapType mapType;
+  final Set<Polygon> polygons;
+  final Set<Marker> markers;
+
+  final bool zoomControlsEnabled;
+  final bool myLocationButtonEnabled;
+  final bool rotateGesturesEnabled;
+  final bool myLocationEnabled;
+
+  /// Optional tracking support
+  final bool isTracking;
+  final LatLng? trackingLatLng;
+
+  const FlightGoogleMapWidget({
+    super.key,
+    required this.initialCameraPosition,
+    required this.mapType,
+    required this.markers,
+    this.polygons = const {},
+
+    this.mapController,
+    this.onMapCreated,
+    this.onCameraIdle,
+
+    this.zoomControlsEnabled = false,
+    this.myLocationButtonEnabled = false,
+    this.rotateGesturesEnabled = false,
+    this.myLocationEnabled = true,
+
+    this.isTracking = false,
+    this.trackingLatLng,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogleMap(
+      zoomControlsEnabled: zoomControlsEnabled,
+      myLocationButtonEnabled: myLocationButtonEnabled,
+      rotateGesturesEnabled: rotateGesturesEnabled,
+      myLocationEnabled: myLocationEnabled,
+      minMaxZoomPreference: MinMaxZoomPreference(5, 12),
+      mapType: mapType,
+      polygons: polygons,
+      markers: markers,
+
+      initialCameraPosition: initialCameraPosition,
+
+      onCameraIdle: onCameraIdle,
+
+      onMapCreated: (controller) async {
+        onMapCreated?.call(controller);
+
+        if (isTracking && trackingLatLng != null) {
+          await controller.animateCamera(
+            CameraUpdate.newLatLng(trackingLatLng!),
+          );
+        }
+      },
+    );
+  }
+}
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
@@ -72,6 +139,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   Marker? _singleSearchMarker;
   GoogleMapController? _mapController;
 
+  late final ValueNotifier<Set<Polygon>> polygonNotifier;
+  late final Set<Polygon> cachedPolygons;
+  bool showPolygon = false;
+
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -79,6 +150,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   @override
   void initState() {
     super.initState();
+
+    //FIRST initialize
+    polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
+    cachedPolygons = <Polygon>{};
+
+    //THEN async work
+    _loadGeoJson(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final hasPermission = await _mapCubit.getCurrentLocation(context);
@@ -113,16 +191,81 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   @override
   void dispose() {
-    _resetFlightSelection(cleanupOnly: true);
     _debounce?.cancel();
+    _debounce = null;
+
+    selectedFlightId = null;
     _singleSearchMarker = null;
-    _searchController.dispose();
+
     if (!kIsWeb) {
       _mapController?.dispose();
+      _mapController = null;
     }
+
+    polygonNotifier.dispose();
+    cachedPolygons.clear();
+
+    _resetFlightSelection(cleanupOnly: true);
+
     _sheetController.dispose();
-    selectedFlightId = null;
+    _searchController.dispose();
+
+    _sheetController.removeListener(_sheetListener);
+    PaintingBinding.instance.imageCache.clear();
     super.dispose();
+  }
+
+  Future<void> _loadGeoJson(BuildContext context) async {
+    try {
+      final String jsonStr = await rootBundle.loadString(
+        "assets/mapFiles/GeoPolygonMap.json",
+      );
+
+      final Map<String, dynamic> data = jsonDecode(jsonStr);
+      final List features = data['features'];
+
+      int id = 1;
+
+      for (final feature in features) {
+        final geometry = feature['geometry'];
+        if (geometry['type'] != 'Polygon') continue;
+
+        final List rings = geometry['coordinates'];
+        final List<LatLng> points = [];
+
+        for (final coord in rings[0]) {
+          final double lng = (coord[0] as num).toDouble();
+          final double lat = (coord[1] as num).toDouble();
+          points.add(LatLng(lat, lng));
+        }
+
+        cachedPolygons.add(
+          Polygon(
+            polygonId: PolygonId('fir_$id'),
+            points: points,
+            strokeWidth: 1,
+            strokeColor: Colors.red,
+            fillColor: Colors.transparent,
+            consumeTapEvents: true,
+            onTap: () {
+              final name = feature['properties']['name'] ?? 'Unknown FIR';
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(name)));
+            },
+          ),
+        );
+        id++;
+      }
+
+      //Agar polygon ON hai to map ko update karo
+      if (showPolygon) {
+        polygonNotifier.value = cachedPolygons;
+      }
+    } catch (e, st) {
+      debugPrint("GeoJSON load failed: $e");
+      debugPrint("$st");
+    }
   }
 
   @override
@@ -162,58 +305,55 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                           false,
                         ),
                         builder: (context, snapshot) {
-                          return GoogleMap(
-                            //minMaxZoomPreference: MinMaxZoomPreference(7, 12),
-                            zoomControlsEnabled: false,
-                            myLocationButtonEnabled: false,
-                            rotateGesturesEnabled: false,
-                            mapType: _mapCubit.state.mapType.toGoogleMapType(),
-                            polygons:
-                                _mapCubit.state.mapType == CustomMapType.polygon
-                                ? _mapCubit.polygons
-                                : {},
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(
-                                state.position!.latitude,
-                                state.position!.longitude,
-                              ),
-                              zoom: 8,
-                            ),
-                            myLocationEnabled: true,
-                            markers: {
-                              Marker(
-                                markerId: const MarkerId("current"),
-                                position: LatLng(
-                                  state.position!.latitude,
-                                  state.position!.longitude,
-                                ),
-                                infoWindow: const InfoWindow(
-                                  title: "Current Location",
-                                ),
-                              ),
-                              if (_singleSearchMarker != null)
-                                _singleSearchMarker!,
-                              if (snapshot.hasData) ...snapshot.data!,
-                            },
-                            onCameraIdle: () async {
-                              _fetchFlightsWithDebounce(constraints);
-                            },
-                            onMapCreated:
-                                (GoogleMapController controller) async {
-                                  _mapController = controller;
+                          return ValueListenableBuilder<Set<Polygon>>(
+                            valueListenable: polygonNotifier,
+                            builder: (_, polygons, __) {
+                              return FlightGoogleMapWidget(
+                                mapType: _mapCubit.state.mapType
+                                    .toGoogleMapType(),
+                                polygons: polygons,
 
-                                  if (state.isTracking &&
-                                      state.selectedFlight != null) {
-                                    _mapController!.animateCamera(
-                                      CameraUpdate.newLatLng(
-                                        LatLng(
-                                          state.selectedFlight!.latitude,
-                                          state.selectedFlight!.longitude,
-                                        ),
-                                      ),
-                                    );
-                                  }
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                    state.position!.latitude,
+                                    state.position!.longitude,
+                                  ),
+                                  zoom: 8,
+                                ),
+
+                                markers: {
+                                  Marker(
+                                    markerId: const MarkerId("current"),
+                                    position: LatLng(
+                                      state.position!.latitude,
+                                      state.position!.longitude,
+                                    ),
+                                    infoWindow: const InfoWindow(
+                                      title: "Current Location",
+                                    ),
+                                  ),
+                                  if (_singleSearchMarker != null)
+                                    _singleSearchMarker!,
+                                  if (snapshot.hasData) ...snapshot.data!,
                                 },
+
+                                isTracking: state.isTracking,
+                                trackingLatLng: state.selectedFlight != null
+                                    ? LatLng(
+                                        state.selectedFlight!.latitude,
+                                        state.selectedFlight!.longitude,
+                                      )
+                                    : null,
+
+                                onCameraIdle: () {
+                                  _fetchFlightsWithDebounce(constraints);
+                                },
+
+                                onMapCreated: (controller) {
+                                  _mapController = controller;
+                                },
+                              );
+                            },
                           );
                         },
                       );
@@ -240,6 +380,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                   if (_activeCard == 2 && state.selectedAirport != null)
                     _buildAnimatedAirportDetailsCard(context),
+
                 ],
               );
             }
@@ -456,7 +597,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   Future<Set<Marker>> _buildAirportMarkers() async {
     final markers = <Marker>{};
 
-    // 🔐 SAFETY GUARDS
+    // SAFETY GUARDS
     if (_mapController == null) return markers;
 
     final airports = _mapCubit.state.airports;
@@ -767,7 +908,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     onPressed: (_) async {
                                       if (aircraft == null || data.id == null) {
                                         debugPrint(
-                                          "❌ Aircraft or Flight data is null",
+                                          "Aircraft or Flight data is null",
                                         );
                                         return;
                                       }
@@ -1103,11 +1244,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           );
 
           if (filterResult != null) {
+            final bool shouldShow =
+                filterResult.mapType == CustomMapType.polygon;
+            if (showPolygon == shouldShow) return;
+            showPolygon = shouldShow;
+            polygonNotifier.value = shouldShow
+                ? cachedPolygons
+                : const <Polygon>{};
+
             _mapCubit.changeMapType(filterResult.mapType);
             _mapCubit.setFilters(
               filterResult.categories,
               filterResult.aircraftIcaos,
             );
+
             debugPrint(
               "Applied Filters - Categories: ${filterResult.categories}, Aircraft ICAOs: ${filterResult.aircraftIcaos}",
             ); // DEBUG
