@@ -25,7 +25,7 @@ class _OneWordDetailScreenState extends State<OneWordDetailScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.oneWordListScreen,
+      FirebaseEvents.oneWordTopicListScreen,
     );
   }
 
@@ -74,7 +74,7 @@ class _OneWordDetailScreenState extends State<OneWordDetailScreen> {
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.oneWordListButton,
-                    FirebaseEvents.oneWordListScreen,
+                    FirebaseEvents.oneWordTopicListScreen,
                   );
                 },
               ),

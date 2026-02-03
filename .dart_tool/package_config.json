@@ -92,6 +92,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "code_assets",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/code_assets-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
       "name": "collection",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/collection-1.19.1",
       "packageUri": "lib/",
@@ -470,6 +476,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "glob",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/glob-2.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "google_identity_services_web",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.3+1",
       "packageUri": "lib/",
@@ -540,6 +552,12 @@
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.4+4",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "hooks",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/hooks-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
     },
     {
       "name": "html",
@@ -644,6 +662,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "logging",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/logging-1.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "matcher",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/matcher-0.12.17",
       "packageUri": "lib/",
@@ -672,6 +696,12 @@
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/mocktail-1.0.4",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "native_toolchain_c",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/native_toolchain_c-0.17.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
     },
     {
       "name": "nested",
@@ -824,6 +854,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "pub_semver",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/pub_semver-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "responsive_sizer",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/responsive_sizer-3.3.1",
       "packageUri": "lib/",
@@ -957,9 +993,9 @@
     },
     {
       "name": "sqflite_common_ffi",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqflite_common_ffi-2.3.6",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqflite_common_ffi-2.4.0+2",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.10"
     },
     {
       "name": "sqflite_darwin",
@@ -975,9 +1011,9 @@
     },
     {
       "name": "sqlite3",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-2.9.4",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-3.1.4",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.9"
     },
     {
       "name": "stack_trace",
@@ -1224,6 +1260,12 @@
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/xml-6.6.1",
       "packageUri": "lib/",
       "languageVersion": "3.8"
+    },
+    {
+      "name": "yaml",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/yaml-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "avionics_internal",

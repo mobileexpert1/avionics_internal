@@ -38,6 +38,49 @@ import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
 import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 
+class ParsedPolygon {
+  final String id;
+  final List<List<double>> points;
+  final String name;
+
+  ParsedPolygon(this.id, this.points, this.name);
+}
+
+List<ParsedPolygon> parseGeoJson(String jsonStr) {
+  final Map<String, dynamic> data = jsonDecode(jsonStr);
+  final List features = data['features'];
+
+  int id = 1;
+  final List<ParsedPolygon> result = [];
+
+  for (final feature in features) {
+    final geometry = feature['geometry'];
+    if (geometry['type'] != 'Polygon') continue;
+
+    final List rings = geometry['coordinates'];
+    final List<List<double>> points = [];
+
+    for (final coord in rings[0]) {
+      points.add([
+        (coord[1] as num).toDouble(),
+        (coord[0] as num).toDouble(),
+      ]);
+    }
+
+    result.add(
+      ParsedPolygon(
+        'fir_$id',
+        points,
+        feature['properties']['name'] ?? 'Unknown FIR',
+      ),
+    );
+    id++;
+  }
+
+  return result;
+}
+
+
 class FlightGoogleMapWidget extends StatelessWidget {
   final CameraPosition initialCameraPosition;
 
@@ -217,48 +260,30 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Future<void> _loadGeoJson(BuildContext context) async {
     try {
-      final String jsonStr = await rootBundle.loadString(
-        "assets/mapFiles/GeoPolygonMap.json",
-      );
+      final jsonStr = await rootBundle.loadString("assets/mapFiles/GeoPolygonMap.json");
 
-      final Map<String, dynamic> data = jsonDecode(jsonStr);
-      final List features = data['features'];
+      final parsed = await compute(parseGeoJson, jsonStr);
 
-      int id = 1;
-
-      for (final feature in features) {
-        final geometry = feature['geometry'];
-        if (geometry['type'] != 'Polygon') continue;
-
-        final List rings = geometry['coordinates'];
-        final List<LatLng> points = [];
-
-        for (final coord in rings[0]) {
-          final double lng = (coord[0] as num).toDouble();
-          final double lat = (coord[1] as num).toDouble();
-          points.add(LatLng(lat, lng));
-        }
-
+      for (final p in parsed) {
         cachedPolygons.add(
           Polygon(
-            polygonId: PolygonId('fir_$id'),
-            points: points,
+            polygonId: PolygonId(p.id),
+            points: p.points
+                .map((e) => LatLng(e[0], e[1]))
+                .toList(),
             strokeWidth: 1,
             strokeColor: Colors.red,
             fillColor: Colors.transparent,
             consumeTapEvents: true,
             onTap: () {
-              final name = feature['properties']['name'] ?? 'Unknown FIR';
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(name)));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(p.name)),
+              );
             },
           ),
         );
-        id++;
       }
 
-      //Agar polygon ON hai to map ko update karo
       if (showPolygon) {
         polygonNotifier.value = cachedPolygons;
       }
@@ -267,6 +292,60 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       debugPrint("$st");
     }
   }
+
+
+  // Future<void> _loadGeoJson(BuildContext context) async {
+  //   try {
+  //     final String jsonStr = await rootBundle.loadString(
+  //       "assets/mapFiles/GeoPolygonMap.json",
+  //     );
+  //
+  //     final Map<String, dynamic> data = jsonDecode(jsonStr);
+  //     final List features = data['features'];
+  //
+  //     int id = 1;
+  //
+  //     for (final feature in features) {
+  //       final geometry = feature['geometry'];
+  //       if (geometry['type'] != 'Polygon') continue;
+  //
+  //       final List rings = geometry['coordinates'];
+  //       final List<LatLng> points = [];
+  //
+  //       for (final coord in rings[0]) {
+  //         final double lng = (coord[0] as num).toDouble();
+  //         final double lat = (coord[1] as num).toDouble();
+  //         points.add(LatLng(lat, lng));
+  //       }
+  //
+  //       cachedPolygons.add(
+  //         Polygon(
+  //           polygonId: PolygonId('fir_$id'),
+  //           points: points,
+  //           strokeWidth: 1,
+  //           strokeColor: Colors.red,
+  //           fillColor: Colors.transparent,
+  //           consumeTapEvents: true,
+  //           onTap: () {
+  //             final name = feature['properties']['name'] ?? 'Unknown FIR';
+  //             ScaffoldMessenger.of(
+  //               context,
+  //             ).showSnackBar(SnackBar(content: Text(name)));
+  //           },
+  //         ),
+  //       );
+  //       id++;
+  //     }
+  //
+  //     //Agar polygon ON hai to map ko update karo
+  //     if (showPolygon) {
+  //       polygonNotifier.value = cachedPolygons;
+  //     }
+  //   } catch (e, st) {
+  //     debugPrint("GeoJSON load failed: $e");
+  //     debugPrint("$st");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1244,6 +1323,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           );
 
           if (filterResult != null) {
+            AnalyticsService.instance.buttonPressed(
+              FirebaseEvents.changeMapType,
+              FirebaseEvents.trackScreen,
+            );
+
             final bool shouldShow =
                 filterResult.mapType == CustomMapType.polygon;
             if (showPolygon == shouldShow) return;

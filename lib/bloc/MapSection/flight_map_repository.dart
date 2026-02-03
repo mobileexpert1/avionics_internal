@@ -75,8 +75,7 @@ class FlightRepository {
           throw e.toString();
         }
       }
-
-      debugPrint("✈️ Final Flight API URL: $url");
+      //debugPrint("✈️ Final Flight API URL: $url");
       final response = await ApiService.get(url: url, isForFlightRadar: true);
       final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;

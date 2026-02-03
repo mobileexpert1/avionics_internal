@@ -25,7 +25,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
     _cubit = OnewordCubit();
     _cubit.loadOneWordTopics(context);
     AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.oneWordTopicScreen,
+      FirebaseEvents.oneWordTopicListScreen,
     );
   }
 
@@ -126,7 +126,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                                   ),
                                 );
                                 AnalyticsService.instance.buttonPressed(
-                                  FirebaseEvents.oneWordTopicScreen,
+                                  FirebaseEvents.oneWordTopicListScreen,
                                   FirebaseEvents.oneWordTopicButton,
                                 );
                               },

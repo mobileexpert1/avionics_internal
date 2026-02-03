@@ -11,7 +11,6 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../CustomFiles/Custom_SnackBar.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -54,6 +53,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
       context: context,
       builder: (_) => RadioPopup(
         onSelected: (selectedIndex) {
+          AnalyticsService.instance.buttonPressed(
+            FirebaseEvents.quizQuestionReportButton,
+            FirebaseEvents.quizMainQuestionScreen,
+          );
           quizCubit.reportQuestionPostMethod(
             selectedIndex,
             quizCubit,
