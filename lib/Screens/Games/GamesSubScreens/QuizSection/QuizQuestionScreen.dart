@@ -668,7 +668,7 @@ class _RadioPopupState extends State<RadioPopup> {
                     maxLength: 50,
                     onChanged: (value) {
                       setState(() {
-                        _errorText = value.length == 20
+                        _errorText = value.length == 50
                             ? 'Maximum 50 characters allowed'
                             : null;
                       });
