@@ -663,11 +663,13 @@ class _RadioPopupState extends State<RadioPopup> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextField(
                     controller: _otherIssueController,
-                    maxLength: 20,
+                    minLines: 3,
+                    maxLines: 5,
+                    maxLength: 50,
                     onChanged: (value) {
                       setState(() {
                         _errorText = value.length == 20
-                            ? 'Maximum 20 characters allowed'
+                            ? 'Maximum 50 characters allowed'
                             : null;
                       });
                     },

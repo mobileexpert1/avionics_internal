@@ -13,6 +13,7 @@ import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
+import 'FlightDetailCard.dart';
 import 'FlightMapScreen.dart';
 
 class TrackFlightScreen extends StatefulWidget {
@@ -510,7 +511,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: FlightCard(
+                  child: FlightDetailCard(
                     flightDetail: detail,
                     isComeFromLiveTracking: true,
                   ),

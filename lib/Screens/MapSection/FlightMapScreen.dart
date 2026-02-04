@@ -10,6 +10,10 @@ import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
+import '../../bloc/MapSection/ParsedPolygon.dart';
+import 'AirportStationDetailCard.dart';
+import 'FlightDetailCard.dart';
+import 'FlightGoogleMapWidget.dart';
 import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -37,117 +41,6 @@ import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
 import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
-
-class ParsedPolygon {
-  final String id;
-  final List<List<double>> points;
-  final String name;
-
-  ParsedPolygon(this.id, this.points, this.name);
-}
-
-List<ParsedPolygon> parseGeoJson(String jsonStr) {
-  final Map<String, dynamic> data = jsonDecode(jsonStr);
-  final List features = data['features'];
-
-  int id = 1;
-  final List<ParsedPolygon> result = [];
-
-  for (final feature in features) {
-    final geometry = feature['geometry'];
-    if (geometry['type'] != 'Polygon') continue;
-
-    final List rings = geometry['coordinates'];
-    final List<List<double>> points = [];
-
-    for (final coord in rings[0]) {
-      points.add([(coord[1] as num).toDouble(), (coord[0] as num).toDouble()]);
-    }
-
-    result.add(
-      ParsedPolygon(
-        'fir_$id',
-        points,
-        feature['properties']['name'] ?? 'Unknown FIR',
-      ),
-    );
-    id++;
-  }
-
-  return result;
-}
-
-class FlightGoogleMapWidget extends StatelessWidget {
-  final CameraPosition initialCameraPosition;
-
-  final GoogleMapController? mapController;
-  final void Function(GoogleMapController controller)? onMapCreated;
-  final VoidCallback? onCameraIdle;
-  final VoidCallback? onCameraMoveStarted;
-
-  final MapType mapType;
-  final Set<Polygon> polygons;
-  final Set<Marker> markers;
-
-  final bool zoomControlsEnabled;
-  final bool myLocationButtonEnabled;
-  final bool rotateGesturesEnabled;
-  final bool myLocationEnabled;
-
-  /// Optional tracking support
-  final bool isTracking;
-  final LatLng? trackingLatLng;
-
-  const FlightGoogleMapWidget({
-    super.key,
-    required this.initialCameraPosition,
-    required this.mapType,
-    required this.markers,
-    this.polygons = const {},
-
-    this.mapController,
-    this.onMapCreated,
-    this.onCameraIdle,
-    this.onCameraMoveStarted,
-
-    this.zoomControlsEnabled = false,
-    this.myLocationButtonEnabled = false,
-    this.rotateGesturesEnabled = false,
-    this.myLocationEnabled = true,
-
-    this.isTracking = false,
-    this.trackingLatLng,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GoogleMap(
-      zoomControlsEnabled: zoomControlsEnabled,
-      myLocationButtonEnabled: myLocationButtonEnabled,
-      rotateGesturesEnabled: rotateGesturesEnabled,
-      myLocationEnabled: myLocationEnabled,
-      minMaxZoomPreference: MinMaxZoomPreference(5, 12),
-      mapType: mapType,
-      polygons: polygons,
-      markers: markers,
-
-      initialCameraPosition: initialCameraPosition,
-
-      onCameraIdle: onCameraIdle,
-      onCameraMoveStarted: onCameraMoveStarted,
-
-      onMapCreated: (controller) async {
-        onMapCreated?.call(controller);
-
-        if (isTracking && trackingLatLng != null) {
-          await controller.animateCamera(
-            CameraUpdate.newLatLng(trackingLatLng!),
-          );
-        }
-      },
-    );
-  }
-}
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
@@ -185,6 +78,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   late final ValueNotifier<Set<Polygon>> polygonNotifier;
   late final Set<Polygon> cachedPolygons;
   bool showPolygon = false;
+  String? _selectedPolygonId;
+  late List<ParsedPolygon> _parsedPolygons;
 
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
@@ -195,8 +90,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     super.initState();
 
     //FIRST initialize
-    polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
-    cachedPolygons = <Polygon>{};
+
+    //cachedPolygons = <Polygon>{};
 
     //THEN async work
     _loadGeoJson(context);
@@ -234,6 +129,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   @override
   void dispose() {
+    _selectedPolygonId = null;
+    polygonNotifier.dispose();
+    cachedPolygons.clear();
     _debounce?.cancel();
     _debounce = null;
 
@@ -244,9 +142,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       _mapController?.dispose();
       _mapController = null;
     }
-
-    polygonNotifier.dispose();
-    cachedPolygons.clear();
 
     _resetFlightSelection(cleanupOnly: true);
 
@@ -259,33 +154,18 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Future<void> _loadGeoJson(BuildContext context) async {
+    polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
+
     try {
       final jsonStr = await rootBundle.loadString(
         "assets/mapFiles/GeoPolygonMap.json",
       );
 
-      final parsed = await compute(parseGeoJson, jsonStr);
+      _parsedPolygons = await compute(parseGeoJson, jsonStr);
 
-      for (final p in parsed) {
-        cachedPolygons.add(
-          Polygon(
-            polygonId: PolygonId(p.id),
-            points: p.points.map((e) => LatLng(e[0], e[1])).toList(),
-            strokeWidth: 1,
-            strokeColor: Colors.red,
-            fillColor: Colors.transparent,
-            //fillColor: Colors.red.withOpacity(0.10),
-            consumeTapEvents: true,
-            onTap: () {
-              if (_mapCubit.state.mapType == CustomMapType.polygon) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(p.name)));
-              }
-            },
-          ),
-        );
-      }
+      cachedPolygons = _parsedPolygons
+          .map((p) => _buildPolygon(context, p))
+          .toSet();
 
       if (showPolygon) {
         polygonNotifier.value = cachedPolygons;
@@ -294,6 +174,46 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       debugPrint("GeoJSON load failed: $e");
       debugPrint("$st");
     }
+  }
+
+  Polygon _buildPolygon(BuildContext context, dynamic p) {
+    final bool isSelected = _selectedPolygonId == p.id;
+
+    return Polygon(
+      polygonId: PolygonId(p.id),
+      points: p.points.map<LatLng>((e) => LatLng(e[0], e[1])).toList(),
+
+      strokeWidth: isSelected ? 2 : 1,
+      strokeColor: isSelected ? Colors.purple : Colors.red,
+
+      fillColor: isSelected
+          ? Colors.yellow.withOpacity(0.25)
+          : Colors.transparent,
+
+      consumeTapEvents: true,
+
+      onTap: () {
+        if (_mapCubit.state.mapType != CustomMapType.polygon) return;
+
+        print(_selectedPolygonId);
+        print(p.id);
+        if (_selectedPolygonId == p.id) {
+          _selectedPolygonId = null;
+        } else {
+          _selectedPolygonId = p.id;
+        }
+
+        polygonNotifier.value = _parsedPolygons
+            .map((p) => _buildPolygon(context, p))
+            .toSet();
+
+        if (_selectedPolygonId != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(p.name)));
+        }
+      },
+    );
   }
 
   @override
@@ -1290,6 +1210,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
           // Only update if changed
           if (showPolygon != shouldShowPolygon) {
+            _selectedPolygonId = null;
             showPolygon = shouldShowPolygon;
             polygonNotifier.value = shouldShowPolygon
                 ? cachedPolygons
@@ -1408,7 +1329,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           if (state.selectedFlightDetail == null) {
             return const SizedBox.shrink();
           }
-          return FlightCard(
+          return FlightDetailCard(
             flightDetail: state.selectedFlightDetail,
             isComeFromLiveTracking: false,
             callBackForHideFlightCard: _resetFlightSelection,
@@ -1433,7 +1354,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             return const SizedBox.shrink();
           }
 
-          return AirportStationCard(
+          return AirportStationDetailCard(
             airportDetail: state.selectedAirport!,
             isComeFromLiveTracking: false,
             callBackForHideFlightCard: () {
@@ -1443,661 +1364,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class FlightCard extends StatelessWidget {
-  final FlightAircraftDetail? flightDetail;
-  final bool? isComeFromLiveTracking;
-  final VoidCallback? callBackForHideFlightCard;
-
-  const FlightCard({
-    super.key,
-    this.callBackForHideFlightCard,
-    this.flightDetail,
-    this.isComeFromLiveTracking,
-  });
-
-  String _formatDuration(Duration duration) {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes.remainder(60);
-    if (hours == 0 && minutes == 0) {
-      return '0 min';
-    } else if (hours == 0) {
-      return '$minutes min';
-    } else if (minutes == 0) {
-      return '$hours h';
-    } else {
-      return '${hours}h ${minutes}min';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
-      child: BlocBuilder<FlightMapCubit, FlightMapState>(
-        builder: (context, state) {
-          final selectedFlight = state.selectedFlight;
-          final detail = flightDetail;
-
-          if (selectedFlight == null && detail == null) {
-            return const Text('No flight selected');
-          }
-
-          final groundSpeed =
-              detail?.groundSpeed ?? selectedFlight?.groundSpeed ?? 0;
-          final altitude = detail?.altitude ?? selectedFlight?.altitude ?? 0;
-          final eta = detail?.eta ?? selectedFlight?.eta;
-          final takeoffTime = detail?.takeoffTime;
-
-          final aircraftType = detail?.aircraftModel ?? 'N/A';
-          final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
-          final category = detail?.icaoTypeCode ?? detail?.type ?? "";
-          final image = detail?.image ?? "";
-          final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
-
-          final airlineName =
-              (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
-              ? detail!.manufacturer!.airlineName!
-              : 'N/A';
-
-          final manufacturerLogo = detail?.manufacturer?.logo ?? "";
-          final callSign =
-              detail?.callsign ?? selectedFlight?.callSign ?? 'N/A';
-          final departureIata = detail?.departureIcao ?? 'N/A';
-          final arrivalIata = detail?.arrivalIcao ?? 'N/A';
-          final flightNumber =
-              selectedFlight?.flightNumber ?? detail?.flightNumber ?? '';
-
-          final flightId = selectedFlight?.id ?? detail?.id ?? '';
-
-          String timeSinceTakeoff = 'N/A';
-
-          if (takeoffTime != null) {
-            final duration = DateTime.now().toUtc().difference(takeoffTime);
-            timeSinceTakeoff = '${_formatDuration(duration)} ago';
-          }
-
-          String timeToArrival = 'N/A';
-          if (eta != null) {
-            final duration = eta.difference(DateTime.now().toUtc());
-            timeToArrival = duration.isNegative
-                ? 'Landed'
-                : 'in ${_formatDuration(duration)}';
-          }
-
-          double progress = 0.0;
-
-          if (takeoffTime != null && eta != null) {
-            final takeoffMillis = takeoffTime.millisecondsSinceEpoch;
-            final etaMillis = eta.millisecondsSinceEpoch;
-            final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-
-            final totalDuration = etaMillis - takeoffMillis;
-            final elapsed = nowMillis - takeoffMillis;
-
-            if (totalDuration > 0) {
-              progress = (elapsed / totalDuration).clamp(0.0, 1.0);
-            }
-          }
-
-          final departureCity = detail?.originAirport?.city ?? 'N/A';
-          final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
-
-          return GestureDetector(
-            onTap: callBackForHideFlightCard,
-            child: Card(
-              color: Colors.white,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-              elevation: 10,
-              margin: EdgeInsets.zero,
-              child: Padding(
-                // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                padding: const EdgeInsets.fromLTRB(20, 35, 20, 0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 6,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 220, // prevents touching logo
-                                    ),
-                                    child: Text(
-                                      aircraftType,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF3F3D56),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      category,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF3F3D56),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 4),
-                              Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: manufacturerLogo.isEmpty
-                                        ? SvgPicture.asset(
-                                            CommonUi.setSvgImage(
-                                              AssetsPath.manufacturer,
-                                            ),
-                                            width: 22,
-                                            height: 16,
-                                            fit: BoxFit.fill,
-                                          )
-                                        : CachedAnyImage(
-                                            imagePath: manufacturerLogo,
-                                            width: 22,
-                                            height: 16,
-                                            contentImage: BoxFit.contain,
-                                            useCache: false,
-                                          ),
-                                  ),
-                                  Text(
-                                    manufacturer,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Color(0xFF3F3D56),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // CallSign Box
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 18,
-                                          vertical: 3,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF3F3D56),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          callSign,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(6),
-                                        onTap: () {
-                                          if (isComeFromLiveTracking == true) {
-                                            context
-                                                .read<FlightMapCubit>()
-                                                .stopTrackingFlight();
-                                            Navigator.pop(context, flightId);
-                                          } else {
-                                            AnalyticsService.instance
-                                                .buttonPressed(
-                                                  FirebaseEvents
-                                                      .trackAFlightButton,
-                                                  FirebaseEvents.trackScreen,
-                                                );
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    BlocProvider.value(
-                                                      value: context
-                                                          .read<
-                                                            FlightMapCubit
-                                                          >(),
-                                                      child: TrackFlightScreen(
-                                                        flightNumber:
-                                                            flightNumber,
-                                                        initialFlight:
-                                                            selectedFlight,
-                                                        initialFlightDetail:
-                                                            detail,
-                                                        flightId: flightId,
-                                                      ),
-                                                    ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4),
-                                          child: state.isTracking
-                                              ? const LiveBadge()
-                                              : const Icon(
-                                                  Icons.my_location,
-                                                  color: Colors.blue,
-                                                  size: 20,
-                                                ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(6),
-                              child: airlineLogo.isEmpty
-                                  ? SvgPicture.asset(
-                                      CommonUi.setSvgImage(
-                                        AssetsPath.airbusplane,
-                                      ),
-                                      width: 100,
-                                      height: 30,
-                                      fit: BoxFit.fill,
-                                    )
-                                  : CachedAnyImage(
-                                      imagePath: airlineLogo,
-                                      width: 100,
-                                      height: 20,
-                                      contentImage: BoxFit.contain,
-                                      useCache: false,
-                                    ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              airlineName,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Color(0xFF3F3D56),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const CustomDivider(height: 1.0),
-                    const SizedBox(height: 16),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "$departureCity\n$departureIata\n$timeSinceTakeoff",
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Column(
-                            children: [
-                              LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor: Colors.grey.shade300,
-                                color: Colors.blue,
-                                minHeight: 5,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      groundSpeed == 0
-                                          ? 'N/A'
-                                          : '$groundSpeed km/h',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  const Text(
-                                    "•",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Flexible(
-                                    child: Text(
-                                      altitude == 0 ? 'N/A' : '$altitude m',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "$arrivalCity\n$arrivalIata\n$timeToArrival",
-                            style: const TextStyle(fontSize: 13),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.grey.shade300,
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            final combinedDetail = detail?.copyWith(
-                              latitude:
-                                  (detail?.latitude != null &&
-                                      detail!.latitude != 0.0)
-                                  ? detail.latitude
-                                  : selectedFlight?.latitude,
-                              longitude:
-                                  (detail?.longitude != null &&
-                                      detail!.longitude != 0.0)
-                                  ? detail.longitude
-                                  : selectedFlight?.longitude,
-                              groundSpeed:
-                                  detail?.groundSpeed ??
-                                  selectedFlight?.groundSpeed,
-                              altitude:
-                                  detail?.altitude ?? selectedFlight?.altitude,
-                              takeoffTime:
-                                  detail?.takeoffTime ??
-                                  selectedFlight?.takeoffTime,
-                              eta: detail?.eta ?? selectedFlight?.eta,
-                              flightNumber:
-                                  detail?.flightNumber ??
-                                  selectedFlight?.flightNumber,
-                              registration:
-                                  detail?.registration ??
-                                  selectedFlight?.registration,
-                              callsign:
-                                  detail?.callsign ?? selectedFlight?.callSign,
-                              track: detail?.track ?? selectedFlight?.track,
-                              vspeed:
-                                  detail?.vspeed ??
-                                  selectedFlight?.verticalSpeed,
-                              source: detail?.source ?? selectedFlight?.source,
-                              squawk: detail?.squawk ?? selectedFlight?.squawk,
-                              flightTime:
-                                  detail?.flightTime ??
-                                  selectedFlight?.flightTime,
-                            );
-
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.flightDetailScreen,
-                              FirebaseEvents.trackScreen,
-                            );
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<FlightMapCubit>(),
-                                  child: FlightDetailScreen(
-                                    ICAOType: category,
-                                    flightDetail: combinedDetail,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  "View Details",
-                                  style: TextStyle(
-                                    color: Color(0xFF3F3D56),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 14,
-                                  color: Color(0xFF3F3D56),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class AirportStationCard extends StatelessWidget {
-  final AircraftStationModel? airportDetail;
-  final bool? isComeFromLiveTracking;
-  final VoidCallback? callBackForHideFlightCard;
-
-  const AirportStationCard({
-    super.key,
-    this.callBackForHideFlightCard,
-    this.airportDetail,
-    this.isComeFromLiveTracking,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final detail = airportDetail;
-    if (detail == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return GestureDetector(
-      onTap: callBackForHideFlightCard,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    "Airport Details",
-                    style: TextStyle(
-                      color: Color(0xFF3E3C55),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'Name',
-                      text: detail.name == "" ? "N/A" : detail.name,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'City',
-                      text: detail.city == "" ? "N/A" : detail.city,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'State',
-                      text: detail.state == "" ? "N/A" : detail.state,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'Country',
-                      text: detail.country == "" ? "N/A" : detail.country,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'Elevation(m)',
-                      text: detail.elev.toString() == ""
-                          ? "N/A"
-                          : detail.elev.toString(),
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'Runway Length(m)',
-                      text: detail.runwayLength.toString() == ""
-                          ? "N/A"
-                          : detail.runwayLength.toString(),
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'ICAO Code',
-                      text: detail.icao == "" ? "N/A" : detail.icao ?? "",
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'IATA Code',
-                      text: detail.iataCode == ""
-                          ? "N/A"
-                          : detail.iataCode ?? "",
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-            ],
-          ),
-        ),
       ),
     );
   }
