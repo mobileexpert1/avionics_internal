@@ -61,10 +61,7 @@ List<ParsedPolygon> parseGeoJson(String jsonStr) {
     final List<List<double>> points = [];
 
     for (final coord in rings[0]) {
-      points.add([
-        (coord[1] as num).toDouble(),
-        (coord[0] as num).toDouble(),
-      ]);
+      points.add([(coord[1] as num).toDouble(), (coord[0] as num).toDouble()]);
     }
 
     result.add(
@@ -80,13 +77,13 @@ List<ParsedPolygon> parseGeoJson(String jsonStr) {
   return result;
 }
 
-
 class FlightGoogleMapWidget extends StatelessWidget {
   final CameraPosition initialCameraPosition;
 
   final GoogleMapController? mapController;
   final void Function(GoogleMapController controller)? onMapCreated;
   final VoidCallback? onCameraIdle;
+  final VoidCallback? onCameraMoveStarted;
 
   final MapType mapType;
   final Set<Polygon> polygons;
@@ -111,6 +108,7 @@ class FlightGoogleMapWidget extends StatelessWidget {
     this.mapController,
     this.onMapCreated,
     this.onCameraIdle,
+    this.onCameraMoveStarted,
 
     this.zoomControlsEnabled = false,
     this.myLocationButtonEnabled = false,
@@ -136,6 +134,7 @@ class FlightGoogleMapWidget extends StatelessWidget {
       initialCameraPosition: initialCameraPosition,
 
       onCameraIdle: onCameraIdle,
+      onCameraMoveStarted: onCameraMoveStarted,
 
       onMapCreated: (controller) async {
         onMapCreated?.call(controller);
@@ -181,6 +180,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   int _isForFlyingInTheArea = 0;
   Marker? _singleSearchMarker;
   GoogleMapController? _mapController;
+  bool _isUserInteractingWithMap = false;
 
   late final ValueNotifier<Set<Polygon>> polygonNotifier;
   late final Set<Polygon> cachedPolygons;
@@ -260,7 +260,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Future<void> _loadGeoJson(BuildContext context) async {
     try {
-      final jsonStr = await rootBundle.loadString("assets/mapFiles/GeoPolygonMap.json");
+      final jsonStr = await rootBundle.loadString(
+        "assets/mapFiles/GeoPolygonMap.json",
+      );
 
       final parsed = await compute(parseGeoJson, jsonStr);
 
@@ -268,17 +270,18 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         cachedPolygons.add(
           Polygon(
             polygonId: PolygonId(p.id),
-            points: p.points
-                .map((e) => LatLng(e[0], e[1]))
-                .toList(),
+            points: p.points.map((e) => LatLng(e[0], e[1])).toList(),
             strokeWidth: 1,
             strokeColor: Colors.red,
             fillColor: Colors.transparent,
+            //fillColor: Colors.red.withOpacity(0.10),
             consumeTapEvents: true,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(p.name)),
-              );
+              if (_mapCubit.state.mapType == CustomMapType.polygon) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(p.name)));
+              }
             },
           ),
         );
@@ -292,60 +295,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       debugPrint("$st");
     }
   }
-
-
-  // Future<void> _loadGeoJson(BuildContext context) async {
-  //   try {
-  //     final String jsonStr = await rootBundle.loadString(
-  //       "assets/mapFiles/GeoPolygonMap.json",
-  //     );
-  //
-  //     final Map<String, dynamic> data = jsonDecode(jsonStr);
-  //     final List features = data['features'];
-  //
-  //     int id = 1;
-  //
-  //     for (final feature in features) {
-  //       final geometry = feature['geometry'];
-  //       if (geometry['type'] != 'Polygon') continue;
-  //
-  //       final List rings = geometry['coordinates'];
-  //       final List<LatLng> points = [];
-  //
-  //       for (final coord in rings[0]) {
-  //         final double lng = (coord[0] as num).toDouble();
-  //         final double lat = (coord[1] as num).toDouble();
-  //         points.add(LatLng(lat, lng));
-  //       }
-  //
-  //       cachedPolygons.add(
-  //         Polygon(
-  //           polygonId: PolygonId('fir_$id'),
-  //           points: points,
-  //           strokeWidth: 1,
-  //           strokeColor: Colors.red,
-  //           fillColor: Colors.transparent,
-  //           consumeTapEvents: true,
-  //           onTap: () {
-  //             final name = feature['properties']['name'] ?? 'Unknown FIR';
-  //             ScaffoldMessenger.of(
-  //               context,
-  //             ).showSnackBar(SnackBar(content: Text(name)));
-  //           },
-  //         ),
-  //       );
-  //       id++;
-  //     }
-  //
-  //     //Agar polygon ON hai to map ko update karo
-  //     if (showPolygon) {
-  //       polygonNotifier.value = cachedPolygons;
-  //     }
-  //   } catch (e, st) {
-  //     debugPrint("GeoJSON load failed: $e");
-  //     debugPrint("$st");
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -425,7 +374,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                     : null,
 
                                 onCameraIdle: () {
+                                  if (!_isUserInteractingWithMap) return;
+                                  _isUserInteractingWithMap = false;
                                   _fetchFlightsWithDebounce(constraints);
+                                },
+
+                                onCameraMoveStarted: () {
+                                  _isUserInteractingWithMap = true;
                                 },
 
                                 onMapCreated: (controller) {
@@ -459,7 +414,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                   if (_activeCard == 2 && state.selectedAirport != null)
                     _buildAnimatedAirportDetailsCard(context),
-
                 ],
               );
             }
@@ -1322,44 +1276,72 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             },
           );
 
-          if (filterResult != null) {
-            AnalyticsService.instance.buttonPressed(
-              FirebaseEvents.changeMapType,
-              FirebaseEvents.trackScreen,
-            );
+          if (filterResult == null) return;
 
-            final bool shouldShow =
-                filterResult.mapType == CustomMapType.polygon;
-            if (showPolygon == shouldShow) return;
-            showPolygon = shouldShow;
-            polygonNotifier.value = shouldShow
+          AnalyticsService.instance.buttonPressed(
+            FirebaseEvents.changeMapType,
+            FirebaseEvents.trackScreen,
+          );
+
+          /* ---------------- MAP TYPE + POLYGON ---------------- */
+
+          final bool shouldShowPolygon =
+              filterResult.mapType == CustomMapType.polygon;
+
+          // Only update if changed
+          if (showPolygon != shouldShowPolygon) {
+            showPolygon = shouldShowPolygon;
+            polygonNotifier.value = shouldShowPolygon
                 ? cachedPolygons
                 : const <Polygon>{};
-
-            _mapCubit.changeMapType(filterResult.mapType);
-            _mapCubit.setFilters(
-              filterResult.categories,
-              filterResult.aircraftIcaos,
-            );
-
-            debugPrint(
-              "Applied Filters - Categories: ${filterResult.categories}, Aircraft ICAOs: ${filterResult.aircraftIcaos}",
-            ); // DEBUG
-            final visibleRegion = await _mapController!.getVisibleRegion();
-            final screenCenter = ScreenCoordinate(
-              x: (MediaQuery.of(context).size.width ~/ 2),
-              y: (MediaQuery.of(context).size.height ~/ 2),
-            );
-            final LatLng centerLatLng = await _mapController!.getLatLng(
-              screenCenter,
-            );
-            _mapCubit.fetchFlightsByBounds(
-              isNeedToRefresh: true,
-              bounds: visibleRegion,
-              context: context,
-              currentCenterLatLong: centerLatLng,
-            );
           }
+
+          // Change map type (NO API CALL)
+          _mapCubit.changeMapType(filterResult.mapType);
+
+          /* ---------------- FILTERS ---------------- */
+
+          _mapCubit.setFilters(
+            filterResult.categories,
+            filterResult.aircraftIcaos,
+          );
+
+          debugPrint(
+            "Applied Filters - Categories: ${filterResult.categories}, "
+            "Aircraft ICAOs: ${filterResult.aircraftIcaos}",
+          );
+
+          /* ---------------- API CALL (SAFE) ---------------- */
+
+          // Only fetch if map is ready
+          if (_mapController == null) return;
+
+          // ⏱️ Let map settle after style change
+          Future.delayed(const Duration(milliseconds: 300), () async {
+            try {
+              final visibleRegion = await _mapController!.getVisibleRegion();
+
+              final size = MediaQuery.of(context).size;
+              final screenCenter = ScreenCoordinate(
+                x: (size.width / 2).round(),
+                y: (size.height / 2).round(),
+              );
+
+              final centerLatLng = await _mapController!.getLatLng(
+                screenCenter,
+              );
+
+              _mapCubit.fetchFlightsByBounds(
+                isNeedToRefresh: true,
+                bounds: visibleRegion,
+                currentCenterLatLong: centerLatLng,
+                context: context,
+              );
+            } catch (e) {
+              debugPrint('Filter fetch skipped: $e');
+            }
+          });
+
           _activeCard = 0;
         },
         searchTitle: _isForFlyingInTheArea == 2
