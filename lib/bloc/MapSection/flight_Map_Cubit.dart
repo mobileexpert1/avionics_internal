@@ -224,18 +224,18 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             : null,
       );
 
-      final savedResponse = await SavedFlightRepository()
-          .getSavedAndFavoriteAircrafts();
-
-      final favoriteMap = buildFavoriteMap(savedResponse.favorite);
-
-      // 3️⃣ Merge fav flag
-      final updatedFlights = flights.map((flight) {
-        final isFav =
-            flight.callSign != null && favoriteMap.containsKey(flight.callSign);
-
-        return flight.copyWith(isFavorite: isFav);
-      }).toList();
+      // final savedResponse = await SavedFlightRepository()
+      //     .getSavedAndFavoriteAircrafts();
+      //
+      // final favoriteMap = buildFavoriteMap(savedResponse.favorite);
+      //
+      // // 3️⃣ Merge fav flag
+      // final updatedFlights = flights.map((flight) {
+      //   final isFav =
+      //       flight.callSign != null && favoriteMap.containsKey(flight.callSign);
+      //
+      //   return flight.copyWith(isFavorite: isFav);
+      // }).toList();
 
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
@@ -250,7 +250,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       emit(
         state.copyWith(
-          flights: updatedFlights,
+          flights: flights,
           airports: airportList.data,
           status: CommonApiStatus.success,
           isSuccess: true,

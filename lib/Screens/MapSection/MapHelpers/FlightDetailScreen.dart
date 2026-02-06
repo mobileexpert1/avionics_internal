@@ -75,12 +75,23 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
       FirebaseEvents.flightDetailScreen,
     );
   }
-
-  /// Fetches full flight details + live position and merges them
   Future<void> _loadFullFlightDetailsFromSaved() async {
     if (!widget.fromSavedFlight || _isLoadingFullDetails) return;
-    final flightId = widget.flightNumber ?? widget.flightId;
-    if (flightId == null || flightId.isEmpty) return;
+
+    final String? apiFlightId = widget.flightNumber ?? '';
+    final String flightNumber = widget.flightId ?? '';
+
+    if (apiFlightId == null || apiFlightId.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Live data not available'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
 
     setState(() => _isLoadingFullDetails = true);
 
@@ -91,19 +102,21 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
       final formattedTo = now.toIso8601String().split('.').first + 'Z';
 
       final response = await FlightRepository().getFlightDetails(
-        flightId: flightId,
+        flightId: apiFlightId,
         fromDateTime: formattedFrom,
         toDateTime: formattedTo,
       );
 
-      final fullFlightDetail = response['flightDetail'] as FlightAircraftDetail;
+      final fullFlightDetail =
+      response['flightDetail'] as FlightAircraftDetail;
 
-      // Refresh live position
       final flightMapCubit = context.read<FlightMapCubit>();
-      await flightMapCubit.refreshFlightPosition(
-        flightNumber: flightId,
-        context: context,
-      );
+      if (flightNumber.isNotEmpty) {
+        await flightMapCubit.refreshFlightPosition(
+          flightNumber: flightNumber,
+          context: context,
+        );
+      }
 
       if (!mounted) return;
 
@@ -120,7 +133,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           vspeed: liveFlight.verticalSpeed,
           track: liveFlight.track,
 
-          // === LIVE IDENTIFIERS ===
+          // === LIVE IDENTIFIERS (SAFE) ===
           callsign: liveFlight.callSign ?? fullFlightDetail.callsign,
           squawk: liveFlight.squawk ?? fullFlightDetail.squawk,
           source: liveFlight.source ?? fullFlightDetail.source,
@@ -135,26 +148,25 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           takeoffTime: liveFlight.takeoffTime ?? fullFlightDetail.takeoffTime,
           flightTime: liveFlight.flightTime ?? fullFlightDetail.flightTime,
 
-          // // === FULL AIRPORT OBJECTS (CRITICAL!) ===
-          // originAirport: liveFlight.originAirport ?? fullFlightDetail.originAirport,
-          // destinationAirport: liveFlight.destinationAirport ?? fullFlightDetail.destinationAirport,
-
-          // === ICAO/IATA (backup) ===
+          // === ICAO / IATA ===
           departureIcao:
-              liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
+          liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
           departureIata:
-              liveFlight.departureIata ?? fullFlightDetail.departureIata,
-          arrivalIcao: liveFlight.arrivalIcao ?? fullFlightDetail.arrivalIcao,
-          arrivalIata: liveFlight.arrivalIata ?? fullFlightDetail.arrivalIata,
+          liveFlight.departureIata ?? fullFlightDetail.departureIata,
+          arrivalIcao:
+          liveFlight.arrivalIcao ?? fullFlightDetail.arrivalIcao,
+          arrivalIata:
+          liveFlight.arrivalIata ?? fullFlightDetail.arrivalIata,
 
           // === AIRCRAFT INFO ===
           registration:
-              liveFlight.registration ?? fullFlightDetail.registration,
+          liveFlight.registration ?? fullFlightDetail.registration,
           type: liveFlight.type ?? fullFlightDetail.type,
           paintedAs: liveFlight.paintedAs ?? fullFlightDetail.paintedAs,
-          operatingAs: liveFlight.operatingAs ?? fullFlightDetail.operatingAs,
+          operatingAs:
+          liveFlight.operatingAs ?? fullFlightDetail.operatingAs,
 
-          // === RUNWAYS & DISTANCE (from full API) ===
+          // === DISTANCE / RUNWAY (API DATA) ===
           takeoffRunway: fullFlightDetail.takeoffRunway,
           landingRunway: fullFlightDetail.landingRunway,
           actualDistance: fullFlightDetail.actualDistance,
@@ -171,7 +183,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
       debugPrint('Error loading full flight details: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load full details: $e')),
+          const SnackBar(
+            content: Text('Live data not available'),
+          ),
         );
       }
     } finally {
@@ -180,6 +194,113 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
       }
     }
   }
+
+  // /// Fetches full flight details + live position and merges them
+  // Future<void> _loadFullFlightDetailsFromSaved() async {
+  //   if (!widget.fromSavedFlight || _isLoadingFullDetails) return;
+  //   // final flightId = widget.flightNumber ?? widget.flightId;
+  //   final flightId = widget.flightNumber;
+  //   final flightNumber = widget.flightId ?? '';
+  //   if (flightId == null || flightId.isEmpty) return;
+  //
+  //   setState(() => _isLoadingFullDetails = true);
+  //
+  //   try {
+  //     final now = DateTime.now().toUtc();
+  //     final from = now.subtract(const Duration(hours: 24));
+  //     final formattedFrom = from.toIso8601String().split('.').first + 'Z';
+  //     final formattedTo = now.toIso8601String().split('.').first + 'Z';
+  //
+  //     final response = await FlightRepository().getFlightDetails(
+  //       flightId: flightId,
+  //       fromDateTime: formattedFrom,
+  //       toDateTime: formattedTo,
+  //     );
+  //
+  //     final fullFlightDetail = response['flightDetail'] as FlightAircraftDetail;
+  //
+  //     // Refresh live position
+  //     final flightMapCubit = context.read<FlightMapCubit>();
+  //     await flightMapCubit.refreshFlightPosition(
+  //       flightNumber: flightNumber,
+  //       context: context,
+  //     );
+  //
+  //     if (!mounted) return;
+  //
+  //     final liveFlight = flightMapCubit.state.selectedFlight;
+  //     FlightAircraftDetail mergedDetail = fullFlightDetail;
+  //
+  //     if (liveFlight != null) {
+  //       mergedDetail = fullFlightDetail.copyWith(
+  //         // === LIVE POSITION ===
+  //         latitude: liveFlight.latitude,
+  //         longitude: liveFlight.longitude,
+  //         altitude: liveFlight.altitude,
+  //         groundSpeed: liveFlight.groundSpeed,
+  //         vspeed: liveFlight.verticalSpeed,
+  //         track: liveFlight.track,
+  //
+  //         // === LIVE IDENTIFIERS ===
+  //         callsign: liveFlight.callSign ?? fullFlightDetail.callsign,
+  //         squawk: liveFlight.squawk ?? fullFlightDetail.squawk,
+  //         source: liveFlight.source ?? fullFlightDetail.source,
+  //         hex: liveFlight.hex ?? fullFlightDetail.hex,
+  //
+  //         // === LIVE TIMING ===
+  //         firstSeen: liveFlight.firstSeen ?? fullFlightDetail.firstSeen,
+  //         lastSeen: liveFlight.lastSeen ?? fullFlightDetail.lastSeen,
+  //         flightEnded: liveFlight.flightEnded ?? fullFlightDetail.flightEnded,
+  //         landingTime: liveFlight.landingTime ?? fullFlightDetail.landingTime,
+  //         eta: liveFlight.eta ?? fullFlightDetail.eta,
+  //         takeoffTime: liveFlight.takeoffTime ?? fullFlightDetail.takeoffTime,
+  //         flightTime: liveFlight.flightTime ?? fullFlightDetail.flightTime,
+  //
+  //         // // === FULL AIRPORT OBJECTS (CRITICAL!) ===
+  //         // originAirport: liveFlight.originAirport ?? fullFlightDetail.originAirport,
+  //         // destinationAirport: liveFlight.destinationAirport ?? fullFlightDetail.destinationAirport,
+  //
+  //         // === ICAO/IATA (backup) ===
+  //         departureIcao:
+  //             liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
+  //         departureIata:
+  //             liveFlight.departureIata ?? fullFlightDetail.departureIata,
+  //         arrivalIcao: liveFlight.arrivalIcao ?? fullFlightDetail.arrivalIcao,
+  //         arrivalIata: liveFlight.arrivalIata ?? fullFlightDetail.arrivalIata,
+  //
+  //         // === AIRCRAFT INFO ===
+  //         registration:
+  //             liveFlight.registration ?? fullFlightDetail.registration,
+  //         type: liveFlight.type ?? fullFlightDetail.type,
+  //         paintedAs: liveFlight.paintedAs ?? fullFlightDetail.paintedAs,
+  //         operatingAs: liveFlight.operatingAs ?? fullFlightDetail.operatingAs,
+  //
+  //         // === RUNWAYS & DISTANCE (from full API) ===
+  //         takeoffRunway: fullFlightDetail.takeoffRunway,
+  //         landingRunway: fullFlightDetail.landingRunway,
+  //         actualDistance: fullFlightDetail.actualDistance,
+  //         circleDistance: fullFlightDetail.circleDistance,
+  //       );
+  //     }
+  //
+  //     if (mounted) {
+  //       setState(() {
+  //         _currentFlightDetail = mergedDetail;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error loading full flight details: $e');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Failed to load full details: $e')),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() => _isLoadingFullDetails = false);
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
