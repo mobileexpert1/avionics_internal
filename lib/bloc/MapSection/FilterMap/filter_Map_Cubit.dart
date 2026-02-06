@@ -37,7 +37,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
       case 'Hybrid':
         emit(state.copyWith(mapType: CustomMapType.hybrid));
         break;
-      case 'Polygon':
+      case 'FIR Borders':
         emit(state.copyWith(mapType: CustomMapType.polygon));
         break;
     }
@@ -52,7 +52,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
       case CustomMapType.hybrid:
         return "Hybrid";
       case CustomMapType.polygon:
-        return "Polygon";
+        return "FIR Borders";
     }
   }
 

@@ -210,7 +210,7 @@ class _FilterContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   SegmentedControl(
-                    options: const ['Standard', 'Satellite', 'Hybrid','Polygon'],
+                    options: const ['Standard', 'Satellite', 'Hybrid','FIR Borders'],
                     selectedValue: cubit.getMapTypeName(),
                     onChanged: cubit.changeMapTypeByName,
                   ),
