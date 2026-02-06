@@ -317,8 +317,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (!context.mounted) return;
 
-      if (result.userDetails?.userType == null ||
-          result.userDetails?.userType == '') {
+      if (result.userDetails!.userType == '') {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => AvtarScreen(
@@ -330,9 +329,7 @@ class LoginCubit extends Cubit<LoginState> {
           (_) => false,
         );
         return;
-      }
-
-      if (result.userDetails?.isActiveSubscription != true) {
+      }else  if (result.userDetails!.isActiveSubscription == false) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => defaultTargetPlatform == TargetPlatform.iOS
@@ -344,18 +341,18 @@ class LoginCubit extends Cubit<LoginState> {
           ),
         );
         return;
+      } else {
+        AppSnackBar.custom(
+          context,
+          message: 'Login Successfully',
+          svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
+        );
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+              (_) => false,
+        );
       }
-
-      AppSnackBar.custom(
-        context,
-        message: 'Login Successfully',
-        svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
-      );
-
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-        (_) => false,
-      );
     } else if (result.isVerified == false) {
       if (!context.mounted) return;
 

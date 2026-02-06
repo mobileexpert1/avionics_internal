@@ -194,9 +194,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
       onTap: () {
         if (_mapCubit.state.mapType != CustomMapType.polygon) return;
-
-        print(_selectedPolygonId);
-        print(p.id);
         if (_selectedPolygonId == p.id) {
           _selectedPolygonId = null;
         } else {
