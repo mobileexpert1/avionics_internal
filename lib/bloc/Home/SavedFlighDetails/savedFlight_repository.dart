@@ -20,8 +20,12 @@ class SavedFlightRepository {
   }
 
 
-  Future<List<AircraftItem>> getOnlyFavoriteFlights() async {
+  Future<Set<String>> getFavoriteCallSigns() async {
     final response = await getSavedAndFavoriteAircrafts();
-    return response.favorite;
+
+    return response.favorite
+        .map((e) => e.callsign)
+        .whereType<String>()
+        .toSet();
   }
 }

@@ -9,6 +9,7 @@ import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
 import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import '../../bloc/MapSection/ParsedPolygon.dart';
 import 'AirportStationDetailCard.dart';
@@ -120,6 +121,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         } else {
           _showInitialTrackingModePopup(context);
         }
+        await _loadFavoritesFlights();
       }
     });
 
@@ -152,6 +154,22 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     PaintingBinding.instance.imageCache.clear();
     super.dispose();
   }
+
+
+  Future<void> _loadFavoritesFlights() async {
+    final favCallSigns =
+    await SavedFlightRepository().getFavoriteCallSigns();
+
+    debugPrint('Favorite CallSigns: $favCallSigns');
+
+    if (!mounted) return;
+
+    context
+        .read<FlightMapCubit>()
+        .FavoriteFlights(favCallSigns);
+  }
+
+
 
   Future<void> _loadGeoJson(BuildContext context) async {
     polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
@@ -877,6 +895,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                         data.id.toString(),
                                         context,
                                       );
+
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .toggleFavoriteByCallSign(data.callSign);
+
                                       AppSnackBar.custom(
                                         context,
                                         message: isFavorite

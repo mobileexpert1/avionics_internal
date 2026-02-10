@@ -34,13 +34,45 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   FlightMapCubit() : super(FlightMapState());
 
   Timer? _trackingTimer;
+  Set<String>? _favCallSigns;
 
-  Map<String, AircraftItem> buildFavoriteMap(List<AircraftItem> favorites) {
-    return {
-      for (final item in favorites)
-        if (item.callsign != null) item.callsign!: item,
-    };
+  void FavoriteFlights(Set<String> favCallSigns) {
+    _favCallSigns = favCallSigns;
+
+    if (state.flights == null || state.flights!.isEmpty) {
+      debugPrint('Flights not loaded yet, storing favCallSigns');
+      return;
+    }
+
+    _favoritesToFlights();
   }
+
+
+  void _favoritesToFlights() {
+    if (_favCallSigns == null || state.flights == null) return;
+
+    final updatedFlights = state.flights!.map((flight) {
+      final isFav = _favCallSigns!.contains(flight.callSign);
+
+      if (isFav) {
+        debugPrint('FAV MATCHED CallSign => ${flight.callSign}');
+      }
+
+      return flight.copyWith(isFavorite: isFav);
+    }).toList();
+
+    emit(state.copyWith(flights: updatedFlights));
+  }
+
+
+
+  void onFlightsLoaded(List<FlightModel> flights) {
+    emit(state.copyWith(flights: flights));
+    if (_favCallSigns != null) {
+      _favoritesToFlights();
+    }
+  }
+
 
   Future<bool> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -224,19 +256,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             : null,
       );
 
-      // final savedResponse = await SavedFlightRepository()
-      //     .getSavedAndFavoriteAircrafts();
-      //
-      // final favoriteMap = buildFavoriteMap(savedResponse.favorite);
-      //
-      // // 3️⃣ Merge fav flag
-      // final updatedFlights = flights.map((flight) {
-      //   final isFav =
-      //       flight.callSign != null && favoriteMap.containsKey(flight.callSign);
-      //
-      //   return flight.copyWith(isFavorite: isFav);
-      // }).toList();
-
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
             longitude: currentCenterLatLong.longitude.toString(),
@@ -247,10 +266,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         "Flights fetched: ${flights.length}\n"
         "Airport list count: ${airportList.data.length}",
       );
-
+      onFlightsLoaded(flights);
       emit(
         state.copyWith(
-          flights: flights,
+          // flights: flights,
           airports: airportList.data,
           status: CommonApiStatus.success,
           isSuccess: true,
@@ -509,4 +528,20 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
     }
   }
+
+  void toggleFavoriteByCallSign(String? callSign) {
+    if (callSign == null || state.flights == null) return;
+
+    final updatedFlights = state.flights!.map((flight) {
+      if (flight.callSign == callSign) {
+        return flight.copyWith(
+          isFavorite: !(flight.isFavorite ?? false),
+        );
+      }
+      return flight;
+    }).toList();
+
+    emit(state.copyWith(flights: updatedFlights));
+  }
+
 }
