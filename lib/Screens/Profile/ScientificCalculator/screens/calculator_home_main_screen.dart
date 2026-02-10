@@ -1,0 +1,203 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../CustomFiles/CustomAppBar.dart';
+import '../providers/calculations.dart';
+import '../providers/history.dart';
+import '../core/index.dart';
+
+import '../widgets/answer_text.dart';
+import '../widgets/buttons_grid.dart';
+import '../widgets/custom_animated_switcher.dart';
+import '../widgets/custom_icon.dart';
+import '../widgets/custom_switch.dart';
+import '../widgets/gradient_divider.dart';
+import '../widgets/input_feild.dart';
+import '../widgets/last_answer.dart';
+import '../widgets/responsive.dart';
+import '../widgets/switch_text.dart';
+
+class CalculatorHomeMainScreen extends StatefulWidget {
+  const CalculatorHomeMainScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CalculatorHomeMainScreen> createState() =>
+      _CalculatorHomeMainScreenState();
+}
+
+class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    super.dispose();
+  }
+
+  void onExpand() {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    SystemChrome.setPreferredOrientations(
+      isLandscape
+          ? [DeviceOrientation.portraitUp]
+          : [
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ],
+    );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    final calc = Provider.of<Calculations>(context, listen: false);
+    final history = Provider.of<History>(context);
+
+    final lGrid = Provider.of<Calculations>(context).lGrid;
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    return SafeArea(
+      bottom: false,
+      top: false,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          title: ConstantStrings.scientificCalculator,
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+
+          rightButton:IconButton(
+            icon: CustomIcon(
+              AppIcon.history,
+              onPressed: history.toggleShowHistory,
+              isSelected: history.isShowHistory,
+            ),
+            onPressed: () {
+
+            },
+          ),
+          centerTitle: true,
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (isLandscape)
+              Expanded(
+                flex: 7,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const Expanded(flex: 5, child: InputFeild()),
+                          Expanded(
+                            flex: isLandscape ? 4 : 2,
+                            child: const AnswerText(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else ...[
+              const Expanded(flex: 4, child: InputFeild()),
+              const Expanded(flex: 2, child: AnswerText()),
+            ],
+            if (!isLandscape) const SizedBox(height: 5),
+            const GradientDivider(),
+            Expanded(
+              flex: isLandscape ? 14 : 12,
+              child: Container(
+                color: colorScheme.gridBg,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 5,
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 33,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 3,
+                        vertical: isLandscape ? 0 : 5,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CustomIcon(
+                            AppIcon.expand,
+                            onPressed: onExpand,
+                            isSelected: isLandscape,
+                          ),
+                          const Spacer(),
+                          CustomIcon(AppIcon.delete, onPressed: calc.delete),
+                        ],
+                      ),
+                    ),
+                    if (!isLandscape) const SizedBox(height: 5),
+                    Expanded(
+                      child: Responsive(
+                        portrait: const Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: CustomAnimatedSwitcher(
+                                grid: ButtonsGrid(grid: AppConstant.grid),
+                              ),
+                            ),
+                            Expanded(
+                              child: ButtonsGrid(grid: AppConstant.opGrid),
+                            ),
+                          ],
+                        ),
+                        landscape: Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: CustomAnimatedSwitcher(
+                                grid: ButtonsGrid(grid: lGrid),
+                              ),
+                            ),
+                            const Expanded(
+                              flex: 3,
+                              child: ButtonsGrid(grid: AppConstant.grid),
+                            ),
+                            const Expanded(
+                              child: ButtonsGrid(grid: AppConstant.opGrid),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: isLandscape ? 2 : 5),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

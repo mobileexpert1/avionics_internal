@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Screens/Onboarding/Splash/splash_screen.dart';
+import 'package:avionics_internal/Screens/Profile/ProfileScreen.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackbox_cubit.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
@@ -10,11 +11,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'Database/db_helper.dart';
 import 'Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
+import 'Screens/Profile/ScientificCalculator/providers/calculations.dart';
+import 'Screens/Profile/ScientificCalculator/providers/history.dart';
+import 'Screens/Profile/ScientificCalculator/providers/theme_provider.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -48,6 +54,7 @@ import 'firebase_options.dart';
 //   debugPrint('🗑️  Old database deleted at $path');
 // }
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
@@ -134,6 +141,10 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => MapSearchAircraftListCubit()),
         BlocProvider(create: (_) => BlackboxCubit()),
         BlocProvider(create: (_) => FlightMapCubit()),
+        BlocProvider(create: (_) => FlightMapCubit()),
+        ChangeNotifierProvider(create: (_) => Calculations()),
+        ChangeNotifierProvider(create: (_) => History()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider(ThemeMode.system)),
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {

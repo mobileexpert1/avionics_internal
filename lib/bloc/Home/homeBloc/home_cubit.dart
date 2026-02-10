@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'home_state.dart';
@@ -18,35 +20,40 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchHomeData(BuildContext context) async {
     emit(HomeLoading());
-
     try {
       final data = await repository.getHomeData();
-
       if (data.isActiveSubscription == false) {
         await SharedPrefsHelper.saveApiFetchKeyFromSever(true);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
                 ? AppleSubscriptionScreen(isComeFromSignup: true)
-                : AppleSubscriptionScreen(isComeFromSignup: true,isComeFromSocialLogin: true)),
+                : AppleSubscriptionScreen(
+                    isComeFromSignup: true,
+                    isComeFromSocialLogin: true,
+                  )),
           ),
         );
         return;
-      }else{
+      } else {
+        AppSnackBar.custom(
+          context,
+          message: 'isActiveSubscription ${data.isActiveSubscription} ',
+          svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
+        );
         await SharedPrefsHelper.saveApiFetchKeyFromSever(false);
+        final top2Manufacturers = data.manufacturers.take(2).toList();
+        emit(
+          HomeLoaded(
+            manufacturers: top2Manufacturers,
+            flights: data.flights,
+            favourites: data.favourites,
+            detail: data.detail,
+            isActiveSubscription: data.isActiveSubscription,
+            selectedIndex: _selectedIndex,
+          ),
+        );
       }
-
-      final top2Manufacturers = data.manufacturers.take(2).toList();
-      emit(
-        HomeLoaded(
-          manufacturers: top2Manufacturers,
-          flights: data.flights,
-          favourites: data.favourites,
-          detail: data.detail,
-          isActiveSubscription: data.isActiveSubscription,
-          selectedIndex: _selectedIndex,
-        ),
-      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(HomeError(e.toString()));

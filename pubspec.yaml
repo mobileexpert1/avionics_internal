@@ -31,6 +31,8 @@ dependencies:
 
   flutter:
     sdk: flutter
+  provider: ^6.0.3
+  eval_ex: ^1.1.6
   speech_to_text:
   permission_handler:
   equatable: ^2.0.5
@@ -107,6 +109,7 @@ flutter:
     - assets/jpg_images/
     - assets/png_images/
     - assets/mapFiles/
+    - assets/images/
     - 'assets/svg_images/airportsIcon.svg'
     - .env
   # assets:

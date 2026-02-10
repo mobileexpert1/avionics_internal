@@ -30,6 +30,8 @@ import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 
+import 'ScientificCalculator/screens/calculator_home_main_screen.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -53,8 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     Widget content = BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
       builder: (context, state) {
         if (state.isLoading) {
@@ -164,6 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.unitMeasureAcc,
@@ -198,6 +199,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.unitMeasureAcc,
+                    //   ),
+                    //   title: "Scientific Calculator",
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => CalculatorHomeMainScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                   ],
                 ),
 
@@ -230,7 +246,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   headerTitle: "FEEDBACK",
                   showBottomDivider: false,
                   items: [
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.tutorialVideo,

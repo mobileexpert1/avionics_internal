@@ -50,6 +50,10 @@
 	<string>3fdf59b543830de9b8860238fc53987a</string>
 	<key>FacebookDisplayName</key>
 	<string>Avioflai-App</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
+	<key>GMSApiKey</key>
+	<string>AIzaSyCgCkZkU5x5LrPm8nnK0MX82tFOhJLRA2M</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>
@@ -57,8 +61,25 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Need Permission to access network</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to your location to show your position on the map.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to your location to show your position on the map</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to your location to show your position on the map</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone to capture voice input.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app needs access to speech recognition for voice input.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -67,29 +88,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Need Permission to access network</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app needs access to your location to show your position on the map.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to your location to show your position on the map</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to your location to show your position on the map</string>
 	<key>io.flutter.embedded_views_preview</key>
-    <true/>
-    <key>GMSApiKey</key>
-    <string>AIzaSyCgCkZkU5x5LrPm8nnK0MX82tFOhJLRA2M</string>
-     <key>NSSpeechRecognitionUsageDescription</key>
-     <string>This app needs access to speech recognition for voice input.</string>
-     <key>NSMicrophoneUsageDescription</key>
-     <string>This app needs access to your microphone to capture voice input.</string>
-
-     	<key>FirebaseAppDelegateProxyEnabled</key>
-     	<true/>
-     	<key>UIBackgroundModes</key>
-     	<array>
-     		<string>remote-notification</string>
-     		<string>fetch</string>
-     	</array>
+	<true/>
 </dict>
 </plist>
