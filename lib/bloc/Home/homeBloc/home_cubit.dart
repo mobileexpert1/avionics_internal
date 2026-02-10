@@ -36,11 +36,6 @@ class HomeCubit extends Cubit<HomeState> {
         );
         return;
       } else {
-        AppSnackBar.custom(
-          context,
-          message: 'isActiveSubscription ${data.isActiveSubscription} ',
-          svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
-        );
         await SharedPrefsHelper.saveApiFetchKeyFromSever(false);
         final top2Manufacturers = data.manufacturers.take(2).toList();
         emit(
