@@ -37,6 +37,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     return "";
   }
 
+  bool _navigated = false;
+
   @override
   void initState() {
     super.initState();
@@ -72,8 +74,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          AppleSubscriptionCubit(autoRestore: widget.isComeFromSignup == false),
+      create: (_) => AppleSubscriptionCubit(autoRestore: true),
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
             (prev.error != curr.error && curr.error != null) ||
@@ -95,6 +96,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             );
 
             if (widget.isComeFromSignup == true) {
+              _navigated = true;
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => RootTabbarscreen()),
@@ -231,7 +233,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                             textColor: Colors.white,
                             title: SubscriptionTexts.changeSubPlanTitle,
                             icon: const SizedBox(),
-                            isEnabled: selected != null,
+                            isEnabled: selected != null && !state.loading,
                             onPressed: () {
                               if (selected != null) {
                                 context

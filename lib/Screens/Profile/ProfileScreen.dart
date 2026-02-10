@@ -200,20 +200,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
 
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.unitMeasureAcc,
-                    //   ),
-                    //   title: "Scientific Calculator",
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => CalculatorHomeMainScreen(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.unitMeasureAcc,
+                      ),
+                      title: "Scientific Calculator",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CalculatorHomeMainScreen(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
 

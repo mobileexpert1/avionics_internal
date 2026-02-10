@@ -182,7 +182,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       _parsedPolygons = await compute(parseGeoJson, jsonStr);
 
       cachedPolygons = _parsedPolygons
-          .map((p) => _buildPolygon(context, p))
+          .expand((p) => _buildPolygon(context, p))
           .toSet();
 
       if (showPolygon) {
@@ -194,42 +194,59 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     }
   }
 
-  Polygon _buildPolygon(BuildContext context, dynamic p) {
+  Set<Polygon> _buildPolygon(BuildContext context, dynamic p) {
+    final Set<Polygon> polygons = {};
     final bool isSelected = _selectedPolygonId == p.id;
 
-    return Polygon(
-      polygonId: PolygonId(p.id),
-      points: p.points.map<LatLng>((e) => LatLng(e[0], e[1])).toList(),
+    int index = 0;
 
-      strokeWidth: isSelected ? 2 : 1,
-      strokeColor: isSelected ? Colors.purple : Colors.red,
+    for (final ring in p.polygons) {
+      // p.polygons → List<List<List<double>>>
+      polygons.add(
+        Polygon(
+          polygonId: PolygonId('${p.id}_$index'),
+          points: ring
+              .map<LatLng>(
+                (e) => LatLng(
+              e[1].clamp(-85.0, 85.0), // lat
+              e[0], // lng
+            ),
+          )
+              .toList(),
 
-      fillColor: isSelected
-          ? Colors.yellow.withOpacity(0.25)
-          : Colors.transparent,
+          strokeWidth: isSelected ? 2 : 1,
+          strokeColor: isSelected ? Colors.purple : Colors.red,
+          fillColor: isSelected
+              ? Colors.yellow.withOpacity(0.25)
+              : Colors.transparent,
 
-      consumeTapEvents: true,
+          consumeTapEvents: true,
 
-      onTap: () {
-        if (_mapCubit.state.mapType != CustomMapType.polygon) return;
-        if (_selectedPolygonId == p.id) {
-          _selectedPolygonId = null;
-        } else {
-          _selectedPolygonId = p.id;
-        }
+          onTap: () {
+            print(_mapCubit.state.mapType);
+            if (_mapCubit.state.mapType != CustomMapType.polygon) return;
 
-        polygonNotifier.value = _parsedPolygons
-            .map((p) => _buildPolygon(context, p))
-            .toSet();
+            _selectedPolygonId =
+            (_selectedPolygonId == p.id) ? null : p.id;
 
-        if (_selectedPolygonId != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(p.name)));
-        }
-      },
-    );
+            polygonNotifier.value = _parsedPolygons
+                .expand((p) => _buildPolygon(context, p))
+                .toSet();
+
+            if (_selectedPolygonId != null) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(p.name)));
+            }
+          },
+        ),
+      );
+
+      index++;
+    }
+
+    return polygons;
   }
+
 
   @override
   Widget build(BuildContext context) {

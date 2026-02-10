@@ -224,7 +224,10 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       }
 
       // Prevent duplicate backend calls
-      if (state.activeProductId == purchase.productID) return;
+      if (state.subscription?.status == "active" &&
+          state.subscription?.productId == purchase.productID) {
+        return;
+      }
 
       await AppleSubscriptionRepository().postSubscriptionApi(
         token: purchase.verificationData.serverVerificationData,
@@ -253,9 +256,11 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         );
       }
 
+      final isActive = backendResponse.data?.status == "active";
+
       emit(
         state.copyWith(
-          purchased: backendResponse.data?.status == "active",
+          purchased: isActive,
           loading: false,
           status: CommonApiStatus.success,
           activeProductId: resolvedProductId,
@@ -286,15 +291,14 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   // ---------------- RESTORE ----------------
 
   Future<void> restorePurchases() async {
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
     try {
       await _iap.restorePurchases();
     } catch (e) {
       emit(state.copyWith(loading: false, error: "Restore failed: $e"));
-    } finally {
-      emit(state.copyWith(loading: false));
     }
   }
+
 
   // ---------------- CANCEL SUBSCRIPTION ----------------
   Future<void> guideUserToCancelSubscription() async {

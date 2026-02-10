@@ -2,10 +2,10 @@ import 'dart:convert';
 
 class ParsedPolygon {
   final String id;
-  final List<List<double>> points;
   final String name;
+  final List<List<List<double>>> polygons;
 
-  ParsedPolygon(this.id, this.points, this.name);
+  ParsedPolygon({required this.id, required this.name, required this.polygons});
 }
 
 List<ParsedPolygon> parseGeoJson(String jsonStr) {
@@ -17,22 +17,46 @@ List<ParsedPolygon> parseGeoJson(String jsonStr) {
 
   for (final feature in features) {
     final geometry = feature['geometry'];
-    if (geometry['type'] != 'Polygon') continue;
+    final String type = geometry['type'];
+    final String name = feature['properties']?['name'] ?? 'Unknown FIR';
 
-    final List rings = geometry['coordinates'];
-    final List<List<double>> points = [];
+    final List<List<List<double>>> polygons = [];
 
-    for (final coord in rings[0]) {
-      points.add([(coord[1] as num).toDouble(), (coord[0] as num).toDouble()]);
+    if (type == 'Polygon') {
+      // Polygon → coordinates: [ [ [lng, lat], ... ] ]
+      final List rings = geometry['coordinates'];
+
+      final List<List<double>> outerRing = [];
+      for (final coord in rings[0]) {
+        outerRing.add([
+          (coord[0] as num).toDouble(), // lng
+          (coord[1] as num).toDouble(), // lat
+        ]);
+      }
+
+      polygons.add(outerRing);
+    } else if (type == 'MultiPolygon') {
+      // MultiPolygon → [ [ [ [lng, lat] ] ], ... ]
+      final List multi = geometry['coordinates'];
+
+      for (final polygon in multi) {
+        final List<List<double>> outerRing = [];
+
+        for (final coord in polygon[0]) {
+          outerRing.add([
+            (coord[0] as num).toDouble(), // lng
+            (coord[1] as num).toDouble(), // lat
+          ]);
+        }
+
+        polygons.add(outerRing);
+      }
+    } else {
+      continue; // Ignore unsupported geometry
     }
 
-    result.add(
-      ParsedPolygon(
-        'fir_$id',
-        points,
-        feature['properties']['name'] ?? 'Unknown FIR',
-      ),
-    );
+    result.add(ParsedPolygon(id: 'fir_$id', name: name, polygons: polygons));
+
     id++;
   }
 
