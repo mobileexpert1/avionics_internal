@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../../Constants/constantImages.dart';
 import '../core/index.dart';
 
 Color getButtonBgColor(String text, BuildContext context) {
   final colorScheme = Theme.of(context).colorScheme;
   switch (text) {
-    case '=':
-      return Colors.transparent;
     case '%':
     case '( )':
     case 'C':
@@ -15,14 +14,15 @@ Color getButtonBgColor(String text, BuildContext context) {
     case '√':
     case '∛':
     case 'switch':
-      return colorScheme.topButtonBg;
+      return Colors.white;
+    case '=':
     case '+':
     case '-':
     case '×':
     case '÷':
       return colorScheme.primary;
     default:
-      return colorScheme.buttonBg;
+      return Colors.white;
   }
 }
 
@@ -70,7 +70,7 @@ Widget getOnButtonWidget(String text, BuildContext context) {
           shaderCallback: (bounds) =>
               Theme.of(context).colorScheme.gradient.createShader(bounds),
           child: SvgPicture.asset(
-            AppIcon.switchLGrid,
+            AssetsPath.switchLGridForCal,
             color: getTextColor(text, context),
           ),
         ),

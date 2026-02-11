@@ -1,7 +1,6 @@
 class AppConstant {
   const AppConstant._();
 
-
   static const List<List<String>> opGrid = [
     [ '÷'],
     [ '×'],
@@ -9,8 +8,6 @@ class AppConstant {
     ['+'],
     ['='],
   ];
-
-
 
   static const List<List<String>> grid = [
     ['C', '( )', '%'],

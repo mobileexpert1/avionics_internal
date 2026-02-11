@@ -105,7 +105,12 @@ abstract class AssetsPath {
   ///jpg
   static const String explore = "explore";
 
+  static const deleteForCal = 'assets/images/delete.svg';
+  static const expandForCal = 'assets/images/expand.svg';
+  static const historyForCal = 'assets/images/history.svg';
+  static const switchLGridForCal = 'assets/images/switch.svg';
 }
+
 
 class CommonUi {
   static String setjpgImage(String image) {

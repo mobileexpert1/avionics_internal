@@ -1,8 +1,10 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../providers/calculations.dart';
 import '../providers/history.dart';
@@ -12,12 +14,9 @@ import '../widgets/answer_text.dart';
 import '../widgets/buttons_grid.dart';
 import '../widgets/custom_animated_switcher.dart';
 import '../widgets/custom_icon.dart';
-import '../widgets/custom_switch.dart';
-import '../widgets/gradient_divider.dart';
 import '../widgets/input_feild.dart';
 import '../widgets/last_answer.dart';
 import '../widgets/responsive.dart';
-import '../widgets/switch_text.dart';
 
 class CalculatorHomeMainScreen extends StatefulWidget {
   const CalculatorHomeMainScreen({Key? key}) : super(key: key);
@@ -88,7 +87,7 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
 
           rightButton:IconButton(
             icon: CustomIcon(
-              AppIcon.history,
+              AssetsPath.historyForCal,
               onPressed: history.toggleShowHistory,
               isSelected: history.isShowHistory,
             ),
@@ -125,11 +124,11 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
               const Expanded(flex: 2, child: AnswerText()),
             ],
             if (!isLandscape) const SizedBox(height: 5),
-            const GradientDivider(),
+            //const GradientDivider(),
             Expanded(
               flex: isLandscape ? 14 : 12,
               child: Container(
-                color: colorScheme.gridBg,
+                color: AppColors.customBottomEnabledColour,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                   vertical: 5,
@@ -146,12 +145,12 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CustomIcon(
-                            AppIcon.expand,
+                            AssetsPath.expandForCal,
                             onPressed: onExpand,
                             isSelected: isLandscape,
                           ),
                           const Spacer(),
-                          CustomIcon(AppIcon.delete, onPressed: calc.delete),
+                          CustomIcon(AssetsPath.deleteForCal, onPressed: calc.delete),
                         ],
                       ),
                     ),

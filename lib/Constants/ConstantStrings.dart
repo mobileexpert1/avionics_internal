@@ -101,7 +101,7 @@ class ConstantStrings {
   static const String profileTitle = 'Profile';
   static const String glossaryTitle = 'Glossary';
   static const String avtarTitle = 'Choose Your Avatar';
-  static const String scientificCalculator = 'Scientific Calculator';
+  static const String scientificCalculator = 'Calculator';
 
 
 

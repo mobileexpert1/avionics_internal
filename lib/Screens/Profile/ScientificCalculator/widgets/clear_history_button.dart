@@ -16,7 +16,7 @@ class ClearHistoryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: Provider.of<History>(context, listen: false).clearHistory,
       style: ElevatedButton.styleFrom(
-        foregroundColor: colorScheme.buttonText, backgroundColor: colorScheme.buttonBg, elevation: 0,
+        foregroundColor: colorScheme.buttonText, backgroundColor: Colors.white, elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50),
         ),

@@ -204,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.unitMeasureAcc,
                       ),
-                      title: "Scientific Calculator",
+                      title: "Calculator",
                       onTap: () {
                         Navigator.push(
                           context,

@@ -35,7 +35,7 @@ class HistoryList extends StatelessWidget {
                     right: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: colorScheme.topButtonBg,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                     border:
                         Border.all(width: 3, color: colorScheme.historyBorder),

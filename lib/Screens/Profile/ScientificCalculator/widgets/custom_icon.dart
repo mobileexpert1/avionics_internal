@@ -22,14 +22,10 @@ class CustomIcon extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        color: isSelected ? colorScheme.historyBg.withOpacity(.6) : null,
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: SvgPicture.asset(
-          icon,
-          color: isSelected ? colorScheme.historyIcon : null,
-        ),
+        icon: SvgPicture.asset(icon),
         padding: const EdgeInsets.all(5),
       ),
     );

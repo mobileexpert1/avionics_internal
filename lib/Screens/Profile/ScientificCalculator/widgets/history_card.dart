@@ -53,7 +53,7 @@ class CustomTextButton extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      color: colorScheme.topButtonBg,
+      color: Colors.white,
       child: InkWell(
         onTap: () =>
             Provider.of<Calculations>(context, listen: false).add(text),

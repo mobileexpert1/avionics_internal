@@ -20,7 +20,7 @@ class AnswerText extends StatelessWidget {
           : AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 150),
               style: TextStyle(
-                fontFamily: AppTheme.fontFamily,
+                //fontFamily: AppTheme.fontFamily,
                 fontWeight: FontWeight.w800,
                 fontSize: calc.isShowingResult ? 40 : 25,
                 color: calc.isShowingResult
