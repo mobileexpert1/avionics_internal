@@ -102,6 +102,8 @@ abstract class AssetsPath {
   static const String badgeimg = "badgeimg";
   static const String carFollowImage = "CarFollowIcon";
 
+  static const String gifTimeoutAlert = "timeout";
+
   ///jpg
   static const String explore = "explore";
 
@@ -123,5 +125,9 @@ class CommonUi {
 
   static String setSvgImage(String image) {
     return 'assets/svg_images/$image.svg';
+  }
+
+  static String setGifImage(String image) {
+    return 'assets/gif/$image.gif';
   }
 }

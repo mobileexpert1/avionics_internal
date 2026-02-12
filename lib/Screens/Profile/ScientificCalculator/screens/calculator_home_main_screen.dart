@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -30,18 +31,12 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 
@@ -49,16 +44,15 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
-    SystemChrome.setPreferredOrientations(
-      isLandscape
-          ? [DeviceOrientation.portraitUp]
-          : [
+    if (isLandscape) {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    } else {
+      SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
-      ],
-    );
+      ]);
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +60,6 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
     final history = Provider.of<History>(context);
 
     final lGrid = Provider.of<Calculations>(context).lGrid;
-
-    final colorScheme = Theme.of(context).colorScheme;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -85,15 +77,13 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
             },
           ),
 
-          rightButton:IconButton(
+          rightButton: IconButton(
             icon: CustomIcon(
               AssetsPath.historyForCal,
               onPressed: history.toggleShowHistory,
               isSelected: history.isShowHistory,
             ),
-            onPressed: () {
-
-            },
+            onPressed: () {},
           ),
           centerTitle: true,
         ),
@@ -126,7 +116,7 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
             if (!isLandscape) const SizedBox(height: 5),
             //const GradientDivider(),
             Expanded(
-              flex: isLandscape ? 14 : 12,
+              flex: kIsWeb ? (isLandscape ? 13 : 11) : 13,
               child: Container(
                 color: AppColors.customBottomEnabledColour,
                 padding: const EdgeInsets.symmetric(
@@ -144,13 +134,18 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CustomIcon(
-                            AssetsPath.expandForCal,
-                            onPressed: onExpand,
-                            isSelected: isLandscape,
-                          ),
+                          if (!kIsWeb) ...[
+                            CustomIcon(
+                              AssetsPath.expandForCal,
+                              onPressed: onExpand,
+                              isSelected: isLandscape,
+                            ),
+                          ],
                           const Spacer(),
-                          CustomIcon(AssetsPath.deleteForCal, onPressed: calc.delete),
+                          CustomIcon(
+                            AssetsPath.deleteForCal,
+                            onPressed: calc.delete,
+                          ),
                         ],
                       ),
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Constants/AppColors.dart';
 import '../providers/calculations.dart';
 
 import '../core/index.dart';
@@ -43,8 +44,10 @@ class _InputFieldState extends State<InputFeild> {
               scrollPadding: const EdgeInsets.all(3),
               textAlign: TextAlign.end,
               decoration: const InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 10,
+                ),
                 border: OutlineInputBorder(borderSide: BorderSide.none),
               ),
               cursorColor: theme.colorScheme.cursor,
@@ -54,7 +57,7 @@ class _InputFieldState extends State<InputFeild> {
                 fontSize: value,
                 color: calc.isShowingResult
                     ? theme.colorScheme.switchText
-                    : theme.colorScheme.onBackground,
+                    : AppColors.customBottomEnabledColour,
               ),
             ),
           );

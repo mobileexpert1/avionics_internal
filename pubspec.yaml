@@ -110,6 +110,7 @@ flutter:
     - assets/png_images/
     - assets/mapFiles/
     - assets/images/
+    - assets/gif/
     - 'assets/svg_images/airportsIcon.svg'
     - .env
   # assets:

@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/constantImages.dart';
@@ -20,7 +21,7 @@ Color getButtonBgColor(String text, BuildContext context) {
     case '-':
     case '×':
     case '÷':
-      return colorScheme.primary;
+      return Colors.white;
     default:
       return Colors.white;
   }
@@ -35,9 +36,9 @@ Color getTextColor(String text, BuildContext context) {
     case '×':
     case '÷':
     case 'switch':
-      return colorScheme.grey7;
+      return colorScheme.buttonText;
     case 'C':
-      return colorScheme.error;
+      return AppColors.progressColour;
     default:
       return colorScheme.buttonText;
   }

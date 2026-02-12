@@ -8,7 +8,6 @@ extension CustomColorScheme on ColorScheme {
     colors: [
       Color(0xffFEFEFF),
       Color(0xffF318AD),
-      //Color(0xffFF2171),
     ],
   );
 
@@ -26,11 +25,11 @@ extension CustomColorScheme on ColorScheme {
 
   Color get grey7 => const Color(0xffFEFEFF);
 
-  Color get cursor => brightness == Brightness.light ? primary : secondary;
+  Color get cursor =>  Color.fromRGBO(30, 128, 242, 1.0);
 
   Color get historyBorder => brightness == Brightness.light ? secondary : grey4;
 
-  Color get resultText => brightness == Brightness.light ? primary : grey7;
+  Color get resultText => Color.fromRGBO(63, 61, 86, 1.0);
 
   Color get buttonText => brightness == Brightness.light ? grey2 : grey6;
 

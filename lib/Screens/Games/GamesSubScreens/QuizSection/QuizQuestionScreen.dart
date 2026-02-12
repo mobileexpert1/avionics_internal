@@ -517,14 +517,29 @@ class QuizProgressCard extends StatelessWidget {
                 ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.access_time, color: Colors.blue),
+                  (secondsRemaining > 0 && secondsRemaining < 10)
+                      ? Image.asset(
+                    CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                  )
+                      : Icon(
+                    Icons.access_time,
+                    size: 30,
+                    color: secondsRemaining == 0
+                        ? Colors.red
+                        : Colors.blue,
+                  ),
+
                   const SizedBox(width: 4),
                   SizedBox(
                     width: 40,
                     child: Text(
                       '${secondsRemaining}s',
-                      textAlign: TextAlign.left, // text alignment
+                      textAlign: TextAlign.left,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
