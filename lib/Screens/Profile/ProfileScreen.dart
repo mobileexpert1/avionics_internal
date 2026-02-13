@@ -182,9 +182,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.unitMeasureAcc,
+                        AssetsPath.calculatorImage,
+                      ),
+                      title: "Calculator",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CalculatorHomeMainScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.conversionImage,
                       ),
                       title: "Conversions",
                       onTap: () {
@@ -199,23 +216,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.unitMeasureAcc,
-                      ),
-                      title: "Calculator",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CalculatorHomeMainScreen(),
-                          ),
-                        );
-                      },
-                    ),
                   ],
+
                 ),
+
+
 
                 // REFERENCES Section
                 SettingsListGroup(

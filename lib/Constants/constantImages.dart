@@ -111,6 +111,10 @@ abstract class AssetsPath {
   static const expandForCal = 'assets/images/expand.svg';
   static const historyForCal = 'assets/images/history.svg';
   static const switchLGridForCal = 'assets/images/switch.svg';
+
+
+  static const calculatorImage = 'Calculator';
+  static const conversionImage = 'Conversion';
 }
 
 
