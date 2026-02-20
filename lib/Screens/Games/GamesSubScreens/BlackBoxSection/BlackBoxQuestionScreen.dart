@@ -9,6 +9,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/FormattedText/FormattedText.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_questioncubit.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
@@ -456,13 +457,7 @@ class BlackBoxCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              child: Text(
-                                hintText,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                                child: FormattedText(text: hintText),
                             ),
                           ),
                         ],

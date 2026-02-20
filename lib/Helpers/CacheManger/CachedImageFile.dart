@@ -22,7 +22,7 @@ class CachedAnyImage extends StatelessWidget {
     this.isForPlaneList = false,
   });
 
-  bool get _isNetwork => imagePath.startsWith('http');
+  bool get _isNetwork => imagePath.startsWith('http://') || imagePath.startsWith('https://');
 
   bool get _isSvg => imagePath.toLowerCase().endsWith('.svg');
 

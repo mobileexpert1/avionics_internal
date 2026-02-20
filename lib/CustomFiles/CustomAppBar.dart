@@ -48,6 +48,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         title: Text(
           title,
           style: const TextStyle(fontSize: 20, color: Color(0xFF151A6A)),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: centerTitle ?? true,
         titleSpacing: centerTitle == true ? titleSpacing : 0,
@@ -60,7 +62,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : null,
-        leadingWidth: 100,
+        leadingWidth: 60,
 
         actions: rightButton != null
             ? [

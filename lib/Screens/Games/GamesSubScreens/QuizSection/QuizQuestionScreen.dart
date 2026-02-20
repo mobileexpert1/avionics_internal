@@ -11,6 +11,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/FormattedText/FormattedText.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -429,13 +430,7 @@ class QuizQuestionCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              child: Text(
-                                hintText,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                              child: FormattedText(text: hintText),
                             ),
                           ),
                         ],

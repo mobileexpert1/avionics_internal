@@ -180,7 +180,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                     padding: const EdgeInsets.only(right: 13),
                                     child: Icon(
                                       Icons.bookmark,
-                                      color: (model.isFavorite == true
+                                      color: (model.isSaved == true
                                           ? Colors.black
                                           : Colors.white),
                                       size: kIsWeb ? 22 : 25,
@@ -198,11 +198,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             context
                                                 .read<AllPlanesCubit>()
                                                 .toggleFavorite(
-                                                model.id, context);
+                                                model.id, context,model.isSaved);
 
                                             AppSnackBar.custom(
                                               context,
-                                              message: model.isFavorite ? "Bookmark Unsaved" : "Bookmark Saved",
+                                              message: model.isSaved ? "Bookmark Unsaved" : "Bookmark Saved",
                                               svgAsset: "",
                                             );
                                           },

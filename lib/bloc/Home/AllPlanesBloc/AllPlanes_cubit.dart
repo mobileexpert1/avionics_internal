@@ -103,7 +103,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  void toggleFavorite(String id, BuildContext context) {
+  void toggleFavorite(String id, BuildContext context, bool isSaved) {
     final updatedList = state.listoFAircraftModels.map((model) {
       if (model.id == id) {
         return AircraftListModel(
@@ -112,6 +112,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
           isFavorite: !model.isFavorite,
           image: model.image,
           ICAOCode: model.ICAOCode,
+          isSaved: !isSaved,
         );
       }
       return model;
@@ -135,5 +136,4 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
 
     emit(state.copyWith(flights: updatedFlights));
   }
-
 }

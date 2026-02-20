@@ -6,6 +6,7 @@ class AircraftListModel extends BaseModel {
   final String model;
   final String ICAOCode;
   final bool isFavorite;
+  final bool isSaved;
   final String image;
 
   AircraftListModel({
@@ -13,6 +14,7 @@ class AircraftListModel extends BaseModel {
     required this.model,
     required this.ICAOCode,
     required this.isFavorite,
+    required this.isSaved,
     required this.image,
   });
 
@@ -22,6 +24,7 @@ class AircraftListModel extends BaseModel {
       model: json['Aircraft_Model'] ?? '',
       ICAOCode: json['ICAO_Type_Code'] ?? '',
       isFavorite: json['IsFavorite'] ?? false,
+      isSaved: json['isSaved'] ?? false,
       image: json['Image'] ?? '',
     );
   }
@@ -32,6 +35,7 @@ class AircraftListModel extends BaseModel {
       model: map['model'] as String,
       ICAOCode: map['ICAO_Type_Code'] as String,
       isFavorite: map['isFavorite'] == 1,
+      isSaved: map['isSaved'] == 1,
       image: map['Image'] as String,
     );
   }
@@ -43,6 +47,7 @@ class AircraftListModel extends BaseModel {
       'model': model,
       'ICAO_Type_Code': ICAOCode,
       'isFavorite': isFavorite ? 1 : 0,
+      'isSaved': isSaved ? 1 : 0,
       'Image': image,
     };
   }
@@ -53,6 +58,7 @@ class AircraftListModel extends BaseModel {
       'Aircraft_Model': model,
       'ICAO_Type_Code': ICAOCode,
       'IsFavorite': isFavorite,
+      'isSaved': isSaved,
       'Image': image,
     };
   }
