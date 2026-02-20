@@ -62,6 +62,18 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt"
+            )
+        }
+    }
 }
 
 flutter {
@@ -72,6 +84,10 @@ flutter {
 dependencies {
     implementation("com.google.firebase:firebase-crashlytics:18.6.2")
     implementation("com.google.firebase:firebase-analytics:21.6.2")
+
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
+    implementation("org.apache.httpcomponents:httpcore:4.4.16")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }
 
