@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
+import '../../Helpers/CustomSegmentController/CustomSegmentController.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
@@ -82,6 +83,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   String? _selectedPolygonId;
   late List<ParsedPolygon> _parsedPolygons;
 
+  int selectedSegmentIndex = 0;
+
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
@@ -155,21 +158,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     super.dispose();
   }
 
-
   Future<void> _loadFavoritesFlights() async {
-    final favCallSigns =
-    await SavedFlightRepository().getFavoriteCallSigns();
+    final favCallSigns = await SavedFlightRepository().getFavoriteCallSigns();
 
     debugPrint('Favorite CallSigns: $favCallSigns');
 
     if (!mounted) return;
 
-    context
-        .read<FlightMapCubit>()
-        .FavoriteFlights(favCallSigns);
+    context.read<FlightMapCubit>().FavoriteFlights(favCallSigns);
   }
-
-
 
   Future<void> _loadGeoJson(BuildContext context) async {
     polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
@@ -208,10 +205,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           points: ring
               .map<LatLng>(
                 (e) => LatLng(
-              e[1].clamp(-85.0, 85.0), // lat
-              e[0], // lng
-            ),
-          )
+                  e[1].clamp(-85.0, 85.0), // lat
+                  e[0], // lng
+                ),
+              )
               .toList(),
 
           strokeWidth: isSelected ? 2 : 1,
@@ -226,16 +223,16 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             print(_mapCubit.state.mapType);
             if (_mapCubit.state.mapType != CustomMapType.polygon) return;
 
-            _selectedPolygonId =
-            (_selectedPolygonId == p.id) ? null : p.id;
+            _selectedPolygonId = (_selectedPolygonId == p.id) ? null : p.id;
 
             polygonNotifier.value = _parsedPolygons
                 .expand((p) => _buildPolygon(context, p))
                 .toSet();
 
             if (_selectedPolygonId != null) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(p.name)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(p.name)));
             }
           },
         ),
@@ -246,7 +243,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
     return polygons;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -915,7 +911,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                                       context
                                           .read<FlightMapCubit>()
-                                          .toggleFavoriteByCallSign(data.callSign);
+                                          .toggleFavoriteByCallSign(
+                                            data.callSign,
+                                          );
 
                                       AppSnackBar.custom(
                                         context,
@@ -1379,29 +1377,63 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
-    return AnimatedPositioned(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      left: kIsWeb ? 400.0 : 0.0,
-      right: kIsWeb ? 400.0 : 0.0,
-      bottom: _activeCard == 2 ? 0 : -MediaQuery.of(context).size.height * 0.4,
-      child: BlocBuilder<FlightMapCubit, FlightMapState>(
-        builder: (context, state) {
-          if (state.selectedAirport == null) {
-            return const SizedBox.shrink();
-          }
+    final screenHeight = MediaQuery.of(context).size.height;
+    final cardHeight = screenHeight * 0.33;
+    const segmentHeight = 50.0;
 
-          return AirportStationDetailCard(
-            airportDetail: state.selectedAirport!,
-            isComeFromLiveTracking: false,
-            callBackForHideFlightCard: () {
-              setState(() {
-                _activeCard = 0;
-              });
-            },
-          );
-        },
-      ),
+    return Stack(
+      alignment: Alignment.bottomLeft,
+      children: [
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          left: kIsWeb ? 400.0 : 0.0,
+          right: kIsWeb ? 400.0 : 0.0,
+          bottom: _activeCard == 2 ? 0 : -cardHeight,
+          child: SizedBox(
+            height: cardHeight,
+            child: BlocBuilder<FlightMapCubit, FlightMapState>(
+              builder: (context, state) {
+                if (state.selectedAirport == null) {
+                  return const SizedBox.shrink();
+                }
+
+                return AirportStationDetailCard(
+                  airportDetail: state.selectedAirport!,
+                  isComeFromLiveTracking: false,
+                  segmentIndex: selectedSegmentIndex,
+                  callBackForHideFlightCard: () {
+                    setState(() {
+                      _activeCard = 0;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          left: kIsWeb ? 400.0 : 0.0,
+          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3,
+
+          bottom: _activeCard == 2 ? cardHeight : -cardHeight,
+          child: SizedBox(
+            width: 300,
+            height: segmentHeight,
+            child: CustomSegmentController(
+              segments: ["Airport details", "More details"],
+              onChanged: (index) {
+                setState(() {
+                  selectedSegmentIndex = index;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
