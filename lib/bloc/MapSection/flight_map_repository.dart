@@ -10,27 +10,6 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
-  // Future<List<FlightModel>> getFlights({
-  //   required String bounds,
-  //   int limit = 20,
-  //   String? aircraft,
-  //   String? categories,
-  // }) async {
-  //   final url = Uri.parse(
-  //     "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
-  //     "?bounds=$bounds&limit=$limit"
-  //     "&aircraft=A318,A320,A20N,A21N&altitude_ranges=0-46000&categories=C,P",
-  //   );
-  //
-  //   try {
-  //     final response = await ApiService.get(url: url, isForFlightRadar: true);
-  //     final flightResponse = FlightResponse.fromJson(response);
-  //     return flightResponse.flights;
-  //   } catch (e) {
-  //     throw throw e.toString();
-  //   }
-  // }
-
   Future<List<FlightModel>> getFlights({
     required String bounds,
     int limit = 20,
@@ -66,7 +45,8 @@ class FlightRepository {
         try {
           final responseKeyValue = await FlightRepository()
               .getMapKeyValueFromServer();
-          if (responseKeyValue.data.fr24 != null && responseKeyValue.data.fr24 != "") {
+          if (responseKeyValue.data.fr24 != null &&
+              responseKeyValue.data.fr24 != "") {
             await SharedPrefsHelper.seMapKeyValuesFromServer(
               responseKeyValue.data.fr24 ?? "",
             );
@@ -267,7 +247,9 @@ class FlightRepository {
 
   Future<FlightKeyValuesModel> getMapKeyValueFromServer() async {
     final uri = Uri.parse(
-      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlConstant.userService + ApiServiceUrlConstant.authFetchMapKey,
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlConstant.userService +
+          ApiServiceUrlConstant.authFetchMapKey,
     );
     try {
       final jsonData =

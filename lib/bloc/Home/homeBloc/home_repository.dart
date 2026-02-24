@@ -42,7 +42,6 @@ class HomeRepository {
         return modelResponse;
       } catch (e) {
         print(e.toString());
-        //throw e.toString();
         return null;
       }
     }

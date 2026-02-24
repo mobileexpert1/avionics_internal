@@ -295,10 +295,38 @@ class LoginCubit extends Cubit<LoginState> {
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: mapStatusCode(e.toString()),
         ),
       );
     }
+  }
+
+  String mapStatusCode(String error) {
+    if (error.contains("400")) {
+      return "Invalid request. Please try again.";
+    }
+
+    if (error.contains("401")) {
+      return "Invalid email or password.";
+    }
+
+    if (error.contains("500")) {
+      return "Server error. Please try later.";
+    }
+
+    if (error.contains("504")) {
+      return "Server is taking too long to respond. Please try again.";
+    }
+
+    if (error.contains("SocketException")) {
+      return "No internet connection.";
+    }
+
+    if (error.contains("TimeoutException")) {
+      return "Connection timed out. Please try again.";
+    }
+
+    return error;
   }
 
   Future<void> _navigateAfterLogin(
@@ -329,7 +357,7 @@ class LoginCubit extends Cubit<LoginState> {
           (_) => false,
         );
         return;
-      }else  if (result.userDetails!.isActiveSubscription == false) {
+      } else if (result.userDetails!.isActiveSubscription == false) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => defaultTargetPlatform == TargetPlatform.iOS
@@ -350,7 +378,7 @@ class LoginCubit extends Cubit<LoginState> {
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-              (_) => false,
+          (_) => false,
         );
       }
     } else if (result.isVerified == false) {
