@@ -43,6 +43,7 @@ class FlightGoogleMapWidget extends StatelessWidget {
     this.trackingLatLng,
   });
 
+
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
@@ -50,7 +51,7 @@ class FlightGoogleMapWidget extends StatelessWidget {
       myLocationButtonEnabled: myLocationButtonEnabled,
       rotateGesturesEnabled: rotateGesturesEnabled,
       myLocationEnabled: myLocationEnabled,
-      minMaxZoomPreference: MinMaxZoomPreference(5, 12),
+      //minMaxZoomPreference: MinMaxZoomPreference(5, 12),
       mapType: mapType,
       polygons: polygons,
       markers: markers,

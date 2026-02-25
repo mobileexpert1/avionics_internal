@@ -244,17 +244,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           state.selectedCategories != null &&
           state.selectedCategories!.isNotEmpty;
 
-      final flights = await FlightRepository().getFlights(
-        bounds: boundsString,
-        aircraft: hasAircraftFilter
-            ? state.selectedAircraftIcaos!.join(',')
-            : null,
-        categories: hasCategoryFilter
-            ? state.selectedCategories!
-                  .map((cat) => _getCategoryCode(cat))
-                  .join(',')
-            : null,
-      );
+      // final flights = await FlightRepository().getFlights(
+      //   bounds: boundsString,
+      //   aircraft: hasAircraftFilter
+      //       ? state.selectedAircraftIcaos!.join(',')
+      //       : null,
+      //   categories: hasCategoryFilter
+      //       ? state.selectedCategories!
+      //             .map((cat) => _getCategoryCode(cat))
+      //             .join(',')
+      //       : null,
+      // );
 
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
@@ -263,10 +263,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           );
 
       debugPrint(
-        "Flights fetched: ${flights.length}\n"
+        //"Flights fetched: ${flights.length}\n"
         "Airport list count: ${airportList.data.length}",
       );
-      onFlightsLoaded(flights);
+      //onFlightsLoaded(flights);
       emit(
         state.copyWith(
           // flights: flights,
@@ -354,11 +354,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         toDateTime: formattedTo,
       );
 
-      final flightDetail = response['flightDetail'] as FlightAircraftDetail;
+      //final flightDetail = response['flightDetail'] as FlightAircraftDetail;
 
       emit(
         state.copyWith(
-          selectedFlightDetail: flightDetail,
+          selectedFlightDetail: null,
           status: CommonApiStatus.success,
           isLoading: false,
         ),

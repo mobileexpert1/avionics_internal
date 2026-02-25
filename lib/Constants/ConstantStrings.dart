@@ -266,6 +266,8 @@ class ApiGameBadges {
 class ApiFunctionUrlMapSectionConstant {
   static const aircraftFlyingList = "aircraft/flying-area/";
   static const aircraftStationList = "airport/?";
+  static const String airCraftListNew = 'airport/new';
+
 }
 
 class ApiServiceUrlGamesConstant {

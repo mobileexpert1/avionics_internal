@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
@@ -8,22 +7,16 @@ import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/CustomSegmentController/CustomSegmentController.dart';
-import '../../Helpers/Custom_widget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
-import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import '../../bloc/MapSection/ParsedPolygon.dart';
 import 'AirportStationDetailCard.dart';
 import 'FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
-import 'FlightTrackScreen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'MapHelpers/FlightDetailScreen.dart';
-import 'MapHelpers/LiveBadge.dart';
 import 'MapHelpers/MapToggleButtons.dart';
-import '../../Helpers/CustomDivider.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../Constants/constantImages.dart';
 import 'MapHelpers/MapTrackingModePopup.dart';
@@ -35,7 +28,6 @@ import '../../bloc/MapSection/flight_map_state.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../Helpers/CacheManger/CachedImageFile.dart';
-import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../Home/HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -75,7 +67,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   int _isForFlyingInTheArea = 0;
   Marker? _singleSearchMarker;
   GoogleMapController? _mapController;
-  bool _isUserInteractingWithMap = false;
+  bool _isUserInteractingWithMap = true;
 
   late final ValueNotifier<Set<Polygon>> polygonNotifier;
   late final Set<Polygon> cachedPolygons;
@@ -92,12 +84,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   @override
   void initState() {
     super.initState();
-
-    //FIRST initialize
-
-    //cachedPolygons = <Polygon>{};
-
-    //THEN async work
     _loadGeoJson(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -619,13 +605,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             _mapCubit.setSelectedAirport(airport);
             _resetFlightSelection();
             setState(() {
+              selectedSegmentIndex = 0;
               _activeCard = 2;
             });
           },
         ),
       );
     }
-
     return markers;
   }
 
@@ -1404,6 +1390,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   segmentIndex: selectedSegmentIndex,
                   callBackForHideFlightCard: () {
                     setState(() {
+                      _isMapListViewShown = true;
                       _activeCard = 0;
                     });
                   },
@@ -1425,6 +1412,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             height: segmentHeight,
             child: CustomSegmentController(
               segments: ["Airport details", "More details"],
+              selectedIndex: selectedSegmentIndex,
               onChanged: (index) {
                 setState(() {
                   selectedSegmentIndex = index;

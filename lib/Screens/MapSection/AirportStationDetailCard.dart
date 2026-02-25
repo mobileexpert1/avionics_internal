@@ -32,7 +32,7 @@ class AirportStationDetailCard extends StatelessWidget {
                 Expanded(
                   child: customField(
                     label: 'Name',
-                    text: detail.name.isEmpty ? "N/A" : detail.name,
+                    text: detail.valueOrNA(detail.name),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -41,7 +41,7 @@ class AirportStationDetailCard extends StatelessWidget {
                 Expanded(
                   child: customField(
                     label: 'City',
-                    text: detail.city.isEmpty ? "N/A" : detail.city,
+                    text: detail.valueOrNA(detail.city),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -54,7 +54,7 @@ class AirportStationDetailCard extends StatelessWidget {
                 Expanded(
                   child: customField(
                     label: 'State',
-                    text: detail.state.isEmpty ? "N/A" : detail.state,
+                    text: detail.valueOrNA(detail.state),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -63,7 +63,7 @@ class AirportStationDetailCard extends StatelessWidget {
                 Expanded(
                   child: customField(
                     label: 'Country',
-                    text: detail.country.isEmpty ? "N/A" : detail.country,
+                    text: detail.valueOrNA(detail.country),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -75,8 +75,10 @@ class AirportStationDetailCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: customField(
-                    label: 'Elevation(m)',
-                    text: detail.elev.toString(),
+                    label: 'IATA/ICAO Code ',
+                    text:
+                        "${detail.valueOrNA(detail.iataCode)} / "
+                        "${detail.valueOrNA(detail.icao)}",
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -84,8 +86,8 @@ class AirportStationDetailCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: customField(
-                    label: 'Runway Length(m)',
-                    text: detail.runwayLength.toString(),
+                    label: 'Terminal(s) No',
+                    text: detail.valueOrNA(detail.numberOfTerminals),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -97,8 +99,8 @@ class AirportStationDetailCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: customField(
-                    label: 'ICAO Code',
-                    text: detail.icao?.isEmpty ?? true ? "N/A" : detail.icao!,
+                    label: 'Time Zone',
+                    text: detail.valueOrNA(detail.timezone),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -106,10 +108,8 @@ class AirportStationDetailCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: customField(
-                    label: 'IATA Code',
-                    text: detail.iataCode?.isEmpty ?? true
-                        ? "N/A"
-                        : detail.iataCode!,
+                    label: 'UTC',
+                    text: detail.valueOrNA(detail.utcOffset),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -123,10 +123,8 @@ class AirportStationDetailCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: customField(
-                    label: 'Latitude',
-                    text: detail.latitude.toString().isEmpty
-                        ? "N/A"
-                        : detail.latitude.toString(),
+                    label: 'Type',
+                    text: detail.valueOrNA(detail.type),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -134,10 +132,8 @@ class AirportStationDetailCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: customField(
-                    label: 'Longitude',
-                    text: detail.longitude.toString().isEmpty
-                        ? "N/A"
-                        : detail.longitude.toString(),
+                    label: 'Runway(s) No',
+                    text: detail.valueOrNA(detail.numberOfRunways),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -149,8 +145,8 @@ class AirportStationDetailCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: customField(
-                    label: 'Timezone',
-                    text: detail.timezone.isEmpty ? "N/A" : detail.timezone,
+                    label: 'Runway(s) direction ',
+                    text: detail.valueOrNA(detail.runwayDirection),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -158,8 +154,30 @@ class AirportStationDetailCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: customField(
-                    label: 'Type',
-                    text: detail.type.isEmpty ? "N/A" : detail.type,
+                    label: 'Runway(s) elevation (ft)',
+                    text: detail.valueOrNA(detail.elev),
+                    labelColor: const Color(0xFF3E3C55),
+                    textColor: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: customField(
+                    label: 'Runway(s) length (m)',
+                    text: detail.valueOrNA(detail.runwayLength),
+                    labelColor: const Color(0xFF3E3C55),
+                    textColor: Colors.black,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: customField(
+                    label: 'Runway(s) surface type',
+                    text: detail.valueOrNA(detail.runwaySurfaceType),
                     labelColor: const Color(0xFF3E3C55),
                     textColor: Colors.black,
                   ),
@@ -188,7 +206,7 @@ class AirportStationDetailCard extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-          child: Column(children: children),
+          child: SingleChildScrollView(child: Column(children: children)),
         ),
       ),
     );
