@@ -171,10 +171,10 @@ class LoginCubit extends Cubit<LoginState> {
         }
 
         final accessToken = result.accessToken!;
-        backendToken = accessToken.tokenString;
+        backendToken = accessToken.token;
         debugPrint('MOBILE → Facebook Access Token: $backendToken');
         final credential = FacebookAuthProvider.credential(
-          accessToken.tokenString,
+          accessToken.token,
         );
         userCredential = await _auth.signInWithCredential(credential);
       }

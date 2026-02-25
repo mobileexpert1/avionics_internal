@@ -27,7 +27,6 @@
         "flutter_dotenv",
         "flutter_facebook_auth",
         "flutter_local_notifications",
-        "flutter_map",
         "flutter_slidable",
         "flutter_svg",
         "geocoding",
@@ -38,7 +37,6 @@
         "internet_connection_checker",
         "intl",
         "js",
-        "latlong2",
         "path",
         "path_provider",
         "permission_handler",
@@ -255,29 +253,6 @@
         "geolocator_platform_interface",
         "geolocator_web",
         "geolocator_windows"
-      ]
-    },
-    {
-      "name": "latlong2",
-      "version": "0.8.2",
-      "dependencies": [
-        "intl"
-      ]
-    },
-    {
-      "name": "flutter_map",
-      "version": "4.0.0",
-      "dependencies": [
-        "async",
-        "collection",
-        "flutter",
-        "http",
-        "latlong2",
-        "meta",
-        "polylabel",
-        "proj4dart",
-        "tuple",
-        "vector_math"
       ]
     },
     {
@@ -1070,27 +1045,6 @@
       ]
     },
     {
-      "name": "tuple",
-      "version": "2.0.2",
-      "dependencies": []
-    },
-    {
-      "name": "proj4dart",
-      "version": "2.1.0",
-      "dependencies": [
-        "meta",
-        "mgrs_dart",
-        "wkt_parser"
-      ]
-    },
-    {
-      "name": "polylabel",
-      "version": "1.0.1",
-      "dependencies": [
-        "collection"
-      ]
-    },
-    {
       "name": "in_app_purchase_storekit",
       "version": "0.4.7",
       "dependencies": [
@@ -1792,18 +1746,6 @@
       ]
     },
     {
-      "name": "wkt_parser",
-      "version": "2.0.0",
-      "dependencies": []
-    },
-    {
-      "name": "mgrs_dart",
-      "version": "2.0.0",
-      "dependencies": [
-        "unicode"
-      ]
-    },
-    {
       "name": "flutter_secure_storage",
       "version": "8.1.0",
       "dependencies": [
@@ -1897,6 +1839,11 @@
       "dependencies": []
     },
     {
+      "name": "tuple",
+      "version": "2.0.2",
+      "dependencies": []
+    },
+    {
       "name": "rational",
       "version": "2.2.3",
       "dependencies": []
@@ -1905,13 +1852,6 @@
       "name": "vm_service",
       "version": "15.0.2",
       "dependencies": []
-    },
-    {
-      "name": "unicode",
-      "version": "0.3.1",
-      "dependencies": [
-        "lists"
-      ]
     },
     {
       "name": "flutter_secure_storage_windows",
@@ -1992,13 +1932,6 @@
       "version": "7.0.1",
       "dependencies": [
         "collection",
-        "meta"
-      ]
-    },
-    {
-      "name": "lists",
-      "version": "1.0.1",
-      "dependencies": [
         "meta"
       ]
     }
