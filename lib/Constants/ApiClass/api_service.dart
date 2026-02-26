@@ -160,8 +160,10 @@ class ApiService {
 
     final encodedBody = body != null ? jsonEncode(body) : null;
 
-    //print('[$method] URL: $url');
-    //print('Header Token: $requestHeaders');
+    print(
+      "[$method] URL: $url "
+          '\nHeader Token: $requestHeaders Request Body: $encodedBody',
+    );
     //if (encodedBody != null) print('Request Body: $encodedBody');
 
     try {
@@ -205,10 +207,6 @@ class ApiService {
 
       final decodedBody = utf8.decode(response.bodyBytes);
 
-      print(
-        "[$method] URL: $url "
-        '\nResponse Code: ${response.statusCode}, \nHeader Token: $requestHeaders Request Body: $encodedBody',
-      );
       print('Response Body: $decodedBody');
       final jsonResponse = jsonDecode(decodedBody);
 

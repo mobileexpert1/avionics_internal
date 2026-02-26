@@ -47,7 +47,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     _favoritesToFlights();
   }
 
-
   void _favoritesToFlights() {
     if (_favCallSigns == null || state.flights == null) return;
 
@@ -64,15 +63,12 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(flights: updatedFlights));
   }
 
-
-
   void onFlightsLoaded(List<FlightModel> flights) {
     emit(state.copyWith(flights: flights));
     if (_favCallSigns != null) {
       _favoritesToFlights();
     }
   }
-
 
   Future<bool> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -244,17 +240,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           state.selectedCategories != null &&
           state.selectedCategories!.isNotEmpty;
 
-      // final flights = await FlightRepository().getFlights(
-      //   bounds: boundsString,
-      //   aircraft: hasAircraftFilter
-      //       ? state.selectedAircraftIcaos!.join(',')
-      //       : null,
-      //   categories: hasCategoryFilter
-      //       ? state.selectedCategories!
-      //             .map((cat) => _getCategoryCode(cat))
-      //             .join(',')
-      //       : null,
-      // );
+      final flights = await FlightRepository().getFlights(
+        bounds: boundsString,
+        aircraft: hasAircraftFilter
+            ? state.selectedAircraftIcaos!.join(',')
+            : null,
+        categories: hasCategoryFilter
+            ? state.selectedCategories!
+                  .map((cat) => _getCategoryCode(cat))
+                  .join(',')
+            : null,
+      );
 
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
@@ -263,13 +259,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           );
 
       debugPrint(
-        //"Flights fetched: ${flights.length}\n"
+        "Flights fetched: ${flights.length}\n"
         "Airport list count: ${airportList.data.length}",
       );
-      //onFlightsLoaded(flights);
+      onFlightsLoaded(flights);
       emit(
         state.copyWith(
-          // flights: flights,
+          flights: flights,
           airports: airportList.data,
           status: CommonApiStatus.success,
           isSuccess: true,
@@ -354,11 +350,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         toDateTime: formattedTo,
       );
 
-      //final flightDetail = response['flightDetail'] as FlightAircraftDetail;
+      final flightDetail = response['flightDetail'] as FlightAircraftDetail;
 
       emit(
         state.copyWith(
-          selectedFlightDetail: null,
+          selectedFlightDetail: flightDetail,
           status: CommonApiStatus.success,
           isLoading: false,
         ),
@@ -371,13 +367,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         ),
       );
       emit(state.copyWith(isLoading: false));
-      // emit(
-      //   state.copyWith(
-      //     status: CommonApiStatus.failure,
-      //     errorMessage: 'Error fetching flight details: ${e.toString()}',
-      //     isLoading: false,
-      //   ),
-      // );
     }
   }
 
@@ -457,14 +446,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  // void stopTrackingFlight() {
-  //   if (_trackingTimer != null) {
-  //     _trackingTimer?.cancel();
-  //     _trackingTimer = null;
-  //   }
-  //   emit(state.copyWith(isTracking: false,isFlightLanded:false));
-  // }
-
   void stopTrackingFlight({String? flightNumber, String? destination}) {
     if (_trackingTimer != null) {
       _trackingTimer?.cancel();
@@ -534,14 +515,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
     final updatedFlights = state.flights!.map((flight) {
       if (flight.callSign == callSign) {
-        return flight.copyWith(
-          isFavorite: !(flight.isFavorite ?? false),
-        );
+        return flight.copyWith(isFavorite: !(flight.isFavorite ?? false));
       }
       return flight;
     }).toList();
 
     emit(state.copyWith(flights: updatedFlights));
   }
-
 }

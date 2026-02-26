@@ -367,6 +367,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     if (cleanupOnly) {
       _activeCard = 0;
       selectedFlightId = "";
+      _isMapListViewShown = true;
       return;
     }
 
@@ -374,6 +375,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       setState(() {
         _activeCard = 0;
         selectedFlightId = "";
+        _isMapListViewShown = true;
       });
 
       _buildFlightMarkers(
@@ -605,6 +607,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             _mapCubit.setSelectedAirport(airport);
             _resetFlightSelection();
             setState(() {
+              _isMapListViewShown = false;
               selectedSegmentIndex = 0;
               _activeCard = 2;
             });

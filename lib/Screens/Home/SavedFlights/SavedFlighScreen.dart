@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,22 +42,17 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
   }
 
   Future<void> _GetFr24Key() async {
-    final localKey =
-    await SharedPrefsHelper.getMapKeyValuesForApi();
+    final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
 
     if (localKey.isNotEmpty) {
       return;
     }
 
     try {
-      final response =
-      await FlightRepository().getMapKeyValueFromServer();
+      final response = await FlightRepository().getMapKeyValueFromServer();
 
-      if (response.data.fr24 != null &&
-          response.data.fr24!.isNotEmpty) {
-        await SharedPrefsHelper.seMapKeyValuesFromServer(
-          response.data.fr24!,
-        );
+      if (response.data.fr24 != null && response.data.fr24!.isNotEmpty) {
+        await SharedPrefsHelper.seMapKeyValuesFromServer(response.data.fr24!);
       }
     } catch (e) {
       debugPrint("FR24 key fetch failed: $e");
@@ -296,14 +292,16 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Saved"),
-        backgroundColor: Colors.white,
-        elevation: 4,
-        shadowColor: Colors.grey.withOpacity(0.5),
-        surfaceTintColor: Colors.white,
-        centerTitle: true,
+      appBar: CustomAppBar(
+        title: "Saved",
+        leftButton: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
+
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1500),
@@ -312,7 +310,10 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
             children: [
               if (widget.showTabs)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 5,
+                  ),
                   child: CustomTabBar(
                     tabTitles: _tabTitles,
                     initialIndex: _currentTabIndex,
