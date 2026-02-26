@@ -40,9 +40,14 @@ class FirebaseMessagingService {
     );
 
     // Save FCM token
-    final token = await _messaging.getToken();
-    if (token != null) await SharedPrefsHelper.saveFCMToken(token);
-
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await SharedPrefsHelper.saveFCMToken(token);
+      }
+    } catch (e, stack) {
+      debugPrint("FCM getToken failed: $e");
+    }
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((message) {
       _showNotification(message);

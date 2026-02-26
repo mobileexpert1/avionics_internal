@@ -32,7 +32,6 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
   }
 
   Future<void> _loadTokenAndInitPages() async {
-    await SharedPrefsHelper.clearApiFetchServer();
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('UserAccessTokenKey');
 

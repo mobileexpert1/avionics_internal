@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPrefsHelper.removeMapApiKey();
+    SharedPrefsHelper.removeTempKeyBeforeLaunch();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
     homeCubit.repository.getMapKeyValueFromServer();
@@ -541,13 +541,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         FirebaseEvents.savedFlightScreen,
                                       );
 
-                                      await homeCubit.repository.getFlightKeyValueFromServer();
+                                      await homeCubit.repository
+                                          .getFlightKeyValueFromServer();
                                       // Pending Details From Backend side
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => BlocProvider.value(
-                                            value: context.read<FlightMapCubit>(),
+                                            value: context
+                                                .read<FlightMapCubit>(),
                                             child: FlightDetailScreen(
                                               ICAOType: f.iCAOCode,
                                               flightNumber: f.flightNumber,

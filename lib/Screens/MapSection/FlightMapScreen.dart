@@ -70,10 +70,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   bool _isUserInteractingWithMap = true;
 
   late final ValueNotifier<Set<Polygon>> polygonNotifier;
-  late final Set<Polygon> cachedPolygons;
+  final Set<Polygon> cachedPolygons = <Polygon>{};
   bool showPolygon = false;
   String? _selectedPolygonId;
-  late List<ParsedPolygon> _parsedPolygons;
+  List<ParsedPolygon> _parsedPolygons = [];
 
   int selectedSegmentIndex = 0;
 
@@ -84,6 +84,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   @override
   void initState() {
     super.initState();
+    polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
+
     _loadGeoJson(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -136,10 +138,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
     _resetFlightSelection(cleanupOnly: true);
 
-    _sheetController.dispose();
-    _searchController.dispose();
-
     _sheetController.removeListener(_sheetListener);
+    _searchController.dispose();
+    _sheetController.dispose();
     PaintingBinding.instance.imageCache.clear();
     super.dispose();
   }
@@ -155,18 +156,22 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Future<void> _loadGeoJson(BuildContext context) async {
-    polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
-
     try {
       final jsonStr = await rootBundle.loadString(
         "assets/mapFiles/GeoPolygonMap.json",
       );
 
-      _parsedPolygons = await compute(parseGeoJson, jsonStr);
+      final parsed = await compute(parseGeoJson, jsonStr);
 
-      cachedPolygons = _parsedPolygons
-          .expand((p) => _buildPolygon(context, p))
-          .toSet();
+      if (!mounted) return;
+
+      _parsedPolygons = parsed;
+
+      cachedPolygons
+        ..clear()
+        ..addAll(
+          _parsedPolygons.expand((p) => _buildPolygon(context, p)).toSet(),
+        );
 
       if (showPolygon) {
         polygonNotifier.value = cachedPolygons;
@@ -211,9 +216,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
             _selectedPolygonId = (_selectedPolygonId == p.id) ? null : p.id;
 
-            polygonNotifier.value = _parsedPolygons
-                .expand((p) => _buildPolygon(context, p))
-                .toSet();
+            cachedPolygons
+              ..clear()
+              ..addAll(
+                _parsedPolygons
+                    .expand((poly) => _buildPolygon(context, poly))
+                    .toSet(),
+              );
+
+            polygonNotifier.value = cachedPolygons;
 
             if (_selectedPolygonId != null) {
               ScaffoldMessenger.of(
@@ -404,6 +415,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     _hasFetchedDetails = false;
     _debounce?.cancel();
     _debounce = Timer(const Duration(seconds: 2), () async {
+      if (!mounted) return;
+
       final visibleRegion = await _mapController!.getVisibleRegion();
 
       final screenCenter = ScreenCoordinate(
@@ -1233,12 +1246,21 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
               filterResult.mapType == CustomMapType.polygon;
 
           // Only update if changed
-          if (showPolygon != shouldShowPolygon) {
-            _selectedPolygonId = null;
-            showPolygon = shouldShowPolygon;
-            polygonNotifier.value = shouldShowPolygon
-                ? cachedPolygons
-                : const <Polygon>{};
+          _selectedPolygonId = null;
+          showPolygon = shouldShowPolygon;
+
+          if (shouldShowPolygon) {
+            cachedPolygons
+              ..clear()
+              ..addAll(
+                _parsedPolygons
+                    .expand((poly) => _buildPolygon(context, poly))
+                    .toSet(),
+              );
+
+            polygonNotifier.value = cachedPolygons;
+          } else {
+            polygonNotifier.value = {};
           }
 
           // Change map type (NO API CALL)
@@ -1264,6 +1286,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           // ⏱️ Let map settle after style change
           Future.delayed(const Duration(milliseconds: 300), () async {
             try {
+              if (!mounted) return;
+
               final visibleRegion = await _mapController!.getVisibleRegion();
 
               final size = MediaQuery.of(context).size;
@@ -1366,28 +1390,36 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       left: kIsWeb ? 400.0 : 0.0,
       right: kIsWeb ? 400.0 : 0.0,
-      bottom: _activeCard == 2 ? 0 : -MediaQuery.of(context).size.height * 0.4,
-      child: BlocBuilder<FlightMapCubit, FlightMapState>(
-        builder: (context, state) {
-          if (state.selectedAirport == null) {
-            return const SizedBox.shrink();
-          }
+      bottom: _activeCard == 2 ? 0 : -screenHeight * 0.4,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: screenHeight * 0.6,
+        ),
+        child: BlocBuilder<FlightMapCubit, FlightMapState>(
+          builder: (context, state) {
+            if (state.selectedAirport == null) {
+              return const SizedBox.shrink();
+            }
 
-          return AirportStationDetailCard(
-            airportDetail: state.selectedAirport!,
-            isComeFromLiveTracking: false,
-            callBackForHideFlightCard: () {
-              setState(() {
-                _activeCard = 0;
-              });
-            },
-          );
-        },
+            return AirportStationDetailCard(
+              airportDetail: state.selectedAirport!,
+              isComeFromLiveTracking: false,
+              callBackForHideFlightCard: () {
+                setState(() {
+                  _isMapListViewShown = true;
+                  _activeCard = 0;
+                });
+              },
+            );
+          },
+        ),
       ),
     );
   }

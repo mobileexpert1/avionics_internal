@@ -21,6 +21,7 @@ class AirportStationDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final detail = airportDetail;
+
     if (detail == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -42,119 +43,133 @@ class AirportStationDetailCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    "Airport Details",
-                    style: TextStyle(
-                      color: Color(0xFF3E3C55),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
+        child: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25,
+                vertical: 20,
               ),
-              const SizedBox(height: 12),
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: customField(
-                      label: 'Name',
-                      text: detail.name == "" ? "N/A" : detail.name,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Airport Details",
+                        style: TextStyle(
+                          color: Color(0xFF3E3C55),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'City',
-                      text: detail.city == "" ? "N/A" : detail.city,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
+                  const SizedBox(height: 12),
+
+                  /// Row 1
+                  Row(
+                    children: [
+                      Expanded(
+                        child: customField(
+                          label: 'Name',
+                          text: detail.name.isEmpty ? "N/A" : detail.name,
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: customField(
+                          label: 'City',
+                          text: detail.city.isEmpty ? "N/A" : detail.city,
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  /// Row 2
+                  Row(
+                    children: [
+                      Expanded(
+                        child: customField(
+                          label: 'State',
+                          text: detail.state.isEmpty ? "N/A" : detail.state,
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: customField(
+                          label: 'Country',
+                          text: detail.country.isEmpty ? "N/A" : detail.country,
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  /// Row 3
+                  Row(
+                    children: [
+                      Expanded(
+                        child: customField(
+                          label: 'Elevation (m)',
+                          text: detail.elev?.toString() ?? "N/A",
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: customField(
+                          label: 'Runway Length (m)',
+                          text: detail.runwayLength?.toString() ?? "N/A",
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  /// Row 4
+                  Row(
+                    children: [
+                      Expanded(
+                        child: customField(
+                          label: 'ICAO Code',
+                          text: (detail.icao ?? "").isEmpty
+                              ? "N/A"
+                              : detail.icao!,
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: customField(
+                          label: 'IATA Code',
+                          text: (detail.iataCode ?? "").isEmpty
+                              ? "N/A"
+                              : detail.iataCode!,
+                          labelColor: const Color(0xFF3E3C55),
+                          textColor: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'State',
-                      text: detail.state == "" ? "N/A" : detail.state,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'Country',
-                      text: detail.country == "" ? "N/A" : detail.country,
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'Elevation(m)',
-                      text: detail.elev.toString() == ""
-                          ? "N/A"
-                          : detail.elev.toString(),
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'Runway Length(m)',
-                      text: detail.runwayLength.toString() == ""
-                          ? "N/A"
-                          : detail.runwayLength.toString(),
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: customField(
-                      label: 'ICAO Code',
-                      text: detail.icao == "" ? "N/A" : detail.icao ?? "",
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: customField(
-                      label: 'IATA Code',
-                      text: detail.iataCode == ""
-                          ? "N/A"
-                          : detail.iataCode ?? "",
-                      labelColor: const Color(0xFF3E3C55),
-                      textColor: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-            ],
+            ),
           ),
         ),
       ),

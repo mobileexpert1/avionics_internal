@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class FlightGoogleMapWidget extends StatelessWidget {
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
+
+class FlightGoogleMapWidget extends StatefulWidget {
   final CameraPosition initialCameraPosition;
 
-  final GoogleMapController? mapController;
   final void Function(GoogleMapController controller)? onMapCreated;
   final VoidCallback? onCameraIdle;
   final VoidCallback? onCameraMoveStarted;
@@ -18,7 +20,6 @@ class FlightGoogleMapWidget extends StatelessWidget {
   final bool rotateGesturesEnabled;
   final bool myLocationEnabled;
 
-  /// Optional tracking support
   final bool isTracking;
   final LatLng? trackingLatLng;
 
@@ -28,45 +29,78 @@ class FlightGoogleMapWidget extends StatelessWidget {
     required this.mapType,
     required this.markers,
     this.polygons = const {},
-
-    this.mapController,
     this.onMapCreated,
     this.onCameraIdle,
     this.onCameraMoveStarted,
-
     this.zoomControlsEnabled = false,
     this.myLocationButtonEnabled = false,
     this.rotateGesturesEnabled = false,
     this.myLocationEnabled = true,
-
     this.isTracking = false,
     this.trackingLatLng,
   });
 
+  @override
+  State<FlightGoogleMapWidget> createState() => _FlightGoogleMapWidgetState();
+}
+
+class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
+  GoogleMapController? _mapController;
+
+  bool _isAlreadyFetchedTheKey = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTheApiKey();
+    debugPrint("FlightGoogleMapWidget initialized");
+  }
+
+  Future<void> fetchTheApiKey() async {
+    bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
+    if (apiTokenSever == true) {
+      _isAlreadyFetchedTheKey = true;
+    } else {
+      _isAlreadyFetchedTheKey = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    debugPrint("FlightGoogleMapWidget disposed");
+    _mapController?.dispose();
+    _mapController = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (!_isAlreadyFetchedTheKey) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return GoogleMap(
-      zoomControlsEnabled: zoomControlsEnabled,
-      myLocationButtonEnabled: myLocationButtonEnabled,
-      rotateGesturesEnabled: rotateGesturesEnabled,
-      myLocationEnabled: myLocationEnabled,
-      //minMaxZoomPreference: MinMaxZoomPreference(5, 12),
-      mapType: mapType,
-      polygons: polygons,
-      markers: markers,
-
-      initialCameraPosition: initialCameraPosition,
-
-      onCameraIdle: onCameraIdle,
-      onCameraMoveStarted: onCameraMoveStarted,
-
+      zoomControlsEnabled: widget.zoomControlsEnabled,
+      myLocationButtonEnabled: widget.myLocationButtonEnabled,
+      rotateGesturesEnabled: widget.rotateGesturesEnabled,
+      minMaxZoomPreference: MinMaxZoomPreference(5, 12),
+      myLocationEnabled: widget.myLocationEnabled,
+      mapType: widget.mapType,
+      polygons: widget.polygons,
+      markers: widget.markers,
+      initialCameraPosition: widget.initialCameraPosition,
+      onCameraIdle: widget.onCameraIdle,
+      onCameraMoveStarted: widget.onCameraMoveStarted,
       onMapCreated: (controller) async {
-        onMapCreated?.call(controller);
+        _mapController = controller;
 
-        if (isTracking && trackingLatLng != null) {
+        widget.onMapCreated?.call(controller);
+
+        if (widget.isTracking && widget.trackingLatLng != null) {
           await controller.animateCamera(
-            CameraUpdate.newLatLng(trackingLatLng!),
+            CameraUpdate.newLatLng(widget.trackingLatLng!),
           );
         }
       },

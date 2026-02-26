@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsHelper {
@@ -38,7 +39,6 @@ class SharedPrefsHelper {
     await prefs.remove(apiFetchKeyFromSever);
   }
 
-
   static Future<void> saveFCMToken(String deviceId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_fcmTokenKey, deviceId);
@@ -59,14 +59,28 @@ class SharedPrefsHelper {
     await prefs.setString(_emailKey, email);
   }
 
+  // static Future<String?> refreshAndUpdateFCMToken() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await FirebaseMessaging.instance.deleteToken();
+  //   final String? newToken = await FirebaseMessaging.instance.getToken();
+  //   if (newToken != null && newToken.isNotEmpty) {
+  //     await prefs.setString(_fcmTokenKey, newToken);
+  //   }
+  //   return newToken;
+  // }
+
   static Future<String?> refreshAndUpdateFCMToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    await FirebaseMessaging.instance.deleteToken();
-    final String? newToken = await FirebaseMessaging.instance.getToken();
-    if (newToken != null && newToken.isNotEmpty) {
-      await prefs.setString(_fcmTokenKey, newToken);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final newToken = await FirebaseMessaging.instance.getToken();
+      if (newToken != null && newToken.isNotEmpty) {
+        await prefs.setString(_fcmTokenKey, newToken);
+      }
+      return newToken;
+    } catch (e) {
+      debugPrint("FCM refresh failed: $e");
+      return null;
     }
-    return newToken;
   }
 
   static Future<String?> getEmail() async {
@@ -134,6 +148,11 @@ class SharedPrefsHelper {
     return prefs.getString(isMapKeyValues) ?? '';
   }
 
+  static Future<void> removeTempKeyBeforeLaunch() async {
+    removeMapApiKey();
+    clearApiFetchServer();
+  }
+
   static Future<void> removeMapApiKey() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(isMapKeyValues);
@@ -154,7 +173,11 @@ class SharedPrefsHelper {
         _isUserAccessTokenKey,
         _isUserRefreshTokenKey,
         _isAvtarForProfileKey,
-        _fcmTokenKey
+        _fcmTokenKey,
+        isMapKeyValues,
+        _fcmTokenKey,
+        apiFetchKeyFromSever,
+        fetchSubsIsTrueKey,
       ];
       for (final key in keys) {
         await prefs.remove(key);
