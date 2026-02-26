@@ -1366,65 +1366,29 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   }
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final cardHeight = screenHeight * 0.33;
-    const segmentHeight = 50.0;
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      left: kIsWeb ? 400.0 : 0.0,
+      right: kIsWeb ? 400.0 : 0.0,
+      bottom: _activeCard == 2 ? 0 : -MediaQuery.of(context).size.height * 0.4,
+      child: BlocBuilder<FlightMapCubit, FlightMapState>(
+        builder: (context, state) {
+          if (state.selectedAirport == null) {
+            return const SizedBox.shrink();
+          }
 
-    return Stack(
-      alignment: Alignment.bottomLeft,
-      children: [
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : 0.0,
-          bottom: _activeCard == 2 ? 0 : -cardHeight,
-          child: SizedBox(
-            height: cardHeight,
-            child: BlocBuilder<FlightMapCubit, FlightMapState>(
-              builder: (context, state) {
-                if (state.selectedAirport == null) {
-                  return const SizedBox.shrink();
-                }
-
-                return AirportStationDetailCard(
-                  airportDetail: state.selectedAirport!,
-                  isComeFromLiveTracking: false,
-                  segmentIndex: selectedSegmentIndex,
-                  callBackForHideFlightCard: () {
-                    setState(() {
-                      _isMapListViewShown = true;
-                      _activeCard = 0;
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3,
-
-          bottom: _activeCard == 2 ? cardHeight : -cardHeight,
-          child: SizedBox(
-            width: 300,
-            height: segmentHeight,
-            child: CustomSegmentController(
-              segments: ["Airport details", "More details"],
-              selectedIndex: selectedSegmentIndex,
-              onChanged: (index) {
-                setState(() {
-                  selectedSegmentIndex = index;
-                });
-              },
-            ),
-          ),
-        ),
-      ],
+          return AirportStationDetailCard(
+            airportDetail: state.selectedAirport!,
+            isComeFromLiveTracking: false,
+            callBackForHideFlightCard: () {
+              setState(() {
+                _activeCard = 0;
+              });
+            },
+          );
+        },
+      ),
     );
   }
 }
