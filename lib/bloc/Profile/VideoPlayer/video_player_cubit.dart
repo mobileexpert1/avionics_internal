@@ -9,20 +9,37 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     final String urlVideo =
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
 
-    final controller = VideoPlayerController.networkUrl(Uri.parse(urlVideo));
+    final controller =
+    VideoPlayerController.networkUrl(Uri.parse(urlVideo));
 
-    await controller.initialize();
-    controller.addListener(_listener);
+    try {
+      await controller.initialize();
 
-    emit(
-      state.copyWith(
-        controller: controller,
-        duration: controller.value.duration,
-      ),
-    );
+      if (isClosed) {
+        controller.dispose();
+        return;
+      }
+
+      controller.addListener(_listener);
+
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            controller: controller,
+            duration: controller.value.duration,
+          ),
+        );
+      }
+    } catch (_) {
+      if (!isClosed) {
+        emit(state.copyWith(isPlaying: false));
+      }
+    }
   }
 
   void _listener() {
+    if (isClosed) return;
+
     final controller = state.controller;
     if (controller == null) return;
 
@@ -45,25 +62,32 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   void seekForward() {
     final controller = state.controller;
     if (controller == null) return;
-    controller.seekTo(controller.value.position + const Duration(seconds: 10));
+    controller.seekTo(
+        controller.value.position + const Duration(seconds: 10));
   }
 
   void seekBackward() {
     final controller = state.controller;
     if (controller == null) return;
-    controller.seekTo(controller.value.position - const Duration(seconds: 10));
+    controller.seekTo(
+        controller.value.position - const Duration(seconds: 10));
   }
 
   void toggleMute() {
     final controller = state.controller;
     if (controller == null) return;
+
     final muted = !state.isMuted;
     controller.setVolume(muted ? 0 : 1);
-    emit(state.copyWith(isMuted: muted));
+
+    if (!isClosed) {
+      emit(state.copyWith(isMuted: muted));
+    }
   }
 
   @override
   Future<void> close() {
+    state.controller?.removeListener(_listener);
     state.controller?.dispose();
     return super.close();
   }

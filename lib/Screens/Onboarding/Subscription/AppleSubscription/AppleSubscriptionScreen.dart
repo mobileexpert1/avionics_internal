@@ -30,6 +30,8 @@ class AppleSubscriptionScreen extends StatefulWidget {
 }
 
 class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
+  late AppleSubscriptionCubit _cubit;
+
   String getTrialText(String description) {
     if (description.toLowerCase().contains('7 days')) {
       return "+ 7 days free trial";
@@ -42,11 +44,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    // if (widget.isComeFromSignup == false) {
-    //   Future.delayed(Duration.zero, () {
-    //     context.read<AppleSubscriptionCubit>().restorePurchases();
-    //   });
-    // }
+    _cubit = AppleSubscriptionCubit(autoRestore: true);
+
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<AppleSubscriptionCubit>().handleWebRedirectionIfNeeded();
@@ -59,8 +58,9 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 
   @override
   void dispose() {
+    _cubit.globalWebRedirectDone = false;
+    _cubit.close();
     super.dispose();
-    context.read<AppleSubscriptionCubit>().globalWebRedirectDone = false;
   }
 
   String _cleanProductTitle(ProductDetails product) {
@@ -74,7 +74,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AppleSubscriptionCubit(autoRestore: true),
+      create: (_) => _cubit,
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
             (prev.error != curr.error && curr.error != null) ||
