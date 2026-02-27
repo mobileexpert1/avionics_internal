@@ -330,7 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "AvioflAI App ver 1.0",
+                    "AvioflAI App ver 1.0 (8)",
                     style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                   ),
                 ),

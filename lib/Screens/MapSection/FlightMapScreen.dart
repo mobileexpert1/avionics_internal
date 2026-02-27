@@ -439,11 +439,30 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       isMapViewSelected = newIsMapViewSelected;
       if (!isMapViewSelected) _activeCard = 0;
     });
-    _sheetController.animateTo(
-      isMapViewSelected ? 0.0 : 0.78,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _safeAnimate(isMapViewSelected ? 0.01 : 0.78);
+    });
+
+    // _sheetController.animateTo(
+    //   isMapViewSelected ? 0.0 : 0.78,
+    //   duration: const Duration(milliseconds: 400),
+    //   curve: Curves.easeInOut,
+    // );
+  }
+
+  Future<void> _safeAnimate(double size) async {
+    if (!mounted) return;
+    if (!_sheetController.isAttached) return;
+
+    try {
+      await _sheetController.animateTo(
+        size,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    } catch (_) {
+      debugPrint("_safeAnimate");
+    }
   }
 
   void _showInitialTrackingModePopup(BuildContext context) {
@@ -785,8 +804,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
       child: DraggableScrollableSheet(
         controller: _sheetController,
-        initialChildSize: 0.0,
-        minChildSize: 0.0,
+        initialChildSize: 0.01,
+        minChildSize: 0.01,
         maxChildSize: 0.75,
         snap: true,
         builder: (context, scrollController) {
@@ -951,11 +970,15 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                   );
 
                                   _toggleFlightCard(flight: data.id);
-                                  _sheetController.animateTo(
-                                    0.0,
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeInOut,
-                                  );
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    _safeAnimate(0.01);
+                                  });
+
+                                  // _sheetController.animateTo(
+                                  //   0.0,
+                                  //   duration: const Duration(milliseconds: 400),
+                                  //   curve: Curves.easeInOut,
+                                  // );
                                 },
 
                                 child: LayoutBuilder(

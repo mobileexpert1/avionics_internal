@@ -118,7 +118,10 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
             Expanded(
               flex: kIsWeb ? (isLandscape ? 13 : 11) : 13,
               child: Container(
-                color: AppColors.customBottomEnabledColour,
+                decoration: BoxDecoration(
+                  color: AppColors.customBottomEnabledColour,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                   vertical: 5,
