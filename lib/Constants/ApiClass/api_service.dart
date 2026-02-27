@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:http/http.dart' as http;
@@ -139,7 +141,7 @@ class ApiService {
     VoidCallback? onUnauthorized,
   }) async {
     if (!await _hasInternetConnection()) {
-      throw 'No internet connection. Please check your network.';
+      throw SocketException('No internet connection');
     }
 
     final token = await getBearerToken();
@@ -160,11 +162,7 @@ class ApiService {
 
     final encodedBody = body != null ? jsonEncode(body) : null;
 
-    print(
-      "[$method] URL: $url "
-          '\nHeader Token: $requestHeaders Request Body: $encodedBody',
-    );
-    //if (encodedBody != null) print('Request Body: $encodedBody');
+    print("[$method] URL: $url\nHeaders: $requestHeaders\nBody: $encodedBody");
 
     try {
       late http.Response response;
@@ -202,32 +200,38 @@ class ApiService {
           );
           break;
         default:
-          throw 'Unsupported HTTP method: $method';
+          throw Exception('Unsupported HTTP method: $method');
       }
 
       final decodedBody = utf8.decode(response.bodyBytes);
-
+      print('Status Code: ${response.statusCode}');
       print('Response Body: $decodedBody');
-      final jsonResponse = jsonDecode(decodedBody);
+
+      Map<String, dynamic>? jsonResponse;
+      try {
+        jsonResponse = jsonDecode(decodedBody);
+      } catch (_) {
+        jsonResponse = null; // In case of HTML (503 page)
+      }
 
       switch (response.statusCode) {
         case 200:
         case 201:
-          return jsonResponse;
-
-        case 422:
-          throw ApiErrorModel.fromJson(jsonResponse).toString();
-
-        case 500:
-        case 502:
-          throw ApiErrorModel.fromJson(jsonResponse).toString();
+          if (jsonResponse != null) {
+            return jsonResponse;
+          } else {
+            return decodedBody;
+          }
 
         case 400:
         case 404:
-          final messages = jsonResponse.entries
-              .map((e) => '${e.value}')
-              .join('\n');
-          throw messages;
+          if (jsonResponse != null) {
+            final messages = jsonResponse.entries
+                .map((e) => '${e.value}')
+                .join('\n');
+            throw '400 $messages';
+          }
+          throw '400 Bad request';
 
         case 401:
           if (retry) {
@@ -244,15 +248,31 @@ class ApiService {
                 retry: false,
                 onUnauthorized: onUnauthorized,
               );
-            } catch (e) {
-              throw 'Unauthorized. Please log in again.';
+            } catch (_) {
+              throw '401 Unauthorized. Please log in again.';
             }
           } else {
-            throw 'Unauthorized. Please log in again.';
+            throw '401 Unauthorized. Please log in again.';
           }
+
+        case 422:
+          if (jsonResponse != null) {
+            throw ApiErrorModel.fromJson(jsonResponse).toString();
+          }
+          throw '422 Validation error';
+
+        case 500:
+        case 502:
+        case 503:
+          throw '${response.statusCode} Server temporarily unavailable. Please try again later.';
+
         default:
-          throw 'Request failed with status: ${response.statusCode}';
+          throw '${response.statusCode} Request failed.';
       }
+    } on SocketException {
+      throw SocketException('No internet connection');
+    } on TimeoutException {
+      throw TimeoutException('Connection timed out');
     } catch (e) {
       print('Request Exception: ${e.toString()}');
       rethrow;

@@ -7,9 +7,10 @@ import '../core/index.dart';
 Color getButtonBgColor(String text, BuildContext context) {
   final colorScheme = Theme.of(context).colorScheme;
   switch (text) {
-    case '%':
-    case '( )':
     case 'C':
+    case '( )':
+    case '%':
+    return const Color(0xFFEAEBED);
     case 'Rad':
     case 'Deg':
     case '√':
@@ -21,11 +22,12 @@ Color getButtonBgColor(String text, BuildContext context) {
     case '-':
     case '×':
     case '÷':
-      return Colors.white;
+      return const Color(0xFFFAC200);
     default:
       return Colors.white;
   }
 }
+
 
 Color getTextColor(String text, BuildContext context) {
   final colorScheme = Theme.of(context).colorScheme;
@@ -35,10 +37,9 @@ Color getTextColor(String text, BuildContext context) {
     case '-':
     case '×':
     case '÷':
+    case 'C':
     case 'switch':
       return colorScheme.buttonText;
-    case 'C':
-      return AppColors.progressColour;
     default:
       return colorScheme.buttonText;
   }

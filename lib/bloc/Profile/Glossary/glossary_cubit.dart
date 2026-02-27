@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:avionics_internal/bloc/Profile/Glossary/glossary_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
       emit(GlossaryState(glossaryData: glossaryData, isLoading: false));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(GlossaryState(glossaryData: {}, isLoading: false));
+      emit(GlossaryState(glossaryData: {}, isLoading: false,errorMessage: e.toString(),status: CommonApiStatus.failure));
     }
   }
 }

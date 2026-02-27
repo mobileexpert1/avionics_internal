@@ -65,9 +65,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => LoginScreen()),
-                (route) => false,
-          )
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
+                )
               : Navigator.pop(context)),
         ),
       ),
@@ -80,19 +80,17 @@ class _AvtarScreenState extends State<AvtarScreen> {
               ),
             );
             context.read<AvtarCubit>().resetStatus();
-          }
-        },
-        builder: (context, state) {
-          if (state.status == CommonApiStatus.initial) {
-            return const Scaffold(
+          } else if (state.status == CommonApiStatus.initial) {
+            Scaffold(
               backgroundColor: Colors.white,
               body: Center(child: CircularProgressIndicator()),
             );
           }
-
           if (state.avatars.isEmpty) {
-            return const Center(child: Text('No avatars found'));
+            Center(child: Text('No avatars found'));
           }
+        },
+        builder: (context, state) {
           return Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
@@ -149,23 +147,27 @@ class _AvtarScreenState extends State<AvtarScreen> {
                             children: [
                               (userType.logo.isNotEmpty)
                                   ? SvgPicture.network(
-                                userType.logo,
-                                width: 44,
-                                height: 44,
-                                fit: BoxFit.contain,
-                                placeholderBuilder: (context) =>
-                                const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                ),
-                              )
+                                      userType.logo,
+                                      width: 44,
+                                      height: 44,
+                                      fit: BoxFit.contain,
+                                      placeholderBuilder: (context) =>
+                                          const SizedBox(
+                                            width: 24,
+                                            height: 24,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                    )
                                   : SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.avtarSecond),
-                                width: 44,
-                                height: 44,
-                                fit: BoxFit.contain,
-                              ),
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.avtarSecond,
+                                      ),
+                                      width: 44,
+                                      height: 44,
+                                      fit: BoxFit.contain,
+                                    ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Text(
@@ -196,41 +198,41 @@ class _AvtarScreenState extends State<AvtarScreen> {
         },
       ),
       bottomNavigationBar:
-      (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
+          (widget.isComeFromSignupScreen || widget.isComeFromSocialLogin)
           ? SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 12,
-            horizontal: 20,
-          ),
-          child: BlocSelector<AvtarCubit, AvtarState, bool>(
-            selector: (state) =>
-            state.selectedUserType != null &&
-                state.selectedUserType!.isNotEmpty,
-            builder: (context, isButtonEnabled) {
-              return CustomBottomButton(
-                title: ConstantStrings.submitTitle,
-                backgroundColor: AppColors.customBottomEnabledColour,
-                textColor: Colors.white,
-                icon: const SizedBox(width: 0),
-                isEnabled: isButtonEnabled,
-                onPressed: () {
-                  final selectedUserType =
-                      context.read<AvtarCubit>().state.selectedUserType ??
-                          '';
-                  context.read<AvtarCubit>().selectAvatar(
-                    selectedUserType,
-                    widget.isComeFromSignupScreen,
-                    widget.isComeFromSocialLogin,
-                    context,
-                    widget.signupData,
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      )
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 20,
+                ),
+                child: BlocSelector<AvtarCubit, AvtarState, bool>(
+                  selector: (state) =>
+                      state.selectedUserType != null &&
+                      state.selectedUserType!.isNotEmpty,
+                  builder: (context, isButtonEnabled) {
+                    return CustomBottomButton(
+                      title: ConstantStrings.submitTitle,
+                      backgroundColor: AppColors.customBottomEnabledColour,
+                      textColor: Colors.white,
+                      icon: const SizedBox(width: 0),
+                      isEnabled: isButtonEnabled,
+                      onPressed: () {
+                        final selectedUserType =
+                            context.read<AvtarCubit>().state.selectedUserType ??
+                            '';
+                        context.read<AvtarCubit>().selectAvatar(
+                          selectedUserType,
+                          widget.isComeFromSignupScreen,
+                          widget.isComeFromSocialLogin,
+                          context,
+                          widget.signupData,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
           : const SizedBox.shrink(),
     );
   }

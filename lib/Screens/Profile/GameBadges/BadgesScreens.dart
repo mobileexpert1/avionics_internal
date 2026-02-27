@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:universal_html/html.dart' as html;
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
@@ -51,16 +52,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
     super.dispose();
   }
 
-  void _toggleFullScreen() {
-    if (kIsWeb) {
-      if (html.document.fullscreenElement == null) {
-        html.document.documentElement?.requestFullscreen();
-      } else {
-        html.document.exitFullscreen();
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool ikweb =
@@ -93,7 +84,16 @@ class _BadgesScreenState extends State<BadgesScreen> {
             },
           ),
         ),
-        body: BlocBuilder<BadgesCubit, BadgesState>(
+        body: BlocConsumer<BadgesCubit, BadgesState>(
+          listener: (context, state) {
+            if (state.status == CommonApiStatus.failure && state.errorMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage ?? 'Something went wrong'),
+                ),
+              );
+            }
+          },
           builder: (context, state) {
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -104,7 +104,6 @@ class _BadgesScreenState extends State<BadgesScreen> {
                 const SizedBox(height: 10),
                 _buildTabs(context, state),
 
-                /// Total Points Section
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal:

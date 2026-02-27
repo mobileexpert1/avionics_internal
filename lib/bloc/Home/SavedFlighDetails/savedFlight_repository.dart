@@ -15,7 +15,7 @@ class SavedFlightRepository {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
       return SavedFlightResponse.fromJson(jsonData);
     } catch (e) {
-      throw Exception("Failed to fetch saved/favorite aircrafts: $e");
+      throw e.toString();
     }
   }
 

@@ -970,7 +970,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                   );
 
                                   _toggleFlightCard(flight: data.id);
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
                                     _safeAnimate(0.01);
                                   });
 
@@ -1422,9 +1424,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
       right: kIsWeb ? 400.0 : 0.0,
       bottom: _activeCard == 2 ? 0 : -screenHeight * 0.4,
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: screenHeight * 0.6,
-        ),
+        constraints: BoxConstraints(maxHeight: screenHeight * 0.6),
         child: BlocBuilder<FlightMapCubit, FlightMapState>(
           builder: (context, state) {
             if (state.selectedAirport == null) {

@@ -1,6 +1,7 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../bloc/Profile/FormulaSection/formula_cubit.dart';
@@ -43,14 +44,29 @@ class _FormulasScreenState extends State<FormulasScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        body: BlocBuilder<FormulaCubit, FormulaState>(
+        body: BlocConsumer<FormulaCubit, FormulaState>(
+          listener: (context, state) {
+            if (state.status == CommonApiStatus.failure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    state.errorMessage ?? 'No formulas found',
+                  ),
+                ),
+              );
+            }
+          },
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
 
             if (state.categories.isEmpty) {
-              return const Center(child: Text("No formulas found"));
+              return const Center(
+                child: Text("No formulas found"),
+              );
             }
 
             return ListView.builder(
@@ -91,7 +107,6 @@ class _FormulasScreenState extends State<FormulasScreen> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   formula.expression,
-                                  textAlign: TextAlign.start,
                                   style: const TextStyle(
                                     fontSize: 13,
                                     color: Colors.black,

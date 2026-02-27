@@ -18,10 +18,10 @@ class Button extends StatelessWidget {
     final history = Provider.of<History>(context, listen: false);
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.all(3),
+        margin: const EdgeInsets.all(6),
         height: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           gradient: text == '=' ? colorScheme.gradient : null,
         ),
         child: ElevatedButton(
@@ -35,7 +35,7 @@ class Button extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             foregroundColor: getTextColor(text, context), backgroundColor: getButtonBgColor(text, context), elevation: 0,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
           child: FittedBox(

@@ -356,6 +356,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -378,7 +379,6 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
     _cubit = ConversionCubit();
     _cubit.loadConversions();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.conversionScreen);
-
   }
 
   @override
@@ -403,10 +403,24 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
-        body: BlocBuilder<ConversionCubit, ConversionState>(
+        body: BlocConsumer<ConversionCubit, ConversionState>(
+          listenWhen: (previous, current) => previous.status != current.status,
+          listener: (context, state) {
+            if (state.status == CommonApiStatus.failure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage ?? "Something went wrong"),
+                ),
+              );
+            }
+          },
           builder: (context, state) {
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
+            }
+
+            if (state.categories.isEmpty) {
+              return const Center(child: Text("No conversions found"));
             }
 
             return ListView.builder(
@@ -450,7 +464,7 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                                 trackVisibility: true,
                                 interactive: true,
                                 scrollbarOrientation:
-                                ScrollbarOrientation.bottom,
+                                    ScrollbarOrientation.bottom,
                                 child: Padding(
                                   padding: EdgeInsets.only(
                                     bottom: !kIsWeb && Platform.isIOS ? 40 : 0,
@@ -463,9 +477,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                                       child: IntrinsicWidth(
                                         child: ClipRRect(
                                           borderRadius:
-                                          const BorderRadius.vertical(
-                                            bottom: Radius.circular(8),
-                                          ),
+                                              const BorderRadius.vertical(
+                                                bottom: Radius.circular(8),
+                                              ),
                                           child: _buildConversionTable(
                                             category,
                                           ),
@@ -495,9 +509,7 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
 
   Widget _buildConversionTable(category) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: kIsWeb ? 1200 : 600,
-      ),
+      constraints: BoxConstraints(minWidth: kIsWeb ? 1200 : 600),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -510,32 +522,35 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
             child: Row(
               children: [
                 SizedBox(
-                    width: kIsWeb ? 350 : 200,
-                    child: const Text(
-                      "From → To",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
+                  width: kIsWeb ? 350 : 200,
+                  child: const Text(
+                    "From → To",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 SizedBox(
-                    width: kIsWeb ? 350 : 200,
-                    child: const Text(
-                      "Conversion",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
+                  width: kIsWeb ? 350 : 200,
+                  child: const Text(
+                    "Conversion",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 SizedBox(
-                    width: kIsWeb ? 350 : 200,
-                    child: const Text(
-                      "Example",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
+                  width: kIsWeb ? 350 : 200,
+                  child: const Text(
+                    "Example",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -550,8 +565,14 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
               child: Row(
                 children: [
                   SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.fromTo)),
-                  SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.formula)),
-                  SizedBox(width: kIsWeb ? 350 : 200, child: Text(item.example)),
+                  SizedBox(
+                    width: kIsWeb ? 350 : 200,
+                    child: Text(item.formula),
+                  ),
+                  SizedBox(
+                    width: kIsWeb ? 350 : 200,
+                    child: Text(item.example),
+                  ),
                 ],
               ),
             );
@@ -562,7 +583,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
   }
 
   ScrollbarThemeData _scrollbarTheme(
-      BuildContext context, double screenHeight) {
+    BuildContext context,
+    double screenHeight,
+  ) {
     return ScrollbarThemeData(
       thumbColor: WidgetStateProperty.all(const Color(0xFF1E80F2)),
       trackColor: WidgetStateProperty.all(Colors.transparent),

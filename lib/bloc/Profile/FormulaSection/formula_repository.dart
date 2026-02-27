@@ -12,10 +12,9 @@ class FormulaRepository {
 
     try {
       final jsonData = await ApiService.get(url: url) as List<dynamic>;
-
       return jsonData.map((item) => FormulaModel.fromJson(item)).toList();
     } catch (e) {
-      throw Exception("Failed to fetch formulas: $e");
+      throw e.toString();
     }
   }
 }

@@ -67,7 +67,11 @@ class ManageaccCubit extends Cubit<ManageAccState> {
   }
 
   Future<void> fetchUserDetails(BuildContext context) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(
+      isLoading: true,
+      status: CommonApiStatus.submitting,
+      errorMessage: null,
+    ));
     try {
       final user = await repository.getUserDetail();
 
@@ -80,10 +84,13 @@ class ManageaccCubit extends Cubit<ManageAccState> {
 
       await SharedPrefsHelper.setAvtarUserType(user.userType);
 
-      emit(state.copyWith(isLoading: false));
+      emit(state.copyWith(
+        isLoading: false,
+        status: CommonApiStatus.success,
+      ));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      emit(state.copyWith(status: CommonApiStatus.failure,isLoading: false, errorMessage: e.toString()));
     }
   }
 

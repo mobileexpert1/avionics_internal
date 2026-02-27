@@ -274,15 +274,6 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
       );
     }
 
-    if (state.status == CommonApiStatus.failure) {
-      return Center(
-        child: Text(
-          state.errorMessage ?? "Something went wrong",
-          style: const TextStyle(color: Colors.red),
-        ),
-      );
-    }
-
     return _currentTabIndex == 0
         ? _buildAircraftList(state.savedflight, "No saved aircraft found.")
         : _buildAircraftList(state.favorites, "No favorite aircraft found.");
@@ -325,8 +316,25 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                   ),
                 ),
               Expanded(
-                child: BlocBuilder<SavedFlightCubit, SavedFlightState>(
-                  builder: (context, state) => _buildTabContent(state),
+                child: BlocConsumer<SavedFlightCubit, SavedFlightState>(
+                  listener: (context, state) {
+                    if (state.status == CommonApiStatus.failure) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            state.errorMessage ?? "Something went wrong",
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    return _buildTabContent(state);
+                  },
                 ),
               ),
             ],

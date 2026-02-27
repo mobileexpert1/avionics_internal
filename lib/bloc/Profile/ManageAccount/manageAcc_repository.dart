@@ -15,11 +15,6 @@ class ManageAccountRepository {
   final GenericMethods<ManageAccountModel> _profiles;
 
   Future<ManageAccountModel> getUserDetail() async {
-    // Not Working in web section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return _getLocalRow();
-    // }
-
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -34,7 +29,6 @@ class ManageAccountRepository {
 
       final profile = ManageAccountModel.fromJson(json);
 
-      // 2️⃣ Remember UID and cache
       await AuthStorage.save(profile.id);
       await _profiles.insertAll([profile]);
 

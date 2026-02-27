@@ -116,11 +116,11 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
             if (!isLandscape) const SizedBox(height: 5),
             //const GradientDivider(),
             Expanded(
-              flex: kIsWeb ? (isLandscape ? 13 : 11) : 13,
+              flex: kIsWeb ? (isLandscape ? 14 : 11) : 14,
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColors.customBottomEnabledColour,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,

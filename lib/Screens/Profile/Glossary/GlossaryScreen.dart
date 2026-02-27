@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Helpers/SearchBarWidget.dart';
@@ -26,7 +27,6 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.glossaryScreen);
-
   }
 
   void _onSearchChanged() {
@@ -68,7 +68,20 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: BlocBuilder<GlossaryCubit, GlossaryState>(
+            child: BlocConsumer<GlossaryCubit, GlossaryState>(
+              listenWhen: (previous, current) =>
+                  previous.status != current.status,
+              listener: (context, state) {
+                if (state.status == CommonApiStatus.failure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        state.errorMessage ?? "Something went wrong",
+                      ),
+                    ),
+                  );
+                }
+              },
               builder: (context, state) {
                 final glossaryData = state.glossaryData;
 

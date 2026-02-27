@@ -303,34 +303,6 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  String mapStatusCode(String error) {
-    if (error.contains("400")) {
-      return "Invalid request. Please try again.";
-    }
-
-    if (error.contains("401")) {
-      return "Invalid email or password.";
-    }
-
-    if (error.contains("500")) {
-      return "Server error. Please try later.";
-    }
-
-    if (error.contains("504")) {
-      return "Server is taking too long to respond. Please try again.";
-    }
-
-    if (error.contains("SocketException")) {
-      return "No internet connection.";
-    }
-
-    if (error.contains("TimeoutException")) {
-      return "Connection timed out. Please try again.";
-    }
-
-    return error;
-  }
-
   Future<void> _navigateAfterLogin(
     BuildContext context,
     LoginResponseModel result,
