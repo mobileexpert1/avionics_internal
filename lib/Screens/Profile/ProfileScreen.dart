@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
 import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
+import 'package:avionics_internal/Screens/Profile/GoogleEarthMap/GoogleEarthMap.dart';
 import 'package:avionics_internal/Screens/Profile/TestColourScreen.dart';
 import 'package:avionics_internal/Screens/Profile/VideoPlayer/VideoPlayerScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
@@ -151,6 +152,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TestColourScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.savedIcon,
+                      ),
+                      title: "Google Earth Map Screen ",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GoogleEarthMap(),
                           ),
                         );
                       },

@@ -18,6 +18,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+9
 
+dependency_overrides:
+  http: ^1.2.0
+
 environment:
   sdk: ^3.8.0
 
@@ -31,6 +34,7 @@ dependencies:
 
   flutter:
     sdk: flutter
+  flutter_earth_globe:
   provider: ^6.0.3
   eval_ex: ^1.1.6
   speech_to_text:
@@ -109,6 +113,7 @@ flutter:
     - assets/mapFiles/
     - assets/images/
     - assets/gif/
+    - assets/google_earth_map/
     - 'assets/svg_images/airportsIcon.svg'
     - .env
   # assets:

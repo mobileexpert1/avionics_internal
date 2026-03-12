@@ -320,6 +320,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_earth_globe",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_earth_globe-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "flutter_facebook_auth",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_facebook_auth-5.0.11",
       "packageUri": "lib/",
@@ -579,9 +585,9 @@
     },
     {
       "name": "http",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/http-0.13.6",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/http-1.6.0",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.4"
     },
     {
       "name": "http_parser",
