@@ -8,12 +8,18 @@ class GlossaryState {
   final String? errorMessage;
   final CommonApiStatus status;
 
-  const GlossaryState({
+  final Map<String, List<GlossaryItem>>? originalData;
+  String? selectedLetter;
+
+  GlossaryState({
     required this.glossaryData,
     this.isLoading = false,
     this.isSuccess = false,
     this.errorMessage,
     this.status = CommonApiStatus.initial,
+
+    this.originalData,
+    this.selectedLetter,
   });
 
   GlossaryState copyWith({
@@ -22,6 +28,9 @@ class GlossaryState {
     bool? isSuccess,
     String? errorMessage,
     CommonApiStatus? status,
+
+    Map<String, List<GlossaryItem>>? originalData,
+    String? selectedLetter,
   }) {
     return GlossaryState(
       glossaryData: glossaryData ?? this.glossaryData,
@@ -29,6 +38,9 @@ class GlossaryState {
       isSuccess: isSuccess ?? this.isSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
       status: status ?? this.status,
+
+      originalData: originalData ?? this.originalData,
+      selectedLetter: selectedLetter ?? this.selectedLetter,
     );
   }
 }

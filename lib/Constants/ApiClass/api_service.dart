@@ -207,7 +207,7 @@ class ApiService {
       print('Status Code: ${response.statusCode}');
       print('Response Body: $decodedBody');
 
-      Map<String, dynamic>? jsonResponse;
+      dynamic jsonResponse;
       try {
         jsonResponse = jsonDecode(decodedBody);
       } catch (_) {

@@ -32,14 +32,6 @@ class AvtarScreen extends StatefulWidget {
 }
 
 class _AvtarScreenState extends State<AvtarScreen> {
-  // final List<String> titles = ['Pilot', 'ATCO', 'Student', 'Enthusiasts'];
-  // final List<String> userTypes = ['pilot', 'atco', 'student', 'enthusiast'];
-  // final List<String> icons = [
-  //   AssetsPath.avtarFirst,
-  //   AssetsPath.avtarSecond,
-  //   AssetsPath.avtarThird,
-  //   AssetsPath.avtarFouth,
-  // ];
 
   @override
   void initState() {

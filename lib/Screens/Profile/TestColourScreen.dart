@@ -85,6 +85,22 @@ class TestColourScreen extends StatelessWidget {
       "rgb": "255, 255, 255",
       "hex": "#FFFFFF",
     },
+
+    //Extra Colour
+    {
+      "name": "Extra Color Used",
+      "color": const Color(0xFFFFCB19),
+      "rgb": "255, 203, 25",
+      "hex": "#FFFFFF",
+    },
+
+    //Extra Colour
+    {
+      "name": "Extra Color Used",
+      "color": const Color(0xFFF3F3F3),
+      "rgb": "243, 243, 243",
+      "hex": "#FFFFFF",
+    },
   ];
 
   @override

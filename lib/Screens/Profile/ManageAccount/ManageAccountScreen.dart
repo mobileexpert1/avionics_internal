@@ -54,29 +54,28 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       create: (_) => ManageaccCubit()..fetchUserDetails(context),
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) {
-          if (state.status == CommonApiStatus.failure) {
+          if (!state.isLoading) {
+            firstNameController.text = state.firstName;
+            lastNameController.text = state.lastName;
+            emailController.text = state.email;
+
+            isSocialLogin =
+                (state.authType == "apple" ||
+                state.authType == "facebook" ||
+                state.authType == "google");
+          } else if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage ?? 'Profile update failed'),
               ),
             );
-          } else if (state.status == CommonApiStatus.success) {
+          } else if (state.status == CommonApiStatus.success &&
+              state.isLoading == false) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Your profile has been successfully updated'),
               ),
             );
-          } else {
-            if (!state.isLoading) {
-              firstNameController.text = state.firstName;
-              lastNameController.text = state.lastName;
-              emailController.text = state.email;
-
-              isSocialLogin =
-                  (state.authType == "apple" ||
-                  state.authType == "facebook" ||
-                  state.authType == "google");
-            }
           }
         },
         builder: (context, state) {
