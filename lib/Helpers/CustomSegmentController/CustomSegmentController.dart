@@ -24,9 +24,9 @@ class CustomSegmentController extends StatelessWidget {
           topRight: Radius.circular(20),
         ),
         border: Border(
-          top: BorderSide(width: 2),
-          left: BorderSide(width: 2),
-          right: BorderSide(width: 2),
+          top: BorderSide(width: 1),
+          left: BorderSide(width: 1),
+          right: BorderSide(width: 1),
         ),
       ),
       child: Row(

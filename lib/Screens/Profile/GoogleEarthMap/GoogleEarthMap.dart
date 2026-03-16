@@ -17,7 +17,7 @@ class GoogleEarthMap extends StatefulWidget {
   State<GoogleEarthMap> createState() => _GoogleEarthMap();
 }
 
-class _GoogleEarthMap extends State<GoogleEarthMap> with TickerProviderStateMixin {
+class _GoogleEarthMap extends State<GoogleEarthMap> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late FlutterEarthGlobeController _controller;
 
@@ -78,12 +78,10 @@ class _GoogleEarthMap extends State<GoogleEarthMap> with TickerProviderStateMixi
   @override
   void dispose() {
     _isActive = false;
-    _controller.dispose();
     super.dispose();
   }
 
-
-    @override
+  @override
   void initState() {
     super.initState();
     _controller = FlutterEarthGlobeController(
@@ -97,7 +95,9 @@ class _GoogleEarthMap extends State<GoogleEarthMap> with TickerProviderStateMixi
       isBackgroundFollowingSphereRotation: true,
       background: Image.asset('assets/google_earth_map/2k_stars.jpg').image,
       surface: Image.asset('assets/google_earth_map/2k_earth-day.jpg').image,
-      nightSurface: Image.asset('assets/google_earth_map/2k_earth-night.jpg').image,
+      nightSurface: Image.asset(
+        'assets/google_earth_map/2k_earth-night.jpg',
+      ).image,
       isDayNightCycleEnabled: false,
       dayNightBlendFactor: 0.15,
     );
@@ -300,9 +300,11 @@ class _GoogleEarthMap extends State<GoogleEarthMap> with TickerProviderStateMixi
       _controller.dayNightBlendFactor,
     );
 
-    Future.delayed(const Duration(milliseconds: 2200), () {
-      if (!mounted || !_isActive) return;
-      startConnectionAnimation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 2200), () {
+        if (!mounted || !_isActive) return;
+        startConnectionAnimation();
+      });
     });
   }
 
@@ -311,10 +313,17 @@ class _GoogleEarthMap extends State<GoogleEarthMap> with TickerProviderStateMixi
       if (!mounted || !_isActive) return;
 
       final connection = connections[i];
-      _controller.addPointConnection(connection, animateDraw: true);
+
+      try {
+        _controller.addPointConnection(connection, animateDraw: true);
+      } catch (_) {
+        return;
+      }
+
       GlobeControlsState.instance.addVisibleConnection(connection.id);
 
       _controller.focusOnCoordinates(connection.end, animate: true);
+
       await Future.delayed(const Duration(seconds: 3));
 
       if (!mounted || !_isActive) return;
@@ -333,6 +342,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> with TickerProviderStateMixi
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
+            _isActive = false;
             Navigator.pop(context);
           },
         ),

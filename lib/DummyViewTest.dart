@@ -30,8 +30,8 @@ class _DemoScreenState extends State<DemoScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           CustomHeaderViewExpandable(
-            isNeedToShowLeftRightBottomBorder:false,
-            isNeedToShowLeftImage:true,
+            isNeedToShowLeftRightBottomBorder: false,
+            isNeedToShowLeftImage: true,
             title: "Library",
             headerColor: const Color(0xFF201E48),
             arrowBackgroundColor: const Color(0xFFF9E84B),
@@ -48,8 +48,8 @@ class _DemoScreenState extends State<DemoScreen> {
           const SizedBox(height: 50),
 
           CustomHeaderViewExpandable(
-            isNeedToShowLeftRightBottomBorder:false,
-            isNeedToShowLeftImage:true,
+            isNeedToShowLeftRightBottomBorder: false,
+            isNeedToShowLeftImage: true,
             title: "Manufacturer",
             headerColor: const Color(0x4F99D8FF),
             arrowBackgroundColor: const Color(0xFFF9E84B),
@@ -65,11 +65,9 @@ class _DemoScreenState extends State<DemoScreen> {
 
           const SizedBox(height: 50),
 
-
-
           CustomHeaderViewExpandable(
-            isNeedToShowLeftRightBottomBorder:false,
-            isNeedToShowLeftImage:true,
+            isNeedToShowLeftRightBottomBorder: false,
+            isNeedToShowLeftImage: true,
             title: "Selected: ${selectedLetter ?? ''}",
             headerColor: const Color(0x4F99D8FF),
             arrowBackgroundColor: const Color(0xFFF9E84B),
