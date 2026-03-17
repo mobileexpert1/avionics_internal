@@ -11,6 +11,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
 
 final GlobalKey _iconKey = GlobalKey();
@@ -183,6 +184,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                             QuizQuestionCard(
                               timeTaken: state.timeTaken,
                               hintText: state.currentQuestion.hint,
+                              imgUrl: state.currentQuestion.imgUrl,
                               question: state.currentQuestion.question,
                               options: state.currentQuestion.options,
                               selectedOption: state.selectedIndex,
@@ -252,6 +254,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 class QuizQuestionCard extends StatelessWidget {
   final int timeTaken;
   final String hintText;
+  final String imgUrl;
   final String question;
   final List<String> options;
   final int? selectedOption;
@@ -267,6 +270,7 @@ class QuizQuestionCard extends StatelessWidget {
   const QuizQuestionCard({
     required this.timeTaken,
     required this.hintText,
+    required this.imgUrl,
     required this.question,
     required this.options,
     required this.correctOption,
@@ -282,6 +286,10 @@ class QuizQuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final imageWidth = kIsWeb ? screenWidth * 0.1 : screenWidth * 1;
+    final imageHeight = kIsWeb ? screenWidth * 0.9 : screenWidth * 0.5;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -311,6 +319,17 @@ class QuizQuestionCard extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  const SizedBox(height: 13),
+                  if (imgUrl != "") ...[
+                    CachedAnyImage(
+                      key: ValueKey(imgUrl),
+                      imagePath: imgUrl,
+                      width: imageWidth,
+                      height: imageHeight,
+                      contentImage: BoxFit.cover,
+                      isForPlaneList: true,
+                    ),
+                  ],
                   const SizedBox(height: 13),
                   Text(
                     question,
@@ -516,18 +535,18 @@ class QuizProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                    CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                  )
+                          CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        )
                       : Icon(
-                    Icons.access_time,
-                    size: 30,
-                    color: secondsRemaining == 0
-                        ? Colors.red
-                        : Colors.blue,
-                  ),
+                          Icons.access_time,
+                          size: 30,
+                          color: secondsRemaining == 0
+                              ? Colors.red
+                              : Colors.blue,
+                        ),
 
                   const SizedBox(width: 4),
                   SizedBox(

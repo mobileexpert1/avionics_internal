@@ -44,6 +44,20 @@ class QuizQuestionRepository {
             ApiFunctionUrlGamesConstant.reportQuestion,
       );
       break;
+      case "trivia":
+        url = Uri.parse(
+          ApiBaseUrlConstant.baseUrl +
+              ApiFunctionUrlGamesConstant.triviaTopic +
+              ApiFunctionUrlGamesConstant.reportQuestion,
+        );
+        break;
+      case "imageBased":
+        url = Uri.parse(
+          ApiBaseUrlConstant.baseUrl +
+              ApiFunctionUrlGamesConstant.triviaTopic +
+              ApiFunctionUrlGamesConstant.reportQuestion,
+        );
+        break;
       default:
         url = null;
     }
@@ -180,16 +194,47 @@ class QuizQuestionRepository {
     int gameNumber,
     int actionNumber,
   ) async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlGamesConstant.quizQuestions}"
       "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      print("Fetched Data From Server$jsonData");
+      return CalculationGameModel.fromJson(jsonData);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  ///Quiz Get Questions API
+  Future<CalculationGameModel?> getTriviaData(
+      int gameNumber,
+      int actionNumber,
+      ) async {
+    final uri = Uri.parse(
+        "${ApiBaseUrlConstant.baseUrl}"
+            "${ApiFunctionUrlGamesConstant.triviaTopic}"
+    );
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      print("Fetched Data From Server$jsonData");
+      return CalculationGameModel.fromJson(jsonData);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  //Quiz Get Questions API
+  Future<CalculationGameModel?> getImageBasedQuestionData(
+      int actionNumber,
+      ) async {
+    final uri = Uri.parse(
+        "${ApiBaseUrlConstant.baseUrl}"
+            "${ApiFunctionUrlGamesConstant.imageBasedTopic(actionNumber)}"
+    );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
       print("Fetched Data From Server$jsonData");

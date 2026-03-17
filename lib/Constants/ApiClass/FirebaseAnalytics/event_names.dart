@@ -29,6 +29,10 @@ class FirebaseEvents {
   static const calculationsListScreen = 'calculations_List_Screen';
   static const quizLockListScreen = 'quiz_Lock_List_Screen';
   static const calculationsLockListScreen = 'calculations_Lock_List_Screen';
+  static const triviaLockScreen = 'trivia_Lock_Screen';
+  static const imageBasedDetailLockScreen = 'image_Based_Detail_Lock_Screen';
+  static const imageBasedLockScreen = 'image_Based_Lock_Screen';
+
 
   // =====================================================
   // GAMES – GAMEPLAY SCREENS

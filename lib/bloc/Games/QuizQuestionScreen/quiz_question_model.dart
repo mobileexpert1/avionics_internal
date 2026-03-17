@@ -3,6 +3,7 @@ class QuizQuestion {
   final List<String> options;
   final int correctIndex;
   final String hint;
+  final String imgUrl;
   final String questionId;
   final String setId;
 
@@ -11,6 +12,7 @@ class QuizQuestion {
     required this.options,
     required this.correctIndex,
     required this.hint,
+    required this.imgUrl,
     required this.questionId,
     required this.setId,
   });

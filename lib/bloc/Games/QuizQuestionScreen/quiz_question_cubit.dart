@@ -87,6 +87,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       options: q.options.map((o) => o.value).toList(),
       correctIndex: correctIndex,
       hint: q.explanation,
+      imgUrl: q.imgUrl,
       questionId: q.questionId,
       setId: setId,
     );
@@ -106,7 +107,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         gameData = await _repository.getOneWordData(sectionId, 3);
       } else if (gameId == "quiz") {
         gameData = await _repository.getQuizData(sectionId, 3);
-      } else {
+      } else if (gameId == "trivia") {
+        gameData = await _repository.getTriviaData(sectionId, 3);
+      } else if (gameId == "imageBased") {
+        gameData = await _repository.getImageBasedQuestionData(3);
+      }  else {
         emit(
           state.copyWith(
             isLoading: false,
@@ -505,6 +510,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
               ),
               "answer": indexToLetter(q.correctIndex),
               "explanation": q.hint,
+              "img_url": q.imgUrl,
               "user_answered": indexToLetter(result.userAnswerIndex),
               "correct_point": result.correctPoint,
               "bonus_point": result.bonusPoint,

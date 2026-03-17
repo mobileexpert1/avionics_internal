@@ -11,6 +11,8 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Helpers/Games/GameCard.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
+import '../GamesSubScreens/ImageBasedQuestion/ImageBasedDetailScreen.dart';
+import '../GamesSubScreens/TriviaSection/TriviaDetailScreen.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({super.key});
@@ -115,7 +117,24 @@ class _GamesScreenState extends State<GamesScreen> {
                                   ),
                                 );
                                 break;
-
+                              case 'trivia':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        TriviaDetailScreen(gameId: game.id),
+                                  ),
+                                );
+                                break;
+                              case 'imageBased':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        ImageBasedDetailScreen(gameId: game.id),
+                                  ),
+                                );
+                                break;
                               default:
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

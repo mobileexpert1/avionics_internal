@@ -126,6 +126,11 @@ class ConstantStrings {
   static const String startGame = 'Start Game';
   static const String compare = 'Compare';
   static const String calculationsTitle = 'Calculations';
+  static const String triviaLockTitle= 'Trivia Levels';
+  static const String triviaTitle= 'Trivia';
+
+  static const String imageBasedLockTitle= 'Image Based Levels';
+  static const String imageBasedTitle= 'Image Based';
 }
 
 class SubscriptionTexts {
@@ -254,6 +259,10 @@ class ApiFunctionUrlGamesConstant {
   static const blackBox = "blackbox/";
   static const reportQuestion = "report";
   static const blackBoxTopic = "blackbox/";
+  static const triviaTopic = "trivia/questions";
+
+  static String imageBasedTopic(int actionNumber) =>
+      "image-game/questions/?action_no=$actionNumber";
 }
 
 class ApiGameBadges {

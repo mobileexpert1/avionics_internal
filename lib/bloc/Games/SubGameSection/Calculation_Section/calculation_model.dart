@@ -71,6 +71,7 @@ class Question {
   final String question;
   final List<Option> options;
   final String answer;
+  final String imgUrl;
   final String explanation;
 
   Question({
@@ -78,6 +79,7 @@ class Question {
     required this.question,
     required this.options,
     required this.answer,
+    required this.imgUrl,
     required this.explanation,
   });
 
@@ -90,6 +92,7 @@ class Question {
           : List<Option>.from(json["options"].map((x) => Option.fromJson(x))),
       answer: json["answer"] ?? "",
       explanation: json["explanation"] ?? "",
+      imgUrl: json["img_url"] ?? "",
     );
   }
 
@@ -98,6 +101,7 @@ class Question {
     "question": question,
     "options": List<dynamic>.from(options.map((x) => x.toJson())),
     "answer": answer,
+    "img_url": imgUrl,
     "explanation": explanation,
   };
 }
