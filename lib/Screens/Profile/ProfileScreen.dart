@@ -157,20 +157,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
 
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.savedIcon,
-                      ),
-                      title: "Google Earth Map Screen ",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GoogleEarthMap(),
-                          ),
-                        );
-                      },
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.savedIcon,
+                    //   ),
+                    //   title: "Google Earth Map Screen ",
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => GoogleEarthMap(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                   ],
                 ),
 

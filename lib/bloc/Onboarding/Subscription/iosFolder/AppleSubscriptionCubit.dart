@@ -32,6 +32,8 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   Timer? _debounceTimer;
   List<PurchaseDetails> _pendingPurchases = [];
   bool _notificationShown = false;
+  bool _isRestoring = false;
+  final Set<String> _processedPurchaseIds = {};
 
   AppleSubscriptionCubit({bool autoRestore = false})
     : super(AppleSubscriptionState()) {
@@ -40,7 +42,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
   // ---------------- INIT ----------------
   Future<void> _initStore({bool autoRestore = false}) async {
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loading: state.products.isEmpty));
     if (!kIsWeb) {
       _notificationShown = false;
 
@@ -175,22 +177,40 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     _pendingPurchases.addAll(purchases);
 
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 200), () async {
-      final pending = List<PurchaseDetails>.from(_pendingPurchases);
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
+      final pending = [..._pendingPurchases];
       _pendingPurchases.clear();
 
-      for (final purchase in pending) {
-        // Skip already processed purchase
-        if (state.activeProductId == purchase.productID &&
-            (purchase.status == PurchaseStatus.purchased ||
-                purchase.status == PurchaseStatus.restored)) {
+      final Map<String, PurchaseDetails> uniquePurchases = {};
+
+      for (final p in pending) {
+        final key = p.purchaseID ?? p.verificationData.serverVerificationData;
+
+        uniquePurchases[key] = p;
+      }
+
+      for (final purchase in uniquePurchases.values) {
+        final purchaseKey =
+            purchase.purchaseID ??
+            purchase.verificationData.serverVerificationData;
+
+        if (_processedPurchaseIds.contains(purchaseKey)) {
           continue;
         }
 
+        _processedPurchaseIds.add(purchaseKey);
+
+        print(
+          "Purchase Event -> ${purchase.productID} | ${purchase.status} | $purchaseKey",
+        );
+
         switch (purchase.status) {
           case PurchaseStatus.purchased:
+            await _handleSuccess(purchase, purchaseKey);
+            break;
+
           case PurchaseStatus.restored:
-            await _handleSuccess(purchase);
+            await _handleRestore(purchase, purchaseKey);
             break;
 
           case PurchaseStatus.pending:
@@ -208,25 +228,67 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             );
             break;
 
-          default:
+          case PurchaseStatus.canceled:
+            emit(state.copyWith(loading: false, error: "Purchase cancelled"));
             break;
         }
       }
     });
   }
 
-  // ---------------- SUCCESS HANDLING ----------------
-
-  Future<void> _handleSuccess(PurchaseDetails purchase) async {
+  Future<void> _handleRestore(
+    PurchaseDetails purchase,
+    String purchaseKey,
+  ) async {
     try {
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
       }
 
-      // Prevent duplicate backend calls
-      if (state.subscription?.status == "active" &&
-          state.subscription?.productId == purchase.productID) {
+      if (state.subscription?.status == "active") {
+        emit(
+          state.copyWith(
+            purchased: true,
+            loading: false,
+            status: CommonApiStatus.success,
+            activeProductId: purchase.productID,
+          ),
+        );
         return;
+      }
+
+      await AppleSubscriptionRepository().postSubscriptionApi(
+        token: purchase.verificationData.serverVerificationData,
+        selectedSubscritionId: purchase.productID,
+        platform: Platform.isIOS ? "ios" : "android",
+        packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
+      );
+
+      final backendResponse = await AppleSubscriptionRepository()
+          .getSubscriptionDetails();
+
+      emit(
+        state.copyWith(
+          purchased: backendResponse.data?.status == "active",
+          loading: false,
+          status: CommonApiStatus.success,
+          activeProductId: purchase.productID,
+          subscription: backendResponse.data,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(loading: false, error: "Restore failed: $e"));
+    }
+  }
+
+  // ---------------- SUCCESS HANDLING ----------------
+  Future<void> _handleSuccess(
+    PurchaseDetails purchase,
+    String purchaseKey,
+  ) async {
+    try {
+      if (purchase.pendingCompletePurchase) {
+        await _iap.completePurchase(purchase);
       }
 
       await AppleSubscriptionRepository().postSubscriptionApi(
@@ -244,10 +306,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         backendSubscription: backendResponse.data,
       );
 
-      //  if (!kIsWeb) {
-      if (!_notificationShown &&
-          purchase.status == PurchaseStatus.purchased &&
-          !kIsWeb) {
+      if (!_notificationShown && !kIsWeb) {
         _notificationShown = true;
         LocalNotificationHelper.show(
           title: "Subscription Active",
@@ -256,11 +315,9 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         );
       }
 
-      final isActive = backendResponse.data?.status == "active";
-
       emit(
         state.copyWith(
-          purchased: isActive,
+          purchased: backendResponse.data?.status == "active",
           loading: false,
           status: CommonApiStatus.success,
           activeProductId: resolvedProductId,
@@ -291,14 +348,30 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   // ---------------- RESTORE ----------------
 
   Future<void> restorePurchases() async {
+    _isRestoring = true;
+    _processedPurchaseIds.clear();
     emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
     try {
       await _iap.restorePurchases();
+
+      Future.delayed(const Duration(seconds: 6), () {
+        if (_isRestoring && !isClosed) {
+          _isRestoring = false;
+          emit(state.copyWith(loading: false));
+        }
+      });
     } catch (e) {
-      emit(state.copyWith(loading: false, error: "Restore failed: $e"));
+      _isRestoring = false;
+
+      emit(
+        state.copyWith(
+          loading: false,
+          error: "Restore failed: $e",
+          status: CommonApiStatus.failure,
+        ),
+      );
     }
   }
-
 
   // ---------------- CANCEL SUBSCRIPTION ----------------
   Future<void> guideUserToCancelSubscription() async {
@@ -343,11 +416,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
 
     try {
-      // await AppleSubscriptionRepository().cancelSubscriptionApi(
-      //   productId: state.activeProductId,
-      //   platform: Platform.isIOS ? "ios" : "android",
-      // );
-      // Update Cubit state after cancellation
       emit(
         state.copyWith(
           purchased: false,
@@ -377,7 +445,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- BACKEND SYNC ----------------
-
   Future<void> getSubscriptionsFromBackendServer(String activeProductId) async {
     emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
 
@@ -406,7 +473,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- CLEANUP ----------------
-
   @override
   Future<void> close() {
     _purchaseSubscription?.cancel();
