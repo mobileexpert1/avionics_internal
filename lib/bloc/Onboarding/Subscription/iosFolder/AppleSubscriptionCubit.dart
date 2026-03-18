@@ -194,7 +194,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
             purchase.purchaseID ??
             purchase.verificationData.serverVerificationData;
 
-        if (_processedPurchaseIds.contains(purchaseKey)) {
+        if (!_isRestoring && _processedPurchaseIds.contains(purchaseKey)) {
           continue;
         }
 
@@ -354,12 +354,13 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     try {
       await _iap.restorePurchases();
 
-      Future.delayed(const Duration(seconds: 6), () {
+      Future.delayed(const Duration(seconds: 8), () {
         if (_isRestoring && !isClosed) {
           _isRestoring = false;
           emit(state.copyWith(loading: false));
         }
       });
+
     } catch (e) {
       _isRestoring = false;
 

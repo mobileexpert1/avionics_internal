@@ -36,18 +36,18 @@ class GamesCubit extends Cubit<GamesState> {
         icon: AssetsPath.calculations,
       ),
 
-      // GameItem(
-      //   id: "trivia",
-      //   title: "Trivia",
-      //   subtitle: "Test your trivia question game",
-      //   icon: AssetsPath.calculations,
-      // ),
-      // GameItem(
-      //   id: "imageBased",
-      //   title: "Image Based Question",
-      //   subtitle: "Test your Image question game",
-      //   icon: AssetsPath.calculations,
-      // ),
+      GameItem(
+        id: "trivia",
+        title: "Trivia",
+        subtitle: "Test your trivia question game",
+        icon: AssetsPath.calculations,
+      ),
+      GameItem(
+        id: "imageBased",
+        title: "Image Based Question",
+        subtitle: "Test your Image question game",
+        icon: AssetsPath.calculations,
+      ),
     ];
     emit(GamesLoaded(games));
   }

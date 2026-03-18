@@ -636,63 +636,103 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-  // Widget _buildFieldRows(List<List<String>> fields) {
-  //   return Column(
-  //     children: List.generate((fields.length / 2).ceil(), (i) {
-  //       final first = fields[i * 2];
-  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-  //
-  //       return Padding(
-  //         padding: const EdgeInsets.only(bottom: 15),
-  //         child: Row(
-  //           children: [
-  //             Expanded(
-  //               child: customField(label: first[0], text: first[1]),
-  //             ),
-  //             const SizedBox(width: 15),
-  //             Expanded(
-  //               child: second != null
-  //                   ? customField(label: second[0], text: second[1])
-  //                   : const SizedBox(),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }),
-  //   );
-  // }
   Widget _buildFieldRows(
-    List<List<String>> fields, {
-    Color labelColor = Colors.white70,
-    Color valueColor = Colors.white,
-  }) {
+      List<List<String>> fields, {
+        Color labelColor = Colors.white70,
+        Color valueColor = Colors.white,
+      }) {
     return Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
         final first = fields[i * 2];
         final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-
         return Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: Row(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Column(
             children: [
-              Expanded(
-                child: customField(
-                  label: first[0],
-                  text: first[1],
-                  labelColor: labelColor,
-                  textColor: valueColor,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 28,
+                      child: Text(
+                        first[0],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: labelColor,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: second != null
+                        ? SizedBox(
+                      height: 28,
+                      child: Text(
+                        second[0],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: labelColor,
+                          fontSize: 11,
+                        ),
+                      ),
+                    )
+                        : const SizedBox(),
+                  ),
+                ],
               ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: second != null
-                    ? customField(
-                        label: second[0],
-                        text: second[1],
-                        labelColor: labelColor,
-                        textColor: valueColor,
-                      )
-                    : const SizedBox(),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      first[1],
+                      style: TextStyle(
+                        color: valueColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: second != null
+                        ? Text(
+                      second[1],
+                      style: TextStyle(
+                        color: valueColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                        : const SizedBox(),
+                  ),
+                ],
+              ),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(
+                      thickness: 2,
+                      color: AppColors.sepratorColourAppBar,
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: second != null
+                        ? Divider(
+                      thickness: 2,
+                      color: AppColors.sepratorColourAppBar,
+                    )
+                        : const SizedBox(),
+                  ),
+                ],
               ),
             ],
           ),

@@ -43,7 +43,6 @@ Widget customField({
                 ),
               ),
             ),
-
             if (showInfoIcon)
               GestureDetector(
                 behavior: HitTestBehavior.opaque,

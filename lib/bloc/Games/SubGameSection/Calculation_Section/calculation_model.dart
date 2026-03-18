@@ -1,4 +1,5 @@
 class CalculationGameModel {
+  final String imageBasedId;
   final String setId;
   final String game;
   final String level;
@@ -6,7 +7,8 @@ class CalculationGameModel {
   final List<CategoryType> categoryTypes;
 
   CalculationGameModel({
-    required this.setId,
+    required this.imageBasedId,
+   required this.setId,
     required this.game,
     required this.level,
     required this.difficulty,
@@ -15,6 +17,7 @@ class CalculationGameModel {
 
   factory CalculationGameModel.fromJson(Map<String, dynamic> json) {
     return CalculationGameModel(
+      imageBasedId: json["img_id"] ?? "",
       setId: json["set_id"] ?? "",
       game: json["game"] ?? "",
       level: json["level"] ?? "",
@@ -28,6 +31,7 @@ class CalculationGameModel {
   }
 
   Map<String, dynamic> toJson() => {
+    "img_id": imageBasedId,
     "set_id": setId,
     "game": game,
     "level": level,

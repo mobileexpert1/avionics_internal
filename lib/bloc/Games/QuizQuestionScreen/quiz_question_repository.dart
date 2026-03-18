@@ -37,13 +37,13 @@ class QuizQuestionRepository {
               ApiFunctionUrlGamesConstant.reportQuestion,
         );
         break;
-        case "black_box":
-      url = Uri.parse(
-        ApiBaseUrlConstant.baseUrl +
-            ApiFunctionUrlGamesConstant.blackBoxTopic +
-            ApiFunctionUrlGamesConstant.reportQuestion,
-      );
-      break;
+      case "black_box":
+        url = Uri.parse(
+          ApiBaseUrlConstant.baseUrl +
+              ApiFunctionUrlGamesConstant.blackBoxTopic +
+              ApiFunctionUrlGamesConstant.reportQuestion,
+        );
+        break;
       case "trivia":
         url = Uri.parse(
           ApiBaseUrlConstant.baseUrl +
@@ -54,7 +54,7 @@ class QuizQuestionRepository {
       case "imageBased":
         url = Uri.parse(
           ApiBaseUrlConstant.baseUrl +
-              ApiFunctionUrlGamesConstant.triviaTopic +
+              ApiFunctionUrlGamesConstant.imageBased +
               ApiFunctionUrlGamesConstant.reportQuestion,
         );
         break;
@@ -211,12 +211,12 @@ class QuizQuestionRepository {
 
   ///Quiz Get Questions API
   Future<CalculationGameModel?> getTriviaData(
-      int gameNumber,
-      int actionNumber,
-      ) async {
+    int gameNumber,
+    int actionNumber,
+  ) async {
     final uri = Uri.parse(
-        "${ApiBaseUrlConstant.baseUrl}"
-            "${ApiFunctionUrlGamesConstant.triviaTopic}"
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlGamesConstant.triviaTopic}",
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
@@ -229,11 +229,11 @@ class QuizQuestionRepository {
 
   //Quiz Get Questions API
   Future<CalculationGameModel?> getImageBasedQuestionData(
-      int actionNumber,
-      ) async {
+    int actionNumber,
+  ) async {
     final uri = Uri.parse(
-        "${ApiBaseUrlConstant.baseUrl}"
-            "${ApiFunctionUrlGamesConstant.imageBasedTopic(actionNumber)}"
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlGamesConstant.imageBasedTopic}",
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
@@ -291,6 +291,9 @@ class QuizQuestionRepository {
     } else if (gameId == "quiz") {
       submitUrl =
           "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitQuizResults(gameNumber)}";
+    } else if (gameId == "imageBased") {
+      submitUrl =
+          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitImageBasedResults}";
     } else {
       throw Exception('Invalid gameId: $gameId');
     }

@@ -288,7 +288,7 @@ class QuizQuestionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final imageWidth = kIsWeb ? screenWidth * 0.1 : screenWidth * 1;
-    final imageHeight = kIsWeb ? screenWidth * 0.9 : screenWidth * 0.5;
+    final imageHeight = kIsWeb ? screenWidth * 0.9 : screenWidth * 0.6;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),

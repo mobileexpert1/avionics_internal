@@ -62,7 +62,7 @@ class _GamesScreenState extends State<GamesScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
-                      vertical: 40,
+                      vertical: 5,
                     ),
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

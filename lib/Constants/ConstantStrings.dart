@@ -260,9 +260,9 @@ class ApiFunctionUrlGamesConstant {
   static const reportQuestion = "report";
   static const blackBoxTopic = "blackbox/";
   static const triviaTopic = "trivia/questions";
-
-  static String imageBasedTopic(int actionNumber) =>
-      "image-game/questions/?action_no=$actionNumber";
+  static const trivia = "trivia/";
+  static const imageBasedTopic = "image-game/questions/";
+  static const imageBased = "image-game/";
 }
 
 class ApiGameBadges {
@@ -291,6 +291,8 @@ class ApiServiceUrlGamesConstant {
 
   static String submitQuizResults(int gameNumber) =>
       "${ApiFunctionUrlGamesConstant.quiz}$gameNumber/submit/";
+
+  static String submitImageBasedResults = "${ApiFunctionUrlGamesConstant.imageBased}submit/";
 }
 
 class MapFlightAircraftSectionConstant {

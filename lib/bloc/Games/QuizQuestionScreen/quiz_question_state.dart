@@ -27,11 +27,13 @@ class QuizQuestionState {
   final String game;
   final String level;
   final String difficulty;
+  final String imageBasedId;
   final String setId;
   final List<CategoryType> categoryTypes;
 
   const QuizQuestionState({
     required this.setId,
+    required this.imageBasedId,
     required this.questions,
     this.currentIndex = 0,
     this.selectedIndex,
@@ -62,6 +64,7 @@ class QuizQuestionState {
 
   QuizQuestionState copyWith({
     String? setId,
+    String? imageBasedId,
     List<QuizQuestion>? questions,
     int? currentIndex,
     int? selectedIndex,
@@ -89,6 +92,7 @@ class QuizQuestionState {
   }) {
     return QuizQuestionState(
       setId: setId ?? this.setId,
+      imageBasedId: imageBasedId ?? this.imageBasedId,
       questions: questions ?? this.questions,
       currentIndex: currentIndex ?? this.currentIndex,
       selectedIndex: selectedIndex,
@@ -128,6 +132,7 @@ class QuizQuestionState {
     level: '',
     difficulty: '',
     setId: '',
+    imageBasedId: '',
     categoryTypes: [],
   );
 }

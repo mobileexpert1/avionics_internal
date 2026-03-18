@@ -5,6 +5,7 @@ class QuizQuestion {
   final String hint;
   final String imgUrl;
   final String questionId;
+  final String imageBasedId;
   final String setId;
 
   QuizQuestion({
@@ -14,6 +15,7 @@ class QuizQuestion {
     required this.hint,
     required this.imgUrl,
     required this.questionId,
+    required this.imageBasedId,
     required this.setId,
   });
 }

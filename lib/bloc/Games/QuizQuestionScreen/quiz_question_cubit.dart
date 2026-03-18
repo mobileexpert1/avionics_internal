@@ -33,68 +33,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }) : _repository = repository ?? QuizQuestionRepository(),
        super(QuizQuestionState.initial()) {
     const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40};
-
     _quizTypesId = sectionId;
     _totalDuration = gameDurations[gameId] ?? 40;
     loadQuestions(sectionId, context);
   }
-
-  Future<void> reportQuestionPostMethod(
-    String reason,
-    QuizQuestionCubit quizCubit,
-    BuildContext context,
-    String isForType,
-  ) async {
-    try {
-      final currentQuestion = quizCubit.state.currentQuestion;
-
-      print(
-        "setId:-${currentQuestion.setId}, "
-        "questionId:-${currentQuestion.questionId}"
-        "question:-${currentQuestion.question}, "
-        "reason:-$reason",
-      );
-      await _repository.reportQuestionPostMethod(
-        setId: currentQuestion.setId,
-        questionId: currentQuestion.questionId,
-        reason: reason,
-        isForType: isForType,
-      );
-
-      AppSnackBar.custom(
-        context,
-        message: "Question Report Successfully",
-        svgAsset: "",
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      AppSnackBar.custom(context, message: e.toString(), svgAsset: "");
-    }
-  }
-
-  QuizQuestion _mapQuestion(Question q, String setId) {
-    final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
-    print(
-      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
-    );
-    if (correctIndex == -1) {
-      print(
-        'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
-      );
-    }
-    return QuizQuestion(
-      question: q.question,
-      options: q.options.map((o) => o.value).toList(),
-      correctIndex: correctIndex,
-      hint: q.explanation,
-      imgUrl: q.imgUrl,
-      questionId: q.questionId,
-      setId: setId,
-    );
-  }
-
-  // Local buffer for silent background questions SD
-  List<QuizQuestion> _bufferedQuestions = [];
 
   Future<void> loadQuestions(int sectionId, BuildContext context) async {
     try {
@@ -111,7 +53,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         gameData = await _repository.getTriviaData(sectionId, 3);
       } else if (gameId == "imageBased") {
         gameData = await _repository.getImageBasedQuestionData(3);
-      }  else {
+      } else {
         emit(
           state.copyWith(
             isLoading: false,
@@ -122,7 +64,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
 
       if (gameData == null || gameData.categoryTypes.isEmpty) {
-        print('No categories found in gameData');
         emit(
           state.copyWith(
             isLoading: false,
@@ -136,7 +77,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
       for (var category in gameData.categoryTypes) {
         var questions = category.questions
-            .map((q) => _mapQuestion(q, gameData!.setId))
+            .map((q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId))
             .toList();
         categorizedQuestions[category.name] = questions;
       }
@@ -144,7 +85,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       // Initial questions capped at maxQuestions
       final allQuestions = gameData.categoryTypes
           .expand((category) => category.questions)
-          .map((q) => _mapQuestion(q, gameData!.setId))
+          .map((q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId))
           .take(maxQuestions)
           .toList();
 
@@ -193,6 +134,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           difficulty: gameData.difficulty,
           categoryTypes: gameData.categoryTypes,
           setId: gameData.setId,
+          imageBasedId: gameData.imageBasedId,
         ),
       );
 
@@ -230,10 +172,35 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     }
   }
 
+  QuizQuestion _mapQuestion(Question q, String setId, String imageBasedId) {
+    final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
+    // print(
+    //   'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
+    // );
+    if (correctIndex == -1) {
+      // print(
+      //   'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
+      // );
+    }
+    return QuizQuestion(
+      question: q.question,
+      options: q.options.map((o) => o.value).toList(),
+      correctIndex: correctIndex,
+      hint: q.explanation,
+      imgUrl: q.imgUrl,
+      questionId: q.questionId,
+      setId: setId,
+      imageBasedId: imageBasedId,
+    );
+  }
+
+  // Local buffer for silent background questions SD
+  List<QuizQuestion> _bufferedQuestions = [];
+
   Future<void> _fetchAndBufferBackgroundQuestions(
-    int sectionId,
-    BuildContext context,
-  ) async {
+      int sectionId,
+      BuildContext context,
+      ) async {
     for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
       if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
         break;
@@ -286,19 +253,25 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   Future<void> appendQuestionsSilently(
-    CalculationGameModel additionalData,
-    BuildContext context,
-  ) async {
+      CalculationGameModel additionalData,
+      BuildContext context,
+      ) async {
     if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
       return;
     }
 
     final newQuestions = additionalData.categoryTypes
         .expand((category) => category.questions)
-        .map((q) => _mapQuestion(q, additionalData.setId))
+        .map(
+          (q) => _mapQuestion(
+        q,
+        additionalData.setId,
+        additionalData.imageBasedId,
+      ),
+    )
         .take(
-          maxQuestions - (state.questions.length + _bufferedQuestions.length),
-        )
+      maxQuestions - (state.questions.length + _bufferedQuestions.length),
+    )
         .toList()
         .cast<QuizQuestion>();
 
@@ -371,6 +344,43 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         });
       }
     });
+  }
+
+  Future<void> reportQuestionPostMethod(
+    String reason,
+    QuizQuestionCubit quizCubit,
+    BuildContext context,
+    String isForType,
+  ) async {
+    try {
+      final currentQuestion = quizCubit.state.currentQuestion;
+
+      // print(
+      //   "imageBasedId:-${currentQuestion.imageBasedId}, "
+      //   "setId:-${currentQuestion.setId}, "
+      //   "questionId:-${currentQuestion.questionId}"
+      //   "question:-${currentQuestion.question}, "
+      //   "reason:-$reason",
+      // );
+
+      await _repository.reportQuestionPostMethod(
+        setId: isForType == "imageBased"
+            ? currentQuestion.imageBasedId
+            : currentQuestion.setId,
+        questionId: currentQuestion.questionId,
+        reason: reason,
+        isForType: isForType,
+      );
+
+      AppSnackBar.custom(
+        context,
+        message: "Question Report Successfully",
+        svgAsset: "",
+      );
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      AppSnackBar.custom(context, message: e.toString(), svgAsset: "");
+    }
   }
 
   void selectOption(int index) {
@@ -477,14 +487,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       });
 
       final categories = state.categorizedQuestions.entries.map((entry) {
-        final categoryName = entry.key; // category.name
-        // final questions = entry.value
-        //     .where((q) => state.questions.contains(q))
-        //     .toList();
+        final categoryName = entry.key;
         final questions = entry.value;
-        final categoryType =
-            categoryTypeMap[categoryName] ??
-            categoryName; // Use numeric type or fallback
+        final categoryType = categoryTypeMap[categoryName] ?? categoryName;
         return {
           "category_type": categoryType,
           "category_name": formatCategoryName(categoryName),
@@ -536,7 +541,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         "difficulty": state.difficulty,
         "categories": categories,
         "game_number": _quizTypesId,
-        "set_id": state.setId,
+        "set_id": gameId == "imageBased" ? state.imageBasedId : state.setId,
+        "img_id": state.imageBasedId,
       };
 
       debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
@@ -620,10 +626,4 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     _timer?.cancel();
     return super.close();
   }
-}
-
-void debugPrintPayload(Map<String, dynamic> payload) {
-  const encoder = JsonEncoder.withIndent('  ');
-  final prettyPayload = encoder.convert(payload);
-  debugPrint(prettyPayload);
 }
