@@ -211,25 +211,20 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           consumeTapEvents: true,
 
           onTap: () {
-            print(_mapCubit.state.mapType);
             if (_mapCubit.state.mapType != CustomMapType.polygon) return;
 
-            _selectedPolygonId = (_selectedPolygonId == p.id) ? null : p.id;
+            _selectedPolygonId =
+            (_selectedPolygonId == p.id) ? null : p.id;
 
-            cachedPolygons
-              ..clear()
-              ..addAll(
-                _parsedPolygons
-                    .expand((poly) => _buildPolygon(context, poly))
-                    .toSet(),
-              );
+            final newPolygons = _parsedPolygons
+                .expand((poly) => _buildPolygon(context, poly))
+                .toSet();
 
-            polygonNotifier.value = cachedPolygons;
+            polygonNotifier.value = newPolygons;
 
             if (_selectedPolygonId != null) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(p.name)));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(p.name)));
             }
           },
         ),

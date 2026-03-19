@@ -654,7 +654,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 28,
+                      height: 30,
                       child: Text(
                         first[0],
                         maxLines: 2,
@@ -670,7 +670,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                   Expanded(
                     child: second != null
                         ? SizedBox(
-                      height: 28,
+                      height: 30,
                       child: Text(
                         second[0],
                         maxLines: 2,

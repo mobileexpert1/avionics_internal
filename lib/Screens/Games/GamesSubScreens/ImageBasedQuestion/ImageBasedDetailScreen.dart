@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'package:avionics_internal/Screens/Games/GamesSubScreens/ImageBasedQuestion/ImageBasedLockScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,9 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
+import '../QuizSection/QuizQuestionScreen.dart';
 
 class ImageBasedDetailScreen extends StatefulWidget {
   final String gameId;
@@ -78,7 +79,14 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
                 onStartGame: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const ImageBasedLockScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => QuizQuestionScreen(
+                        sectionId: 0,
+                        sectionTitle:
+                        ConstantStrings.imageBasedTitle,
+                        gameId: "imageBased",
+                      ),
+                    ),
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.imageBasedDetailLockScreen,

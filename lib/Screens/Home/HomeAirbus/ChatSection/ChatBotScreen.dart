@@ -154,7 +154,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'AskWILCO',
+          title: 'WILCO',
           leftButton: widget.isComeFromTab == true
               ? const SizedBox()
               : IconButton(

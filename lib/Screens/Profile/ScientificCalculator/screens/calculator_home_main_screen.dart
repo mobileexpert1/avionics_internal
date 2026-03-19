@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../Constants/ConstantStrings.dart';
@@ -15,6 +16,7 @@ import '../widgets/answer_text.dart';
 import '../widgets/buttons_grid.dart';
 import '../widgets/custom_animated_switcher.dart';
 import '../widgets/custom_icon.dart';
+import '../widgets/history_list.dart';
 import '../widgets/input_feild.dart';
 import '../widgets/last_answer.dart';
 import '../widgets/responsive.dart';
@@ -76,14 +78,11 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
               Navigator.pop(context);
             },
           ),
-
           rightButton: IconButton(
-            icon: CustomIcon(
-              AssetsPath.historyForCal,
-              onPressed: history.toggleShowHistory,
-              isSelected: history.isShowHistory,
-            ),
-            onPressed: () {},
+            icon: SvgPicture.asset(AssetsPath.historyForCal),
+            onPressed: () {
+              openHistory(context);
+            },
           ),
           centerTitle: true,
         ),
@@ -195,6 +194,28 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void openHistory(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E1E1E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.5,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return HistoryList();
+          },
+        );
+      },
     );
   }
 }

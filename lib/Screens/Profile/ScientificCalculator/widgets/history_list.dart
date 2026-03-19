@@ -1,24 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../providers/history.dart';
 import 'clear_history_button.dart';
 import 'empty_history.dart';
 import 'history_card.dart';
-import '../core/index.dart';
 
-class HistoryList extends StatelessWidget {
+class HistoryList extends StatefulWidget {
   const HistoryList({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    final scrollConroller = ScrollController();
+  State<HistoryList> createState() => _HistoryListState();
+}
 
+class _HistoryListState extends State<HistoryList> {
+  late Future _historyFuture;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _historyFuture = Provider.of<History>(
+      context,
+      listen: false,
+    ).fetchAndSetHistory();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  String formatDate(DateTime date) {
+    final now = DateTime.now();
+
+    if (date.day == now.day &&
+        date.month == now.month &&
+        date.year == now.year) {
+      return "Today";
+    }
+
+    final yesterday = now.subtract(const Duration(days: 1));
+
+    if (date.day == yesterday.day &&
+        date.month == yesterday.month &&
+        date.year == yesterday.year) {
+      return "Yesterday";
+    }
+
+    return DateFormat.yMMMd().format(date);
+  }
+
+  String formatTime(DateTime date) {
+    return DateFormat.jm().format(date);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Provider.of<History>(context, listen: false).fetchAndSetHistory(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      future: _historyFuture,
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
@@ -28,44 +70,36 @@ class HistoryList extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: EdgeInsets.only(
-                    bottom: isLandscape ? 2 : 15,
-                    top: isLandscape ? 3 : 0,
-                    right: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border:
-                        Border.all(width: 3, color: colorScheme.historyBorder),
-                  ),
+                  color: const Color(0xFF1E1E1E),
                   child: Consumer<History>(
                     builder: (context, historyProvider, _) {
                       if (historyProvider.history.isEmpty) {
                         return const EmptyHistory();
-                      } else {
-                        return Scrollbar(
-                          controller: scrollConroller,
-                          child: ListView.builder(
-                            controller: scrollConroller,
-                            shrinkWrap: true,
-                            itemCount: historyProvider.history.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return HistoryCard(
-                                operation:
-                                    historyProvider.history[index].operation,
-                                result: historyProvider.history[index].result,
-                              );
-                            },
-                          ),
-                        );
                       }
+
+                      return Scrollbar(
+                        controller: _scrollController,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: historyProvider.history.length,
+                          itemBuilder: (context, index) {
+                            final item = historyProvider.history[index];
+                            final DateTime createdAt = item.createdAt;
+                            return HistoryCard(
+                              operation: item.operation,
+                              result: item.result,
+                              time: formatTime(createdAt),
+                              date: formatDate(createdAt),
+                            );
+                          },
+                        ),
+                      );
                     },
                   ),
                 ),
               ),
               const ClearHistoryButton(),
+              SizedBox(height: 30)
             ],
           );
         }

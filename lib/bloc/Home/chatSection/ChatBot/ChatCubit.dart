@@ -12,7 +12,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   })  : _repo = ChatRepositoryImpl(),
         super([
         {'type': 'bot', 'text': 'Hey there!'},
-        {'type': 'bot', 'text': 'I’m your AskWILCO, How can I help you?'},
+        {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
       ]) {
     _init(accessToken, existingSessionId, isNewSession);
     _startInternetListener();
@@ -60,7 +60,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   Future<void> _loadCompleteHistory(String sessionId) async {
     List<Map<String, String>> greeting = [
       {'type': 'bot', 'text': 'Hey there!'},
-      {'type': 'bot', 'text': 'I’m your AskWILCO, How can I help you?'},
+      {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
     ];
     emit(greeting);
     final localMessages = await _repo.getMessagesForSession(sessionId);

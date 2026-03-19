@@ -21,7 +21,7 @@ class GameDetailCard extends StatelessWidget {
         return Center(
           child: Container(
             margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -45,10 +45,10 @@ class GameDetailCard extends StatelessWidget {
 
                 Text(
                   game.title,
-                  style: const TextStyle(
-                    fontSize: 25,
+                  style: TextStyle(
+                    fontSize: game.title.toLowerCase().contains("image") ? 23 : 25,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF3E3C55),
+                    color: const Color(0xFF3E3C55),
                   ),
                 ),
 

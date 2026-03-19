@@ -5,10 +5,8 @@ import '../providers/history.dart';
 import 'history_list.dart';
 
 class CustomAnimatedSwitcher extends StatelessWidget {
-  const CustomAnimatedSwitcher({
-    Key? key,
-    required this.grid,
-  }) : super(key: key);
+  const CustomAnimatedSwitcher({Key? key, required this.grid})
+    : super(key: key);
 
   final Widget grid;
 
@@ -20,11 +18,8 @@ class CustomAnimatedSwitcher extends StatelessWidget {
       switchOutCurve: Curves.easeInOut,
       duration: const Duration(milliseconds: 150),
       transitionBuilder: (Widget child, Animation<double> animation) =>
-          ScaleTransition(
-        scale: animation,
-        child: child,
-      ),
-      child: history.isShowHistory ? const HistoryList() : grid,
+          ScaleTransition(scale: animation, child: child),
+      child: grid,
     );
   }
 }
