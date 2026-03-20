@@ -30,6 +30,7 @@ class AircraftStationModel {
   final String? runwayLength;
 
   final String? websiteUrl;
+  final String? airportWeatherUrl;
   final String? utcOffset;
   final String? numberOfRunways;
   final String? runwayDirection;
@@ -59,6 +60,7 @@ class AircraftStationModel {
     this.icao,
     this.elev,
     this.runwayLength,
+    this.airportWeatherUrl,
     this.websiteUrl,
     this.utcOffset,
     this.numberOfRunways,
@@ -84,6 +86,7 @@ class AircraftStationModel {
       icao: json['icao'],
       elev: json['elev']?.toString(),
       runwayLength: json['runway_length']?.toString(),
+      airportWeatherUrl: json['airport_weather'],
       websiteUrl: json['website_url'],
       utcOffset: json['utc_offset'],
       numberOfRunways: json['number_of_runways']?.toString(),

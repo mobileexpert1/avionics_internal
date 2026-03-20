@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/calculations.dart';
@@ -19,11 +20,11 @@ class HistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFF1E1E1E),
+      color: AppColors.primaryDark,
       child: InkWell(
         onTap: () {
           Provider.of<Calculations>(context, listen: false)
-              .add(result); // ya operation bhi use kar sakte ho
+              .add(result);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
@@ -35,7 +36,6 @@ class HistoryCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // LEFT → TIME + DATE
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -55,8 +55,6 @@ class HistoryCard extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // RIGHT → OPERATION + RESULT
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -66,8 +64,9 @@ class HistoryCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: operation,
+
                           style: const TextStyle(
-                            color: Colors.orange,
+                            color: AppColors.extraDarkYellow,
                             fontSize: 18,
                           ),
                         ),

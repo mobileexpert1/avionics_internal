@@ -142,20 +142,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.savedIcon,
-                      ),
-                      title: "Test Colour Screen ",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TestColourScreen(),
-                          ),
-                        );
-                      },
-                    ),
+                      // SettingsListItem(
+                      //   leadingSvgAsset: CommonUi.setSvgImage(
+                      //     AssetsPath.savedIcon,
+                      //   ),
+                      //   title: "Test Colour Screen ",
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => TestColourScreen(),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
 
                     // SettingsListItem(
                     //   leadingSvgAsset: CommonUi.setSvgImage(

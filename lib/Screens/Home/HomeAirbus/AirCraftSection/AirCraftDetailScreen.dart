@@ -312,8 +312,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     );
   }
 
-
-
   Widget _buildTopHeadingDetails(double screenHeight) {
     final aircraftData = context
         .read<AirCraftDetailCubit>()
@@ -340,10 +338,11 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   }
 
   final fieldColor = const Color(0xFF3E3C55);
+
   Widget _buildTechnicalData(IdentificationClassification? detail) {
     if (detail == null) return const Text('No data available');
     final identification = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['ICAO Type Code', identification.icaoTypeCode],
         ['Aircraft Manufacturer', identification.manufacturer],
@@ -378,7 +377,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _buildPowerPlantData(PowerplantPropulsion? detail) {
     if (detail == null) return const Text('No data available');
     final powerPlantDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Number of Engines', powerPlantDetails.numberOfEngines.toString()],
         ['Fuel Consumption', powerPlantDetails.fuel.burnRate],
@@ -400,7 +399,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _buildDimenionsData(Dimensions? detail) {
     if (detail == null) return const Text('No data available');
     final dimensionDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Wingspan (m)', dimensionDetails.wingspanM],
         ['Cabin Width (m)', dimensionDetails.cabinWidthM],
@@ -418,7 +417,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _buildWeightsData(Weights? detail) {
     if (detail == null) return const Text('No data available');
     final weightsDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Operating Empty Weight (kg)', weightsDetails.emptyWeight],
         ['Maximum Zero Fuel Weight (kg)', weightsDetails.zeroFuelWeight],
@@ -442,7 +441,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _builPerfomanceOrderedBYsData(Performance? detail) {
     if (detail == null) return const Text('No data available');
     final performanceDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Takeoff Speed (kts)', performanceDetails.takeoffSpeedKts],
         ['Takeoff Distance (m)', performanceDetails.takeoffDistanceM],
@@ -486,7 +485,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _builOperationLimitationsData(OperationalLimitations? detail) {
     if (detail == null) return const Text('No data available');
     final operationalDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Runway Slope Limit percent', operationalDetails.runwaySlopeLimit],
         [
@@ -519,7 +518,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _builLandingGearData(LandingGear? detail) {
     if (detail == null) return const Text('No data available');
     final landingDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Landing Gear Configuration', landingDetails.type],
         ['Number of Wheels', landingDetails.numberOfWheels],
@@ -534,7 +533,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
   Widget _builCertificationData(CertificationEnvironmental? detail) {
     if (detail == null) return const Text('No data available');
     final certificationDetails = detail;
-    return _buildFieldRows(
+    return buildFieldRows(
       [
         ['Certification Basis', certificationDetails.certificationBasis],
         ['Special Conditions', certificationDetails.specialConditions],
@@ -635,109 +634,103 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
       ],
     );
   }
+}
 
-  Widget _buildFieldRows(
-      List<List<String>> fields, {
-        Color labelColor = Colors.white70,
-        Color valueColor = Colors.white,
-      }) {
-    return Column(
-      children: List.generate((fields.length / 2).ceil(), (i) {
-        final first = fields[i * 2];
-        final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 30,
-                      child: Text(
-                        first[0],
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: labelColor,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: second != null
-                        ? SizedBox(
-                      height: 30,
-                      child: Text(
-                        second[0],
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: labelColor,
-                          fontSize: 11,
-                        ),
-                      ),
-                    )
-                        : const SizedBox(),
-                  ),
-                ],
-              ),
-
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
+Widget buildFieldRows(
+  List<List<String>> fields, {
+  Color labelColor = Colors.white70,
+  Color valueColor = Colors.white,
+}) {
+  return Column(
+    children: List.generate((fields.length / 2).ceil(), (i) {
+      final first = fields[i * 2];
+      final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 7),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 29,
                     child: Text(
-                      first[1],
-                      style: TextStyle(
-                        color: valueColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      first[0],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: labelColor, fontSize: 10),
                     ),
                   ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: second != null
-                        ? Text(
-                      second[1],
-                      style: TextStyle(
-                        color: valueColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                        : const SizedBox(),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: second != null
+                      ? SizedBox(
+                          height: 29,
+                          child: Text(
+                            second[0],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: labelColor, fontSize: 10),
+                          ),
+                        )
+                      : const SizedBox(),
+                ),
+              ],
+            ),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 2,
-                      color: AppColors.sepratorColourAppBar,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    first[1],
+                    style: TextStyle(
+                      color: valueColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: second != null
-                        ? Divider(
-                      thickness: 2,
-                      color: AppColors.sepratorColourAppBar,
-                    )
-                        : const SizedBox(),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: second != null
+                      ? Text(
+                          second[1],
+                          style: TextStyle(
+                            color: valueColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      : const SizedBox(),
+                ),
+              ],
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: Divider(
+                    thickness: 2,
+                    color: AppColors.sepratorColourAppBar,
                   ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }),
-    );
-  }
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: second != null
+                      ? Divider(
+                          thickness: 2,
+                          color: AppColors.sepratorColourAppBar,
+                        )
+                      : const SizedBox(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }),
+  );
 }

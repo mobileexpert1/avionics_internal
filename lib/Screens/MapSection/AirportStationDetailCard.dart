@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../Constants/AppColors.dart';
 import '../../Helpers/Custom_widget.dart';
 import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
+import '../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class AirportStationDetailCard extends StatefulWidget {
   final AircraftStationModel? airportDetail;
@@ -25,6 +27,7 @@ class AirportStationDetailCard extends StatefulWidget {
 
 class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
   int subSegmentIndex = 0;
+  final fieldColor = Color(0xFF3E3C55);
 
   final subSegmentOptions = const [
     'General info',
@@ -75,15 +78,20 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
 
   List<Widget> _buildAirportDetails(AircraftStationModel detail) {
     return [
-      _row(detail.name, "Name", detail.city, "City"),
-      _row(detail.state, "State", detail.country, "Country"),
-      _row(
-        "${detail.valueOrNA(detail.elev)} ",
-        "Elevation (m)",
-        detail.runwayLength,
-        "Runway Length (m)",
+      buildFieldRows(
+        [
+          ["Name", detail.name],
+          ["City", detail.city],
+          ["State", detail.state],
+          ["Country", detail.country],
+          ["Elevation (m)", (detail.valueOrNA(detail.elev))],
+          ["Runway(s) Length (m)", detail.runwayLength.toString()],
+          ["ICAO Code", detail.icao.toString()],
+          ["IATA Code", detail.iataCode.toString()],
+        ],
+        labelColor: fieldColor,
+        valueColor: fieldColor,
       ),
-      _row(detail.icao, "ICAO Code", detail.iataCode, "IATA Code"),
     ];
   }
 
@@ -99,72 +107,64 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
       const SizedBox(height: 20),
 
       if (subSegmentIndex == 0) ...[
-        _row(detail.name, "Name", detail.city, "City"),
-        _row(detail.state, "State", detail.country, "Country"),
-        _row(
-          "${detail.valueOrNA(detail.iataCode)} / ${detail.valueOrNA(detail.icao)}",
-          "IATA/ICAO Code",
-          detail.numberOfTerminals,
-          "Terminal(s) No",
+        buildFieldRows(
+          [
+            ["Name", detail.name],
+            ["City", detail.city],
+            ["State", detail.state],
+            ["Country", detail.country],
+            [
+              "IATA/ICAO Code",
+              "${detail.valueOrNA(detail.iataCode)} / ${detail.valueOrNA(detail.icao)}",
+            ],
+            ["Terminal(s) No", detail.numberOfTerminals.toString()],
+            ["Time Zone", detail.timezone],
+            ["UTC", detail.utcOffset.toString()],
+          ],
+          labelColor: fieldColor,
+          valueColor: fieldColor,
         ),
-        _row(detail.timezone, "Time Zone", detail.utcOffset, "UTC"),
       ],
 
       if (subSegmentIndex == 1) ...[
-        _row(
-          detail.runwaySurfaceType,
-          "Type",
-          detail.runwayDirection,
-          "Runway direction",
+        buildFieldRows(
+          [
+            ["Type", detail.runwaySurfaceType.toString()],
+            ["Runway(s) direction", detail.runwayDirection.toString()],
+            ["Runway(s) length (m)", detail.runwayLength.toString()],
+            ["Runway(s) No", detail.numberOfRunways.toString()],
+            ["Runway(s) elevation (ft)", detail.runwaySurfaceType.toString()],
+            ["Runway(s) surface", detail.runwaySurfaceType.toString()],
+          ],
+          labelColor: fieldColor,
+          valueColor: fieldColor,
         ),
-        _row(
-          detail.runwayLength,
-          "Runway length (m)",
-          detail.numberOfRunways,
-          "Runway(s) No",
-        ),
-        _row(
-          detail.elev,
-          "Runway elevation (ft)",
-          detail.runwaySurfaceType,
-          "Runway surface",
-        ),
+        if (detail.airportWeatherUrl != null &&
+            detail.airportWeatherUrl!.isNotEmpty &&
+            detail.airportWeatherUrl != "N/A") ...[
+          buildActionText("Airport Weather & More", () {
+            if (detail.airportWeatherUrl != null &&
+                detail.airportWeatherUrl!.isNotEmpty) {
+              _openUrl(detail.airportWeatherUrl!);
+            }
+          }),
+        ],
       ],
 
       if (subSegmentIndex == 2) ...[
-        _row(
-          detail.annualMovements,
-          "Annual movements (approx.)",
-          detail.annualPassengerTraffic,
-          "Annual passenger traffic",
+        buildFieldRows(
+          [
+            ["Annual movements (approx.)", detail.annualMovements.toString()],
+            [
+              "Annual passenger traffic",
+              detail.annualPassengerTraffic.toString(),
+            ],
+          ],
+          labelColor: fieldColor,
+          valueColor: fieldColor,
         ),
       ],
     ];
-  }
-
-  /// -------- Reusable Row --------
-
-  Widget _row(dynamic value1, String label1, dynamic value2, String label2) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(child: _field(label1, value1)),
-          const SizedBox(width: 10),
-          Expanded(child: _field(label2, value2)),
-        ],
-      ),
-    );
-  }
-
-  Widget _field(String label, dynamic value) {
-    final detail = widget.airportDetail!;
-    return customField(
-      label: label,
-      text: detail.valueOrNA(value),
-      labelColor: const Color(0xFF3E3C55),
-      textColor: Colors.black,
-    );
   }
 }
 
@@ -195,15 +195,48 @@ class RadioChips extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: selected ? AppColors.primaryBlue : Colors.grey[500],
+              color: selected
+                  ? AppColors.primaryBlue
+                  : AppColors.greyForAirportDetailCard,
             ),
             child: Text(
               values[index],
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: selected ? AppColors.white : AppColors.grayMedium,
+              ),
             ),
           ),
         );
       }),
     );
+  }
+}
+
+Widget buildActionText(String title, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFF2E2E5E), // same dark bluish tone
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(width: 6),
+        const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF2E2E5E)),
+      ],
+    ),
+  );
+}
+
+void _openUrl(String url) async {
+  final Uri uri = Uri.parse(url);
+
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }

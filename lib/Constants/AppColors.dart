@@ -55,9 +55,11 @@ class AppColors {
 
 
   //Not in the Colour Code
-  static const Color extraDarkYellow = Color(0xFFFFCB19);  //"hex": "#ffcb19",
   static const Color extraLightGrey = Color(0xFFF3F3F3);  //"hex": "#ffcb19",
   static const Color lightGreyWithAlphaDecreased = Color.fromRGBO(255, 255, 255, 0.2);
   static const Color greyForConversionScreen = Color(0xFFf2f2f2);
   static const Color greyForAirportDetailCard = Color(0xFFF4F3F6);
+  static const Color extraDarkYellow = Color(0xFFFAC200);  //"hex": "#ffcb19",
+  static const Color lightGreyAirportDetailCard = Color(0xF4f4f4f4);  //"hex": "#ffcb19",
+
 }

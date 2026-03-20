@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,7 @@ class _HistoryListState extends State<HistoryList> {
             children: [
               Expanded(
                 child: Container(
-                  color: const Color(0xFF1E1E1E),
+                  color: AppColors.primaryDark,
                   child: Consumer<History>(
                     builder: (context, historyProvider, _) {
                       if (historyProvider.history.isEmpty) {

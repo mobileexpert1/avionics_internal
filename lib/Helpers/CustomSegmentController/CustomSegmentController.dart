@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class CustomSegmentController extends StatelessWidget {
     return Container(
       height: 50,
       decoration: const BoxDecoration(
-        color: Color(0xFFE9ECF3),
+        color: AppColors.greyForAirportDetailCard,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(20),
@@ -41,7 +42,7 @@ class CustomSegmentController extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFF1C1F3A)
+                      ? AppColors.primaryDark
                       : Colors.transparent,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),

@@ -6,12 +6,11 @@ class TestColourScreen extends StatelessWidget {
   TestColourScreen({super.key});
 
   final List<Map<String, dynamic>> colors = [
-    // 🔵 Primary
     {
       "name": "Primary Dark",
-      "color": const Color(0xFF201E48),
+      "color": const Color(0xFF1B1748),
       "rgb": "32, 30, 72",
-      "hex": "#201E48",
+      "hex": "#1B1748",
     },
     {
       "name": "Primary Blue",

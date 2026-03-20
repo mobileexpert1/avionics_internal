@@ -229,7 +229,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           },
         ),
       );
-
       index++;
     }
 
@@ -1411,7 +1410,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final cardHeight = screenHeight * 0.33;
+    final cardHeight = screenHeight * 0.41;
     const segmentHeight = 48.0;
 
     return Stack(
@@ -1458,7 +1457,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             width: 300,
             height: segmentHeight,
             child: CustomSegmentController(
-              segments: ["Airport details", "More details"],
+              segments: ["Airport details", "More Details"],
               selectedIndex: selectedSegmentIndex,
               onChanged: (index) {
                 setState(() {

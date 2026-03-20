@@ -133,7 +133,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
                     height: 24,
                     color: _selectedIndex == 3 ? Colors.black : Colors.grey,
                   ),
-                  label: 'AskWILCO',
+                  label: 'WILCO',
                 ),
                 BottomNavigationBarItem(
                   icon: Image.asset(

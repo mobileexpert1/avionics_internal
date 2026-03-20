@@ -118,7 +118,7 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
               flex: kIsWeb ? (isLandscape ? 14 : 11) : 14,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.customBottomEnabledColour,
+                  color: AppColors.primaryDark,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -201,18 +201,49 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: AppColors.primaryDark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return DraggableScrollableSheet(
           expand: false,
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
+          initialChildSize: 0.7,
+          minChildSize: 0.7,
           maxChildSize: 0.9,
           builder: (context, scrollController) {
-            return HistoryList();
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "History",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Divider(color: Colors.white24, height: 1),
+                Expanded(
+                  child: HistoryList(),
+                ),
+              ],
+            );
           },
         );
       },
