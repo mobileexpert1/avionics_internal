@@ -37,7 +37,6 @@
         "in_app_purchase",
         "internet_connection_checker",
         "intl",
-        "js",
         "path",
         "path_provider",
         "permission_handler",
@@ -52,7 +51,6 @@
         "sqflite_common_ffi",
         "universal_html",
         "url_launcher",
-        "uuid",
         "video_player",
         "web_socket_channel"
       ],
@@ -334,22 +332,6 @@
         "http",
         "http_parser",
         "js"
-      ]
-    },
-    {
-      "name": "js",
-      "version": "0.6.7",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "uuid",
-      "version": "4.5.2",
-      "dependencies": [
-        "crypto",
-        "fixnum",
-        "meta"
       ]
     },
     {
@@ -992,6 +974,15 @@
       ]
     },
     {
+      "name": "uuid",
+      "version": "4.5.2",
+      "dependencies": [
+        "crypto",
+        "fixnum",
+        "meta"
+      ]
+    },
+    {
       "name": "rxdart",
       "version": "0.27.7",
       "dependencies": []
@@ -1124,15 +1115,10 @@
       ]
     },
     {
-      "name": "fixnum",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "crypto",
-      "version": "3.0.7",
+      "name": "js",
+      "version": "0.6.7",
       "dependencies": [
-        "typed_data"
+        "meta"
       ]
     },
     {
@@ -1270,6 +1256,13 @@
       "version": "1.0.1",
       "dependencies": [
         "web"
+      ]
+    },
+    {
+      "name": "crypto",
+      "version": "3.0.7",
+      "dependencies": [
+        "typed_data"
       ]
     },
     {
@@ -1755,6 +1748,11 @@
       "dependencies": [
         "flutter"
       ]
+    },
+    {
+      "name": "fixnum",
+      "version": "1.1.1",
+      "dependencies": []
     },
     {
       "name": "flutter_secure_storage",

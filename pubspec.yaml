@@ -56,8 +56,6 @@ dependencies:
   firebase_crashlytics:
   cloud_firestore: ^5.6.11
   sign_in_with_apple: ^7.0.1
-  uuid:
-  js:
   firebase: ^9.0.3
   firebase_auth: ^5.6.2
   internet_connection_checker:
