@@ -200,12 +200,6 @@
       "languageVersion": "3.0"
     },
     {
-      "name": "firebase",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/firebase-9.0.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "firebase_analytics",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/firebase_analytics-11.6.0",
       "packageUri": "lib/",

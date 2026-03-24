@@ -62,4 +62,8 @@ class AppColors {
   static const Color extraDarkYellow = Color(0xFFFAC200);  //"hex": "#ffcb19",
   static const Color lightGreyAirportDetailCard = Color(0xF4f4f4f4);  //"hex": "#ffcb19",
 
+
+
+
+  static const Color primaryValueColour = Color(0xFF1B1748);        //"hex": "#201E48",
 }

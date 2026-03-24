@@ -638,7 +638,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
 Widget buildFieldRows(
   List<List<String>> fields, {
-  Color labelColor = Colors.white70,
+  Color labelColor = Colors.white,
   Color valueColor = Colors.white,
 }) {
   return Column(
@@ -654,12 +654,15 @@ Widget buildFieldRows(
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 29,
                     child: Text(
                       first[0],
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: labelColor, fontSize: 10),
+                      style: TextStyle(
+                        color: labelColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ),
@@ -667,19 +670,21 @@ Widget buildFieldRows(
                 Expanded(
                   child: second != null
                       ? SizedBox(
-                          height: 29,
                           child: Text(
                             second[0],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: labelColor, fontSize: 10),
+                            style: TextStyle(
+                              color: labelColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         )
                       : const SizedBox(),
                 ),
               ],
             ),
-
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -688,8 +693,8 @@ Widget buildFieldRows(
                     first[1],
                     style: TextStyle(
                       color: valueColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -700,8 +705,8 @@ Widget buildFieldRows(
                           second[1],
                           style: TextStyle(
                             color: valueColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         )
                       : const SizedBox(),

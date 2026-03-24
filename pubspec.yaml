@@ -35,7 +35,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_earth_globe:
-  provider: ^6.0.3
   eval_ex: ^1.1.6
   speech_to_text:
   permission_handler:
@@ -56,7 +55,6 @@ dependencies:
   firebase_crashlytics:
   cloud_firestore: ^5.6.11
   sign_in_with_apple: ^7.0.1
-  firebase: ^9.0.3
   firebase_auth: ^5.6.2
   internet_connection_checker:
   cupertino_icons: ^1.0.8

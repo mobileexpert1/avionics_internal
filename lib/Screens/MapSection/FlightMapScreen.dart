@@ -1410,8 +1410,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final cardHeight = screenHeight * 0.41;
-    const segmentHeight = 48.0;
+    final cardHeight = screenHeight * 0.36;
+    const segmentHeight = 45.0;
 
     return Stack(
       alignment: Alignment.bottomLeft,
@@ -1430,7 +1430,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   return const SizedBox.shrink();
                 }
 
-                return AirportStationDetailCard(
+                return AirportStationDetailCard (
                   airportDetail: state.selectedAirport!,
                   isComeFromLiveTracking: false,
                   segmentIndex: selectedSegmentIndex,

@@ -258,10 +258,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             latitude: currentCenterLatLong.latitude.toString(),
           );
 
-      debugPrint(
-        "Flights fetched: ${flights.length}\n"
-        "Airport list count: ${airportList.data.length}",
-      );
+      debugPrint("Flights fetched: ${flights.length}");
+      debugPrint("Airport list count: ${airportList.data.length}");
+      debugPrint("Credit Session count: ${flights.length * 6}");
+
       onFlightsLoaded(flights);
       emit(
         state.copyWith(

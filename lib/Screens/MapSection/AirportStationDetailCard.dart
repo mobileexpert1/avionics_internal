@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Constants/AppColors.dart';
-import '../../Helpers/Custom_widget.dart';
 import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import '../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
@@ -27,7 +26,8 @@ class AirportStationDetailCard extends StatefulWidget {
 
 class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
   int subSegmentIndex = 0;
-  final fieldColor = Color(0xFF3E3C55);
+  final labelColor = AppColors.primaryValueColour;
+  final valueColor = AppColors.primaryValueColour;
 
   final subSegmentOptions = const [
     'General info',
@@ -56,12 +56,13 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
             BoxShadow(
               color: Colors.black12,
               blurRadius: 10,
+
               offset: Offset(0, -2),
             ),
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
           child: SingleChildScrollView(
             child: Column(
               children: widget.segmentIndex == 0
@@ -75,7 +76,6 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
   }
 
   /// -------- Airport Details --------
-
   List<Widget> _buildAirportDetails(AircraftStationModel detail) {
     return [
       buildFieldRows(
@@ -89,14 +89,13 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
           ["ICAO Code", detail.icao.toString()],
           ["IATA Code", detail.iataCode.toString()],
         ],
-        labelColor: fieldColor,
-        valueColor: fieldColor,
+        labelColor: labelColor,
+        valueColor: valueColor,
       ),
     ];
   }
 
   /// -------- More Details --------
-
   List<Widget> _buildMoreDetails(AircraftStationModel detail) {
     return [
       RadioChips(
@@ -104,8 +103,7 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
         selectedIndex: subSegmentIndex,
         onSelected: (i) => setState(() => subSegmentIndex = i),
       ),
-      const SizedBox(height: 20),
-
+      const SizedBox(height: 15),
       if (subSegmentIndex == 0) ...[
         buildFieldRows(
           [
@@ -121,11 +119,10 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
             ["Time Zone", detail.timezone],
             ["UTC", detail.utcOffset.toString()],
           ],
-          labelColor: fieldColor,
-          valueColor: fieldColor,
+          labelColor: labelColor,
+          valueColor: valueColor,
         ),
       ],
-
       if (subSegmentIndex == 1) ...[
         buildFieldRows(
           [
@@ -136,9 +133,10 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
             ["Runway(s) elevation (ft)", detail.runwaySurfaceType.toString()],
             ["Runway(s) surface", detail.runwaySurfaceType.toString()],
           ],
-          labelColor: fieldColor,
-          valueColor: fieldColor,
+          labelColor: labelColor,
+          valueColor: valueColor,
         ),
+
         if (detail.airportWeatherUrl != null &&
             detail.airportWeatherUrl!.isNotEmpty &&
             detail.airportWeatherUrl != "N/A") ...[
@@ -150,7 +148,6 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
           }),
         ],
       ],
-
       if (subSegmentIndex == 2) ...[
         buildFieldRows(
           [
@@ -160,8 +157,8 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
               detail.annualPassengerTraffic.toString(),
             ],
           ],
-          labelColor: fieldColor,
-          valueColor: fieldColor,
+          labelColor: labelColor,
+          valueColor: valueColor,
         ),
       ],
     ];

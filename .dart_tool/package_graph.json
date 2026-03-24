@@ -15,7 +15,6 @@
         "device_info_plus",
         "equatable",
         "eval_ex",
-        "firebase",
         "firebase_analytics",
         "firebase_auth",
         "firebase_core",
@@ -41,7 +40,6 @@
         "path_provider",
         "permission_handler",
         "pinput",
-        "provider",
         "responsive_sizer",
         "shared_preferences",
         "sign_in_with_apple",
@@ -326,15 +324,6 @@
       ]
     },
     {
-      "name": "firebase",
-      "version": "9.0.3",
-      "dependencies": [
-        "http",
-        "http_parser",
-        "js"
-      ]
-    },
-    {
       "name": "sign_in_with_apple",
       "version": "7.0.1",
       "dependencies": [
@@ -551,15 +540,6 @@
       "dependencies": [
         "dart_numerics",
         "decimal"
-      ]
-    },
-    {
-      "name": "provider",
-      "version": "6.1.5+1",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "nested"
       ]
     },
     {
@@ -1115,13 +1095,6 @@
       ]
     },
     {
-      "name": "js",
-      "version": "0.6.7",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "sign_in_with_apple_web",
       "version": "3.0.0",
       "dependencies": [
@@ -1533,6 +1506,15 @@
       ]
     },
     {
+      "name": "provider",
+      "version": "6.1.5+1",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "nested"
+      ]
+    },
+    {
       "name": "bloc",
       "version": "9.2.0",
       "dependencies": [
@@ -1624,13 +1606,6 @@
       "dependencies": [
         "intl",
         "rational"
-      ]
-    },
-    {
-      "name": "nested",
-      "version": "1.0.0",
-      "dependencies": [
-        "flutter"
       ]
     },
     {
@@ -1768,6 +1743,13 @@
       ]
     },
     {
+      "name": "js",
+      "version": "0.6.7",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
       "name": "google_identity_services_web",
       "version": "0.3.3+1",
       "dependencies": [
@@ -1846,6 +1828,13 @@
       "name": "args",
       "version": "2.7.0",
       "dependencies": []
+    },
+    {
+      "name": "nested",
+      "version": "1.0.0",
+      "dependencies": [
+        "flutter"
+      ]
     },
     {
       "name": "tuple",

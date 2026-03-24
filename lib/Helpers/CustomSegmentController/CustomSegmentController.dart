@@ -21,8 +21,8 @@ class CustomSegmentController extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppColors.greyForAirportDetailCard,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
         border: Border(
           top: BorderSide(width: 1),
@@ -31,6 +31,7 @@ class CustomSegmentController extends StatelessWidget {
         ),
       ),
       child: Row(
+
         children: List.generate(segments.length, (index) {
           final isSelected = selectedIndex == index;
 
@@ -45,8 +46,8 @@ class CustomSegmentController extends StatelessWidget {
                       ? AppColors.primaryDark
                       : Colors.transparent,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(18),
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
                   ),
                 ),
                 child: Text(
