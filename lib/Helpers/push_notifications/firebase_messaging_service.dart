@@ -5,13 +5,10 @@ import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/Quiz
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
-import '../../Screens/Profile/GameBadges/BadgesScreens.dart';
-//import 'local_notification_storage.dart';
 
 final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -45,7 +42,7 @@ class FirebaseMessagingService {
       if (token != null) {
         await SharedPrefsHelper.saveFCMToken(token);
       }
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint("FCM getToken failed: $e");
     }
     // Handle foreground messages

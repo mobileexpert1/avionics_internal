@@ -40,7 +40,7 @@ class _LiveBadgeState extends State<LiveBadge>
       children: [
         AnimatedBuilder(
           animation: _colorAnimation,
-          builder: (_, __) {
+          builder: (_, _) {
             return Container(
               width: 12,
               height: 12,

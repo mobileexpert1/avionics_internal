@@ -35,7 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           bottom: BorderSide(
             color: isHideTopGradient == true
                 ? Colors.white
-                : AppColors.sepratorColourAppBar,
+                : AppColors.separatorColourAppBar,
             width: 1.0,
           ),
         ),

@@ -34,7 +34,6 @@
         "google_maps_flutter",
         "google_sign_in",
         "in_app_purchase",
-        "internet_connection_checker",
         "intl",
         "path",
         "path_provider",
@@ -304,11 +303,6 @@
     {
       "name": "cupertino_icons",
       "version": "1.0.8",
-      "dependencies": []
-    },
-    {
-      "name": "internet_connection_checker",
-      "version": "1.0.0+1",
       "dependencies": []
     },
     {

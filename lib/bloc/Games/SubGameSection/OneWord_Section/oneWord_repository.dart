@@ -1,7 +1,6 @@
 import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_model.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../../../../Database/generic_methods.dart';
 
 class OneWordTopicRepository {
   Future<OneWordTopicModel?> getOneWordTopic() async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../Constants/constantImages.dart';
+import 'CachedSvgImage.dart';
 import 'CustomCacheManager.dart';
 
 class CachedAnyImage extends StatelessWidget {
@@ -48,8 +49,8 @@ class CachedAnyImage extends StatelessWidget {
                 cacheManager: CustomCacheManager.instance,
                 imageUrl: imagePath,
                 fit: contentImage,
-                placeholder: (_, __) => _loader(),
-                errorWidget: (_, __, ___) => _errorIcon(isForPlaneList),
+                placeholder: (_, _) => _loader(),
+                errorWidget: (_, _, _) => _errorIcon(isForPlaneList),
               )
             : Image.network(
                 imagePath,
@@ -98,16 +99,4 @@ class CachedAnyImage extends StatelessWidget {
           )
         : const Center(child: Icon(Icons.error, color: Colors.red)),
   );
-}
-
-class CachedSvgImage extends StatelessWidget {
-  final String imageUrl;
-  final BoxFit fit;
-
-  const CachedSvgImage({super.key, required this.imageUrl, required this.fit});
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.network(imageUrl, fit: fit);
-  }
 }

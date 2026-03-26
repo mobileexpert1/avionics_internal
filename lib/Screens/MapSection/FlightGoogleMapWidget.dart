@@ -14,6 +14,7 @@ class FlightGoogleMapWidget extends StatefulWidget {
   final MapType mapType;
   final Set<Polygon> polygons;
   final Set<Marker> markers;
+  final Set<Circle>? circles;
 
   final bool zoomControlsEnabled;
   final bool myLocationButtonEnabled;
@@ -28,6 +29,7 @@ class FlightGoogleMapWidget extends StatefulWidget {
     required this.initialCameraPosition,
     required this.mapType,
     required this.markers,
+    this.circles,
     this.polygons = const {},
     this.onMapCreated,
     this.onCameraIdle,
@@ -82,6 +84,7 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
       );
     }
     return GoogleMap(
+      key: ValueKey(widget.circles.hashCode),
       zoomControlsEnabled: widget.zoomControlsEnabled,
       myLocationButtonEnabled: widget.myLocationButtonEnabled,
       rotateGesturesEnabled: widget.rotateGesturesEnabled,
@@ -90,6 +93,7 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
       mapType: widget.mapType,
       polygons: widget.polygons,
       markers: widget.markers,
+      circles: widget.circles ?? {},
       initialCameraPosition: widget.initialCameraPosition,
       onCameraIdle: widget.onCameraIdle,
       onCameraMoveStarted: widget.onCameraMoveStarted,

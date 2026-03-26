@@ -1,7 +1,6 @@
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/Custom_Pagination.dart';
-import '../../../Database/generic_methods.dart';
 import 'AircraftComparisonModel.dart';
 
 class AircraftRepository {
@@ -36,7 +35,7 @@ class AircraftRepository {
         fromJson: (e) => AircraftModel.fromJson(e),
         currentPage: page,
       );
-    } catch (e, st) {
+    } catch (e) {
       throw e.toString();
     }
   }

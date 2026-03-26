@@ -27,7 +27,7 @@ class SubscriptionOptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
-            color: isSelected ? Colors.black : AppColors.sepratorColourAppBar,
+            color: isSelected ? Colors.black : AppColors.separatorColourAppBar,
             width: 1.2,
           ),
         ),

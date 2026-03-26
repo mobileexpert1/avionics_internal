@@ -10,7 +10,7 @@ import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.d
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_model.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_screen.dart';
+import '../FilterScreen/filtter_screen.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
 
 class ComparisonScreen extends StatefulWidget {

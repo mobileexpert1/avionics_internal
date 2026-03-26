@@ -98,8 +98,8 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     try {
       final now = DateTime.now().toUtc();
       final from = now.subtract(const Duration(hours: 24));
-      final formattedFrom = from.toIso8601String().split('.').first + 'Z';
-      final formattedTo = now.toIso8601String().split('.').first + 'Z';
+      final formattedFrom = '${from.toIso8601String().split('.').first}Z';
+      final formattedTo = '${now.toIso8601String().split('.').first}Z';
 
       final response = await FlightRepository().getFlightDetails(
         flightId: apiFlightId,
@@ -134,10 +134,10 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           track: liveFlight.track,
 
           // === LIVE IDENTIFIERS (SAFE) ===
-          callsign: liveFlight.callSign ?? fullFlightDetail.callsign,
-          squawk: liveFlight.squawk ?? fullFlightDetail.squawk,
-          source: liveFlight.source ?? fullFlightDetail.source,
-          hex: liveFlight.hex ?? fullFlightDetail.hex,
+          callsign: liveFlight.callSign,
+          squawk: liveFlight.squawk,
+          source: liveFlight.source,
+          hex: liveFlight.hex,
 
           // === LIVE TIMING ===
           firstSeen: liveFlight.firstSeen ?? fullFlightDetail.firstSeen,
@@ -150,21 +150,21 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
 
           // === ICAO / IATA ===
           departureIcao:
-          liveFlight.departureIcao ?? fullFlightDetail.departureIcao,
+          liveFlight.departureIcao,
           departureIata:
-          liveFlight.departureIata ?? fullFlightDetail.departureIata,
+          liveFlight.departureIata,
           arrivalIcao:
-          liveFlight.arrivalIcao ?? fullFlightDetail.arrivalIcao,
+          liveFlight.arrivalIcao,
           arrivalIata:
-          liveFlight.arrivalIata ?? fullFlightDetail.arrivalIata,
+          liveFlight.arrivalIata,
 
           // === AIRCRAFT INFO ===
           registration:
-          liveFlight.registration ?? fullFlightDetail.registration,
-          type: liveFlight.type ?? fullFlightDetail.type,
-          paintedAs: liveFlight.paintedAs ?? fullFlightDetail.paintedAs,
+          liveFlight.registration,
+          type: liveFlight.type,
+          paintedAs: liveFlight.paintedAs,
           operatingAs:
-          liveFlight.operatingAs ?? fullFlightDetail.operatingAs,
+          liveFlight.operatingAs,
 
           // === DISTANCE / RUNWAY (API DATA) ===
           takeoffRunway: fullFlightDetail.takeoffRunway,
@@ -974,7 +974,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             ),
           const Divider(
             height: 0,
-            color: AppColors.sepratorColourAppBar,
+            color: AppColors.separatorColourAppBar,
             thickness: 3,
           ),
 
@@ -1050,7 +1050,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             ),
           const Divider(
             height: 0,
-            color: AppColors.sepratorColourAppBar,
+            color: AppColors.separatorColourAppBar,
             thickness: 3,
           ),
 
@@ -1073,7 +1073,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             ),
           const Divider(
             height: 0,
-            color: AppColors.sepratorColourAppBar,
+            color: AppColors.separatorColourAppBar,
             thickness: 3,
           ),
         ],
@@ -1155,7 +1155,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ),
         Divider(
           height: 0,
-          color: AppColors.sepratorColourAppBar,
+          color: AppColors.separatorColourAppBar,
           thickness: 2,
           indent: 20,
           endIndent: 20,
@@ -1288,7 +1288,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
             : const SizedBox.shrink(),
         const Divider(
           height: 0,
-          color: AppColors.sepratorColourAppBar,
+          color: AppColors.separatorColourAppBar,
           thickness: 3,
         ),
       ],

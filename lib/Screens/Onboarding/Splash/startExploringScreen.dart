@@ -175,7 +175,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                 ConstantStrings.loginButton,
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: AppColors.LoginTxt,
+                                  color: AppColors.loginTxt,
                                 ),
                               ),
                             ),

@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -86,7 +85,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                         state.mapType,
                         state.selectedCategories,
                         aircraftCubit.selectedAircraft
-                            .map((a) => a.icaoTypeCode ?? '')
+                            .map((a) => a.icaoTypeCode)
                             .where((c) => c.isNotEmpty)
                             .toList(),
                       ),
@@ -286,7 +285,7 @@ class _FilterContent extends StatelessWidget {
                           ),
                           Expanded(
                             child: Text(
-                              aircraft.aircraftModel ?? "-",
+                              aircraft.aircraftModel,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -307,7 +306,7 @@ class _FilterContent extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              aircraft.icaoTypeCode ?? "-",
+                              aircraft.icaoTypeCode,
                               style: const TextStyle(
                                 color: Color(0xFF3E3C55),
                                 fontWeight: FontWeight.w600,

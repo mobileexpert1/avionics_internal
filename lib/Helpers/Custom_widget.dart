@@ -62,8 +62,8 @@ Widget customField({
         Divider(
           height: 10,
           color: isDarkDivider == false
-              ? AppColors.sepratorColourAppBar
-              : AppColors.darkSepratorColourAppBar,
+              ? AppColors.separatorColourAppBar
+              : AppColors.darkSeparatorColourAppBar,
           thickness: 2,
         ),
       ],

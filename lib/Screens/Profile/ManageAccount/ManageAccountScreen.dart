@@ -33,7 +33,6 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.manageAccountScreen,

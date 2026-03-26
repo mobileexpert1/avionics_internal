@@ -1,11 +1,14 @@
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
+import '../../../Constants/AppColors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../bloc/Profile/FormulaSection/formula_cubit.dart';
+import '../../../bloc/Profile/FormulaSection/formula_model.dart';
 import '../../../bloc/Profile/FormulaSection/formula_state.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 
 class FormulasScreen extends StatefulWidget {
   const FormulasScreen({super.key});
@@ -16,6 +19,8 @@ class FormulasScreen extends StatefulWidget {
 
 class _FormulasScreenState extends State<FormulasScreen> {
   late FormulaCubit _cubit;
+
+  Map<int, bool> expandedMap = {};
 
   @override
   void initState() {
@@ -28,6 +33,7 @@ class _FormulasScreenState extends State<FormulasScreen> {
   @override
   void dispose() {
     _cubit.close();
+    expandedMap = {};
     super.dispose();
   }
 
@@ -49,24 +55,18 @@ class _FormulasScreenState extends State<FormulasScreen> {
             if (state.status == CommonApiStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    state.errorMessage ?? 'No formulas found',
-                  ),
+                  content: Text(state.errorMessage ?? 'No formulas found'),
                 ),
               );
             }
           },
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (state.categories.isEmpty) {
-              return const Center(
-                child: Text("No formulas found"),
-              );
+              return const Center(child: Text("No formulas found"));
             }
 
             return ListView.builder(
@@ -74,59 +74,28 @@ class _FormulasScreenState extends State<FormulasScreen> {
               itemCount: state.categories.length,
               itemBuilder: (context, index) {
                 final category = state.categories[index];
-                return Card(
-                  color: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            category.name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF32377D),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ...List.generate(category.formulas.length, (i) {
-                          final formula = category.formulas[i];
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  formula.expression,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              if (i != category.formulas.length - 1)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Divider(
-                                    thickness: 1,
-                                    color: Colors.black12,
-                                  ),
-                                ),
-                            ],
-                          );
-                        }),
-                      ],
-                    ),
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: CustomHeaderViewExpandable(
+                    isNeedToShowLeftRightBottomBorder: false,
+                    isNeedToShowLeftImage: false,
+                    isExpanded: expandedMap[index] ?? false,
+                    title: category.name,
+                    headerColor: expandedMap[index] ?? false
+                        ? AppColors.primaryDark
+                        : AppColors.grayMedium,
+                    arrowBackgroundColor: expandedMap[index] ?? false
+                        ? AppColors.extraDarkYellow
+                        : AppColors.lightGreyWithAlphaDecreased,
+                    arrowFrontColor: Colors.white,
+                    isExpandedViewAvailable: true,
+                    onHeaderTap: () {
+                      setState(() {
+                        expandedMap[index] = !(expandedMap[index] ?? false);
+                      });
+                    },
+                    child: _buildFormulaBody(category),
                   ),
                 );
               },
@@ -134,6 +103,34 @@ class _FormulasScreenState extends State<FormulasScreen> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildFormulaBody(FormulaModel category) {
+    return Column(
+      children: [
+        ...List.generate(category.formulas.length, (index) {
+          final formula = category.formulas[index];
+          return Container(
+            color: AppColors.greyForConversionScreen,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    formula.expression,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
     );
   }
 }

@@ -535,8 +535,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       _timer?.cancel();
 
       String formatTime(int seconds) => "${seconds}s";
-      String indexToLetter(int? index) =>
-          index == null ? "" : String.fromCharCode(65 + index);
 
       final categoryNameMap = {
         "1": "event sequence",
@@ -656,11 +654,11 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
               "question": q.question,
               "options": options,
               "answer": answer,
-              "explanation": q.hint ?? '',
+              "explanation": q.hint,
               "user_answered": userAnswered,
-              "correct_point": result.correctPoint ?? 0,
-              "bonus_point": result.bonusPoint ?? 0,
-              "time_taken": formatTime(result.timeTakenSeconds ?? 0),
+              "correct_point": result.correctPoint,
+              "bonus_point": result.bonusPoint,
+              "time_taken": formatTime(result.timeTakenSeconds),
             };
           }).toList(),
         };
@@ -668,16 +666,16 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
 
       final correctAnswers = state.questionResults.fold<int>(
         0,
-        (sum, result) => sum + ((result.correctPoint ?? 0) > 0 ? 1 : 0),
+        (sum, result) => sum + ((result.correctPoint) > 0 ? 1 : 0),
       );
       final correctPoints = state.questionResults.fold<int>(
         0,
-        (sum, result) => sum + (result.correctPoint ?? 0),
+        (sum, result) => sum + (result.correctPoint),
       );
 
       final bonusPoints = state.questionResults.fold<int>(
         0,
-        (sum, result) => sum + (result.bonusPoint ?? 0),
+        (sum, result) => sum + (result.bonusPoint),
       );
 
       final allCorrectBonus = (correctAnswers == state.questions.length)

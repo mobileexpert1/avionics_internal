@@ -3,9 +3,9 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'filtter_cubit.dart';
-import 'filtter_model.dart';
-import 'filtter_state.dart';
+import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
+import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_model.dart';
+import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
 
 class FilterScreen1 extends StatefulWidget {
   final bool isAlreadyProcessing;

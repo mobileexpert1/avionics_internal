@@ -21,10 +21,10 @@ class GlossaryScreen extends StatefulWidget {
 }
 
 class _GlossaryScreenState extends State<GlossaryScreen> {
-  final Map<String, bool> _expandedItems = {};
-  late TextEditingController _searchController;
 
   bool isSelectedExpanded = false;
+  final Map<String, bool> _expandedItems = {};
+  late TextEditingController _searchController;
 
   List<String> get alphabets =>
       List.generate(26, (index) => String.fromCharCode(65 + index));
@@ -69,7 +69,6 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           child: Column(
             children: [
               const SizedBox(height: 5),
-
               SearchBarWidget(
                 searchTitle: 'Search Glossary...',
                 enableBackArrow: false,
@@ -83,7 +82,6 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                   );
                 },
               ),
-              //const SizedBox(height: 10),
               Expanded(
                 child: BlocConsumer<GlossaryCubit, GlossaryState>(
                   listenWhen: (previous, current) =>

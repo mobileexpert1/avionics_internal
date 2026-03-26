@@ -1,5 +1,3 @@
-import '../../home/SavedFlighDetails/savedFlight_model.dart';
-
 class ProfileScreenState  {
   // final List<SavedFlightAndProfileSectionModel> savedflight;
   final bool isLoading;

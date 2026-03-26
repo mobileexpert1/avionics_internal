@@ -1,7 +1,6 @@
 import 'package:avionics_internal/bloc/Home/AircraftComparison/Comparison/ComparisonModel.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../../../../Database/generic_methods.dart';
 
 class ComparisonRepository {
   Future<ComparisonModel> compareAircrafts({

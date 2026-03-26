@@ -1,38 +1,34 @@
-import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
-import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
-import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
-import 'package:avionics_internal/Screens/Profile/GoogleEarthMap/GoogleEarthMap.dart';
-import 'package:avionics_internal/Screens/Profile/TestColourScreen.dart';
-import 'package:avionics_internal/Screens/Profile/VideoPlayer/VideoPlayerScreen.dart';
-import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
-import 'package:flutter/foundation.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../CustomFiles/Custom_SnackBar.dart';
-import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
-import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
-import '../../bloc/Profile/DeleteProfile/delete_state.dart';
-import '../../bloc/Profile/Glossary/glossary_cubit.dart';
-import '../Home/SavedFlights/SavedFlighScreen.dart';
-import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'Avtar/AvtarScreen.dart';
 import 'Feedback/FeedbackScreen.dart';
 import 'GameBadges/BadgesScreens.dart';
 import 'Glossary/GlossaryScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../Constants/ConstantStrings.dart';
+import '../../CustomFiles/Custom_SnackBar.dart';
 import 'ManageAccount/ManageAccountScreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../Home/SavedFlights/SavedFlighScreen.dart';
 import 'ContactSupportScreen/ContactSupportScreen.dart';
+import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../bloc/Profile/DeleteProfile/delete_state.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import 'ScientificCalculator/screens/calculator_home_main_screen.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
-
-import 'ScientificCalculator/screens/calculator_home_main_screen.dart';
+import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
+import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
+import 'package:avionics_internal/Screens/Profile/VideoPlayer/VideoPlayerScreen.dart';
+import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
+import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -65,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return SingleChildScrollView(
           child: Container(
-            width: kIsWeb ? 1500 : double.infinity, // 💡 Box constraint for web
+            width: kIsWeb ? 1500 : double.infinity,
             alignment: Alignment.center,
             margin: kIsWeb
                 ? const EdgeInsets.symmetric(horizontal: 50)
@@ -142,20 +138,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                      // SettingsListItem(
-                      //   leadingSvgAsset: CommonUi.setSvgImage(
-                      //     AssetsPath.savedIcon,
-                      //   ),
-                      //   title: "Test Colour Screen ",
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => TestColourScreen(),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.savedIcon,
+                    //   ),
+                    //   title: "Test Colour Screen ",
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => TestColourScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
 
                     // SettingsListItem(
                     //   leadingSvgAsset: CommonUi.setSvgImage(

@@ -4,7 +4,6 @@ class QuestionResult {
   final int bonusPoint;
   final int timeTakenSeconds;
 
-  // These extra fields help build API payloads without needing to manually combine later
   final String question;
   final List<String> options;
   final int correctIndex;

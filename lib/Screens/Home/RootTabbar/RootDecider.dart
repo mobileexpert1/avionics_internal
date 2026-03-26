@@ -1,7 +1,7 @@
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
-import 'Constants/ApiClass/shared_prefs_helper.dart';
-import 'Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import 'RootTabbarScreen.dart';
 
 class RootDecider extends StatelessWidget {
   RootDecider({super.key});

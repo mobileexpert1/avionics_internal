@@ -614,12 +614,6 @@
       "languageVersion": "3.9"
     },
     {
-      "name": "internet_connection_checker",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/internet_connection_checker-1.0.0+1",
-      "packageUri": "lib/",
-      "languageVersion": "2.18"
-    },
-    {
       "name": "intl",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/intl-0.20.2",
       "packageUri": "lib/",

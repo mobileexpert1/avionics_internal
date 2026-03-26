@@ -87,7 +87,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                   builder: (context) {
                                     final controller =
                                     TextEditingController(
-                                        text: item.title ?? "");
+                                        text: item.title);
 
                                     return AlertDialog(
                                       backgroundColor: Colors.white,
@@ -189,7 +189,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                           ),
                           child: ListTile(
                             title: Text(
-                              item.title ?? "Untitled Chat",
+                              item.title,
                               style: const TextStyle(
                                   fontWeight: FontWeight.w500),
                             ),
@@ -215,7 +215,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                         accessToken: token,
                                         isComeFromTab: false,
                                         sessionId: item.id!,
-                                        title: item.title ?? "",
+                                        title: item.title,
                                       ),
                                 ),
                                     (route) =>

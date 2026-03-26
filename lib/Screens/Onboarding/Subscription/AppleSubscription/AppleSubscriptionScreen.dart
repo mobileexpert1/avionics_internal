@@ -39,7 +39,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     return "";
   }
 
-  bool _navigated = false;
+  //bool _navigated = false;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             );
 
             if (widget.isComeFromSignup == true) {
-              _navigated = true;
+              //_navigated = true;
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => RootTabbarscreen()),

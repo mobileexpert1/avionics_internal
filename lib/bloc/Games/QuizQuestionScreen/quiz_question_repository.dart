@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../../../../Database/generic_methods.dart';
 import '../../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 import '../SubGameSection/Calculation_Section/calculation_submit_model.dart';

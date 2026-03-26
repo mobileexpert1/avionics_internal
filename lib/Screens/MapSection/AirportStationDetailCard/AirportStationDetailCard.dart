@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../Constants/AppColors.dart';
-import '../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
-import '../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
+import '../../../Constants/AppColors.dart';
+import '../../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
+import '../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class AirportStationDetailCard extends StatefulWidget {
   final AircraftStationModel? airportDetail;

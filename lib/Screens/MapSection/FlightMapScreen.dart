@@ -10,8 +10,8 @@ import '../../Helpers/CustomSegmentController/CustomSegmentController.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
 import '../../bloc/MapSection/ParsedPolygon.dart';
-import 'AirportStationDetailCard.dart';
-import 'FlightDetailCard.dart';
+import 'AirportStationDetailCard/AirportStationDetailCard.dart';
+import 'FlightDetailCard/FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -213,8 +213,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           onTap: () {
             if (_mapCubit.state.mapType != CustomMapType.polygon) return;
 
-            _selectedPolygonId =
-            (_selectedPolygonId == p.id) ? null : p.id;
+            _selectedPolygonId = (_selectedPolygonId == p.id) ? null : p.id;
 
             final newPolygons = _parsedPolygons
                 .expand((poly) => _buildPolygon(context, poly))
@@ -223,8 +222,9 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             polygonNotifier.value = newPolygons;
 
             if (_selectedPolygonId != null) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(p.name)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(p.name)));
             }
           },
         ),
@@ -619,13 +619,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
       markers.add(
         Marker(
-          markerId: MarkerId(
-            airport.iataCode ?? airport.icao ?? UniqueKey().toString(),
-          ),
+          markerId: MarkerId(airport.iataCode),
           position: LatLng(airport.latitude, airport.longitude),
           infoWindow: InfoWindow(
-            title: airport.name ?? 'N/A',
-            snippet: "${airport.city ?? ''}, ${airport.country ?? ''}",
+            title: airport.name,
+            snippet: "${airport.city}, ${airport.country}",
           ),
           icon: customIcon,
           onTap: () {
@@ -856,7 +854,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                     final icaoCode = aircraft?.icaoTypeCode ?? "";
                     final manufacturer =
                         aircraft?.manufacturer?.companyName ?? "";
-                    final isFavorite = data.isFavorite ?? false;
+                    final isFavorite = data.isFavorite;
                     final flightCode =
                         (data?.callSign != null && data!.callSign!.isNotEmpty)
                         ? data.callSign!
@@ -1430,7 +1428,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   return const SizedBox.shrink();
                 }
 
-                return AirportStationDetailCard (
+                return AirportStationDetailCard(
                   airportDetail: state.selectedAirport!,
                   isComeFromLiveTracking: false,
                   segmentIndex: selectedSegmentIndex,

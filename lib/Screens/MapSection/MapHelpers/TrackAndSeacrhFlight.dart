@@ -141,8 +141,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                               .isNotEmpty ??
                                           false)
                                       ? data.aircraftDetails!.icaoTypeCode
-                                      : (data.detail.acType.isNotEmpty ?? false
-                                            ? data.detail.acType
+                                      : (data.detail.acType.isNotEmpty ? data.detail.acType
                                             : ""),
 
                                   // data.aircraftDetails?.icaoTypeCode ??

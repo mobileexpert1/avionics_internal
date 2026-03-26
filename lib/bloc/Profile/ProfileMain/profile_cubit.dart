@@ -1,8 +1,6 @@
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../home/SavedFlighDetails/savedFlight_model.dart';
-
 class ProfileScreenCubit extends Cubit<ProfileScreenState> {
   ProfileScreenCubit() : super(ProfileScreenState());
 

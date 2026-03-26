@@ -41,7 +41,6 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isWeb = kIsWeb;
 
-    double getResponsiveFont(double mobile, double web) => isWeb ? web : mobile;
     double getPadding() => isWeb ? screenWidth * 0.02 : 16;
     int getCrossAxisCount() => isWeb ? 4 : 2;
     double getChildAspectRatio() => isWeb ? 0.9 : 0.8;

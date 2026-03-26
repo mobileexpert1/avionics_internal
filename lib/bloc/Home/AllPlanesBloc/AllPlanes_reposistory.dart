@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Database/generic_methods.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_model.dart';
-import 'package:flutter/cupertino.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../../Constants/ConstantStrings.dart';
@@ -50,10 +49,6 @@ class AllPlanesReposistory {
     } catch (e) {
       throw e.toString();
     }
-  }
-
-  Future<List<AircraftListModel>> _getLocalData() async {
-    return _manufacturer.getAll('allAircraftsList');
   }
 
   Future<BaseDetailResponseModel> setFavOrUnfavPlanFromList({

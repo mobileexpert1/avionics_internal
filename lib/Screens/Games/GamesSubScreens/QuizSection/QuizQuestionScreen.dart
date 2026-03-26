@@ -133,7 +133,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                               Colors.blue,
                             ),
                             foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.sepratorColourAppBar,
+                              AppColors.separatorColourAppBar,
                             ),
                           ),
                           child: const Text("Yes, Exit"),

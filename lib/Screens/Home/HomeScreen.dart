@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
-import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -200,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Divider(
                             height: 0,
                             thickness: 3,
-                            color: AppColors.sepratorColourAppBar,
+                            color: AppColors.separatorColourAppBar,
                           ),
 
                           SizedBox(
@@ -300,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Divider(
                             height: 0,
                             thickness: 3,
-                            color: AppColors.sepratorColourAppBar,
+                            color: AppColors.separatorColourAppBar,
                           ),
 
                           SizedBox(
@@ -508,7 +507,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Divider(
                             height: 0,
                             thickness: 3,
-                            color: AppColors.sepratorColourAppBar,
+                            color: AppColors.separatorColourAppBar,
                           ),
 
                           SizedBox(

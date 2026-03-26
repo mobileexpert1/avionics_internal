@@ -24,12 +24,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.initState();
     _cubit = VideoPlayerCubit();
     _cubit.initialize();
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.videoPlayerScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.videoPlayerScreen,
+    );
   }
 
   @override
   void dispose() {
     _cubit.close();
+    _cubit.state.controller?.dispose();
     super.dispose();
   }
 

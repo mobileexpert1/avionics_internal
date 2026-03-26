@@ -8,7 +8,6 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../CustomFiles/onboarding_model.dart';
+import '../../../../bloc/Onboarding/splashInfo/onboarding_model.dart';
 import '../../../../bloc/Profile/VideoPlayer/video_player_cubit.dart';
 import '../../../../bloc/Profile/VideoPlayer/video_player_state.dart';
 

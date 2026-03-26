@@ -5,8 +5,8 @@ import 'package:flutter_earth_globe/point.dart';
 import 'package:flutter_earth_globe/point_connection.dart';
 import 'package:flutter_earth_globe/point_connection_style.dart';
 import 'package:flutter/material.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
-import 'app_theme.dart';
 import 'coordinate_state.dart';
 import 'globe_controls_state.dart';
 
@@ -40,10 +40,10 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isHovering
-              ? [AppTheme.accentCyan, AppTheme.accentPurple]
+              ? [AppColors.accentCyan, AppColors.accentPurple]
               : [
-                  AppTheme.accentCyan.withAlpha(180),
-                  AppTheme.accentPurple.withAlpha(180),
+                  AppColors.accentCyan.withAlpha(180),
+                  AppColors.accentPurple.withAlpha(180),
                 ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -53,7 +53,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentCyan.withAlpha(isHovering ? 150 : 80),
+            color: AppColors.accentCyan.withAlpha(isHovering ? 150 : 80),
             blurRadius: isHovering ? 20 : 12,
             spreadRadius: isHovering ? 2 : 0,
           ),

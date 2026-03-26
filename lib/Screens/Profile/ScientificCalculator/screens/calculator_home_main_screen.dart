@@ -9,7 +9,6 @@ import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../providers/calculations.dart';
-import '../providers/history.dart';
 import '../core/index.dart';
 
 import '../widgets/answer_text.dart';
@@ -18,7 +17,6 @@ import '../widgets/custom_animated_switcher.dart';
 import '../widgets/custom_icon.dart';
 import '../widgets/history_list.dart';
 import '../widgets/input_feild.dart';
-import '../widgets/last_answer.dart';
 import '../widgets/responsive.dart';
 
 class CalculatorHomeMainScreen extends StatefulWidget {
@@ -59,8 +57,6 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
   @override
   Widget build(BuildContext context) {
     final calc = Provider.of<Calculations>(context, listen: false);
-    final history = Provider.of<History>(context);
-
     final lGrid = Provider.of<Calculations>(context).lGrid;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
@@ -113,7 +109,6 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
               const Expanded(flex: 2, child: AnswerText()),
             ],
             if (!isLandscape) const SizedBox(height: 5),
-            //const GradientDivider(),
             Expanded(
               flex: kIsWeb ? (isLandscape ? 14 : 11) : 14,
               child: Container(

@@ -53,12 +53,12 @@ void main() {
         // Check first aircraft in the list
         final first = aircraftList.results.first;
         expect(first.id, isNotEmpty);
-        expect(first.aircraftModel ?? first.aircraftModel, isNotEmpty);
+        expect(first.aircraftModel, isNotEmpty);
 
         // manufacturer is an object, check required fields instead
         expect(first.manufacturer, isNotNull);
         expect(first.manufacturer!.id, isNotEmpty);
-        expect(first.manufacturer!.companyName ?? first.manufacturer!.companyName, isNotEmpty);
+        expect(first.manufacturer!.companyName, isNotEmpty);
       }
     });
 

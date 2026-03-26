@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../Constants/constantImages.dart';
-import '../../Helpers/CacheManger/CachedImageFile.dart';
-import '../../Helpers/CustomDivider.dart';
-import '../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../bloc/MapSection/flight_map_detailModel.dart';
-import '../../bloc/MapSection/flight_map_state.dart';
-import 'FlightTrackScreen.dart';
-import 'MapHelpers/FlightDetailScreen.dart';
-import 'MapHelpers/LiveBadge.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../Helpers/CacheManger/CachedImageFile.dart';
+import '../../../Helpers/CustomDivider.dart';
+import '../../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../../bloc/MapSection/flight_map_detailModel.dart';
+import '../../../bloc/MapSection/flight_map_state.dart';
+import '../FlightTrackScreen.dart';
+import '../MapHelpers/FlightDetailScreen.dart';
+import '../MapHelpers/LiveBadge.dart';
 
 class FlightDetailCard extends StatelessWidget {
   final FlightAircraftDetail? flightDetail;
@@ -64,7 +64,6 @@ class FlightDetailCard extends StatelessWidget {
           final aircraftType = detail?.aircraftModel ?? 'N/A';
           final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
           final category = detail?.icaoTypeCode ?? detail?.type ?? "";
-          final image = detail?.image ?? "";
           final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
 
           final airlineName =

@@ -1,19 +1,17 @@
-import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/constantImages.dart';
+import '../../Onboarding/Login/LoginScreen.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
-import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
 import '../../../bloc/Profile/Avtar/avtar_state.dart';
-import '../../Onboarding/Login/LoginScreen.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;

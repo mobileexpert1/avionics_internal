@@ -39,7 +39,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
-    // ✅ RELEASE MEMORY
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();

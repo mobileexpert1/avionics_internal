@@ -207,7 +207,7 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      aircraft.aircraftModel ?? "-",
+                                      aircraft.aircraftModel,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -226,7 +226,7 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                       ),
                                     ),
                                     child: Text(
-                                      aircraft.icaoTypeCode ?? "-",
+                                      aircraft.icaoTypeCode,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
@@ -301,7 +301,7 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    aircraft.aircraftModel ?? "-",
+                                    aircraft.aircraftModel,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -320,7 +320,7 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                     ),
                                   ),
                                   child: Text(
-                                    aircraft.icaoTypeCode ?? "-",
+                                    aircraft.icaoTypeCode,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,

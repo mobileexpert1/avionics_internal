@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../core/index.dart';
-
 class CustomIcon extends StatelessWidget {
   const CustomIcon(
     this.icon, {
@@ -17,8 +15,6 @@ class CustomIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),

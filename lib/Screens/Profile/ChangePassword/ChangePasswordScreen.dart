@@ -32,7 +32,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.changePasswordScreen,
@@ -75,7 +74,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     return SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
                       child: Align(
-                        alignment: Alignment.topCenter, // center horizontally
+                        alignment: Alignment.topCenter,
                         child: ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: maxWidth),
                           child: Column(

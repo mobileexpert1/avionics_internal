@@ -14,7 +14,6 @@ import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
-import '../../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'login_repository.dart';
 import 'login_response_model.dart';
 import 'login_state.dart';

@@ -1,30 +1,19 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:avionics_internal/Constants/ApiClass/api_service.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     hide Position;
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
-import '../../Constants/AppColors.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
-import '../Home/SavedFlighDetails/savedFlight_model.dart';
-import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
-import 'FilterMap/filter_Map_Cubit.dart';
 import 'FilterMap/filter_Map_State.dart';
-import 'MapAircraftList/aircraft_List_Data_Cubit.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
 import 'flight_map_model.dart';
 import 'flight_map_state.dart';
@@ -60,13 +49,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       return flight.copyWith(isFavorite: isFav);
     }).toList();
 
-    emit(state.copyWith(flights: updatedFlights));
+    if (!isClosed) {
+      emit(state.copyWith(flights: updatedFlights));
+    }
   }
 
   void onFlightsLoaded(List<FlightModel> flights) {
-    emit(state.copyWith(flights: flights));
-    if (_favCallSigns != null) {
-      _favoritesToFlights();
+    if (!isClosed) {
+      emit(state.copyWith(flights: flights));
+      if (_favCallSigns != null) {
+        _favoritesToFlights();
+      }
     }
   }
 
@@ -148,6 +141,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
+      if (!isClosed) {
       emit(
         state.copyWith(
           position: position,
@@ -156,6 +150,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           isLoading: false,
         ),
       );
+      }
 
       return true; // Successfully got location
     } catch (e) {
@@ -184,14 +179,16 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           state.flights ?? [],
           flightsDetails.data,
         );
-        emit(
-          state.copyWith(
-            flights: enrichedFlights,
-            status: CommonApiStatus.success,
-            isSuccess: true,
-            isLoading: false,
-          ),
-        );
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              flights: enrichedFlights,
+              status: CommonApiStatus.success,
+              isSuccess: true,
+              isLoading: false,
+            ),
+          );
+        }
       }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
@@ -218,8 +215,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedAirport: airportModel));
   }
 
-  LatLngBounds? _previousBounds;
-
   Future<void> fetchFlightsByBounds({
     required bool isNeedToRefresh,
     required LatLngBounds bounds,
@@ -227,7 +222,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required LatLng currentCenterLatLong,
   }) async {
     try {
-      _previousBounds = bounds;
 
       final boundsString =
           "${bounds.northeast.latitude},${bounds.southwest.latitude},"
@@ -260,20 +254,21 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       debugPrint("Flights fetched: ${flights.length}");
       debugPrint("Airport list count: ${airportList.data.length}");
-      debugPrint("Credit Session count: ${flights.length * 6}");
 
       onFlightsLoaded(flights);
-      emit(
-        state.copyWith(
-          flights: flights,
-          airports: airportList.data,
-          status: CommonApiStatus.success,
-          isSuccess: true,
-          isLoading: false,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            flights: flights,
+            airports: airportList.data,
+            status: CommonApiStatus.success,
+            isSuccess: true,
+            isLoading: false,
+          ),
+        );
+      }
     } catch (e, stack) {
-      debugPrint("❌ Error fetching flights: $e");
+      debugPrint("Error fetching flights: $e");
       debugPrint(stack.toString());
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
@@ -515,7 +510,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
     final updatedFlights = state.flights!.map((flight) {
       if (flight.callSign == callSign) {
-        return flight.copyWith(isFavorite: !(flight.isFavorite ?? false));
+        return flight.copyWith(isFavorite: !(flight.isFavorite));
       }
       return flight;
     }).toList();

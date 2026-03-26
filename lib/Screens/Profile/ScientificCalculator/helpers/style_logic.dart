@@ -1,11 +1,9 @@
-import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/constantImages.dart';
 import '../core/index.dart';
 
 Color getButtonBgColor(String text, BuildContext context) {
-  final colorScheme = Theme.of(context).colorScheme;
   switch (text) {
     case 'C':
     case '( )':

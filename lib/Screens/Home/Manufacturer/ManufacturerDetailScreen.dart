@@ -1,4 +1,3 @@
-import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
-import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/Custom_widget.dart';
@@ -279,7 +277,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                             const Divider(
                               height: 0,
                               thickness: 3,
-                              color: AppColors.sepratorColourAppBar,
+                              color: AppColors.separatorColourAppBar,
                             ),
 
                             _buildSectionHeader(
@@ -304,7 +302,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 : const SizedBox.shrink(),
                             Divider(
                               height: 0,
-                              color: AppColors.sepratorColourAppBar,
+                              color: AppColors.separatorColourAppBar,
                               thickness: 3,
                             ),
 
@@ -342,7 +340,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
                             Divider(
                               height: 0,
-                              color: AppColors.sepratorColourAppBar,
+                              color: AppColors.separatorColourAppBar,
                               thickness: 3,
                             ),
 
@@ -378,7 +376,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
                             Divider(
                               height: 0,
-                              color: AppColors.sepratorColourAppBar,
+                              color: AppColors.separatorColourAppBar,
                               thickness: 3,
                             ),
 
@@ -647,7 +645,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
         Divider(
           height: 0,
-          color: AppColors.sepratorColourAppBar,
+          color: AppColors.separatorColourAppBar,
           thickness: 2,
           indent: 20,
           endIndent: 20,

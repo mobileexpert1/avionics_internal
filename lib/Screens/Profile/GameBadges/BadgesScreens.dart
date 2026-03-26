@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:avionics_internal/RootDecider.dart';
+import 'package:avionics_internal/Screens/Home/RootTabbar/RootDecider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +15,6 @@ import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../bloc/Profile/GameBadges/gameBadges_cubit.dart';
 import '../../../bloc/Profile/GameBadges/gameBadges_state.dart';
 import '../../../bloc/Profile/GameBadges/gameBadges_model.dart';
-import '../../Home/HomeScreen.dart';
 
 class BadgesScreen extends StatefulWidget {
   final bool fromResultScreen;
@@ -235,7 +234,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
   Widget _buildTabs(BuildContext context, BadgesState state) {
     final tabs = ["Quiz", "One Word", "Black Box", "Calculations"];
-    final selectedTab = state.selectedTab ?? tabs[0];
+    final selectedTab = state.selectedTab;
 
     final bool ikweb =
         kIsWeb &&
@@ -253,7 +252,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           itemCount: tabs.length,
-          separatorBuilder: (_, __) => SizedBox(
+          separatorBuilder: (_, _) => SizedBox(
             width: MediaQuery.of(context).size.width * (ikweb ? 0.09 : 0.02),
           ),
           itemBuilder: (context, index) {

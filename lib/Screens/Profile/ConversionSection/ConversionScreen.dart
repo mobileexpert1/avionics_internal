@@ -7,6 +7,7 @@ import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../bloc/Profile/ConversionSection/conversion_cubit.dart';
+import '../../../bloc/Profile/ConversionSection/conversion_model.dart';
 import '../../../bloc/Profile/ConversionSection/conversion_state.dart';
 
 class ConversionsScreen extends StatefulWidget {
@@ -17,9 +18,8 @@ class ConversionsScreen extends StatefulWidget {
 }
 
 class _ConversionsScreenState extends State<ConversionsScreen> {
-  late ConversionCubit _cubit;
 
-  /// expand collapse map
+  late ConversionCubit _cubit;
   Map<int, bool> expandedMap = {};
 
   @override
@@ -33,6 +33,7 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
   @override
   void dispose() {
     _cubit.close();
+    expandedMap = {};
     super.dispose();
   }
 
@@ -42,7 +43,6 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
       value: _cubit,
       child: Scaffold(
         backgroundColor: Colors.white,
-
         appBar: CustomAppBar(
           title: 'Conversions Table',
           leftButton: IconButton(
@@ -76,29 +76,27 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
               itemCount: state.categories.length,
               itemBuilder: (context, index) {
                 final category = state.categories[index];
-
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: CustomHeaderViewExpandable(
                     // HEADER CONFIG
                     isNeedToShowLeftRightBottomBorder: false,
                     isNeedToShowLeftImage: false,
-                    isExpanded: expandedMap[index] ?? true,
+                    isExpanded: expandedMap[index] ?? false,
                     title: category.title,
-                    headerColor: expandedMap[index] ?? true
+                    headerColor: expandedMap[index] ?? false
                         ? AppColors.primaryDark
                         : AppColors.grayMedium,
-                    arrowBackgroundColor: expandedMap[index] ?? true
+                    arrowBackgroundColor: expandedMap[index] ?? false
                         ? AppColors.extraDarkYellow
                         : AppColors.lightGreyWithAlphaDecreased,
                     arrowFrontColor: Colors.white,
                     isExpandedViewAvailable: true,
                     onHeaderTap: () {
                       setState(() {
-                        expandedMap[index] = !(expandedMap[index] ?? true);
+                        expandedMap[index] = !(expandedMap[index] ?? false);
                       });
                     },
-                    // BODY
                     child: _buildConversionBody(category),
                   ),
                 );
@@ -110,10 +108,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
     );
   }
 
-  Widget _buildConversionBody(category) {
+  Widget _buildConversionBody(ConversionCategory category) {
     return Column(
       children: [
-        // HEADER ROW
         Container(
           color: AppColors.greyForConversionScreen,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -137,7 +134,6 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
           ),
         ),
 
-        // DATA ROWS
         ...List.generate(category.items.length, (index) {
           final item = category.items[index];
           return Column(
@@ -163,7 +159,6 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                 ),
               ),
 
-              // EXAMPLE ROW
               Container(
                 color: AppColors.greyForConversionScreen,
                 padding: const EdgeInsets.symmetric(

@@ -63,7 +63,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
     ];
     emit(greeting);
-    final localMessages = await _repo.getMessagesForSession(sessionId);
     final serverMessages = await _repo.fetchFullServerHistory(sessionId);
 
     final converted = serverMessages.map(

@@ -220,7 +220,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               width: 100,
                               height: 50,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, _, __) => const Icon(
+                              errorBuilder: (context, _, _) => const Icon(
                                 Icons.image_not_supported,
                                 color: Colors.grey,
                               ),

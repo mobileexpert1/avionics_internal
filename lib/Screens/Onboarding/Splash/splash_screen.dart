@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/constantImages.dart';
-import '../../../RootDecider.dart';
+import '../../Home/RootTabbar/RootDecider.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {

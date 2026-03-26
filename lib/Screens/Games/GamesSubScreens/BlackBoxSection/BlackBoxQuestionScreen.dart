@@ -178,7 +178,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                               Colors.blue,
                             ),
                             foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.sepratorColourAppBar,
+                              AppColors.separatorColourAppBar,
                             ),
                           ),
                           child: const Text("Yes, Exit"),
@@ -525,12 +525,12 @@ class BlackBoxCard extends StatelessWidget {
           color: Colors.green,
           size: 20,
         );
-      } else if (isSelected! && !isCorrect) {
+      } else if (isSelected && !isCorrect) {
         backgroundColor = Colors.red.shade100;
         borderColor = Colors.red;
         trailingIcon = const Icon(Icons.cancel, color: Colors.red, size: 20);
       }
-    } else if (isSelected!) {
+    } else if (isSelected) {
       backgroundColor = Colors.grey.shade300;
       borderColor = Colors.white;
     }
@@ -645,7 +645,7 @@ class BlackBoxCard extends StatelessWidget {
 
   Widget _buildEventSequence(BuildContext context) {
     final state = context.watch<BlackBoxQuestionCubit>().state;
-    final options = state.currentQuestion.options ?? [];
+    final options = state.currentQuestion.options;
 
     final sequenceItems =
         state.selectedSequenceItems ?? List<String>.from(options);

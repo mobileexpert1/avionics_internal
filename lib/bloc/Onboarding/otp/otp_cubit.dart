@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../../Screens/Onboarding/Subscription/SubscriptionScreen.dart';
 import 'otp_repository.dart';
 import 'otp_state.dart';
 

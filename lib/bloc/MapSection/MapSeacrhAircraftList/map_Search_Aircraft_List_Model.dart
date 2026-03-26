@@ -1,6 +1,5 @@
 // Response Model
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
-import '../flight_map_detailModel.dart';
 import '../flight_map_model.dart';
 
 class MapSearchAircraftListModel {

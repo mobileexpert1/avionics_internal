@@ -13,8 +13,7 @@ import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
-import 'FlightDetailCard.dart';
-import 'FlightMapScreen.dart';
+import 'FlightDetailCard/FlightDetailCard.dart';
 
 class TrackFlightScreen extends StatefulWidget {
   final String flightNumber;

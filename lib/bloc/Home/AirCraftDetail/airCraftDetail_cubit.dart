@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
-import '../../MapSection/flight_map_detailModel.dart';
 import 'airCraftDetail_repository.dart';
 import 'airCraftDetail_state.dart';
 

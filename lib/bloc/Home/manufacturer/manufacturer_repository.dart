@@ -50,10 +50,6 @@ class ManufacturerRepository {
     }
   }
 
-  Future<List<ManufacturerListModel>> _getLocalData() async {
-    return _manufacturer.getAll('manufacturers');
-  }
-
   Future<ManufacturerDetailResponse> getParticularAirbusDetail({
     required String query,
   }) async {

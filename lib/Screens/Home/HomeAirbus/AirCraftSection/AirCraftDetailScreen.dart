@@ -11,7 +11,6 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
-import '../../../../Helpers/Custom_widget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
@@ -597,7 +596,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
         Divider(
           height: 0,
-          color: AppColors.sepratorColourAppBar,
+          color: AppColors.separatorColourAppBar,
           thickness: 2,
           indent: 20,
           endIndent: 20,
@@ -628,7 +627,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
             : const SizedBox.shrink(),
         const Divider(
           height: 0,
-          color: AppColors.sepratorColourAppBar,
+          color: AppColors.separatorColourAppBar,
           thickness: 3,
         ),
       ],
@@ -719,7 +718,7 @@ Widget buildFieldRows(
                 Expanded(
                   child: Divider(
                     thickness: 2,
-                    color: AppColors.sepratorColourAppBar,
+                    color: AppColors.separatorColourAppBar,
                   ),
                 ),
                 const SizedBox(width: 15),
@@ -727,7 +726,7 @@ Widget buildFieldRows(
                   child: second != null
                       ? Divider(
                           thickness: 2,
-                          color: AppColors.sepratorColourAppBar,
+                          color: AppColors.separatorColourAppBar,
                         )
                       : const SizedBox(),
                 ),

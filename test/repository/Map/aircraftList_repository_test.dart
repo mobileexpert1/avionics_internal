@@ -82,7 +82,7 @@ void main() {
         expect(responseModel.data!.isNotEmpty, true);
 
         final first = responseModel.data!.first;
-        expect(first.icaoTypeCode ?? '', isNotEmpty);
+        expect(first.icaoTypeCode, isNotEmpty);
       }
     });
   });

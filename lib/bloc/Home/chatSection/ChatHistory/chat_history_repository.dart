@@ -83,9 +83,7 @@ class ChatHistoryRepository {
 
   Future<BaseDetailResponseModel> deleteChatSession(String sessionId) async {
     final url = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlChatConstant.chatService +
-          "/$sessionId",
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlChatConstant.chatService}/$sessionId",
     );
 
     try {

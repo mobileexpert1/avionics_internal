@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MapToggleButtons extends StatelessWidget {
-  // The current state of the buttons, passed from the parent widget.
   final bool isMapViewSelected;
 
-  // The callback function to be executed when a button is tapped.
   final void Function(bool) onToggle;
 
   const MapToggleButtons({

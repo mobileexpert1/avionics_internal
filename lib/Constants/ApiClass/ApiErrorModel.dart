@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:io';
-
 enum CommonApiStatus { initial, submitting, success, failure }
 
 class ApiErrorModel {

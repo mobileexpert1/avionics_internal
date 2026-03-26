@@ -12,9 +12,6 @@ class AnalyticsService {
 
   final String _userId = "";
 
-  // ---------------------------
-  // Initialize
-  // ---------------------------
   Future<void> init() async {
     await _analytics.setUserId(id: _userId);
   }
@@ -35,9 +32,6 @@ class AnalyticsService {
     return "unknown_platform_$uid";
   }
 
-  // ---------------------------
-  // Screen View
-  // ---------------------------
   Future<void> logVisibleScreen(String screenName) async {
     await _analytics.logScreenView(
       screenName: screenName,
@@ -52,9 +46,6 @@ class AnalyticsService {
     // );
   }
 
-  // ---------------------------
-  // Button Press
-  // ---------------------------
   Future<void> buttonPressed(String buttonName, String screenName) async {
     await _analytics.logEvent(
       name: buttonName,
@@ -67,11 +58,5 @@ class AnalyticsService {
     // print(
     //   "Uploaded Button Parameters:screenName $screenName,  ${{'currentUserId': await _generateUserId(), 'timestamp': DateTime.now().toIso8601String()}}",
     // );
-  }
-
-  // Helper to remove null values
-  Map<String, Object> _nonNullParams(Map<String, Object?>? params) {
-    if (params == null) return {};
-    return params.map((key, value) => MapEntry(key, value ?? ""));
   }
 }

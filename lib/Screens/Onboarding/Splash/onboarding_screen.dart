@@ -12,7 +12,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
-import '../../../CustomFiles/onboarding_model.dart';
+import '../../../bloc/Onboarding/splashInfo/onboarding_model.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

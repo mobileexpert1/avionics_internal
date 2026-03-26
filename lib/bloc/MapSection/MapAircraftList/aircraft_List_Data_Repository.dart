@@ -1,6 +1,5 @@
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../../Database/generic_methods.dart';
 import 'aircraft_List_Data_State.dart';
 
 class AircraftListDataRepository {
