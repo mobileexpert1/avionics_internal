@@ -396,7 +396,7 @@ class QuizQuestionCard extends StatelessWidget {
                               width: 60,
                               height: 40,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.green),
+                                border: Border.all(color: Colors.black,width: 1),
                               ),
                               child: Stack(
                                 children: [

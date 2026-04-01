@@ -23,7 +23,7 @@ class QuestionResult {
   Map<String, dynamic> toJson() {
     String indexToLetter(int? index) {
       if (index == null) return "";
-      return String.fromCharCode(65 + index); // A=0, B=1, etc.
+      return String.fromCharCode(65 + index);
     }
 
     return {
