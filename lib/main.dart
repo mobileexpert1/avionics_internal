@@ -143,8 +143,10 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
-            theme: ThemeData(primarySwatch: Colors.blue),
-            home: const TestDemoMap(),
+
+            theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit',
+            ),
+            home: const SplashScreen(),
           );
         },
       ),

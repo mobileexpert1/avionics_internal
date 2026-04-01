@@ -32,11 +32,16 @@ class QuizQuestionScreen extends StatefulWidget {
   _QuizQuestionScreenState createState() => _QuizQuestionScreenState();
 }
 
+double imageZoomMin = 0.5;
+double imageZoomMax = 5.0;
 bool isNeedToShowOrNot = false;
 bool isNeedToShowFlagOptions = false;
 
 class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   final ScrollController _scrollController = ScrollController();
+
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void initState() {
@@ -194,6 +199,8 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                               currentQuestion: state.currentIndex + 1,
                               totalQuestions: 20,
                               secondsRemaining: state.timer,
+                              transformationController:
+                                  _transformationController,
                               onOptionSelected: (index) {
                                 if (state.timer.toInt() != 0 &&
                                     !state.showAnswer) {
@@ -206,6 +213,9 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                                     isNeedToShowFlagOptions = false;
                                     isNeedToShowOrNot = false;
                                   });
+
+                                  _transformationController.value =
+                                      Matrix4.identity();
                                   quizCubit.nextQuestion(context);
                                 } else if (state.selectedIndex != null ||
                                     state.showAnswer) {
@@ -266,6 +276,7 @@ class QuizQuestionCard extends StatelessWidget {
   final int secondsRemaining;
   final Function(int) onOptionSelected;
   final VoidCallback? onNext;
+  final TransformationController transformationController;
 
   const QuizQuestionCard({
     required this.timeTaken,
@@ -282,13 +293,14 @@ class QuizQuestionCard extends StatelessWidget {
     required this.onOptionSelected,
     this.selectedOption,
     this.onNext,
+    required this.transformationController,
   });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final imageWidth = kIsWeb ? screenWidth * 0.1 : screenWidth * 1;
-    final imageHeight = kIsWeb ? screenWidth * 0.9 : screenWidth * 0.6;
+    final imageWidth = kIsWeb ? screenWidth * 0.6 : screenWidth;
+    final imageHeight = kIsWeb ? screenWidth * 0.35 : screenWidth * 0.6;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -321,13 +333,126 @@ class QuizQuestionCard extends StatelessWidget {
                 children: [
                   const SizedBox(height: 13),
                   if (imgUrl != "") ...[
-                    CachedAnyImage(
-                      key: ValueKey(imgUrl),
-                      imagePath: imgUrl,
+                    SizedBox(
                       width: imageWidth,
                       height: imageHeight,
-                      contentImage: BoxFit.cover,
-                      isForPlaneList: true,
+                      child: Stack(
+                        children: [
+                          InteractiveViewer(
+                            transformationController: transformationController,
+                            boundaryMargin: const EdgeInsets.all(100),
+                            minScale: imageZoomMin,
+                            maxScale: imageZoomMax,
+                            onInteractionUpdate: (details) {
+                              final scale = transformationController.value
+                                  .getMaxScaleOnAxis();
+                              if (scale <= 1.01) {
+                                transformationController.value =
+                                    Matrix4.identity();
+                              }
+                            },
+                            child: CachedAnyImage(
+                              imagePath: imgUrl,
+                              width: imageWidth,
+                              height: imageHeight,
+                              contentImage: kIsWeb
+                                  ? BoxFit.contain
+                                  : BoxFit.cover,
+                            ),
+                          ),
+
+                          // ZOOM LEVEL INDICATOR
+                          Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: ValueListenableBuilder(
+                              valueListenable: transformationController,
+                              builder: (_, value, __) {
+                                final scale = transformationController.value
+                                    .getMaxScaleOnAxis();
+
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    "${scale.toStringAsFixed(1)}x",
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              width: 60,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.green),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Full preview
+                                  CachedAnyImage(
+                                    imagePath: imgUrl,
+                                    width: 60,
+                                    height: 40,
+                                    contentImage: BoxFit.cover,
+                                  ),
+
+                                  ValueListenableBuilder(
+                                    valueListenable: transformationController,
+                                    builder: (_, value, __) {
+                                      final matrix = transformationController.value;
+
+                                      final scale = matrix.getMaxScaleOnAxis();
+                                      final dx = matrix.storage[12];
+                                      final dy = matrix.storage[13];
+
+                                      if (scale <= 1.01) {
+                                        return Positioned(
+                                          left: 0,
+                                          top: 0,
+                                          child: Container(
+                                            width: 60,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.red, width: 1),
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      double viewWidth = 60 / scale;
+                                      double viewHeight = 40 / scale;
+
+                                      return Positioned(
+                                        left: (-dx / scale).clamp(0, 60 - viewWidth),
+                                        top: (-dy / scale).clamp(0, 40 - viewHeight),
+                                        child: Container(
+                                          width: viewWidth,
+                                          height: viewHeight,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.red, width: 1),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                   const SizedBox(height: 13),

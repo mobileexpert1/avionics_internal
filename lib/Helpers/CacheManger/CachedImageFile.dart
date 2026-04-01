@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../Constants/constantImages.dart';
-import 'CachedSvgImage.dart';
 import 'CustomCacheManager.dart';
+import 'cached_svg.dart';
 
 class CachedAnyImage extends StatelessWidget {
   final String imagePath;
@@ -23,7 +23,8 @@ class CachedAnyImage extends StatelessWidget {
     this.isForPlaneList = false,
   });
 
-  bool get _isNetwork => imagePath.startsWith('http://') || imagePath.startsWith('https://');
+  bool get _isNetwork =>
+      imagePath.startsWith('http://') || imagePath.startsWith('https://');
 
   bool get _isSvg => imagePath.toLowerCase().endsWith('.svg');
 
@@ -33,7 +34,7 @@ class CachedAnyImage extends StatelessWidget {
       return _errorIcon(isForPlaneList);
     }
 
-    /// ================= NETWORK =================
+    ///NETWORK
     if (_isNetwork) {
       if (_isSvg) {
         return _fixedBox(
@@ -60,7 +61,7 @@ class CachedAnyImage extends StatelessWidget {
       );
     }
 
-    /// ================= ASSETS =================
+    ///ASSETS
     if (_isSvg) {
       return _fixedBox(SvgPicture.asset(imagePath, fit: contentImage));
     }
@@ -74,8 +75,7 @@ class CachedAnyImage extends StatelessWidget {
     );
   }
 
-  /// ================= HELPERS =================
-
+  ///HELPERS
   Widget _fixedBox(Widget child) => SizedBox(
     width: width,
     height: height,

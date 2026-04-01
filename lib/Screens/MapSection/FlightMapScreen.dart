@@ -1408,7 +1408,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final cardHeight = screenHeight * 0.36;
+    final cardHeight = screenHeight * 0.32;
     const segmentHeight = 45.0;
 
     return Stack(
