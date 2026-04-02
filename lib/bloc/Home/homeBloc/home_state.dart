@@ -1,4 +1,4 @@
-import '../manufacturer/manufacturer_list_model.dart';
+import '../../home/manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 
 abstract class HomeState {}

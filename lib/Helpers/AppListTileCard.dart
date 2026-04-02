@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
 
 class AppListTileCard extends StatelessWidget {
@@ -24,43 +25,38 @@ class AppListTileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final horizontalPadding = kIsWeb
-        ? screenWidth * 0.02
-        : screenWidth * 0.042;
-    final iconSize = kIsWeb ? screenWidth * 0.055 : screenWidth * 0.15;
+    final horizontalPadding = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.01;
+    final iconSize = kIsWeb ? screenWidth * 0.055 : screenWidth * 0.10;
     final fontSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.038;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 6),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 6,
-              offset: Offset(0, 3),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: 5,
+          ),
+          child: ListTile(
+            dense: true,
+            visualDensity: VisualDensity(vertical: -3),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03,
+              vertical: 6,
             ),
-          ],
-        ),
-        child: ListTile(
-          dense: true,
-          visualDensity: VisualDensity(vertical: -3),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: kIsWeb ? screenWidth * 0.01 :screenWidth * 0.03,
-            vertical: 6,
+            leading: _buildLeadingImage(iconSize),
+            title: Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: fontSize),
+            ),
+            onTap: onTap,
           ),
-          leading: _buildLeadingImage(iconSize),
-          title: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: fontSize),
-          ),
-          trailing: Icon(Icons.arrow_forward_ios, size: kIsWeb ?  screenWidth * 0.020: screenWidth * 0.040),
-          onTap: onTap,
         ),
-      ),
+        const Divider(
+          height: 0,
+          thickness: 2,
+          color: AppColors.dividerLineColour,
+        ),
+      ],
     );
   }
 

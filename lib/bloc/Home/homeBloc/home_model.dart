@@ -1,5 +1,5 @@
 import '../../../Database/db_helper.dart';
-import '../manufacturer/manufacturer_list_model.dart';
+import '../../home/manufacturer/manufacturer_list_model.dart';
 
 class HomeResponse {
   final String detail;

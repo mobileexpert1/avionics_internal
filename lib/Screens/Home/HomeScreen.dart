@@ -9,8 +9,11 @@ import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomAppBar.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
+import '../../Helpers/CustomHeaderViewExpandable.dart';
+import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
@@ -32,6 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
 
+  bool expandedManufacturerTab = false;
+  bool expandFlyingInTheAreaTab = true;
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +56,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiBlocProvider(
       providers: [BlocProvider<HomeCubit>(create: (_) => homeCubit)],
       child: Scaffold(
+        appBar: CustomAppBar(
+          isForHomeScreen: true,
+          title: '',
+          leftButton: IconButton(
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.homeLeftMainLogo),
+              width: 120,
+              height: 31,
+              fit: BoxFit.cover,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          rightButton: IconButton(
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+              width: 30,
+              height: 30,
+              fit: BoxFit.cover,
+            ),
+            onPressed: () async {},
+          ),
+        ),
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         floatingActionButton: Padding(
@@ -112,392 +140,165 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: kIsWeb ? 30 : 60),
-                          //SizedBox(height: screenWidth * 0.03),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: kIsWeb
-                                  ? screenWidth * 0.01
-                                  : screenWidth * 0.05,
-                            ),
-                            child: Text(
-                              "Welcome Onboard",
-                              style: TextStyle(
-                                fontSize: kIsWeb
-                                    ? screenWidth * 0.02
-                                    : screenWidth * 0.04,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-
                           SizedBox(
                             height: kIsWeb
                                 ? screenWidth * 0.01
                                 : screenWidth * 0.05,
                           ),
-                          Container(
+                          SizedBox(
                             width: kIsWeb ? size.width : double.infinity,
                             height: kIsWeb
                                 ? screenWidth * 0.09
-                                : screenWidth * 0.50,
-                            color: const Color(0xFF3F3D51),
+                                : screenWidth * 0.53,
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(
                                 kIsWeb
                                     ? AssetsPath.WebAppLogo
                                     : AssetsPath.avionicaHome,
                               ),
-                              fit: kIsWeb ? BoxFit.contain : BoxFit.cover,
+                              fit: kIsWeb ? BoxFit.contain : BoxFit.fill,
                             ),
                           ),
 
                           SizedBox(
                             height: kIsWeb
                                 ? screenWidth * 0.02
-                                : screenWidth * 0.06,
+                                : screenWidth * 0.05,
                           ),
 
-                          /// Model Comparison
-                          _buildSectionTitle(
-                            "Model Comparison",
-                            AssetsPath.comparsion,
-                            screenWidth,
-                          ),
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.035,
-                          ),
-                          AppListTileCard(
-                            title: "Select model for comparison",
-                            imagePath: CommonUi.setSvgImage(
-                              AssetsPath.selectModel,
-                            ),
-                            onTap: () {
-                              AnalyticsService.instance.buttonPressed(
-                                FirebaseEvents.selectModelCompareScreen,
-                                FirebaseEvents.exploreScreen,
-                              );
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => SelectModelCompareScreen(),
-                                ),
-                              );
-                            },
-                            isSvg: true,
-                          ),
-
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-                          const Divider(
-                            height: 0,
-                            thickness: 3,
-                            color: AppColors.separatorColourAppBar,
-                          ),
-
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-
-                          /// Manufacturer Section
-                          _buildSectionTitle(
-                            'Manufacturer',
-                            AssetsPath.manufacturer,
-                            screenWidth,
-                          ),
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-                          if (state.manufacturers.isNotEmpty) ...[
-                            ...state.manufacturers
-                                .take(2)
-                                .map(
-                                  (m) => AppListTileCard(
-                                    title: m.companyName,
-                                    imagePath: (m.icon ?? ''),
-                                    onTap: () {
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.manufacturerDetailScreen,
-                                        FirebaseEvents.exploreScreen,
-                                      );
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
-                                            create: (_) => ManufacturerCubit(),
-                                            child: ManufacturerDetailScreen(
-                                              manufacturerDetailId: m.id,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    isSvg: (m.icon ?? '').contains(".svg"),
-                                    isNetwork: true,
-                                  ),
-                                ),
-
-                            SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.01
-                                  : screenWidth * 0.045,
-                            ),
-                            Center(
-                              child: TextButton(
-                                onPressed: () {
-                                  AnalyticsService.instance.buttonPressed(
-                                    FirebaseEvents.manufacturerScreen,
-                                    FirebaseEvents.exploreScreen,
-                                  );
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                        create: (_) => ManufacturerCubit(),
-                                        child: ManufacturerScreen(),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'See All',
-                                  style: TextStyle(
-                                    fontSize: kIsWeb
-                                        ? screenWidth * 0.02
-                                        : screenWidth * 0.04,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textColour,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ] else
-                            _emptyRow(
-                              'No manufacturers available yet.',
-                              screenWidth,
-                            ),
-
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.01
-                                : screenWidth * 0.045,
-                          ),
-
-                          const Divider(
-                            height: 0,
-                            thickness: 3,
-                            color: AppColors.separatorColourAppBar,
-                          ),
-
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-
-                          /// Flying in the area
-                          _buildSectionTitle(
-                            'Flying in the area',
-                            AssetsPath.flyingareaicon,
-                            screenWidth,
-                          ),
-
-                          const SizedBox(height: 12),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 25,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Flying in the Area Button
-                                GestureDetector(
-                                  onTap: () {
+                                // Compare Aircraft
+                                CustomHeaderViewExpandable(
+                                  isNeedToShowLeftRightBottomBorder: true,
+                                  isNeedToShowLeftImage: true,
+                                  isLeftImage: IconButton(
+                                    icon: SvgPicture.asset(
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.homeCompareAircraft,
+                                      ),
+                                      width: 30,
+                                      height: 30,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    onPressed: () async {},
+                                  ),
+                                  title: "Compare Aircraft",
+                                  headerColor: AppColors.primaryDark,
+                                  arrowBackgroundColor:
+                                      AppColors.extraDarkYellow,
+                                  arrowFrontColor: Colors.black,
+                                  isExpandedViewAvailable: true,
+                                  isExpanded: false,
+                                  onHeaderTap: () {
                                     AnalyticsService.instance.buttonPressed(
-                                      FirebaseEvents.flightMapScreen,
+                                      FirebaseEvents.selectModelCompareScreen,
                                       FirebaseEvents.exploreScreen,
                                     );
 
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => BlocProvider(
-                                          create: (_) {
-                                            final mapCubit = FlightMapCubit();
-                                            final firstFlight =
-                                                mapCubit.state.flights?.first;
-                                            if (firstFlight != null) {
-                                              mapCubit.setSelectedFlight(
-                                                firstFlight,
-                                              );
-                                              mapCubit
-                                                  .clearSelectedFlightDetail();
-                                            }
-                                            return mapCubit;
-                                          },
-                                          child: FlightMapScreen(
-                                            onGoToFirstTab: () {},
-                                            skipInitialPopup: true,
-                                            openMode: 1,
-                                          ),
-                                        ),
+                                        builder: (_) =>
+                                            SelectModelCompareScreen(),
                                       ),
                                     );
                                   },
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.facebookButton,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          CommonUi.setSvgImage(
-                                            AssetsPath.mapPopupAircraft,
-                                          ),
-                                          height: 32,
-                                          width: 32,
-                                          fit: BoxFit.contain,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            "Flying in the Area",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: kIsWeb
-                                                  ? screenWidth * 0.016
-                                                  : screenWidth * 0.04,
-                                            ),
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_forward_ios,
-                                          size: 16,
-                                          color: Colors.white,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                 ),
 
-                                const SizedBox(height: 6),
-                                const Text(
-                                  "Click to view flights currently flying in this area on the map",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 13,
-                                  ),
-                                  textAlign: TextAlign.start,
+                                SizedBox(
+                                  height: kIsWeb
+                                      ? screenWidth * 0.02
+                                      : screenWidth * 0.04,
                                 ),
 
-                                const SizedBox(height: 16),
-                                // Track a Flight Button
-                                GestureDetector(
-                                  onTap: () {
-                                    AnalyticsService.instance.buttonPressed(
-                                      FirebaseEvents.trackAndSearchFlight,
-                                      FirebaseEvents.exploreScreen,
-                                    );
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => BlocProvider(
-                                          create: (_) {
-                                            final mapCubit = FlightMapCubit();
-                                            final flightToTrack =
-                                                mapCubit.state.flights?.first;
-                                            if (flightToTrack != null) {
-                                              mapCubit.startTrackingFlight(
-                                                flightToTrack.id,
-                                                context,
-                                              );
-                                            }
-                                            return mapCubit;
-                                          },
-                                          child: FlightMapScreen(
-                                            onGoToFirstTab: () {},
-                                            skipInitialPopup: true,
-                                            openMode: 2,
-                                          ),
+                                if (state.manufacturers.isNotEmpty) ...[
+                                  CustomHeaderViewExpandable(
+                                    isNeedToShowLeftRightBottomBorder: false,
+                                    isNeedToShowLeftImage: true,
+                                    isExpanded: expandedManufacturerTab,
+                                    title: "Manufacturer Library",
+                                    headerColor: AppColors.primaryDark,
+                                    arrowBackgroundColor:
+                                        AppColors.extraDarkYellow,
+                                    arrowFrontColor: Colors.black,
+                                    isExpandedViewAvailable: true,
+                                    isLeftImage: IconButton(
+                                      icon: SvgPicture.asset(
+                                        CommonUi.setSvgImage(
+                                          AssetsPath.homeManufacturerLibrary,
                                         ),
+                                        width: 30,
+                                        height: 30,
+                                        fit: BoxFit.cover,
                                       ),
-                                    );
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          AppColors.customBottomEnabledColour,
-                                      borderRadius: BorderRadius.circular(5),
+                                      onPressed: () async {},
                                     ),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          CommonUi.setSvgImage(
-                                            AssetsPath.mapPopupLivearea,
-                                          ),
-                                          height: 25,
-                                          width: 25,
-                                          fit: BoxFit.fitWidth,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            "Track a Flight",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: kIsWeb
-                                                  ? screenWidth * 0.016
-                                                  : screenWidth * 0.04,
-                                            ),
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_forward_ios,
-                                          size: 16,
-                                          color: Colors.white,
-                                        ),
-                                      ],
+                                    onHeaderTap: () {
+                                      setState(() {
+                                        expandedManufacturerTab =
+                                            !expandedManufacturerTab;
+                                      });
+                                    },
+                                    child: _buildManufacturerBody(
+                                      state.manufacturers,
+                                      screenWidth,
                                     ),
                                   ),
+                                ] else
+                                  _emptyRow(
+                                    'No manufacturers available yet.',
+                                    screenWidth,
+                                  ),
+
+                                SizedBox(
+                                  height: kIsWeb
+                                      ? screenWidth * 0.02
+                                      : screenWidth * 0.045,
                                 ),
 
-                                const SizedBox(height: 6),
-                                const Text(
-                                  "View real-time status, route, and updates for a flight.",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
+                                CustomHeaderViewExpandable(
+                                  isNeedToShowLeftRightBottomBorder: false,
+                                  isNeedToShowLeftImage: true,
+                                  isExpanded: expandFlyingInTheAreaTab,
+                                  title: "Flight Tracker",
+                                  headerColor: AppColors.primaryDark,
+                                  arrowBackgroundColor:
+                                      AppColors.extraDarkYellow,
+                                  arrowFrontColor: Colors.black,
+                                  isExpandedViewAvailable: true,
+                                  isLeftImage: IconButton(
+                                    icon: SvgPicture.asset(
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.flyingareaicon,
+                                      ),
+                                      width: 30,
+                                      height: 30,
+                                      fit: BoxFit.cover,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () async {},
                                   ),
-                                  textAlign: TextAlign.start,
+                                  onHeaderTap: () {
+                                    setState(() {
+                                      expandFlyingInTheAreaTab =
+                                          !expandFlyingInTheAreaTab;
+                                    });
+                                  },
+                                  child: _buildFlyingInTheAreaBody(screenWidth),
                                 ),
                               ],
                             ),
                           ),
+
+                          SizedBox(
+                            height: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.045,
+                          ),
+
                           const SizedBox(height: 20),
                           SizedBox(
                             height: kIsWeb
@@ -617,6 +418,228 @@ class _HomeScreenState extends State<HomeScreen> {
             return const SizedBox();
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildManufacturerBody(
+    List<ManufacturerListModel> category,
+    double screenWidth,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.greyForConversionScreen,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: [
+          ...List.generate(category.length, (index) {
+            final formula = category[index];
+            return AppListTileCard(
+              title: formula.companyName,
+              imagePath: (formula.icon ?? ''),
+              onTap: () {
+                AnalyticsService.instance.buttonPressed(
+                  FirebaseEvents.manufacturerDetailScreen,
+                  FirebaseEvents.exploreScreen,
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => ManufacturerCubit(),
+                      child: ManufacturerDetailScreen(
+                        manufacturerDetailId: formula.id,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              isSvg: (formula.icon ?? '').contains(".svg"),
+              isNetwork: true,
+            );
+          }),
+
+          Center(
+            child: TextButton(
+              onPressed: () {
+                AnalyticsService.instance.buttonPressed(
+                  FirebaseEvents.manufacturerScreen,
+                  FirebaseEvents.exploreScreen,
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) => ManufacturerCubit(),
+                      child: ManufacturerScreen(),
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                'See All',
+                style: TextStyle(
+                  fontSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlyingInTheAreaBody(double screenWidth) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.06,
+        vertical: 15,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.greyForConversionScreen,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Choose Your Tracking Mode",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
+          ),
+
+          SizedBox(height: screenWidth * 0.02),
+
+          CustomHeaderViewExpandable(
+            isNeedToShowLeftRightBottomBorder: false,
+            isNeedToShowLeftImage: true,
+            isExpanded: false,
+            title: "Flying in the Area",
+            headerColor: AppColors.primaryBlue,
+            arrowBackgroundColor: AppColors.extraDarkYellow,
+            arrowFrontColor: Colors.black,
+            isExpandedViewAvailable: true,
+            isLeftImage: IconButton(
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
+                color: Colors.white,
+              ),
+              onPressed: () async {},
+            ),
+            onHeaderTap: () {
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.flightMapScreen,
+                FirebaseEvents.exploreScreen,
+              );
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider(
+                    create: (_) {
+                      final mapCubit = FlightMapCubit();
+                      final firstFlight = mapCubit.state.flights?.first;
+                      if (firstFlight != null) {
+                        mapCubit.setSelectedFlight(firstFlight);
+                        mapCubit.clearSelectedFlightDetail();
+                      }
+                      return mapCubit;
+                    },
+                    child: FlightMapScreen(
+                      onGoToFirstTab: () {},
+                      skipInitialPopup: true,
+                      openMode: 1,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 6),
+          const Text(
+            "Click to view flights currently flying in this area on the map",
+            style: TextStyle(
+              color: AppColors.textHomeColour,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            textAlign: TextAlign.start,
+          ),
+
+          SizedBox(height: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03),
+
+          CustomHeaderViewExpandable(
+            isNeedToShowLeftRightBottomBorder: false,
+            isNeedToShowLeftImage: true,
+            isExpanded: false,
+            title: "Flying in the Area",
+            headerColor: AppColors.primaryBlue,
+            arrowBackgroundColor: AppColors.extraDarkYellow,
+            arrowFrontColor: Colors.black,
+            isExpandedViewAvailable: true,
+            isLeftImage: IconButton(
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
+                color: Colors.white,
+              ),
+              onPressed: () async {},
+            ),
+            onHeaderTap: () {
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.flightMapScreen,
+                FirebaseEvents.exploreScreen,
+              );
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider(
+                    create: (_) {
+                      final mapCubit = FlightMapCubit();
+                      final firstFlight = mapCubit.state.flights?.first;
+                      if (firstFlight != null) {
+                        mapCubit.setSelectedFlight(firstFlight);
+                        mapCubit.clearSelectedFlightDetail();
+                      }
+                      return mapCubit;
+                    },
+                    child: FlightMapScreen(
+                      onGoToFirstTab: () {},
+                      skipInitialPopup: true,
+                      openMode: 1,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            "View real-time status, route, and updates for a flight",
+            style: TextStyle(
+              color: AppColors.textHomeColour,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            textAlign: TextAlign.start,
+          ),
+        ],
       ),
     );
   }

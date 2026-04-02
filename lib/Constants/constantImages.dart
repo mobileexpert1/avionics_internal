@@ -1,5 +1,14 @@
 abstract class AssetsPath {
   /// svg Images
+
+  //home Screen
+  static const String avionicaHome = "1avionicaHome";
+  static const String homeLeftMainLogo = "2homeLeftMainLogo";
+  static const String homeRightSetting = "3homeRightSetting";
+  static const String homeCompareAircraft = "4homeCompareAircraft";
+  static const String homeManufacturerLibrary = "5homeManufacturerLibrary";
+
+
   static const String tutorialVideo = "TutorialVideo";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";
   static const String mapLayers = "MpaLayes";
@@ -18,7 +27,6 @@ abstract class AssetsPath {
   static const String trackIcon = "TrackIcon";
   static const String tickIcon = "TickIcon";
   static const String sliders = "Sliders";
-  static const String avionicaHome = "homeLogo";
   static const String WebAppLogo = "WebAppLogo";
   static const String search = "search";
   static const String comparsion = "Comparsion";

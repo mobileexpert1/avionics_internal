@@ -15,6 +15,7 @@ class AppColors {
   static const Color customColourOfTimeExpired = Color(0xFFF0F7FF);
 
   static const Color textColour = Color(0xFF626262);
+  static const Color textHomeColour = Color(0xFF565656);
   static const Color saveButtonColour = Color(0xFFD2E6FC);
 
   static const Color primaryDark = Color(0xFF201E48);
@@ -22,6 +23,8 @@ class AppColors {
   static const Color grayMedium = Color(0xFF969696);
   static const Color grayLight = Color(0xFFD6D6D6);
   static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
+  static const Color dividerLineColour = Color(0xFFEAEAEA);
 
   static const Color extraLightGrey = Color(0xFFF3F3F3);
   static const Color lightGreyWithAlphaDecreased = Color(0x33FFFFFF);

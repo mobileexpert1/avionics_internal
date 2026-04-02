@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../MapSection/flight_key_values_model.dart';
 import '../../MapSection/flight_map_repository.dart';
-import '../manufacturer/manufacturer_list_model.dart';
+import '../../home/manufacturer/manufacturer_list_model.dart';
 import 'home_model.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';

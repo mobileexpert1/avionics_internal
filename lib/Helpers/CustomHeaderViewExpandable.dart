@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isNeedToShowLeftRightBottomBorder;
   final bool isNeedToShowLeftImage;
+  final IconButton? isLeftImage;
   final bool isExpanded;
   final String title;
   final Color headerColor;
@@ -25,6 +26,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     required this.arrowFrontColor,
     required this.isExpandedViewAvailable,
     this.onHeaderTap,
+    this.isLeftImage,
     this.child,
   });
 
@@ -43,9 +45,9 @@ class CustomHeaderViewExpandable extends StatelessWidget {
             child: Stack(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isNeedToShowLeftImage ? 10 : 15,
+                    vertical:  isNeedToShowLeftImage ? 05 : 16,
                   ),
                   decoration: BoxDecoration(
                     color: headerColor,
@@ -57,7 +59,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   child: Row(
                     children: [
                       if (isNeedToShowLeftImage)...[
-                        const Icon(Icons.menu_book, color: Colors.white),
+                        isLeftImage!,
                         const SizedBox(width: 12),
                       ],
                       Expanded(
@@ -80,7 +82,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   top: 0,
                   bottom: 0,
                   child: Container(
-                    width: 60,
+                    width: 55,
                     decoration: BoxDecoration(
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded
@@ -94,6 +96,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         child: Icon(
                           Icons.keyboard_arrow_right,
                           color:arrowFrontColor,
+                          size: 40,
                         ),
                       ),
                     ),

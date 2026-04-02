@@ -1,4 +1,3 @@
-
 import '../../../Database/db_helper.dart';
 
 class ManufacturerListModel extends BaseModel {

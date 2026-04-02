@@ -8,6 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? centerTitle;
   final double? titleSpacing;
   final bool? isHideTopGradient;
+  final bool? isForHomeScreen;
 
   const CustomAppBar({
     super.key,
@@ -17,13 +18,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle,
     this.titleSpacing,
     this.isHideTopGradient,
+    this.isForHomeScreen,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.primaryDark,
         boxShadow: [
           BoxShadow(
             color: isHideTopGradient == true ? Colors.white : Colors.black12,
@@ -62,8 +64,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : null,
-        leadingWidth: 100,
-
+        leadingWidth: isForHomeScreen == true ? 200 : 100,
         actions: rightButton != null
             ? [
                 Align(
