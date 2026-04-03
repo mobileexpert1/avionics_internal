@@ -25,6 +25,8 @@ class AppColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
   static const Color dividerLineColour = Color(0xFFEAEAEA);
+  static const Color dividerLineColourForComparison = Color(0xFFD9D9D9);
+
 
   static const Color extraLightGrey = Color(0xFFF3F3F3);
   static const Color lightGreyWithAlphaDecreased = Color(0x33FFFFFF);
@@ -36,6 +38,7 @@ class AppColors {
 
   static const Color primaryValueColour = Color(0xFF1B1748);
 
+
   static const Color accentCyan = Color(0xFF00D9FF);
   static const Color accentPurple = Color(0xFF9D4EDD);
 
@@ -44,4 +47,8 @@ class AppColors {
     end: Alignment.bottomRight,
     colors: [Color(0xCC1B263B), Color(0xCC0D1B2A)],
   );
+
+  static const Color grayForCompareItem = Color.fromRGBO(227, 227, 227, 0.4);
+  static const Color grayForCompareTextColour = Color.fromRGBO(27, 23, 72, 0.6);
+
 }

@@ -56,6 +56,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
         listener: (context, state) {
           if (!mounted) return;
 
+
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -70,6 +71,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
               Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
+                  isClearBackgroundColour: true,
                   title: ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -85,7 +87,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                     constraints: BoxConstraints(maxWidth: contentMaxWidth),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: 20,
                         vertical: topPadding,
                       ),
                       child: SingleChildScrollView(
@@ -126,8 +128,8 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                   child: CustomBottomButton(
                                     title: ConstantStrings.sendEmailButton,
                                     backgroundColor: isButtonEnabled
-                                        ? AppColors.customBottomEnabledColour
-                                        : AppColors.customBottomDisableColour,
+                                        ? AppColors.primaryValueColour
+                                        : AppColors.darkSeparatorColourAppBar,
                                     textColor: Colors.white,
                                     icon: const SizedBox.shrink(),
                                     isEnabled: isButtonEnabled,

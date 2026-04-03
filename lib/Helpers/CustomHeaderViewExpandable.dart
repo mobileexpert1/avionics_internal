@@ -47,7 +47,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: isNeedToShowLeftImage ? 10 : 15,
-                    vertical:  isNeedToShowLeftImage ? 05 : 16,
+                    vertical:  isNeedToShowLeftImage ? 03 : 16,
                   ),
                   decoration: BoxDecoration(
                     color: headerColor,
@@ -82,7 +82,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   top: 0,
                   bottom: 0,
                   child: Container(
-                    width: 55,
+                    width: 52,
                     decoration: BoxDecoration(
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded

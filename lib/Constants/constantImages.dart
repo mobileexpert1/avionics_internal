@@ -2,12 +2,18 @@ abstract class AssetsPath {
   /// svg Images
 
   //home Screen
+  static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";
   static const String homeLeftMainLogo = "2homeLeftMainLogo";
   static const String homeRightSetting = "3homeRightSetting";
   static const String homeCompareAircraft = "4homeCompareAircraft";
   static const String homeManufacturerLibrary = "5homeManufacturerLibrary";
-
+  static const String homeWilco = "6homeWilco";
+  static const String homeLiveTracking = "7HomeLiveTracking";
+  static const String compareLogo = "8CompareLogo";
+  static const String compareFilter = "9CompareFilter";
+  static const String generalCompare = "10GeneralCompare";
+  static const String technicalCompare = "11TechnicalCompare";
 
   static const String tutorialVideo = "TutorialVideo";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";
@@ -37,7 +43,6 @@ abstract class AssetsPath {
   static const String Plane1 = "Plane1";
   static const String ChatIcon = "Chatbot";
   static const String SendIcon = "SendIcon";
-  static const String filterIconCompare = "filterIconCompare";
   static const String flyingareaicon = "flyingareaicon";
   static const String instantAI = "instantAI";
   static const String Quiz = "Quiz";

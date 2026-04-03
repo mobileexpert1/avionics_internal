@@ -102,6 +102,7 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
         values: subSegmentOptions,
         selectedIndex: subSegmentIndex,
         onSelected: (i) => setState(() => subSegmentIndex = i),
+        isForFlightScreen: true,
       ),
       const SizedBox(height: 15),
       if (subSegmentIndex == 0) ...[
@@ -168,11 +169,13 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
 class RadioChips extends StatelessWidget {
   final List<String> values;
   final int selectedIndex;
+  final bool isForFlightScreen;
   final Function(int) onSelected;
 
   const RadioChips({
     super.key,
     required this.values,
+    required this.isForFlightScreen,
     required this.selectedIndex,
     required this.onSelected,
   });
@@ -180,15 +183,15 @@ class RadioChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: isForFlightScreen ? MainAxisSize.max : MainAxisSize.min,
       children: List.generate(values.length, (index) {
         final selected = index == selectedIndex;
-
         return GestureDetector(
           onTap: () => onSelected(index),
           child: Container(
-            height: 30,
+            height: 35,
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),

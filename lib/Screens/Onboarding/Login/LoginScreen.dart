@@ -67,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
+                  isClearBackgroundColour: true,
                   title: ConstantStrings.loginButton,
                 ),
                 body: Center(
@@ -75,15 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? const BoxConstraints(maxWidth: 450)
                         : const BoxConstraints(),
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
-
                             SvgPicture.asset(
                               CommonUi.setSvgImage(
-                                AssetsPath.logoMain,
+                                AssetsPath.mainLogo,
                               ),
                               fit: BoxFit.fill,
                             ),
@@ -147,10 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   title:
                                   ConstantStrings.loginButton,
                                   backgroundColor: enabled
-                                      ? AppColors
-                                      .customBottomEnabledColour
-                                      : AppColors
-                                      .customBottomDisableColour,
+                                      ? AppColors.primaryValueColour
+                                      : AppColors.darkSeparatorColourAppBar,
                                   textColor: Colors.white,
                                   icon: const SizedBox(width: 0),
                                   isEnabled: enabled,
@@ -275,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
 
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 20),
 
                             // -------- Signup --------
                             TextButton(
@@ -299,6 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ConstantStrings.signUpPrompt,
                                 style: TextStyle(
                                   color: AppColors.textColour,
+                                  fontSize: 18
                                 ),
                               ),
                             ),

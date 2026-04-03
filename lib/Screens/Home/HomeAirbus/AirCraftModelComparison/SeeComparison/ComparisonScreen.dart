@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,29 +6,29 @@ import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.da
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../../CustomFiles/CustomTabBar.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_model.dart';
-import '../FilterScreen/filtter_screen.dart';
+import '../../../../MapSection/AirportStationDetailCard/AirportStationDetailCard.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
+import '../FilterScreen/Filter_Screen_For_Comparison.dart';
 
 class ComparisonScreen extends StatefulWidget {
-  final bool showTabs;
+  // final bool showTabs;
   final String model1;
   final String model2;
   final String model1Name;
   final String model2Name;
 
   const ComparisonScreen({
-    Key? key,
-    this.showTabs = true,
+    super.key,
+    //this.showTabs = true,
     required this.model1,
     required this.model2,
     required this.model1Name,
     required this.model2Name,
-  }) : super(key: key);
+  });
 
   @override
   State<ComparisonScreen> createState() => _ComparisonScreenState();
@@ -35,6 +36,13 @@ class ComparisonScreen extends StatefulWidget {
 
 class _ComparisonScreenState extends State<ComparisonScreen> {
   int _currentTabIndex = 0;
+
+  int subSegmentIndex = 0;
+  final subSegmentOptions = const [
+    'General',
+    'Technical Data',
+    'Operational Data',
+  ];
 
   @override
   void initState() {
@@ -52,10 +60,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
+        isForComparison: true,
         title: "Comparison ${widget.model1Name}, ${widget.model2Name}",
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         rightButton: GestureDetector(
@@ -80,7 +89,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20),
                           ),
-                          child: FilterScreen1(
+                          child: FilterScreenForComparison(
                             isAlreadyProcessing: currentState.isApplied,
                             modelResponse: currentState,
                           ),
@@ -97,10 +106,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             }
           },
           child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.filterIconCompare),
-            fit: BoxFit.fill,
-            width: 50,
-            height: 50,
+            CommonUi.setSvgImage(AssetsPath.compareFilter),
+            fit: BoxFit.cover,
+            width: 30,
+            height: 30,
           ),
         ),
       ),
@@ -162,7 +171,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 labels.add(option.name);
 
                 switch (option.id) {
-                  // GENERAL
                   case 'icao_type_code':
                     a1Values.add(model.aircraft1.general.icaoTypeCode);
                     a2Values.add(model.aircraft2.general.icaoTypeCode);
@@ -367,23 +375,57 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
               return Column(
                 children: [
-                  if (widget.showTabs)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: CustomTabBar(
-                        tabTitles: const [
-                          'GENERAL',
-                          'TECHNICAL DATA',
-                          'OPERATIONAL DATA',
-                        ],
-                        initialIndex: _currentTabIndex,
-                        isComeFromComparsionScreen: true,
-                        onTabSelected: (index) {
-                          setState(() => _currentTabIndex = index);
-                        },
-                      ),
+                  Container(
+                    color: AppColors.primaryDark,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: RadioChips(
+                            isForFlightScreen: false,
+                            values: subSegmentOptions,
+                            selectedIndex: _currentTabIndex,
+                            onSelected: (i) =>
+                                setState(() => _currentTabIndex = i),
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 15,
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  "PARAMETERS",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  widget.model1Name,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  widget.model2Name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  const SizedBox(height: 10),
+                  ),
+
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(20),
@@ -400,61 +442,59 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                 2: FlexColumnWidth(2),
                               },
                               border: TableBorder.all(
-                                color: Colors.grey,
+                                color: AppColors.dividerLineColourForComparison,
                                 width: 1,
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                              children: [
-                                TableRow(
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: Text(""),
-                                    ),
-                                    Container(
-                                      color: const Color(0xFFEBF5FF),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Center(
-                                        child: Text(
-                                          widget.model1Name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF3F3D56),
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      color: const Color(0xFFEBF5FF),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Center(
-                                        child: Text(
-                                          widget.model2Name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF3F3D56),
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
 
+                              children: [
                                 for (int i = 0; i < labels.length; i++)
                                   TableRow(
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(10),
-                                        child: Text(labels[i]),
+                                        child: Text(
+                                          labels[i],
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors
+                                                .grayForCompareTextColour,
+                                            fontSize: 14,
+                                          ),
+                                        ),
                                       ),
+
+                                      TableCell(
+                                        verticalAlignment:
+                                            TableCellVerticalAlignment.fill,
+                                        child: Container(
+                                          color: AppColors.grayForCompareItem,
+                                          padding: const EdgeInsets.all(10),
+                                          child: Center(
+                                            child: Text(
+                                              a1Values[i],
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.black,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
                                       Padding(
                                         padding: const EdgeInsets.all(10),
-                                        child: Text(a1Values[i]),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Text(a2Values[i]),
+                                        child: Center(
+                                          child: Text(
+                                            a2Values[i],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.black,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),

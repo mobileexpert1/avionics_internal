@@ -151,8 +151,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           CustomBottomButton(
                             title: buttonBottomTitle,
                             backgroundColor: state.isButtonEnabled
-                                ? AppColors.customBottomEnabledColour
-                                : AppColors.customBottomDisableColour,
+                                ? AppColors.primaryValueColour
+                                : AppColors.darkSeparatorColourAppBar,
                             textColor: Colors.white,
                             icon: const SizedBox(width: 0),
                             isEnabled:

@@ -967,12 +967,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                   ) {
                                     _safeAnimate(0.01);
                                   });
-
-                                  // _sheetController.animateTo(
-                                  //   0.0,
-                                  //   duration: const Duration(milliseconds: 400),
-                                  //   curve: Curves.easeInOut,
-                                  // );
                                 },
 
                                 child: LayoutBuilder(

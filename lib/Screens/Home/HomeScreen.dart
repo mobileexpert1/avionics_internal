@@ -15,18 +15,17 @@ import '../../Helpers/AppText.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
-import '../MapSection/MapHelpers/FlightDetailScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
-import 'SavedFlights/SavedFlighScreen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -35,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
 
-  bool expandedManufacturerTab = false;
+  bool expandedManufacturerTab = true;
   bool expandFlyingInTheAreaTab = true;
 
   @override
@@ -66,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 31,
               fit: BoxFit.cover,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {},
           ),
           rightButton: IconButton(
             icon: SvgPicture.asset(
@@ -112,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             child: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.Chatbot),
+              CommonUi.setSvgImage(AssetsPath.homeWilco),
               width: 50,
               height: 50,
               fit: BoxFit.cover,
@@ -296,118 +295,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(
                             height: kIsWeb
                                 ? screenWidth * 0.02
-                                : screenWidth * 0.045,
+                                : screenWidth *
+                                      ((expandedManufacturerTab == true &&
+                                              expandFlyingInTheAreaTab == true)
+                                          ? 0.0
+                                          : 0.35),
                           ),
-
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-                          const Divider(
-                            height: 0,
-                            thickness: 3,
-                            color: AppColors.separatorColourAppBar,
-                          ),
-
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-
-                          /// Favourites
-                          _buildSectionTitle(
-                            'Favourites',
-                            AssetsPath.star,
-                            screenWidth,
-                          ),
-                          SizedBox(
-                            height: kIsWeb
-                                ? screenWidth * 0.02
-                                : screenWidth * 0.045,
-                          ),
-                          if (state.favourites.isNotEmpty) ...[
-                            ...state.favourites
-                                .take(2)
-                                .map(
-                                  (f) => AppListTileCard(
-                                    title: f.callSign,
-                                    imagePath: (f.image),
-                                    onTap: () async {
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.flightAircraftDetail,
-                                        FirebaseEvents.savedFlightScreen,
-                                      );
-
-                                      await homeCubit.repository
-                                          .getFlightKeyValueFromServer();
-                                      // Pending Details From Backend side
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider.value(
-                                            value: context
-                                                .read<FlightMapCubit>(),
-                                            child: FlightDetailScreen(
-                                              ICAOType: f.iCAOCode,
-                                              flightNumber: f.flightNumber,
-                                              callsign: "",
-                                              flightId: f.flightId,
-                                              fromSavedFlight: true,
-                                              flightDetail:
-                                                  FlightAircraftDetail(
-                                                    icaoTypeCode: f.iCAOCode,
-                                                    aircraftModel:
-                                                        f.aircraftModel,
-                                                    image: f.image,
-                                                    id: f.id,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    isSvg: (f.image).contains(".svg"),
-                                    isNetwork: true,
-                                  ),
-                                ),
-                            Center(
-                              child: TextButton(
-                                onPressed: () {
-                                  AnalyticsService.instance.buttonPressed(
-                                    FirebaseEvents.savedFlighScreen,
-                                    FirebaseEvents.exploreScreen,
-                                  );
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          SavedFlighScreen(showTabs: true),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'See All',
-                                  style: TextStyle(
-                                    fontSize: kIsWeb
-                                        ? screenWidth * 0.02
-                                        : screenWidth * 0.04,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF626262),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: kIsWeb
-                                  ? screenWidth * 0.02
-                                  : screenWidth * 0.045,
-                            ),
-                          ] else
-                            _emptyRow('No favourites saved yet.', screenWidth),
                         ],
                       ),
                     ),
@@ -498,8 +391,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.06,
-        vertical: 15,
+        horizontal: screenWidth * 0.04,
+        vertical: 10,
       ),
       decoration: BoxDecoration(
         color: AppColors.greyForConversionScreen,
@@ -585,14 +478,14 @@ class _HomeScreenState extends State<HomeScreen> {
             isNeedToShowLeftRightBottomBorder: false,
             isNeedToShowLeftImage: true,
             isExpanded: false,
-            title: "Flying in the Area",
+            title: "Track a Flight",
             headerColor: AppColors.primaryBlue,
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
+                CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
                 width: 30,
                 height: 30,
                 fit: BoxFit.cover,

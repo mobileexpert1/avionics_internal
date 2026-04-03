@@ -29,7 +29,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   @override
   void initState() {
@@ -58,9 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ?? 'Signup failed'),
-              ),
+              SnackBar(content: Text(state.errorMessage ?? 'Signup failed')),
             );
           }
         },
@@ -70,19 +68,15 @@ class _SignupScreenState extends State<SignupScreen> {
               Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
+                  isClearBackgroundColour: true,
                   title: ConstantStrings.CreateAccount,
                   leftButton: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xFF151A6A),
-                    ),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
                     onPressed: () {
                       if (!mounted) return;
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (_) => const LoginScreen(),
-                        ),
-                            (route) => false,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
                       );
                     },
                   ),
@@ -93,17 +87,14 @@ class _SignupScreenState extends State<SignupScreen> {
                       maxWidth: kIsWeb ? 450 : double.infinity,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 20),
                             Center(
                               child: SvgPicture.asset(
-                                CommonUi.setSvgImage(
-                                  AssetsPath.logoMain,
-                                ),
+                                CommonUi.setSvgImage(AssetsPath.mainLogo),
                                 height: 80,
                                 fit: BoxFit.contain,
                               ),
@@ -177,14 +168,11 @@ class _SignupScreenState extends State<SignupScreen> {
 
                             // -------- Confirm Password --------
                             BlocSelector<SignupCubit, SignupState, String?>(
-                              selector: (state) =>
-                              state.confirmPasswordError,
+                              selector: (state) => state.confirmPasswordError,
                               builder: (_, error) {
                                 return CustomTextField(
-                                  label:
-                                  ConstantStrings.confirmPasswordLabel,
-                                  controller:
-                                  confirmPasswordController,
+                                  label: ConstantStrings.confirmPasswordLabel,
+                                  controller: confirmPasswordController,
                                   errorText: error,
                                   obscureText: true,
                                   onChanged: (val) => context
@@ -198,9 +186,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     if (kIsWeb && mounted) {
                                       context
                                           .read<SignupCubit>()
-                                          .verifyEmailRegisteredOrNot(
-                                        context,
-                                      );
+                                          .verifyEmailRegisteredOrNot(context);
                                     }
                                   },
                                 );
@@ -215,10 +201,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                 return CustomBottomButton(
                                   title: ConstantStrings.next,
                                   backgroundColor: enabled
-                                      ? AppColors
-                                      .customBottomEnabledColour
-                                      : AppColors
-                                      .customBottomDisableColour,
+                                      ? AppColors.primaryValueColour
+                                      : AppColors.darkSeparatorColourAppBar,
                                   textColor: Colors.white,
                                   icon: const SizedBox(width: 0),
                                   isEnabled: enabled,
@@ -227,9 +211,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                                     context
                                         .read<SignupCubit>()
-                                        .verifyEmailRegisteredOrNot(
-                                      context,
-                                    );
+                                        .verifyEmailRegisteredOrNot(context);
 
                                     AnalyticsService.instance.buttonPressed(
                                       FirebaseEvents.signupButton,
@@ -250,8 +232,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                      const LoginScreen(),
+                                      builder: (_) => const LoginScreen(),
                                     ),
                                   );
 
@@ -264,11 +245,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ConstantStrings.loginPrompt,
                                   style: TextStyle(
                                     color: AppColors.textColour,
-                                    fontSize: 14,
+                                    fontSize: 18,
                                   ),
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 80),
                           ],
                         ),
                       ),
@@ -281,9 +263,7 @@ class _SignupScreenState extends State<SignupScreen> {
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
           );

@@ -9,6 +9,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double? titleSpacing;
   final bool? isHideTopGradient;
   final bool? isForHomeScreen;
+  final bool? isForComparison;
+  final bool? isClearBackgroundColour;
 
   const CustomAppBar({
     super.key,
@@ -19,21 +21,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleSpacing,
     this.isHideTopGradient,
     this.isForHomeScreen,
+    this.isForComparison,
+    this.isClearBackgroundColour,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primaryDark,
+        color: isClearBackgroundColour == true ? Colors.white : AppColors.primaryDark,
         boxShadow: [
           BoxShadow(
             color: isHideTopGradient == true ? Colors.white : Colors.black12,
-            offset: const Offset(0, 2), // move down
+            offset: const Offset(0, 2),
             blurRadius: 4,
           ),
         ],
-        border: Border(
+        border: isForComparison == true ? null : Border(
           bottom: BorderSide(
             color: isHideTopGradient == true
                 ? Colors.white
@@ -45,11 +49,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         surfaceTintColor: Colors.white,
         title: Text(
           title,
-          style: const TextStyle(fontSize: 20, color: Color(0xFF151A6A)),
+          style: TextStyle(fontSize: 20, color: isClearBackgroundColour == true ? Colors.black :Colors.white),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -64,7 +69,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : null,
-        leadingWidth: isForHomeScreen == true ? 200 : 100,
+        leadingWidth: isForHomeScreen == true ? 200 : 50,
         actions: rightButton != null
             ? [
                 Align(
