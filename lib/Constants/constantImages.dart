@@ -14,6 +14,7 @@ abstract class AssetsPath {
   static const String compareFilter = "9CompareFilter";
   static const String generalCompare = "10GeneralCompare";
   static const String technicalCompare = "11TechnicalCompare";
+  static const String searchIcon = "12SearchIcon";
 
   static const String tutorialVideo = "TutorialVideo";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";

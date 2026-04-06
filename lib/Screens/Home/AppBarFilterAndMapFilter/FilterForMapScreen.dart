@@ -135,50 +135,50 @@ class _FilterContent extends StatelessWidget {
                 runSpacing: 8,
                 children: ["CARGO", "BUSINESS_JETS", "PASSENGER", "GLIDERS"]
                     .map((label) {
-                      final isSelected = state.selectedCategories.contains(
-                        label,
-                      );
-                      return GestureDetector(
-                        onTap: () => cubit.toggleCategory(label),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFFD2E6FC)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF3E3C55),
-                              width: 2,
+                  final isSelected = state.selectedCategories.contains(
+                    label,
+                  );
+                  return GestureDetector(
+                    onTap: () => cubit.toggleCategory(label),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFFD2E6FC)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color(0xFF3E3C55),
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // SvgPicture.asset(
+                          //   CommonUi.setSvgImage(AssetsPath.filterCheckMap),
+                          //   height: 16,
+                          //   width: 16,
+                          // ),
+                          // const SizedBox(width: 10),
+                          Text(
+                            label,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? Color(0xFF3E3C55)
+                                  : const Color(0xFF3E3C55),
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // SvgPicture.asset(
-                              //   CommonUi.setSvgImage(AssetsPath.filterCheckMap),
-                              //   height: 16,
-                              //   width: 16,
-                              // ),
-                              // const SizedBox(width: 10),
-                              Text(
-                                label,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: isSelected
-                                      ? Color(0xFF3E3C55)
-                                      : const Color(0xFF3E3C55),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    })
+                        ],
+                      ),
+                    ),
+                  );
+                })
                     .toList(),
               ),
             ),
@@ -209,7 +209,12 @@ class _FilterContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   SegmentedControl(
-                    options: const ['Standard', 'Satellite', 'Hybrid','FIR Borders'],
+                    options: const [
+                      'Standard',
+                      'Satellite',
+                      'Hybrid',
+                      'FIR Borders'
+                    ],
                     selectedValue: cubit.getMapTypeName(),
                     onChanged: cubit.changeMapTypeByName,
                   ),
@@ -230,12 +235,14 @@ class _FilterContent extends StatelessWidget {
                       final result = await Navigator.push<List<AircraftModel>>(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: aircraftCubit,
-                            child: AircraftSearchScreen(
-                              initialSelected: aircraftCubit.selectedAircraft,
-                            ),
-                          ),
+                          builder: (_) =>
+                              BlocProvider.value(
+                                value: aircraftCubit,
+                                child: AircraftSearchScreen(
+                                  initialSelected: aircraftCubit
+                                      .selectedAircraft,
+                                ),
+                              ),
                         ),
                       );
                       // if (result != null) {
@@ -316,9 +323,10 @@ class _FilterContent extends StatelessWidget {
                           ),
                           const SizedBox(width: 10),
                           GestureDetector(
-                            onTap: () => aircraftCubit.removeSelectedAircraft(
-                              aircraft.icaoTypeCode,
-                            ),
+                            onTap: () =>
+                                aircraftCubit.removeSelectedAircraft(
+                                  aircraft.icaoTypeCode,
+                                ),
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.closeIcon),
                               width: 20,
@@ -365,6 +373,7 @@ class _FilterContent extends StatelessWidget {
 
 /// 🔹 Expandable Section with Show More/Less toggle
 class ExpandableSection extends StatelessWidget {
+  final bool? isComeFromManufactureScreen;
   final String title;
   final bool expanded;
   final VoidCallback onToggle;
@@ -376,46 +385,48 @@ class ExpandableSection extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     required this.child,
+    this.isComeFromManufactureScreen,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF3E3C55),
+        if (isComeFromManufactureScreen == false)...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF3E3C55),
+                ),
               ),
-            ),
-            InkWell(
-              onTap: onToggle,
-              child: Row(
-                children: [
-                  Text(expanded ? "Show Less" : "Show More"),
-                  const SizedBox(width: 4),
-                  Icon(
-                    expanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    size: 20,
-                  ),
-                ],
+              InkWell(
+                onTap: onToggle,
+                child: Row(
+                  children: [
+                    Text(expanded ? "Show Less" : "Show More"),
+                    const SizedBox(width: 4),
+                    Icon(
+                      expanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 20,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
         if (expanded) ...[const SizedBox(height: 20), child],
       ],
     );
   }
 }
 
-/// 🔹 Reusable Category Chip
 class CategoryChip extends StatelessWidget {
   final String label;
   final bool isSelected;

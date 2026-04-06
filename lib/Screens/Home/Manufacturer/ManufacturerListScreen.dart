@@ -1,3 +1,5 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
-import '../../../Helpers/AppText.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
@@ -54,39 +55,23 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    double titleFontSize = kIsWeb ? screenWidth * 0.015 : screenWidth * 0.05;
-    double bodyFontSize = kIsWeb ? screenWidth * 0.013 : screenWidth * 0.035;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SearchBarWidget(
-                enableBackArrow: true,
-                enableFilter: false,
-                enableCloseScreen: false,
-                controller: searchController,
-                onFilterTap: () {},
-                onBackButtonTap: () {
-                  Navigator.pop(context);
-                },
-                onChanged: (value) {
-                  context.read<ManufacturerCubit>().loadListOfManufacturers(
-                    context: context,
-                    query: value.trim(),
-                  );
-                },
-                searchTitle: 'Search Manufacturer...',
-              ),
-            ],
+      appBar: CustomAppBar(
+        title: 'Manufacturers Library',
+        centerTitle: false,
+        leftButton: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        rightButton: IconButton(
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+            width: 30,
+            height: 30,
           ),
+          onPressed: () {},
         ),
       ),
 
@@ -97,50 +82,87 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.03,
-                ),
-
-                // Title
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: kIsWeb
-                        ? screenWidth * 0.02
-                        : screenWidth * 0.06,
-                  ),
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: AppTexts(
-                      text: "Manufacturer",
-                      imageName: null,
-                      font: 'Roboto',
-                      side: 'left',
-                      color: const Color(0xFF3F3D56),
-                      weight: FontWeight.w600,
-                      fontSize: titleFontSize,
-                      imageSize: 15,
-                    ),
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SearchBarWidget(
+                    enableBackArrow: false,
+                    enableFilter: false,
+                    enableCloseScreen: false,
+                    controller: searchController,
+                    onChanged: (value) {
+                      context.read<ManufacturerCubit>().loadListOfManufacturers(
+                        context: context,
+                        query: value.trim(),
+                      );
+                    },
+                    searchTitle: "Search Manufacturer",
                   ),
                 ),
 
-                SizedBox(
-                  height: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.03,
+                BlocBuilder<ManufacturerCubit, ManufacturerState>(
+                  builder: (context, state) {
+                    final cubit = context.read<ManufacturerCubit>();
+
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: kIsWeb
+                            ? screenWidth * 0.02
+                            : screenWidth * 0.05,
+                      ),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: (state.categories ?? []).map((label) {
+                          final isSelected = state.selectedCategories.contains(
+                            label,
+                          );
+                          return GestureDetector(
+                            onTap: () => cubit.toggleCategory(label, context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.extraDarkYellow
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: AppColors.black,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                label,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.black,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
                 ),
 
-                // Manufacturer List
+                const SizedBox(height: 20),
+
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: kIsWeb
                           ? screenWidth * 0.02
-                          : screenWidth * 0.04,
+                          : screenWidth * 0.03,
                     ),
                     child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
                       builder: (context, state) {
                         if (state.isLoading) {
-                          return const Scaffold(
-                            backgroundColor: Colors.white,
-                            body: Center(child: CircularProgressIndicator()),
+                          return const Center(
+                            child: CircularProgressIndicator(),
                           );
                         }
 
@@ -165,90 +187,70 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                           itemBuilder: (context, index) {
                             if (index < sortedManufacturers.length) {
                               final item = sortedManufacturers[index];
-                              return Card(
-                                color: Colors.white,
-                                margin: EdgeInsets.symmetric(
-                                  vertical: kIsWeb ? 6 : 8,
-                                ),
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: kIsWeb
-                                        ? screenWidth * 0.02
-                                        : screenWidth * 0.05,
-                                    vertical: screenHeight * 0.012,
-                                  ),
-                                  leading: item.icon != null
-                                      ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                          child: CachedAnyImage(
-                                            imagePath: item.icon ?? "",
-                                            width: kIsWeb
-                                                ? screenWidth * 0.06
-                                                : screenWidth * 0.15,
-                                            height: kIsWeb
-                                                ? screenWidth * 0.07
-                                                : screenWidth * 0.15,
-                                            contentImage: BoxFit.contain,
-                                          ),
-                                        )
-                                      : SvgPicture.asset(
-                                          CommonUi.setSvgImage(
-                                            AssetsPath.manuFirstImage,
-                                          ),
-                                          width: kIsWeb
-                                              ? screenWidth * 0.06
-                                              : screenWidth * 0.15,
-                                          height: kIsWeb
-                                              ? screenWidth * 0.07
-                                              : screenWidth * 0.15,
-                                          fit: BoxFit.contain,
+
+                              return GestureDetector(
+                                onTap: () {
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.allAirbusModelsButton,
+                                    FirebaseEvents.manufacturerScreen,
+                                  );
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
+                                        create: (_) => ManufacturerCubit(),
+                                        child: ManufacturerDetailScreen(
+                                          key: ValueKey(item.id),
+                                          manufacturerDetailId: item.id,
                                         ),
-                                  title: Align(
-                                    alignment: kIsWeb
-                                        ? Alignment.center
-                                        : Alignment.centerLeft,
-                                    child: Text(
-                                      item.companyName,
-                                      textAlign: kIsWeb
-                                          ? TextAlign.center
-                                          : TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize: bodyFontSize,
-                                        fontWeight: FontWeight.w500,
-                                        color: const Color(0xFF3F3D56),
                                       ),
                                     ),
-                                  ),
-
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: kIsWeb ? 30 : 15,
-                                  ),
-                                  onTap: () {
-                                    AnalyticsService.instance.buttonPressed(
-                                      FirebaseEvents.allAirbusModelsButton,
-                                      FirebaseEvents.manufacturerScreen,
-                                    );
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => BlocProvider(
-                                          create: (_) => ManufacturerCubit(),
-                                          child: ManufacturerDetailScreen(
-                                            key: ValueKey(item.id),
-                                            manufacturerDetailId: item.id,
-                                          ),
-                                        ),
+                                  );
+                                },
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 11,
+                                        horizontal: 10,
                                       ),
-                                    );
-                                  },
+                                      child: Row(
+                                        children: [
+                                          item.icon != null
+                                              ? CachedAnyImage(
+                                                  imagePath: item.icon ?? "",
+                                                  width: 40,
+                                                  height: 40,
+                                                  contentImage: BoxFit.contain,
+                                                )
+                                              : SvgPicture.asset(
+                                                  CommonUi.setSvgImage(
+                                                    AssetsPath.manuFirstImage,
+                                                  ),
+                                                  width: 40,
+                                                  height: 40,
+                                                ),
+                                          const SizedBox(width: 50),
+                                          Expanded(
+                                            child: Text(
+                                              item.companyName,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF3F3D56),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Divider(
+                                      height: 1,
+                                      thickness: 1,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                  ],
                                 ),
                               );
                             } else {

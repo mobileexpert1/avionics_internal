@@ -18,7 +18,6 @@ class ConversionsScreen extends StatefulWidget {
 }
 
 class _ConversionsScreenState extends State<ConversionsScreen> {
-
   late ConversionCubit _cubit;
   Map<int, bool> expandedMap = {};
 
@@ -45,8 +44,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Conversions Table',
+          centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),

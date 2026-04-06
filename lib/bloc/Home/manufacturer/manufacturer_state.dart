@@ -14,6 +14,9 @@ class ManufacturerState {
   final String? apiError;
   final CommonApiStatus status;
   final String? errorMessage;
+  final List<String> selectedCategories;
+  final bool showCategories;
+  final List<String> categories;
 
   const ManufacturerState({
     required this.manufacturers,
@@ -27,6 +30,14 @@ class ManufacturerState {
     this.apiError,
     this.status = CommonApiStatus.initial,
     this.errorMessage,
+    this.selectedCategories = const [],
+    this.showCategories = true,
+    this.categories = const [
+      "Passenger",
+      "Military and Government",
+      "Cargo",
+      "General Aviation","Jets"
+    ],
   });
 
   ManufacturerState copyWith({
@@ -41,6 +52,9 @@ class ManufacturerState {
     String? apiError,
     CommonApiStatus? status,
     String? errorMessage,
+    List<String>? selectedCategories,
+    bool? showCategories,
+    List<String>? categories,
   }) {
     return ManufacturerState(
       manufacturers: manufacturers ?? this.manufacturers,
@@ -54,6 +68,10 @@ class ManufacturerState {
       apiError: apiError ?? this.apiError,
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
+
+      selectedCategories: selectedCategories ?? this.selectedCategories,
+      showCategories: showCategories ?? this.showCategories,
+      categories: categories ?? this.categories,
     );
   }
 }

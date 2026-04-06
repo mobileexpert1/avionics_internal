@@ -22,6 +22,7 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       return;
     }
 
+
     if (isLoadMore) {
       emit(state.copyWith(isFetchingMore: true));
     } else {
@@ -99,5 +100,24 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
         ),
       );
     }
+  }
+
+  void toggleCategory(String category, BuildContext context) {
+    final updated = List<String>.from(state.selectedCategories);
+
+    if (updated.contains(category)) {
+      updated.remove(category);
+    } else {
+      updated.add(category);
+    }
+    emit(state.copyWith(selectedCategories: updated));
+    // loadListOfManufacturers(
+    //   context: context,
+    //   page: 1,
+    // );
+  }
+
+  void toggleCategoriesSection() {
+    emit(state.copyWith(showCategories: !state.showCategories));
   }
 }

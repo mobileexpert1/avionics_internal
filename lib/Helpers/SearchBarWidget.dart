@@ -36,7 +36,7 @@ class SearchBarWidget extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 11, 16, 8),
+          padding: const EdgeInsets.fromLTRB(20, 10, 10, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +83,7 @@ class SearchBarWidget extends StatelessWidget {
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(13),
                                 child: SvgPicture.asset(
-                                  CommonUi.setSvgImage(AssetsPath.search),
+                                  CommonUi.setSvgImage(AssetsPath.searchIcon),
                                   width: 18,
                                   height: 18,
                                 ),

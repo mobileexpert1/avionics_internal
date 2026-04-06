@@ -2,9 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
@@ -91,25 +94,21 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SearchBarWidget(
-                enableBackArrow: true,
-                enableFilter: false,
-                enableCloseScreen: false,
-                controller: searchController,
-                onChanged: _onSearch,
-                searchTitle: 'Search ${widget.manufacturerName} Models',
-                onBackButtonTap: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
+      appBar:CustomAppBar(
+        title: "All ${widget.manufacturerName} Models" , //'Search ${widget.manufacturerName} Models',
+        centerTitle: false,
+        leftButton: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        rightButton: IconButton(
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+            width: 30,
+            height: 30,
+            fit: BoxFit.cover,
           ),
+          onPressed: () async {},
         ),
       ),
       body: SafeArea(
@@ -118,7 +117,24 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             constraints: const BoxConstraints(maxWidth: 1500),
             child: Column(
               children: [
-                SizedBox(height: kIsWeb ? 15 : 10),
+                PreferredSize(
+                  preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SearchBarWidget(
+                          enableBackArrow: false,
+                          enableFilter: false,
+                          enableCloseScreen: false,
+                          controller: searchController,
+                          onChanged: _onSearch,
+                          searchTitle: 'Search ${widget.manufacturerName} Models',
+                        )
+                      ],
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
                   child: Align(
