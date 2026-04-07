@@ -4,8 +4,10 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppText.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SelectableAircraftCard.dart';
@@ -136,29 +138,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                           ),
                         ),
                       ),
-
-
-                      // Padding(
-                      //   padding: EdgeInsets.only(
-                      //     left: kIsWeb
-                      //         ? screenWidth * 0.03
-                      //         : screenWidth * 0.06,
-                      //   ),
-                      //   child: AppTexts(
-                      //     text: "Select Model for Comparison",
-                      //     imageName: null,
-                      //     font: 'Roboto',
-                      //     side: 'left',
-                      //     color: const Color(0xFF3F3D56),
-                      //     weight: FontWeight.w600,
-                      //     fontSize: kIsWeb
-                      //         ? screenWidth * 0.02
-                      //         : screenWidth * 0.04,
-                      //     imageSize: kIsWeb
-                      //         ? screenWidth * 0.02
-                      //         : screenWidth * 0.04,
-                      //   ),
-                      // ),
                       SizedBox(
                         height: kIsWeb
                             ? screenWidth * 0.01
@@ -221,8 +200,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                     }
 
                                     final model = models[index];
-
-                                    // Web layout
                                     if (kIsWeb) {
                                       return Padding(
                                         key: ValueKey(model.id),
@@ -404,38 +381,129 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                         ),
                                       );
                                     } else {
-                                      // Mobile layout
-                                      return Padding(
-                                        key: ValueKey(model.id),
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: screenWidth * 0.017,
-                                        ),
-                                        child: SimpleAircraftCard(
-                                          imagePath: CachedAnyImage(
-                                            imagePath: model.image,
-                                            width: screenWidth * 0.15,
-                                            height: screenWidth * 0.15,
-                                            contentImage: BoxFit.fill,
-                                            isForPlaneList: true,
-                                          ),
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context, model);
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 5,
+                                                    horizontal: 10,
+                                                  ),
+                                              child: Row(
+                                                children: [
+                                                  // Image
+                                                  model.image != null &&
+                                                          model.image.isNotEmpty
+                                                      ? CachedAnyImage(
+                                                          imagePath:
+                                                              model.image,
+                                                          width: 70,
+                                                          height: 70,
+                                                          contentImage:
+                                                              BoxFit.contain,
+                                                    isForPlaneList:
+                                                    true,
 
-                                          model: model.aircraftModel,
-                                          badge: model.icaoTypeCode,
-                                          callSign: "",
-                                          manufacturer:
-                                              model.manufacturer?.companyName,
-                                          airline: null,
-                                          airlineImagePath: CachedAnyImage(
-                                            imagePath:
-                                                model.manufacturer?.logo ?? "",
-                                            width: screenWidth * 0.05,
-                                            height: screenWidth * 0.05,
-                                            contentImage: BoxFit.fill,
-                                            isForPlaneList: true,
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context, model);
-                                          },
+                                                        )
+                                                      : SvgPicture.asset(
+                                                          CommonUi.setSvgImage(
+                                                            AssetsPath
+                                                                .manuFirstImage,
+                                                          ),
+                                                          width: 40,
+                                                          height: 40,
+                                                        ),
+
+                                                  const SizedBox(width: 20),
+
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          model.aircraftModel ??
+                                                              "",
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: Color(
+                                                                  0xFF3F3D56,
+                                                                ),
+                                                              ),
+                                                        ),
+
+                                                        Row(
+                                                            children: [
+                                                              ClipRRect(
+                                                                child: SizedBox(
+                                                                  width: 40,
+                                                                  height: 20,
+                                                                  child: CachedAnyImage(
+                                                                    imagePath:
+                                                                        model
+                                                                            .manufacturer
+                                                                            ?.logo ??
+                                                                        "",
+                                                                    width:
+                                                                        screenWidth *
+                                                                        0.06,
+                                                                    height:
+                                                                        screenWidth *
+                                                                        0.06,
+                                                                    contentImage:
+                                                                        BoxFit
+                                                                            .fill,
+                                                                    isForPlaneList:
+                                                                        true,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              // if (model
+                                                              //         .manufacturer
+                                                              //         ?.companyName !=
+                                                              //     null)
+                                                              //   Expanded(
+                                                              //     child: Text(
+                                                              //       model
+                                                              //           .manufacturer!
+                                                              //           .companyName,
+                                                              //       style: const TextStyle(
+                                                              //         fontSize:
+                                                              //             13,
+                                                              //       ),
+                                                              //       overflow:
+                                                              //           TextOverflow
+                                                              //               .ellipsis,
+                                                              //     ),
+                                                              //   ),
+                                                            ],
+                                                          ),
+
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            Divider(
+                                              height: 1,
+                                              thickness: 1,
+                                              color: Colors.grey.shade300,
+                                            ),
+                                          ],
                                         ),
                                       );
                                     }

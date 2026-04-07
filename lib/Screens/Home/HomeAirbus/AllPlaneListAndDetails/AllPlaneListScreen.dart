@@ -45,7 +45,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
         context: context,
       );
     });
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.airCraftDetailScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.airCraftDetailScreen,
+    );
   }
 
   void _onScroll() {
@@ -71,6 +73,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
       selectedAirbusId: widget.selectedAirbusId,
     );
   }
+
   String normalizeWikiImage(String url) {
     if (!url.contains('upload.wikimedia.org')) return url;
 
@@ -94,8 +97,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      appBar:CustomAppBar(
-        title: "All ${widget.manufacturerName} Models" , //'Search ${widget.manufacturerName} Models',
+      appBar: CustomAppBar(
+        title: "All ${widget.manufacturerName} Models",
+        //'Search ${widget.manufacturerName} Models',
         centerTitle: false,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -129,8 +133,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                           enableCloseScreen: false,
                           controller: searchController,
                           onChanged: _onSearch,
-                          searchTitle: 'Search ${widget.manufacturerName} Models',
-                        )
+                          searchTitle:
+                              'Search ${widget.manufacturerName} Models',
+                        ),
                       ],
                     ),
                   ),
@@ -175,66 +180,95 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                         itemCount: state.listoFAircraftModels.length,
                         itemBuilder: (context, index) {
                           final model = state.listoFAircraftModels[index];
-                          double cardHorizontalPadding =
-                          kIsWeb ? screenWidth * 0.02 : 30;
 
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: kIsWeb ? 8 : 10,
-                              horizontal: cardHorizontalPadding,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Stack(
                               children: [
+                                /// 🔹 BACKGROUND (Swipe ke time visible)
                                 Positioned.fill(
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: AppColors.saveButtonColour,
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    alignment: Alignment.centerRight,
-                                    padding: const EdgeInsets.only(right: 13),
-                                    child: Icon(
-                                      Icons.bookmark,
-                                      color: (model.isSaved == true
-                                          ? Colors.black
-                                          : Colors.white),
-                                      size: kIsWeb ? 22 : 25,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        /// LEFT IMAGE (background me bhi)
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          child: CachedAnyImage(
+                                            imagePath: model.image,
+                                            contentImage: BoxFit.cover,
+                                            isForPlaneList: true,
+                                            width: imageWidth,
+                                            height: imageHeight,
+                                          ),
+                                        ),
+
+                                        const Spacer(),
+
+                                        /// BOOKMARK ICON
+                                        Icon(
+                                          Icons.bookmark,
+                                          color: model.isSaved
+                                              ? Colors.black
+                                              : Colors.white,
+                                          size: 26,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
+
+                                /// 🔹 FOREGROUND (Main UI)
                                 Slidable(
                                   key: ValueKey(model.id),
                                   endActionPane: ActionPane(
                                     motion: const BehindMotion(),
-                                    extentRatio: 0.15,
+                                    extentRatio: 0.2,
                                     children: [
                                       CustomSlidableAction(
-                                          onPressed: (_) {
-                                            context
-                                                .read<AllPlanesCubit>()
-                                                .toggleFavorite(
-                                                model.id, context,model.isSaved);
+                                        onPressed: (_) {
+                                          context
+                                              .read<AllPlanesCubit>()
+                                              .toggleFavorite(
+                                                model.id,
+                                                context,
+                                                model.isSaved,
+                                              );
 
-                                            AppSnackBar.custom(
-                                              context,
-                                              message: model.isSaved ? "Bookmark Unsaved" : "Bookmark Saved",
-                                              svgAsset: "",
-                                            );
-                                          },
-
-
+                                          AppSnackBar.custom(
+                                            context,
+                                            message: model.isSaved
+                                                ? "Bookmark Unsaved"
+                                                : "Bookmark Saved",
+                                            svgAsset: "",
+                                          );
+                                        },
                                         backgroundColor: Colors.transparent,
                                         child: const SizedBox.shrink(),
                                       ),
                                     ],
                                   ),
+
                                   child: InkWell(
                                     onTap: () {
-
-
-                                      AnalyticsService.instance.buttonPressed(FirebaseEvents.manufacturerListItemButton,FirebaseEvents.allPlanesListScreen);
-
-
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents
+                                            .manufacturerListItemButton,
+                                        FirebaseEvents.allPlanesListScreen,
+                                      );
 
                                       Navigator.push(
                                         context,
@@ -249,122 +283,130 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         ),
                                       );
                                     },
+
                                     child: Container(
-                                      height: cardHeight,
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.08),
-                                            blurRadius: 5,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 1),
-                                          ),
-                                        ],
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                      height: 60,
+                                      color: Colors.white,
+                                      child: Stack(
                                         children: [
-                                          /// CODE 1
-                                          CachedAnyImage(
-                                            imagePath: model.image,
-                                            width: imageWidth,
-                                            height: imageHeight,
-                                            contentImage: BoxFit.cover,
-                                            isForPlaneList: true,
+                                          Positioned(
+                                            right: 33,
+                                            top: 32,
+                                            child: Container(
+                                              width: 16,
+                                              height: 16,
+                                              decoration: BoxDecoration(
+                                                color: Colors.amber,
+                                                border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 0.5,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          /// CODE 2
-                                          // CachedNetworkImage(
-                                          //   imageUrl: model.image ?? '',
-                                          //   width: imageWidth,
-                                          //   height: imageHeight,
-                                          //   fit: BoxFit.cover,
-                                          //   httpHeaders: const {
-                                          //     'User-Agent': 'Mozilla/5.0',
-                                          //     'Accept': 'image/*',
-                                          //   },
-                                          //   placeholder: (context, url) =>
-                                          //   const Center(child: CircularProgressIndicator()),
-                                          //   errorWidget: (context, url, error) =>
-                                          //   const Icon(Icons.broken_image),
-                                          // )
-                                          /// CODE 3
-                                          // CachedNetworkImage(
-                                          //   imageUrl: normalizeWikiImage(model.image ?? ''),
-                                          //   width: imageWidth,
-                                          //   height: imageHeight,
-                                          //   fit: BoxFit.cover,
-                                          //   placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
-                                          //   errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
-                                          // ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              kIsWeb ? CrossAxisAlignment.center: CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                              children: [
-                                                Flexible(
-                                                  child: Wrap(
-                                                    crossAxisAlignment:
-                                                    WrapCrossAlignment.center,
-                                                    spacing: 8,
-                                                    runSpacing: 4,
-                                                    children: [
-                                                      Text(
-                                                        model.model,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          fontSize: bodyFontSize,
-                                                        ),
-                                                        overflow: TextOverflow.ellipsis,
+
+                                          Positioned(
+                                            left: 100,
+                                            right: 40,
+                                            top: 40,
+                                            child: Container(
+                                              height: 1,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          ),
+
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(width: 10),
+
+                                              Container(
+                                                width: 80,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.shade200,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: CachedAnyImage(
+                                                  imagePath: model.image,
+                                                  contentImage: BoxFit.cover,
+                                                  isForPlaneList: true,
+                                                  width: imageWidth,
+                                                  height: imageHeight,
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 12),
+
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 8,
                                                       ),
-                                                      if (model.ICAOCode.isNotEmpty)
-                                                        Container(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 6,
-                                                            vertical: 2,
-                                                          ),
-                                                          decoration:
-                                                          BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(4),
-                                                            boxShadow: const [
-                                                              BoxShadow(
-                                                                color:
-                                                                Colors.grey,
-                                                                spreadRadius: 0.1,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          model.model,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Color(
+                                                                  0xFF2E2E4D,
+                                                                ),
                                                               ),
-                                                            ],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+
+                                                      if (model
+                                                          .ICAOCode
+                                                          .isNotEmpty)
+                                                        Container(
+                                                          margin:
+                                                              const EdgeInsets.only(
+                                                                left: 8,
+                                                              ),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 5,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  20,
+                                                                ),
                                                           ),
                                                           child: Text(
                                                             model.ICAOCode,
                                                             style:
-                                                            const TextStyle(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                              FontWeight.w500,
-                                                            ),
+                                                                const TextStyle(
+                                                                  fontSize: 17,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
                                                           ),
                                                         ),
                                                     ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+
+                                              const SizedBox(width: 60),
+                                            ],
                                           ),
-                                          const Icon(Icons.arrow_forward_ios,
-                                              size: kIsWeb ? 30 :15),
                                         ],
                                       ),
                                     ),

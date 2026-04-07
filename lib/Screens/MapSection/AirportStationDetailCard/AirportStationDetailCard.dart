@@ -182,32 +182,38 @@ class RadioChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: isForFlightScreen ? MainAxisSize.max : MainAxisSize.min,
-      children: List.generate(values.length, (index) {
-        final selected = index == selectedIndex;
-        return GestureDetector(
-          onTap: () => onSelected(index),
-          child: Container(
-            height: 35,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: selected
-                  ? AppColors.primaryBlue
-                  : AppColors.greyForAirportDetailCard,
-            ),
-            child: Text(
-              values[index],
-              style: TextStyle(
-                color: selected ? AppColors.white : AppColors.grayMedium,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize:
+        isForFlightScreen ? MainAxisSize.max : MainAxisSize.min,
+        children: List.generate(values.length, (index) {
+          final selected = index == selectedIndex;
+          return GestureDetector(
+            onTap: () => onSelected(index),
+            child: Container(
+              height: 35,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: selected
+                    ? AppColors.primaryBlue
+                    : AppColors.greyForAirportDetailCard,
+              ),
+              child: Text(
+                values[index],
+                style: TextStyle(
+                  color: selected
+                      ? AppColors.white
+                      : AppColors.grayMedium,
+                ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }

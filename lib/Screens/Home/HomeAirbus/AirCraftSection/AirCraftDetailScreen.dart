@@ -69,7 +69,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 "",
             centerTitle: false,
             leftButton: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -601,6 +601,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           indent: 20,
           endIndent: 20,
         ),
+        if (isExpanded)
         const SizedBox(height: 20),
       ],
     );
@@ -625,6 +626,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 child: content,
               )
             : const SizedBox.shrink(),
+        if (isExpanded)
         const Divider(
           height: 0,
           color: AppColors.separatorColourAppBar,
