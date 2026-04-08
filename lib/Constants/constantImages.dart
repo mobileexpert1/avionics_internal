@@ -16,6 +16,25 @@ abstract class AssetsPath {
   static const String technicalCompare = "11TechnicalCompare";
   static const String searchIcon = "12SearchIcon";
 
+  static const String exploreTabBarIcon = "13ExploreTabBar";
+  static const String unExploreTabBarIcon = "14UnExploreTabBar";
+  static const String trackTabBarIcon = "15TrackTabBar";
+  static const String unTrackTabBarIcon = "16UnTrackTabBar";
+  static const String gamesTabBarIcon = "17GamesTabBar";
+  static const String unGamesTabBarIcon = "18UnGamesTabBar";
+  static const String wilcoTabBarIcon = "19WilcoTabBar";
+  static const String unWilcoTabBarIcon = "20UnWilcoTabBar";
+  static const String profileTabBarIcon = "21ProfileTabBar";
+  static const String unProfileTabBarIcon = "22UnProfileTabBar";
+
+  static const String ExploreIcon = "ExploreIcon";
+  static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
+
+  static const String MapIcon = "MapIcon";
+  static const String gameIcon = "gameIcon";
+  static const String chatIcon = "chatIcon";
+  static const String ProfileIcon = "ProfileIcon";
+
   static const String tutorialVideo = "TutorialVideo";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";
   static const String mapLayers = "MpaLayes";
@@ -83,7 +102,6 @@ abstract class AssetsPath {
   static const String logoutIcon = "logoutIcon";
   static const String signinIcon = "signinIcon";
 
-
   static const String quiz = "quizIcon";
   static const String oneWord = "oneWorldIcon";
   static const String blackBox = "blackBoxIcon";
@@ -98,13 +116,8 @@ abstract class AssetsPath {
   static const String infoIcon2 = "infoIcon2";
 
   /// png
-  static const String gameIcon = "gameIcon";
-  static const String chatIcon = "chatIcon";
   static const String CompareIcon = "CompareIcon";
-  static const String ExploreIcon = "ExploreIcon";
-  static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
-  static const String MapIcon = "MapIcon";
-  static const String ProfileIcon = "ProfileIcon";
+
   static const String SavedIcon = "SavedIcon";
   static const String airbus = "airbus";
   static const String aeroplaneComparison = "aeroplaneComparison";
@@ -125,11 +138,9 @@ abstract class AssetsPath {
   static const historyForCal = 'assets/images/history.svg';
   static const switchLGridForCal = 'assets/images/switch.svg';
 
-
   static const calculatorImage = 'Calculator';
   static const conversionImage = 'Conversion';
 }
-
 
 class CommonUi {
   static String setjpgImage(String image) {

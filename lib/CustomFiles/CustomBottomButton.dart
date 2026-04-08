@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class CustomBottomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
@@ -31,7 +33,10 @@ class CustomBottomButton extends StatelessWidget {
         icon: icon,
         label: Text(
           title,
-          style: TextStyle(color: effectiveTextColor, fontSize: 16),
+          style: AppTextStyles.regular(21.46).copyWith(
+            height: 1.0,
+            color: effectiveTextColor,
+          ),
         ),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(

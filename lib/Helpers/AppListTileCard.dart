@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
+import 'AppTextStyles/AppTextStyles.dart';
 
 class AppListTileCard extends StatelessWidget {
   final String title;
@@ -46,7 +47,9 @@ class AppListTileCard extends StatelessWidget {
             leading: _buildLeadingImage(iconSize),
             title: Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: fontSize),
+              style: AppTextStyles.medium(
+                16,
+              ).copyWith(height: 1.0, color: AppColors.black),
             ),
             onTap: onTap,
           ),

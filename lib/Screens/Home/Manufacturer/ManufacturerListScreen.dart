@@ -68,8 +68,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         rightButton: IconButton(
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeRightSetting),
-            width: 30,
-            height: 30,
+            width: 35,
+            height: 31,
           ),
           onPressed: () {},
         ),

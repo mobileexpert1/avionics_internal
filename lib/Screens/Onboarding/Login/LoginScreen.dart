@@ -14,6 +14,7 @@ import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomSocialLoginButtons.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/login/login_cubit.dart';
 import '../../../bloc/Onboarding/login/login_state.dart';
 import '../ForgotCreateNewPassword/ForgotScreen.dart';
@@ -32,9 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.loginScreen,
-    );
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.loginScreen);
   }
 
   @override
@@ -55,9 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ?? 'Login failed'),
-              ),
+              SnackBar(content: Text(state.errorMessage ?? 'Login failed')),
             );
           }
         },
@@ -81,9 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Column(
                           children: [
                             SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                AssetsPath.mainLogo,
-                              ),
+                              CommonUi.setSvgImage(AssetsPath.mainLogo),
                               fit: BoxFit.fill,
                             ),
 
@@ -91,8 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             // -------- Email --------
                             BlocBuilder<LoginCubit, LoginState>(
-                              buildWhen: (p, c) =>
-                              p.emailError != c.emailError,
+                              buildWhen: (p, c) => p.emailError != c.emailError,
                               builder: (context, state) {
                                 return CustomTextField(
                                   label: ConstantStrings.emailLabel,
@@ -110,11 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             // -------- Password --------
                             BlocBuilder<LoginCubit, LoginState>(
                               buildWhen: (p, c) =>
-                              p.passwordError != c.passwordError,
+                                  p.passwordError != c.passwordError,
                               builder: (context, state) {
                                 return CustomTextField(
-                                  label:
-                                  ConstantStrings.passwordLabel,
+                                  label: ConstantStrings.passwordLabel,
                                   controller: passwordController,
                                   obscureText: true,
                                   errorText: state.passwordError,
@@ -122,9 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .read<LoginCubit>()
                                       .passwordChanged(val),
                                   onEnterPressed: (val) {
-                                    context
-                                        .read<LoginCubit>()
-                                        .passwordChanged(val);
+                                    context.read<LoginCubit>().passwordChanged(
+                                      val,
+                                    );
 
                                     if (kIsWeb && mounted) {
                                       context
@@ -143,8 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               selector: (state) => state.isButtonEnabled,
                               builder: (_, enabled) {
                                 return CustomBottomButton(
-                                  title:
-                                  ConstantStrings.loginButton,
+                                  title: ConstantStrings.loginButton,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour
                                       : AppColors.darkSeparatorColourAppBar,
@@ -153,9 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isEnabled: enabled,
                                   onPressed: () {
                                     if (!mounted) return;
-                                    context
-                                        .read<LoginCubit>()
-                                        .validateAndLogin(context);
+                                    context.read<LoginCubit>().validateAndLogin(
+                                      context,
+                                    );
                                   },
                                 );
                               },
@@ -171,8 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                    ForgotScreen(),
+                                    builder: (_) => ForgotScreen(),
                                   ),
                                 );
 
@@ -183,20 +174,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: Text(
                                 ConstantStrings.forgotPassword,
-                                style: TextStyle(
+                                style: AppTextStyles.medium(19.31).copyWith(
+                                  height: 1.0,
                                   color: AppColors.textColour,
-                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 15),
 
                             Text(
                               ConstantStrings.orContinue,
-                              style: TextStyle(
+                              style: AppTextStyles.regular(19.31).copyWith(
+                                height: 1.0,
                                 color: AppColors.textColour,
-                                fontWeight: FontWeight.w700,
                               ),
                             ),
 
@@ -206,19 +197,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             CustomSocialLoginButtons(
                               backgroundColor: Colors.white,
                               textColor: Colors.black,
-                              title:
-                              ConstantStrings.loginWithGoogle,
+                              title: ConstantStrings.loginWithGoogle,
                               icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(
-                                  AssetsPath.google,
-                                ),
+                                CommonUi.setSvgImage(AssetsPath.google),
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                context
-                                    .read<LoginCubit>()
-                                    .signInWithGoogle(context);
+                                context.read<LoginCubit>().signInWithGoogle(
+                                  context,
+                                );
                               },
                             ),
 
@@ -226,26 +214,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             // -------- Apple --------
                             if (!kIsWeb &&
-                                (defaultTargetPlatform ==
-                                    TargetPlatform.iOS ||
+                                (defaultTargetPlatform == TargetPlatform.iOS ||
                                     defaultTargetPlatform ==
                                         TargetPlatform.macOS)) ...[
                               CustomSocialLoginButtons(
                                 backgroundColor: Colors.black,
                                 textColor: Colors.white,
-                                title:
-                                ConstantStrings.loginWithApple,
+                                title: ConstantStrings.loginWithApple,
                                 icon: SvgPicture.asset(
-                                  CommonUi.setSvgImage(
-                                    AssetsPath.apple,
-                                  ),
+                                  CommonUi.setSvgImage(AssetsPath.apple),
                                   fit: BoxFit.fill,
                                 ),
                                 onPressed: () {
                                   if (!mounted) return;
-                                  context
-                                      .read<LoginCubit>()
-                                      .signInWithApple(context);
+                                  context.read<LoginCubit>().signInWithApple(
+                                    context,
+                                  );
                                 },
                               ),
                               const SizedBox(height: 12),
@@ -253,22 +237,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             // -------- Facebook --------
                             CustomSocialLoginButtons(
-                              backgroundColor:
-                              AppColors.facebookButton,
+                              backgroundColor: AppColors.facebookButton,
                               textColor: Colors.white,
-                              title:
-                              ConstantStrings.loginWithFacebook,
+                              title: ConstantStrings.loginWithFacebook,
                               icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(
-                                  AssetsPath.facebook,
-                                ),
+                                CommonUi.setSvgImage(AssetsPath.facebook),
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                context
-                                    .read<LoginCubit>()
-                                    .signInWithFacebook(context);
+                                context.read<LoginCubit>().signInWithFacebook(
+                                  context,
+                                );
                               },
                             ),
 
@@ -282,8 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                    const SignupScreen(),
+                                    builder: (_) => const SignupScreen(),
                                   ),
                                 );
 
@@ -294,9 +273,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: Text(
                                 ConstantStrings.signUpPrompt,
-                                style: TextStyle(
+                                style: AppTextStyles.regular(19.31).copyWith(
+                                  height: 1.0,
                                   color: AppColors.textColour,
-                                  fontSize: 18
                                 ),
                               ),
                             ),
@@ -314,9 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (state.status == CommonApiStatus.submitting)
                 Container(
                   color: Colors.black.withOpacity(0.3),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
           );

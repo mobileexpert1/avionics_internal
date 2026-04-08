@@ -84,8 +84,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
             rightButton: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.homeRightSetting),
-                width: 30,
-                height: 30,
+                width: 35,
+                height: 31,
                 fit: BoxFit.cover,
               ),
               onPressed: () async {},

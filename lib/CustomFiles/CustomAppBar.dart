@@ -1,6 +1,8 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 
+import '../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget? leftButton;
@@ -29,34 +31,45 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isClearBackgroundColour == true ? Colors.white : AppColors.primaryDark,
-        boxShadow: [
-          BoxShadow(
-            color: isHideTopGradient == true ? Colors.white : Colors.black12,
-            offset: const Offset(0, 2),
-            blurRadius: 4,
-          ),
-        ],
-        border: isForComparison == true ? null : Border(
-          bottom: BorderSide(
-            color: isHideTopGradient == true
-                ? Colors.white
-                : AppColors.separatorColourAppBar,
-            width: 1.0,
-          ),
-        ),
+        color: isClearBackgroundColour == true
+            ? Colors.white
+            : AppColors.primaryDark,
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: isHideTopGradient == true ? Colors.white : Colors.black12,
+        //     offset: const Offset(0, 2),
+        //     blurRadius: 4,
+        //   ),
+        // ],
+        border: isForComparison == true
+            ? null
+            : Border(
+                bottom: BorderSide(
+                  color: isHideTopGradient == true
+                      ? Colors.white
+                      : AppColors.separatorColourAppBar,
+                  width: 1.0,
+                ),
+              ),
       ),
       child: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isClearBackgroundColour == true
+            ? Colors.white
+            : Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         surfaceTintColor: Colors.white,
         title: Text(
           title,
-          style: TextStyle(fontSize: 20, color: isClearBackgroundColour == true ? Colors.black :Colors.white),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.regular(17.16).copyWith(
+            height: 1.0,
+            color: isClearBackgroundColour == true
+                ? AppColors.blackForNavTitle
+                : Colors.white,
+          ),
         ),
         centerTitle: centerTitle ?? true,
         titleSpacing: centerTitle == true ? titleSpacing : 0,
@@ -64,7 +77,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ? Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: leftButton!,
                 ),
               )
@@ -75,7 +88,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: rightButton!,
                   ),
                 ),

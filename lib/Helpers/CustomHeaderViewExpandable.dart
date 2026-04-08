@@ -2,6 +2,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../Constants/AppColors.dart';
+import 'AppTextStyles/AppTextStyles.dart';
+
 class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isNeedToShowLeftRightBottomBorder;
   final bool isNeedToShowLeftImage;
@@ -35,7 +38,11 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isNeedToShowLeftRightBottomBorder == true ? Colors.transparent : Colors.black12),
+        border: Border.all(
+          color: isNeedToShowLeftRightBottomBorder == true
+              ? Colors.transparent
+              : Colors.black12,
+        ),
       ),
       child: Column(
         children: [
@@ -47,7 +54,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: isNeedToShowLeftImage ? 10 : 15,
-                    vertical:  isNeedToShowLeftImage ? 03 : 16,
+                    vertical: isNeedToShowLeftImage ? 03 : 16,
                   ),
                   decoration: BoxDecoration(
                     color: headerColor,
@@ -58,17 +65,16 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      if (isNeedToShowLeftImage)...[
+                      if (isNeedToShowLeftImage) ...[
                         isLeftImage!,
                         const SizedBox(width: 12),
                       ],
                       Expanded(
                         child: Text(
                           title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                          style: AppTextStyles.regular(16).copyWith(
+                            height: 1.0,
+                            color: AppColors.whiteWithExpandableTitle,
                           ),
                         ),
                       ),
@@ -86,7 +92,9 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded
-                          ? const BorderRadius.vertical(top: Radius.circular(12))
+                          ? const BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            )
                           : BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -94,9 +102,9 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         turns: isExpanded ? 0.25 : 0,
                         duration: const Duration(milliseconds: 200),
                         child: Icon(
-                          Icons.keyboard_arrow_right,
-                          color:arrowFrontColor,
-                          size: 40,
+                          Icons.arrow_forward_ios_sharp,
+                          color: arrowFrontColor,
+                          size: 20,
                         ),
                       ),
                     ),
@@ -111,16 +119,15 @@ class CustomHeaderViewExpandable extends StatelessWidget {
             duration: const Duration(milliseconds: 250),
             child: isExpanded
                 ? Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(12),
-                ),
-              ),
-              child: child ?? const SizedBox(),
-            )
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(12),
+                      ),
+                    ),
+                    child: child ?? const SizedBox(),
+                  )
                 : const SizedBox(),
-
           ),
         ],
       ),

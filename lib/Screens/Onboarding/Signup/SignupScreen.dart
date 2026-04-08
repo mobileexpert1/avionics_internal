@@ -12,6 +12,7 @@ import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/signup/signup_cubit.dart';
 import '../../../bloc/Onboarding/signup/signup_state.dart';
 import '../Login/LoginScreen.dart';
@@ -243,9 +244,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 },
                                 child: Text(
                                   ConstantStrings.loginPrompt,
-                                  style: TextStyle(
+                                  style: AppTextStyles.regular(19.31).copyWith(
+                                    height: 1.0,
                                     color: AppColors.textColour,
-                                    fontSize: 18,
                                   ),
                                 ),
                               ),

@@ -12,6 +12,7 @@ import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
+import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
@@ -33,9 +34,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
-
-  bool expandedManufacturerTab = true;
-  bool expandFlyingInTheAreaTab = true;
+  bool expandedManufacturerTab = false;
+  bool expandFlyingInTheAreaTab = false;
 
   @override
   void initState() {
@@ -70,8 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
           rightButton: IconButton(
             icon: SvgPicture.asset(
               CommonUi.setSvgImage(AssetsPath.homeRightSetting),
-              width: 30,
-              height: 30,
+              width: 35,
+              height: 31,
               fit: BoxFit.cover,
             ),
             onPressed: () async {},
@@ -374,11 +374,9 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Text(
                 'See All',
-                style: TextStyle(
-                  fontSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.black,
-                ),
+                style: AppTextStyles.bold(
+                  kIsWeb ? screenWidth * 0.02 : 16,
+                ).copyWith(height: 1.0, color: AppColors.black),
               ),
             ),
           ),
@@ -403,11 +401,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             "Choose Your Tracking Mode",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
-            ),
+            style: AppTextStyles.bold(
+              18,
+            ).copyWith(height: 1.0, color: AppColors.black),
           ),
 
           SizedBox(height: screenWidth * 0.02),

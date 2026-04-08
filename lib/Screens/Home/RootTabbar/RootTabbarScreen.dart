@@ -1,8 +1,10 @@
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapScreen.dart';
 import '../../Profile/ProfileScreen.dart';
@@ -78,7 +80,6 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,64 +88,83 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
           : _pages[_selectedIndex],
       bottomNavigationBar: _isLoading
           ? null
-          : BottomNavigationBar(
-              backgroundColor: Colors.white,
-              currentIndex: _selectedIndex,
-              onTap: onItemTapped,
-              selectedItemColor: Colors.black,
-              unselectedItemColor: Colors.grey,
-              type: BottomNavigationBarType.fixed,
-              items: [
-                BottomNavigationBarItem(
-                  icon: Image.asset(
-                    CommonUi.setPngImage(
-                      _selectedIndex == 0
-                          ? AssetsPath.ExploreIcon
-                          : AssetsPath.ExploreUnSelectedIcon,
-                    ),
-                    width: 70,
-                    height: 30,
+          : Container(
+              height: 90,
+              color: Colors.white,
+              child: Row(
+                children: [
+                  _buildNavItem(
+                    0,
+                    AssetsPath.exploreTabBarIcon,
+                    AssetsPath.unExploreTabBarIcon,
+                    'Explore',
                   ),
-                  label: 'Explore',
-                ),
-                BottomNavigationBarItem(
-                  icon: Image.asset(
-                    CommonUi.setPngImage(AssetsPath.MapIcon),
-                    width: 70,
-                    height: 24,
-                    color: _selectedIndex == 1 ? Colors.black : Colors.grey,
+                  _buildNavItem(
+                    1,
+                    AssetsPath.trackTabBarIcon,
+                    AssetsPath.unTrackTabBarIcon,
+                    'Track',
                   ),
-                  label: 'Track',
-                ),
-                BottomNavigationBarItem(
-                  icon: Image.asset(
-                    CommonUi.setPngImage(AssetsPath.gameIcon),
-                    width: 70,
-                    height: 24,
-                    color: _selectedIndex == 2 ? Colors.black : Colors.grey,
+                  _buildNavItem(
+                    2,
+                    AssetsPath.gamesTabBarIcon,
+                    AssetsPath.unGamesTabBarIcon,
+                    'Games',
                   ),
-                  label: 'Games',
-                ),
-                BottomNavigationBarItem(
-                  icon: Image.asset(
-                    CommonUi.setPngImage(AssetsPath.chatIcon),
-                    width: 70,
-                    height: 24,
-                    color: _selectedIndex == 3 ? Colors.black : Colors.grey,
+                  _buildNavItem(
+                    3,
+                    AssetsPath.wilcoTabBarIcon,
+                    AssetsPath.unWilcoTabBarIcon,
+                    'WILCO',
                   ),
-                  label: 'WILCO',
-                ),
-                BottomNavigationBarItem(
-                  icon: Image.asset(
-                    CommonUi.setPngImage(AssetsPath.ProfileIcon),
-                    width: 70,
-                    height: 24,
-                    color: _selectedIndex == 4 ? Colors.black : Colors.grey,
+                  _buildNavItem(
+                    4,
+                    AssetsPath.profileTabBarIcon,
+                    AssetsPath.unProfileTabBarIcon,
+                    'Profile',
                   ),
-                  label: 'Profile',
-                ),
-              ],
+                ],
+              ),
             ),
+    );
+  }
+
+  Widget _buildNavItem(
+    int index,
+    String activeIcon,
+    String inactiveIcon,
+    String label,
+  ) {
+    final isSelected = _selectedIndex == index;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onItemTapped(index),
+        child: Container(
+          height: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          color: isSelected ? const Color(0xFF1E1B4B) : Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                CommonUi.setSvgImage(isSelected ? inactiveIcon : activeIcon),
+                width: 48,
+                height: 48,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: AppTextStyles.regular(14).copyWith(
+                  height: 1.0,
+                  color: isSelected ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

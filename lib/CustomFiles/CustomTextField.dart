@@ -1,5 +1,8 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class CustomTextField extends StatefulWidget {
   final String label;
@@ -50,6 +53,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       },
       child: TextField(
         controller: widget.controller,
+        style: const TextStyle(color: AppColors.primaryDark),
         obscureText: _isObscure,
         onChanged: widget.onChanged,
         enabled: widget.enabled,
@@ -62,9 +66,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ? TextInputAction.newline
             : TextInputAction.done,
         decoration: InputDecoration(
+          enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.primaryDark),
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.primaryDark),
+          ),
           labelText: widget.label,
-          labelStyle: const TextStyle(color: Colors.black),
-          floatingLabelStyle: const TextStyle(color: Colors.black),
+          labelStyle: const TextStyle(color: Colors.black, fontSize: 30),
+          floatingLabelStyle: AppTextStyles.regular(
+            17.16,
+          ).copyWith(height: 1.0, color: AppColors.greyForTextfield),
           errorText: widget.errorText,
           errorMaxLines: 3,
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -74,7 +86,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   iconSize: 20.0,
                   icon: Icon(
                     _isObscure ? Icons.visibility_off : Icons.visibility,
-                    color: _isObscure ? Colors.grey : Colors.black,
+                    color: _isObscure ? Colors.grey : AppColors.primaryDark,
                   ),
                   onPressed: () {
                     setState(() {
