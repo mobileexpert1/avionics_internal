@@ -56,6 +56,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           isHideTopGradient: true,
+          isForHomeScreen:true,
           leftButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
               return Padding(
@@ -63,8 +64,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                 child: Text(
                   "Filter",
                   style: const TextStyle(
-                    fontSize: 19,
+                    fontSize: 20,
                     fontWeight: FontWeight.w500,
+                    color: Colors.white,
                   ),
                 ),
               );
@@ -94,9 +96,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                   child: Text(
                     "Apply",
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: hasSelection ? Colors.blue : Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ),

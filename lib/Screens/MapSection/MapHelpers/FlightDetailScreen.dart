@@ -327,11 +327,11 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                 : 'N/A',
             centerTitle: true,
             leftButton: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
             rightButton: IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.black),
+              icon: const Icon(Icons.refresh, color: Colors.white),
               onPressed: () async {
                 if (widget.fromSavedFlight) {
                   await _loadFullFlightDetailsFromSaved();

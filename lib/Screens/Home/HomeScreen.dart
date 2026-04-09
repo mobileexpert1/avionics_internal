@@ -191,6 +191,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   arrowFrontColor: Colors.black,
                                   isExpandedViewAvailable: true,
                                   isExpanded: false,
+                                  fontStyle: AppTextStyles.regular(16).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.whiteWithExpandableTitle,
+                                  ),
                                   onHeaderTap: () {
                                     AnalyticsService.instance.buttonPressed(
                                       FirebaseEvents.selectModelCompareScreen,
@@ -224,6 +228,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         AppColors.extraDarkYellow,
                                     arrowFrontColor: Colors.black,
                                     isExpandedViewAvailable: true,
+                                    fontStyle: AppTextStyles.regular(16)
+                                        .copyWith(
+                                          height: 1.0,
+                                          color: AppColors
+                                              .whiteWithExpandableTitle,
+                                        ),
                                     isLeftImage: IconButton(
                                       icon: SvgPicture.asset(
                                         CommonUi.setSvgImage(
@@ -268,6 +278,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       AppColors.extraDarkYellow,
                                   arrowFrontColor: Colors.black,
                                   isExpandedViewAvailable: true,
+                                  fontStyle: AppTextStyles.regular(16).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.whiteWithExpandableTitle,
+                                  ),
                                   isLeftImage: IconButton(
                                     icon: SvgPicture.asset(
                                       CommonUi.setSvgImage(
@@ -417,6 +431,11 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
+            fontStyle: AppTextStyles.regular(18).copyWith(
+              height: 1.4,
+              color: AppColors.white,
+              letterSpacing: 0.2 * 18,
+            ),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
@@ -458,13 +477,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           const SizedBox(height: 6),
-          const Text(
+          Text(
             "Click to view flights currently flying in this area on the map",
-            style: TextStyle(
-              color: AppColors.textHomeColour,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
+            style: AppTextStyles.regular(
+              14,
+            ).copyWith(height: 1.4, color: AppColors.textHomeColour),
             textAlign: TextAlign.start,
           ),
 
@@ -479,6 +496,11 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
+            fontStyle: AppTextStyles.regular(18).copyWith(
+              height: 1.4,
+              color: AppColors.white,
+              letterSpacing: 0.2 * 18,
+            ),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
@@ -519,13 +541,11 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             "View real-time status, route, and updates for a flight",
-            style: TextStyle(
-              color: AppColors.textHomeColour,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
+            style: AppTextStyles.regular(
+              14,
+            ).copyWith(height: 1.4, color: AppColors.textHomeColour),
             textAlign: TextAlign.start,
           ),
         ],
@@ -543,28 +563,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ),
   );
-
-  Widget _buildSectionTitle(
-    String text,
-    String iconPath,
-    double screenWidth, {
-    double fontSize = (kIsWeb ? 0.02 : 0.045),
-    double imageSize = (kIsWeb ? 0.02 : 0.060),
-  }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: kIsWeb ? screenWidth * 0.00 : screenWidth * 0.05,
-      ),
-      child: AppTexts(
-        text: text,
-        imageName: CommonUi.setSvgImage(iconPath),
-        font: 'Roboto',
-        side: 'left',
-        color: Colors.black,
-        weight: FontWeight.w500,
-        fontSize: screenWidth * fontSize,
-        imageSize: screenWidth * imageSize,
-      ),
-    );
-  }
 }

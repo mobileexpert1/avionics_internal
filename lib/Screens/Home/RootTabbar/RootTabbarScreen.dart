@@ -89,7 +89,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
       bottomNavigationBar: _isLoading
           ? null
           : Container(
-              height: 90,
+              height: 95,
               color: Colors.white,
               child: Row(
                 children: [
@@ -147,12 +147,13 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 5),
               SvgPicture.asset(
                 CommonUi.setSvgImage(isSelected ? inactiveIcon : activeIcon),
-                width: 48,
-                height: 48,
+                width: 45,
+                height: 45,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Text(
                 label,
                 style: AppTextStyles.regular(14).copyWith(
@@ -160,7 +161,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
                   color: isSelected ? Colors.white : Colors.black,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 13),
             ],
           ),
         ),

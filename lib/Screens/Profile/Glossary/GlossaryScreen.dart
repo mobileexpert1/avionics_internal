@@ -5,6 +5,7 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/Profile/Glossary/glossary_cubit.dart';
@@ -21,7 +22,6 @@ class GlossaryScreen extends StatefulWidget {
 }
 
 class _GlossaryScreenState extends State<GlossaryScreen> {
-
   bool isSelectedExpanded = false;
   final Map<String, bool> _expandedItems = {};
   late TextEditingController _searchController;
@@ -58,8 +58,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         title: ConstantStrings.glossaryTitle,
+        centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -114,7 +115,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                     }
 
                     return ListView(
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 2,
+                      ),
                       children: [
                         LayoutBuilder(
                           builder: (context, constraints) {
@@ -151,6 +155,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                           arrowBackgroundColor: AppColors.extraDarkYellow,
                           arrowFrontColor: Colors.black,
                           isExpandedViewAvailable: true,
+                          fontStyle: AppTextStyles.regular(
+                            16,
+                          ).copyWith(height: 1.4, color: AppColors.white),
                           isExpanded: isSelectedExpanded,
                           onHeaderTap: () {
                             setState(() {
@@ -188,7 +195,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                                     Colors.transparent,
                                               ),
                                               child: ExpansionTile(
-                                                showTrailingIcon: isExpanded ? true : false,
+                                                showTrailingIcon: isExpanded
+                                                    ? true
+                                                    : false,
                                                 shape: const Border(),
                                                 collapsedShape: const Border(),
                                                 backgroundColor:
@@ -207,10 +216,13 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                                     ),
                                                 title: Text(
                                                   item.title,
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                                  style:
+                                                      AppTextStyles.regular(
+                                                        18.67,
+                                                      ).copyWith(
+                                                        height: 1.0,
+                                                        color: Colors.black,
+                                                      ),
                                                 ),
                                                 initiallyExpanded: isExpanded,
                                                 onExpansionChanged: (expanded) {
@@ -222,10 +234,13 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                                 children: [
                                                   Text(
                                                     item.description,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      height: 1.4,
-                                                    ),
+                                                    style:
+                                                        AppTextStyles.regular(
+                                                          16,
+                                                        ).copyWith(
+                                                          height: 1.4,
+                                                          color: Colors.black,
+                                                        ),
                                                   ),
                                                 ],
                                               ),
@@ -289,9 +304,8 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         ),
         child: Text(
           letter,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
+          style: AppTextStyles.regular(12).copyWith(
+            height: 1.0,
             color: isSelected ? Colors.white : Colors.black,
           ),
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
+import 'AppTextStyles/AppTextStyles.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -76,6 +78,9 @@ class SearchBarWidget extends StatelessWidget {
                           absorbing: enableGestureMode,
                           // disable typing if true
                           child: TextField(
+                            style: AppTextStyles.regular(
+                              18.67,
+                            ).copyWith(height: 1.0, color: AppColors.primaryDark),
                             controller: controller,
                             onChanged: onChanged,
                             decoration: InputDecoration(

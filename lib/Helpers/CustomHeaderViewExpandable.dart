@@ -17,6 +17,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isExpandedViewAvailable;
   final VoidCallback? onHeaderTap;
   final Widget? child;
+  final TextStyle fontStyle;
 
   const CustomHeaderViewExpandable({
     super.key,
@@ -31,6 +32,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     this.onHeaderTap,
     this.isLeftImage,
     this.child,
+    required this.fontStyle,
   });
 
   @override
@@ -69,15 +71,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         isLeftImage!,
                         const SizedBox(width: 12),
                       ],
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: AppTextStyles.regular(16).copyWith(
-                            height: 1.0,
-                            color: AppColors.whiteWithExpandableTitle,
-                          ),
-                        ),
-                      ),
+                      Expanded(child: Text(title, style: fontStyle)),
                       const SizedBox(width: 50),
                     ],
                   ),

@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppText.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SelectableAircraftCard.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
@@ -185,14 +187,14 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                           ),
                                         );
                                       } else {
-                                        return const Padding(
+                                        return Padding(
                                           padding: EdgeInsets.all(16),
                                           child: Center(
                                             child: Text(
                                               "No more models",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
+                                              style: AppTextStyles.medium(
+                                                14,
+                                              ).copyWith(height: 1.0, color: AppColors.grayMedium),
                                             ),
                                           ),
                                         );
@@ -395,7 +397,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                   ),
                                               child: Row(
                                                 children: [
-                                                  // Image
                                                   model.image != null &&
                                                           model.image.isNotEmpty
                                                       ? CachedAnyImage(
@@ -445,8 +446,8 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                             children: [
                                                               ClipRRect(
                                                                 child: SizedBox(
-                                                                  width: 40,
-                                                                  height: 20,
+                                                                  width: 60,
+                                                                  height: 15,
                                                                   child: CachedAnyImage(
                                                                     imagePath:
                                                                         model
@@ -470,24 +471,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                               const SizedBox(
                                                                 width: 5,
                                                               ),
-                                                              // if (model
-                                                              //         .manufacturer
-                                                              //         ?.companyName !=
-                                                              //     null)
-                                                              //   Expanded(
-                                                              //     child: Text(
-                                                              //       model
-                                                              //           .manufacturer!
-                                                              //           .companyName,
-                                                              //       style: const TextStyle(
-                                                              //         fontSize:
-                                                              //             13,
-                                                              //       ),
-                                                              //       overflow:
-                                                              //           TextOverflow
-                                                              //               .ellipsis,
-                                                              //     ),
-                                                              //   ),
                                                             ],
                                                           ),
 

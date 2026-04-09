@@ -1,4 +1,5 @@
 import '../../Constants/ApiClass/api_service.dart';
+import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
 import 'flight_key_values_model.dart';
@@ -6,6 +7,25 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
+  Future<BaseDetailResponseModel> postFlightCreditApi({
+    required int type,
+    required int credit,
+  }) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlAirplaneConstant.airplaneService+
+          ApiFunctionUrlAirplaneConstant.airCraftFlightCredit,
+    );
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {"type": type, "credit": credit},
+      );
+      return BaseDetailResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   Future<List<FlightModel>> getFlights({
     required String bounds,
     int limit = 20,

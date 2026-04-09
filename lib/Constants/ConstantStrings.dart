@@ -218,6 +218,7 @@ class ApiFunctionUrlAirplaneConstant {
   static const String airplaneService = 'airplane-service/';
   static const String airCraftDetail = 'aircraft/details/';
   static const String airCraftDetailICAOCode = 'aircraft/flight-details/';
+  static const String airCraftFlightCredit = 'airport/flight-radar-credit';
 }
 
 class ApiServiceUrlAirplaneConstant {
@@ -299,8 +300,8 @@ class MapFlightAircraftSectionConstant {
   static String baseUrl = "https://fr24api.flightradar24.com/api/live";
   static String baseUrlDetail =
       "https://fr24api.flightradar24.com/api/flight-summary/full";
-  static String baseUrlSearch =
-      "https://www.flightradar24.com/v1/search/web/find?query=";
-  static String baseUrlForFlightPosition =
-      "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
+   static String baseUrlSearch =
+       "https://www.flightradar24.com/v1/search/web/find?query=";
+   static String baseUrlForFlightPosition =
+       "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
 }

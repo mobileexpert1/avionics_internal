@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
@@ -135,11 +136,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               ),
                               child: Text(
                                 label,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.black,
-                                ),
+                                style: AppTextStyles.regular(
+                                  18.67,
+                                ).copyWith(height: 1.0, color: AppColors.primaryDark),
                               ),
                             ),
                           );
@@ -235,11 +234,16 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                           Expanded(
                                             child: Text(
                                               item.companyName,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Color(0xFF3F3D56),
-                                              ),
+                                              style: AppTextStyles.regular(
+                                                14.09,
+                                              ).copyWith(height: 1.0, color: AppColors.black),
+
+
+                                              // const TextStyle(
+                                              //   fontSize: 14,
+                                              //   fontWeight: FontWeight.w500,
+                                              //   color: Color(0xFF3F3D56),
+                                              // ),
                                             ),
                                           ),
                                         ],

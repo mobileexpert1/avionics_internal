@@ -68,19 +68,20 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: ConstantStrings.scientificCalculator,
+          centerTitle:false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           rightButton: IconButton(
             icon: SvgPicture.asset(AssetsPath.historyForCal),
+
             onPressed: () {
               openHistory(context);
             },
           ),
-          centerTitle: true,
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

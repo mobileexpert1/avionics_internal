@@ -160,7 +160,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               : IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios_new,
-                    color: Color(0xFF32377D),
+                    color: Colors.white,
                   ),
                   onPressed: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);

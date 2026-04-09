@@ -222,7 +222,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
 
                             // -------- Login Redirect --------
                             Center(

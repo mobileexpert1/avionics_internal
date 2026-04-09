@@ -9,6 +9,7 @@ import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
@@ -146,10 +147,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'All ${widget.manufacturerName} Models',
-                      style: TextStyle(
-                        fontSize: titleFontSize,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      style: AppTextStyles.bold(20).copyWith(
+                        height: 1.0,
+                        color: AppColors.primaryValueColour,
                       ),
                     ),
                   ),
@@ -197,7 +197,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                     ),
                                     child: Row(
                                       children: [
-                                        /// LEFT IMAGE (background me bhi)
                                         Container(
                                           width: 50,
                                           height: 50,
@@ -352,14 +351,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                         child: Text(
                                                           model.model,
                                                           style:
-                                                              const TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: Color(
-                                                                  0xFF2E2E4D,
-                                                                ),
+                                                              AppTextStyles.bold(
+                                                                18,
+                                                              ).copyWith(
+                                                                height: 1.0,
+                                                                color: AppColors
+                                                                    .planListTitleColour,
                                                               ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -388,14 +385,16 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                                   20,
                                                                 ),
                                                           ),
+
                                                           child: Text(
                                                             model.ICAOCode,
                                                             style:
-                                                                const TextStyle(
-                                                                  fontSize: 17,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
+                                                                AppTextStyles.medium(
+                                                                  18,
+                                                                ).copyWith(
+                                                                  height: 1.0,
+                                                                  color: AppColors
+                                                                      .planListTitleColour,
                                                                 ),
                                                           ),
                                                         ),

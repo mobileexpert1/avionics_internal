@@ -43,23 +43,23 @@ Color getTextColor(String text, BuildContext context) {
   }
 }
 
-double getTextSize(String text) {
-  switch (text) {
-    case '.':
-      return 35;
-    case '-':
-    case '+':
-    case '×':
-    case '÷':
-      return 27;
-    default:
-      return 21;
-  }
-}
+// double getTextSize(String text) {
+//   switch (text) {
+//     case '.':
+//       return 2;
+//     case '-':
+//     case '+':
+//     case '×':
+//     case '÷':
+//       return 27;
+//     default:
+//       return 21;
+//   }
+// }
 
 Widget getOnButtonWidget(String text, BuildContext context) {
   final textStyle = TextStyle(
-    fontSize: getTextSize(text),
+    fontSize: 30,
     fontWeight: FontWeight.bold,
   );
   switch (text) {

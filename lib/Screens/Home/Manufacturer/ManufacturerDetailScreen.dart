@@ -9,6 +9,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
@@ -225,18 +226,14 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 60),
-
-                                    // Text(
-                                    //   detail.general.companyName,
-                                    //   style: TextStyle(
-                                    //     fontSize: 20,
-                                    //     fontWeight: FontWeight.bold,
-                                    //   ),
-                                    // ),
-                                    // const SizedBox(height: 20),
                                     CustomHeaderViewExpandable(
                                       isNeedToShowLeftRightBottomBorder: true,
                                       isNeedToShowLeftImage: true,
+                                      fontStyle: AppTextStyles.regular(18.67)
+                                          .copyWith(
+                                            height: 1.0,
+                                            color: AppColors.white,
+                                          ),
                                       isLeftImage: IconButton(
                                         icon: SvgPicture.asset(
                                           CommonUi.setSvgImage(
@@ -365,9 +362,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   children: [
                                     Text(
                                       detail.company.companyDescription,
-                                      style: const TextStyle(height: 1.5),
+                                      style: AppTextStyles.regular(16).copyWith(
+                                        height: 1.5,
+                                        color:
+                                            AppColors.textColour,
+                                      ),
                                       maxLines: showMoreAboutInfo ? null : 2,
-                                      // null = show full text
                                       overflow: showMoreAboutInfo
                                           ? TextOverflow.visible
                                           : TextOverflow.ellipsis,
@@ -402,7 +402,11 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   children: [
                                     Text(
                                       detail.company.companyHistory,
-                                      style: const TextStyle(height: 1.5),
+                                      style: AppTextStyles.regular(16).copyWith(
+                                        height: 1.5,
+                                        color:
+                                        AppColors.textColour,
+                                      ),
                                       maxLines: showMoreHistory ? null : 2,
                                       overflow: showMoreHistory
                                           ? TextOverflow.visible
@@ -450,16 +454,20 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                             if (product.series.isNotEmpty)
                                               Text(
                                                 product.series,
-                                                style: const TextStyle(
-                                                  fontSize: 15,
+                                                style: AppTextStyles.regular(16).copyWith(
+                                                  height: 1.5,
+                                                  color:
+                                                  AppColors.textColour,
                                                 ),
                                               ),
                                             SizedBox(height: 4),
 
                                             Text(
                                               product.description,
-                                              style: const TextStyle(
+                                              style: AppTextStyles.regular(16).copyWith(
                                                 height: 1.5,
+                                                color:
+                                                AppColors.textColour,
                                               ),
                                               maxLines: showMoreProducts
                                                   ? null
@@ -515,9 +523,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                         child: Text(
                                           "• $fact",
-                                          style: const TextStyle(
-                                            fontSize: 14,
+                                          style: AppTextStyles.regular(16).copyWith(
                                             height: 1.4,
+                                            color:
+                                            AppColors.textColour,
                                           ),
                                         ),
                                       );
@@ -608,6 +617,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   }
 
   Widget _buildGeneralInfo(General generalDetails) {
+
     return Column(
       children: [
         Row(
@@ -616,8 +626,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: customField(
                 label: 'Headquarters',
                 text: generalDetails.headquarter ?? '',
-                labelColor: const Color(0xFF3E3C55),
-                textColor: Colors.black,
+                fontSize: 18,
+                labelColor: AppColors.lightGreyTextFieldHeading,
+                textColor: AppColors.primaryValueColour,
               ),
             ),
             const SizedBox(width: 12),
@@ -626,8 +637,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: customField(
                 label: 'Founding Date',
                 text: generalDetails.foundingDate,
-                labelColor: const Color(0xFF3E3C55),
-                textColor: const Color(0xFF3F3D56),
+                fontSize: 18,
+                labelColor: AppColors.lightGreyTextFieldHeading,
+                textColor: AppColors.primaryValueColour,
               ),
             ),
           ],
@@ -659,9 +671,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                   Flexible(
                     child: Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
+                      style: AppTextStyles.bold(20).copyWith(
+                        height: 1.0,
+                        color: AppColors.primaryValueColour,
                       ),
                     ),
                   ),

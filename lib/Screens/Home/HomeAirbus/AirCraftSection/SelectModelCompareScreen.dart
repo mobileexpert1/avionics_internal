@@ -8,6 +8,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
@@ -237,15 +238,12 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                           width: 90,
                         ),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           "Compare every detail\nfrom engines to dimensions",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            height: 1.5,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: AppTextStyles.semiBold(
+                            19.37,
+                          ).copyWith(height: 1.0, color: AppColors.white,letterSpacing: 0.02 * 19.37),
                         ),
                         const SizedBox(height: 60),
                         Container(
@@ -262,20 +260,19 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.black12,
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text(
+                              Text(
                                 "Compare Aircraft Specifications",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                style: AppTextStyles.bold(
+                                  18,
+                                ).copyWith(height: 1.0, color: AppColors.black),
                               ),
                               const SizedBox(height: 20),
 
@@ -409,16 +406,16 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(fontSize: 12, color: AppColors.grayMedium),
+                    style:AppTextStyles.medium(
+                      14,
+                    ).copyWith(height: 1.0, color: AppColors.grayMedium),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Text(
                     value?.aircraftModel ?? hint,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryValueColour,
-                    ),
+                    style:AppTextStyles.bold(
+                      14,
+                    ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
                   ),
                 ],
               ),

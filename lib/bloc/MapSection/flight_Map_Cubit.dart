@@ -25,6 +25,23 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   Timer? _trackingTimer;
   Set<String>? _favCallSigns;
 
+  Future<void> submitFlightCreditApi(int type, int credit) async {
+    try {
+      final response = await FlightRepository().postFlightCreditApi(
+        type: type,
+        credit: credit,
+      );
+      final flightDetail = response.detail;
+      if (kDebugMode) {
+        print(flightDetail);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
   void FavoriteFlights(Set<String> favCallSigns) {
     _favCallSigns = favCallSigns;
 
@@ -56,6 +73,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   void onFlightsLoaded(List<FlightModel> flights) {
     if (!isClosed) {
+      // SUMMARY = 1
+      // TRACK_FLIGHT = 2
+      // EMPTY_REQUEST = 3
+      submitFlightCreditApi(
+        flights.isEmpty == true ? 3 : 2,
+        flights.isEmpty == true ? 1 : flights.length * 8,
+      );
       emit(state.copyWith(flights: flights));
       if (_favCallSigns != null) {
         _favoritesToFlights();
@@ -142,14 +166,14 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       );
 
       if (!isClosed) {
-      emit(
-        state.copyWith(
-          position: position,
-          status: CommonApiStatus.success,
-          isSuccess: true,
-          isLoading: false,
-        ),
-      );
+        emit(
+          state.copyWith(
+            position: position,
+            status: CommonApiStatus.success,
+            isSuccess: true,
+            isLoading: false,
+          ),
+        );
       }
 
       return true; // Successfully got location
@@ -222,7 +246,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required LatLng currentCenterLatLong,
   }) async {
     try {
-
       final boundsString =
           "${bounds.northeast.latitude},${bounds.southwest.latitude},"
           "${bounds.southwest.longitude},${bounds.northeast.longitude}";
@@ -347,6 +370,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final flightDetail = response['flightDetail'] as FlightAircraftDetail;
 
+      // SUMMARY = 1
+      // TRACK_FLIGHT = 2
+      // EMPTY_REQUEST = 3
+      submitFlightCreditApi(1, 2);
       emit(
         state.copyWith(
           selectedFlightDetail: flightDetail,
@@ -406,8 +433,16 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         flightNumber,
       );
       final flights = response?.flights as List<FlightModel>;
+      // SUMMARY = 1
+      // TRACK_FLIGHT = 2
+      // EMPTY_REQUEST = 3
+      submitFlightCreditApi(
+        flights.isNotEmpty ? 2 : 3,
+        flights.isNotEmpty ? 8 : 1,
+      );
       if (flights.isNotEmpty && !isClosed) {
         final updatedFlight = flights.first;
+
         emit(
           state.copyWith(
             selectedFlight: updatedFlight,
@@ -473,6 +508,14 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     try {
       final response = await FlightRepository().getFlightPositions(
         flightNumber,
+      );
+
+      // SUMMARY = 1
+      // TRACK_FLIGHT = 2
+      // EMPTY_REQUEST = 3
+      submitFlightCreditApi(
+        response!.flights.isNotEmpty ? 2 : 3,
+        response!.flights.isNotEmpty ? 8 : 1,
       );
       if (response?.flights != null && response!.flights.isNotEmpty) {
         final updatedFlight = response.flights.first;

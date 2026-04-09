@@ -36,6 +36,10 @@ class AppColors {
   static const Color greyForAirportDetailCard = Color(0xFFF4F3F6);
 
   static const Color extraDarkYellow = Color(0xFFFAC200);
+  static const Color planListTitleColour = Color(0xFF19173E);
+
+  static const Color calculatorTextColour = Color(0xFF171C22);
+
 
   static const Color primaryValueColour = Color(0xFF1B1748);
 
@@ -43,6 +47,8 @@ class AppColors {
   static const Color accentPurple = Color(0xFF9D4EDD);
   static const Color greyForTextfield = Color(0xFF575757);
   static const Color blackForNavTitle = Color(0xFF3F3D56);
+
+  static const Color lightGreyTextFieldHeading = Color(0xFF6B6B6B);
 
   static const LinearGradient panelGradient = LinearGradient(
     begin: Alignment.topLeft,

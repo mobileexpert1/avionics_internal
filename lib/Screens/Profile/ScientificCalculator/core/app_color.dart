@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 
 // Further Color Cutomization
@@ -31,7 +32,7 @@ extension CustomColorScheme on ColorScheme {
 
   Color get resultText => Color.fromRGBO(63, 61, 86, 1.0);
 
-  Color get buttonText => brightness == Brightness.light ? grey2 : grey6;
+  Color get buttonText => brightness == Brightness.light ? AppColors.calculatorTextColour : grey6;
 
   Color get opText => brightness == Brightness.light ? grey4 : grey5;
 

@@ -28,7 +28,7 @@ class CustomSocialLoginButtons extends StatelessWidget {
         label: Text(
           title,
           style: AppTextStyles.regular(
-            21.46,
+            20.46,
           ).copyWith(height: 1.0, color: textColor),
         ),
 
