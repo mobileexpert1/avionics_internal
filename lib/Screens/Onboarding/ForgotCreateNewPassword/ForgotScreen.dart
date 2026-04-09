@@ -43,7 +43,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
     final isWeb = kIsWeb;
 
     // --- Responsive sizes ---
-    final logoWidth = isWeb ? 120.0 : screenWidth * 0.4;
+    final logoWidth = isWeb ? 120.0 : screenWidth * 0.2;
     final topPadding = isWeb ? 20.0 : 40.0;
     final spacingAfterLogo = isWeb ? 20.0 : 40.0;
     final contentMaxWidth = isWeb ? 420.0 : double.infinity;
