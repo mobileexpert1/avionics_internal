@@ -95,7 +95,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.logoMain),
+                              CommonUi.setSvgImage(AssetsPath.mainLogo),
                               width: logoWidth,
                               fit: BoxFit.contain,
                             ),
