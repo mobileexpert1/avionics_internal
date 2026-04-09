@@ -1,6 +1,8 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 
+import '../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget? leftButton;
@@ -8,6 +10,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? centerTitle;
   final double? titleSpacing;
   final bool? isHideTopGradient;
+  final bool? isForHomeScreen;
+  final bool? isForComparison;
+  final bool? isClearBackgroundColour;
 
   const CustomAppBar({
     super.key,
@@ -17,21 +22,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle,
     this.titleSpacing,
     this.isHideTopGradient,
+    this.isForHomeScreen,
+    this.isForComparison,
+    this.isClearBackgroundColour,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: isHideTopGradient == true ? Colors.white : Colors.black12,
-            offset: const Offset(0, 2), // move down
-            blurRadius: 4,
-          ),
-        ],
-        border: Border(
+        color: isClearBackgroundColour == true
+            ? Colors.white
+            : AppColors.primaryDark,
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: isHideTopGradient == true ? Colors.white : Colors.black12,
+        //     offset: const Offset(0, 2),
+        //     blurRadius: 4,
+        //   ),
+        // ],
+        border: isForComparison == true
+            ? null
+            : Border(
           bottom: BorderSide(
             color: isHideTopGradient == true
                 ? Colors.white
@@ -41,39 +53,46 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       child: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isClearBackgroundColour == true
+            ? Colors.white
+            : Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         surfaceTintColor: Colors.white,
         title: Text(
           title,
-          style: const TextStyle(fontSize: 20, color: Color(0xFF151A6A)),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.regular(17.16).copyWith(
+            height: 1.0,
+            color: isClearBackgroundColour == true
+                ? AppColors.blackForNavTitle
+                : Colors.white,
+          ),
         ),
         centerTitle: centerTitle ?? true,
         titleSpacing: centerTitle == true ? titleSpacing : 0,
         leading: leftButton != null
             ? Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: leftButton!,
-                ),
-              )
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: leftButton!,
+          ),
+        )
             : null,
-        leadingWidth: 100,
-
+        leadingWidth: isForHomeScreen == true ? 200 : 50,
         actions: rightButton != null
             ? [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: rightButton!,
-                  ),
-                ),
-              ]
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: rightButton!,
+            ),
+          ),
+        ]
             : null,
       ),
     );

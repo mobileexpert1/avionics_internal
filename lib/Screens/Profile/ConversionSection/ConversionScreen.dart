@@ -5,6 +5,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../bloc/Profile/ConversionSection/conversion_cubit.dart';
 import '../../../bloc/Profile/ConversionSection/conversion_model.dart';
@@ -18,7 +19,6 @@ class ConversionsScreen extends StatefulWidget {
 }
 
 class _ConversionsScreenState extends State<ConversionsScreen> {
-
   late ConversionCubit _cubit;
   Map<int, bool> expandedMap = {};
 
@@ -44,9 +44,10 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'Conversions Table',
+          title: 'Unit Conversion',
+          centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -83,6 +84,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                     isNeedToShowLeftRightBottomBorder: false,
                     isNeedToShowLeftImage: false,
                     isExpanded: expandedMap[index] ?? false,
+                    fontStyle: AppTextStyles.regular(
+                      16,
+                    ).copyWith(height: 1.4, color: AppColors.white),
                     title: category.title,
                     headerColor: expandedMap[index] ?? false
                         ? AppColors.primaryDark
@@ -114,20 +118,24 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
         Container(
           color: AppColors.greyForConversionScreen,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: const Row(
+          child: Row(
             children: [
               Expanded(
                 child: Text(
                   textAlign: TextAlign.center,
                   "From ⇄ To",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.regular(
+                    16,
+                  ).copyWith(height: 1.4, color: AppColors.black),
                 ),
               ),
               Expanded(
                 child: Text(
                   textAlign: TextAlign.center,
                   "Conversion",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.regular(
+                    16,
+                  ).copyWith(height: 1.4, color: AppColors.black),
                 ),
               ),
             ],
@@ -150,10 +158,23 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(item.fromTo, style: TextStyle(fontSize: 13)),
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        item.fromTo,
+                        style: AppTextStyles.regular(
+                          16,
+                        ).copyWith(height: 1.4, color: AppColors.black),
+                      ),
                     ),
                     Expanded(
-                      child: Text(item.formula, style: TextStyle(fontSize: 10)),
+
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        item.formula,
+                        style: AppTextStyles.regular(
+                          16,
+                        ).copyWith(height: 1.4, color: AppColors.black),
+                      ),
                     ),
                   ],
                 ),
@@ -171,7 +192,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                       child: Text(
                         "Example: ${item.example}",
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        style: AppTextStyles.regular(
+                          16,
+                        ).copyWith(height: 1.4, color: AppColors.black),
                       ),
                     ),
                   ],

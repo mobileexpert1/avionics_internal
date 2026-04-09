@@ -3,6 +3,7 @@ import '../../../Constants/AppColors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../bloc/Profile/FormulaSection/formula_cubit.dart';
 import '../../../bloc/Profile/FormulaSection/formula_model.dart';
@@ -44,9 +45,10 @@ class _FormulasScreenState extends State<FormulasScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
+          centerTitle: false,
           title: 'Formulas',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -82,6 +84,9 @@ class _FormulasScreenState extends State<FormulasScreen> {
                     isNeedToShowLeftImage: false,
                     isExpanded: expandedMap[index] ?? false,
                     title: category.name,
+                    fontStyle: AppTextStyles.regular(
+                      16,
+                    ).copyWith(height: 1.4, color: AppColors.white),
                     headerColor: expandedMap[index] ?? false
                         ? AppColors.primaryDark
                         : AppColors.grayMedium,
@@ -120,10 +125,9 @@ class _FormulasScreenState extends State<FormulasScreen> {
                   child: Text(
                     formula.expression,
                     textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyles.regular(
+                      16,
+                    ).copyWith(height: 1.4, color: AppColors.black),
                   ),
                 ),
               ],

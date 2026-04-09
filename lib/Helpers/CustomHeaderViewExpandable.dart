@@ -2,9 +2,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../Constants/AppColors.dart';
+import 'AppTextStyles/AppTextStyles.dart';
+
 class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isNeedToShowLeftRightBottomBorder;
   final bool isNeedToShowLeftImage;
+  final IconButton? isLeftImage;
   final bool isExpanded;
   final String title;
   final Color headerColor;
@@ -13,6 +17,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isExpandedViewAvailable;
   final VoidCallback? onHeaderTap;
   final Widget? child;
+  final TextStyle fontStyle;
 
   const CustomHeaderViewExpandable({
     super.key,
@@ -25,7 +30,9 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     required this.arrowFrontColor,
     required this.isExpandedViewAvailable,
     this.onHeaderTap,
+    this.isLeftImage,
     this.child,
+    required this.fontStyle,
   });
 
   @override
@@ -33,7 +40,11 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isNeedToShowLeftRightBottomBorder == true ? Colors.transparent : Colors.black12),
+        border: Border.all(
+          color: isNeedToShowLeftRightBottomBorder == true
+              ? Colors.transparent
+              : Colors.black12,
+        ),
       ),
       child: Column(
         children: [
@@ -43,9 +54,9 @@ class CustomHeaderViewExpandable extends StatelessWidget {
             child: Stack(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isNeedToShowLeftImage ? 10 : 15,
+                    vertical: isNeedToShowLeftImage ? 03 : 16,
                   ),
                   decoration: BoxDecoration(
                     color: headerColor,
@@ -56,20 +67,11 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      if (isNeedToShowLeftImage)...[
-                        const Icon(Icons.menu_book, color: Colors.white),
+                      if (isNeedToShowLeftImage) ...[
+                        isLeftImage!,
                         const SizedBox(width: 12),
                       ],
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                      Expanded(child: Text(title, style: fontStyle)),
                       const SizedBox(width: 50),
                     ],
                   ),
@@ -80,11 +82,13 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   top: 0,
                   bottom: 0,
                   child: Container(
-                    width: 60,
+                    width: 52,
                     decoration: BoxDecoration(
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded
-                          ? const BorderRadius.vertical(top: Radius.circular(12))
+                          ? const BorderRadius.vertical(
+                        top: Radius.circular(12),
+                      )
                           : BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -92,8 +96,9 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         turns: isExpanded ? 0.25 : 0,
                         duration: const Duration(milliseconds: 200),
                         child: Icon(
-                          Icons.keyboard_arrow_right,
-                          color:arrowFrontColor,
+                          Icons.arrow_forward_ios_sharp,
+                          color: arrowFrontColor,
+                          size: 20,
                         ),
                       ),
                     ),
@@ -117,7 +122,6 @@ class CustomHeaderViewExpandable extends StatelessWidget {
               child: child ?? const SizedBox(),
             )
                 : const SizedBox(),
-
           ),
         ],
       ),

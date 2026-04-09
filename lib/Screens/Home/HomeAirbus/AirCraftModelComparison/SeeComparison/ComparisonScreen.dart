@@ -97,7 +97,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             }
           },
           child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.filterIconCompare),
+            CommonUi.setSvgImage(AssetsPath.compareFilter),
             fit: BoxFit.fill,
             width: 50,
             height: 50,
