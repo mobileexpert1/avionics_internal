@@ -434,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
             fontStyle: AppTextStyles.regular(18).copyWith(
               height: 1.4,
               color: AppColors.white,
-              letterSpacing: 0.2 * 18,
+              letterSpacing: 0.2,
             ),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
@@ -499,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen> {
             fontStyle: AppTextStyles.regular(18).copyWith(
               height: 1.4,
               color: AppColors.white,
-              letterSpacing: 0.2 * 18,
+              letterSpacing: 0.2,
             ),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(

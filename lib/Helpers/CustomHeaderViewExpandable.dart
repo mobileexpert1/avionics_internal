@@ -69,7 +69,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                     children: [
                       if (isNeedToShowLeftImage) ...[
                         isLeftImage!,
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 5),
                       ],
                       Expanded(child: Text(title, style: fontStyle)),
                       const SizedBox(width: 50),

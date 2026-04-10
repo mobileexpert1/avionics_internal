@@ -3,6 +3,7 @@ import '../../../Constants/AppColors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Onboarding/Login/LoginScreen.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
@@ -30,7 +31,6 @@ class AvtarScreen extends StatefulWidget {
 }
 
 class _AvtarScreenState extends State<AvtarScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -52,7 +52,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
       appBar: CustomAppBar(
         title: ConstantStrings.avtarTitle,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -84,17 +84,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
           return Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
-              child: ListView.separated(
+              child: ListView.builder(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 20,
+                  vertical: 10,
+                  horizontal: 8,
                 ),
                 itemCount: state.avatars.length,
-                separatorBuilder: (context, index) => const Divider(
-                  height: 0.1,
-                  color: Colors.grey,
-                  thickness: 0.1,
-                ),
                 itemBuilder: (context, index) {
                   final userType = state.avatars[index];
                   final isSelected = state.selectedUserType == userType.key;
@@ -119,65 +114,81 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         FirebaseEvents.updatedAvtarButtonTap,
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 20,
-                      ),
-                      child: Card(
-                        color: Colors.white,
-                        elevation: 0,
-                        margin: EdgeInsets.zero,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              (userType.logo.isNotEmpty)
-                                  ? SvgPicture.network(
-                                      userType.logo,
-                                      width: 44,
-                                      height: 44,
-                                      fit: BoxFit.contain,
-                                      placeholderBuilder: (context) =>
-                                          const SizedBox(
-                                            width: 24,
-                                            height: 24,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                    )
-                                  : SvgPicture.asset(
-                                      CommonUi.setSvgImage(
-                                        AssetsPath.avtarSecond,
-                                      ),
-                                      width: 44,
-                                      height: 44,
-                                      fit: BoxFit.contain,
-                                    ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  userType.name,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                              if (isSelected)
-                                const Icon(
-                                  Icons.check,
-                                  size: 25,
-                                  color: Colors.blue,
-                                ),
-                            ],
-                          ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected == true ? AppColors.primaryBlue :AppColors.white,
+                          border: Border.all(color: AppColors.primaryDark),
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 20,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userType.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.bold(18).copyWith(
+                                      height: 1.0,
+                                      color: isSelected ? AppColors.white : AppColors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    userType.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.regular(12).copyWith(
+                                      height: 1.0,
+                                      color: isSelected ? AppColors.white : AppColors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(width: 10),
+
+                            // Logo
+                            (userType.logo.isNotEmpty)
+                                ? SvgPicture.network(
+                              userType.logo,
+                              width: 44,
+                              height: 44,
+                              fit: BoxFit.contain,
+                              color: isSelected ? AppColors.white : AppColors.black,
+                              placeholderBuilder: (context) => const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            )
+                                : SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.avtarSecond),
+                              width: 44,
+                              height: 44,
+                              fit: BoxFit.contain,
+                            ),
+
+                            const SizedBox(width: 8),
+
+                            // if (isSelected)
+                            //   const Icon(
+                            //     Icons.check,
+                            //     size: 25,
+                            //     color: Colors.blue,
+                            //   ),
+                          ],
+                        )
                       ),
                     ),
                   );

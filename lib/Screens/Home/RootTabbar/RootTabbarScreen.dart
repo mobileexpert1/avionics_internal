@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -141,9 +142,18 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
       child: GestureDetector(
         onTap: () => onItemTapped(index),
         child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF1E1B4B) : Colors.white,
+            border: Border(
+              top: BorderSide(
+                color:AppColors.greyWithBottomLine,
+                width: 1.5,
+              ),
+            ),
+          ),
           height: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 0),
-          color: isSelected ? const Color(0xFF1E1B4B) : Colors.white,
+          //color: isSelected ? const Color(0xFF1E1B4B) : Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

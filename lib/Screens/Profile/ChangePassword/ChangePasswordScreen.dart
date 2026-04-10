@@ -58,8 +58,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title: ConstantStrings.changePassword,
+                  centerTitle: false,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                     onPressed: () {
                       Navigator.pop(context);
                     },

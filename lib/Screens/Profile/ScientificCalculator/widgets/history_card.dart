@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../providers/calculations.dart';
 
 class HistoryCard extends StatelessWidget {
@@ -23,8 +24,7 @@ class HistoryCard extends StatelessWidget {
       color: AppColors.primaryDark,
       child: InkWell(
         onTap: () {
-          Provider.of<Calculations>(context, listen: false)
-              .add(result);
+          Provider.of<Calculations>(context, listen: false).add(result);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
@@ -41,17 +41,20 @@ class HistoryCard extends StatelessWidget {
                 children: [
                   Text(
                     time,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: AppTextStyles.bold(
+                      14,
+                    ).copyWith(height: 1.0, color: AppColors.white),
+
+                    // style: const TextStyle(
+                    //   color: Colors.white70,
+                    //   fontSize: 14,
+                    // ),
                   ),
                   Text(
                     date,
-                    style: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 12,
-                    ),
+                    style: AppTextStyles.bold(
+                      13,
+                    ).copyWith(height: 1.0, color: AppColors.white),
                   ),
                 ],
               ),
@@ -64,23 +67,22 @@ class HistoryCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: operation,
-
-                          style: const TextStyle(
+                          style: AppTextStyles.bold(18).copyWith(
+                            height: 1.0,
                             color: AppColors.extraDarkYellow,
-                            fontSize: 18,
                           ),
                         ),
-                        const TextSpan(
+                        TextSpan(
                           text: " = ",
-                          style: TextStyle(color: Colors.white70),
-
+                          style: AppTextStyles.bold(
+                            18,
+                          ).copyWith(height: 1.0, color: AppColors.white),
                         ),
                         TextSpan(
                           text: result,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
+                          style: AppTextStyles.bold(
+                            18,
+                          ).copyWith(height: 1.0, color: AppColors.white),
                         ),
                       ],
                     ),

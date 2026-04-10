@@ -24,6 +24,7 @@ class AppColors {
   static const Color grayLight = Color(0xFFD6D6D6);
   static const Color white = Color(0xFFFFFFFF);
   static const Color whiteWithExpandableTitle = Color(0xFFE3E2E8);
+  static const Color greyWithBottomLine = Color(0xFFE3E3E3);
 
   static const Color black = Color(0xFF000000);
   static const Color dividerLineColour = Color(0xFFEAEAEA);

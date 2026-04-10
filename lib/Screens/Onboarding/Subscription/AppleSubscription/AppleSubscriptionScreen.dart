@@ -136,13 +136,14 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           widget.isComeFromSignup == null)
                       ? SubscriptionTexts.currentSubTitle
                       : ConstantStrings.startSubscription,
+                  centerTitle:false,
                   leftButton:
                       (widget.isComeFromSignup == false ||
                           widget.isComeFromSignup == null)
                       ? IconButton(
                           icon: const Icon(
                             Icons.arrow_back_ios,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                           onPressed: () {
                             Navigator.pop(context);

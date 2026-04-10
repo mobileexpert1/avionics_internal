@@ -285,8 +285,9 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         title: "Saved",
+        centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../providers/calculations.dart';
 import '../core/index.dart';
 
@@ -215,12 +216,11 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         "History",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        style: AppTextStyles.bold(18).copyWith(
+                          height: 1.0,
+                          color: AppColors.white,
                         ),
                       ),
                       GestureDetector(
