@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class CustomSocialLoginButtons extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
@@ -23,7 +25,13 @@ class CustomSocialLoginButtons extends StatelessWidget {
       height: 48,
       child: ElevatedButton.icon(
         icon: icon,
-        label: Text(title, style: TextStyle(color: textColor, fontSize: 16)),
+        label: Text(
+          title,
+          style: AppTextStyles.regular(
+            18,
+          ).copyWith(height: 1.0, color: textColor),
+        ),
+
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
