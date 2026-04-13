@@ -771,6 +771,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         _isMapListViewShown = false;
       });
 
+      _mapCubit.submitFlightCreditApi(1, 8);
       _toggleFlightCard(flight: result.id);
 
       _buildSingleFlightMarker(result.flightDetailResponse!).then((marker) {

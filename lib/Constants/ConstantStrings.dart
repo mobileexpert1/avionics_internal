@@ -218,6 +218,7 @@ class ApiFunctionUrlAirplaneConstant {
   static const String airplaneService = 'airplane-service/';
   static const String airCraftDetail = 'aircraft/details/';
   static const String airCraftDetailICAOCode = 'aircraft/flight-details/';
+  static const String airCraftFlightCredit = 'airport/flight-radar-credit';
 }
 
 class ApiServiceUrlAirplaneConstant {

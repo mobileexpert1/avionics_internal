@@ -1,4 +1,5 @@
 import '../../Constants/ApiClass/api_service.dart';
+import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
 import 'flight_key_values_model.dart';
@@ -6,6 +7,25 @@ import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 
 class FlightRepository {
+  Future<BaseDetailResponseModel> postFlightCreditApi({
+    required int type,
+    required int credit,
+  }) async {
+    final url = Uri.parse(
+      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlAirplaneConstant.airplaneService+
+          ApiFunctionUrlAirplaneConstant.airCraftFlightCredit,
+    );
+    try {
+      final response = await ApiService.post(
+        url: url,
+        body: {"type": type, "credit": credit},
+      );
+      return BaseDetailResponseModel.fromJson(response);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   Future<List<FlightModel>> getFlights({
     required String bounds,
     int limit = 20,
@@ -29,11 +49,11 @@ class FlightRepository {
 
       final url = Uri.parse(
         "$baseUrl?"
-        "bounds=$bounds"
-        "&limit=$limit"
-        "&aircraft=$finalAircraft"
-        "&altitude_ranges=0-46000"
-        "&categories=$finalCategories",
+            "bounds=$bounds"
+            "&limit=$limit"
+            "&aircraft=$finalAircraft"
+            "&altitude_ranges=0-46000"
+            "&categories=$finalCategories",
       );
       // ✅ Pass filters only if applied
       var mapKeyValue = await SharedPrefsHelper.getMapKeyValuesForApi();
@@ -65,7 +85,7 @@ class FlightRepository {
   }) async {
     final url = Uri.parse(
       "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
-      "?bounds=90,-90,-180,180&flights=$flightId",
+          "?bounds=90,-90,-180,180&flights=$flightId",
     );
 
     try {
@@ -85,9 +105,9 @@ class FlightRepository {
   }) async {
     final url = Uri.parse(
       "${MapFlightAircraftSectionConstant.baseUrlDetail}"
-      "?flight_ids=$flightId"
-      "&flight_datetime_from=$fromDateTime"
-      "&flight_datetime_to=$toDateTime",
+          "?flight_ids=$flightId"
+          "&flight_datetime_from=$fromDateTime"
+          "&flight_datetime_to=$toDateTime",
     );
 
     try {
@@ -121,9 +141,9 @@ class FlightRepository {
   }
 
   FlightAircraftDetail mergeFlightAndAircraftDetails(
-    FlightAircraftDetail flightDetail,
-    List<FlightAircraftDetail> aircraftDetails,
-  ) {
+      FlightAircraftDetail flightDetail,
+      List<FlightAircraftDetail> aircraftDetails,
+      ) {
     final aircraftDetail = aircraftDetails.isNotEmpty
         ? aircraftDetails.first
         : null;
@@ -149,7 +169,7 @@ class FlightRepository {
 
       // Aircraft fields:
       aircraftModel:
-          aircraftDetail?.aircraftModel ?? flightDetail.aircraftModel,
+      aircraftDetail?.aircraftModel ?? flightDetail.aircraftModel,
       isFavorite: aircraftDetail?.isFavorite ?? flightDetail.isFavorite,
       icaoTypeCode: aircraftDetail?.icaoTypeCode ?? flightDetail.icaoTypeCode,
       image: aircraftDetail?.image ?? flightDetail.image,
@@ -157,9 +177,9 @@ class FlightRepository {
 
       // Airport fields
       originAirport:
-          aircraftDetail?.originAirport ?? flightDetail.originAirport,
+      aircraftDetail?.originAirport ?? flightDetail.originAirport,
       destinationAirport:
-          aircraftDetail?.destinationAirport ?? flightDetail.destinationAirport,
+      aircraftDetail?.destinationAirport ?? flightDetail.destinationAirport,
 
       // Preserve other fields from flightDetail
       takeoffTime: flightDetail.takeoffTime,
@@ -207,9 +227,9 @@ class FlightRepository {
   }) async {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-      "${ApiServiceUrlAirplaneConstant.getListAirbus}details"
-      "?aircraft_id=$aircraftId&orig_icao=$origIcao&dest_icao=$destIcao&callsign=$callSign",
+          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+          "${ApiServiceUrlAirplaneConstant.getListAirbus}details"
+          "?aircraft_id=$aircraftId&orig_icao=$origIcao&dest_icao=$destIcao&callsign=$callSign",
     );
 
     try {
@@ -233,8 +253,8 @@ class FlightRepository {
     final uri = Uri.parse(url);
     try {
       final jsonData =
-          await ApiService.get(url: uri, isForFlightRadar: true)
-              as Map<String, dynamic>;
+      await ApiService.get(url: uri, isForFlightRadar: true)
+      as Map<String, dynamic>;
       return FlightResponse.fromJson(jsonData);
     } catch (e) {
       throw e.toString();
@@ -249,8 +269,8 @@ class FlightRepository {
     );
     try {
       final jsonData =
-          await ApiService.get(url: uri, isForFlightRadar: true)
-              as Map<String, dynamic>;
+      await ApiService.get(url: uri, isForFlightRadar: true)
+      as Map<String, dynamic>;
       return FlightKeyValuesModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();
@@ -265,22 +285,22 @@ class FlightRepository {
   }) async {
     try {
       final aircraftParam =
-          (selectedIcaoTypes != null && selectedIcaoTypes.isNotEmpty)
+      (selectedIcaoTypes != null && selectedIcaoTypes.isNotEmpty)
           ? selectedIcaoTypes.join(',')
           : 'A318,A320,A20N,A21N';
 
       final categoriesParam =
-          (selectedCategories != null && selectedCategories.isNotEmpty)
+      (selectedCategories != null && selectedCategories.isNotEmpty)
           ? selectedCategories.join(',')
           : 'C,P';
 
       final url = Uri.parse(
         "${MapFlightAircraftSectionConstant.baseUrl}/flight-positions/full"
-        "?bounds=$bounds"
-        "&limit=$limit"
-        "&aircraft=$aircraftParam"
-        "&altitude_ranges=0-46000"
-        "&categories=$categoriesParam",
+            "?bounds=$bounds"
+            "&limit=$limit"
+            "&aircraft=$aircraftParam"
+            "&altitude_ranges=0-46000"
+            "&categories=$categoriesParam",
       );
 
       final response = await ApiService.get(url: url, isForFlightRadar: true);
