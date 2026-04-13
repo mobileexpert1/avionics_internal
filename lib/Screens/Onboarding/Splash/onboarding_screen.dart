@@ -157,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         description: "",
         imageWidget: Wrap(),
         videoUrl:
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+            "https://avionica.csdevhub.com/s3/manufacturer/aviation_tutorial.mp4",
       ),
     ];
 

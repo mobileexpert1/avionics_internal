@@ -118,7 +118,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
                                 ),
-                                backgroundColor: const Color(0xFF1C1733),
+                                backgroundColor: AppColors.primaryDark,
                                 side: const BorderSide(
                                   color: Color(0xFF1C1733),
                                 ),

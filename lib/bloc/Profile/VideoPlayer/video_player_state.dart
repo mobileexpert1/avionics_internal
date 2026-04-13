@@ -8,6 +8,7 @@ class VideoPlayerState {
   final Duration duration;
   final bool isBuffering;
   final bool isFullScreen;
+  final String? errorMessage;
 
   VideoPlayerState({
     this.controller,
@@ -17,6 +18,7 @@ class VideoPlayerState {
     this.duration = Duration.zero,
     this.isBuffering = false,
     this.isFullScreen = false,
+    this.errorMessage = "",
   });
 
   VideoPlayerState copyWith({
@@ -27,6 +29,7 @@ class VideoPlayerState {
     Duration? duration,
     bool? isBuffering,
     bool? isFullScreen,
+    String? errorMessage,
   }) {
     return VideoPlayerState(
       controller: controller ?? this.controller,
@@ -36,6 +39,7 @@ class VideoPlayerState {
       duration: duration ?? this.duration,
       isBuffering: isBuffering ?? this.isBuffering,
       isFullScreen: isFullScreen ?? this.isFullScreen,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }

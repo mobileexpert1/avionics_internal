@@ -7,13 +7,24 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
   Future<void> initialize() async {
     final String urlVideo =
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
-
-    final controller =
-    VideoPlayerController.networkUrl(Uri.parse(urlVideo));
+        "https://avionica.csdevhub.com/s3/manufacturer/aviation_tutorial.mp4";
 
     try {
+      final uri = Uri.tryParse(urlVideo);
+
+      if (uri == null || !uri.hasAbsolutePath) {
+        emit(state.copyWith(errorMessage: "Invalid video URL"));
+        return;
+      }
+
+      final controller = VideoPlayerController.networkUrl(uri);
+
       await controller.initialize();
+
+      if (!controller.value.isInitialized) {
+        emit(state.copyWith(errorMessage: "Video failed to initialize"));
+        return;
+      }
 
       if (isClosed) {
         controller.dispose();
@@ -22,17 +33,21 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
       controller.addListener(_listener);
 
+      emit(
+        state.copyWith(
+          controller: controller,
+          duration: controller.value.duration,
+          errorMessage: null,
+        ),
+      );
+    } catch (e) {
       if (!isClosed) {
         emit(
           state.copyWith(
-            controller: controller,
-            duration: controller.value.duration,
+            isPlaying: false,
+            errorMessage: "Video not available or failed to load",
           ),
         );
-      }
-    } catch (_) {
-      if (!isClosed) {
-        emit(state.copyWith(isPlaying: false));
       }
     }
   }
@@ -41,7 +56,17 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     if (isClosed) return;
 
     final controller = state.controller;
-    if (controller == null) return;
+    if (controller == null || !controller.value.isInitialized) return;
+
+    if (controller.value.hasError) {
+      emit(
+        state.copyWith(
+          isPlaying: false,
+          errorMessage: controller.value.errorDescription ?? "Playback error",
+        ),
+      );
+      return;
+    }
 
     emit(
       state.copyWith(
@@ -49,6 +74,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
         position: controller.value.position,
         duration: controller.value.duration,
         isBuffering: controller.value.isBuffering,
+        errorMessage: null,
       ),
     );
   }
@@ -62,15 +88,13 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   void seekForward() {
     final controller = state.controller;
     if (controller == null) return;
-    controller.seekTo(
-        controller.value.position + const Duration(seconds: 10));
+    controller.seekTo(controller.value.position + const Duration(seconds: 10));
   }
 
   void seekBackward() {
     final controller = state.controller;
     if (controller == null) return;
-    controller.seekTo(
-        controller.value.position - const Duration(seconds: 10));
+    controller.seekTo(controller.value.position - const Duration(seconds: 10));
   }
 
   void toggleMute() {
