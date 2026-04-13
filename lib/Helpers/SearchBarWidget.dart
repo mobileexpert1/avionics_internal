@@ -76,8 +76,7 @@ class SearchBarWidget extends StatelessWidget {
                         onTap: enableGestureMode ? onTextTap : null,
                         child: AbsorbPointer(
                           absorbing: enableGestureMode,
-                          // disable typing if true
-                          child: TextField(
+                           child: TextField(
                             style: AppTextStyles.regular(
                               18.67,
                             ).copyWith(height: 1.0, color: AppColors.primaryDark),
@@ -85,6 +84,9 @@ class SearchBarWidget extends StatelessWidget {
                             onChanged: onChanged,
                             decoration: InputDecoration(
                               hintText: searchTitle,
+                              hintStyle: const TextStyle(
+                                color: AppColors.grayLight
+                              ),
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(13),
                                 child: SvgPicture.asset(

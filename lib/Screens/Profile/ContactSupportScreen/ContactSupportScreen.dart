@@ -4,6 +4,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Profile/ContactSupport/contactsupport_cubit.dart';
 import '../../../bloc/Profile/ContactSupport/contactsupport_state.dart';
 import '../../../bloc/Profile/ManageAccount/manageAcc_repository.dart';
@@ -184,6 +185,15 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                                   SizedBox(
                                     width: double.infinity,
                                     child: CustomBottomButton(
+                                      fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                        height: 1.0,
+                                        color: !state.isSubmitting &&
+                                            state.email.isNotEmpty &&
+                                            cubit.isValidEmail(state.email) &&
+                                            state.message.isNotEmpty
+                                            ? Colors.white
+                                            : Colors.grey.shade600,
+                                      ),
                                       title: state.isSubmitting ? "" : "Submit",
                                       backgroundColor: const Color.fromRGBO(
                                         63,

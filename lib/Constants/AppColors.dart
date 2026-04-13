@@ -43,6 +43,7 @@ class AppColors {
 
 
   static const Color primaryValueColour = Color(0xFF1B1748);
+  static const Color avtarTitleColour = Color(0xFF1A1848);
 
   static const Color accentCyan = Color(0xFF00D9FF);
   static const Color accentPurple = Color(0xFF9D4EDD);

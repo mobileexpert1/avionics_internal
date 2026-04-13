@@ -8,6 +8,7 @@ import '../../Constants/ConstantStrings.dart';
 import '../../Constants/constantImages.dart';
 import '../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
+import '../AppTextStyles/AppTextStyles.dart';
 
 class GameDetailCard extends StatelessWidget {
   final VoidCallback onStartGame;
@@ -195,6 +196,12 @@ class GameDetailCard extends StatelessWidget {
                         ? MediaQuery.of(context).size.width * 0.5
                         : double.infinity,
                     child: CustomBottomButton(
+                      fontStyle: AppTextStyles.regular(21.46).copyWith(
+                        height: 1.0,
+                        color: true
+                            ? Colors.white
+                            : Colors.grey.shade600,
+                      ),
                       title: "Start Game",
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,
@@ -437,6 +444,12 @@ class GameDetailCardBlackBox extends StatelessWidget {
                           ? MediaQuery.of(context).size.width * 0.5
                           : double.infinity,
                       child: CustomBottomButton(
+                        fontStyle: AppTextStyles.regular(21.46).copyWith(
+                          height: 1.0,
+                          color: true
+                              ? Colors.white
+                              : Colors.grey.shade600,
+                        ),
                         title: ConstantStrings.startGame,
                         backgroundColor: AppColors.customBottomEnabledColour,
                         textColor: Colors.white,

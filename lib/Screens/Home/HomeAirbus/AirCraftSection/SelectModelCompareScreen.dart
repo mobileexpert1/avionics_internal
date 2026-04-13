@@ -9,6 +9,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
@@ -177,6 +178,14 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                                   ),
                                   const SizedBox(height: 24),
                                   CustomBottomButton(
+                                    fontStyle: AppTextStyles.regular(21.46)
+                                        .copyWith(
+                                          height: 1.0,
+                                          color: isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade600,
+                                        ),
+                                    isComeFromCompare: true,
                                     title: ConstantStrings.compare,
                                     backgroundColor: isButtonEnabled
                                         ? AppColors.primaryValueColour
@@ -226,6 +235,7 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                               icon: const Icon(
                                 Icons.arrow_back_ios,
                                 color: Colors.white,
+                                size: 27,
                               ),
                               onPressed: () {
                                 Navigator.pop(context);
@@ -241,9 +251,11 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                         Text(
                           "Compare every detail\nfrom engines to dimensions",
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.semiBold(
-                            19.37,
-                          ).copyWith(height: 1.0, color: AppColors.white,letterSpacing: 0.02 * 19.37),
+                          style: AppTextStyles.semiBold(19.37).copyWith(
+                            height: 1.0,
+                            color: AppColors.white,
+                            letterSpacing: 0.02 * 19,
+                          ),
                         ),
                         const SizedBox(height: 60),
                         Container(
@@ -329,6 +341,13 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                           ),
                         ),
                         CustomBottomButton(
+                          fontStyle: AppTextStyles.regular(16).copyWith(
+                            height: 1.0,
+                            color: isButtonEnabled
+                                ? Colors.white
+                                : Colors.grey.shade600,
+                          ),
+                          isComeFromCompare: true,
                           title: ConstantStrings.compare,
                           backgroundColor: isButtonEnabled
                               ? AppColors.primaryValueColour
@@ -389,13 +408,18 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
         child: Row(
           children: [
             Container(
-              width: 45,
-              height: 45,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.flight, color: Colors.grey),
+              child: Padding(
+                padding: EdgeInsets.all(7),
+                child: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.compareAeroPlaneIcon),
+                ),
+              ),
             ),
 
             const SizedBox(width: 12),
@@ -406,16 +430,17 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                 children: [
                   Text(
                     title,
-                    style:AppTextStyles.medium(
+                    style: AppTextStyles.medium(
                       14,
                     ).copyWith(height: 1.0, color: AppColors.grayMedium),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     value?.aircraftModel ?? hint,
-                    style:AppTextStyles.bold(
-                      14,
-                    ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
+                    style: AppTextStyles.bold(14).copyWith(
+                      height: 1.0,
+                      color: AppColors.primaryValueColour,
+                    ),
                   ),
                 ],
               ),

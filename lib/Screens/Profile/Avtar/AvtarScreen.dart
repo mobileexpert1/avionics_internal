@@ -50,7 +50,8 @@ class _AvtarScreenState extends State<AvtarScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: ConstantStrings.avtarTitle,
+        title: ConstantStrings.avtarTRole,
+        centerTitle: false,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => (widget.isComeFromSocialLogin == true
@@ -60,6 +61,15 @@ class _AvtarScreenState extends State<AvtarScreen> {
                 )
               : Navigator.pop(context)),
         ),
+          rightButton: IconButton(
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+              width: 35,
+              height: 31,
+              fit: BoxFit.cover,
+            ),
+            onPressed: () async {},
+          )
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(
         listener: (context, state) {
@@ -139,7 +149,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: AppTextStyles.bold(18).copyWith(
                                       height: 1.0,
-                                      color: isSelected ? AppColors.white : AppColors.black,
+                                      color: isSelected ? AppColors.white : AppColors.avtarTitleColour,
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -149,7 +159,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: AppTextStyles.regular(12).copyWith(
                                       height: 1.0,
-                                      color: isSelected ? AppColors.white : AppColors.black,
+                                      color: isSelected ? AppColors.white : AppColors.greyForTextfield,
                                     ),
                                   ),
                                 ],
@@ -212,6 +222,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
                       state.selectedUserType!.isNotEmpty,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
+                      fontStyle: AppTextStyles.regular(21.46).copyWith(
+                        height: 1.0,
+                        color: isButtonEnabled
+                            ? Colors.white
+                            : Colors.grey.shade600,
+                      ),
                       title: ConstantStrings.submitTitle,
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,

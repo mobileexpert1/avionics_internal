@@ -9,6 +9,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_questioncubit.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
@@ -472,6 +473,12 @@ class BlackBoxCard extends StatelessWidget {
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(
+                        fontStyle: AppTextStyles.regular(21.46).copyWith(
+                          height: 1.0,
+                          color: _isSubmitEnabled()
+                              ? Colors.white
+                              : Colors.grey.shade600,
+                        ),
                         title: isShowAnswers == false
                             ? ConstantStrings.submitTitle
                             : ConstantStrings.next,

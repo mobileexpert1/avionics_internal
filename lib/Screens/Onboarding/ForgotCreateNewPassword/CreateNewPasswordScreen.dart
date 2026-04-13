@@ -9,6 +9,7 @@ import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
 import '../../../bloc/Profile/createNewPassword/createNewPassword_state.dart';
 
@@ -134,6 +135,12 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                           selector: (state) => state.isButtonEnabled,
                           builder: (_, isButtonEnabled) {
                             return CustomBottomButton(
+                              fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                height: 1.0,
+                                color: isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
+                              ),
                               title: ConstantStrings.resetPassword,
                               backgroundColor: isButtonEnabled
                                   ? AppColors.primaryValueColour

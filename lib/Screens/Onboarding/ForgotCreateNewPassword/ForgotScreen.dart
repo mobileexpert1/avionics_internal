@@ -12,6 +12,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import '../../../bloc/Onboarding/forgotPassword/forgot_state.dart';
 
@@ -126,6 +127,12 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                 return SizedBox(
                                   width: buttonWidth,
                                   child: CustomBottomButton(
+                                    fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                      height: 1.0,
+                                      color: isButtonEnabled
+                                          ? Colors.white
+                                          : Colors.grey.shade600,
+                                    ),
                                     title: ConstantStrings.sendEmailButton,
                                     backgroundColor: isButtonEnabled
                                         ? AppColors.primaryValueColour

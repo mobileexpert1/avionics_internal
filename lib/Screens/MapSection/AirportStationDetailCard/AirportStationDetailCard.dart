@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import '../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
@@ -204,7 +205,9 @@ class RadioChips extends StatelessWidget {
               ),
               child: Text(
                 values[index],
-                style: TextStyle(
+                style:
+                AppTextStyles.bold(12).copyWith(
+                  height: 1.0,
                   color: selected
                       ? AppColors.white
                       : AppColors.grayMedium,

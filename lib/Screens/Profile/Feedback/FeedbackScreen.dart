@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_cubit.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_state.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -145,6 +146,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: CustomBottomButton(
+                                fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                  height: 1.0,
+                                  color: !state.isSubmitting
+                                      ? Colors.white
+                                      : Colors.grey.shade600,
+                                ),
                                 title:
                                 state.isSubmitting ? "" : "Submit",
                                 backgroundColor:

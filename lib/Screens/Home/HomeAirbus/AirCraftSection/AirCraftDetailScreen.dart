@@ -518,7 +518,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                   Flexible(
                     child: Text(
                       title.toUpperCase(),
-                      style: AppTextStyles.bold(18).copyWith(
+                      style: AppTextStyles.bold(16).copyWith(
                         height: 1.0,
                         color: AppColors.primaryValueColour,
                       ),

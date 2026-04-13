@@ -64,7 +64,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         title: "Comparison ${widget.model1Name}, ${widget.model2Name}",
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white,size: 27),
           onPressed: () => Navigator.pop(context),
         ),
         rightButton: GestureDetector(

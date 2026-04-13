@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/Subscription/subscription_cubit.dart';
 import '../../../bloc/Onboarding/Subscription/subscription_state.dart';
 import '../../Onboarding/Subscription/SubscriptionOptionCard.dart';
@@ -59,7 +60,7 @@ class ProfileSubscriptionScreen extends StatelessWidget {
                         const SizedBox(height: 10),
 
                         ...state.subscriptionList.map(
-                              (item) => Padding(
+                          (item) => Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: SubscriptionOptionCard(
                               item: item,
@@ -72,16 +73,27 @@ class ProfileSubscriptionScreen extends StatelessWidget {
 
                         /// Change Subscription Plan Button
                         CustomBottomButton(
-                          backgroundColor:
-                          const Color.fromRGBO(63, 61, 81, 1.0),
+                          fontStyle: AppTextStyles.regular(21.46).copyWith(
+                            height: 1.0,
+                            color: state is SubscriptionInitial
+                                ? Colors.white
+                                : Colors.grey.shade600,
+                          ),
+                          backgroundColor: const Color.fromRGBO(
+                            63,
+                            61,
+                            81,
+                            1.0,
+                          ),
                           textColor: Colors.white,
                           title: SubscriptionTexts.changeSubPlanTitle,
                           icon: const SizedBox(),
                           isEnabled: state is SubscriptionInitial,
                           onPressed: () {
                             if (state is SubscriptionInitial) {
-                              final selected =
-                                  context.read<SubscriptionCubit>().selectedItem;
+                              final selected = context
+                                  .read<SubscriptionCubit>()
+                                  .selectedItem;
                               if (selected != null) {
                                 print({
                                   "duration": selected.duration,
@@ -97,8 +109,19 @@ class ProfileSubscriptionScreen extends StatelessWidget {
 
                         /// Restore Subscription Button
                         CustomBottomButton(
-                          backgroundColor:
-                          const Color.fromRGBO(30, 128, 242, 1.0),
+                          fontStyle: AppTextStyles.regular(21.46).copyWith(
+                            height: 1.0,
+                            color: state is SubscriptionInitial
+                                ? Colors.white
+                                : Colors.grey.shade600,
+                          ),
+
+                          backgroundColor: const Color.fromRGBO(
+                            30,
+                            128,
+                            242,
+                            1.0,
+                          ),
                           textColor: Colors.white,
                           title: SubscriptionTexts.restoreSubTitle,
                           icon: const SizedBox(),
@@ -107,7 +130,8 @@ class ProfileSubscriptionScreen extends StatelessWidget {
                             if (state is SubscriptionInitial) {
                               final selected = state.selectedId;
                               print(
-                                  'Restore Subscription clicked with option: $selected');
+                                'Restore Subscription clicked with option: $selected',
+                              );
                             }
                           },
                         ),

@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -8,7 +9,7 @@ class AppSnackBar {
       BuildContext ctx, {
         required String message,
         required String svgAsset,
-        Color backgroundColor = const Color(0xFF3F3D56),
+        Color backgroundColor = AppColors.primaryDark,
         Duration duration = const Duration(seconds: 2),
       }) {
     ScaffoldMessenger.of(ctx).removeCurrentSnackBar();

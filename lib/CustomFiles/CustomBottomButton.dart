@@ -9,6 +9,8 @@ class CustomBottomButton extends StatelessWidget {
   final Widget icon;
   final VoidCallback onPressed;
   final bool isEnabled;
+  final bool isComeFromCompare;
+  final TextStyle fontStyle;
 
   const CustomBottomButton({
     super.key,
@@ -18,6 +20,8 @@ class CustomBottomButton extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     this.isEnabled = true,
+    this.isComeFromCompare = false,
+    required this.fontStyle,
   });
 
   @override
@@ -33,16 +37,23 @@ class CustomBottomButton extends StatelessWidget {
         icon: icon,
         label: Text(
           title,
-          style: AppTextStyles.regular(21.46).copyWith(
-            height: 1.0,
-            color: effectiveTextColor,
-          ),
+          style: fontStyle,
+          // AppTextStyles.regular(
+          //   21.46,
+          // ).copyWith(height: 1.0, color: effectiveTextColor),
         ),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          shape: RoundedRectangleBorder(
+            borderRadius: isComeFromCompare == false
+                ? BorderRadius.circular(5)
+                : BorderRadius.only(
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                  ),
+          ),
         ),
       ),
     );

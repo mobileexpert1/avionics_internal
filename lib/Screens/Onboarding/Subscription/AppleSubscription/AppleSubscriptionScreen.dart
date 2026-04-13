@@ -10,6 +10,7 @@ import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionState.dart';
 import '../../../Home/RootTabbar/RootTabbarScreen.dart';
@@ -225,6 +226,12 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         if (widget.isComeFromSignup == false ||
                             widget.isComeFromSignup == null) ...[
                           CustomBottomButton(
+                            fontStyle: AppTextStyles.regular(21.46).copyWith(
+                              height: 1.0,
+                              color: selected != null && !state.loading
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
                             backgroundColor: const Color.fromRGBO(
                               63,
                               61,
@@ -249,6 +256,12 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           ),
                           const SizedBox(height: 20),
                           CustomBottomButton(
+                            fontStyle: AppTextStyles.regular(21.46).copyWith(
+                              height: 1.0,
+                              color: true
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
                             backgroundColor: const Color.fromRGBO(
                               30,
                               128,
@@ -271,6 +284,12 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           ),
                           const SizedBox(height: 20),
                           CustomBottomButton(
+                            fontStyle: AppTextStyles.regular(21.46).copyWith(
+                              height: 1.0,
+                              color: true
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
                             title: SubscriptionTexts.cancelTitle,
@@ -289,6 +308,12 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           const SizedBox(height: 20),
                         ] else ...[
                           CustomBottomButton(
+                            fontStyle: AppTextStyles.regular(21.46).copyWith(
+                              height: 1.0,
+                              color: selected != null
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
                             backgroundColor: const Color(0xFF3F3D51),
                             textColor: Colors.white,
                             title: "Go Premium",
