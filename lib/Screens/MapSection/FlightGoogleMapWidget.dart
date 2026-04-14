@@ -61,9 +61,9 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
   Future<void> fetchTheApiKey() async {
     bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
     if (apiTokenSever == true) {
-      _isAlreadyFetchedTheKey = true;
-    } else {
       _isAlreadyFetchedTheKey = false;
+    } else {
+      _isAlreadyFetchedTheKey = true;
     }
   }
 
@@ -111,3 +111,4 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
     );
   }
 }
+
