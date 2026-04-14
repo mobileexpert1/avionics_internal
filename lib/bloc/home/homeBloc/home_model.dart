@@ -177,6 +177,8 @@ class CurrentPlan {
   final double totalCredit;
   final double tokenUsage;
   final double creditUsage;
+  final double creditLimit;
+
 
   CurrentPlan({
     required this.id,
@@ -189,6 +191,7 @@ class CurrentPlan {
     required this.totalCredit,
     required this.tokenUsage,
     required this.creditUsage,
+    required this.creditLimit,
   });
 
   factory CurrentPlan.fromJson(Map<String, dynamic> json) {
@@ -203,6 +206,7 @@ class CurrentPlan {
       totalCredit: (json['total_credit'] ?? 0).toDouble(),
       tokenUsage: (json['token_usage'] ?? 0).toDouble(),
       creditUsage: (json['credit_usage'] ?? 0).toDouble(),
+      creditLimit: json['credit_usage'] ?? '',
     );
   }
 }

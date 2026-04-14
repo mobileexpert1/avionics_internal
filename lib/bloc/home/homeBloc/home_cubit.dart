@@ -38,7 +38,7 @@ class HomeCubit extends Cubit<HomeState> {
         await SharedPrefsHelper.saveApiFetchKeyFromSever(false);
         final top2Manufacturers = data.manufacturers.take(2).toList();
         if (data.currentPlan != null) {
-          CreditManager().initialize(data.currentPlan! as CurrentPlan);
+          CreditManager().initialize(data.currentPlan!);
         }
         emit(
           HomeLoaded(

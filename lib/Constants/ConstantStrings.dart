@@ -97,7 +97,6 @@ class ConstantStrings {
   static const String startSubscription = 'Start Subscription';
   static const String manageAccount = 'Manage Your Account';
   static const String tutorialScreen = 'Tutorial Screen';
-  static const String titleHome = "Home";
   static const String profileTitle = 'Profile';
   static const String glossaryTitle = 'Glossary';
   static const String avtarTitle = 'Choose Your Avatar';
@@ -223,7 +222,7 @@ class ApiFunctionUrlAirplaneConstant {
 }
 
 class ApiServiceUrlAirplaneConstant {
-  //Home
+  //home
   static const String getExploreData = 'explore/';
   static const String getListManufacturer = 'manufacturer/';
   static const String getListAirbus = 'aircraft/';

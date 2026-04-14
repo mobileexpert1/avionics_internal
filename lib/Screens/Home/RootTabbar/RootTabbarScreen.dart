@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapScreen.dart';
+import '../../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../../Profile/ProfileScreen.dart';
 import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
 import '../HomeScreen.dart';
@@ -26,6 +30,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
   int _selectedIndex = 0;
   List<Widget> _pages = [];
   bool _isLoading = true;
+  final creditManager = CreditManager();
 
   @override
   void initState() {
@@ -60,25 +65,37 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
   }
 
   Future<void> onItemTapped(int index) async {
-    // final bool isRestrictedTab = index == 1 || index == 2 || index == 3;
-    // if (isRestrictedTab) {
-    //   final bool? apiTokenServer =
-    //   await SharedPrefsHelper.getApiFetchKeyFromSever();
-    //   final bool shouldShowPopup =
-    //      apiTokenServer == null || apiTokenServer == true; // for testing
-    //   if (shouldShowPopup) {
-    //     AlertHelperForSubsPopup.showSubscriptionEndAlert(
-    //       context: context,
-    //       title: "Subscription Required",
-    //       message: "This feature requires a subscription. You don’t have an active plan right now. Go to the subscription screen to choose and buy a plan.",
-    //       navigateTo: const AppleSubscriptionScreen(),
-    //     );
-    //     return;
-    //   }
-    // }
-    setState(() {
-      _selectedIndex = index;
-    });
+    final bool isRestrictedTab = index == 1;
+
+    if (isRestrictedTab) {
+      final bool success = await creditManager.tryUseCredit(
+        amount: 8,
+        onError: (String message) async {
+          if (mounted) {
+            Future.microtask(() {
+              AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                context: context,
+                title: "Subscription Required",
+                message: message,
+                navigateTo: const AppleSubscriptionScreen(),
+              );
+            });
+          }
+        },
+      );
+
+      if (success && mounted) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      }
+    } else {
+      if (!mounted) return;
+
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -145,15 +162,11 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF1E1B4B) : Colors.white,
             border: Border(
-              top: BorderSide(
-                color:AppColors.greyWithBottomLine,
-                width: 1.5,
-              ),
+              top: BorderSide(color: AppColors.greyWithBottomLine, width: 1.5),
             ),
           ),
           height: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 0),
-          //color: isSelected ? const Color(0xFF1E1B4B) : Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -1,5 +1,5 @@
-import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
+import 'package:avionics_internal/Constants/AppColors.dart';
 
 class AlertHelperForSubsPopup {
   static void showSubscriptionEndAlert({
@@ -13,12 +13,13 @@ class AlertHelperForSubsPopup {
   }) {
     showDialog(
       context: context,
+      useRootNavigator: true, // ✅ IMPORTANT FIX
       barrierDismissible: false,
       builder: (ctx) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text(title),
           content: Text(message),
-          backgroundColor: Colors.white,
           actions: [
             TextButton(
               style: buttonBackgroundColor != null
@@ -28,8 +29,11 @@ class AlertHelperForSubsPopup {
                   : null,
               onPressed: () {
                 Navigator.of(ctx).pop(); // close dialog
+
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => navigateTo),
+                  MaterialPageRoute(
+                    builder: (_) => navigateTo,
+                  ),
                 );
               },
               child: Text(

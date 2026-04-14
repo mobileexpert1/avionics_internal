@@ -1,4 +1,4 @@
-import 'package:avionics_internal/bloc/home/homeBloc/home_model.dart';
+import '../../bloc/home/homeBloc/home_model.dart';
 
 class CreditManager {
   static final CreditManager _instance = CreditManager._internal();
@@ -29,22 +29,27 @@ class CreditManager {
 
   bool get isCreditFinished => remainingCredit <= 0;
 
-  bool tryUseCredit({
+  Future<bool> tryUseCredit({
     required double amount,
-    required Function(String message) onError,
-  }) {
+    required Future<void> Function(String message) onError,
+  }) async {
+    print("isExpired: $isExpired");
+    print("remainingCredit: $remainingCredit");
+
     if (isExpired) {
-      onError("Plan expired. Please renew subscription.");
+      await onError("Plan expired. Please renew subscription.");
       return false;
     }
 
     if (remainingCredit <= 0) {
-      onError("Credits finished. Please buy subscription.");
+      await onError("Credits finished. Please buy subscription.");
       return false;
     }
 
     if (amount > remainingCredit) {
-      onError("Not enough credits.");
+      await onError(
+        "Not enough credits. Used: $creditUsage | Remaining: $remainingCredit | Total: $totalCredit",
+      );
       return false;
     }
 
