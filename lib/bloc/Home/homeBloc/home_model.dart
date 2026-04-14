@@ -7,6 +7,7 @@ class HomeResponse {
   final List<ManufacturerListModel> manufacturers;
   final List<Flight> flights;
   final List<Favourite> favourites;
+  final CurrentPlan? currentPlan;
 
   HomeResponse({
     required this.detail,
@@ -14,6 +15,7 @@ class HomeResponse {
     required this.manufacturers,
     required this.flights,
     required this.favourites,
+    this.currentPlan,
   });
 
   factory HomeResponse.fromJson(Map<String, dynamic> json) => HomeResponse(
@@ -28,6 +30,9 @@ class HomeResponse {
     favourites: (json['favourite'] as List<dynamic>? ?? [])
         .map((e) => Favourite.fromJson(e))
         .toList(),
+    currentPlan: json['current_plan'] != null
+        ? CurrentPlan.fromJson(json['current_plan'])
+        : null,
   );
 }
 
@@ -119,7 +124,7 @@ class Favourite extends BaseModel {
     required this.image,
     required this.callSign,
     required this.flightId,
-    required this.flightNumber
+    required this.flightNumber,
   });
 
   factory Favourite.fromJson(Map<String, dynamic> json) => Favourite(
@@ -159,4 +164,45 @@ class Favourite extends BaseModel {
 
   @override
   String get table => 'favourites';
+}
+
+class CurrentPlan {
+  final String id;
+  final String name;
+  final double price;
+  final String billingCycle;
+  final DateTime startDate;
+  final DateTime expiryDate;
+  final double totalToken;
+  final double totalCredit;
+  final double tokenUsage;
+  final double creditUsage;
+
+  CurrentPlan({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.billingCycle,
+    required this.startDate,
+    required this.expiryDate,
+    required this.totalToken,
+    required this.totalCredit,
+    required this.tokenUsage,
+    required this.creditUsage,
+  });
+
+  factory CurrentPlan.fromJson(Map<String, dynamic> json) {
+    return CurrentPlan(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      billingCycle: json['billing_cycle'] ?? '',
+      startDate: DateTime.parse(json['start_date']),
+      expiryDate: DateTime.parse(json['expiry_date']),
+      totalToken: (json['total_token'] ?? 0).toDouble(),
+      totalCredit: (json['total_credit'] ?? 0).toDouble(),
+      tokenUsage: (json['token_usage'] ?? 0).toDouble(),
+      creditUsage: (json['credit_usage'] ?? 0).toDouble(),
+    );
+  }
 }

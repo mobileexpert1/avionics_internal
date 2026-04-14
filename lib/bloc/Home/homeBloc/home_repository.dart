@@ -13,9 +13,9 @@ import '../../../../Constants/ConstantStrings.dart';
 
 class HomeRepository {
   HomeRepository()
-    : _manufacturers = GenericMethods<ManufacturerListModel>(
-        ManufacturerListModel.fromMap,
-      );
+      : _manufacturers = GenericMethods<ManufacturerListModel>(
+    ManufacturerListModel.fromMap,
+  );
 
   final GenericMethods<ManufacturerListModel> _manufacturers;
 
@@ -29,8 +29,8 @@ class HomeRepository {
       );
       try {
         final jsonData =
-            await ApiService.get(url: uri, isForFlightRadar: true)
-                as Map<String, dynamic>;
+        await ApiService.get(url: uri, isForFlightRadar: true)
+        as Map<String, dynamic>;
         final modelResponse = FlightKeyValuesModel.fromJson(jsonData);
         if (!kIsWeb) {
           await const MethodChannel('com.app/google_maps').invokeMethod(
@@ -104,6 +104,7 @@ class HomeRepository {
       manufacturers: manufacturers,
       favourites: [],
       flights: const [],
+      currentPlan: null,
     );
   }
 }

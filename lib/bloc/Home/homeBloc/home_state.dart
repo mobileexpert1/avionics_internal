@@ -14,6 +14,7 @@ class HomeLoaded extends HomeState {
   final String detail;
   final bool isActiveSubscription;
   final int selectedIndex;
+  final CurrentPlan? currentPlan;
 
   HomeLoaded({
     required this.manufacturers,
@@ -22,6 +23,7 @@ class HomeLoaded extends HomeState {
     required this.detail,
     required this.isActiveSubscription,
     this.selectedIndex = 0,
+    this.currentPlan,
   });
 }
 
