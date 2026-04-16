@@ -10,7 +10,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
+import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
+import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Screens/MapSection/FlightMapScreen.dart';
+import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
 import 'FilterMap/filter_Map_State.dart';
@@ -24,16 +29,53 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   Timer? _trackingTimer;
   Set<String>? _favCallSigns;
+  bool? isFromTrackingClass;
 
-  Future<void> submitFlightCreditApi(int type, int credit) async {
+  void resetTracking() {
+    isFromTrackingClass = false;
+  }
+
+  Future<void> submitFlightCreditApi(
+    int type,
+    int credit,
+    BuildContext context,
+  ) async {
     try {
       final response = await FlightRepository().postFlightCreditApi(
         type: type,
         credit: credit,
       );
       final flightDetail = response.detail;
-      if (kDebugMode) {
-        print(flightDetail);
+
+      print("isFromTrackingClass-=-=-=$isFromTrackingClass");
+      final bool success = await CreditManager().tryUseCredit(
+        amount: credit.toDouble(),
+        isComeFromTabbar: false,
+        onError: (String message) async {
+          if (_trackingTimer != null) {
+            _trackingTimer?.cancel();
+            _trackingTimer = null;
+          }
+
+          Future.microtask(() {
+            AlertHelperForSubsPopup.showSubscriptionEndAlert(
+              isFromTrackingClass: isFromTrackingClass,
+              context: context,
+              title: "Subscription Required",
+              message: message,
+              navigateTo: AppleSubscriptionScreen(),
+              onGoToFirstTab: () {
+                RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
+              },
+            );
+          });
+        },
+      );
+
+      if (success) {
+        if (kDebugMode) {
+          print(flightDetail);
+        }
       }
     } catch (e) {
       if (kDebugMode) {
@@ -71,7 +113,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
-  void onFlightsLoaded(List<FlightModel> flights) {
+  void onFlightsLoaded(List<FlightModel> flights, BuildContext context) {
     if (!isClosed) {
       // SUMMARY = 1
       // TRACK_FLIGHT = 2
@@ -79,6 +121,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       submitFlightCreditApi(
         flights.isEmpty == true ? 3 : 2,
         flights.isEmpty == true ? 1 : flights.length * 8,
+        context,
       );
       emit(state.copyWith(flights: flights));
       if (_favCallSigns != null) {
@@ -258,6 +301,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           state.selectedCategories!.isNotEmpty;
 
       final flights = await FlightRepository().getFlights(
+        context: context,
         bounds: boundsString,
         aircraft: hasAircraftFilter
             ? state.selectedAircraftIcaos!.join(',')
@@ -278,7 +322,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       debugPrint("Flights fetched: ${flights.length}");
       debugPrint("Airport list count: ${airportList.data.length}");
 
-      onFlightsLoaded(flights);
+      onFlightsLoaded(flights, context);
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -366,21 +410,23 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         flightId: flightId,
         fromDateTime: formattedFrom,
         toDateTime: formattedTo,
+        context: context,
       );
 
-      final flightDetail = response['flightDetail'] as FlightAircraftDetail;
-
-      // SUMMARY = 1
-      // TRACK_FLIGHT = 2
-      // EMPTY_REQUEST = 3
-      submitFlightCreditApi(1, 2);
-      emit(
-        state.copyWith(
-          selectedFlightDetail: flightDetail,
-          status: CommonApiStatus.success,
-          isLoading: false,
-        ),
-      );
+      if (response != null) {
+        final flightDetail = response['flightDetail'] as FlightAircraftDetail;
+        // SUMMARY = 1
+        // TRACK_FLIGHT = 2
+        // EMPTY_REQUEST = 3
+        submitFlightCreditApi(1, 2, context);
+        emit(
+          state.copyWith(
+            selectedFlightDetail: flightDetail,
+            status: CommonApiStatus.success,
+            isLoading: false,
+          ),
+        );
+      }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -439,6 +485,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       submitFlightCreditApi(
         flights.isNotEmpty ? 2 : 3,
         flights.isNotEmpty ? 8 : 1,
+        context,
       );
       if (flights.isNotEmpty && !isClosed) {
         final updatedFlight = flights.first;
@@ -516,6 +563,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       submitFlightCreditApi(
         response!.flights.isNotEmpty ? 2 : 3,
         response!.flights.isNotEmpty ? 8 : 1,
+        context,
       );
       if (response?.flights != null && response!.flights.isNotEmpty) {
         final updatedFlight = response.flights.first;

@@ -38,8 +38,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   }
 
   void _onSearchChanged() {
-    final query = _searchController.text.trim();
-    context.read<GlossaryCubit>().loadGlossary(query: query, context: context);
+    setState(() {
+      context.read<GlossaryCubit>().state.selectedLetter = "";
+    });
   }
 
   @override
@@ -71,13 +72,13 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             children: [
               const SizedBox(height: 5),
               SearchBarWidget(
-                searchTitle: 'Search Glossary...',
+                searchTitle: 'Search Term...',
                 enableBackArrow: false,
                 enableFilter: false,
                 enableCloseScreen: false,
                 controller: _searchController,
                 onChanged: (value) {
-                  context.read<GlossaryCubit>().loadGlossary(
+                  context.read<GlossaryCubit>().searchGlossary(
                     query: value.trim(),
                     context: context,
                   );
@@ -106,10 +107,12 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                     }
 
                     if (glossaryData.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Text(
                           'No glossary terms found.',
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          style: AppTextStyles.regular(
+                            16,
+                          ).copyWith(height: 1.4, color: AppColors.black),
                         ),
                       );
                     }
@@ -167,98 +170,116 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
 
                           child: Column(
                             children: [
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: glossaryData.length,
-                                itemBuilder: (context, index) {
-                                  final entry = glossaryData.entries.elementAt(
-                                    index,
-                                  );
-                                  final String letter = entry.key;
-                                  final List<GlossaryItem> items = entry.value;
+                              if (state.isLetterQueryEmpty == true) ...[
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 5,
+                                ),
+                                Center(
+                                  child: Text(
+                                    'No glossary terms found.',
+                                    style: AppTextStyles.regular(16).copyWith(
+                                      height: 1.4,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ),
+                              ] else
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: glossaryData.length,
+                                  itemBuilder: (context, index) {
+                                    final entry = glossaryData.entries
+                                        .elementAt(index);
+                                    final String letter = entry.key;
+                                    final List<GlossaryItem> items =
+                                        entry.value;
 
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...items.map((item) {
-                                        final key = '$letter-${item.title}';
-                                        final isExpanded =
-                                            _expandedItems[key] ?? false;
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ...items.map((item) {
+                                          final key = '$letter-${item.title}';
+                                          final isExpanded =
+                                              _expandedItems[key] ?? false;
 
-                                        return Column(
-                                          children: [
-                                            Theme(
-                                              data: Theme.of(context).copyWith(
-                                                dividerColor:
-                                                    Colors.transparent,
-                                              ),
-                                              child: ExpansionTile(
-                                                showTrailingIcon: isExpanded
-                                                    ? true
-                                                    : false,
-                                                shape: const Border(),
-                                                collapsedShape: const Border(),
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                collapsedBackgroundColor:
-                                                    Colors.transparent,
-                                                tilePadding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 16,
+                                          return Column(
+                                            children: [
+                                              Theme(
+                                                data: Theme.of(context)
+                                                    .copyWith(
+                                                      dividerColor:
+                                                          Colors.transparent,
                                                     ),
-                                                childrenPadding:
-                                                    const EdgeInsets.only(
-                                                      left: 16,
-                                                      right: 16,
-                                                      bottom: 12,
-                                                    ),
-                                                title: Text(
-                                                  item.title,
-                                                  style:
-                                                      AppTextStyles.regular(
-                                                        18.67,
-                                                      ).copyWith(
-                                                        height: 1.0,
-                                                        color: Colors.black,
+                                                child: ExpansionTile(
+                                                  showTrailingIcon: isExpanded
+                                                      ? true
+                                                      : false,
+                                                  shape: const Border(),
+                                                  collapsedShape:
+                                                      const Border(),
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  collapsedBackgroundColor:
+                                                      Colors.transparent,
+                                                  tilePadding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 16,
                                                       ),
-                                                ),
-                                                initiallyExpanded: isExpanded,
-                                                onExpansionChanged: (expanded) {
-                                                  setState(() {
-                                                    _expandedItems[key] =
-                                                        expanded;
-                                                  });
-                                                },
-                                                children: [
-                                                  Text(
-                                                    item.description,
+                                                  childrenPadding:
+                                                      const EdgeInsets.only(
+                                                        left: 16,
+                                                        right: 16,
+                                                        bottom: 12,
+                                                      ),
+                                                  title: Text(
+                                                    item.title,
                                                     style:
                                                         AppTextStyles.regular(
-                                                          16,
+                                                          18.67,
                                                         ).copyWith(
-                                                          height: 1.4,
+                                                          height: 1.0,
                                                           color: Colors.black,
                                                         ),
                                                   ),
-                                                ],
+                                                  initiallyExpanded: isExpanded,
+                                                  onExpansionChanged:
+                                                      (expanded) {
+                                                        setState(() {
+                                                          _expandedItems[key] =
+                                                              expanded;
+                                                        });
+                                                      },
+                                                  children: [
+                                                    Text(
+                                                      item.description,
+                                                      style:
+                                                          AppTextStyles.regular(
+                                                            16,
+                                                          ).copyWith(
+                                                            height: 1.4,
+                                                            color: Colors.black,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            const Divider(
-                                              height: 0,
-                                              thickness: 1,
-                                              color: Color(0xFFE0E0E0),
-                                              indent: 16,
-                                              endIndent: 16,
-                                            ),
-                                          ],
-                                        );
-                                      }),
-                                    ],
-                                  );
-                                },
-                              ),
+                                              const Divider(
+                                                height: 0,
+                                                thickness: 1,
+                                                color: Color(0xFFE0E0E0),
+                                                indent: 16,
+                                                endIndent: 16,
+                                              ),
+                                            ],
+                                          );
+                                        }),
+                                      ],
+                                    );
+                                  },
+                                ),
                             ],
                           ),
                         ),

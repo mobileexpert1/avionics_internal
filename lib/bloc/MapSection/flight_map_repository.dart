@@ -1,7 +1,12 @@
+import 'package:flutter/widgets.dart';
+
+import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Constants/ApiClass/api_service.dart';
 import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
+import '../../Helpers/CreditManager/CreditManager.dart';
+import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import 'flight_key_values_model.dart';
 import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
@@ -12,7 +17,8 @@ class FlightRepository {
     required int credit,
   }) async {
     final url = Uri.parse(
-      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlAirplaneConstant.airplaneService+
+      ApiBaseUrlConstant.baseUrl +
+          ApiFunctionUrlAirplaneConstant.airplaneService +
           ApiFunctionUrlAirplaneConstant.airCraftFlightCredit,
     );
     try {
@@ -31,6 +37,7 @@ class FlightRepository {
     int limit = 20,
     String? aircraft,
     String? categories,
+    required BuildContext context,
   }) async {
     try {
       final baseUrl =
@@ -47,6 +54,23 @@ class FlightRepository {
         finalCategories = categories;
       }
 
+      if (CreditManager().remainingCredit <= 10 &&
+          CreditManager().remainingCredit >= 8) {
+        limit = 1;
+      } else {
+        if (CreditManager().remainingCredit <= 8) {
+          Future.microtask(() {
+            AlertHelperForSubsPopup.showSubscriptionEndAlert(
+              context: context,
+              title: "Subscription Required",
+              message: "Credits finished. Please buy subscription.",
+              navigateTo: const AppleSubscriptionScreen(),
+            );
+          });
+          return [];
+        }
+      }
+
       final url = Uri.parse(
         "$baseUrl?"
         "bounds=$bounds"
@@ -55,7 +79,7 @@ class FlightRepository {
         "&altitude_ranges=0-46000"
         "&categories=$finalCategories",
       );
-      // ✅ Pass filters only if applied
+
       var mapKeyValue = await SharedPrefsHelper.getMapKeyValuesForApi();
       if (mapKeyValue.isEmpty) {
         try {
@@ -71,7 +95,6 @@ class FlightRepository {
           throw e.toString();
         }
       }
-      //debugPrint("✈️ Final Flight API URL: $url");
       final response = await ApiService.get(url: url, isForFlightRadar: true);
       final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;
@@ -97,12 +120,25 @@ class FlightRepository {
     }
   }
 
-  Future<Map<String, dynamic>> getFlightDetails({
+  Future<Map<String, dynamic>?> getFlightDetails({
     required String flightId,
     required String fromDateTime,
     required String toDateTime,
+    required BuildContext context,
     FlightModel? flightModel,
   }) async {
+    if (CreditManager().remainingCredit <= 2) {
+      Future.microtask(() {
+        AlertHelperForSubsPopup.showSubscriptionEndAlert(
+          context: context,
+          title: "Subscription Required",
+          message: "Credits finished. Please buy subscription.",
+          navigateTo: const AppleSubscriptionScreen(),
+        );
+      });
+      return null;
+    }
+
     final url = Uri.parse(
       "${MapFlightAircraftSectionConstant.baseUrlDetail}"
       "?flight_ids=$flightId"
@@ -279,7 +315,7 @@ class FlightRepository {
 
   Future<List<FlightModel>> getFlightsWithFilters({
     required String bounds,
-    int limit = 3,
+    int limit = 20,
     List<String>? selectedIcaoTypes,
     List<String>? selectedCategories,
   }) async {

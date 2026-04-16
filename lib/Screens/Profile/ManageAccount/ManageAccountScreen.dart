@@ -153,12 +153,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(21.46).copyWith(
                               height: 1.0,
-                              color: (buttonBottomTitle == ConstantStrings.saveTitle)
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+                              color: Colors.white,
                             ),
-
-
                             title: buttonBottomTitle,
                             backgroundColor: state.isButtonEnabled
                                 ? AppColors.primaryValueColour

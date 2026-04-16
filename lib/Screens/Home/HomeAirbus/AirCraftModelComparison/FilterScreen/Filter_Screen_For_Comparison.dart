@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
+import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
 
@@ -47,19 +48,21 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                 padding: const EdgeInsets.fromLTRB(20, 10, 16, 6),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         "Filter",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTextStyles.bold(
+                          24,
+                        ).copyWith(height: 1.0, color: AppColors.black),
                       ),
                     ),
                     GestureDetector(
-                      onTap: () =>
-                          Navigator.of(context).pop(state.filterCategories),
-                      child: const Icon(Icons.close, size: 26),
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Icon(
+                        Icons.close,
+                        size: 27,
+                        color: AppColors.primaryValueColour,
+                      ),
                     ),
                   ],
                 ),
@@ -99,9 +102,9 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                 Expanded(
                                   child: Text(
                                     category.name,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
+                                    style: AppTextStyles.regular(16).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.primaryValueColour,
                                     ),
                                   ),
                                 ),
@@ -116,10 +119,9 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                     category.isExpanded
                                         ? "Show less"
                                         : "Show more",
-                                    style: const TextStyle(
+                                    style: AppTextStyles.regular(16).copyWith(
+                                      height: 1.0,
                                       color: AppColors.primaryBlue,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
@@ -137,10 +139,11 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                         Expanded(
                                           child: Text(
                                             option.name,
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            style: AppTextStyles.regular(14)
+                                                .copyWith(
+                                                  height: 1.0,
+                                                  color: AppColors.black,
+                                                ),
                                           ),
                                         ),
                                         Checkbox(
@@ -158,7 +161,12 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                         ),
                                       ],
                                     ),
-                                    const Divider(thickness: 1, height: 1),
+                                    const Divider(
+                                      thickness: 1,
+                                      height: 1,
+                                      color: AppColors
+                                          .dividerLineColourForComparison,
+                                    ),
                                   ],
                                 );
                               }).toList(),
@@ -175,26 +183,61 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                   horizontal: 20,
                   vertical: 16,
                 ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.read<ComparisonFilterCubit1>().resetFilters();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    side: const BorderSide(color: Colors.black),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(state.filterCategories);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          side: const BorderSide(color: Colors.black),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          "Apply Filter",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.semiBold(
+                            16,
+                          ).copyWith(height: 1.4, color: AppColors.black),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    "Reset Filter",
-                    style: TextStyle(fontSize: 16),
-                  ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<ComparisonFilterCubit1>().resetFilters();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          side: const BorderSide(color: Colors.black),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          "Reset Filter",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.semiBold(
+                            16,
+                          ).copyWith(height: 1.4, color: AppColors.black),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 10),
             ],
           );
         },

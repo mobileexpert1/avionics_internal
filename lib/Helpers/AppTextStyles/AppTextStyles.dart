@@ -22,6 +22,9 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle semiRegular(double size, {Color? color}) =>
+      _base(size: size, weight: FontWeight.w300, color: color);
+
   static TextStyle regular(double size, {Color? color}) =>
       _base(size: size, weight: FontWeight.w400, color: color);
 

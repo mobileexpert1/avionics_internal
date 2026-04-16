@@ -196,7 +196,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           points: ring
               .map<LatLng>(
                 (e) => LatLng(
-                  e[1].clamp(-85.0, 85.0), // lat
+                  e[1].clamp(-85.0, 85.0),
                   e[0], // lng
                 ),
               )
@@ -771,7 +771,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         _isMapListViewShown = false;
       });
 
-      _mapCubit.submitFlightCreditApi(1, 8);
+      _mapCubit.submitFlightCreditApi(1, 8, context);
 
       _toggleFlightCard(flight: result.id);
 

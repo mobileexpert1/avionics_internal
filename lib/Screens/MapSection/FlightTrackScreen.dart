@@ -53,9 +53,12 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
   final List<LatLng> _flightNextCoordinatesPoints = [];
   Set<Polyline> _flightNextLocationCoordinates = {};
 
+  late FlightMapCubit flightMapCubit;
+
   @override
   void initState() {
     super.initState();
+    flightMapCubit = context.read<FlightMapCubit>();
 
     // set initial flight position
     if (widget.initialFlight != null) {
@@ -74,7 +77,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     _addStaticAirportMarkers();
 
     // start flight tracking
-    context.read<FlightMapCubit>().startTrackingFlight(
+    flightMapCubit.startTrackingFlight(
       widget.flightNumber,
       context,
     );
@@ -87,10 +90,13 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.flightTrackScreen,
     );
+    flightMapCubit.isFromTrackingClass = true;
   }
 
   @override
   void dispose() {
+    flightMapCubit.resetTracking();
+
     // 1. Stop and dispose animation
     _animationController?.stop();
     _animationController?.dispose();
@@ -211,7 +217,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
         actions: [
           TextButton(
             onPressed: () {
-              context.read<FlightMapCubit>().stopTrackingFlight();
+              flightMapCubit.stopTrackingFlight();
               Navigator.of(ctx).pop();
               Navigator.of(context).pop();
             },
@@ -237,7 +243,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
           TextButton(
             onPressed: () {
               _alertShownOfTrackingStopped = false;
-              context.read<FlightMapCubit>().stopTrackingFlight(
+              flightMapCubit.stopTrackingFlight(
                 flightNumber: widget.flightNumber,
                 destination:
                     widget.initialFlightDetail?.destinationAirport?.name,
@@ -484,7 +490,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                         rotateGesturesEnabled: false,
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
-                        mapType: context.read<FlightMapCubit>().state.mapType.toGoogleMapType(),
+                        mapType: flightMapCubit.state.mapType.toGoogleMapType(),
                         polylines: _staticPolyline.union(
                           _flightNextLocationCoordinates,
                         ),
@@ -521,7 +527,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
                     onPressed: () {
-                      context.read<FlightMapCubit>().stopTrackingFlight();
+                      flightMapCubit.stopTrackingFlight();
                       Navigator.pop(context, widget.flightId);
                     },
                   ),

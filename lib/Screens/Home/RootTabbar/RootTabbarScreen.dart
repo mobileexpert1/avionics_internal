@@ -70,6 +70,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
     if (isRestrictedTab) {
       final bool success = await creditManager.tryUseCredit(
         amount: 8,
+        isComeFromTabbar:true,
         onError: (String message) async {
           if (mounted) {
             Future.microtask(() {

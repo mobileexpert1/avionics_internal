@@ -94,7 +94,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                     arrowBackgroundColor: expandedMap[index] ?? false
                         ? AppColors.extraDarkYellow
                         : AppColors.lightGreyWithAlphaDecreased,
-                    arrowFrontColor: Colors.white,
+                    arrowFrontColor: expandedMap[index] ?? false
+                        ? AppColors.black
+                        : AppColors.white,
                     isExpandedViewAvailable: true,
                     onHeaderTap: () {
                       setState(() {

@@ -6,6 +6,7 @@ import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.da
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
@@ -64,7 +65,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         title: "Comparison ${widget.model1Name}, ${widget.model2Name}",
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white,size: 27),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 27,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         rightButton: GestureDetector(
@@ -108,8 +113,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           child: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.compareFilter),
             fit: BoxFit.cover,
-            width: 30,
-            height: 30,
+            width: 27,
+            height: 27,
           ),
         ),
       ),
@@ -402,21 +407,31 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                 flex: 2,
                                 child: Text(
                                   "PARAMETERS",
-                                  style: TextStyle(color: Colors.white),
+                                  style: AppTextStyles.regular(14).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.white,
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   widget.model1Name,
                                   textAlign: TextAlign.start,
-                                  style: TextStyle(color: Colors.white),
+                                  style: AppTextStyles.bold(16).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.white,
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   widget.model2Name,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white),
+
+                                  style: AppTextStyles.bold(16).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.white,
+                                  ),
                                 ),
                               ),
                             ],
@@ -428,7 +443,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(15),
                       child: selectedOptions.isEmpty
                           ? const Center(
                               child: Text(
@@ -444,7 +459,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                               border: TableBorder.all(
                                 color: AppColors.dividerLineColourForComparison,
                                 width: 1,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(12),
                               ),
 
                               children: [
@@ -455,12 +470,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                         padding: const EdgeInsets.all(10),
                                         child: Text(
                                           labels[i],
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors
-                                                .grayForCompareTextColour,
-                                            fontSize: 14,
-                                          ),
+                                          style: AppTextStyles.bold(14)
+                                              .copyWith(
+                                                height: 1.3,
+                                                color: AppColors
+                                                    .grayForCompareTextColour,
+                                              ),
                                         ),
                                       ),
 
@@ -473,11 +488,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                           child: Center(
                                             child: Text(
                                               a1Values[i],
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.black,
-                                                fontSize: 14,
-                                              ),
+                                              style: AppTextStyles.regular(15)
+                                                  .copyWith(
+                                                    height: 1.3,
+                                                    color: AppColors.black,
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -488,11 +503,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                         child: Center(
                                           child: Text(
                                             a2Values[i],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.black,
-                                              fontSize: 14,
-                                            ),
+                                            style: AppTextStyles.regular(15)
+                                                .copyWith(
+                                                  height: 1.3,
+                                                  color: AppColors.black,
+                                                ),
                                           ),
                                         ),
                                       ),

@@ -12,9 +12,10 @@ class CreditManager {
   DateTime? expiryDate;
 
   void initialize(CurrentPlan plan) {
-    totalCredit = plan.totalCredit;
+    totalCredit = plan.totalCredit + 100;
     creditUsage = plan.creditUsage;
     expiryDate = plan.expiryDate;
+    print("totalCredit-=-=-= $totalCredit,creditUsage-=-=-=- $creditUsage");
   }
 
   double get remainingCredit {
@@ -31,6 +32,7 @@ class CreditManager {
 
   Future<bool> tryUseCredit({
     required double amount,
+    required bool isComeFromTabbar,
     required Future<void> Function(String message) onError,
   }) async {
     print("isExpired: $isExpired");
@@ -52,8 +54,13 @@ class CreditManager {
       );
       return false;
     }
-
-    creditUsage += amount;
+    print(isComeFromTabbar);
+    if (isComeFromTabbar == false) {
+      creditUsage += amount;
+    }
+    print(
+      "After Addition Used: $creditUsage | Remaining: $remainingCredit | Total: $totalCredit",
+    );
     return true;
   }
 }

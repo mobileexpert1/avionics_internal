@@ -16,6 +16,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
 
   Future<void> loadGlossary({
     String? query,
+    bool? isComeFromSearch = false,
     required BuildContext context,
   }) async {
     emit(state.copyWith(isLoading: true));
@@ -29,14 +30,19 @@ class GlossaryCubit extends Cubit<GlossaryState> {
         ),
       );
 
-      state.selectedLetter = "A";
-      filterByLetter(letter: state.selectedLetter ?? "", context: context);
+      if (isComeFromSearch == false) {
+        state.selectedLetter = "A";
+        filterByLetter(letter: state.selectedLetter ?? "", context: context);
+      }else{
+
+      }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(
         GlossaryState(
           glossaryData: {},
           originalData: {},
+          isLetterQueryEmpty: false,
           isLoading: false,
           errorMessage: e.toString(),
           status: CommonApiStatus.failure,
@@ -57,6 +63,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
           state.copyWith(
             glossaryData: state.originalData,
             isLoading: false,
+            isLetterQueryEmpty: false,
             status: CommonApiStatus.success,
           ),
         );
@@ -79,6 +86,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
         state.copyWith(
           glossaryData: result,
           isLoading: false,
+          isLetterQueryEmpty: false,
           status: CommonApiStatus.success,
         ),
       );
@@ -90,6 +98,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
           glossaryData: {},
           isLoading: false,
           errorMessage: e.toString(),
+          isLetterQueryEmpty: false,
           status: CommonApiStatus.failure,
         ),
       );
@@ -109,6 +118,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
             glossaryData: state.originalData,
             isLoading: false,
             status: CommonApiStatus.success,
+            isLetterQueryEmpty: true,
           ),
         );
         return;
@@ -119,6 +129,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
           glossaryData: {letter: state.originalData![letter]!},
           isLoading: false,
           status: CommonApiStatus.success,
+          isLetterQueryEmpty: false,
         ),
       );
     } catch (e) {
@@ -128,6 +139,7 @@ class GlossaryCubit extends Cubit<GlossaryState> {
         state.copyWith(
           glossaryData: {},
           isLoading: false,
+          isLetterQueryEmpty: false,
           errorMessage: e.toString(),
           status: CommonApiStatus.failure,
         ),
