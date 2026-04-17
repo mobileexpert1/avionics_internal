@@ -100,13 +100,13 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               rightButton: isNeedToShowFlagOptions == false
                   ? null
                   : IconButton(
-                      icon: const Icon(Icons.flag, color: Colors.black),
+                      icon: const Icon(Icons.flag, color: Colors.white),
                       onPressed: () async {
                         _showRadioPopup(context);
                       },
                     ),
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () async {
                   final shouldExit = await showDialog<bool>(
                     context: context,

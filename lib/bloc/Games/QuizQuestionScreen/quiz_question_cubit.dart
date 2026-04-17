@@ -175,9 +175,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   QuizQuestion _mapQuestion(Question q, String setId, String imageBasedId) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
-    // print(
-    //   'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
-    // );
+    print(
+      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
+    );
     if (correctIndex == -1) {
       // print(
       //   'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
