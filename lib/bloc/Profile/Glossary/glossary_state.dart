@@ -10,6 +10,7 @@ class GlossaryState {
 
   final Map<String, List<GlossaryItem>>? originalData;
   String? selectedLetter;
+  bool? isLetterQueryEmpty;
 
   GlossaryState({
     required this.glossaryData,
@@ -20,6 +21,7 @@ class GlossaryState {
 
     this.originalData,
     this.selectedLetter,
+    this.isLetterQueryEmpty,
   });
 
   GlossaryState copyWith({
@@ -31,6 +33,8 @@ class GlossaryState {
 
     Map<String, List<GlossaryItem>>? originalData,
     String? selectedLetter,
+    bool? isLetterQueryEmpty,
+
   }) {
     return GlossaryState(
       glossaryData: glossaryData ?? this.glossaryData,
@@ -41,6 +45,7 @@ class GlossaryState {
 
       originalData: originalData ?? this.originalData,
       selectedLetter: selectedLetter ?? this.selectedLetter,
+      isLetterQueryEmpty: isLetterQueryEmpty ?? this.isLetterQueryEmpty,
     );
   }
 }
