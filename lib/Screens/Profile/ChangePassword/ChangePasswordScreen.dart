@@ -8,6 +8,7 @@ import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomTextField.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Profile/ChangePassword/changePassword_cubit.dart';
 import '../../../bloc/Profile/ChangePassword/changePassword_state.dart';
 
@@ -146,6 +147,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 selector: (state) => state.isButtonEnabled,
                                 builder: (context, isButtonEnabled) {
                                   return CustomBottomButton(
+                                    fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                      height: 1.0,
+                                      color: isButtonEnabled
+                                          ? Colors.white
+                                          : Colors.grey.shade600,
+                                    ),
                                     title: ConstantStrings.saveTitle,
                                     backgroundColor: isButtonEnabled
                                         ? AppColors.customBottomEnabledColour

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import '../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
@@ -102,6 +103,7 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
         values: subSegmentOptions,
         selectedIndex: subSegmentIndex,
         onSelected: (i) => setState(() => subSegmentIndex = i),
+        isForFlightScreen: true,
       ),
       const SizedBox(height: 15),
       if (subSegmentIndex == 0) ...[
@@ -168,43 +170,53 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
 class RadioChips extends StatelessWidget {
   final List<String> values;
   final int selectedIndex;
+  final bool isForFlightScreen;
   final Function(int) onSelected;
 
   const RadioChips({
     super.key,
     required this.values,
+    required this.isForFlightScreen,
     required this.selectedIndex,
     required this.onSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(values.length, (index) {
-        final selected = index == selectedIndex;
-
-        return GestureDetector(
-          onTap: () => onSelected(index),
-          child: Container(
-            height: 30,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: selected
-                  ? AppColors.primaryBlue
-                  : AppColors.greyForAirportDetailCard,
-            ),
-            child: Text(
-              values[index],
-              style: TextStyle(
-                color: selected ? AppColors.white : AppColors.grayMedium,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize:
+        isForFlightScreen ? MainAxisSize.max : MainAxisSize.min,
+        children: List.generate(values.length, (index) {
+          final selected = index == selectedIndex;
+          return GestureDetector(
+            onTap: () => onSelected(index),
+            child: Container(
+              height: 35,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: selected
+                    ? AppColors.primaryBlue
+                    : AppColors.greyForAirportDetailCard,
+              ),
+              child: Text(
+                values[index],
+                style:
+                AppTextStyles.bold(12).copyWith(
+                  height: 1.0,
+                  color: selected
+                      ? AppColors.white
+                      : AppColors.grayMedium,
+                ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }
@@ -237,3 +249,4 @@ void _openUrl(String url) async {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }
+

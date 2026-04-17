@@ -7,6 +7,7 @@ import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../ChangePassword/ChangePasswordScreen.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
@@ -149,6 +150,12 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           ),
                           const SizedBox(height: 30),
                           CustomBottomButton(
+                            fontStyle: AppTextStyles.regular(21.46).copyWith(
+                              height: 1.0,
+                              color: (buttonBottomTitle == ConstantStrings.saveTitle)
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
                             title: buttonBottomTitle,
                             backgroundColor: state.isButtonEnabled
                                 ? AppColors.customBottomEnabledColour

@@ -3,6 +3,7 @@ import '../../../Constants/AppColors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Onboarding/Login/LoginScreen.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../bloc/Profile/Avtar/avtar_cubit.dart';
@@ -201,6 +202,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
                       state.selectedUserType!.isNotEmpty,
                   builder: (context, isButtonEnabled) {
                     return CustomBottomButton(
+                      fontStyle: AppTextStyles.regular(21.46).copyWith(
+                        height: 1.0,
+                        color: isButtonEnabled
+                            ? Colors.white
+                            : Colors.grey.shade600,
+                      ),
                       title: ConstantStrings.submitTitle,
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,

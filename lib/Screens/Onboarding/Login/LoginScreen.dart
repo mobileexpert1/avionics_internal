@@ -136,6 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               selector: (state) => state.isButtonEnabled,
                               builder: (_, enabled) {
                                 return CustomBottomButton(
+                                  fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                    height: 1.0,
+                                    color: enabled
+                                        ? Colors.white
+                                        : Colors.grey.shade600,
+                                  ),
+
                                   title: ConstantStrings.loginButton,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour

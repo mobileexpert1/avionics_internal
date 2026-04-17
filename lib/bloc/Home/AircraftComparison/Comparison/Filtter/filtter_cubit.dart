@@ -266,7 +266,7 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
   void resetFilters() {
     final resetCategories = state.filterCategories.map((category) {
       final resetOptions = category.options.map((option) {
-        return option.copyWith(isSelected: true);
+        return option.copyWith(isSelected: false);
       }).toList();
       return category.copyWith(options: resetOptions);
     }).toList();

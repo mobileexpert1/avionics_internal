@@ -8,6 +8,7 @@ import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart'
     hide CommonApiStatus;
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackbox_cubit.dart';
@@ -254,6 +255,13 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                 ? MediaQuery.of(context).size.width * 0.5
                                 : double.infinity,
                             child: CustomBottomButton(
+                              fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                height: 1.0,
+                                color: true
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
+                              ),
+
                               title: ConstantStrings.next,
                               backgroundColor: isLastPage
                                   ? AppColors.customBottomEnabledColour

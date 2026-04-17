@@ -26,6 +26,8 @@ abstract class AssetsPath {
   static const String unWilcoTabBarIcon = "20UnWilcoTabBar";
   static const String profileTabBarIcon = "21ProfileTabBar";
   static const String unProfileTabBarIcon = "22UnProfileTabBar";
+  static const String compareAeroPlaneIcon = "23CompareAeroPlaneIcon";
+  static const String backArrowForPop = "24BackArrowForPop";
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
@@ -159,3 +161,4 @@ class CommonUi {
     return 'assets/gif/$image.gif';
   }
 }
+

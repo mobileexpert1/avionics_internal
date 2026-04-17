@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class CustomBottomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
@@ -7,6 +9,8 @@ class CustomBottomButton extends StatelessWidget {
   final Widget icon;
   final VoidCallback onPressed;
   final bool isEnabled;
+  final bool isComeFromCompare;
+  final TextStyle fontStyle;
 
   const CustomBottomButton({
     super.key,
@@ -16,6 +20,8 @@ class CustomBottomButton extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     this.isEnabled = true,
+    this.isComeFromCompare = false,
+    required this.fontStyle,
   });
 
   @override
@@ -31,15 +37,23 @@ class CustomBottomButton extends StatelessWidget {
         icon: icon,
         label: Text(
           title,
-          style: TextStyle(color: effectiveTextColor, fontSize: 16),
+          style: fontStyle,
         ),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor, // FIXED HERE
+          backgroundColor: backgroundColor,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          shape: RoundedRectangleBorder(
+            borderRadius: isComeFromCompare == false
+                ? BorderRadius.circular(5)
+                : BorderRadius.only(
+              bottomLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+            ),
+          ),
         ),
       ),
     );
   }
 }
+

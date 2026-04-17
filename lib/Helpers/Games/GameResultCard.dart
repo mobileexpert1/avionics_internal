@@ -199,6 +199,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Screens/Profile/GameBadges/BadgesScreens.dart';
+import '../AppTextStyles/AppTextStyles.dart';
 
 class GameResultCard extends StatelessWidget {
   final String title;
@@ -335,6 +336,10 @@ class GameResultCard extends StatelessWidget {
                         ? MediaQuery.of(context).size.width * 0.45
                         : double.infinity,
                     child: CustomBottomButton(
+                      fontStyle: AppTextStyles.regular(21.46).copyWith(
+                        height: 1.0,
+                        color: true ? Colors.white : Colors.grey.shade600,
+                      ),
                       title: ConstantStrings.backToGame,
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,

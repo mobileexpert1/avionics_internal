@@ -200,6 +200,13 @@ class _SignupScreenState extends State<SignupScreen> {
                               selector: (state) => state.isButtonEnabled,
                               builder: (_, enabled) {
                                 return CustomBottomButton(
+                                  fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                    height: 1.0,
+                                    color: enabled
+                                        ? Colors.white
+                                        : Colors.grey.shade600,
+                                  ),
+
                                   title: ConstantStrings.next,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour

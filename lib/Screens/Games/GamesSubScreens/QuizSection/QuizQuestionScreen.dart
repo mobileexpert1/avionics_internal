@@ -11,6 +11,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
 
@@ -589,6 +590,13 @@ class QuizQuestionCard extends StatelessWidget {
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(
+                        fontStyle: AppTextStyles.regular(21.46).copyWith(
+                          height: 1.0,
+                          color: selectedOption != null
+                              ? Colors.white
+                              : Colors.grey.shade600,
+                        ),
+
                         title: isShowAnswers == false
                             ? ConstantStrings.submitTitle
                             : ConstantStrings.next,

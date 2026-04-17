@@ -5,6 +5,7 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/Subscription/subscription_cubit.dart';
 import '../../../bloc/Onboarding/Subscription/subscription_state.dart';
 import 'SubscriptionOptionCard.dart';
@@ -118,6 +119,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                             /// Go Premium Button
                             CustomBottomButton(
+                              fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                height: 1.0,
+                                color: true
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
+                              ),
                               backgroundColor: const Color.fromRGBO(
                                 63,
                                 61,
