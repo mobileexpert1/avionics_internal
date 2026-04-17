@@ -9,8 +9,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     final String urlVideo =
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
 
-    final controller =
-    VideoPlayerController.networkUrl(Uri.parse(urlVideo));
+    final controller = VideoPlayerController.networkUrl(Uri.parse(urlVideo));
 
     try {
       await controller.initialize();
@@ -62,15 +61,13 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   void seekForward() {
     final controller = state.controller;
     if (controller == null) return;
-    controller.seekTo(
-        controller.value.position + const Duration(seconds: 10));
+    controller.seekTo(controller.value.position + const Duration(seconds: 10));
   }
 
   void seekBackward() {
     final controller = state.controller;
     if (controller == null) return;
-    controller.seekTo(
-        controller.value.position - const Duration(seconds: 10));
+    controller.seekTo(controller.value.position - const Duration(seconds: 10));
   }
 
   void toggleMute() {

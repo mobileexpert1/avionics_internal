@@ -353,6 +353,7 @@ class QuizQuestionCard extends StatelessWidget {
                               }
                             },
                             child: CachedAnyImage(
+                              isForPlaneList: true,
                               imagePath: imgUrl,
                               width: imageWidth,
                               height: imageHeight,
@@ -397,12 +398,16 @@ class QuizQuestionCard extends StatelessWidget {
                               width: 60,
                               height: 40,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black,width: 1),
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
                               ),
                               child: Stack(
                                 children: [
                                   // Full preview
                                   CachedAnyImage(
+                                    isForPlaneList: true,
                                     imagePath: imgUrl,
                                     width: 60,
                                     height: 40,
@@ -412,7 +417,8 @@ class QuizQuestionCard extends StatelessWidget {
                                   ValueListenableBuilder(
                                     valueListenable: transformationController,
                                     builder: (_, value, __) {
-                                      final matrix = transformationController.value;
+                                      final matrix =
+                                          transformationController.value;
 
                                       final scale = matrix.getMaxScaleOnAxis();
                                       final dx = matrix.storage[12];
@@ -426,7 +432,10 @@ class QuizQuestionCard extends StatelessWidget {
                                             width: 60,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.red, width: 1),
+                                              border: Border.all(
+                                                color: Colors.red,
+                                                width: 1,
+                                              ),
                                             ),
                                           ),
                                         );
@@ -436,13 +445,22 @@ class QuizQuestionCard extends StatelessWidget {
                                       double viewHeight = 40 / scale;
 
                                       return Positioned(
-                                        left: (-dx / scale).clamp(0, 60 - viewWidth),
-                                        top: (-dy / scale).clamp(0, 40 - viewHeight),
+                                        left: (-dx / scale).clamp(
+                                          0,
+                                          60 - viewWidth,
+                                        ),
+                                        top: (-dy / scale).clamp(
+                                          0,
+                                          40 - viewHeight,
+                                        ),
                                         child: Container(
                                           width: viewWidth,
                                           height: viewHeight,
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.red, width: 1),
+                                            border: Border.all(
+                                              color: Colors.red,
+                                              width: 1,
+                                            ),
                                           ),
                                         ),
                                       );
