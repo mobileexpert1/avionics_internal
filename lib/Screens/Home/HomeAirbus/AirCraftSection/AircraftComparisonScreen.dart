@@ -1,11 +1,16 @@
 import 'dart:ui';
 
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppText.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SelectableAircraftCard.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
@@ -77,25 +82,14 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
       value: _cubit,
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SearchBarWidget(
-                  enableBackArrow: true,
-                  enableFilter: false,
-                  enableCloseScreen: false,
-                  controller: searchController,
-                  onChanged: _onSearch,
-                  searchTitle: 'Search Models',
-                  onBackButtonTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
+        appBar: CustomAppBar(
+          title: 'Models Lists',
+          centerTitle: false,
+          leftButton: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
         body: Center(
@@ -123,23 +117,34 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.04),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: kIsWeb ? screenWidth * 0.03 : screenWidth * 0.06,
-                        ),
-                        child: AppTexts(
-                          text: "Select Model for Comparison",
-                          imageName: null,
-                          font: 'Roboto',
-                          side: 'left',
-                          color: const Color(0xFF3F3D56),
-                          weight: FontWeight.w600,
-                          fontSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04,
-                          imageSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.04,
+                      SizedBox(
+                        height: kIsWeb
+                            ? screenWidth * 0.01
+                            : screenWidth * 0.03,
+                      ),
+                      PreferredSize(
+                        preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+                        child: SafeArea(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SearchBarWidget(
+                                enableBackArrow: false,
+                                enableFilter: false,
+                                enableCloseScreen: false,
+                                controller: searchController,
+                                onChanged: _onSearch,
+                                searchTitle: 'Select Model for Comparison',
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(height: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.04),
+                      SizedBox(
+                        height: kIsWeb
+                            ? screenWidth * 0.01
+                            : screenWidth * 0.02,
+                      ),
 
                       // Scrollable list
                       Flexible(
@@ -147,7 +152,10 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                             ? const Center(
                           child: Text(
                             'No Compare models available',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
                           ),
                         )
                             : ScrollConfiguration(
@@ -166,21 +174,27 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                               right: screenWidth * 0.025,
                             ),
                             physics: const BouncingScrollPhysics(),
-                            itemCount: models.length + (state.isFetchingMore ? 1 : 0),
+                            itemCount:
+                            models.length +
+                                (state.isFetchingMore ? 1 : 0),
                             itemBuilder: (context, index) {
                               if (index >= models.length) {
                                 if (state.hasNextPage) {
                                   return const Padding(
                                     padding: EdgeInsets.all(16),
-                                    child: Center(child: CircularProgressIndicator()),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
                                   );
                                 } else {
-                                  return const Padding(
+                                  return Padding(
                                     padding: EdgeInsets.all(16),
                                     child: Center(
                                       child: Text(
                                         "No more models",
-                                        style: TextStyle(color: Colors.grey),
+                                        style: AppTextStyles.medium(
+                                          14,
+                                        ).copyWith(height: 1.0, color: AppColors.grayMedium),
                                       ),
                                     ),
                                   );
@@ -188,12 +202,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                               }
 
                               final model = models[index];
-
-                              // Web layout
                               if (kIsWeb) {
                                 return Padding(
                                   key: ValueKey(model.id),
-                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0,
+                                  ),
                                   child: InkWell(
                                     onTap: () {
                                       Navigator.pop(context, model);
@@ -203,10 +217,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                       clipBehavior: Clip.hardEdge,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5),
+                                        borderRadius:
+                                        BorderRadius.circular(5),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.08),
+                                            color: Colors.black
+                                                .withOpacity(0.08),
                                             blurRadius: 5,
                                             spreadRadius: 1,
                                             offset: const Offset(0, 1),
@@ -215,7 +231,8 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                       ),
                                       padding: const EdgeInsets.all(10),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                         children: [
                                           CachedAnyImage(
                                             key: ValueKey(model.image),
@@ -228,35 +245,73 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                           const SizedBox(width: 10),
                                           Expanded(
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .center,
                                               children: [
                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
                                                   children: [
                                                     Text(
                                                       model.aircraftModel,
                                                       style: TextStyle(
-                                                        fontWeight: FontWeight.w600,
-                                                        fontSize: bodyFontSize,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .w600,
+                                                        fontSize:
+                                                        bodyFontSize,
                                                       ),
-                                                      overflow: TextOverflow.ellipsis,
+                                                      overflow:
+                                                      TextOverflow
+                                                          .ellipsis,
                                                     ),
-                                                    if (model.icaoTypeCode.isNotEmpty)
+                                                    if (model
+                                                        .icaoTypeCode
+                                                        .isNotEmpty)
                                                       Padding(
-                                                        padding: const EdgeInsets.only(left: 8.0),
+                                                        padding:
+                                                        const EdgeInsets.only(
+                                                          left: 8.0,
+                                                        ),
                                                         child: Container(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                          padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal:
+                                                            6,
+                                                            vertical:
+                                                            2,
+                                                          ),
                                                           decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius: BorderRadius.circular(4),
+                                                            color: Colors
+                                                                .white,
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                              4,
+                                                            ),
                                                             boxShadow: const [
-                                                              BoxShadow(color: Colors.grey, spreadRadius: 0.1),
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey,
+                                                                spreadRadius:
+                                                                0.1,
+                                                              ),
                                                             ],
                                                           ),
                                                           child: Text(
-                                                            model.icaoTypeCode,
-                                                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                                            model
+                                                                .icaoTypeCode,
+                                                            style: const TextStyle(
+                                                              fontSize:
+                                                              12,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .w500,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
@@ -264,69 +319,174 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                 ),
                                                 const SizedBox(height: 6),
                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
                                                   children: [
                                                     ClipRRect(
-                                                      borderRadius: BorderRadius.circular(2),
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                        2,
+                                                      ),
                                                       child: SizedBox(
                                                         width: 40,
                                                         height: 40,
                                                         child: CachedAnyImage(
-                                                          imagePath: model.manufacturer?.logo ?? "",
+                                                          imagePath:
+                                                          model
+                                                              .manufacturer
+                                                              ?.logo ??
+                                                              "",
                                                           width: 40,
                                                           height: 40,
-                                                          contentImage: BoxFit.contain,
-                                                          isForPlaneList: true,
+                                                          contentImage:
+                                                          BoxFit
+                                                              .contain,
+                                                          isForPlaneList:
+                                                          true,
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(width: 8),
-                                                    if (model.manufacturer?.companyName != null)
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    if (model
+                                                        .manufacturer
+                                                        ?.companyName !=
+                                                        null)
                                                       Text(
-                                                        model.manufacturer?.companyName ?? "",
-                                                        style: const TextStyle(fontSize: 13),
-                                                        overflow: TextOverflow.ellipsis,
+                                                        model
+                                                            .manufacturer
+                                                            ?.companyName ??
+                                                            "",
+                                                        style:
+                                                        const TextStyle(
+                                                          fontSize:
+                                                          13,
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                   ],
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          const Icon(Icons.arrow_forward_ios, size: 30),
+                                          const Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 30,
+                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
                                 );
                               } else {
-                                // Mobile layout
-                                return Padding(
-                                  key: ValueKey(model.id),
-                                  padding: EdgeInsets.symmetric(vertical: screenWidth * 0.017),
-                                  child: SimpleAircraftCard(
-                                    imagePath: CachedAnyImage(
-                                      imagePath: model.image,
-                                      width: screenWidth * 0.15,
-                                      height: screenWidth * 0.15,
-                                      contentImage: BoxFit.fill,
-                                      isForPlaneList: true,
-                                    ),
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context, model);
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                          vertical: 5,
+                                          horizontal: 10,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            model.image != null &&
+                                                model.image.isNotEmpty
+                                                ? CachedAnyImage(
+                                              imagePath:
+                                              model.image,
+                                              width: 70,
+                                              height: 70,
+                                              contentImage:
+                                              BoxFit.contain,
+                                              isForPlaneList:
+                                              true,
 
-                                    model: model.aircraftModel,
-                                    badge: model.icaoTypeCode,
-                                    callSign: "",
-                                    manufacturer: model.manufacturer?.companyName,
-                                    airline: null,
-                                    airlineImagePath: CachedAnyImage(
-                                      imagePath: model.manufacturer?.logo ?? "",
-                                      width: screenWidth * 0.05,
-                                      height: screenWidth * 0.05,
-                                      contentImage: BoxFit.fill,
-                                      isForPlaneList: true,
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context, model);
-                                    },
+                                            )
+                                                : SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath
+                                                    .manuFirstImage,
+                                              ),
+                                              width: 40,
+                                              height: 40,
+                                            ),
+
+                                            const SizedBox(width: 20),
+
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    model.aircraftModel ??
+                                                        "",
+                                                    style:
+                                                    const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .w500,
+                                                      color: Color(
+                                                        0xFF3F3D56,
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  Row(
+                                                    children: [
+                                                      ClipRRect(
+                                                        child: SizedBox(
+                                                          width: 60,
+                                                          height: 15,
+                                                          child: CachedAnyImage(
+                                                            imagePath:
+                                                            model
+                                                                .manufacturer
+                                                                ?.logo ??
+                                                                "",
+                                                            width:
+                                                            screenWidth *
+                                                                0.06,
+                                                            height:
+                                                            screenWidth *
+                                                                0.06,
+                                                            contentImage:
+                                                            BoxFit
+                                                                .fill,
+                                                            isForPlaneList:
+                                                            true,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      Divider(
+                                        height: 1,
+                                        thickness: 1,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ],
                                   ),
                                 );
                               }
@@ -345,3 +505,4 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
     );
   }
 }
+

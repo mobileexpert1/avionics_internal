@@ -6,9 +6,9 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
   ComparisonFilterCubit1() : super(const FilterState1(filterCategories: []));
 
   void loadFiltersFromComparison1(
-    bool isAlreadyProcessing,
-    FilterState1? model,
-  ) {
+      bool isAlreadyProcessing,
+      FilterState1? model,
+      ) {
     if (isAlreadyProcessing == true) {
       if (model != null) {
         emit(model);
@@ -205,9 +205,9 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
   }
 
   void updateSelectedFilters(
-    List<FilterCategory1> updatedFilters, {
-    bool isApplied = false,
-  }) {
+      List<FilterCategory1> updatedFilters, {
+        bool isApplied = false,
+      }) {
     print("Previous:- $state.filterCategories");
     print("Previous:- $updatedFilters");
     emit(
@@ -227,11 +227,11 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
       final allSelectedOptions = category.options
           .map(
             (option) => FilterOption1(
-              id: option.id,
-              name: option.name,
-              isSelected: true,
-            ),
-          )
+          id: option.id,
+          name: option.name,
+          isSelected: true,
+        ),
+      )
           .toList();
       return FilterCategory1(
         id: category.id,
@@ -296,3 +296,4 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
     );
   }
 }
+
