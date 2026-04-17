@@ -96,7 +96,7 @@ class Question {
           : List<Option>.from(json["options"].map((x) => Option.fromJson(x))),
       answer: json["answer"] ?? "",
       explanation: json["explanation"] ?? "",
-      imgUrl: json["img_url"] ?? "",
+      imgUrl: json["url"] ?? "",
     );
   }
 
@@ -105,7 +105,7 @@ class Question {
     "question": question,
     "options": List<dynamic>.from(options.map((x) => x.toJson())),
     "answer": answer,
-    "img_url": imgUrl,
+    "url": imgUrl,
     "explanation": explanation,
   };
 }

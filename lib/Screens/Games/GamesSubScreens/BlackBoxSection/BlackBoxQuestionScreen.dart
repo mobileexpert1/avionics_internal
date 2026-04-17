@@ -145,7 +145,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                   ? "$currentQuestionTitle\n$currentQuestionName"
                   : currentQuestionTitle,
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () async {
                   final shouldExit = await showDialog<bool>(
                     context: context,
@@ -194,7 +194,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
               rightButton: isNeedToShowFlagOptions == false
                   ? null
                   : IconButton(
-                      icon: const Icon(Icons.flag, color: Colors.black),
+                      icon: const Icon(Icons.flag, color: Colors.white),
                       onPressed: () async {
                         _showRadioPopup(context);
                       },
