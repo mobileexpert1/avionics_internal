@@ -61,15 +61,15 @@ class _AvtarScreenState extends State<AvtarScreen> {
                 )
               : Navigator.pop(context)),
         ),
-          rightButton: IconButton(
-            icon: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.homeRightSetting),
-              width: 35,
-              height: 31,
-              fit: BoxFit.cover,
-            ),
-            onPressed: () async {},
-          )
+        rightButton: IconButton(
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+            width: 35,
+            height: 31,
+            fit: BoxFit.cover,
+          ),
+          onPressed: () async {},
+        ),
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(
         listener: (context, state) {
@@ -129,7 +129,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
 
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected == true ? AppColors.primaryBlue :AppColors.white,
+                          color: isSelected == true
+                              ? AppColors.primaryBlue
+                              : AppColors.white,
                           border: Border.all(color: AppColors.primaryDark),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -149,7 +151,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: AppTextStyles.bold(18).copyWith(
                                       height: 1.0,
-                                      color: isSelected ? AppColors.white : AppColors.avtarTitleColour,
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.avtarTitleColour,
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -159,7 +163,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: AppTextStyles.regular(12).copyWith(
                                       height: 1.0,
-                                      color: isSelected ? AppColors.white : AppColors.greyForTextfield,
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.greyForTextfield,
                                     ),
                                   ),
                                 ],
@@ -171,34 +177,34 @@ class _AvtarScreenState extends State<AvtarScreen> {
                             // Logo
                             (userType.logo.isNotEmpty)
                                 ? SvgPicture.network(
-                              userType.logo,
-                              width: 44,
-                              height: 44,
-                              fit: BoxFit.contain,
-                              color: isSelected ? AppColors.white : AppColors.black,
-                              placeholderBuilder: (context) => const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            )
+                                    userType.logo,
+                                    width: 44,
+                                    height: 44,
+                                    fit: BoxFit.contain,
+                                    color: isSelected
+                                        ? AppColors.white
+                                        : AppColors.black,
+                                    placeholderBuilder: (context) =>
+                                        const SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                  )
                                 : SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.avtarSecond),
-                              width: 44,
-                              height: 44,
-                              fit: BoxFit.contain,
-                            ),
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.avtarSecond,
+                                    ),
+                                    width: 44,
+                                    height: 44,
+                                    fit: BoxFit.contain,
+                                  ),
 
                             const SizedBox(width: 8),
-
-                            // if (isSelected)
-                            //   const Icon(
-                            //     Icons.check,
-                            //     size: 25,
-                            //     color: Colors.blue,
-                            //   ),
                           ],
-                        )
+                        ),
                       ),
                     ),
                   );
