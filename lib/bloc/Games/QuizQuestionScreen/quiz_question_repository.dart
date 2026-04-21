@@ -44,7 +44,7 @@ class QuizQuestionRepository {
         break;
       case "trivia":
         url = Uri.parse(
-          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.triviaTopic}/${ApiFunctionUrlGamesConstant.reportQuestion}",
+          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.trivia}/${ApiFunctionUrlGamesConstant.reportQuestion}",
         );
         break;
       case "imageBased":
