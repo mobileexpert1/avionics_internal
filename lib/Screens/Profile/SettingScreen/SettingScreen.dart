@@ -21,6 +21,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../VideoPlayer/VideoPlayerScreen.dart';
+import 'InfoBottomSheet.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -76,7 +77,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                   child: SettingsListItem(
                     leadingSvgAsset: CommonUi.setSvgImage(
-                      AssetsPath.calculatorImage,
+                      AssetsPath.calculatorProfile,
                     ),
                     title: "Avtar Image",
                     onTap: () {},
@@ -89,7 +90,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   items: [
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.calculatorImage,
+                        AssetsPath.manageAccountProfile,
                       ),
                       title: "Personal Data",
                       onTap: () {
@@ -101,10 +102,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         );
                       },
                     ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.conversionImage,
+                        AssetsPath.subscriptionProfile,
                       ),
                       title: "Subscription",
                       onTap: () {
@@ -126,7 +126,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.unitMeasureAcc,
+                        AssetsPath.logoutProfile,
                       ),
                       title: "Logout",
                       onTap: () {
@@ -136,7 +136,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.glossaryAcc,
+                        AssetsPath.deleteProfile,
                       ),
                       title: "Delete Account",
                       onTap: () {
@@ -152,7 +152,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   items: [
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.badgeIcon,
+                        AssetsPath.tutorialVideoProfile,
                       ),
                       title: "Tutorial",
                       onTap: () {
@@ -167,7 +167,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.conversionImage,
+                        AssetsPath.reviewsProfile,
                       ),
                       title: "Review",
                       onTap: () {
@@ -182,7 +182,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.savedIcon,
+                        AssetsPath.customerSupportProfile,
                       ),
                       title: "Customer Support",
                       onTap: () {},
@@ -195,7 +195,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   items: [
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.badgeIcon,
+                        AssetsPath.privacyPolicyProfile,
                       ),
                       title: "Privacy Policy",
                       onTap: () {},
@@ -203,7 +203,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.conversionImage,
+                        AssetsPath.termsAndConditionsProfile,
                       ),
                       title: "Terms of Service",
                       onTap: () {},
@@ -211,7 +211,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.savedIcon,
+                        AssetsPath.aboutProfile,
                       ),
                       title: "About",
                       onTap: () {},
@@ -300,7 +300,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       AppSnackBar.custom(
                         context,
                         message: 'Logged out',
-                        svgAsset: CommonUi.setSvgImage(AssetsPath.logoutIcon),
+                        svgAsset: CommonUi.setSvgImage(
+                          AssetsPath.logoutProfile,
+                        ),
                       );
                       _clearAllDataAndRedirectToSplashScreen(context);
                       AnalyticsService.instance.buttonPressed(
