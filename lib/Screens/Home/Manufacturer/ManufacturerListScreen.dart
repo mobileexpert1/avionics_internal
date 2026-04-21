@@ -12,6 +12,7 @@ import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
+import '../../Profile/SettingScreen/SettingScreen.dart';
 import 'ManufacturerDetailScreen.dart';
 
 class ManufacturerScreen extends StatefulWidget {
@@ -72,7 +73,12 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
             width: 35,
             height: 31,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingScreen()),
+            );
+          },
         ),
       ),
 

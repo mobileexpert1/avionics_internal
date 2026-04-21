@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +8,8 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
-import '../../../../Helpers/AppText.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
-import '../../../../Helpers/SelectableAircraftCard.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonState.dart';

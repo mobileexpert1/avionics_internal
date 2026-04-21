@@ -19,6 +19,7 @@ class FirebaseEvents {
   static const askChatScreen = 'ask_Chat_Screen';
   static const chatHistoryScreen = 'chat_History_Screen';
   static const profileScreen = 'profile_Screen';
+  static const settingScreen = 'setting_Screen';
 
   // =====================================================
   // GAMES – LIST SCREENS

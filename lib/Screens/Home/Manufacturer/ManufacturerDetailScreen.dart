@@ -15,6 +15,7 @@ import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
+import '../../Profile/SettingScreen/SettingScreen.dart';
 import '../HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
 class ManufacturerDetailScreen extends StatefulWidget {
@@ -89,7 +90,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                 height: 31,
                 fit: BoxFit.cover,
               ),
-              onPressed: () async {},
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingScreen()),
+                );
+              },
             ),
           ),
 

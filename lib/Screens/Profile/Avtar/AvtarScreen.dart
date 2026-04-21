@@ -13,6 +13,7 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../SettingScreen/SettingScreen.dart';
 
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;
@@ -68,7 +69,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
             height: 31,
             fit: BoxFit.cover,
           ),
-          onPressed: () async {},
+          onPressed: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingScreen()),
+            );
+          },
         ),
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(

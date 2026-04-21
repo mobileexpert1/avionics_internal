@@ -70,6 +70,7 @@ class ConstantStrings {
       'Enter the 4-digit OTP sent to your registered email.';
   static const String continueText = 'Continue';
   static const String goBack = 'Go Back';
+  static const String settingScreen = 'Settings';
 
   // ─────────────────────────────
   // Labels / Form Fields

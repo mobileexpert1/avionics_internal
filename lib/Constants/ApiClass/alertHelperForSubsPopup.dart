@@ -1,9 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
-
-import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 
 class AlertHelperForSubsPopup {
   static void showSubscriptionEndAlert({

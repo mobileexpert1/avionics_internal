@@ -75,9 +75,6 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
           title: "",
           rightButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
-              final bool hasSelection = state.selectedCategories.isNotEmpty ||
-                  aircraftCubit.selectedAircraft.isNotEmpty;
-
               return Padding(
                 padding: const EdgeInsets.only(right: 16, top: 10),
                 child: GestureDetector(

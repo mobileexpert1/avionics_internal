@@ -96,6 +96,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           CommonUi.setSvgImage(AssetsPath.editIcon),
                           width: 20,
                           height: 20,
+                          color: Colors.white,
                         ),
                         onTap: () {
                           setState(() {

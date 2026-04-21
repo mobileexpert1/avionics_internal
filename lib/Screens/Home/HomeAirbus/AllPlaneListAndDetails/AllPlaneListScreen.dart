@@ -15,6 +15,7 @@ import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
+import '../../../Profile/SettingScreen/SettingScreen.dart';
 import '../AirCraftSection/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
@@ -85,9 +86,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    double titleFontSize = kIsWeb ? screenWidth * 0.02 : 18;
-    double bodyFontSize = kIsWeb ? screenWidth * 0.015 : 16;
     double paddingHorizontal = kIsWeb ? screenWidth * 0.02 : 20;
 
     // card height for web
@@ -113,7 +111,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             height: 31,
             fit: BoxFit.cover,
           ),
-          onPressed: () async {},
+          onPressed: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingScreen()),
+            );
+          },
         ),
       ),
       body: SafeArea(

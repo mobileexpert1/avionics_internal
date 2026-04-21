@@ -20,6 +20,7 @@ import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
+import '../Profile/SettingScreen/SettingScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
@@ -74,7 +75,12 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 31,
               fit: BoxFit.cover,
             ),
-            onPressed: () async {},
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingScreen()),
+              );
+            },
           ),
         ),
         backgroundColor: Colors.white,

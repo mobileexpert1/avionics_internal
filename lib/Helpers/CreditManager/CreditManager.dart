@@ -9,13 +9,28 @@ class CreditManager {
 
   double totalCredit = 0;
   double creditUsage = 0;
+
+  double totalToken = 0;
+  double tokenUsage = 0;
+
   DateTime? expiryDate;
 
   void initialize(CurrentPlan plan) {
     totalCredit = plan.totalCredit + 100;
     creditUsage = plan.creditUsage;
+
+    totalToken = plan.totalToken + 100;
+    tokenUsage = plan.tokenUsage;
+
     expiryDate = plan.expiryDate;
-    print("totalCredit-=-=-= $totalCredit,creditUsage-=-=-=- $creditUsage");
+    print(
+      "totalCredit-=-=-= $totalCredit,creditUsage-=-=-=- $creditUsage totalToken-=-=-= $totalToken,tokenUsage-=-=-=- $tokenUsage",
+    );
+  }
+
+  double get remainingToken {
+    final value = totalCredit - creditUsage;
+    return value < 0 ? 0 : value;
   }
 
   double get remainingCredit {

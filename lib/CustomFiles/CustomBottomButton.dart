@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../Helpers/AppTextStyles/AppTextStyles.dart';
-
 class CustomBottomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
@@ -26,11 +24,7 @@ class CustomBottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color effectiveTextColor = isEnabled
-        ? textColor
-        : Colors.grey.shade600;
-
-    return SizedBox(
+      return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton.icon(
