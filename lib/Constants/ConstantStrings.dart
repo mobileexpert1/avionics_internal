@@ -97,10 +97,10 @@ class ConstantStrings {
   static const String startSubscription = 'Start Subscription';
   static const String manageAccount = 'Manage Your Account';
   static const String tutorialScreen = 'Tutorial Screen';
-  static const String titleHome = "Home";
   static const String profileTitle = 'Profile';
   static const String glossaryTitle = 'Glossary';
   static const String avtarTitle = 'Choose Your Avatar';
+  static const String avtarTRole = 'Role';
   static const String scientificCalculator = 'Calculator';
 
 
@@ -129,8 +129,7 @@ class ConstantStrings {
   static const String triviaLockTitle= 'Trivia Levels';
   static const String triviaTitle= 'Trivia';
 
-  static const String imageBasedLockTitle= 'Image Based Levels';
-  static const String imageBasedTitle= 'Image Based';
+  static const String imageBasedTitle= 'Planespotter';
 }
 
 class SubscriptionTexts {
@@ -222,7 +221,7 @@ class ApiFunctionUrlAirplaneConstant {
 }
 
 class ApiServiceUrlAirplaneConstant {
-  //Home
+  //home
   static const String getExploreData = 'explore/';
   static const String getListManufacturer = 'manufacturer/';
   static const String getListAirbus = 'aircraft/';
@@ -294,6 +293,9 @@ class ApiServiceUrlGamesConstant {
       "${ApiFunctionUrlGamesConstant.quiz}$gameNumber/submit/";
 
   static String submitImageBasedResults = "${ApiFunctionUrlGamesConstant.imageBased}submit/";
+
+  static String submitTriviaResults = "${ApiFunctionUrlGamesConstant.trivia}submit/";
+
 }
 
 class MapFlightAircraftSectionConstant {
@@ -305,3 +307,4 @@ class MapFlightAircraftSectionConstant {
   static String baseUrlForFlightPosition =
       "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
 }
+

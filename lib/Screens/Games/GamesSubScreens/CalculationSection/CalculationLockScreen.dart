@@ -54,7 +54,7 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
           leftButton: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black,
+              color: Colors.white,
               size: isWeb ? 28 : 20,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -105,7 +105,7 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
                                 builder: (_) => QuizQuestionScreen(
                                   sectionId: game.gameNumber,
                                   sectionTitle:
-                                      ConstantStrings.calculationsTitle,
+                                  ConstantStrings.calculationsTitle,
                                   gameId: "calculation",
                                 ),
                               ),
@@ -129,3 +129,4 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
     );
   }
 }
+

@@ -47,7 +47,7 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
         appBar: CustomAppBar(
           title: 'Quiz',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -97,7 +97,7 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
                                 builder: (_) => QuizQuestionScreen(
                                   sectionId: game.gameNumber,
                                   sectionTitle:
-                                      ConstantStrings.aviationQuizTitle,
+                                  ConstantStrings.aviationQuizTitle,
                                   gameId: "quiz",
                                 ),
                               ),
@@ -122,3 +122,4 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
     );
   }
 }
+

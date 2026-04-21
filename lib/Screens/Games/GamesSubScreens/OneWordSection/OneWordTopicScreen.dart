@@ -54,7 +54,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
           leftButton: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black,
+              color: Colors.white,
               size: isWeb ? 28 : 20,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -101,12 +101,12 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                         return GridView.builder(
                           itemCount: state.games.length,
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: getCrossAxisCount(),
-                                crossAxisSpacing: isWeb ? 20 : 12,
-                                mainAxisSpacing: isWeb ? 20 : 12,
-                                childAspectRatio: getChildAspectRatio(),
-                              ),
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: getCrossAxisCount(),
+                            crossAxisSpacing: isWeb ? 20 : 12,
+                            mainAxisSpacing: isWeb ? 20 : 12,
+                            childAspectRatio: getChildAspectRatio(),
+                          ),
                           itemBuilder: (context, index) {
                             final game = state.games[index];
 
@@ -146,3 +146,4 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
     );
   }
 }
+

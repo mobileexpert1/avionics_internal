@@ -44,9 +44,7 @@ class QuizQuestionRepository {
         break;
       case "trivia":
         url = Uri.parse(
-          ApiBaseUrlConstant.baseUrl +
-              ApiFunctionUrlGamesConstant.triviaTopic +
-              ApiFunctionUrlGamesConstant.reportQuestion,
+          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlGamesConstant.triviaTopic}/${ApiFunctionUrlGamesConstant.reportQuestion}",
         );
         break;
       case "imageBased":
@@ -81,9 +79,9 @@ class QuizQuestionRepository {
 
   /// Fetch calculation game data from API for a specific game number
   Future<CalculationGameModel?> getCalculationData(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
@@ -97,8 +95,8 @@ class QuizQuestionRepository {
     final gameName = gameNoAssign[gameNumber];
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.calculationQuestions}"
-      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+          "${ApiFunctionUrlGamesConstant.calculationQuestions}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
     try {
@@ -111,9 +109,9 @@ class QuizQuestionRepository {
   }
 
   Future<CalculationGameModel?> fetchAdditionalQuestions(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
@@ -126,8 +124,8 @@ class QuizQuestionRepository {
 
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.calculationQuestions}"
-      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+          "${ApiFunctionUrlGamesConstant.calculationQuestions}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
     try {
@@ -142,17 +140,17 @@ class QuizQuestionRepository {
 
   ///One word Get API
   Future<CalculationGameModel?> getOneWordData(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
     // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
-      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+          "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
     try {
@@ -166,17 +164,17 @@ class QuizQuestionRepository {
 
   ///One word Get Questions API
   Future<CalculationGameModel?> fetchOneWordQuestions(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
     // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
-      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+          "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
     try {
@@ -189,13 +187,13 @@ class QuizQuestionRepository {
 
   ///Quiz Get Questions API
   Future<CalculationGameModel?> getQuizData(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.quizQuestions}"
-      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+          "${ApiFunctionUrlGamesConstant.quizQuestions}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
     try {
@@ -209,12 +207,12 @@ class QuizQuestionRepository {
 
   ///Quiz Get Questions API
   Future<CalculationGameModel?> getTriviaData(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.triviaTopic}",
+          "${ApiFunctionUrlGamesConstant.triviaTopic}",
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
@@ -227,11 +225,11 @@ class QuizQuestionRepository {
 
   //Quiz Get Questions API
   Future<CalculationGameModel?> getImageBasedQuestionData(
-    int actionNumber,
-  ) async {
+      int actionNumber,
+      ) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.imageBasedTopic}",
+          "${ApiFunctionUrlGamesConstant.imageBasedTopic}",
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
@@ -244,17 +242,17 @@ class QuizQuestionRepository {
 
   ///Quiz Get Questions API hit background
   Future<CalculationGameModel?> fetchQuizQuestions(
-    int gameNumber,
-    int actionNumber,
-  ) async {
+      int gameNumber,
+      int actionNumber,
+      ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
     // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.quizQuestions}"
-      "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
+          "${ApiFunctionUrlGamesConstant.quizQuestions}"
+          "${ApiServiceUrlGamesConstant.getLimitedQuestions(gameNumber, actionNumber)}",
     );
 
     try {
@@ -266,9 +264,9 @@ class QuizQuestionRepository {
   }
 
   Future<SubmitCalculationResultResponse> submitResult(
-    Map<String, dynamic> payload,
-    String gameId,
-  ) async {
+      Map<String, dynamic> payload,
+      String gameId,
+      ) async {
     // Not Working in Web Section
     // if (!await GenericMethods.hasInternet()) {
     //   return null;
@@ -282,16 +280,19 @@ class QuizQuestionRepository {
     String submitUrl;
     if (gameId == "calculation") {
       submitUrl =
-          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitCalculationResults(gameNumber)}";
+      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitCalculationResults(gameNumber)}";
     } else if (gameId == "one_word") {
       submitUrl =
-          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitOneWordResults(gameNumber)}";
+      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitOneWordResults(gameNumber)}";
     } else if (gameId == "quiz") {
       submitUrl =
-          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitQuizResults(gameNumber)}";
+      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitQuizResults(gameNumber)}";
     } else if (gameId == "imageBased") {
       submitUrl =
-          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitImageBasedResults}";
+      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitImageBasedResults}";
+    } else if (gameId == "trivia") {
+      submitUrl =
+      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitTriviaResults}";
     } else {
       throw Exception('Invalid gameId: $gameId');
     }
@@ -307,3 +308,4 @@ class QuizQuestionRepository {
     }
   }
 }
+

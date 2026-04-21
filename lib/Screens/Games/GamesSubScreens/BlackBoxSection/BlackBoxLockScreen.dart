@@ -45,7 +45,7 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
         appBar: CustomAppBar(
           title: 'Black Box',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -115,3 +115,4 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
     );
   }
 }
+

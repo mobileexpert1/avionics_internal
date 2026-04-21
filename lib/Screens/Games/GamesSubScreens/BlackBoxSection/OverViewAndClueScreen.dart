@@ -48,14 +48,14 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          BlackboxCubit()
-            ..loadBlackboxSummary(context: context, gameNo: widget.gameNo),
+      BlackboxCubit()
+        ..loadBlackboxSummary(context: context, gameNo: widget.gameNo),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Overview & Clue Deck',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -110,13 +110,13 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                       context
                                           .read<BlackboxCubit>()
                                           .loadBlackboxSummary(
-                                            context: context,
-                                            gameNo: widget.gameNo,
-                                          );
+                                        context: context,
+                                        gameNo: widget.gameNo,
+                                      );
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          AppColors.customBottomEnabledColour,
+                                      AppColors.customBottomEnabledColour,
                                       foregroundColor: Colors.white,
                                     ),
                                     child: const Text('Retry'),
@@ -161,12 +161,12 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                 child: ScrollConfiguration(
                                   behavior: ScrollConfiguration.of(context)
                                       .copyWith(
-                                        dragDevices: {
-                                          PointerDeviceKind.touch,
-                                          PointerDeviceKind.mouse,
-                                          PointerDeviceKind.trackpad,
-                                        },
-                                      ),
+                                    dragDevices: {
+                                      PointerDeviceKind.touch,
+                                      PointerDeviceKind.mouse,
+                                      PointerDeviceKind.trackpad,
+                                    },
+                                  ),
                                   child: PageView.builder(
                                     controller: _pageController,
                                     onPageChanged: (index) {
@@ -188,7 +188,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 clue.title ?? 'No Title',
@@ -246,7 +246,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                             state.blackboxModels
                                 ?.expand((b) => b.data ?? [])
                                 .toList() ??
-                            [];
+                                [];
                         final isLastPage = _currentPage == clues.length - 1;
 
                         return Center(
@@ -261,7 +261,6 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                     ? Colors.white
                                     : Colors.grey.shade600,
                               ),
-
                               title: ConstantStrings.next,
                               backgroundColor: isLastPage
                                   ? AppColors.customBottomEnabledColour
@@ -275,8 +274,10 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                     MaterialPageRoute(
                                       builder: (context) => BlackBoxScreen(
                                         gameId: 'black_box',
-                                        summarySetId:
-                                            state.blackboxModels!.single.summarySetId!,
+                                        summarySetId: state
+                                            .blackboxModels!
+                                            .single
+                                            .summarySetId!,
                                         summaryGameNumber: widget.gameNo,
                                       ),
                                     ),
@@ -307,3 +308,4 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
     );
   }
 }
+

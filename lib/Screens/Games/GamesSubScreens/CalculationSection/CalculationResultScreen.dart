@@ -63,7 +63,7 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
         appBar: CustomAppBar(
           title: "Result",
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () =>
                 Navigator.of(context).popUntil((route) => route.isFirst),
           ),
@@ -93,3 +93,4 @@ class _CalculationResultScreenState extends State<CalculationResultScreen> {
     );
   }
 }
+

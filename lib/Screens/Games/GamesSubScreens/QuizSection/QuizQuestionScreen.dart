@@ -42,7 +42,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   final ScrollController _scrollController = ScrollController();
 
   final TransformationController _transformationController =
-      TransformationController();
+  TransformationController();
 
   @override
   void initState() {
@@ -100,11 +100,11 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               rightButton: isNeedToShowFlagOptions == false
                   ? null
                   : IconButton(
-                      icon: const Icon(Icons.flag, color: Colors.white),
-                      onPressed: () async {
-                        _showRadioPopup(context);
-                      },
-                    ),
+                icon: const Icon(Icons.flag, color: Colors.white),
+                onPressed: () async {
+                  _showRadioPopup(context);
+                },
+              ),
               leftButton: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () async {
@@ -198,10 +198,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                               isNeedToShowOrNot: isNeedToShowOrNot,
                               isShowAnswers: state.showAnswer,
                               currentQuestion: state.currentIndex + 1,
-                              totalQuestions: 20,
+                              totalQuestions: quizCubit.maxQuestions,
                               secondsRemaining: state.timer,
                               transformationController:
-                                  _transformationController,
+                              _transformationController,
                               onOptionSelected: (index) {
                                 if (state.timer.toInt() != 0 &&
                                     !state.showAnswer) {
@@ -224,7 +224,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                                   Future.delayed(
                                     const Duration(milliseconds: 300),
-                                    () {
+                                        () {
                                       if (_scrollController.hasClients) {
                                         _scrollController.animateTo(
                                           _scrollController
@@ -353,6 +353,7 @@ class QuizQuestionCard extends StatelessWidget {
                               }
                             },
                             child: CachedAnyImage(
+                              isForPlaneList: true,
                               imagePath: imgUrl,
                               width: imageWidth,
                               height: imageHeight,
@@ -397,12 +398,16 @@ class QuizQuestionCard extends StatelessWidget {
                               width: 60,
                               height: 40,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black,width: 1),
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
                               ),
                               child: Stack(
                                 children: [
                                   // Full preview
                                   CachedAnyImage(
+                                    isForPlaneList: true,
                                     imagePath: imgUrl,
                                     width: 60,
                                     height: 40,
@@ -412,7 +417,8 @@ class QuizQuestionCard extends StatelessWidget {
                                   ValueListenableBuilder(
                                     valueListenable: transformationController,
                                     builder: (_, value, __) {
-                                      final matrix = transformationController.value;
+                                      final matrix =
+                                          transformationController.value;
 
                                       final scale = matrix.getMaxScaleOnAxis();
                                       final dx = matrix.storage[12];
@@ -426,7 +432,10 @@ class QuizQuestionCard extends StatelessWidget {
                                             width: 60,
                                             height: 40,
                                             decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.red, width: 1),
+                                              border: Border.all(
+                                                color: Colors.red,
+                                                width: 1,
+                                              ),
                                             ),
                                           ),
                                         );
@@ -436,13 +445,22 @@ class QuizQuestionCard extends StatelessWidget {
                                       double viewHeight = 40 / scale;
 
                                       return Positioned(
-                                        left: (-dx / scale).clamp(0, 60 - viewWidth),
-                                        top: (-dy / scale).clamp(0, 40 - viewHeight),
+                                        left: (-dx / scale).clamp(
+                                          0,
+                                          60 - viewWidth,
+                                        ),
+                                        top: (-dy / scale).clamp(
+                                          0,
+                                          40 - viewHeight,
+                                        ),
                                         child: Container(
                                           width: viewWidth,
                                           height: viewHeight,
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.red, width: 1),
+                                            border: Border.all(
+                                              color: Colors.red,
+                                              width: 1,
+                                            ),
                                           ),
                                         ),
                                       );
@@ -596,7 +614,6 @@ class QuizQuestionCard extends StatelessWidget {
                               ? Colors.white
                               : Colors.grey.shade600,
                         ),
-
                         title: isShowAnswers == false
                             ? ConstantStrings.submitTitle
                             : ConstantStrings.next,
@@ -668,18 +685,18 @@ class QuizProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                          CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
-                          width: 30,
-                          height: 30,
-                          fit: BoxFit.cover,
-                        )
+                    CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                  )
                       : Icon(
-                          Icons.access_time,
-                          size: 30,
-                          color: secondsRemaining == 0
-                              ? Colors.red
-                              : Colors.blue,
-                        ),
+                    Icons.access_time,
+                    size: 30,
+                    color: secondsRemaining == 0
+                        ? Colors.red
+                        : Colors.blue,
+                  ),
 
                   const SizedBox(width: 4),
                   SizedBox(
@@ -746,8 +763,8 @@ class _RadioPopupState extends State<RadioPopup> {
 
     final bool canSubmit =
         _selectedOption != null &&
-        (!isOtherSelected || _otherIssueController.text.trim().isNotEmpty) &&
-        _errorText == null;
+            (!isOtherSelected || _otherIssueController.text.trim().isNotEmpty) &&
+            _errorText == null;
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -903,14 +920,14 @@ class _RadioPopupState extends State<RadioPopup> {
                         ),
                         onPressed: canSubmit
                             ? () {
-                                widget.onSelected(
-                                  _selectedOption ==
-                                          widget.options.indexOf('Other Issue')
-                                      ? _otherIssueController.text.trim()
-                                      : widget.options[_selectedOption!],
-                                );
-                                Navigator.of(context).pop();
-                              }
+                          widget.onSelected(
+                            _selectedOption ==
+                                widget.options.indexOf('Other Issue')
+                                ? _otherIssueController.text.trim()
+                                : widget.options[_selectedOption!],
+                          );
+                          Navigator.of(context).pop();
+                        }
                             : null,
                         child: const Text(
                           'Report',
@@ -928,3 +945,4 @@ class _RadioPopupState extends State<RadioPopup> {
     );
   }
 }
+

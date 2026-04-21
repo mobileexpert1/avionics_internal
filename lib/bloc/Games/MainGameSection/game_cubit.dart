@@ -3,7 +3,6 @@ import '../../../Constants/constantImages.dart';
 import 'game_model.dart';
 import 'game_state.dart';
 
-
 class GamesCubit extends Cubit<GamesState> {
   GamesCubit() : super(GamesInitial()) {
     loadGames();
@@ -36,17 +35,18 @@ class GamesCubit extends Cubit<GamesState> {
         icon: AssetsPath.calculations,
       ),
 
-      // GameItem(
-      //   id: "trivia",
-      //   title: "Trivia",
-      //   subtitle: "Test your trivia question game",
-      //   icon: AssetsPath.calculations,
-      // ),
       GameItem(
         id: "imageBased",
-        title: "Image Based Question",
+        title: "Planespotter",
         subtitle: "Test your Image question game",
-        icon: AssetsPath.calculations,
+        icon: AssetsPath.quiz,
+      ),
+
+      GameItem(
+        id: "trivia",
+        title: "Trivia",
+        subtitle: "Test your trivia question game",
+        icon: AssetsPath.oneWord,
       ),
     ];
     emit(GamesLoaded(games));

@@ -42,7 +42,7 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
     return BlocProvider(
       create: (_) => GameDetailCubit(
         GameInfo(
-          title: 'Image Based Question',
+          title: 'Planespotter',
           description: 'Complete the aviation sentence',
           questions: 10,
           questionType: 'aviation fill-in-the-blanks',
@@ -58,11 +58,11 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'Image Based Question',
+          title: 'Planespotter',
           leftButton: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black,
+              color: Colors.white,
               size: isWeb ? 28 : 20,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -101,3 +101,4 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
     );
   }
 }
+

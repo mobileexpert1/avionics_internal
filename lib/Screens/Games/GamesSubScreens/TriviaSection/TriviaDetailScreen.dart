@@ -62,7 +62,7 @@ class _TriviaDetailScreenState extends State<TriviaDetailScreen> {
           leftButton: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black,
+              color: Colors.white,
               size: isWeb ? 28 : 20,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -101,3 +101,4 @@ class _TriviaDetailScreenState extends State<TriviaDetailScreen> {
     );
   }
 }
+
