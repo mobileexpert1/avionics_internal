@@ -15,7 +15,7 @@ class SettingsSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20.0, 30.0, 10.0, 10.0),
+      padding: EdgeInsets.fromLTRB(20.0, title == "" ? 0.0 : 30.0, 10.0, 10.0),
       child: Text(
         title,
         style:

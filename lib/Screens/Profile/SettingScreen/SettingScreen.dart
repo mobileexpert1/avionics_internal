@@ -1,5 +1,6 @@
 import 'package:flutter_svg/svg.dart';
 
+import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../Avtar/AvtarScreen.dart';
 import '../Feedback/FeedbackScreen.dart';
@@ -73,7 +74,18 @@ class _SettingScreenState extends State<SettingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20.0, 30.0, 0.0, 10.0),
+
+                  child: Text(
+                    "Manage Account",
+                    style: AppTextStyles.bold(20).copyWith(
+                      height: 1.0,
+                      color: AppColors.primaryValueColour,
+                    ),
+                  ),
+                ),
+
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
@@ -100,10 +112,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         MaterialPageRoute(
                           builder: (context) => AvtarScreen(
                             isComeFromSignupScreen: false,
+                            isComeFromSettingScreen: true,
                             signupData: {},
                           ),
                         ),
-                      );
+                      ).then((value) {
+                        setLocalData();
+                      });
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -113,15 +128,15 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: Row(
                         children: [
                           Container(
-                            width: 60,
-                            height: 60,
+                            width: 50,
+                            height: 50,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.blue,
+                              color: AppColors.primaryBlue,
                             ),
                             child: ClipOval(
                               child: Padding(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(13),
                                 child: userAvtarTypeUrl.isNotEmpty
                                     ? SvgPicture.network(
                                         userAvtarTypeUrl,
@@ -145,7 +160,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              avatarTypeName.toUpperCase(),
+                              avatarTypeName
+                                  .toUpperCase()
+                                  .replaceAll("_", " ")
+                                  .capitalize(),
                               style: AppTextStyles.regular(20).copyWith(
                                 height: 1.0,
                                 color: AppColors.primaryValueColour,
@@ -165,7 +183,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                 // USER Section
                 SettingsListGroup(
-                  headerTitle: "Manage Account",
+                  headerTitle: "",
                   items: [
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

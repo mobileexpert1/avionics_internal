@@ -32,9 +32,6 @@ class CustomBottomButton extends StatelessWidget {
         label: Text(
           title,
           style: fontStyle,
-          // AppTextStyles.regular(
-          //   21.46,
-          // ).copyWith(height: 1.0, color: effectiveTextColor),
         ),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(

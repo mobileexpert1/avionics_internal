@@ -60,4 +60,5 @@ class AppColors {
 
   static const Color grayForCompareItem = Color.fromRGBO(227, 227, 227, 0.4);
   static const Color grayForCompareTextColour = Color.fromRGBO(27, 23, 72, 0.6);
+  static const Color grayForFeedbackAndText = Color.fromRGBO(27, 23, 72, 0.05);
 }

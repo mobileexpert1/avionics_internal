@@ -113,7 +113,7 @@ class ManageAccountModel extends BaseModel {
     'email': email,
     'phone_number': phone,
     'user_type': userType,
-    'userType': userType,
+    'user_type_url': userTypeUrl,
     'auth_type': authType,
     'is_active': isActive ? 1 : 0,
     'is_active_subscription': isActiveSubscription ? 1 : 0,

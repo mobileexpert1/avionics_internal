@@ -38,4 +38,19 @@ class FeedbackCubit extends Cubit<FeedbackState> {
       emit(state.copyWith(isSubmitting: false));
     }
   }
+
+  void toggleCategory(String category, BuildContext context) {
+    final updated = List<String>.from(state.selectedCategories);
+
+    if (updated.contains(category)) {
+      updated.remove(category);
+    } else {
+      updated.add(category);
+    }
+    emit(state.copyWith(selectedCategories: updated));
+  }
+
+  void toggleCategoriesSection() {
+    emit(state.copyWith(showCategories: !state.showCategories));
+  }
 }

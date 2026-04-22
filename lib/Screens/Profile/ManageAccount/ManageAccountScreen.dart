@@ -152,10 +152,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           ),
                           const SizedBox(height: 30),
                           CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(21.46).copyWith(
-                              height: 1.0,
-                              color: Colors.white,
-                            ),
+                            fontStyle: AppTextStyles.regular(
+                              21.46,
+                            ).copyWith(height: 1.0, color: Colors.white),
                             title: buttonBottomTitle,
                             backgroundColor: state.isButtonEnabled
                                 ? AppColors.primaryValueColour

@@ -45,17 +45,17 @@ class AppTexts extends StatelessWidget {
 
     final imageWidget = isSvg
         ? SvgPicture.asset(
-      imageName!,
-      width: imageSize,
-      height: imageSize,
-      fit: BoxFit.contain,
-    )
+            imageName!,
+            width: imageSize,
+            height: imageSize,
+            fit: BoxFit.contain,
+          )
         : Image.asset(
-      imageName!,
-      width: imageSize,
-      height: imageSize,
-      fit: BoxFit.contain,
-    );
+            imageName!,
+            width: imageSize,
+            height: imageSize,
+            fit: BoxFit.contain,
+          );
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -63,5 +63,11 @@ class AppTexts extends StatelessWidget {
           ? [imageWidget, const SizedBox(width: 8), textWidget]
           : [textWidget, const SizedBox(width: 8), imageWidget],
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
 }

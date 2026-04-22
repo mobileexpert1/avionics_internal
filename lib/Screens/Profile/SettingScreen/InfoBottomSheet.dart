@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class InfoBottomSheet extends StatelessWidget {
   final VoidCallback onYes;
@@ -35,17 +40,29 @@ class InfoBottomSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 10),
+
+              SvgPicture.asset(
+                CommonUi.setSvgImage(
+                  isComeFromLogout == true
+                      ? AssetsPath.logoutProfile
+                      : AssetsPath.deleteProfile,
+                ),
+                width: 80,
+                height: 80,
+              ),
+              const SizedBox(height: 20),
+
               Text(
                 isComeFromLogout
-                    ? "Are you sure you want to logout?"
-                    : "Do you want to delete your account?",
+                    ? "Do you want to Logout\n account?"
+                    : "Do you want to Delete\n account?",
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.bold(
+                  22,
+                ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -55,14 +72,16 @@ class InfoBottomSheet extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: onYes,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3F3D51),
+                          backgroundColor: AppColors.primaryValueColour,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           "Yes",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          style: AppTextStyles.semiBold(
+                            18,
+                          ).copyWith(height: 1.4, color: AppColors.white),
                         ),
                       ),
                     ),
@@ -74,23 +93,23 @@ class InfoBottomSheet extends StatelessWidget {
                       child: OutlinedButton(
                         onPressed: onNo,
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: const Color(0xFFEAEAEA),
+                          backgroundColor: AppColors.dividerLineColour,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           "No",
-                          style: TextStyle(
-                            color: Color(0xFF3F3D51),
-                            fontSize: 16,
-                          ),
+                          style: AppTextStyles.semiBold(
+                            18,
+                          ).copyWith(height: 1.4, color: AppColors.black),
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
             ],
           ),
         );

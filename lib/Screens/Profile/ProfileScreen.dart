@@ -84,18 +84,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       Container(
-                        width: 95,
-                        height: 95,
+                        width: 85,
+                        height: 85,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.blue,
+                          color: AppColors.primaryBlue,
                         ),
                         child: ClipOval(
                           child: Padding(
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(20),
                             child: userAvtarTypeUrl.isNotEmpty
                                 ? SvgPicture.network(
                                     userAvtarTypeUrl,
+                                    color: Colors.white,
                                     fit: BoxFit.contain,
                                     placeholderBuilder: (context) =>
                                         SvgPicture.asset(
@@ -275,7 +276,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            ).then((value) {
+              setLocalData();
+            });
           },
         ),
       ),

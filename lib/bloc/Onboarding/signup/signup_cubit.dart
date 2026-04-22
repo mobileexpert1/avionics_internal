@@ -162,7 +162,7 @@ class SignupCubit extends Cubit<SignupState> {
         context,
         MaterialPageRoute(
           builder: (_) =>
-              AvtarScreen(isComeFromSignupScreen: true, signupData: signupData),
+              AvtarScreen(isComeFromSignupScreen: true, signupData: signupData,isComeFromSettingScreen: true),
         ),
       );
     } catch (e) {
