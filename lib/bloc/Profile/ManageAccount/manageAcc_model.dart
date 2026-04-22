@@ -1,7 +1,6 @@
 import '../../../Database/db_helper.dart';
 
 class ManageAccountModel extends BaseModel {
-
   @override
   final String id;
   @override
@@ -12,6 +11,7 @@ class ManageAccountModel extends BaseModel {
   final String email;
   final String? phone;
   final String userType;
+  final String userTypeUrl;
   final String authType;
   final bool isActive;
   final bool isActiveSubscription;
@@ -35,6 +35,7 @@ class ManageAccountModel extends BaseModel {
     required this.email,
     this.phone,
     required this.userType,
+    required this.userTypeUrl,
     required this.authType,
     required this.isActive,
     required this.isActiveSubscription,
@@ -60,6 +61,7 @@ class ManageAccountModel extends BaseModel {
         email: json['email'] ?? '',
         phone: json['phone_number'],
         userType: json['user_type'] ?? '',
+        userTypeUrl: json['user_type_url'] ?? '',
         authType: json['auth_type'] ?? '',
         isActive: json['is_active'] ?? false,
         isActiveSubscription: json['is_active_subscription'] ?? false,
@@ -85,6 +87,7 @@ class ManageAccountModel extends BaseModel {
         email: m['email'],
         phone: m['phone_number'],
         userType: m['user_type'],
+        userTypeUrl: m['user_type_url'],
         authType: m['auth_type'],
         isActive: (m['is_active'] as int) == 1,
         isActiveSubscription: (m['is_active_subscription'] as int) == 1,
@@ -110,6 +113,7 @@ class ManageAccountModel extends BaseModel {
     'email': email,
     'phone_number': phone,
     'user_type': userType,
+    'userType': userType,
     'auth_type': authType,
     'is_active': isActive ? 1 : 0,
     'is_active_subscription': isActiveSubscription ? 1 : 0,

@@ -1,33 +1,28 @@
-import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingScreen.dart';
-
-import '../../Constants/AppColors.dart';
-import '../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
+import 'SettingsSectionHeader.dart';
 import 'GameBadges/BadgesScreens.dart';
 import 'Glossary/GlossaryScreen.dart';
 import 'package:flutter/material.dart';
+import '../../Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../CustomFiles/Custom_SnackBar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Home/SavedFlights/SavedFlighScreen.dart';
+import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../bloc/Profile/Glossary/glossary_cubit.dart';
-import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
-import '../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'ScientificCalculator/screens/calculator_home_main_screen.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
 import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
+import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingScreen.dart';
 import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
 import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
 import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
-
-import 'SettingsSectionHeader.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -44,10 +39,26 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String userAvtarTypeUrl = '';
+  String userName = '';
+
   @override
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
+    setLocalData();
+  }
+
+  Future<void> setLocalData() async {
+    final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
+    final name = await SharedPrefsHelper.getUserProfileName();
+
+    setState(() {
+      userAvtarTypeUrl = avatarUrl ?? '';
+      userName = name ?? '';
+    });
+
+    print("Saved Avatar URL: $userAvtarTypeUrl");
   }
 
   @override
@@ -72,15 +83,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Center(
                   child: Column(
                     children: [
-                      SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.manuFirstImage),
-                        width: 90,
-                        height: 90,
+                      Container(
+                        width: 95,
+                        height: 95,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blue,
+                        ),
+                        child: ClipOval(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: userAvtarTypeUrl.isNotEmpty
+                                ? SvgPicture.network(
+                                    userAvtarTypeUrl,
+                                    fit: BoxFit.contain,
+                                    placeholderBuilder: (context) =>
+                                        SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.manuFirstImage,
+                                          ),
+                                        ),
+                                  )
+                                : SvgPicture.asset(
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.manuFirstImage,
+                                    ),
+                                  ),
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 20),
-
+                      SizedBox(height: 10),
                       Text(
-                        "223",
+                        userName,
                         style: AppTextStyles.bold(22).copyWith(
                           height: 1.0,
                           color: AppColors.primaryValueColour,
@@ -97,7 +131,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.calculatorProfile,
-
                       ),
                       title: "Calculator",
                       onTap: () {

@@ -19,12 +19,14 @@ class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;
   final Map<String, String> signupData;
   final bool isComeFromSocialLogin;
+  final bool isComeFromSettingScreen;
 
   const AvtarScreen({
     Key? key,
     required this.isComeFromSignupScreen,
     required this.signupData,
     this.isComeFromSocialLogin = false,
+    this.isComeFromSettingScreen = false,
   }) : super(key: key);
 
   @override
@@ -62,20 +64,22 @@ class _AvtarScreenState extends State<AvtarScreen> {
                 )
               : Navigator.pop(context)),
         ),
-        rightButton: IconButton(
-          icon: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.homeRightSetting),
-            width: 35,
-            height: 31,
-            fit: BoxFit.cover,
-          ),
-          onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
-          },
-        ),
+        rightButton: widget.isComeFromSettingScreen == false
+            ? IconButton(
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+                  width: 35,
+                  height: 31,
+                  fit: BoxFit.cover,
+                ),
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingScreen()),
+                  );
+                },
+              )
+            : null,
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(
         listener: (context, state) {

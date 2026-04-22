@@ -1,3 +1,7 @@
+import 'package:flutter_svg/svg.dart';
+
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../Avtar/AvtarScreen.dart';
 import '../Feedback/FeedbackScreen.dart';
 import '../ManageAccount/ManageAccountScreen.dart';
 import '../ProfileScreen.dart';
@@ -31,10 +35,24 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  String userAvtarTypeUrl = '';
+  String avatarTypeName = '';
+
   @override
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.settingScreen);
+    setLocalData();
+  }
+
+  Future<void> setLocalData() async {
+    final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
+    final avatarType = await SharedPrefsHelper.getAvtarUserType();
+
+    setState(() {
+      userAvtarTypeUrl = avatarUrl ?? '';
+      avatarTypeName = avatarType ?? '';
+    });
   }
 
   @override
@@ -75,12 +93,73 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
 
-                  child: SettingsListItem(
-                    leadingSvgAsset: CommonUi.setSvgImage(
-                      AssetsPath.calculatorProfile,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AvtarScreen(
+                            isComeFromSignupScreen: false,
+                            signupData: {},
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18.0,
+                        vertical: 15.0,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue,
+                            ),
+                            child: ClipOval(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: userAvtarTypeUrl.isNotEmpty
+                                    ? SvgPicture.network(
+                                        userAvtarTypeUrl,
+                                        fit: BoxFit.contain,
+                                        color: Colors.white,
+                                        placeholderBuilder: (context) =>
+                                            SvgPicture.asset(
+                                              CommonUi.setSvgImage(
+                                                AssetsPath.manuFirstImage,
+                                              ),
+                                            ),
+                                      )
+                                    : SvgPicture.asset(
+                                        CommonUi.setSvgImage(
+                                          AssetsPath.manuFirstImage,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              avatarTypeName.toUpperCase(),
+                              style: AppTextStyles.regular(20).copyWith(
+                                height: 1.0,
+                                color: AppColors.primaryValueColour,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: AppColors.black,
+                          ),
+                        ],
+                      ),
                     ),
-                    title: "Avtar Image",
-                    onTap: () {},
                   ),
                 ),
 

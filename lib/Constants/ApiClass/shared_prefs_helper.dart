@@ -14,6 +14,8 @@ class SharedPrefsHelper {
   static const String _fcmTokenKey = 'fcm_token_key';
   static const String apiFetchKeyFromSever = 'api_Fetch_Key_From_Sever';
   static const String fetchSubsIsTrueKey = 'fetchSubsIsTrue';
+  static const String _isAvtarForProfileUrlKey = 'avtarForProfileUrlKey';
+  static const String  _userProfileNameKey  = 'userProfileNameKey';
 
   static Future<void> save(String uid) async {
     final prefs = await SharedPreferences.getInstance();
@@ -29,7 +31,6 @@ class SharedPrefsHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
   }
-
 
   static Future<void> saveApiFetchSubsIsTrueKey(bool isSet) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -145,6 +146,26 @@ class SharedPrefsHelper {
     return prefs.getString(_isAvtarForProfileKey) ?? '';
   }
 
+  static Future<void> setAvtarUserUrl(String userType) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_isAvtarForProfileUrlKey, userType);
+  }
+
+  static Future<String> getAvtarUserUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_isAvtarForProfileUrlKey) ?? '';
+  }
+
+  static Future<void> setUserProfileName(String userType) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userProfileNameKey, userType);
+  }
+
+  static Future<String> getUserProfileName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userProfileNameKey) ?? '';
+  }
+
   static Future<void> seMapKeyValuesFromServer(String mapKeyValue) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(isMapKeyValues, mapKeyValue);
@@ -180,6 +201,8 @@ class SharedPrefsHelper {
         _isUserAccessTokenKey,
         _isUserRefreshTokenKey,
         _isAvtarForProfileKey,
+        _isAvtarForProfileUrlKey,
+        _userProfileNameKey,
         _fcmTokenKey,
         isMapKeyValues,
         _fcmTokenKey,

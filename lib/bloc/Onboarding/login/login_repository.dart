@@ -28,10 +28,9 @@ class LoginRepository {
       try {
         fcmToken = await SharedPrefsHelper.refreshAndUpdateFCMToken();
       } catch (e) {
-        debugPrint("⚠️ FCM ignored during login: $e");
+        debugPrint("FCM ignored during login: $e");
         fcmToken = null;
       }
-      // String? fcmToken = await SharedPrefsHelper.refreshAndUpdateFCMToken();
       final deviceDetails = await DeviceInfoHelper.getDeviceDetails();
       final Map<String, dynamic> body = {
         "email": email,
