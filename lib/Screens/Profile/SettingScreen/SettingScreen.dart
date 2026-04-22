@@ -158,18 +158,20 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              avatarTypeName
-                                  .toUpperCase()
-                                  .replaceAll("_", " ")
-                                  .capitalize(),
-                              style: AppTextStyles.regular(20).copyWith(
-                                height: 1.0,
-                                color: AppColors.primaryValueColour,
+                          if (userAvtarTypeUrl.isNotEmpty)
+                            Expanded(
+                              child: Text(
+                                avatarTypeName
+                                    .toUpperCase()
+                                    .replaceAll("_", " ")
+                                    .capitalize(),
+                                style: AppTextStyles.regular(20).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.primaryValueColour,
+                                ),
                               ),
                             ),
-                          ),
+
                           Icon(
                             Icons.arrow_forward_ios,
                             size: 16,

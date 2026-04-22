@@ -29,7 +29,7 @@ class CreditManager {
   }
 
   double get remainingToken {
-    final value = totalCredit - creditUsage;
+    final value = totalToken - tokenUsage;
     return value < 0 ? 0 : value;
   }
 

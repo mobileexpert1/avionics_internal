@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -8,12 +9,16 @@ import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Database/generic_methods.dart';
+import '../../../../Helpers/CreditManager/CreditManager.dart';
 import '../ChatHistory/chat_messageModel.dart';
+import 'ChatSocket_model.dart';
 import 'chat_model.dart';
 import 'chat_repository.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl();
+
+  VoidCallback? _onSessionExpired;
 
   final _controller = StreamController<ChatMessage>.broadcast();
   final _uuid = Uuid();
@@ -95,46 +100,106 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   void _onData(dynamic data) async {
-    print('[WebSocket] Received: $data');
-    final decoded = jsonDecode(data as String);
-    print('[WebSocket] Decoded: $decoded');
+    try {
+      print('[WebSocket] Raw: $data');
+      final decoded = jsonDecode(data as String);
+      final response = ChatSocketResponse.fromJson(decoded);
+      CreditManager().totalToken = response.totalTokenUsage!.toDouble();
+      print('[WebSocket] Parsed Code: ${response.code}');
+      switch (response.code) {
+        case 1:
+          await _handleSuccess(response);
+          break;
 
-    if (decoded['error'] != null) {
-      final errorMsg = decoded['error'] as String;
-      _pushSystem("Internal Server Error: $errorMsg ❌");
-      return;
+        case 0:
+          _pushSystem("Something went wrong");
+          break;
+
+        case 2:
+          _onSessionExpired?.call();
+          break;
+
+        default:
+          _pushSystem("Unexpected response ⚠️");
+      }
+    } catch (e) {
+      print('[WebSocket] Error: $e');
     }
+  }
 
-    if ((_sessionId ?? '').isEmpty && decoded['session_id'] != null) {
-      _sessionId = decoded['session_id'] as String;
+  Future<void> _handleSuccess(ChatSocketResponse response) async {
+    if ((_sessionId ?? '').isEmpty && response.sessionId != null) {
+      _sessionId = response.sessionId;
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('wilco_session_id', _sessionId!);
 
       if (_pendingUserMessageObject != null) {
         _pendingUserMessageObject!.sessionId = _sessionId!;
-        final updateCount = await _chatDb.update(_pendingUserMessageObject!);
-        print('Updated first message ${_pendingUserMessageObject!.id} with sessionId: $_sessionId, rows affected: $updateCount');
-        if (updateCount == 0) {
-          print('Warning: No rows updated for message ${_pendingUserMessageObject!.id}');
-        }
+        await _chatDb.update(_pendingUserMessageObject!);
         _pendingUserMessage = null;
       }
     }
 
-    final answer = decoded['answer'] as String?;
-    if (answer != null) {
+    if (response.answer != null && response.answer!.trim().isNotEmpty) {
       final msg = ChatMessage(
         id: _uuid.v4(),
         author: ChatAuthor.bot,
-        text: answer,
+        text: response.answer!,
         sessionId: _sessionId ?? '',
       );
-      // _controller.add(msg);
+
       _saveChatMessage(msg);
       _pendingUserMessage = null;
       _pendingUserMessageObject = null;
     }
   }
+
+  void setSessionExpiredCallback(VoidCallback callback) {
+    _onSessionExpired = callback;
+  }
+
+  // void _onData(dynamic data) async {
+  //   print('[WebSocket] Received: $data');
+  //   final decoded = jsonDecode(data as String);
+  //   print('[WebSocket] Decoded: $decoded');
+  //
+  //   if (decoded['error'] != null) {
+  //     final errorMsg = decoded['error'] as String;
+  //     _pushSystem("Internal Server Error: $errorMsg ❌");
+  //     return;
+  //   }
+  //
+  //   if ((_sessionId ?? '').isEmpty && decoded['session_id'] != null) {
+  //     _sessionId = decoded['session_id'] as String;
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString('wilco_session_id', _sessionId!);
+  //
+  //     if (_pendingUserMessageObject != null) {
+  //       _pendingUserMessageObject!.sessionId = _sessionId!;
+  //       final updateCount = await _chatDb.update(_pendingUserMessageObject!);
+  //       print('Updated first message ${_pendingUserMessageObject!.id} with sessionId: $_sessionId, rows affected: $updateCount');
+  //       if (updateCount == 0) {
+  //         print('Warning: No rows updated for message ${_pendingUserMessageObject!.id}');
+  //       }
+  //       _pendingUserMessage = null;
+  //     }
+  //   }
+  //
+  //   final answer = decoded['answer'] as String?;
+  //   if (answer != null) {
+  //     final msg = ChatMessage(
+  //       id: _uuid.v4(),
+  //       author: ChatAuthor.bot,
+  //       text: answer,
+  //       sessionId: _sessionId ?? '',
+  //     );
+  //     // _controller.add(msg);
+  //     _saveChatMessage(msg);
+  //     _pendingUserMessage = null;
+  //     _pendingUserMessageObject = null;
+  //   }
+  // }
 
   void _onError(Object error) {
     print('[WebSocket] Error: $error');
@@ -204,7 +269,9 @@ class ChatRepositoryImpl implements ChatRepository {
       // await _chatDb.insertAll([msg]);
       await _chatDb.insertChatMessageSafe(msg);
       _controller.add(msg);
-      print('Saved message: ${msg.text}, id: ${msg.id}, sessionId: ${msg.sessionId}, userId: ${msg.userId}');
+      print(
+        'Saved message: ${msg.text}, id: ${msg.id}, sessionId: ${msg.sessionId}, userId: ${msg.userId}',
+      );
     } catch (e) {
       print('Error saving message: $e');
     }
@@ -222,8 +289,9 @@ class ChatRepositoryImpl implements ChatRepository {
     await _controller.close();
   }
 
-
-  Future<List<ChatMessageModel>> fetchFullServerHistory(String sessionId) async {
+  Future<List<ChatMessageModel>> fetchFullServerHistory(
+    String sessionId,
+  ) async {
     List<ChatMessageModel> all = [];
     int page = 1;
     while (true) {
@@ -253,7 +321,9 @@ class ChatRepositoryImpl implements ChatRepository {
   }) {
     return ChatMessage(
       id: api.id,
-      author: api.role.toLowerCase() == 'user' ? ChatAuthor.user : ChatAuthor.bot,
+      author: api.role.toLowerCase() == 'user'
+          ? ChatAuthor.user
+          : ChatAuthor.bot,
       text: api.content,
       sessionId: sessionId,
       userId: userId,
@@ -265,7 +335,9 @@ class ChatRepositoryImpl implements ChatRepository {
     final existing = await _chatDb.getAll(ChatMessage.tableName);
     final existingIds = existing.map((e) => e.id).toSet();
 
-    final toInsert = messages.where((m) => !existingIds.contains(m.id)).toList();
+    final toInsert = messages
+        .where((m) => !existingIds.contains(m.id))
+        .toList();
     if (toInsert.isNotEmpty) {
       await _chatDb.insertAll(toInsert);
     }

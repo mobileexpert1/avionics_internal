@@ -21,7 +21,6 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final data = await repository.getHomeData();
       if (data.isActiveSubscription == false) {
-        await SharedPrefsHelper.saveApiFetchKeyFromSever(true);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
@@ -34,7 +33,6 @@ class HomeCubit extends Cubit<HomeState> {
         );
         return;
       } else {
-        await SharedPrefsHelper.saveApiFetchKeyFromSever(false);
         final top2Manufacturers = data.manufacturers.take(2).toList();
         if (data.currentPlan != null) {
           CreditManager().initialize(data.currentPlan!);

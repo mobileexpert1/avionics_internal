@@ -12,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'Constants/ApiClass/shared_prefs_helper.dart';
 import 'Database/db_helper.dart';
 import 'Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'Helpers/push_notifications/firebase_message_handler.dart';
@@ -86,6 +87,7 @@ Future<void> main() async {
     await printDbPath();
     await DBHelper.database;
   }
+  SharedPrefsHelper.removeTempKeyBeforeLaunch();
   runApp(const MyApp());
 }
 
@@ -143,8 +145,7 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
 
-            theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit',
-            ),
+            theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit'),
             home: const SplashScreen(),
           );
         },

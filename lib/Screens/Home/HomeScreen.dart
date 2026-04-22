@@ -41,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPrefsHelper.removeTempKeyBeforeLaunch();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
     homeCubit.repository.getMapKeyValueFromServer();
@@ -437,11 +436,9 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
-            fontStyle: AppTextStyles.regular(18).copyWith(
-              height: 1.4,
-              color: AppColors.white,
-              letterSpacing: 0.2,
-            ),
+            fontStyle: AppTextStyles.regular(
+              18,
+            ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
@@ -502,11 +499,9 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
-            fontStyle: AppTextStyles.regular(18).copyWith(
-              height: 1.4,
-              color: AppColors.white,
-              letterSpacing: 0.2,
-            ),
+            fontStyle: AppTextStyles.regular(
+              18,
+            ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
