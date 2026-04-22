@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsHelper {
+  static const String _key = 'current_user_id';
   static const String _emailKey = 'emailKey';
   static const String _isUserLoginKey = 'UserLoginKey';
   static const String _isFirstLaunchKey = 'FirstLaunchKey';
@@ -13,6 +14,22 @@ class SharedPrefsHelper {
   static const String _fcmTokenKey = 'fcm_token_key';
   static const String apiFetchKeyFromSever = 'api_Fetch_Key_From_Sever';
   static const String fetchSubsIsTrueKey = 'fetchSubsIsTrue';
+
+  static Future<void> save(String uid) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, uid);
+  }
+
+  static Future<String?> read() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_key);
+  }
+
+  static Future<void> clear() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_key);
+  }
+
 
   static Future<void> saveApiFetchSubsIsTrueKey(bool isSet) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -58,16 +75,6 @@ class SharedPrefsHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_emailKey, email);
   }
-
-  // static Future<String?> refreshAndUpdateFCMToken() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await FirebaseMessaging.instance.deleteToken();
-  //   final String? newToken = await FirebaseMessaging.instance.getToken();
-  //   if (newToken != null && newToken.isNotEmpty) {
-  //     await prefs.setString(_fcmTokenKey, newToken);
-  //   }
-  //   return newToken;
-  // }
 
   static Future<String?> refreshAndUpdateFCMToken() async {
     try {

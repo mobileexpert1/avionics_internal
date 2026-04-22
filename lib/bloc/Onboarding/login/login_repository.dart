@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../../Database/auth_storage.dart';
 import '../../../Database/generic_methods.dart';
 import '../../../Helpers/DeviceInfo.dart';
 import 'login_response_model.dart';
@@ -43,7 +42,7 @@ class LoginRepository {
       final response = LoginResponseModel.fromJson(user);
 
       if (response.userDetails != null) {
-        await AuthStorage.save(response.userDetails!.id);
+        await SharedPrefsHelper.save(response.userDetails!.id);
         await _users.insertAll([response.userDetails!]);
       }
       return response;
@@ -70,7 +69,7 @@ class LoginRepository {
       final response = LoginResponseModel.fromJson(user);
 
       if (response.userDetails != null) {
-        await AuthStorage.save(response.userDetails!.id);
+        await SharedPrefsHelper.save(response.userDetails!.id);
         await _users.insertAll([response.userDetails!]);
       }
       return response;

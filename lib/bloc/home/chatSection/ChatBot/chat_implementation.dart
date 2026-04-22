@@ -5,8 +5,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:uuid/uuid.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../../../../Database/auth_storage.dart';
 import '../../../../Database/generic_methods.dart';
 import '../ChatHistory/chat_messageModel.dart';
 import 'chat_model.dart';
@@ -198,7 +198,7 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   void _saveChatMessage(ChatMessage msg) async {
-    msg.userId = await AuthStorage.read();
+    msg.userId = await SharedPrefsHelper.read();
     msg.sessionId = _sessionId ?? '';
     try {
       // await _chatDb.insertAll([msg]);

@@ -1,6 +1,6 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/api_service.dart';
-import '../../../Database/auth_storage.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../login/login_response_model.dart';
 
 class OtpRepository {
@@ -26,7 +26,7 @@ class OtpRepository {
       );
       final model = LoginResponseModel.fromJson(response);
       if (model.userDetails?.id != null) {
-        await AuthStorage.save(model.userDetails!.id);
+        await SharedPrefsHelper.save(model.userDetails!.id);
       }
       return model;
     } catch (e) {
