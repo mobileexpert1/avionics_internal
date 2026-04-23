@@ -137,7 +137,11 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           widget.isComeFromSignup == null)
                       ? SubscriptionTexts.currentSubTitle
                       : ConstantStrings.startSubscription,
-                  centerTitle:false,
+                  centerTitle:
+                      (widget.isComeFromSignup == false ||
+                          widget.isComeFromSignup == null)
+                      ? false
+                      : true,
                   leftButton:
                       (widget.isComeFromSignup == false ||
                           widget.isComeFromSignup == null)
@@ -258,9 +262,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(21.46).copyWith(
                               height: 1.0,
-                              color: true
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+                              color: true ? Colors.white : Colors.grey.shade600,
                             ),
                             backgroundColor: const Color.fromRGBO(
                               30,
@@ -286,9 +288,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(21.46).copyWith(
                               height: 1.0,
-                              color: true
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+                              color: true ? Colors.white : Colors.grey.shade600,
                             ),
                             backgroundColor: Colors.red,
                             textColor: Colors.white,

@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_cubit.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_state.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../SettingScreen/InfoBottomSheet.dart';
+import 'RateAppBottomSheet.dart';
 
 class FeedbackScreen extends StatefulWidget {
   @override
@@ -66,7 +72,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       content: Text("Review submitted successfully."),
                     ),
                   );
-                  Navigator.pop(context);
+                  //Navigator.pop(context);
+                  showRateAppBottomSheet(context);
                 },
                 child: BlocBuilder<FeedbackCubit, FeedbackState>(
                   builder: (context, state) {
@@ -109,33 +116,60 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             const SizedBox(height: 30),
 
                             /// STAR RATING
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(5, (index) {
-                                  return IconButton(
-                                    icon: Icon(
-                                      Icons.star,
-                                      size: 50,
-                                      color: index < state.rating
-                                          ? Colors.amber
-                                          : Colors.grey[300],
-                                    ),
-                                    onPressed: () {
-                                      final currentRating = state.rating;
-                                      final tappedRating = index + 1;
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(5, (index) {
+                                      return IconButton(
+                                        icon: Icon(
+                                          Icons.star,
+                                          size: 50,
+                                          color: index < state.rating
+                                              ? Colors.amber
+                                              : Colors.grey[300],
+                                        ),
+                                        onPressed: () {
+                                          final currentRating = state.rating;
+                                          final tappedRating = index + 1;
 
-                                      context
-                                          .read<FeedbackCubit>()
-                                          .updateRating(
-                                            currentRating == tappedRating
-                                                ? 0
-                                                : tappedRating,
-                                          );
-                                    },
-                                  );
-                                }),
-                              ),
+                                          context
+                                              .read<FeedbackCubit>()
+                                              .updateRating(
+                                                currentRating == tappedRating
+                                                    ? 0
+                                                    : tappedRating,
+                                              );
+                                        },
+                                      );
+                                    }),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                if (state.rating > 0)
+                                  AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 300),
+                                    child: state.rating > 0
+                                        ? Text(
+                                            _getRatingData(
+                                              state.rating,
+                                            ).$1, // text
+                                            style: TextStyle(
+                                              color: _getRatingData(
+                                                state.rating,
+                                              ).$2,
+                                              // color
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                  ),
+                              ],
                             ),
 
                             const SizedBox(height: 30),
@@ -294,7 +328,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 onPressed: () {
                                   if (isEmpty) return;
 
-                                  FocusScope.of(context).unfocus();
+                                  FocusManager.instance.primaryFocus?.unfocus();
 
                                   context.read<FeedbackCubit>().submitFeedback(
                                     context,
@@ -307,6 +341,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 },
                               ),
                             ),
+                            const SizedBox(height: 30),
                           ],
                         ),
                       ),
@@ -318,6 +353,41 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  (String, Color) _getRatingData(int rating) {
+    switch (rating) {
+      case 1:
+        return ("Poor", Colors.red);
+      case 2:
+        return ("Bad", Colors.orange);
+      case 3:
+        return ("Average", Colors.amber);
+      case 4:
+        return ("Good", Colors.lightGreen);
+      case 5:
+        return ("Excellent", Colors.green);
+      default:
+        return ("", Colors.grey);
+    }
+  }
+
+  void showRateAppBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) {
+        return RateAppBottomSheet(
+          onRate: () {
+            Navigator.pop(context);
+          },
+          onMaybeLater: () {
+            Navigator.pop(context);
+          },
+        );
+      },
     );
   }
 }
