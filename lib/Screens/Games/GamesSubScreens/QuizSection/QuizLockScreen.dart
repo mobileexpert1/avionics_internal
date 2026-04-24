@@ -12,6 +12,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../../bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
 import '../../../../demoForGameQuiz.dart';
 import '../../../Profile/SettingScreen/SettingScreen.dart';
@@ -152,7 +153,7 @@ double getHeight(int index) {
   }
 }
 
-class AtmosLayer extends StatelessWidget {
+class AtmosLayer extends StatefulWidget {
   final String title;
   final bool isLocked;
   final VoidCallback onTap;
@@ -167,55 +168,179 @@ class AtmosLayer extends StatelessWidget {
   });
 
   @override
+  State<AtmosLayer> createState() => _AtmosLayerState();
+}
+
+class _AtmosLayerState extends State<AtmosLayer> {
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+
+  void _showPopup() {
+    if (_overlayEntry != null) return;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) {
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: _hidePopup,
+                ),
+              ),
+
+              CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: Offset(-135, widget.index == 4 ? -30 : -15),
+                child: ArrowPopup(
+                  onStart: () {
+                    _hidePopup();
+                    widget.onTap();
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    Overlay.of(context, rootOverlay: true).insert(_overlayEntry!);
+  }
+
+  void _hidePopup() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  @override
+  void dispose() {
+    _hidePopup();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final assetName = AtmosphereAssets.getAsset(title);
+    final assetName = AtmosphereAssets.getAsset(widget.title);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        height: getHeight(index),
-        width: double.infinity,
-        child: Stack(
-          alignment: Alignment.center,
+    return SizedBox(
+      height: getHeight(widget.index),
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            child: SvgPicture.asset(
+              CommonUi.setSvgImage(assetName),
+              fit: BoxFit.contain,
+            ),
+          ),
+
+          Transform.translate(
+            offset: const Offset(0, -30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(widget.title),
+                const SizedBox(height: 10),
+                CompositedTransformTarget(
+                  link: _layerLink,
+                  child: GestureDetector(
+                    onTap: _showPopup,
+                    child: Container(
+                      height: 55,
+                      width: 55,
+                      decoration: BoxDecoration(
+                        color: widget.isLocked
+                            ? AppColors.grayLight
+                            : AppColors.primaryDark,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: widget.isLocked ? Colors.black : Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ArrowPopup extends StatelessWidget {
+  final VoidCallback onStart;
+
+  const ArrowPopup({super.key, required this.onStart});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        width: 320,
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+        decoration: BoxDecoration(
+          color: AppColors.separatorColourAppBar,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.black, width: 1),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned.fill(
-              child: SvgPicture.asset(
-                CommonUi.setSvgImage(assetName),
-                fit: BoxFit.contain,
-              ),
+            Text(
+              "Where all weather happens, and most aircraft fly.",
+              textAlign: TextAlign.left,
+              style: AppTextStyles.regular(
+                16,
+              ).copyWith(height: 1.0, color: AppColors.grayMedium),
             ),
 
-            Transform.translate(
-              offset: Offset(0, -30),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.semiRegular(
-                      16,
-                    ).copyWith(height: 1.0, color: AppColors.black),
-                  ),
-                  const SizedBox(height: 10),
+            const SizedBox(height: 12),
 
-                  Container(
-                    height: 55,
-                    width: 55,
-                    decoration: BoxDecoration(
-                      color: isLocked
-                          ? AppColors.grayLight
-                          : AppColors.primaryDark,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      color: isLocked ? Colors.black : Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
+            Text(
+              "The beginning of your journey.",
+              textAlign: TextAlign.left,
+              style: AppTextStyles.bold(
+                16,
+              ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
             ),
+
+            const SizedBox(height: 25),
+
+            CustomHeaderViewExpandable(
+              isNeedToShowLeftRightBottomBorder: false,
+              isNeedToShowLeftImage: true,
+              isExpanded: false,
+              title: "START GAME",
+              headerColor: AppColors.primaryDark,
+              arrowBackgroundColor: AppColors.extraDarkYellow,
+              arrowFrontColor: Colors.black,
+              isExpandedViewAvailable: true,
+              fontStyle: AppTextStyles.regular(16).copyWith(
+                height: 1.0,
+                color: AppColors.whiteWithExpandableTitle,
+              ),
+              isLeftImage: IconButton(
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.homeManufacturerLibrary),
+                  width: 30,
+                  height: 30,
+                ),
+                onPressed: () {},
+              ),
+              onHeaderTap: onStart,
+            ),
+
+            const SizedBox(height: 12),
           ],
         ),
       ),

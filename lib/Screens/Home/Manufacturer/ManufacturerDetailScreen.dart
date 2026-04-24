@@ -36,6 +36,44 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreHistory = false;
   bool showMoreProducts = false;
   bool showInterestingFacts = false;
+  int expandedIndex = -1;
+
+  final List<ProductModel> staticProducts = [
+    ProductModel(
+      title: "Airbus Helicopters",
+      items: [
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+      ],
+    ),
+    ProductModel(
+      title: "Airbus Airplanes",
+      items: [
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+      ],
+    ),
+  ];
 
   @override
   void initState() {
@@ -370,8 +408,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       detail.company.companyDescription,
                                       style: AppTextStyles.regular(16).copyWith(
                                         height: 1.5,
-                                        color:
-                                            AppColors.textColour,
+                                        color: AppColors.textColour,
                                       ),
                                       maxLines: showMoreAboutInfo ? null : 2,
                                       overflow: showMoreAboutInfo
@@ -410,8 +447,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       detail.company.companyHistory,
                                       style: AppTextStyles.regular(16).copyWith(
                                         height: 1.5,
-                                        color:
-                                        AppColors.textColour,
+                                        color: AppColors.textColour,
                                       ),
                                       maxLines: showMoreHistory ? null : 2,
                                       overflow: showMoreHistory
@@ -441,56 +477,214 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                             if (showMoreProducts)
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 25,
+                                  horizontal: 20,
                                 ),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: List.generate(
-                                    detail.product.length,
-                                    (index) {
-                                      final product = detail.product[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 12,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (product.series.isNotEmpty)
-                                              Text(
-                                                product.series,
-                                                style: AppTextStyles.regular(16).copyWith(
-                                                  height: 1.5,
-                                                  color:
-                                                  AppColors.textColour,
-                                                ),
-                                              ),
-                                            SizedBox(height: 4),
+                                  children: List.generate(staticProducts.length, (
+                                    index,
+                                  ) {
+                                    final product = staticProducts[index];
+                                    final isExpanded = expandedIndex == index;
 
-                                            Text(
-                                              product.description,
-                                              style: AppTextStyles.regular(16).copyWith(
-                                                height: 1.5,
-                                                color:
-                                                AppColors.textColour,
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.06,
                                               ),
-                                              maxLines: showMoreProducts
-                                                  ? null
-                                                  : 2,
-                                              overflow: showMoreProducts
-                                                  ? TextOverflow.visible
-                                                  : TextOverflow.ellipsis,
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 3),
                                             ),
-                                            const SizedBox(height: 8),
                                           ],
                                         ),
-                                      );
-                                    },
-                                  ),
+                                        child: Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  expandedIndex = isExpanded
+                                                      ? -1
+                                                      : index;
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 14,
+                                                    ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 8,
+                                                      height: 8,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                            color: Colors.blue,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    Expanded(
+                                                      child: Text(
+                                                        product.title,
+                                                      ),
+                                                    ),
+                                                    Icon(
+                                                      isExpanded
+                                                          ? Icons.remove
+                                                          : Icons.add,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                    ),
+                                                child: Divider(
+                                                  thickness: 1.2,
+                                                  color: AppColors
+                                                      .separatorColourAppBar,
+                                                ),
+                                              ),
+                                            if (isExpanded)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                      16,
+                                                      8,
+                                                      16,
+                                                      12,
+                                                    ),
+                                                child: Column(
+                                                  children: List.generate(
+                                                    product.items.length,
+                                                    (i) {
+                                                      final item =
+                                                          product.items[i];
+
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              bottom: 8,
+                                                            ),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(
+                                                                item.name,
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical: 4,
+                                                                  ),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      6,
+                                                                    ),
+                                                              ),
+                                                              child: Text(
+                                                                item.tag,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
                                 ),
                               ),
 
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                            //   child: Column(
+                            //     children: List.generate(
+                            //       detail.product.length,
+                            //           (index) {
+                            //         final product = detail.product[index];
+                            //
+                            //         return Padding(
+                            //           padding: const EdgeInsets.only(bottom: 12),
+                            //           child: Container(
+                            //             padding: const EdgeInsets.symmetric(
+                            //               horizontal: 16,
+                            //               vertical: 14,
+                            //             ),
+                            //             decoration: BoxDecoration(
+                            //               color: Colors.white,
+                            //               borderRadius: BorderRadius.circular(12),
+                            //               boxShadow: [
+                            //                 BoxShadow(
+                            //                   color: Colors.black.withOpacity(0.06),
+                            //                   blurRadius: 8,
+                            //                   offset: const Offset(0, 3),
+                            //                 ),
+                            //               ],
+                            //             ),
+                            //             child: Row(
+                            //               children: [
+                            //                 Container(
+                            //                   width: 8,
+                            //                   height: 8,
+                            //                   decoration: const BoxDecoration(
+                            //                     color: Colors.blue,
+                            //                     shape: BoxShape.circle,
+                            //                   ),
+                            //                 ),
+                            //                 const SizedBox(width: 12),
+                            //
+                            //                 Expanded(
+                            //                   child: Text(
+                            //                     product.series,
+                            //                     style: AppTextStyles.regular(16).copyWith(
+                            //                       fontWeight: FontWeight.w600,
+                            //                       color: Colors.black38,
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //
+                            //                 Icon(
+                            //                   Icons.add,
+                            //                   size: 20,
+                            //                   color: Colors.grey.shade600,
+                            //                 ),
+                            //               ],
+                            //             ),
+                            //           ),
+                            //         );
+                            //       },
+                            //     ),
+                            //   ),
+                            // ),
                             _buildSectionHeader(
                               title: "INTERESTING FACTS",
                               isExpanded: showInterestingFacts,
@@ -500,43 +694,130 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                               isShowMoreLessOption:
                                   (detail.interestingFacts?.length ?? 0) > 2,
                             ),
+                            const SizedBox(height: 10),
                             if (showInterestingFacts)
+                              // Padding(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 25,
+                              //   ),
+                              //   child: Column(
+                              //     crossAxisAlignment: CrossAxisAlignment.end,
+                              //     children: List.generate(
+                              //       // show 2 facts by default, full list if expanded
+                              //       showInterestingFacts
+                              //           ? (detail.interestingFacts?.length ?? 0)
+                              //           : (detail.interestingFacts?.length ?? 0)
+                              //                 .clamp(0, 1),
+                              //       (index) {
+                              //         final fact =
+                              //             detail.interestingFacts?[index] ?? "";
+                              //         return Container(
+                              //           margin: const EdgeInsets.only(
+                              //             bottom: 12,
+                              //           ),
+                              //           padding: const EdgeInsets.all(12),
+                              //           decoration: BoxDecoration(
+                              //             color: Colors.grey.shade100,
+                              //             borderRadius: BorderRadius.circular(
+                              //               8,
+                              //             ),
+                              //           ),
+                              //           child: Text(
+                              //             "• $fact",
+                              //             style: AppTextStyles.regular(16).copyWith(
+                              //               height: 1.4,
+                              //               color:
+                              //               AppColors.textColour,
+                              //             ),
+                              //           ),
+                              //         );
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 25,
+                                  horizontal: 20,
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: List.generate(
-                                    // show 2 facts by default, full list if expanded
-                                    showInterestingFacts
-                                        ? (detail.interestingFacts?.length ?? 0)
-                                        : (detail.interestingFacts?.length ?? 0)
-                                              .clamp(0, 1),
-                                    (index) {
-                                      final fact =
-                                          detail.interestingFacts?[index] ?? "";
-                                      return Container(
-                                        margin: const EdgeInsets.only(
-                                          bottom: 12,
-                                        ),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.shade100,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.09),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: List.generate(
+                                      showInterestingFacts
+                                          ? (detail.interestingFacts?.length ??
+                                                0)
+                                          : (detail.interestingFacts?.length ??
+                                                    0)
+                                                .clamp(0, 2),
+                                      (index) {
+                                        final fact =
+                                            detail.interestingFacts?[index] ??
+                                            "";
+
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 14,
                                           ),
-                                        ),
-                                        child: Text(
-                                          "• $fact",
-                                          style: AppTextStyles.regular(16).copyWith(
-                                            height: 1.4,
-                                            color:
-                                            AppColors.textColour,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              //  Yellow Arrow
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 4,
+                                                ),
+                                                child: Icon(
+                                                  Icons.arrow_right,
+                                                  color: Colors.amber,
+                                                  size: 20,
+                                                ),
+                                              ),
+
+                                              ///   in svg
+                                              ///
+                                              ///
+                                              // Padding(
+                                              //   padding: const EdgeInsets.only(top: 4),
+                                              //   child: SvgPicture.asset(
+                                              //    set assets
+                                              //     width: 16,
+                                              //     height: 16,
+                                              //     color: Colors.amber,
+                                              //   ),
+                                              // ),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  fact,
+                                                  style:
+                                                      AppTextStyles.regular(
+                                                        14,
+                                                      ).copyWith(
+                                                        height: 1.5,
+                                                        color: AppColors
+                                                            .textColour,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
@@ -623,7 +904,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   }
 
   Widget _buildGeneralInfo(General generalDetails) {
-
     return Column(
       children: [
         Row(
@@ -786,5 +1066,40 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         ],
       ),
     );
+  }
+}
+
+class ProductItemModel {
+  final String name;
+  final String tag;
+
+  ProductItemModel({required this.name, required this.tag});
+
+  factory ProductItemModel.fromJson(Map<String, dynamic> json) {
+    return ProductItemModel(name: json['name'] ?? '', tag: json['tag'] ?? '');
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'tag': tag};
+  }
+}
+
+class ProductModel {
+  final String title;
+  final List<ProductItemModel> items;
+
+  ProductModel({required this.title, required this.items});
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      title: json['title'] ?? '',
+      items: (json['items'] as List<dynamic>? ?? [])
+          .map((e) => ProductItemModel.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'title': title, 'items': items.map((e) => e.toJson()).toList()};
   }
 }

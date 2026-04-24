@@ -8,7 +8,6 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Helpers/push_notifications/LocalNotificationHelper.dart';
-import '../subscriptionResponseModel.dart';
 import 'AppleSubscriptionRepository.dart';
 import 'AppleSubscriptionState.dart';
 
@@ -30,7 +29,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   // Debounce timer for purchase updates
   bool globalWebRedirectDone = false;
   Timer? _debounceTimer;
-  bool _notificationShown = false;
   final Set<String> _processedTransactions = {};
   bool _isRestoring = false;
   final Set<String> _processedPurchaseIds = {};
@@ -44,8 +42,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   Future<void> _initStore({bool autoRestore = false}) async {
     emit(state.copyWith(loading: state.products.isEmpty));
     if (!kIsWeb) {
-      _notificationShown = false;
-
       final isAvailable = await _iap.isAvailable();
       emit(state.copyWith(storeAvailable: isAvailable));
 
@@ -87,9 +83,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
     final url =
         "https://avionica.csdevhub.com/user-service/subscription/choose/${webSessionToken.session}?callback=$callback";
-
     print(url);
-
     final uri = Uri.parse(url);
     if (kIsWeb) {
       await launchUrl(uri, webOnlyWindowName: '_self');
@@ -180,9 +174,12 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       if (purchases.isEmpty) return;
 
-      // pick latest transaction
       final latest = purchases
-          .where((p) => p.status == PurchaseStatus.purchased)
+          .where(
+            (p) =>
+                p.status == PurchaseStatus.purchased ||
+                p.status == PurchaseStatus.restored,
+          )
           .toList()
           .last;
 
@@ -191,11 +188,9 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       final decoded = decodeJwt(token);
 
       final transactionId = decoded['transactionId'];
-      final expiresDate = decoded['expiresDate'];
 
       print("Latest Transaction ID: $transactionId");
 
-      // avoid duplicate processing
       if (_processedPurchaseIds.contains(transactionId)) {
         print("Already processed");
         return;
@@ -237,7 +232,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   ) async {
     final transactionId = decoded['transactionId'];
 
-    // 🔥 STOP DUPLICATE PROCESSING
     if (_processedTransactions.contains(transactionId)) {
       print("Duplicate transaction ignored: $transactionId");
       return;
@@ -248,11 +242,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     try {
       final token = purchase.verificationData.serverVerificationData;
 
-      final expiresDate = decoded['expiresDate'];
       final productId = decoded['productId'];
-
-      final now = DateTime.now().millisecondsSinceEpoch;
-      final isActive = expiresDate > now;
 
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
@@ -443,6 +433,9 @@ Map<String, dynamic> decodeJwt(String token) {
 }
 
 String formatDate(int millis) {
-  final date = DateTime.fromMillisecondsSinceEpoch(millis);
-  return date.toLocal().toString();
+  final date = DateTime.fromMillisecondsSinceEpoch(millis, isUtc: true)
+      .toLocal();
+
+  return "${date.day}/${date.month}/${date.year} "
+      "${date.hour}:${date.minute}";
 }

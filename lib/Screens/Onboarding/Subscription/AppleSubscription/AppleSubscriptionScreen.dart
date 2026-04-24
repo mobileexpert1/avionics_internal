@@ -40,8 +40,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     return "";
   }
 
-  //bool _navigated = false;
-
   @override
   void initState() {
     super.initState();
@@ -111,10 +109,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             ..sort(
               (a, b) => _cleanProductTitle(a).compareTo(_cleanProductTitle(b)),
             );
-          // -------------------------------
-          // Determine selected product:
-          // - Use state.selectedProduct if user tapped
-          // - Otherwise fallback to active plan
+
           ProductDetails? selected;
           if (state.selectedProduct != null) {
             selected = state.selectedProduct;

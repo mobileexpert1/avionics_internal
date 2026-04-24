@@ -238,9 +238,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               decoration: BoxDecoration(
                                 color: AppColors.grayForFeedbackAndText,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: AppColors.primaryBlue,
-                                ),
                               ),
                               child: Stack(
                                 children: [
@@ -253,6 +250,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                       28,
                                     ),
                                     child: TextField(
+                                      style: AppTextStyles.regular(16).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.black,
+                                      ),
                                       controller: controller,
                                       maxLines: 8,
                                       maxLength: maxChars,
@@ -261,11 +262,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                           maxChars,
                                         ),
                                       ],
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                         hintText:
                                             "Tell us more about your experience",
+
                                         border: InputBorder.none,
                                         counterText: "",
+                                        hintStyle: AppTextStyles.regular(16)
+                                            .copyWith(
+                                              height: 1.0,
+                                              color: AppColors.grayMedium,
+                                            ),
                                       ),
                                       onChanged: (value) {
                                         context
