@@ -1,3 +1,29 @@
+class AtmosphereAssets {
+  static const String exosphereQuiz = "42Exosphere";
+  static const String thermosphereQuiz = "43Thermosphere";
+  static const String mesosphereQuiz = "44Mesosphere";
+  static const String stratosphereQuiz = "45Stratosphere";
+  static const String troposphereQuiz = "46Troposphere";
+
+  static String getAsset(String layer) {
+    switch (layer) {
+      case "Exosphere":
+        return exosphereQuiz;
+      case "Thermosphere":
+        return thermosphereQuiz;
+      case "Mesosphere":
+        return mesosphereQuiz;
+      case "Stratosphere":
+        return stratosphereQuiz;
+      case "Troposphere":
+        return troposphereQuiz;
+      default:
+        return "";
+    }
+  }
+}
+
+
 abstract class AssetsPath {
   /// svg Images
 

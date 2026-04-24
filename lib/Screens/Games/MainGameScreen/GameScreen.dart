@@ -34,7 +34,7 @@ class _GamesScreenState extends State<GamesScreen> {
 
   @override
   void dispose() {
-    _gamesCubit.close(); // VERY IMPORTANT
+    _gamesCubit.close();
     super.dispose();
   }
 

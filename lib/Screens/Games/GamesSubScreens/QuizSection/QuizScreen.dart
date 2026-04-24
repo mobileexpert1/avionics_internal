@@ -58,10 +58,11 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Quiz',
+          centerTitle: false,
           leftButton: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black,
+              color: Colors.white,
               size: isWeb ? 28 : 20,
             ),
             onPressed: () => Navigator.of(context).pop(),

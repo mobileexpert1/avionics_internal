@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Helpers/Games/LockedGameCard.dart';
@@ -5,10 +6,15 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cu
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
+import '../../../../demoForGameQuiz.dart';
+import '../../../Profile/SettingScreen/SettingScreen.dart';
 import 'QuizQuestionScreen.dart';
 
 class QuizLockScreen extends StatefulWidget {
@@ -43,80 +49,174 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
       create: (_) => quizCubit,
       child: Scaffold(
         backgroundColor: Colors.white,
-
         appBar: CustomAppBar(
-          title: 'Quiz',
+          title: 'Aviation Quiz',
+          centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
+          rightButton: IconButton(
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+              width: 35,
+              height: 31,
+              fit: BoxFit.cover,
+            ),
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingScreen()),
+              );
+            },
+          ),
         ),
-
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1500),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: BlocBuilder<QuizCubit, OneWordTopicState>(
-                builder: (context, state) {
-                  if (state.isLoading) {
-                    return const Scaffold(
-                      backgroundColor: Colors.white,
-                      body: Center(child: CircularProgressIndicator()),
-                    );
-                  }
+            child: BlocBuilder<QuizCubit, OneWordTopicState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  if (state.errorMessage != null) {
-                    return Center(child: Text(state.errorMessage!));
-                  }
+                if (state.errorMessage != null) {
+                  return Center(child: Text(state.errorMessage!));
+                }
 
-                  if (state.games.isEmpty) {
-                    return const Center(child: Text("No games available."));
-                  }
+                if (state.games.isEmpty) {
+                  return const Center(child: Text("No games available."));
+                }
 
-                  return GridView.builder(
-                    itemCount: state.games.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: kIsWeb ? 4 : 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: kIsWeb ? 0.78 : 0.68,
+                return MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: SingleChildScrollView(
+                    child: Transform.translate(
+                      offset: Offset(0, -35),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(state.games.length, (index) {
+                          final game = state.games[index];
+                          return AtmosLayer(
+                            index: index,
+                            title: game.title,
+                            isLocked: game.isLocked,
+                            onTap: () {
+                              if (!game.isLocked) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => QuizQuestionScreen(
+                                      sectionId: game.gameNumber,
+                                      sectionTitle:
+                                          ConstantStrings.aviationQuizTitle,
+                                      gameId: "quiz",
+                                    ),
+                                  ),
+                                );
+
+                                AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.quizListLockButton,
+                                  FirebaseEvents.quizLockListScreen,
+                                );
+                              }
+                            },
+                          );
+                        }),
+                      ),
                     ),
-                    itemBuilder: (context, index) {
-                      final game = state.games[index];
-
-                      return LockGameCard(
-                        title: game.title,
-                        isLocked: game.isLocked,
-                        infoMessage: game.info,
-                        onTap: () {
-                          if (!game.isLocked) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => QuizQuestionScreen(
-                                  sectionId: game.gameNumber,
-                                  sectionTitle:
-                                      ConstantStrings.aviationQuizTitle,
-                                  gameId: "quiz",
-                                ),
-                              ),
-                            );
-
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.quizListLockButton,
-                              FirebaseEvents.quizLockListScreen,
-                            );
-                          }
-                        },
-                        onInfoTap: () {},
-                      );
-                    },
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+double getHeight(int index) {
+  switch (index) {
+    case 0:
+      return 130;
+    case 1:
+      return 130;
+    case 2:
+      return 135;
+    case 3:
+      return 120;
+    default:
+      return 120;
+  }
+}
+
+class AtmosLayer extends StatelessWidget {
+  final String title;
+  final bool isLocked;
+  final VoidCallback onTap;
+  final int index;
+
+  const AtmosLayer({
+    super.key,
+    required this.title,
+    required this.isLocked,
+    required this.onTap,
+    required this.index,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final assetName = AtmosphereAssets.getAsset(title);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        height: getHeight(index),
+        width: double.infinity,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+              child: SvgPicture.asset(
+                CommonUi.setSvgImage(assetName),
+                fit: BoxFit.contain,
+              ),
+            ),
+
+            Transform.translate(
+              offset: Offset(0, -30),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.semiRegular(
+                      16,
+                    ).copyWith(height: 1.0, color: AppColors.black),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      color: isLocked
+                          ? AppColors.grayLight
+                          : AppColors.primaryDark,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: isLocked ? Colors.black : Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

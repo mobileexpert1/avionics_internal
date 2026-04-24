@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -29,8 +30,8 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   // Debounce timer for purchase updates
   bool globalWebRedirectDone = false;
   Timer? _debounceTimer;
-  List<PurchaseDetails> _pendingPurchases = [];
   bool _notificationShown = false;
+  final Set<String> _processedTransactions = {};
   bool _isRestoring = false;
   final Set<String> _processedPurchaseIds = {};
 
@@ -146,11 +147,12 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       return;
     }
 
-    emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
+    emit(state.copyWith(loading: true));
 
     final purchaseParam = PurchaseParam(productDetails: product);
 
     try {
+      print(" ${product.id}");
       await _iap.buyNonConsumable(purchaseParam: purchaseParam);
     } on PlatformException catch (e) {
       final cancelled = e.code == 'storekit2_purchase_cancelled';
@@ -173,126 +175,92 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   // ---------------- PURCHASE STREAM (DEBOUNCED) ----------------
 
   void _onPurchaseUpdated(List<PurchaseDetails> purchases) {
-    _pendingPurchases.addAll(purchases);
-
     _debounceTimer?.cancel();
+
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
-      final pending = [..._pendingPurchases];
-      _pendingPurchases.clear();
+      if (purchases.isEmpty) return;
 
-      final Map<String, PurchaseDetails> uniquePurchases = {};
+      // pick latest transaction
+      final latest = purchases
+          .where((p) => p.status == PurchaseStatus.purchased)
+          .toList()
+          .last;
 
-      for (final p in pending) {
-        final key = p.purchaseID ?? p.verificationData.serverVerificationData;
+      final token = latest.verificationData.serverVerificationData;
 
-        uniquePurchases[key] = p;
+      final decoded = decodeJwt(token);
+
+      final transactionId = decoded['transactionId'];
+      final expiresDate = decoded['expiresDate'];
+
+      print("Latest Transaction ID: $transactionId");
+
+      // avoid duplicate processing
+      if (_processedPurchaseIds.contains(transactionId)) {
+        print("Already processed");
+        return;
       }
 
-      for (final purchase in uniquePurchases.values) {
-        final purchaseKey =
-            purchase.purchaseID ??
-            purchase.verificationData.serverVerificationData;
+      _processedPurchaseIds.add(transactionId);
 
-        if (!_isRestoring && _processedPurchaseIds.contains(purchaseKey)) {
-          continue;
-        }
+      print("Purchase Event -> ${latest.productID} | ${latest.status}");
 
-        _processedPurchaseIds.add(purchaseKey);
+      switch (latest.status) {
+        case PurchaseStatus.purchased:
+        case PurchaseStatus.restored:
+          await _handlePurchase(latest, decoded);
+          break;
 
-        print(
-          "Purchase Event -> ${purchase.productID} | ${purchase.status} | $purchaseKey",
-        );
+        case PurchaseStatus.pending:
+          emit(state.copyWith(loading: true));
+          break;
 
-        switch (purchase.status) {
-          case PurchaseStatus.purchased:
-            await _handleSuccess(purchase, purchaseKey);
-            break;
+        case PurchaseStatus.error:
+          emit(
+            state.copyWith(
+              loading: false,
+              error: latest.error?.message ?? "Purchase failed",
+            ),
+          );
+          break;
 
-          case PurchaseStatus.restored:
-            await _handleRestore(purchase, purchaseKey);
-            break;
-
-          case PurchaseStatus.pending:
-            emit(
-              state.copyWith(loading: true, status: CommonApiStatus.initial),
-            );
-            break;
-
-          case PurchaseStatus.error:
-            emit(
-              state.copyWith(
-                loading: false,
-                error: purchase.error?.message ?? "Purchase failed",
-              ),
-            );
-            break;
-
-          case PurchaseStatus.canceled:
-            emit(state.copyWith(loading: false, error: "Purchase cancelled"));
-            break;
-        }
+        case PurchaseStatus.canceled:
+          emit(state.copyWith(loading: false, error: "Purchase cancelled"));
+          break;
       }
     });
   }
 
-  Future<void> _handleRestore(
+  Future<void> _handlePurchase(
     PurchaseDetails purchase,
-    String purchaseKey,
+    Map<String, dynamic> decoded,
   ) async {
-    try {
-      if (purchase.pendingCompletePurchase) {
-        await _iap.completePurchase(purchase);
-      }
+    final transactionId = decoded['transactionId'];
 
-      if (state.subscription?.status == "active") {
-        emit(
-          state.copyWith(
-            purchased: true,
-            loading: false,
-            status: CommonApiStatus.success,
-            activeProductId: purchase.productID,
-          ),
-        );
-        return;
-      }
-
-      await AppleSubscriptionRepository().postSubscriptionApi(
-        token: purchase.verificationData.serverVerificationData,
-        selectedSubscritionId: purchase.productID,
-        platform: Platform.isIOS ? "ios" : "android",
-        packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
-      );
-
-      final backendResponse = await AppleSubscriptionRepository()
-          .getSubscriptionDetails();
-
-      emit(
-        state.copyWith(
-          purchased: backendResponse.data?.status == "active",
-          loading: false,
-          status: CommonApiStatus.success,
-          activeProductId: purchase.productID,
-          subscription: backendResponse.data,
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(loading: false, error: "Restore failed: $e"));
+    // 🔥 STOP DUPLICATE PROCESSING
+    if (_processedTransactions.contains(transactionId)) {
+      print("Duplicate transaction ignored: $transactionId");
+      return;
     }
-  }
 
-  // ---------------- SUCCESS HANDLING ----------------
-  Future<void> _handleSuccess(
-    PurchaseDetails purchase,
-    String purchaseKey,
-  ) async {
+    _processedTransactions.add(transactionId);
+
     try {
+      final token = purchase.verificationData.serverVerificationData;
+
+      final expiresDate = decoded['expiresDate'];
+      final productId = decoded['productId'];
+
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final isActive = expiresDate > now;
+
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
       }
 
       await AppleSubscriptionRepository().postSubscriptionApi(
-        token: purchase.verificationData.serverVerificationData,
-        selectedSubscritionId: purchase.productID,
+        token: token,
+        selectedSubscriptionId: purchase.productID,
         platform: Platform.isIOS ? "ios" : "android",
         packageName: Platform.isAndroid ? "com.avioflai.aviation" : "",
       );
@@ -300,18 +268,9 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       final backendResponse = await AppleSubscriptionRepository()
           .getSubscriptionDetails();
 
-      final resolvedProductId = _resolveActiveProductId(
-        appleProductId: purchase.productID,
-        backendSubscription: backendResponse.data,
-      );
-
-      if (!_notificationShown && !kIsWeb) {
-        _notificationShown = true;
-        LocalNotificationHelper.show(
-          title: "Subscription Active",
-          body: "All premium features are unlocked",
-          screenName: "profileSS",
-        );
+      if (backendResponse.data?.status == "expired") {
+        _processedTransactions.clear();
+        _processedPurchaseIds.clear();
       }
 
       emit(
@@ -319,7 +278,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
           purchased: backendResponse.data?.status == "active",
           loading: false,
           status: CommonApiStatus.success,
-          activeProductId: resolvedProductId,
+          activeProductId: productId,
           subscription: backendResponse.data,
         ),
       );
@@ -331,17 +290,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         ),
       );
     }
-  }
-
-  String _resolveActiveProductId({
-    String? appleProductId,
-    SubscriptionData? backendSubscription,
-  }) {
-    if (backendSubscription?.productId != null &&
-        backendSubscription!.productId.isNotEmpty) {
-      return backendSubscription.productId;
-    }
-    return appleProductId ?? "";
   }
 
   // ---------------- RESTORE ----------------
@@ -359,7 +307,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
           emit(state.copyWith(loading: false));
         }
       });
-
     } catch (e) {
       _isRestoring = false;
 
@@ -479,4 +426,23 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     _debounceTimer?.cancel();
     return super.close();
   }
+}
+
+Map<String, dynamic> decodeJwt(String token) {
+  final parts = token.split('.');
+
+  if (parts.length != 3) {
+    throw Exception('Invalid token');
+  }
+
+  final payload = parts[1];
+  final normalized = base64Url.normalize(payload);
+  final decodedBytes = base64Url.decode(normalized);
+  final decodedString = utf8.decode(decodedBytes);
+  return jsonDecode(decodedString);
+}
+
+String formatDate(int millis) {
+  final date = DateTime.fromMillisecondsSinceEpoch(millis);
+  return date.toLocal().toString();
 }
