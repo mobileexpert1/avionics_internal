@@ -84,11 +84,6 @@ class QuizQuestionRepository {
     int gameNumber,
     int actionNumber,
   ) async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
-
     // Validate gameNumber
     if (!gameNoAssign.containsKey(gameNumber)) {
       throw "Invalid game number: $gameNumber";
@@ -145,10 +140,6 @@ class QuizQuestionRepository {
     int gameNumber,
     int actionNumber,
   ) async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlGamesConstant.oneWordQuestions}"
@@ -219,6 +210,9 @@ class QuizQuestionRepository {
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
       print("Fetched Data From Server$jsonData");
+      if (jsonData['empty'] == true) {
+        return null;
+      }
       return CalculationGameModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();

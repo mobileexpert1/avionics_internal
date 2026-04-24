@@ -64,15 +64,19 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
 
       if (gameData == null || gameData.categoryTypes.isEmpty) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: 'No questions available from API',
-          ),
+        AppSnackBar.custom(
+          context,
+          message:
+              'No questions available from API. Please wait while more questions are loading. Try again later.',
+          svgAsset: '',
         );
+        Future.delayed(const Duration(seconds: 4), () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        });
         return;
       }
-
 
       // Map initial questions by category name
       final Map<String, List<QuizQuestion>> categorizedQuestions = {};
@@ -199,9 +203,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   List<QuizQuestion> _bufferedQuestions = [];
 
   Future<void> _fetchAndBufferBackgroundQuestions(
-      int sectionId,
-      BuildContext context,
-      ) async {
+    int sectionId,
+    BuildContext context,
+  ) async {
     for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
       if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
         break;
@@ -254,9 +258,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   Future<void> appendQuestionsSilently(
-      CalculationGameModel additionalData,
-      BuildContext context,
-      ) async {
+    CalculationGameModel additionalData,
+    BuildContext context,
+  ) async {
     if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
       return;
     }
@@ -265,14 +269,14 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         .expand((category) => category.questions)
         .map(
           (q) => _mapQuestion(
-        q,
-        additionalData.setId,
-        additionalData.imageBasedId,
-      ),
-    )
+            q,
+            additionalData.setId,
+            additionalData.imageBasedId,
+          ),
+        )
         .take(
-      maxQuestions - (state.questions.length + _bufferedQuestions.length),
-    )
+          maxQuestions - (state.questions.length + _bufferedQuestions.length),
+        )
         .toList()
         .cast<QuizQuestion>();
 

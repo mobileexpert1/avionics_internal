@@ -21,8 +21,6 @@ class CreditManager {
 
     totalToken = plan.totalToken + 100;
     tokenUsage = plan.tokenUsage;
-
-    expiryDate = plan.expiryDate;
     print(
       "totalCredit-=-=-= $totalCredit,creditUsage-=-=-=- $creditUsage totalToken-=-=-= $totalToken,tokenUsage-=-=-=- $tokenUsage",
     );
@@ -38,11 +36,6 @@ class CreditManager {
     return value < 0 ? 0 : value;
   }
 
-  bool get isExpired {
-    if (expiryDate == null) return false;
-    return DateTime.now().isAfter(expiryDate!);
-  }
-
   bool get isCreditFinished => remainingCredit <= 0;
 
   Future<bool> tryUseCredit({
@@ -50,13 +43,7 @@ class CreditManager {
     required bool isComeFromTabbar,
     required Future<void> Function(String message) onError,
   }) async {
-    print("isExpired: $isExpired");
     print("remainingCredit: $remainingCredit");
-
-    if (isExpired) {
-      await onError("Plan expired. Please renew subscription.");
-      return false;
-    }
 
     if (remainingCredit <= 0) {
       await onError("Credits finished. Please buy subscription.");

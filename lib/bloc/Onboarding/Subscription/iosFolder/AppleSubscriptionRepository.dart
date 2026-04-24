@@ -46,6 +46,32 @@ class AppleSubscriptionRepository {
         print("Purchase Date => ${formatDate(purchaseDate)}");
       }
 
+
+      int? expiry1 = decoded['expiresDate'] is int
+          ? decoded['expiresDate']
+          : int.tryParse(decoded['expiresDate'].toString());
+
+      int? purchaseDate1 = decoded['purchaseDate'] is int
+          ? decoded['purchaseDate']
+          : int.tryParse(decoded['purchaseDate'].toString());
+
+      if (expiry1 != null) {
+        final expiryDate1 = DateTime
+            .fromMillisecondsSinceEpoch(expiry1, isUtc: true)
+            .toLocal(); // ✅ IST
+
+        print("IST Expiry Date => $expiryDate1");
+      }
+
+      if (purchaseDate1 != null) {
+        final purchase1 = DateTime
+            .fromMillisecondsSinceEpoch(purchaseDate1, isUtc: true)
+            .toLocal(); // ✅ IST
+
+        print("IST Purchase Date => $purchase1");
+      }
+
+
       print("TransactionId => ${decoded['transactionId']}");
       print("OriginalTransactionId => ${decoded['originalTransactionId']}");
       print("Environment => ${decoded['environment']}");

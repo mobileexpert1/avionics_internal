@@ -6,7 +6,9 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomDivider.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
@@ -127,8 +129,7 @@ class FlightDetailCard extends StatelessWidget {
               elevation: 10,
               margin: EdgeInsets.zero,
               child: Padding(
-                // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                padding: const EdgeInsets.fromLTRB(20, 35, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 25, 20, 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,41 +148,41 @@ class FlightDetailCard extends StatelessWidget {
                                 children: [
                                   ConstrainedBox(
                                     constraints: const BoxConstraints(
-                                      maxWidth: 220, // prevents touching logo
+                                      maxWidth: 220,
                                     ),
                                     child: Text(
-                                      aircraftType,
+                                      "A320-200",
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF3F3D56),
+                                      style: AppTextStyles.bold(24).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.primaryValueColour,
                                       ),
                                     ),
                                   ),
+                                  SizedBox(width: 20),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
+                                      horizontal: 10,
+                                      vertical: 5,
                                     ),
                                     decoration: BoxDecoration(
+                                      color: AppColors.primaryBlue,
                                       border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Text(
                                       category,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF3F3D56),
+                                      style: AppTextStyles.regular(12).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.white,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
 
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 20),
                               Wrap(
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 spacing: 8,
@@ -194,102 +195,53 @@ class FlightDetailCard extends StatelessWidget {
                                             CommonUi.setSvgImage(
                                               AssetsPath.manufacturer,
                                             ),
-                                            width: 22,
-                                            height: 16,
+                                            width: 25,
+                                            height: 19,
                                             fit: BoxFit.fill,
                                           )
                                         : CachedAnyImage(
                                             imagePath: manufacturerLogo,
-                                            width: 22,
-                                            height: 16,
+                                            width: 25,
+                                            height: 19,
                                             contentImage: BoxFit.contain,
                                             useCache: false,
                                           ),
                                   ),
+
                                   Text(
                                     manufacturer,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Color(0xFF3F3D56),
-                                      fontWeight: FontWeight.w700,
+                                    style: AppTextStyles.semiBold(14).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.primaryValueColour,
                                     ),
                                   ),
+
+                                  SizedBox(width: 5),
 
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      // CallSign Box
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 18,
-                                          vertical: 3,
+                                          horizontal: 10,
+                                          vertical: 7,
                                         ),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFF3F3D56),
                                           borderRadius: BorderRadius.circular(
-                                            4,
+                                            15,
                                           ),
                                         ),
                                         child: Text(
                                           callSign,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                          ),
+                                          style: AppTextStyles.regular(12)
+                                              .copyWith(
+                                                height: 1.0,
+                                                color: AppColors.white,
+                                              ),
                                         ),
                                       ),
                                       const SizedBox(width: 10),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(6),
-                                        onTap: () {
-                                          if (isComeFromLiveTracking == true) {
-                                            context
-                                                .read<FlightMapCubit>()
-                                                .stopTrackingFlight();
-                                            Navigator.pop(context, flightId);
-                                          } else {
-                                            AnalyticsService.instance
-                                                .buttonPressed(
-                                                  FirebaseEvents
-                                                      .trackAFlightButton,
-                                                  FirebaseEvents.trackScreen,
-                                                );
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    BlocProvider.value(
-                                                      value: context
-                                                          .read<
-                                                            FlightMapCubit
-                                                          >(),
-                                                      child: TrackFlightScreen(
-                                                        flightNumber:
-                                                            flightNumber,
-                                                        initialFlight:
-                                                            selectedFlight,
-                                                        initialFlightDetail:
-                                                            detail,
-                                                        flightId: flightId,
-                                                      ),
-                                                    ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4),
-                                          child: state.isTracking
-                                              ? const LiveBadge()
-                                              : const Icon(
-                                                  Icons.my_location,
-                                                  color: Colors.blue,
-                                                  size: 20,
-                                                ),
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ],
@@ -298,8 +250,98 @@ class FlightDetailCard extends StatelessWidget {
                           ),
                         ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+                            Row(
+                              children: [
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(6),
+                                  onTap: () {
+                                    if (isComeFromLiveTracking == true) {
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .stopTrackingFlight();
+                                      Navigator.pop(context, flightId);
+                                    } else {
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.trackAFlightButton,
+                                        FirebaseEvents.trackScreen,
+                                      );
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider.value(
+                                            value: context
+                                                .read<FlightMapCubit>(),
+                                            child: TrackFlightScreen(
+                                              flightNumber: flightNumber,
+                                              initialFlight: selectedFlight,
+                                              initialFlightDetail: detail,
+                                              flightId: flightId,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: state.isTracking
+                                        ? const LiveBadge()
+                                        : const Icon(
+                                            Icons.my_location,
+                                            color: Colors.blue,
+                                            size: 20,
+                                          ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(6),
+                                  onTap: () {
+                                    if (isComeFromLiveTracking == true) {
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .stopTrackingFlight();
+                                      Navigator.pop(context, flightId);
+                                    } else {
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.trackAFlightButton,
+                                        FirebaseEvents.trackScreen,
+                                      );
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => BlocProvider.value(
+                                            value: context
+                                                .read<FlightMapCubit>(),
+                                            child: TrackFlightScreen(
+                                              flightNumber: flightNumber,
+                                              initialFlight: selectedFlight,
+                                              initialFlightDetail: detail,
+                                              flightId: flightId,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: state.isTracking
+                                        ? const LiveBadge()
+                                        : const Icon(
+                                            Icons.my_location,
+                                            color: Colors.blue,
+                                            size: 20,
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(6),
                               child: airlineLogo.isEmpty
@@ -314,34 +356,49 @@ class FlightDetailCard extends StatelessWidget {
                                   : CachedAnyImage(
                                       imagePath: airlineLogo,
                                       width: 100,
-                                      height: 20,
+                                      height: 30,
                                       contentImage: BoxFit.contain,
                                       useCache: false,
                                     ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              airlineName,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Color(0xFF3F3D56),
-                                fontWeight: FontWeight.w700,
-                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    const CustomDivider(height: 1.0),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
+                    const CustomDivider(height: 0.5),
+                    const SizedBox(height: 8),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           flex: 2,
-                          child: Text(
-                            "$departureCity\n$departureIata\n$timeSinceTakeoff",
-                            style: const TextStyle(fontSize: 13),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "$departureCity\n",
+                                  style: AppTextStyles.semiRegular(16).copyWith(
+                                    height: 1.2,
+                                    color: AppColors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "$departureIata\n",
+                                  style: AppTextStyles.bold(20).copyWith(
+                                    height: 1.4,
+                                    color: AppColors.primaryValueColour,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: timeSinceTakeoff,
+                                  style: AppTextStyles.semiRegular(14).copyWith(
+                                    height: 1.6,
+                                    color: AppColors.grayMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Expanded(
@@ -366,9 +423,9 @@ class FlightDetailCard extends StatelessWidget {
                                           : '$groundSpeed km/h',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w400,
+                                      style: AppTextStyles.regular(14).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.primaryBlue,
                                       ),
                                     ),
                                   ),
@@ -383,9 +440,9 @@ class FlightDetailCard extends StatelessWidget {
                                       altitude == 0 ? 'N/A' : '$altitude m',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w500,
+                                      style: AppTextStyles.regular(14).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.primaryBlue,
                                       ),
                                     ),
                                   ),
@@ -396,109 +453,118 @@ class FlightDetailCard extends StatelessWidget {
                         ),
                         Expanded(
                           flex: 2,
-                          child: Text(
-                            "$arrivalCity\n$arrivalIata\n$timeToArrival",
-                            style: const TextStyle(fontSize: 13),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "$arrivalCity\n",
+                                  style: AppTextStyles.semiRegular(16).copyWith(
+                                    height: 1.2,
+                                    color: AppColors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "$arrivalIata\n",
+                                  style: AppTextStyles.bold(20).copyWith(
+                                    height: 1.4,
+                                    color: AppColors.primaryValueColour,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: timeToArrival,
+                                  style: AppTextStyles.semiRegular(14).copyWith(
+                                    height: 1.6,
+                                    color: AppColors.grayMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
                             textAlign: TextAlign.right,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.grey.shade300,
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            final combinedDetail = detail?.copyWith(
-                              latitude:
-                                  (detail?.latitude != null &&
-                                      detail!.latitude != 0.0)
-                                  ? detail.latitude
-                                  : selectedFlight?.latitude,
-                              longitude:
-                                  (detail?.longitude != null &&
-                                      detail!.longitude != 0.0)
-                                  ? detail.longitude
-                                  : selectedFlight?.longitude,
-                              groundSpeed:
-                                  detail?.groundSpeed ??
-                                  selectedFlight?.groundSpeed,
-                              altitude:
-                                  detail?.altitude ?? selectedFlight?.altitude,
-                              takeoffTime:
-                                  detail?.takeoffTime ??
-                                  selectedFlight?.takeoffTime,
-                              eta: detail?.eta ?? selectedFlight?.eta,
-                              flightNumber:
-                                  detail?.flightNumber ??
-                                  selectedFlight?.flightNumber,
-                              registration:
-                                  detail?.registration ??
-                                  selectedFlight?.registration,
-                              callsign:
-                                  detail?.callsign ?? selectedFlight?.callSign,
-                              track: detail?.track ?? selectedFlight?.track,
-                              vspeed:
-                                  detail?.vspeed ??
-                                  selectedFlight?.verticalSpeed,
-                              source: detail?.source ?? selectedFlight?.source,
-                              squawk: detail?.squawk ?? selectedFlight?.squawk,
-                              flightTime:
-                                  detail?.flightTime ??
-                                  selectedFlight?.flightTime,
-                            );
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          final combinedDetail = detail?.copyWith(
+                            latitude:
+                                (detail?.latitude != null &&
+                                    detail!.latitude != 0.0)
+                                ? detail.latitude
+                                : selectedFlight?.latitude,
+                            longitude:
+                                (detail?.longitude != null &&
+                                    detail!.longitude != 0.0)
+                                ? detail.longitude
+                                : selectedFlight?.longitude,
+                            groundSpeed:
+                                detail?.groundSpeed ??
+                                selectedFlight?.groundSpeed,
+                            altitude:
+                                detail?.altitude ?? selectedFlight?.altitude,
+                            takeoffTime:
+                                detail?.takeoffTime ??
+                                selectedFlight?.takeoffTime,
+                            eta: detail?.eta ?? selectedFlight?.eta,
+                            flightNumber:
+                                detail?.flightNumber ??
+                                selectedFlight?.flightNumber,
+                            registration:
+                                detail?.registration ??
+                                selectedFlight?.registration,
+                            callsign:
+                                detail?.callsign ?? selectedFlight?.callSign,
+                            track: detail?.track ?? selectedFlight?.track,
+                            vspeed:
+                                detail?.vspeed ?? selectedFlight?.verticalSpeed,
+                            source: detail?.source ?? selectedFlight?.source,
+                            squawk: detail?.squawk ?? selectedFlight?.squawk,
+                            flightTime:
+                                detail?.flightTime ??
+                                selectedFlight?.flightTime,
+                          );
 
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.flightDetailScreen,
-                              FirebaseEvents.trackScreen,
-                            );
+                          AnalyticsService.instance.buttonPressed(
+                            FirebaseEvents.flightDetailScreen,
+                            FirebaseEvents.trackScreen,
+                          );
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<FlightMapCubit>(),
-                                  child: FlightDetailScreen(
-                                    ICAOType: category,
-                                    flightDetail: combinedDetail,
-                                  ),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: context.read<FlightMapCubit>(),
+                                child: FlightDetailScreen(
+                                  ICAOType: category,
+                                  flightDetail: combinedDetail,
                                 ),
                               ),
-                            );
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  "View Details",
-                                  style: TextStyle(
-                                    color: Color(0xFF3F3D56),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 14,
-                                  color: Color(0xFF3F3D56),
-                                ),
-                              ],
                             ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "View Details",
+                                style: AppTextStyles.bold(18).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.primaryValueColour,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 15,
+                                color: AppColors.primaryValueColour,
+                              ),
+                            ],
                           ),
                         ),
                       ),
