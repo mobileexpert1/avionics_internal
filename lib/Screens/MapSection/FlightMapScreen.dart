@@ -57,6 +57,9 @@ class FlightMapScreen extends StatefulWidget {
 class _FlightMapscreenState extends State<FlightMapScreen> {
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
 
+  BoxConstraints? firstTimeConstraints;
+  bool? isFirstTimeUserCome = true;
+
   Timer? _debounce;
   int _activeCard = 0;
 
@@ -339,7 +342,10 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 onCameraIdle: () {
                                   if (!_isUserInteractingWithMap) return;
                                   _isUserInteractingWithMap = false;
-                                  _fetchFlightsWithDebounce(constraints);
+                                  firstTimeConstraints = constraints;
+                                  if (isFirstTimeUserCome == false) {
+                                    _fetchFlightsWithDebounce(constraints);
+                                  }
                                 },
 
                                 onCameraMoveStarted: () {
@@ -502,6 +508,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             });
             _resetFlightSelection();
             Navigator.pop(context);
+
+            if (isFirstTimeUserCome == true) {
+              isFirstTimeUserCome = false;
+              _fetchFlightsWithDebounce(firstTimeConstraints!);
+            }
           },
           onTrackSelected: () {
             setState(() {
@@ -1217,7 +1228,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         enableGestureMode: true,
         onTextTap: () => _handleTextTap(context),
         enableBackArrow: false,
-        // onBackButtonTap: () => _showInitialTrackingModePopup(context),
         onBackButtonTap: () {
           if (widget.skipInitialPopup && widget.openMode != null) {
             widget.onGoToFirstTab();

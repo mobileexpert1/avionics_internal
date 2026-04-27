@@ -22,7 +22,6 @@ class CustomSliderSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// Value Badge (right aligned)
         Align(
           alignment: Alignment.centerRight,
           child: Container(
@@ -42,17 +41,20 @@ class CustomSliderSection extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 10),
-
-        /// SLIDER (styled like screenshot)
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            trackHeight: 4,
-            inactiveTrackColor: Colors.grey.shade300,
-            activeTrackColor: const Color(0xFF3E7BFA),
-            thumbColor: const Color(0xFF3E7BFA),
+            trackHeight: 3,
+            activeTrackColor: const Color(0xFF4A90E2),
+            inactiveTrackColor: const Color(0xFFE0E0E0),
+            thumbColor: const Color(0xFF4A90E2),
             overlayColor: Colors.transparent,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+            thumbShape: const RoundSliderThumbShape(
+              enabledThumbRadius: 8, // small dot
+              elevation: 0,
+              pressedElevation: 0,
+            ),
+            overlayShape: SliderComponentShape.noOverlay,
+            trackShape: const RoundedRectSliderTrackShape(),
           ),
           child: Slider(value: value, min: min, max: max, onChanged: onChanged),
         ),
