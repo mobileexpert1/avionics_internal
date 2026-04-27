@@ -172,9 +172,7 @@ class LoginCubit extends Cubit<LoginState> {
         final accessToken = result.accessToken!;
         backendToken = accessToken.token;
         debugPrint('MOBILE → Facebook Access Token: $backendToken');
-        final credential = FacebookAuthProvider.credential(
-          accessToken.token,
-        );
+        final credential = FacebookAuthProvider.credential(accessToken.token);
         userCredential = await _auth.signInWithCredential(credential);
       }
 
@@ -306,12 +304,23 @@ class LoginCubit extends Cubit<LoginState> {
     BuildContext context,
     LoginResponseModel result,
   ) async {
+
     if (!context.mounted) return;
 
     if (result.userDetails != null) {
       await SharedPrefsHelper.setAvtarUserType(
         result.userDetails?.userType ?? '',
       );
+
+      await SharedPrefsHelper.setAvtarUserUrl(
+        result.userDetails?.userTypeUrl ?? '',
+      );
+
+      await SharedPrefsHelper.setUserProfileName(
+        '${result.userDetails?.firstName ?? ''} ${result.userDetails?.lastName ?? ''}'
+            .trim(),
+      );
+
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);

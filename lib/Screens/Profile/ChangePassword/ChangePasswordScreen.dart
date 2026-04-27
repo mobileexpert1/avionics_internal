@@ -59,8 +59,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title: ConstantStrings.changePassword,
+                  centerTitle: false,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -155,8 +156,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     ),
                                     title: ConstantStrings.saveTitle,
                                     backgroundColor: isButtonEnabled
-                                        ? AppColors.customBottomEnabledColour
-                                        : AppColors.customBottomDisableColour,
+                                        ? AppColors.primaryValueColour
+                                        : AppColors.darkSeparatorColourAppBar,
                                     textColor: Colors.white,
                                     icon: const SizedBox(width: 0),
                                     isEnabled: isButtonEnabled,

@@ -8,8 +8,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
+import '../../../Onboarding/Subscription/SubscriptionScreen.dart';
 import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {
@@ -38,15 +40,19 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   late stt.SpeechToText _speech;
   bool _isListening = false;
   Timer? _speechTimeoutTimer;
+  late ChatCubit cubit;
+  bool isReceivedTokenFullWarning = false;
 
   @override
   void initState() {
     super.initState();
+
     _speech = stt.SpeechToText();
 
     _controller.addListener(() {
       setState(() {});
     });
+
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.askChatScreen);
   }
 
@@ -149,6 +155,17 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           existingSessionId: widget.sessionId,
         );
         _listenToInternet(cubit);
+
+        cubit.onSessionExpired = () {
+          isReceivedTokenFullWarning = true;
+
+          AlertHelperForSubsPopup.showSubscriptionEndAlert(
+            context: context,
+            title: "Session Expired",
+            message: "Your session has expired or limit exceeded.",
+            navigateTo: SubscriptionScreen(),
+          );
+        };
         return cubit;
       },
       child: Scaffold(
@@ -160,7 +177,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               : IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios_new,
-                    color: Color(0xFF32377D),
+                    color: Colors.white,
                   ),
                   onPressed: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -371,11 +388,15 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                           final cubit = context.read<ChatCubit>();
 
                           final isAnalyzing = cubit.state.any(
-                                (msg) => msg['type'] == 'analyzing',
+                            (msg) => msg['type'] == 'analyzing',
                           );
 
                           if (!isAnalyzing) {
-                            cubit.sendMessage(text);
+                            cubit.sendMessage(
+                              text,
+                              context,
+                              isReceivedTokenFullWarning,
+                            );
                             _controller.clear();
                             _stopListening(context);
                             _scrollToBottom();
@@ -417,10 +438,13 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                     context.read<ChatCubit>().stopResponse();
                                     return;
                                   }
-
                                   final text = _controller.text.trim();
                                   if (text.isNotEmpty) {
-                                    context.read<ChatCubit>().sendMessage(text);
+                                    context.read<ChatCubit>().sendMessage(
+                                      text,
+                                      context,
+                                      isReceivedTokenFullWarning,
+                                    );
                                     _controller.clear();
                                     _scrollToBottom();
                                     AnalyticsService.instance.buttonPressed(

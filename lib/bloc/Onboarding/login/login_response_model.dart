@@ -44,6 +44,7 @@ class UserDetails extends BaseModel {
   final String professionalRole;
   final String experienceLevel;
   final String userType;
+  final String userTypeUrl;
   final String authType;
   final bool isActive;
   final bool isActiveSubscription;
@@ -57,6 +58,7 @@ class UserDetails extends BaseModel {
     required this.professionalRole,
     required this.experienceLevel,
     required this.userType,
+    required this.userTypeUrl,
     required this.authType,
     required this.isActive,
     required this.isActiveSubscription,
@@ -71,6 +73,7 @@ class UserDetails extends BaseModel {
     professionalRole: json['professional_role'] ?? '',
     experienceLevel: json['experience_level'] ?? '',
     userType: json['user_type'] ?? '',
+    userTypeUrl: json['user_type_url'] ?? '',
     authType: json['auth_type'] ?? '',
     isActive: json['is_active'] ?? false,
     isActiveSubscription: json['is_active_subscription'] ?? false,
@@ -86,6 +89,7 @@ class UserDetails extends BaseModel {
     'professional_role': professionalRole,
     'experience_level': experienceLevel,
     'user_type': userType,
+    'user_type_url': userTypeUrl,
     'auth_type': authType,
     'is_active': isActive ? 1 : 0,
     'is_active_subscription': isActiveSubscription ? 1 : 0,
@@ -97,6 +101,3 @@ class UserDetails extends BaseModel {
   @override
   String get table => 'user_details';
 }
-
-
-

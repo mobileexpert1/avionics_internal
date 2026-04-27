@@ -39,7 +39,7 @@ String mapStatusCode(dynamic error) {
   final errorString = error.toString();
 
   if (errorString.contains("400")) {
-    return "Invalid request. Please try again.";
+    return errorString.replaceAll("400", "");
   }
 
   if (errorString.contains("401")) {

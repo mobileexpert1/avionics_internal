@@ -70,6 +70,7 @@ class ConstantStrings {
       'Enter the 4-digit OTP sent to your registered email.';
   static const String continueText = 'Continue';
   static const String goBack = 'Go Back';
+  static const String settingScreen = 'Settings';
 
   // ─────────────────────────────
   // Labels / Form Fields
@@ -86,7 +87,7 @@ class ConstantStrings {
   static const String saveTitle = 'Save';
   static const String exploring = 'Start Exploring';
   static const String contactSupport = 'Contact Support';
-  static const String reviewTitle = 'Review';
+  static const String reviewTitle = 'Your Feedback';
 
   // ─────────────────────────────
   // Section Titles
@@ -302,9 +303,9 @@ class MapFlightAircraftSectionConstant {
   static String baseUrl = "https://fr24api.flightradar24.com/api/live";
   static String baseUrlDetail =
       "https://fr24api.flightradar24.com/api/flight-summary/full";
-  static String baseUrlSearch =
-      "https://www.flightradar24.com/v1/search/web/find?query=";
-  static String baseUrlForFlightPosition =
-      "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
+   static String baseUrlSearch =
+       "https://www.flightradar24.com/v1/search/web/find?query=";
+   static String baseUrlForFlightPosition =
+       "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
 }
 

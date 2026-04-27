@@ -143,8 +143,8 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                               ),
                               title: ConstantStrings.resetPassword,
                               backgroundColor: isButtonEnabled
-                                  ? AppColors.customBottomEnabledColour
-                                  : AppColors.customBottomDisableColour,
+                                  ? AppColors.primaryValueColour
+                                  : AppColors.darkSeparatorColourAppBar,
                               textColor: Colors.white,
                               icon: const SizedBox(width: 0),
                               isEnabled: isButtonEnabled,

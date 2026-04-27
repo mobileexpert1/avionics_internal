@@ -2,15 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
+import '../../../Profile/SettingScreen/SettingScreen.dart';
 import '../AirCraftSection/AirCraftDetailScreen.dart';
 
 class AllPlanesListScreen extends StatefulWidget {
@@ -42,7 +47,9 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
         context: context,
       );
     });
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.airCraftDetailScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.airCraftDetailScreen,
+    );
   }
 
   void _onScroll() {
@@ -68,6 +75,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
       selectedAirbusId: widget.selectedAirbusId,
     );
   }
+
   String normalizeWikiImage(String url) {
     if (!url.contains('upload.wikimedia.org')) return url;
 
@@ -78,9 +86,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    double titleFontSize = kIsWeb ? screenWidth * 0.02 : 18;
-    double bodyFontSize = kIsWeb ? screenWidth * 0.015 : 16;
     double paddingHorizontal = kIsWeb ? screenWidth * 0.02 : 20;
 
     // card height for web
@@ -91,25 +96,27 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SearchBarWidget(
-                enableBackArrow: true,
-                enableFilter: false,
-                enableCloseScreen: false,
-                controller: searchController,
-                onChanged: _onSearch,
-                searchTitle: 'Search ${widget.manufacturerName} Models',
-                onBackButtonTap: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
+      appBar: CustomAppBar(
+        title: "All ${widget.manufacturerName} Models",
+        //'Search ${widget.manufacturerName} Models',
+        centerTitle: false,
+        leftButton: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        rightButton: IconButton(
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+            width: 35,
+            height: 31,
+            fit: BoxFit.cover,
           ),
+          onPressed: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingScreen()),
+            );
+          },
         ),
       ),
       body: SafeArea(
@@ -118,17 +125,34 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             constraints: const BoxConstraints(maxWidth: 1500),
             child: Column(
               children: [
-                SizedBox(height: kIsWeb ? 15 : 10),
+                PreferredSize(
+                  preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SearchBarWidget(
+                          enableBackArrow: false,
+                          enableFilter: false,
+                          enableCloseScreen: false,
+                          controller: searchController,
+                          onChanged: _onSearch,
+                          searchTitle:
+                              'Search ${widget.manufacturerName} Models',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'All ${widget.manufacturerName} Models',
-                      style: TextStyle(
-                        fontSize: titleFontSize,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      style: AppTextStyles.bold(20).copyWith(
+                        height: 1.0,
+                        color: AppColors.primaryValueColour,
                       ),
                     ),
                   ),
@@ -159,66 +183,91 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                         itemCount: state.listoFAircraftModels.length,
                         itemBuilder: (context, index) {
                           final model = state.listoFAircraftModels[index];
-                          double cardHorizontalPadding =
-                          kIsWeb ? screenWidth * 0.02 : 30;
 
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: kIsWeb ? 8 : 10,
-                              horizontal: cardHorizontalPadding,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Stack(
                               children: [
                                 Positioned.fill(
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: AppColors.saveButtonColour,
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    alignment: Alignment.centerRight,
-                                    padding: const EdgeInsets.only(right: 13),
-                                    child: Icon(
-                                      Icons.bookmark,
-                                      color: (model.isSaved == true
-                                          ? Colors.black
-                                          : Colors.white),
-                                      size: kIsWeb ? 22 : 25,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          child: CachedAnyImage(
+                                            imagePath: model.image,
+                                            contentImage: BoxFit.cover,
+                                            isForPlaneList: true,
+                                            width: imageWidth,
+                                            height: imageHeight,
+                                          ),
+                                        ),
+
+                                        const Spacer(),
+
+                                        Icon(
+                                          Icons.bookmark,
+                                          color: model.isSaved
+                                              ? Colors.black
+                                              : Colors.white,
+                                          size: 26,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
+
                                 Slidable(
                                   key: ValueKey(model.id),
                                   endActionPane: ActionPane(
                                     motion: const BehindMotion(),
-                                    extentRatio: 0.15,
+                                    extentRatio: 0.2,
                                     children: [
                                       CustomSlidableAction(
-                                          onPressed: (_) {
-                                            context
-                                                .read<AllPlanesCubit>()
-                                                .toggleFavorite(
-                                                model.id, context,model.isSaved);
+                                        onPressed: (_) {
+                                          context
+                                              .read<AllPlanesCubit>()
+                                              .toggleFavorite(
+                                                model.id,
+                                                context,
+                                                model.isSaved,
+                                              );
 
-                                            AppSnackBar.custom(
-                                              context,
-                                              message: model.isSaved ? "Bookmark Unsaved" : "Bookmark Saved",
-                                              svgAsset: "",
-                                            );
-                                          },
-
-
+                                          AppSnackBar.custom(
+                                            context,
+                                            message: model.isSaved
+                                                ? "Bookmark Unsaved"
+                                                : "Bookmark Saved",
+                                            svgAsset: "",
+                                          );
+                                        },
                                         backgroundColor: Colors.transparent,
                                         child: const SizedBox.shrink(),
                                       ),
                                     ],
                                   ),
+
                                   child: InkWell(
                                     onTap: () {
-
-
-                                      AnalyticsService.instance.buttonPressed(FirebaseEvents.manufacturerListItemButton,FirebaseEvents.allPlanesListScreen);
-
-
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents
+                                            .manufacturerListItemButton,
+                                        FirebaseEvents.allPlanesListScreen,
+                                      );
 
                                       Navigator.push(
                                         context,
@@ -233,122 +282,130 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                         ),
                                       );
                                     },
+
                                     child: Container(
-                                      height: cardHeight,
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.08),
-                                            blurRadius: 5,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 1),
-                                          ),
-                                        ],
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                      height: 60,
+                                      color: Colors.white,
+                                      child: Stack(
                                         children: [
-                                          /// CODE 1
-                                          CachedAnyImage(
-                                            imagePath: model.image,
-                                            width: imageWidth,
-                                            height: imageHeight,
-                                            contentImage: BoxFit.cover,
-                                            isForPlaneList: true,
+                                          Positioned(
+                                            right: 33,
+                                            top: 32,
+                                            child: Container(
+                                              width: 16,
+                                              height: 16,
+                                              decoration: BoxDecoration(
+                                                color: Colors.amber,
+                                                border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 0.5,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          /// CODE 2
-                                          // CachedNetworkImage(
-                                          //   imageUrl: model.image ?? '',
-                                          //   width: imageWidth,
-                                          //   height: imageHeight,
-                                          //   fit: BoxFit.cover,
-                                          //   httpHeaders: const {
-                                          //     'User-Agent': 'Mozilla/5.0',
-                                          //     'Accept': 'image/*',
-                                          //   },
-                                          //   placeholder: (context, url) =>
-                                          //   const Center(child: CircularProgressIndicator()),
-                                          //   errorWidget: (context, url, error) =>
-                                          //   const Icon(Icons.broken_image),
-                                          // )
-                                          /// CODE 3
-                                          // CachedNetworkImage(
-                                          //   imageUrl: normalizeWikiImage(model.image ?? ''),
-                                          //   width: imageWidth,
-                                          //   height: imageHeight,
-                                          //   fit: BoxFit.cover,
-                                          //   placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
-                                          //   errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
-                                          // ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              kIsWeb ? CrossAxisAlignment.center: CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                              children: [
-                                                Flexible(
-                                                  child: Wrap(
-                                                    crossAxisAlignment:
-                                                    WrapCrossAlignment.center,
-                                                    spacing: 8,
-                                                    runSpacing: 4,
-                                                    children: [
-                                                      Text(
-                                                        model.model,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          fontSize: bodyFontSize,
-                                                        ),
-                                                        overflow: TextOverflow.ellipsis,
+
+                                          Positioned(
+                                            left: 100,
+                                            right: 40,
+                                            top: 40,
+                                            child: Container(
+                                              height: 1,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          ),
+
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(width: 10),
+
+                                              Container(
+                                                width: 80,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.shade200,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: CachedAnyImage(
+                                                  imagePath: model.image,
+                                                  contentImage: BoxFit.cover,
+                                                  isForPlaneList: true,
+                                                  width: imageWidth,
+                                                  height: imageHeight,
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 12),
+
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 8,
                                                       ),
-                                                      if (model.ICAOCode.isNotEmpty)
-                                                        Container(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 6,
-                                                            vertical: 2,
-                                                          ),
-                                                          decoration:
-                                                          BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(4),
-                                                            boxShadow: const [
-                                                              BoxShadow(
-                                                                color:
-                                                                Colors.grey,
-                                                                spreadRadius: 0.1,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          model.model,
+                                                          style:
+                                                              AppTextStyles.bold(
+                                                                18,
+                                                              ).copyWith(
+                                                                height: 1.0,
+                                                                color: AppColors
+                                                                    .planListTitleColour,
                                                               ),
-                                                            ],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+
+                                                      if (model
+                                                          .ICAOCode
+                                                          .isNotEmpty)
+                                                        Container(
+                                                          margin:
+                                                              const EdgeInsets.only(
+                                                                left: 8,
+                                                              ),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 5,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  20,
+                                                                ),
                                                           ),
+
                                                           child: Text(
                                                             model.ICAOCode,
                                                             style:
-                                                            const TextStyle(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                              FontWeight.w500,
-                                                            ),
+                                                                AppTextStyles.medium(
+                                                                  18,
+                                                                ).copyWith(
+                                                                  height: 1.0,
+                                                                  color: AppColors
+                                                                      .planListTitleColour,
+                                                                ),
                                                           ),
                                                         ),
                                                     ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+
+                                              const SizedBox(width: 60),
+                                            ],
                                           ),
-                                          const Icon(Icons.arrow_forward_ios,
-                                              size: kIsWeb ? 30 :15),
                                         ],
                                       ),
                                     ),

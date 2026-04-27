@@ -13,17 +13,20 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../SettingScreen/SettingScreen.dart';
 
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;
   final Map<String, String> signupData;
   final bool isComeFromSocialLogin;
+  final bool isComeFromSettingScreen;
 
   const AvtarScreen({
     Key? key,
     required this.isComeFromSignupScreen,
     required this.signupData,
     this.isComeFromSocialLogin = false,
+    this.isComeFromSettingScreen = false,
   }) : super(key: key);
 
   @override
@@ -31,7 +34,6 @@ class AvtarScreen extends StatefulWidget {
 }
 
 class _AvtarScreenState extends State<AvtarScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -51,9 +53,10 @@ class _AvtarScreenState extends State<AvtarScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: ConstantStrings.avtarTitle,
+        title: ConstantStrings.avtarTRole,
+        centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -61,6 +64,22 @@ class _AvtarScreenState extends State<AvtarScreen> {
                 )
               : Navigator.pop(context)),
         ),
+        rightButton: widget.isComeFromSettingScreen == false
+            ? IconButton(
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+                  width: 35,
+                  height: 31,
+                  fit: BoxFit.cover,
+                ),
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingScreen()),
+                  );
+                },
+              )
+            : null,
       ),
       body: BlocConsumer<AvtarCubit, AvtarState>(
         listener: (context, state) {
@@ -85,17 +104,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
           return Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
-              child: ListView.separated(
+              child: ListView.builder(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 20,
+                  vertical: 10,
+                  horizontal: 8,
                 ),
                 itemCount: state.avatars.length,
-                separatorBuilder: (context, index) => const Divider(
-                  height: 0.1,
-                  color: Colors.grey,
-                  thickness: 0.1,
-                ),
                 itemBuilder: (context, index) {
                   final userType = state.avatars[index];
                   final isSelected = state.selectedUserType == userType.key;
@@ -120,64 +134,86 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         FirebaseEvents.updatedAvtarButtonTap,
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 20,
-                      ),
-                      child: Card(
-                        color: Colors.white,
-                        elevation: 0,
-                        margin: EdgeInsets.zero,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              (userType.logo.isNotEmpty)
-                                  ? SvgPicture.network(
-                                      userType.logo,
-                                      width: 44,
-                                      height: 44,
-                                      fit: BoxFit.contain,
-                                      placeholderBuilder: (context) =>
-                                          const SizedBox(
-                                            width: 24,
-                                            height: 24,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                    )
-                                  : SvgPicture.asset(
-                                      CommonUi.setSvgImage(
-                                        AssetsPath.avtarSecond,
-                                      ),
-                                      width: 44,
-                                      height: 44,
-                                      fit: BoxFit.contain,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected == true
+                              ? AppColors.primaryBlue
+                              : AppColors.white,
+                          border: Border.all(color: AppColors.primaryDark),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 20,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userType.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.bold(18).copyWith(
+                                      height: 1.0,
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.avtarTitleColour,
                                     ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  userType.name,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
                                   ),
-                                ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    userType.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.regular(12).copyWith(
+                                      height: 1.0,
+                                      color: isSelected
+                                          ? AppColors.white
+                                          : AppColors.greyForTextfield,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              if (isSelected)
-                                const Icon(
-                                  Icons.check,
-                                  size: 25,
-                                  color: Colors.blue,
-                                ),
-                            ],
-                          ),
+                            ),
+
+                            const SizedBox(width: 10),
+
+                            // Logo
+                            (userType.logo.isNotEmpty)
+                                ? SvgPicture.network(
+                                    userType.logo,
+                                    width: 44,
+                                    height: 44,
+                                    fit: BoxFit.contain,
+                                    color: isSelected
+                                        ? AppColors.white
+                                        : AppColors.black,
+                                    placeholderBuilder: (context) =>
+                                        const SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                  )
+                                : SvgPicture.asset(
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.avtarSecond,
+                                    ),
+                                    width: 44,
+                                    height: 44,
+                                    fit: BoxFit.contain,
+                                  ),
+
+                            const SizedBox(width: 8),
+                          ],
                         ),
                       ),
                     ),

@@ -51,8 +51,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               backgroundColor: Colors.black,
               appBar: CustomAppBar(
                 title: ConstantStrings.tutorialScreen,
+                centerTitle: false,
                 leftButton: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),

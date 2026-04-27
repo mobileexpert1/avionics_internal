@@ -58,6 +58,7 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Quiz',
+          centerTitle: false,
           leftButton: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,

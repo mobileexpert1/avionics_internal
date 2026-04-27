@@ -7,7 +7,7 @@ class CustomDivider extends StatelessWidget {
 
   const CustomDivider({
     this.height = 2.0,
-    this.margin = const EdgeInsets.symmetric(vertical: 10),
+    this.margin = const EdgeInsets.symmetric(vertical: 9),
     this.colors = const [
       Color(0xFFE0E0E0), // Light top
       Color(0xFFBDBDBD), // Darker middle

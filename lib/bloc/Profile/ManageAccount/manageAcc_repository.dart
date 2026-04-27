@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_model.dart';
 import '../../../Constants/ApiClass/api_service.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../../Database/auth_storage.dart';
 import '../../../Database/generic_methods.dart';
 
 class ManageAccountRepository {
@@ -29,7 +29,7 @@ class ManageAccountRepository {
 
       final profile = ManageAccountModel.fromJson(json);
 
-      await AuthStorage.save(profile.id);
+      await SharedPrefsHelper.save(profile.id);
       await _profiles.insertAll([profile]);
 
       return profile;
@@ -67,7 +67,7 @@ class ManageAccountRepository {
   }
 
   Future<ManageAccountModel> _getLocalRow() async {
-    final uid = await AuthStorage.read();
+    final uid = await SharedPrefsHelper.read();
     if (uid == null || uid.isEmpty) {
       throw Exception('No logged-in user id stored');
     }

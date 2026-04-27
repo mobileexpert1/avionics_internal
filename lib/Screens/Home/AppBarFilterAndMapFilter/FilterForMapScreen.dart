@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Helpers/CustomDivider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
+import '../../MapSection/MapHelpers/CustomSliderSection.dart';
 
 class FilterResult {
   final CustomMapType mapType;
@@ -55,7 +57,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
+          isClearBackgroundColour: true,
           isHideTopGradient: true,
+          isForHomeScreen: true,
           leftButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
               return Padding(
@@ -63,8 +67,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                 child: Text(
                   "Filter",
                   style: const TextStyle(
-                    fontSize: 19,
+                    fontSize: 20,
                     fontWeight: FontWeight.w500,
+                    color: AppColors.primaryDark,
                   ),
                 ),
               );
@@ -73,9 +78,6 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
           title: "",
           rightButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
-              final bool hasSelection = state.selectedCategories.isNotEmpty ||
-                  aircraftCubit.selectedAircraft.isNotEmpty;
-
               return Padding(
                 padding: const EdgeInsets.only(right: 16, top: 10),
                 child: GestureDetector(
@@ -91,19 +93,28 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                       ),
                     );
                   },
-                  child: Text(
-                    "Apply",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: hasSelection ? Colors.blue : Colors.black,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryDark,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "Apply",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white, // contrast text
+                      ),
                     ),
                   ),
                 ),
               );
             },
           ),
-
         ),
         body: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -123,10 +134,45 @@ class _FilterContent extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<FilterMapMainCubit>();
         final aircraftCubit = context.watch<AircraftListDataCubit>();
-
         return ListView(
           children: [
             ExpandableSection(
+              isComeFromManufactureScreen: false,
+              title: "NUMBER OF FLIGHTS",
+              expanded: cubit.state.showNumberOfFlights,
+              onToggle: cubit.togglesNumberOfFlightsSection,
+              child: CustomSliderSection(
+                value: state.numberOfFlights.toDouble(),
+                min: 1,
+                max: 200,
+                label: "${state.numberOfFlights} Flights",
+                onChanged: (val) {
+                  cubit.updateFlights(val.toInt());
+                },
+              ),
+            ),
+
+            const SizedBox(height: 40),
+
+            ExpandableSection(
+              isComeFromManufactureScreen: false,
+              title: "SEARCH RADIUS (NM)",
+              expanded: cubit.state.showSearchInRadius,
+              onToggle: cubit.toggleSearchInRadiusSection,
+              child: CustomSliderSection(
+                value: state.searchRadius.toDouble(),
+                min: 1,
+                max: 200,
+                label: "${state.searchRadius} NM",
+                onChanged: (val) {
+                  cubit.updateRadius(val.toInt());
+                },
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            ExpandableSection(
+              isComeFromManufactureScreen: false,
               title: "CATEGORIES",
               expanded: state.showCategories,
               onToggle: cubit.toggleCategoriesSection,
@@ -142,36 +188,26 @@ class _FilterContent extends StatelessWidget {
                         onTap: () => cubit.toggleCategory(label),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 15,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFFD2E6FC)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFF3E3C55),
-                              width: 2,
-                            ),
+                                ? AppColors.primaryBlue
+                                : AppColors.grayForFeedbackAndText,
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // SvgPicture.asset(
-                              //   CommonUi.setSvgImage(AssetsPath.filterCheckMap),
-                              //   height: 16,
-                              //   width: 16,
-                              // ),
-                              // const SizedBox(width: 10),
                               Text(
                                 label,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
-                                      ? Color(0xFF3E3C55)
-                                      : const Color(0xFF3E3C55),
+                                      ? AppColors.white
+                                      : AppColors.grayMedium,
                                 ),
                               ),
                             ],
@@ -182,34 +218,24 @@ class _FilterContent extends StatelessWidget {
                     .toList(),
               ),
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
 
             /// Map Section
             ExpandableSection(
+              isComeFromManufactureScreen: false,
               title: "MAP",
               expanded: state.showMap,
               onToggle: cubit.toggleMapSection,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.mapLayers),
-                        height: 20,
-                        width: 20,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        "Map Type",
-                        style: TextStyle(fontWeight: FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
                   SegmentedControl(
-                    options: const ['Standard', 'Satellite', 'Hybrid','FIR Borders'],
+                    options: const [
+                      'Standard',
+                      'Satellite',
+                      'Hybrid',
+                      'FIR Borders',
+                    ],
                     selectedValue: cubit.getMapTypeName(),
                     onChanged: cubit.changeMapTypeByName,
                   ),
@@ -217,8 +243,9 @@ class _FilterContent extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
             ExpandableSection(
+              isComeFromManufactureScreen: false,
               title: "AIRCRAFT ICAO CODE",
               expanded: cubit.state.showAircraftLabels,
               onToggle: cubit.toggleAircraftLabels,
@@ -365,6 +392,7 @@ class _FilterContent extends StatelessWidget {
 
 /// 🔹 Expandable Section with Show More/Less toggle
 class ExpandableSection extends StatelessWidget {
+  final bool? isComeFromManufactureScreen;
   final String title;
   final bool expanded;
   final VoidCallback onToggle;
@@ -376,46 +404,48 @@ class ExpandableSection extends StatelessWidget {
     required this.expanded,
     required this.onToggle,
     required this.child,
+    this.isComeFromManufactureScreen,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF3E3C55),
+        if (isComeFromManufactureScreen == false) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF3E3C55),
+                ),
               ),
-            ),
-            InkWell(
-              onTap: onToggle,
-              child: Row(
-                children: [
-                  Text(expanded ? "Show Less" : "Show More"),
-                  const SizedBox(width: 4),
-                  Icon(
-                    expanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    size: 20,
-                  ),
-                ],
+              InkWell(
+                onTap: onToggle,
+                child: Row(
+                  children: [
+                    Text(expanded ? "Show Less" : "Show More"),
+                    const SizedBox(width: 4),
+                    Icon(
+                      expanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 20,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        if (expanded) ...[const SizedBox(height: 20), child],
+            ],
+          ),
+        ],
+        if (expanded) ...[const SizedBox(height: 10), child],
       ],
     );
   }
 }
 
-/// 🔹 Reusable Category Chip
 class CategoryChip extends StatelessWidget {
   final String label;
   final bool isSelected;
@@ -482,14 +512,7 @@ class SegmentedControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        color: const Color(0xFFF5F5F5),
+        color: AppColors.greyForAirportDetailCard,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -499,18 +522,20 @@ class SegmentedControl extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onChanged(option),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 7.5,
+                ),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : const Color(0xFFF5F5F5),
+                  color: isSelected
+                      ? Colors.white
+                      : AppColors.greyForAirportDetailCard,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   option,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
                 ),
               ),
             ),

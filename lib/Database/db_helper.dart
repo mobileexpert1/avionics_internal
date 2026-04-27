@@ -86,6 +86,7 @@ class DBHelper {
       CREATE TABLE user_details (
         id TEXT PRIMARY KEY,
         first_name TEXT,
+        user_type_url TEXT,
         last_name TEXT,
         email TEXT,
         phone_number TEXT,
@@ -119,6 +120,7 @@ class DBHelper {
         id TEXT PRIMARY KEY,
         first_name TEXT,
         last_name TEXT,
+        user_type_url TEXT,
         email TEXT,
         phone_number TEXT,
         user_type TEXT,
@@ -160,7 +162,6 @@ class DBHelper {
       image TEXT
     );
   ''');
-
   }
 
   static Future<void> _createUserIdIndices(Database db) async {
@@ -180,26 +181,26 @@ class DBHelper {
     'unit_prefs',
     'user_profile',
     'chat_messages',
-    'selected_aircraft'
+    'selected_aircraft',
   ];
 
   /* ── CRUD methods ── */
 
   Future<int> insert(
-      String table,
-      Map<String, dynamic> values, {
-        ConflictAlgorithm algo = ConflictAlgorithm.abort,
-      }) async {
+    String table,
+    Map<String, dynamic> values, {
+    ConflictAlgorithm algo = ConflictAlgorithm.abort,
+  }) async {
     if (kIsWeb) return 0;
     return (await database).insert(table, values, conflictAlgorithm: algo);
   }
 
   Future<List<Map<String, Object?>>> get(
-      String table, {
-        String? where,
-        List<Object?>? whereArgs,
-        String? orderBy,
-      }) async {
+    String table, {
+    String? where,
+    List<Object?>? whereArgs,
+    String? orderBy,
+  }) async {
     if (kIsWeb) return [];
     return (await database).query(
       table,
@@ -210,11 +211,11 @@ class DBHelper {
   }
 
   Future<int> update(
-      String table,
-      Map<String, dynamic> values, {
-        required String where,
-        required List<Object?> whereArgs,
-      }) async {
+    String table,
+    Map<String, dynamic> values, {
+    required String where,
+    required List<Object?> whereArgs,
+  }) async {
     if (kIsWeb) return 0;
     return (await database).update(
       table,
@@ -225,20 +226,21 @@ class DBHelper {
   }
 
   Future<int> delete(
-      String table, {
-        required String where,
-        required List<Object?> whereArgs,
-      }) async {
+    String table, {
+    required String where,
+    required List<Object?> whereArgs,
+  }) async {
     if (kIsWeb) return 0;
     return (await database).delete(table, where: where, whereArgs: whereArgs);
   }
 }
 
-
-
 abstract class BaseModel {
   String? userId;
+
   String get table;
+
   String get id;
+
   Map<String, dynamic> toMap();
 }

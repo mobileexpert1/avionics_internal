@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,10 +9,13 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
+import '../../Profile/SettingScreen/SettingScreen.dart';
 import '../HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
 class ManufacturerDetailScreen extends StatefulWidget {
@@ -34,6 +36,44 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreHistory = false;
   bool showMoreProducts = false;
   bool showInterestingFacts = false;
+  int expandedIndex = -1;
+
+  final List<ProductModel> staticProducts = [
+    ProductModel(
+      title: "Airbus Helicopters",
+      items: [
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+        ProductItemModel(name: "EC-135", tag: "EC35"),
+      ],
+    ),
+    ProductModel(
+      title: "Airbus Airplanes",
+      items: [
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+        ProductItemModel(name: "H-160", tag: "H160"),
+        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+      ],
+    ),
+  ];
 
   @override
   void initState() {
@@ -45,7 +85,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       context: context,
       query: widget.manufacturerDetailId,
     );
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.manufacturerDetailScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.manufacturerDetailScreen,
+    );
   }
 
   @override
@@ -72,19 +114,32 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: kIsWeb
-              ? CustomAppBar(
-                  title: "",
-                  leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                )
-              : null,
+          appBar: CustomAppBar(
+            title: detail.general.companyName,
+            centerTitle: false,
+            leftButton: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            rightButton: IconButton(
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+                width: 35,
+                height: 31,
+                fit: BoxFit.cover,
+              ),
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingScreen()),
+                );
+              },
+            ),
+          ),
+
           body: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1500),
-              // Web max width
               child: SingleChildScrollView(
                 child: Stack(
                   children: [
@@ -205,81 +260,105 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 ),
                               ),
                             if (!kIsWeb)
-                              Padding(
+                              Container(
+                                width: double.infinity,
+                                color: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  color: Colors.grey.shade100,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical: 8,
-                                  ), // Internal padding
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(height: 45),
-                                      Text(
-                                        detail.general.companyName,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            const SizedBox(height: 20),
-
-                            // All List Of Airplane
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AllPlanesListScreen(
-                                      selectedAirbusId: detail.id,
-                                      manufacturerName:
-                                          detail.general.companyName,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 25,
-                                  vertical: 5,
-                                ),
-
-                                child: Row(
+                                  horizontal: 20,
+                                ), // Internal padding
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SvgPicture.asset(
-                                      CommonUi.setSvgImage(AssetsPath.Plane1),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    const Expanded(
-                                      child: Text(
-                                        "List of All Planes",
-                                        style: TextStyle(fontSize: 16),
+                                    const SizedBox(height: 60),
+                                    CustomHeaderViewExpandable(
+                                      isNeedToShowLeftRightBottomBorder: true,
+                                      isNeedToShowLeftImage: true,
+                                      fontStyle: AppTextStyles.regular(18.67)
+                                          .copyWith(
+                                            height: 1.0,
+                                            color: AppColors.white,
+                                          ),
+                                      isLeftImage: IconButton(
+                                        icon: SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.homeCompareAircraft,
+                                          ),
+                                          width: 30,
+                                          height: 30,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        onPressed: () async {},
                                       ),
+                                      title: "See all aircraft",
+                                      headerColor: AppColors.primaryDark,
+                                      arrowBackgroundColor:
+                                          AppColors.extraDarkYellow,
+                                      arrowFrontColor: Colors.black,
+                                      isExpandedViewAvailable: true,
+                                      isExpanded: false,
+                                      onHeaderTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => AllPlanesListScreen(
+                                              selectedAirbusId: detail.id,
+                                              manufacturerName:
+                                                  detail.general.companyName,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    const Icon(Icons.chevron_right),
                                   ],
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
 
-                            const Divider(
-                              height: 0,
-                              thickness: 3,
-                              color: AppColors.separatorColourAppBar,
-                            ),
+                            //const SizedBox(height: 20),
 
+                            // All List Of Airplane
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (_) => AllPlanesListScreen(
+                            //           selectedAirbusId: detail.id,
+                            //           manufacturerName:
+                            //               detail.general.companyName,
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            //   child: Container(
+                            //     padding: const EdgeInsets.symmetric(
+                            //       horizontal: 25,
+                            //       vertical: 5,
+                            //     ),
+                            //
+                            //     child: Row(
+                            //       children: [
+                            //         SvgPicture.asset(
+                            //           CommonUi.setSvgImage(AssetsPath.Plane1),
+                            //         ),
+                            //         const SizedBox(width: 12),
+                            //         const Expanded(
+                            //           child: Text(
+                            //             "List of All Planes",
+                            //             style: TextStyle(fontSize: 16),
+                            //           ),
+                            //         ),
+                            //         const Icon(Icons.chevron_right),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 10),
+
+                            // const Divider(
+                            //   height: 0,
+                            //   thickness: 3,
+                            //   color: AppColors.separatorColourAppBar,
+                            // ),
                             _buildSectionHeader(
                               title: "GENERAL INFORMATION",
                               isExpanded: showMoreGeneralInfo,
@@ -300,12 +379,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                     child: _buildGeneralInfo(detail.general),
                                   )
                                 : const SizedBox.shrink(),
-                            Divider(
-                              height: 0,
-                              color: AppColors.separatorColourAppBar,
-                              thickness: 3,
-                            ),
 
+                            // Divider(
+                            //   height: 0,
+                            //   color: AppColors.separatorColourAppBar,
+                            //   thickness: 3,
+                            // ),
                             _buildSectionHeader(
                               title: "ABOUT THE COMPANY",
                               isExpanded: showMoreAboutInfo,
@@ -317,33 +396,35 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   100,
                             ),
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 25,
+                            if (showMoreAboutInfo)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      detail.company.companyDescription,
+                                      style: AppTextStyles.regular(16).copyWith(
+                                        height: 1.5,
+                                        color: AppColors.textColour,
+                                      ),
+                                      maxLines: showMoreAboutInfo ? null : 2,
+                                      overflow: showMoreAboutInfo
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 15),
+                                  ],
+                                ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    detail.company.companyDescription,
-                                    style: const TextStyle(height: 1.5),
-                                    maxLines: showMoreAboutInfo ? null : 2,
-                                    // null = show full text
-                                    overflow: showMoreAboutInfo
-                                        ? TextOverflow.visible
-                                        : TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 15),
-                                ],
-                              ),
-                            ),
 
-                            Divider(
-                              height: 0,
-                              color: AppColors.separatorColourAppBar,
-                              thickness: 3,
-                            ),
-
+                            // Divider(
+                            //   height: 0,
+                            //   color: AppColors.separatorColourAppBar,
+                            //   thickness: 3,
+                            // ),
                             _buildSectionHeader(
                               title: "HISTORY",
                               isExpanded: showMoreHistory,
@@ -354,32 +435,35 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   detail.company.companyHistory.isNotEmpty,
                             ),
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 25,
+                            if (showMoreHistory)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      detail.company.companyHistory,
+                                      style: AppTextStyles.regular(16).copyWith(
+                                        height: 1.5,
+                                        color: AppColors.textColour,
+                                      ),
+                                      maxLines: showMoreHistory ? null : 2,
+                                      overflow: showMoreHistory
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    detail.company.companyHistory,
-                                    style: const TextStyle(height: 1.5),
-                                    maxLines: showMoreHistory ? null : 2,
-                                    overflow: showMoreHistory
-                                        ? TextOverflow.visible
-                                        : TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ),
-                            ),
 
-                            Divider(
-                              height: 0,
-                              color: AppColors.separatorColourAppBar,
-                              thickness: 3,
-                            ),
-
+                            // Divider(
+                            //   height: 0,
+                            //   color: AppColors.separatorColourAppBar,
+                            //   thickness: 3,
+                            // ),
                             if (detail.product.isNotEmpty)
                               _buildSectionHeader(
                                 title: "PRODUCTS",
@@ -390,47 +474,217 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 isShowMoreLessOption: detail.product.isNotEmpty,
                               ),
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 25,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: List.generate(detail.product.length, (
-                                  index,
-                                ) {
-                                  final product = detail.product[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        if (product.series.isNotEmpty)
-                                          Text(
-                                            product.series,
-                                            style: const TextStyle(
-                                                fontSize: 15),
+                            if (showMoreProducts)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Column(
+                                  children: List.generate(staticProducts.length, (
+                                    index,
+                                  ) {
+                                    final product = staticProducts[index];
+                                    final isExpanded = expandedIndex == index;
 
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 12,
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
-                                         SizedBox(height: 4),
-
-                                        Text(
-                                          product.description,
-                                          style: const TextStyle(height: 1.5),
-                                          maxLines: showMoreProducts ? null : 2,
-                                          overflow: showMoreProducts
-                                              ? TextOverflow.visible
-                                              : TextOverflow.ellipsis,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.06,
+                                              ),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(height: 8),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              ),
-                            ),
+                                        child: Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  expandedIndex = isExpanded
+                                                      ? -1
+                                                      : index;
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 14,
+                                                    ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 8,
+                                                      height: 8,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                            color: Colors.blue,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    Expanded(
+                                                      child: Text(
+                                                        product.title,
+                                                      ),
+                                                    ),
+                                                    Icon(
+                                                      isExpanded
+                                                          ? Icons.remove
+                                                          : Icons.add,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                    ),
+                                                child: Divider(
+                                                  thickness: 1.2,
+                                                  color: AppColors
+                                                      .separatorColourAppBar,
+                                                ),
+                                              ),
+                                            if (isExpanded)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                      16,
+                                                      8,
+                                                      16,
+                                                      12,
+                                                    ),
+                                                child: Column(
+                                                  children: List.generate(
+                                                    product.items.length,
+                                                    (i) {
+                                                      final item =
+                                                          product.items[i];
 
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              bottom: 8,
+                                                            ),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Text(
+                                                                item.name,
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical: 4,
+                                                                  ),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      6,
+                                                                    ),
+                                                              ),
+                                                              child: Text(
+                                                                item.tag,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                            //   child: Column(
+                            //     children: List.generate(
+                            //       detail.product.length,
+                            //           (index) {
+                            //         final product = detail.product[index];
+                            //
+                            //         return Padding(
+                            //           padding: const EdgeInsets.only(bottom: 12),
+                            //           child: Container(
+                            //             padding: const EdgeInsets.symmetric(
+                            //               horizontal: 16,
+                            //               vertical: 14,
+                            //             ),
+                            //             decoration: BoxDecoration(
+                            //               color: Colors.white,
+                            //               borderRadius: BorderRadius.circular(12),
+                            //               boxShadow: [
+                            //                 BoxShadow(
+                            //                   color: Colors.black.withOpacity(0.06),
+                            //                   blurRadius: 8,
+                            //                   offset: const Offset(0, 3),
+                            //                 ),
+                            //               ],
+                            //             ),
+                            //             child: Row(
+                            //               children: [
+                            //                 Container(
+                            //                   width: 8,
+                            //                   height: 8,
+                            //                   decoration: const BoxDecoration(
+                            //                     color: Colors.blue,
+                            //                     shape: BoxShape.circle,
+                            //                   ),
+                            //                 ),
+                            //                 const SizedBox(width: 12),
+                            //
+                            //                 Expanded(
+                            //                   child: Text(
+                            //                     product.series,
+                            //                     style: AppTextStyles.regular(16).copyWith(
+                            //                       fontWeight: FontWeight.w600,
+                            //                       color: Colors.black38,
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //
+                            //                 Icon(
+                            //                   Icons.add,
+                            //                   size: 20,
+                            //                   color: Colors.grey.shade600,
+                            //                 ),
+                            //               ],
+                            //             ),
+                            //           ),
+                            //         );
+                            //       },
+                            //     ),
+                            //   ),
+                            // ),
                             _buildSectionHeader(
                               title: "INTERESTING FACTS",
                               isExpanded: showInterestingFacts,
@@ -440,41 +694,133 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                               isShowMoreLessOption:
                                   (detail.interestingFacts?.length ?? 0) > 2,
                             ),
+                            const SizedBox(height: 10),
+                            if (showInterestingFacts)
+                              // Padding(
+                              //   padding: const EdgeInsets.symmetric(
+                              //     horizontal: 25,
+                              //   ),
+                              //   child: Column(
+                              //     crossAxisAlignment: CrossAxisAlignment.end,
+                              //     children: List.generate(
+                              //       // show 2 facts by default, full list if expanded
+                              //       showInterestingFacts
+                              //           ? (detail.interestingFacts?.length ?? 0)
+                              //           : (detail.interestingFacts?.length ?? 0)
+                              //                 .clamp(0, 1),
+                              //       (index) {
+                              //         final fact =
+                              //             detail.interestingFacts?[index] ?? "";
+                              //         return Container(
+                              //           margin: const EdgeInsets.only(
+                              //             bottom: 12,
+                              //           ),
+                              //           padding: const EdgeInsets.all(12),
+                              //           decoration: BoxDecoration(
+                              //             color: Colors.grey.shade100,
+                              //             borderRadius: BorderRadius.circular(
+                              //               8,
+                              //             ),
+                              //           ),
+                              //           child: Text(
+                              //             "• $fact",
+                              //             style: AppTextStyles.regular(16).copyWith(
+                              //               height: 1.4,
+                              //               color:
+                              //               AppColors.textColour,
+                              //             ),
+                              //           ),
+                              //         );
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.09),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: List.generate(
+                                      showInterestingFacts
+                                          ? (detail.interestingFacts?.length ??
+                                                0)
+                                          : (detail.interestingFacts?.length ??
+                                                    0)
+                                                .clamp(0, 2),
+                                      (index) {
+                                        final fact =
+                                            detail.interestingFacts?[index] ??
+                                            "";
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 25,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: List.generate(
-                                  // show 2 facts by default, full list if expanded
-                                  showInterestingFacts
-                                      ? (detail.interestingFacts?.length ?? 0)
-                                      : (detail.interestingFacts?.length ?? 0)
-                                            .clamp(0, 1),
-                                  (index) {
-                                    final fact =
-                                        detail.interestingFacts?[index] ?? "";
-                                    return Container(
-                                      margin: const EdgeInsets.only(bottom: 12),
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade100,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        "• $fact",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 14,
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              //  Yellow Arrow
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 4,
+                                                ),
+                                                child: Icon(
+                                                  Icons.arrow_right,
+                                                  color: Colors.amber,
+                                                  size: 20,
+                                                ),
+                                              ),
+
+                                              ///   in svg
+                                              ///
+                                              ///
+                                              // Padding(
+                                              //   padding: const EdgeInsets.only(top: 4),
+                                              //   child: SvgPicture.asset(
+                                              //    set assets
+                                              //     width: 16,
+                                              //     height: 16,
+                                              //     color: Colors.amber,
+                                              //   ),
+                                              // ),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  fact,
+                                                  style:
+                                                      AppTextStyles.regular(
+                                                        14,
+                                                      ).copyWith(
+                                                        height: 1.5,
+                                                        color: AppColors
+                                                            .textColour,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 50),
@@ -483,82 +829,70 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
                     if (kIsWeb == false)
                       Positioned(
-                        top: screenHeight * 0.06,
-                        left: screenWidth * 0.05,
-                        child: GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    if (kIsWeb == false)
-                    Positioned(
-                      top: screenHeight * 0.21,
-                      left: screenWidth * 0.06,
-                      child: ClipOval(
-                        child: Container(
-                          width: screenWidth * 0.22,
-                          height: screenWidth * 0.22,
-                          color:
-                              Colors.grey.shade200, // Background circle color
-                          child: Builder(
-                            builder: (context) {
-                              final logoUrl =
-                                  '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
-                              debugPrint(logoUrl);
+                        top: screenHeight * 0.21,
+                        left: screenWidth * 0.06,
+                        child: ClipOval(
+                          child: Container(
+                            width: screenWidth * 0.22,
+                            height: screenWidth * 0.22,
+                            color:
+                                Colors.grey.shade200, // Background circle color
+                            child: Builder(
+                              builder: (context) {
+                                final logoUrl =
+                                    '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                                debugPrint(logoUrl);
 
-                              final isSvg = detail.general.logo.contains(
-                                ".svg",
-                              );
-                              final isAsset = detail.general.logo.contains(
-                                "assets",
-                              );
-
-                              if (isAsset) {
-                                return Image.asset(
-                                  detail.general.logo,
-                                  width: screenWidth * 0.22,
-                                  height: screenWidth * 0.22,
-                                  fit: BoxFit.cover,
+                                final isSvg = detail.general.logo.contains(
+                                  ".svg",
                                 );
-                              } else {
-                                return isSvg
-                                    ? SvgPicture.network(
-                                        logoUrl,
-                                        fit: BoxFit.contain,
-                                        placeholderBuilder: (context) =>
-                                            SvgPicture.asset(
-                                              CommonUi.setSvgImage(
-                                                AssetsPath.manuFirstImage,
+                                final isAsset = detail.general.logo.contains(
+                                  "assets",
+                                );
+
+                                if (isAsset) {
+                                  return Image.asset(
+                                    detail.general.logo,
+                                    width: screenWidth * 0.22,
+                                    height: screenWidth * 0.22,
+                                    fit: BoxFit.cover,
+                                  );
+                                } else {
+                                  return isSvg
+                                      ? SvgPicture.network(
+                                          logoUrl,
+                                          fit: BoxFit.contain,
+                                          placeholderBuilder: (context) =>
+                                              SvgPicture.asset(
+                                                CommonUi.setSvgImage(
+                                                  AssetsPath.manuFirstImage,
+                                                ),
+                                                height: 10,
+                                                width: 10,
+                                                fit: BoxFit.contain,
                                               ),
-                                              height: 10,
-                                              width: 10,
-                                              fit: BoxFit.contain,
-                                            ),
-                                      )
-                                    : Image.network(
-                                        logoUrl,
-                                        width: screenWidth * 0.22,
-                                        height: screenWidth * 0.22,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (_, _, _) =>
-                                            SvgPicture.asset(
-                                              CommonUi.setSvgImage(
-                                                AssetsPath.manuFirstImage,
+                                        )
+                                      : Image.network(
+                                          logoUrl,
+                                          width: screenWidth * 0.22,
+                                          height: screenWidth * 0.22,
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (_, _, _) =>
+                                              SvgPicture.asset(
+                                                CommonUi.setSvgImage(
+                                                  AssetsPath.manuFirstImage,
+                                                ),
+                                                height: 10,
+                                                width: 10,
+                                                fit: BoxFit.contain,
                                               ),
-                                              height: 10,
-                                              width: 10,
-                                              fit: BoxFit.contain,
-                                            ),
-                                      );
-                              }
-                            },
+                                        );
+                                }
+                              },
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -578,8 +912,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: customField(
                 label: 'Headquarters',
                 text: generalDetails.headquarter ?? '',
-                labelColor: const Color(0xFF3E3C55),
-                textColor: Colors.black,
+                fontSize: 18,
+                labelColor: AppColors.lightGreyTextFieldHeading,
+                textColor: AppColors.primaryValueColour,
               ),
             ),
             const SizedBox(width: 12),
@@ -588,8 +923,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: customField(
                 label: 'Founding Date',
                 text: generalDetails.foundingDate,
-                labelColor: const Color(0xFF3E3C55),
-                textColor: const Color(0xFF3F3D56),
+                fontSize: 18,
+                labelColor: AppColors.lightGreyTextFieldHeading,
+                textColor: AppColors.primaryValueColour,
               ),
             ),
           ],
@@ -609,7 +945,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: GestureDetector(
@@ -619,20 +954,28 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(child: Text(title)),
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: AppTextStyles.bold(20).copyWith(
+                        height: 1.0,
+                        color: AppColors.primaryValueColour,
+                      ),
+                    ),
+                  ),
                   if (isShowMoreLessOption)
                     GestureDetector(
                       onTap: onTap,
                       child: Row(
                         children: [
-                          Text(
-                            isExpanded ? "Show Less" : "Show More",
-                            style: const TextStyle(fontSize: 13),
-                          ),
+                          // Text(
+                          //   isExpanded ? "Show Less" : "Show More",
+                          //   style: const TextStyle(fontSize: 13),
+                          // ),
                           Icon(
                             isExpanded
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
+                                ? Icons.keyboard_arrow_down
+                                : Icons.keyboard_arrow_right,
                           ),
                         ],
                       ),
@@ -650,7 +993,16 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
           indent: 20,
           endIndent: 20,
         ),
-        const SizedBox(height: 20),
+        SizedBox(
+          height:
+              (showMoreGeneralInfo ||
+                  showMoreAboutInfo ||
+                  showMoreHistory ||
+                  showMoreProducts ||
+                  showInterestingFacts)
+              ? 10
+              : 30,
+        ),
       ],
     );
   }
@@ -714,5 +1066,40 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         ],
       ),
     );
+  }
+}
+
+class ProductItemModel {
+  final String name;
+  final String tag;
+
+  ProductItemModel({required this.name, required this.tag});
+
+  factory ProductItemModel.fromJson(Map<String, dynamic> json) {
+    return ProductItemModel(name: json['name'] ?? '', tag: json['tag'] ?? '');
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'tag': tag};
+  }
+}
+
+class ProductModel {
+  final String title;
+  final List<ProductItemModel> items;
+
+  ProductModel({required this.title, required this.items});
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      title: json['title'] ?? '',
+      items: (json['items'] as List<dynamic>? ?? [])
+          .map((e) => ProductItemModel.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'title': title, 'items': items.map((e) => e.toJson()).toList()};
   }
 }

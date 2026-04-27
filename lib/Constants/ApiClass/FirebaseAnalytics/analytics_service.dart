@@ -1,8 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_analytics/firebase_analytics.dart';
-
-import '../../../Database/auth_storage.dart';
+import '../shared_prefs_helper.dart';
 
 class AnalyticsService {
   AnalyticsService._();
@@ -17,7 +16,7 @@ class AnalyticsService {
   }
 
   Future<String> _generateUserId() async {
-    final storedId = await AuthStorage.read();
+    final storedId = await SharedPrefsHelper.read();
     final uid = storedId ?? "";
     if (kIsWeb) {
       return "web_user_$uid";

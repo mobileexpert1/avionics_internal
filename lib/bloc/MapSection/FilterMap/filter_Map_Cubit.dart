@@ -4,12 +4,28 @@ import 'filter_Map_State.dart';
 class FilterMapMainCubit extends Cubit<FilterMapState> {
   FilterMapMainCubit() : super(FilterMapState.initial());
 
+  void updateFlights(int value) {
+    emit(state.copyWith(numberOfFlights: value));
+  }
+
+  void updateRadius(int value) {
+    emit(state.copyWith(searchRadius: value));
+  }
+
   void setInitialMapType(CustomMapType type) {
     emit(state.copyWith(mapType: type));
   }
 
   void toggleCategoriesSection() {
     emit(state.copyWith(showCategories: !state.showCategories));
+  }
+
+  void toggleSearchInRadiusSection() {
+    emit(state.copyWith(showSearchInRadius: !state.showSearchInRadius));
+  }
+
+  void togglesNumberOfFlightsSection() {
+    emit(state.copyWith(showNumberOfFlights: !state.showNumberOfFlights));
   }
 
   void toggleMapSection() {

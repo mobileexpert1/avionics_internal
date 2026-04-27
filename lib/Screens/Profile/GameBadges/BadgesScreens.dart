@@ -69,8 +69,9 @@ class _BadgesScreenState extends State<BadgesScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Badges',
+          centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
               if (widget.fromResultScreen) {
                 Navigator.push(
@@ -85,7 +86,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
         ),
         body: BlocConsumer<BadgesCubit, BadgesState>(
           listener: (context, state) {
-            if (state.status == CommonApiStatus.failure && state.errorMessage != null) {
+            if (state.status == CommonApiStatus.failure &&
+                state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.errorMessage ?? 'Something went wrong'),

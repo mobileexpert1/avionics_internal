@@ -9,7 +9,7 @@ import '../../Helper/test_token.dart';
 void main() {
 
   group('HOME REPOSITORY API REAL SERVER TEST', () {
-    test('Fetch Home Data → API → STATUS CODE CHECK', () async {
+    test('Fetch home Data → API → STATUS CODE CHECK', () async {
       final url = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"
             "${ApiFunctionUrlAirplaneConstant.airplaneService}"

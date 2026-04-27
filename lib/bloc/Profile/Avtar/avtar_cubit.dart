@@ -54,7 +54,7 @@ class AvtarCubit extends Cubit<AvtarState> {
           ),
         );
       } else {
-        await AvtarRepository().setAvtarForProfile(userType: userType);
+        await AvtarRepository().setAvtarForProfile(userType: userType,context: context);
       }
 
       await SharedPrefsHelper.setAvtarUserType(userType);
@@ -98,24 +98,6 @@ class AvtarCubit extends Cubit<AvtarState> {
       );
     }
   }
-
-  //
-  // Future<void> loadAvatarFromPrefs(
-  //   bool isComeFromSignup,
-  //   bool isComeFromSocialLogin,
-  // ) async {
-  //   var userType = await SharedPrefsHelper.getAvtarUserType();
-  //   if (isComeFromSignup == true || isComeFromSocialLogin == true) {
-  //     userType = '';
-  //   }
-  //   emit(
-  //     state.copyWith(
-  //       selectedUserType: userType,
-  //       status: CommonApiStatus.initial,
-  //       errorMessage: null,
-  //     ),
-  //   );
-  // }
 
   Future<void> loadAvatars(
     bool isComeFromSignup,

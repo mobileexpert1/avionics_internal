@@ -55,8 +55,9 @@ class _CalculationDetailScreenState extends State<CalculationDetailScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'Calculations',
+          centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
