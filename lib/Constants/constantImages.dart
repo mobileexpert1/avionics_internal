@@ -72,6 +72,8 @@ abstract class AssetsPath {
   static const String privacyPolicyProfile = "39PrivacyPolicy";
   static const String termsAndConditionsProfile = "40Terms&Conditions";
   static const String aboutProfile = "41About";
+  static const String liveTrackImage = "47LiveTrackImage";
+
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";

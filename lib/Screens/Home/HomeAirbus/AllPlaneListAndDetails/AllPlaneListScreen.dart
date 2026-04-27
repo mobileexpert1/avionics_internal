@@ -188,7 +188,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Stack(
                               children: [
-                                /// 🔹 BACKGROUND (Swipe ke time visible)
                                 Positioned.fill(
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -220,7 +219,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
 
                                         const Spacer(),
 
-                                        /// BOOKMARK ICON
                                         Icon(
                                           Icons.bookmark,
                                           color: model.isSaved
@@ -233,7 +231,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                   ),
                                 ),
 
-                                /// 🔹 FOREGROUND (Main UI)
                                 Slidable(
                                   key: ValueKey(model.id),
                                   endActionPane: ActionPane(

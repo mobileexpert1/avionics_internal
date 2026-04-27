@@ -11,6 +11,7 @@ import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
+import '../../MapSection/MapHelpers/CustomSliderSection.dart';
 
 class FilterResult {
   final CustomMapType mapType;
@@ -56,7 +57,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           isHideTopGradient: true,
-          isForHomeScreen:true,
+          isForHomeScreen: true,
           leftButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
               return Padding(
@@ -102,7 +103,6 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
               );
             },
           ),
-
         ),
         body: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -125,6 +125,37 @@ class _FilterContent extends StatelessWidget {
 
         return ListView(
           children: [
+            // ExpandableSection(
+            //   title: "NUMBER OF FLIGHTS",
+            //   expanded: true,
+            //   onToggle: () {},
+            //   child: CustomSliderSection(
+            //     value: state.numberOfFlights.toDouble(),
+            //     min: 1,
+            //     max: 200,
+            //     label: "${state.numberOfFlights} Flights",
+            //     onChanged: (val) {
+            //       cubit.updateFlights(val.toInt());
+            //     },
+            //   ),
+            // ),
+            //
+            // const SizedBox(height: 30),
+            //
+            // ExpandableSection(
+            //   title: "SEARCH RADIUS (NM)",
+            //   expanded: true,
+            //   onToggle: () {},
+            //   child: CustomSliderSection(
+            //     value: state.searchRadius.toDouble(),
+            //     min: 1,
+            //     max: 200,
+            //     label: "${state.searchRadius} NM",
+            //     onChanged: (val) {
+            //       cubit.updateRadius(val.toInt());
+            //     },
+            //   ),
+            // ),
             ExpandableSection(
               title: "CATEGORIES",
               expanded: state.showCategories,
@@ -134,50 +165,44 @@ class _FilterContent extends StatelessWidget {
                 runSpacing: 8,
                 children: ["CARGO", "BUSINESS_JETS", "PASSENGER", "GLIDERS"]
                     .map((label) {
-                  final isSelected = state.selectedCategories.contains(
-                    label,
-                  );
-                  return GestureDetector(
-                    onTap: () => cubit.toggleCategory(label),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFD2E6FC)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF3E3C55),
-                          width: 2,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // SvgPicture.asset(
-                          //   CommonUi.setSvgImage(AssetsPath.filterCheckMap),
-                          //   height: 16,
-                          //   width: 16,
-                          // ),
-                          // const SizedBox(width: 10),
-                          Text(
-                            label,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected
-                                  ? Color(0xFF3E3C55)
-                                  : const Color(0xFF3E3C55),
+                      final isSelected = state.selectedCategories.contains(
+                        label,
+                      );
+                      return GestureDetector(
+                        onTap: () => cubit.toggleCategory(label),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFFD2E6FC)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF3E3C55),
+                              width: 2,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                })
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                label,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: isSelected
+                                      ? Color(0xFF3E3C55)
+                                      : const Color(0xFF3E3C55),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    })
                     .toList(),
               ),
             ),
@@ -212,7 +237,7 @@ class _FilterContent extends StatelessWidget {
                       'Standard',
                       'Satellite',
                       'Hybrid',
-                      'FIR Borders'
+                      'FIR Borders',
                     ],
                     selectedValue: cubit.getMapTypeName(),
                     onChanged: cubit.changeMapTypeByName,
@@ -234,14 +259,12 @@ class _FilterContent extends StatelessWidget {
                       final result = await Navigator.push<List<AircraftModel>>(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              BlocProvider.value(
-                                value: aircraftCubit,
-                                child: AircraftSearchScreen(
-                                  initialSelected: aircraftCubit
-                                      .selectedAircraft,
-                                ),
-                              ),
+                          builder: (_) => BlocProvider.value(
+                            value: aircraftCubit,
+                            child: AircraftSearchScreen(
+                              initialSelected: aircraftCubit.selectedAircraft,
+                            ),
+                          ),
                         ),
                       );
                       // if (result != null) {
@@ -322,10 +345,9 @@ class _FilterContent extends StatelessWidget {
                           ),
                           const SizedBox(width: 10),
                           GestureDetector(
-                            onTap: () =>
-                                aircraftCubit.removeSelectedAircraft(
-                                  aircraft.icaoTypeCode,
-                                ),
+                            onTap: () => aircraftCubit.removeSelectedAircraft(
+                              aircraft.icaoTypeCode,
+                            ),
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.closeIcon),
                               width: 20,
@@ -391,7 +413,7 @@ class ExpandableSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (isComeFromManufactureScreen == false)...[
+        if (isComeFromManufactureScreen == false) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -16,6 +16,7 @@ import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/MapSection/flight_map_state.dart';
 import '../FlightTrackScreen.dart';
 import '../MapHelpers/FlightDetailScreen.dart';
+import '../MapHelpers/FlightDetailScreenForMapSection.dart';
 import '../MapHelpers/LiveBadge.dart';
 
 class FlightDetailCard extends StatelessWidget {
@@ -536,7 +537,7 @@ class FlightDetailCard extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => BlocProvider.value(
                                 value: context.read<FlightMapCubit>(),
-                                child: FlightDetailScreen(
+                                child: FlightDetailScreenForMapSection(
                                   ICAOType: category,
                                   flightDetail: combinedDetail,
                                 ),

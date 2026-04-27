@@ -4,6 +4,12 @@ import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
 import 'AppTextStyles/AppTextStyles.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../Constants/AppColors.dart';
+import '../Constants/constantImages.dart';
+import 'AppTextStyles/AppTextStyles.dart';
+
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback? onFilterTap;
@@ -40,9 +46,9 @@ class SearchBarWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 10, 16),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// CLOSE BUTTON
               if (enableCloseScreen)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -51,9 +57,11 @@ class SearchBarWidget extends StatelessWidget {
                     child: const Icon(Icons.clear, color: Colors.black87),
                   ),
                 ),
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  /// BACK BUTTON
                   if (enableBackArrow)
                     GestureDetector(
                       onTap: onBackButtonTap,
@@ -63,7 +71,10 @@ class SearchBarWidget extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
+
                   if (enableBackArrow) const SizedBox(width: 15),
+
+                  /// SEARCH FIELD
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -72,65 +83,81 @@ class SearchBarWidget extends StatelessWidget {
                             : Colors.transparent),
                         borderRadius: BorderRadius.circular(13),
                       ),
-                      child: GestureDetector(
-                        onTap: enableGestureMode ? onTextTap : null,
-                        child: AbsorbPointer(
-                          absorbing: enableGestureMode,
-                           child: TextField(
-                            style: AppTextStyles.regular(
-                              18.67,
-                            ).copyWith(height: 1.0, color: AppColors.primaryDark),
-                            controller: controller,
-                            onChanged: onChanged,
-                            decoration: InputDecoration(
-                              hintText: searchTitle,
-                              hintStyle: AppTextStyles.regular(
-                                18.67,
-                              ).copyWith(height: 1.0, color: AppColors.grayLight),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(13),
-                                child: SvgPicture.asset(
-                                  CommonUi.setSvgImage(AssetsPath.compareFilter),
-                                  color: Colors.black,
-                                  width: 18,
-                                  height: 18,
-                                ),
-                              ),
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.all(13),
-                                child: SvgPicture.asset(
-                                  CommonUi.setSvgImage(AssetsPath.searchIcon),
-                                  width: 18,
-                                  height: 18,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13),
-                                borderSide: BorderSide(
-                                  color: (Colors.black),
-                                  width: 0.6,
-                                ),
-                              ),
+                      child: TextField(
+                        controller: controller,
+                        onChanged: onChanged,
 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13),
-                                borderSide: BorderSide(
-                                  color: (isComeFromMapSection == true ? Colors.transparent : Colors.black),
-                                  width: 1.3,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.transparent,
+                        /// 🔥 KEY FIX
+                        readOnly: enableGestureMode,
+                        onTap: enableGestureMode ? onTextTap : null,
+
+                        style: AppTextStyles.regular(
+                          18.67,
+                        ).copyWith(height: 1.0, color: AppColors.primaryDark),
+
+                        decoration: InputDecoration(
+                          hintText: searchTitle,
+                          hintStyle: AppTextStyles.regular(
+                            18.67,
+                          ).copyWith(height: 1.0, color: AppColors.grayLight),
+
+                          /// ✅ FILTER ICON (WORKING)
+                          suffixIcon: enableFilter
+                              ? GestureDetector(
+                                  onTap: onFilterTap,
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(13),
+                                    child: SvgPicture.asset(
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.compareFilter,
+                                      ),
+                                      width: 18,
+                                      height: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                )
+                              : null,
+
+                          /// SEARCH ICON
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(13),
+                            child: SvgPicture.asset(
+                              CommonUi.setSvgImage(AssetsPath.searchIcon),
+                              width: 18,
+                              height: 18,
                             ),
                           ),
+
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ),
+
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(13),
+                            borderSide: const BorderSide(
+                              color: Colors.black,
+                              width: 0.6,
+                            ),
+                          ),
+
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(13),
+                            borderSide: BorderSide(
+                              color: (isComeFromMapSection == true
+                                  ? Colors.transparent
+                                  : Colors.black),
+                              width: 1.3,
+                            ),
+                          ),
+
+                          filled: true,
+                          fillColor: Colors.transparent,
                         ),
                       ),
                     ),
                   ),
-
                 ],
               ),
             ],

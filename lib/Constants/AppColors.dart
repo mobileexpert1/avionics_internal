@@ -49,6 +49,8 @@ class AppColors {
   static const Color accentPurple = Color(0xFF9D4EDD);
   static const Color greyForTextfield = Color(0xFF575757);
   static const Color blackForNavTitle = Color(0xFF3F3D56);
+  static const Color greyFlightDetailText = Color(0xFF959595);
+
 
   static const Color lightGreyTextFieldHeading = Color(0xFF6B6B6B);
 
