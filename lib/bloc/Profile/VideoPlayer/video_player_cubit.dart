@@ -33,21 +33,17 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
       controller.addListener(_listener);
 
-      emit(
-        state.copyWith(
-          controller: controller,
-          duration: controller.value.duration,
-          errorMessage: null,
-        ),
-      );
-    } catch (e) {
       if (!isClosed) {
         emit(
           state.copyWith(
-            isPlaying: false,
-            errorMessage: "Video not available or failed to load",
+            controller: controller,
+            duration: controller.value.duration,
           ),
         );
+      }
+    } catch (_) {
+      if (!isClosed) {
+        emit(state.copyWith(isPlaying: false));
       }
     }
   }

@@ -133,7 +133,6 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                           ? Colors.white
                                           : Colors.grey.shade600,
                                     ),
-
                                     title: ConstantStrings.sendEmailButton,
                                     backgroundColor: isButtonEnabled
                                         ? AppColors.primaryValueColour

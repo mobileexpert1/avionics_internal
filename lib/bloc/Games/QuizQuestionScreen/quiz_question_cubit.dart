@@ -26,13 +26,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   DateTime? _startTime;
 
   QuizQuestionCubit(
-      int sectionId,
-      BuildContext context, {
-        required this.gameId,
-        QuizQuestionRepository? repository,
-      }) : _repository = repository ?? QuizQuestionRepository(),
-        super(QuizQuestionState.initial()) {
-
+    int sectionId,
+    BuildContext context, {
+    required this.gameId,
+    QuizQuestionRepository? repository,
+  }) : _repository = repository ?? QuizQuestionRepository(),
+       super(QuizQuestionState.initial()) {
     maxQuestions = gameId == "trivia" ? 5 : 20;
 
     const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40};
@@ -70,7 +69,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         AppSnackBar.custom(
           context,
           message:
-              'No questions available from API. Please wait while more questions are loading. Try again later.',
+              'No questions available at this time. Please wait while more questions are loading. Try again later.',
           svgAsset: '',
         );
         Future.delayed(const Duration(seconds: 4), () {
@@ -102,7 +101,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'No questions could be mapped from API response',
+            errorMessage: 'No questions could be mapped',
           ),
         );
         return;
@@ -111,7 +110,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       // Initialize results
       final initialResults = List<QuestionResult>.generate(
         maxQuestions,
-            (index) => QuestionResult(
+        (index) => QuestionResult(
           userAnswerIndex: null,
           correctPoint: 0,
           bonusPoint: 0,
@@ -159,7 +158,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         AppSnackBar.custom(
           context,
           message:
-          'Please wait while more questions are loading. Try again later.',
+              'Please wait while more questions are loading. Try again later.',
           svgAsset: '',
         );
 
@@ -182,9 +181,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   QuizQuestion _mapQuestion(Question q, String setId, String imageBasedId) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
-    print(
-      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
-    );
+    // print(
+    //   'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
+    // );
     if (correctIndex == -1) {
       // print(
       //   'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
@@ -254,7 +253,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: 'No questions available after background fetch.',
+          errorMessage: 'No questions available.',
         ),
       );
     }
@@ -355,11 +354,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   Future<void> reportQuestionPostMethod(
-      String reason,
-      QuizQuestionCubit quizCubit,
-      BuildContext context,
-      String isForType,
-      ) async {
+    String reason,
+    QuizQuestionCubit quizCubit,
+    BuildContext context,
+    String isForType,
+  ) async {
     try {
       final currentQuestion = quizCubit.state.currentQuestion;
 
@@ -507,16 +506,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             final result = resultIndex != -1
                 ? state.questionResults[resultIndex]
                 : QuestionResult(
-              userAnswerIndex: null,
-              correctPoint: 0,
-              bonusPoint: 0,
-              timeTakenSeconds: 0,
-            );
+                    userAnswerIndex: null,
+                    correctPoint: 0,
+                    bonusPoint: 0,
+                    timeTakenSeconds: 0,
+                  );
             return {
               "question": q.question,
               "options": List.generate(
                 q.options.length,
-                    (optIndex) => {
+                (optIndex) => {
                   "label": String.fromCharCode(65 + optIndex),
                   "value": q.options[optIndex],
                 },
@@ -635,4 +634,3 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     return super.close();
   }
 }
-

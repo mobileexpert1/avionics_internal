@@ -33,7 +33,9 @@ class GlossaryCubit extends Cubit<GlossaryState> {
       if (isComeFromSearch == false) {
         state.selectedLetter = "A";
         filterByLetter(letter: state.selectedLetter ?? "", context: context);
-      } else {}
+      }else{
+
+      }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
       emit(

@@ -93,7 +93,9 @@ class _FormulasScreenState extends State<FormulasScreen> {
                     arrowBackgroundColor: expandedMap[index] ?? false
                         ? AppColors.extraDarkYellow
                         : AppColors.lightGreyWithAlphaDecreased,
-                    arrowFrontColor: Colors.white,
+                    arrowFrontColor: expandedMap[index] ?? false
+                        ? AppColors.black
+                        : AppColors.white,
                     isExpandedViewAvailable: true,
                     onHeaderTap: () {
                       setState(() {

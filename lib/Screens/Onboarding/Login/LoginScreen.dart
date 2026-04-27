@@ -142,7 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ? Colors.white
                                         : Colors.grey.shade600,
                                   ),
-
                                   title: ConstantStrings.loginButton,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour

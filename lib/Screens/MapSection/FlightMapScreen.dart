@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../CustomFiles/CustomAppBar.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
 import '../../Helpers/CustomSegmentController/CustomSegmentController.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
 import '../../bloc/MapSection/ParsedPolygon.dart';
+import '../Profile/SettingScreen/SettingScreen.dart';
 import 'AirportStationDetailCard/AirportStationDetailCard.dart';
 import 'FlightDetailCard/FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
@@ -54,6 +56,9 @@ class FlightMapScreen extends StatefulWidget {
 
 class _FlightMapscreenState extends State<FlightMapScreen> {
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
+
+  BoxConstraints? firstTimeConstraints;
+  bool? isFirstTimeUserCome = true;
 
   Timer? _debounce;
   int _activeCard = 0;
@@ -194,12 +199,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         Polygon(
           polygonId: PolygonId('${p.id}_$index'),
           points: ring
-              .map<LatLng>(
-                (e) => LatLng(
-                  e[1].clamp(-85.0, 85.0), // lat
-                  e[0], // lng
-                ),
-              )
+              .map<LatLng>((e) => LatLng(e[1].clamp(-85.0, 85.0), e[0]))
               .toList(),
 
           strokeWidth: isSelected ? 2 : 1,
@@ -238,6 +238,38 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        isForHomeScreen: true,
+        title: '',
+        leftButton: widget.openMode == 1
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : IconButton(
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.homeLeftMainLogo),
+                  width: 120,
+                  height: 31,
+                  fit: BoxFit.cover,
+                ),
+                onPressed: () {},
+              ),
+        rightButton: IconButton(
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+            width: 35,
+            height: 31,
+            fit: BoxFit.cover,
+          ),
+          onPressed: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingScreen()),
+            );
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SizedBox.expand(
         child: BlocBuilder<FlightMapCubit, FlightMapState>(
@@ -315,7 +347,12 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                 onCameraIdle: () {
                                   if (!_isUserInteractingWithMap) return;
                                   _isUserInteractingWithMap = false;
-                                  _fetchFlightsWithDebounce(constraints);
+                                  firstTimeConstraints = constraints;
+                                  if (isFirstTimeUserCome == false) {
+                                    _fetchFlightsWithDebounce(constraints);
+                                  }else if (widget.openMode == 1) {
+                                    _fetchFlightsWithDebounce(constraints);
+                                  }
                                 },
 
                                 onCameraMoveStarted: () {
@@ -335,8 +372,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
                   if (_isMapListViewShown)
                     Positioned(
-                      top: kIsWeb ? 100 : 130,
-                      right: 30,
+                      top: kIsWeb ? 100 : 65,
+                      right: 10,
                       child: MapToggleButtons(
                         isMapViewSelected: isMapViewSelected,
                         onToggle: handleToggle, // Passing the callback function
@@ -436,12 +473,6 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _safeAnimate(isMapViewSelected ? 0.01 : 0.78);
     });
-
-    // _sheetController.animateTo(
-    //   isMapViewSelected ? 0.0 : 0.78,
-    //   duration: const Duration(milliseconds: 400),
-    //   curve: Curves.easeInOut,
-    // );
   }
 
   Future<void> _safeAnimate(double size) async {
@@ -484,6 +515,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             });
             _resetFlightSelection();
             Navigator.pop(context);
+
+            if (isFirstTimeUserCome == true) {
+              isFirstTimeUserCome = false;
+              if (firstTimeConstraints != null) {
+                _fetchFlightsWithDebounce(firstTimeConstraints!);
+              }
+            }
           },
           onTrackSelected: () {
             setState(() {
@@ -771,7 +809,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         _isMapListViewShown = false;
       });
 
-      _mapCubit.submitFlightCreditApi(1, 8);
+      _mapCubit.submitFlightCreditApi(1, 8, context);
+
       _toggleFlightCard(flight: result.id);
 
       _buildSingleFlightMarker(result.flightDetailResponse!).then((marker) {
@@ -968,19 +1007,11 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                   ) {
                                     _safeAnimate(0.01);
                                   });
-
-                                  // _sheetController.animateTo(
-                                  //   0.0,
-                                  //   duration: const Duration(milliseconds: 400),
-                                  //   curve: Curves.easeInOut,
-                                  // );
                                 },
 
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
-                                    final isWide =
-                                        constraints.maxWidth >
-                                        600; // breakpoint
+                                    final isWide = constraints.maxWidth > 600;
 
                                     return Container(
                                       clipBehavior: Clip.hardEdge,
@@ -1199,14 +1230,13 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
   Widget _buildSearchBar(BuildContext context, FlightMapState state) {
     return Positioned(
-      top: kIsWeb ? 10 : 40,
-      left: kIsWeb ? 100 : 5,
-      right: kIsWeb ? 100 : 5,
+      top: kIsWeb ? 10 : 0,
+      left: kIsWeb ? 100 : 0,
+      right: kIsWeb ? 100 : 0,
       child: SearchBarWidget(
         enableGestureMode: true,
         onTextTap: () => _handleTextTap(context),
-        enableBackArrow: _isForFlyingInTheArea != 0,
-        // onBackButtonTap: () => _showInitialTrackingModePopup(context),
+        enableBackArrow: false,
         onBackButtonTap: () {
           if (widget.skipInitialPopup && widget.openMode != null) {
             widget.onGoToFirstTab();
@@ -1296,12 +1326,8 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
             "Aircraft ICAOs: ${filterResult.aircraftIcaos}",
           );
 
-          /* ---------------- API CALL (SAFE) ---------------- */
-
-          // Only fetch if map is ready
           if (_mapController == null) return;
 
-          // ⏱️ Let map settle after style change
           Future.delayed(const Duration(milliseconds: 300), () async {
             try {
               if (!mounted) return;
@@ -1333,7 +1359,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
         },
         searchTitle: _isForFlyingInTheArea == 2
             ? 'Track a flight...'
-            : 'Search Flight no.,CallSign',
+            : 'Search Flight no.,CallSign,...',
       ),
     );
   }

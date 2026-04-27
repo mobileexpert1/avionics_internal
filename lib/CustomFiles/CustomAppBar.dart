@@ -34,13 +34,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: isClearBackgroundColour == true
             ? Colors.white
             : AppColors.primaryDark,
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: isHideTopGradient == true ? Colors.white : Colors.black12,
-        //     offset: const Offset(0, 2),
-        //     blurRadius: 4,
-        //   ),
-        // ],
         border: isForComparison == true
             ? null
             : Border(
@@ -64,7 +57,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: AppTextStyles.regular(17.16).copyWith(
+          style: AppTextStyles.semiRegular(17.16).copyWith(
             height: 1.0,
             color: isClearBackgroundColour == true
                 ? AppColors.blackForNavTitle

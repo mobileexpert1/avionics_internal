@@ -1,13 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_cubit.dart';
 import '../../../bloc/Profile/FeedbackState/feedback_state.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../SettingScreen/InfoBottomSheet.dart';
+import 'RateAppBottomSheet.dart';
 
 class FeedbackScreen extends StatefulWidget {
   @override
@@ -16,6 +25,7 @@ class FeedbackScreen extends StatefulWidget {
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
   late TextEditingController controller;
+  static const int maxChars = 500;
 
   @override
   void initState() {
@@ -41,8 +51,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: ConstantStrings.reviewTitle,
+          centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -58,104 +69,254 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 listener: (context, state) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content: Text("Review submitted successfully.")),
+                      content: Text("Review submitted successfully."),
+                    ),
                   );
-                  Navigator.pop(context);
+                  //Navigator.pop(context);
+                  showRateAppBottomSheet(context);
                 },
                 child: BlocBuilder<FeedbackCubit, FeedbackState>(
                   builder: (context, state) {
+                    final textLength = controller.text.length;
+                    final isEmpty = controller.text.trim().isEmpty;
+                    final isAtLimit = textLength >= maxChars;
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 25,
-                        vertical: 60,
+                        horizontal: 20,
+                        vertical: 20,
                       ),
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            /// Rating Stars
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(5, (index) {
-                                return IconButton(
-                                  icon: Icon(
-                                    Icons.star,
-                                    size: 48,
-                                    color: index < state.rating
-                                        ? Colors.amber
-                                        : Colors.grey[300],
+                            /// HEADER
+                            Center(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "How was your experience?",
+                                    style: AppTextStyles.bold(24).copyWith(
+                                      color: AppColors.primaryValueColour,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  onPressed: () {
-                                    final currentRating = state.rating;
-                                    final tappedRating = index + 1;
-
-                                    context
-                                        .read<FeedbackCubit>()
-                                        .updateRating(
-                                      currentRating == tappedRating
-                                          ? 0
-                                          : tappedRating,
-                                    );
-                                  },
-                                );
-                              }),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "Your feedback helps us improve for everyone",
+                                    style: AppTextStyles.regular(
+                                      14,
+                                    ).copyWith(color: AppColors.grayMedium),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
 
                             const SizedBox(height: 30),
 
-                            const Text(
-                              "Please leave your feedback about the app",
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 15,
-                              ),
-                              textAlign: TextAlign.center,
+                            /// STAR RATING
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(5, (index) {
+                                      return IconButton(
+                                        icon: Icon(
+                                          Icons.star,
+                                          size: 50,
+                                          color: index < state.rating
+                                              ? Colors.amber
+                                              : Colors.grey[300],
+                                        ),
+                                        onPressed: () {
+                                          final currentRating = state.rating;
+                                          final tappedRating = index + 1;
+
+                                          context
+                                              .read<FeedbackCubit>()
+                                              .updateRating(
+                                            currentRating == tappedRating
+                                                ? 0
+                                                : tappedRating,
+                                          );
+                                        },
+                                      );
+                                    }),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                if (state.rating > 0)
+                                  AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 300),
+                                    child: state.rating > 0
+                                        ? Text(
+                                      _getRatingData(
+                                        state.rating,
+                                      ).$1, // text
+                                      style: TextStyle(
+                                        color: _getRatingData(
+                                          state.rating,
+                                        ).$2,
+                                        // color
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    )
+                                        : SizedBox(),
+                                  ),
+                              ],
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 30),
 
-                            /// Text Field
+                            /// WHAT COULD BE BETTER
+                            Text(
+                              "What could be better?",
+                              style: AppTextStyles.bold(
+                                14,
+                              ).copyWith(color: AppColors.primaryValueColour),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: (state.categories ?? const []).map((
+                                  label,
+                                  ) {
+                                final isSelected = state.selectedCategories
+                                    .contains(label);
+
+                                return GestureDetector(
+                                  onTap: () => context
+                                      .read<FeedbackCubit>()
+                                      .toggleCategory(label, context),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.primaryBlue
+                                          : AppColors.grayForFeedbackAndText,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      label,
+                                      style: AppTextStyles.regular(14).copyWith(
+                                        color: isSelected
+                                            ? AppColors.white
+                                            : AppColors.grayMedium,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+
+                            const SizedBox(height: 30),
+
+                            /// ADDITIONAL INFO
+                            Text(
+                              "Additional Information",
+                              style: AppTextStyles.bold(
+                                14,
+                              ).copyWith(color: AppColors.primaryValueColour),
+                            ),
+
+                            const SizedBox(height: 12),
+
                             Container(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 12),
+                              width: double.infinity,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF5F5F5),
-                                borderRadius: BorderRadius.circular(5),
+                                color: AppColors.grayForFeedbackAndText,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: TextField(
-                                controller: controller,
-                                maxLines: 14,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                                decoration: const InputDecoration(
-                                  hintText:
-                                  "Enter some suggestions for us...",
-                                  border: InputBorder.none,
-                                ),
-                                onChanged: context
-                                    .read<FeedbackCubit>()
-                                    .updateComment,
+                              child: Stack(
+                                children: [
+                                  /// TEXT FIELD
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      12,
+                                      12,
+                                      12,
+                                      28,
+                                    ),
+                                    child: TextField(
+                                      style: AppTextStyles.regular(16).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.black,
+                                      ),
+                                      controller: controller,
+                                      maxLines: 8,
+                                      maxLength: maxChars,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(
+                                          maxChars,
+                                        ),
+                                      ],
+                                      decoration: InputDecoration(
+                                        hintText:
+                                        "Tell us more about your experience",
+
+                                        border: InputBorder.none,
+                                        counterText: "",
+                                        hintStyle: AppTextStyles.regular(16)
+                                            .copyWith(
+                                          height: 1.0,
+                                          color: AppColors.grayMedium,
+                                        ),
+                                      ),
+                                      onChanged: (value) {
+                                        context
+                                            .read<FeedbackCubit>()
+                                            .updateComment(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    bottom: 8,
+                                    right: 12,
+                                    child: Text(
+                                      "${controller.text.length}/$maxChars",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color:
+                                        controller.text.length >= maxChars
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
 
                             const SizedBox(height: 20),
 
-                            /// Submit Button
+                            /// SUBMIT BUTTON
                             SizedBox(
                               width: double.infinity,
                               child: CustomBottomButton(
-                                fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                  height: 1.0,
+                                fontStyle: AppTextStyles.regular(21.46)
+                                    .copyWith(
                                   color: !state.isSubmitting
                                       ? Colors.white
                                       : Colors.grey.shade600,
                                 ),
-                                title:
-                                state.isSubmitting ? "" : "Submit",
-                                backgroundColor:
-                                const Color.fromRGBO(63, 61, 81, 1.0),
+                                title: state.isSubmitting
+                                    ? ""
+                                    : "Submit Feedback",
+                                backgroundColor: AppColors.primaryValueColour,
                                 textColor: Colors.white,
                                 icon: state.isSubmitting
                                     ? const SizedBox(
@@ -169,13 +330,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                                    : const SizedBox(width: 0),
-                                isEnabled: !state.isSubmitting,
+                                    : const SizedBox(),
+                                isEnabled: !state.isSubmitting && !isEmpty,
                                 onPressed: () {
-                                  FocusScope.of(context).unfocus();
-                                  context
-                                      .read<FeedbackCubit>()
-                                      .submitFeedback(context);
+                                  if (isEmpty) return;
+
+                                  FocusManager.instance.primaryFocus?.unfocus();
+
+                                  context.read<FeedbackCubit>().submitFeedback(
+                                    context,
+                                  );
+
                                   AnalyticsService.instance.buttonPressed(
                                     FirebaseEvents.submitReviewsButton,
                                     FirebaseEvents.feedbackScreen,
@@ -183,6 +348,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 },
                               ),
                             ),
+                            const SizedBox(height: 30),
                           ],
                         ),
                       ),
@@ -194,6 +360,41 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  (String, Color) _getRatingData(int rating) {
+    switch (rating) {
+      case 1:
+        return ("Poor", Colors.red);
+      case 2:
+        return ("Bad", Colors.orange);
+      case 3:
+        return ("Average", Colors.amber);
+      case 4:
+        return ("Good", Colors.lightGreen);
+      case 5:
+        return ("Excellent", Colors.green);
+      default:
+        return ("", Colors.grey);
+    }
+  }
+
+  void showRateAppBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) {
+        return RateAppBottomSheet(
+          onRate: () {
+            Navigator.pop(context);
+          },
+          onMaybeLater: () {
+            Navigator.pop(context);
+          },
+        );
+      },
     );
   }
 }

@@ -488,4 +488,3 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
     );
   }
 }
-

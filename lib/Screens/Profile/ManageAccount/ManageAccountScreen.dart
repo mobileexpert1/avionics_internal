@@ -60,7 +60,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             emailController.text = state.email;
 
             isSocialLogin =
-                (state.authType == "apple" ||
+            (state.authType == "apple" ||
                 state.authType == "facebook" ||
                 state.authType == "google");
           } else if (state.status == CommonApiStatus.failure) {
@@ -83,28 +83,30 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             backgroundColor: Colors.white,
             appBar: CustomAppBar(
               title: ConstantStrings.manageAccount,
+              centerTitle: false,
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
               rightButton: isRightButtonShow
                   ? Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: GestureDetector(
-                        child: SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.editIcon),
-                          width: 20,
-                          height: 20,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            isTextfiledEnabled = true;
-                            isRightButtonShow = false;
-                            buttonBottomTitle = ConstantStrings.saveTitle;
-                          });
-                        },
-                      ),
-                    )
+                padding: const EdgeInsets.all(15),
+                child: GestureDetector(
+                  child: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.editIcon),
+                    width: 20,
+                    height: 20,
+                    color: Colors.white,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      isTextfiledEnabled = true;
+                      isRightButtonShow = false;
+                      buttonBottomTitle = ConstantStrings.saveTitle;
+                    });
+                  },
+                ),
+              )
                   : null,
             ),
             body: LayoutBuilder(
@@ -150,20 +152,17 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           ),
                           const SizedBox(height: 30),
                           CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(21.46).copyWith(
-                              height: 1.0,
-                              color: (buttonBottomTitle == ConstantStrings.saveTitle)
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
-                            ),
+                            fontStyle: AppTextStyles.regular(
+                              21.46,
+                            ).copyWith(height: 1.0, color: Colors.white),
                             title: buttonBottomTitle,
                             backgroundColor: state.isButtonEnabled
-                                ? AppColors.customBottomEnabledColour
-                                : AppColors.customBottomDisableColour,
+                                ? AppColors.primaryValueColour
+                                : AppColors.darkSeparatorColourAppBar,
                             textColor: Colors.white,
                             icon: const SizedBox(width: 0),
                             isEnabled:
-                                (buttonBottomTitle == ConstantStrings.saveTitle)
+                            (buttonBottomTitle == ConstantStrings.saveTitle)
                                 ? state.isButtonEnabled
                                 : !isSocialLogin && state.isButtonEnabled,
                             onPressed: () async {

@@ -2,9 +2,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../Constants/AppColors.dart';
-import 'AppTextStyles/AppTextStyles.dart';
-
 class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isNeedToShowLeftRightBottomBorder;
   final bool isNeedToShowLeftImage;

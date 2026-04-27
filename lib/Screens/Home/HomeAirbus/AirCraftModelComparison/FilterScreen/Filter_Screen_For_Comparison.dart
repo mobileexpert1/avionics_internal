@@ -141,9 +141,9 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                             option.name,
                                             style: AppTextStyles.regular(14)
                                                 .copyWith(
-                                                  height: 1.0,
-                                                  color: AppColors.black,
-                                                ),
+                                              height: 1.0,
+                                              color: AppColors.black,
+                                            ),
                                           ),
                                         ),
                                         Checkbox(
@@ -152,10 +152,10 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                             context
                                                 .read<ComparisonFilterCubit1>()
                                                 .toggleOption(
-                                                  categoryId: category.id,
-                                                  optionId: option.id,
-                                                  isSelected: newValue ?? false,
-                                                );
+                                              categoryId: category.id,
+                                              optionId: option.id,
+                                              isSelected: newValue ?? false,
+                                            );
                                           },
                                           activeColor: AppColors.primaryBlue,
                                         ),

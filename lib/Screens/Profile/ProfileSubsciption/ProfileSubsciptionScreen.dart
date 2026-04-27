@@ -60,7 +60,7 @@ class ProfileSubscriptionScreen extends StatelessWidget {
                         const SizedBox(height: 10),
 
                         ...state.subscriptionList.map(
-                          (item) => Padding(
+                              (item) => Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: SubscriptionOptionCard(
                               item: item,
@@ -115,6 +115,7 @@ class ProfileSubscriptionScreen extends StatelessWidget {
                                 ? Colors.white
                                 : Colors.grey.shade600,
                           ),
+
                           backgroundColor: const Color.fromRGBO(
                             30,
                             128,

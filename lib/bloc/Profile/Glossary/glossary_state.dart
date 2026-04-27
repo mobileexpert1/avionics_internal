@@ -34,7 +34,6 @@ class GlossaryState {
     Map<String, List<GlossaryItem>>? originalData,
     String? selectedLetter,
     bool? isLetterQueryEmpty,
-
   }) {
     return GlossaryState(
       glossaryData: glossaryData ?? this.glossaryData,

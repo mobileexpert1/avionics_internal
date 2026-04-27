@@ -40,8 +40,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
     return "";
   }
 
-  //bool _navigated = false;
-
   @override
   void initState() {
     super.initState();
@@ -78,7 +76,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
       create: (_) => _cubit,
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
-            (prev.error != curr.error && curr.error != null) ||
+        (prev.error != curr.error && curr.error != null) ||
             (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
           if (state.error != null) {
@@ -101,7 +99,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                (route) => false,
+                    (route) => false,
               );
             }
           }
@@ -109,19 +107,16 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
         builder: (context, state) {
           final products = [...state.products]
             ..sort(
-              (a, b) => _cleanProductTitle(a).compareTo(_cleanProductTitle(b)),
+                  (a, b) => _cleanProductTitle(a).compareTo(_cleanProductTitle(b)),
             );
-          // -------------------------------
-          // Determine selected product:
-          // - Use state.selectedProduct if user tapped
-          // - Otherwise fallback to active plan
+
           ProductDetails? selected;
           if (state.selectedProduct != null) {
             selected = state.selectedProduct;
           } else {
             final activePlans = state.products.where(
-              (p) =>
-                  p.id == state.subscription?.productId &&
+                  (p) =>
+              p.id == state.subscription?.productId &&
                   state.subscription?.status == "active",
             );
             selected = activePlans.isNotEmpty ? activePlans.first : null;
@@ -133,22 +128,27 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title:
-                      (widget.isComeFromSignup == false ||
-                          widget.isComeFromSignup == null)
+                  (widget.isComeFromSignup == false ||
+                      widget.isComeFromSignup == null)
                       ? SubscriptionTexts.currentSubTitle
                       : ConstantStrings.startSubscription,
+                  centerTitle:
+                  (widget.isComeFromSignup == false ||
+                      widget.isComeFromSignup == null)
+                      ? false
+                      : true,
                   leftButton:
-                      (widget.isComeFromSignup == false ||
-                          widget.isComeFromSignup == null)
+                  (widget.isComeFromSignup == false ||
+                      widget.isComeFromSignup == null)
                       ? IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
                       : Wrap(),
                 ),
                 body: Padding(
@@ -197,7 +197,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         ...products.map((product) {
                           final bool isActive =
                               state.subscription?.productId == product.id &&
-                              state.subscription?.status == "active";
+                                  state.subscription?.status == "active";
 
                           final bool isSelected = selected?.id == product.id;
 
@@ -257,9 +257,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(21.46).copyWith(
                               height: 1.0,
-                              color: true
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+                              color: true ? Colors.white : Colors.grey.shade600,
                             ),
                             backgroundColor: const Color.fromRGBO(
                               30,
@@ -285,9 +283,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(21.46).copyWith(
                               height: 1.0,
-                              color: true
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+                              color: true ? Colors.white : Colors.grey.shade600,
                             ),
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
@@ -449,12 +445,12 @@ class _SubscriptionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ]
               : [],
         ),
         child: Row(

@@ -20,6 +20,7 @@ import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
+import '../Profile/SettingScreen/SettingScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
@@ -40,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPrefsHelper.removeTempKeyBeforeLaunch();
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
     homeCubit.repository.getMapKeyValueFromServer();
@@ -74,7 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 31,
               fit: BoxFit.cover,
             ),
-            onPressed: () async {},
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingScreen()),
+              );
+            },
           ),
         ),
         backgroundColor: Colors.white,
@@ -431,11 +436,9 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
-            fontStyle: AppTextStyles.regular(18).copyWith(
-              height: 1.4,
-              color: AppColors.white,
-              letterSpacing: 0.2,
-            ),
+            fontStyle: AppTextStyles.regular(
+              18,
+            ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
@@ -496,11 +499,9 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowBackgroundColor: AppColors.extraDarkYellow,
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
-            fontStyle: AppTextStyles.regular(18).copyWith(
-              height: 1.4,
-              color: AppColors.white,
-              letterSpacing: 0.2,
-            ),
+            fontStyle: AppTextStyles.regular(
+              18,
+            ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.homeLiveTracking),

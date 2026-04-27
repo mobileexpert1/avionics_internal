@@ -1,3 +1,29 @@
+class AtmosphereAssets {
+  static const String exosphereQuiz = "42Exosphere";
+  static const String thermosphereQuiz = "43Thermosphere";
+  static const String mesosphereQuiz = "44Mesosphere";
+  static const String stratosphereQuiz = "45Stratosphere";
+  static const String troposphereQuiz = "46Troposphere";
+
+  static String getAsset(String layer) {
+    switch (layer) {
+      case "Exosphere":
+        return exosphereQuiz;
+      case "Thermosphere":
+        return thermosphereQuiz;
+      case "Mesosphere":
+        return mesosphereQuiz;
+      case "Stratosphere":
+        return stratosphereQuiz;
+      case "Troposphere":
+        return troposphereQuiz;
+      default:
+        return "";
+    }
+  }
+}
+
+
 abstract class AssetsPath {
   /// svg Images
 
@@ -29,6 +55,26 @@ abstract class AssetsPath {
   static const String compareAeroPlaneIcon = "23CompareAeroPlaneIcon";
   static const String backArrowForPop = "24BackArrowForPop";
 
+  static const String calculatorProfile = '25Calculator';
+  static const String conversionProfile = '26Conversion';
+  static const String formulasProfile = "27Formulas";
+  static const String glossaryProfile = "28Glossary";
+  static const String badgeProfile = "29badgeIcon";
+  static const String progressProfile = "30ProgressState";
+  static const String savedProfile = "31SavedIcon";
+  static const String manageAccountProfile = "32ManageAccount";
+  static const String subscriptionProfile = "33Subscriptions";
+  static const String logoutProfile = "34LogoutIcon";
+  static const String deleteProfile = "35DeleteIcons";
+  static const String tutorialVideoProfile = "36TutorialVideo";
+  static const String reviewsProfile = "37Reviews";
+  static const String customerSupportProfile = "38CustomerSupport";
+  static const String privacyPolicyProfile = "39PrivacyPolicy";
+  static const String termsAndConditionsProfile = "40Terms&Conditions";
+  static const String aboutProfile = "41About";
+  static const String liveTrackImage = "47LiveTrackImage";
+
+
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
 
@@ -37,7 +83,6 @@ abstract class AssetsPath {
   static const String chatIcon = "chatIcon";
   static const String ProfileIcon = "ProfileIcon";
 
-  static const String tutorialVideo = "TutorialVideo";
   static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";
   static const String mapLayers = "MpaLayes";
   static const String map = "map";
@@ -83,25 +128,16 @@ abstract class AssetsPath {
   static const String compare1 = "compare1";
   static const String backgroundImageComapre = "backgroundImageComapre";
 
-  static const String deleteAcc = "Delete";
-  static const String deleteAccSvg = "deleteIconsSvg";
   static const String contactAcc = "Contact";
-  static const String reviewsAcc = "Reviews";
-  static const String glossaryAcc = "Glossary";
-  static const String unitMeasureAcc = "UnitsMeasurments";
-  static const String savedIcon = "savedIcon";
+
   static const String avtarAcc = "Avatar";
-  static const String subsrcitAcc = "Subscriptions";
-  static const String manageAccountAcc = "manageAccount";
   static const String editIcon = "EditIcon";
-  static const String badgeIcon = "badgeIcon";
   static const String bagdestarIcon = "bagdestarIcon";
 
   static const String avtarSecond = "AvtarSecond";
 
   static const String loginIcon = "loginIcon";
   static const String otpIcon = "otpIcon";
-  static const String logoutIcon = "logoutIcon";
   static const String signinIcon = "signinIcon";
 
   static const String quiz = "quizIcon";
@@ -139,9 +175,6 @@ abstract class AssetsPath {
   static const expandForCal = 'assets/images/expand.svg';
   static const historyForCal = 'assets/images/history.svg';
   static const switchLGridForCal = 'assets/images/switch.svg';
-
-  static const calculatorImage = 'Calculator';
-  static const conversionImage = 'Conversion';
 }
 
 class CommonUi {
@@ -161,4 +194,3 @@ class CommonUi {
     return 'assets/gif/$image.gif';
   }
 }
-

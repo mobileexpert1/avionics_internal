@@ -41,13 +41,14 @@ class AppColors {
 
   static const Color calculatorTextColour = Color(0xFF171C22);
 
-
   static const Color primaryValueColour = Color(0xFF1B1748);
+  static const Color avtarTitleColour = Color(0xFF1A1848);
 
   static const Color accentCyan = Color(0xFF00D9FF);
   static const Color accentPurple = Color(0xFF9D4EDD);
   static const Color greyForTextfield = Color(0xFF575757);
   static const Color blackForNavTitle = Color(0xFF3F3D56);
+  static const Color greyFlightDetailText = Color(0xFF959595);
 
   static const Color lightGreyTextFieldHeading = Color(0xFF6B6B6B);
 
@@ -59,4 +60,5 @@ class AppColors {
 
   static const Color grayForCompareItem = Color.fromRGBO(227, 227, 227, 0.4);
   static const Color grayForCompareTextColour = Color.fromRGBO(27, 23, 72, 0.6);
+  static const Color grayForFeedbackAndText = Color.fromRGBO(27, 23, 72, 0.05);
 }

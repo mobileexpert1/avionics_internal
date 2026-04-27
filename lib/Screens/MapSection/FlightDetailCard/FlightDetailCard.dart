@@ -255,48 +255,48 @@ class FlightDetailCard extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                InkWell(
-                                  borderRadius: BorderRadius.circular(6),
-                                  onTap: () {
-                                    if (isComeFromLiveTracking == true) {
-                                      context
-                                          .read<FlightMapCubit>()
-                                          .stopTrackingFlight();
-                                      Navigator.pop(context, flightId);
-                                    } else {
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.trackAFlightButton,
-                                        FirebaseEvents.trackScreen,
-                                      );
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider.value(
-                                            value: context
-                                                .read<FlightMapCubit>(),
-                                            child: TrackFlightScreen(
-                                              flightNumber: flightNumber,
-                                              initialFlight: selectedFlight,
-                                              initialFlightDetail: detail,
-                                              flightId: flightId,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4),
-                                    child: state.isTracking
-                                        ? const LiveBadge()
-                                        : const Icon(
-                                            Icons.my_location,
-                                            color: Colors.blue,
-                                            size: 20,
-                                          ),
-                                  ),
-                                ),
+                                // InkWell(
+                                //   borderRadius: BorderRadius.circular(6),
+                                //   onTap: () {
+                                //     if (isComeFromLiveTracking == true) {
+                                //       context
+                                //           .read<FlightMapCubit>()
+                                //           .stopTrackingFlight();
+                                //       Navigator.pop(context, flightId);
+                                //     } else {
+                                //       AnalyticsService.instance.buttonPressed(
+                                //         FirebaseEvents.trackAFlightButton,
+                                //         FirebaseEvents.trackScreen,
+                                //       );
+                                //
+                                //       Navigator.push(
+                                //         context,
+                                //         MaterialPageRoute(
+                                //           builder: (_) => BlocProvider.value(
+                                //             value: context
+                                //                 .read<FlightMapCubit>(),
+                                //             child: TrackFlightScreen(
+                                //               flightNumber: flightNumber,
+                                //               initialFlight: selectedFlight,
+                                //               initialFlightDetail: detail,
+                                //               flightId: flightId,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       );
+                                //     }
+                                //   },
+                                //   child: Padding(
+                                //     padding: const EdgeInsets.all(4),
+                                //     child: state.isTracking
+                                //         ? const LiveBadge()
+                                //         : const Icon(
+                                //             Icons.my_location,
+                                //             color: Colors.blue,
+                                //             size: 20,
+                                //           ),
+                                //   ),
+                                // ),
                                 SizedBox(width: 10),
                                 InkWell(
                                   borderRadius: BorderRadius.circular(6),

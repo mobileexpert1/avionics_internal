@@ -206,7 +206,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                         ? Colors.white
                                         : Colors.grey.shade600,
                                   ),
-
                                   title: ConstantStrings.next,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour

@@ -94,7 +94,9 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
                     arrowBackgroundColor: expandedMap[index] ?? false
                         ? AppColors.extraDarkYellow
                         : AppColors.lightGreyWithAlphaDecreased,
-                    arrowFrontColor: Colors.white,
+                    arrowFrontColor: expandedMap[index] ?? false
+                        ? AppColors.black
+                        : AppColors.white,
                     isExpandedViewAvailable: true,
                     onHeaderTap: () {
                       setState(() {
@@ -146,40 +148,48 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
           final item = category.items[index];
           return Column(
             children: [
-              // CONVERSION ROW
               Container(
-                color: index.isEven
-                    ? AppColors.grayLight
-                    : AppColors.greyForConversionScreen,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        item.fromTo,
-                        style: AppTextStyles.regular(
-                          16,
-                        ).copyWith(height: 1.4, color: AppColors.black),
+                color: AppColors.grayLight,
+                child:
+                IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: TextButton(
+                            onPressed: () {},
+                            child: Text(item.fromTo,style: AppTextStyles.regular(
+                              16,
+                            ).copyWith(height: 1.4, color: AppColors.black),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    Expanded(
 
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        item.formula,
-                        style: AppTextStyles.regular(
-                          16,
-                        ).copyWith(height: 1.4, color: AppColors.black),
+                      const VerticalDivider(
+                        width: 1,
+                        thickness: 1,
+                        color: Colors.white,
                       ),
-                    ),
-                  ],
+
+                      Expanded(
+                        child: Center(
+                          child: TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              item.formula,
+                              style: AppTextStyles.regular(
+                                16,
+                              ).copyWith(height: 1.4, color: AppColors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-
               Container(
                 color: AppColors.greyForConversionScreen,
                 padding: const EdgeInsets.symmetric(
