@@ -40,6 +40,23 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     loadQuestions(sectionId, context);
   }
 
+  String returnGameName() {
+    switch (gameId) {
+      case "calculation":
+        return "Calculation Game";
+      case "one_word":
+        return "OneWord Game";
+      case "trivia":
+        return "Trivia Game";
+      case "imageBased":
+        return "PlaneSpotter Game";
+      case "aircraftEncyclopaedia":
+        return "Aircraft Encyclopaedia";
+      default:
+        return "Quiz Game";
+    }
+  }
+
   Future<void> loadQuestions(int sectionId, BuildContext context) async {
     try {
       emit(state.copyWith(isLoading: true));
@@ -55,6 +72,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         gameData = await _repository.getTriviaData(sectionId, 3);
       } else if (gameId == "imageBased") {
         gameData = await _repository.getImageBasedQuestionData(3);
+      } else if (gameId == "aircraftEncyclopaedia") {
+        gameData = await _repository.getAircraftEncyclopaediaQuestionData(3);
       } else {
         emit(
           state.copyWith(
@@ -361,14 +380,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   ) async {
     try {
       final currentQuestion = quizCubit.state.currentQuestion;
-
-      // print(
-      //   "imageBasedId:-${currentQuestion.imageBasedId}, "
-      //   "setId:-${currentQuestion.setId}, "
-      //   "questionId:-${currentQuestion.questionId}"
-      //   "question:-${currentQuestion.question}, "
-      //   "reason:-$reason",
-      // );
 
       await _repository.reportQuestionPostMethod(
         setId: isForType == "imageBased"

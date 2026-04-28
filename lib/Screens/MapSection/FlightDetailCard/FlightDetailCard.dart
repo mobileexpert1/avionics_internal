@@ -255,88 +255,59 @@ class FlightDetailCard extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                // InkWell(
-                                //   borderRadius: BorderRadius.circular(6),
-                                //   onTap: () {
-                                //     if (isComeFromLiveTracking == true) {
-                                //       context
-                                //           .read<FlightMapCubit>()
-                                //           .stopTrackingFlight();
-                                //       Navigator.pop(context, flightId);
-                                //     } else {
-                                //       AnalyticsService.instance.buttonPressed(
-                                //         FirebaseEvents.trackAFlightButton,
-                                //         FirebaseEvents.trackScreen,
-                                //       );
-                                //
-                                //       Navigator.push(
-                                //         context,
-                                //         MaterialPageRoute(
-                                //           builder: (_) => BlocProvider.value(
-                                //             value: context
-                                //                 .read<FlightMapCubit>(),
-                                //             child: TrackFlightScreen(
-                                //               flightNumber: flightNumber,
-                                //               initialFlight: selectedFlight,
-                                //               initialFlightDetail: detail,
-                                //               flightId: flightId,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //       );
-                                //     }
-                                //   },
-                                //   child: Padding(
-                                //     padding: const EdgeInsets.all(4),
-                                //     child: state.isTracking
-                                //         ? const LiveBadge()
-                                //         : const Icon(
-                                //             Icons.my_location,
-                                //             color: Colors.blue,
-                                //             size: 20,
-                                //           ),
-                                //   ),
-                                // ),
-                                SizedBox(width: 10),
-                                InkWell(
-                                  borderRadius: BorderRadius.circular(6),
-                                  onTap: () {
-                                    if (isComeFromLiveTracking == true) {
-                                      context
-                                          .read<FlightMapCubit>()
-                                          .stopTrackingFlight();
-                                      Navigator.pop(context, flightId);
-                                    } else {
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.trackAFlightButton,
-                                        FirebaseEvents.trackScreen,
-                                      );
+                                if (state.isTracking == false) ...[
+                                  InkWell(
+                                    borderRadius: BorderRadius.circular(6),
+                                    onTap: () {
+                                      if (isComeFromLiveTracking == true) {
+                                        context
+                                            .read<FlightMapCubit>()
+                                            .stopTrackingFlight();
+                                        Navigator.pop(context, flightId);
+                                      } else {
+                                        AnalyticsService.instance.buttonPressed(
+                                          FirebaseEvents.trackAFlightButton,
+                                          FirebaseEvents.trackScreen,
+                                        );
 
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider.value(
-                                            value: context
-                                                .read<FlightMapCubit>(),
-                                            child: TrackFlightScreen(
-                                              flightNumber: flightNumber,
-                                              initialFlight: selectedFlight,
-                                              initialFlightDetail: detail,
-                                              flightId: flightId,
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => BlocProvider.value(
+                                              value: context
+                                                  .read<FlightMapCubit>(),
+                                              child: TrackFlightScreen(
+                                                flightNumber: flightNumber,
+                                                initialFlight: selectedFlight,
+                                                initialFlightDetail: detail,
+                                                flightId: flightId,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  },
+                                        );
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: const Icon(
+                                        Icons.my_location_rounded,
+                                        color: Colors.black,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(6),
+                                  onTap: () {},
                                   child: Padding(
                                     padding: const EdgeInsets.all(4),
                                     child: state.isTracking
                                         ? const LiveBadge()
                                         : const Icon(
-                                            Icons.my_location,
-                                            color: Colors.blue,
-                                            size: 20,
+                                            Icons.star_border,
+                                            color: Colors.yellow,
+                                            size: 30,
                                           ),
                                   ),
                                 ),
@@ -373,7 +344,7 @@ class FlightDetailCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text.rich(
                             TextSpan(
                               children: [
@@ -406,54 +377,16 @@ class FlightDetailCard extends StatelessWidget {
                           flex: 3,
                           child: Column(
                             children: [
-                              LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor: Colors.grey.shade300,
-                                color: Colors.blue,
-                                minHeight: 5,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      groundSpeed == 0
-                                          ? 'N/A'
-                                          : '$groundSpeed km/h',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppTextStyles.regular(14).copyWith(
-                                        height: 1.0,
-                                        color: AppColors.primaryBlue,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  const Text(
-                                    "•",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Flexible(
-                                    child: Text(
-                                      altitude == 0 ? 'N/A' : '$altitude m',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppTextStyles.regular(14).copyWith(
-                                        height: 1.0,
-                                        color: AppColors.primaryBlue,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              buildCustomProgressBar(
+                                progress,
+                                groundSpeed,
+                                altitude,
                               ),
                             ],
                           ),
                         ),
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text.rich(
                             TextSpan(
                               children: [

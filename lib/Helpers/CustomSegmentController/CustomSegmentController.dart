@@ -18,6 +18,7 @@ class CustomSegmentController extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: const BoxDecoration(
         color: AppColors.greyForAirportDetailCard,
         borderRadius: BorderRadius.only(
@@ -31,32 +32,31 @@ class CustomSegmentController extends StatelessWidget {
         ),
       ),
       child: Row(
-
+        mainAxisSize: MainAxisSize.min,
         children: List.generate(segments.length, (index) {
           final isSelected = selectedIndex == index;
 
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onChanged?.call(index),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primaryDark
-                      : Colors.transparent,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                ),
-                child: Text(
-                  segments[index],
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black54,
-                    fontWeight:
-                    isSelected ? FontWeight.w800 : FontWeight.w700,
-                  ),
+          return GestureDetector(
+            onTap: () => onChanged?.call(index),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primaryDark
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                segments[index],
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black54,
+                  fontWeight:
+                  isSelected ? FontWeight.w800 : FontWeight.w700,
                 ),
               ),
             ),

@@ -11,6 +11,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Helpers/Games/GameCard.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
+import '../GamesSubScreens/AircraftEncyclopaedia/AircraftEncyclopaediaDetailScreen.dart';
 import '../GamesSubScreens/ImageBasedQuestion/ImageBasedDetailScreen.dart';
 import '../GamesSubScreens/TriviaSection/TriviaDetailScreen.dart';
 
@@ -132,6 +133,15 @@ class _GamesScreenState extends State<GamesScreen> {
                                   MaterialPageRoute(
                                     builder: (_) =>
                                         ImageBasedDetailScreen(gameId: game.id),
+                                  ),
+                                );
+                                break;
+                              case 'aircraftEncyclopaedia':
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        AircraftEncyclopaediaDetailScreen(),
                                   ),
                                 );
                                 break;

@@ -350,7 +350,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                                   firstTimeConstraints = constraints;
                                   if (isFirstTimeUserCome == false) {
                                     _fetchFlightsWithDebounce(constraints);
-                                  }else if (widget.openMode == 1) {
+                                  } else if (widget.openMode == 1) {
                                     _fetchFlightsWithDebounce(constraints);
                                   }
                                 },
@@ -1266,7 +1266,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
                   ..setInitialMapType(currentMapType)
                   ..setInitialCategories(currentCategories),
                 child: FractionallySizedBox(
-                  heightFactor: 0.84,
+                  heightFactor: 0.8,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(20),

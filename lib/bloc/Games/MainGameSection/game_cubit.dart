@@ -48,6 +48,13 @@ class GamesCubit extends Cubit<GamesState> {
         subtitle: "Test your trivia question game",
         icon: AssetsPath.oneWord,
       ),
+
+      GameItem(
+        id: "aircraftEncyclopaedia",
+        title: "Aircraft Encyclopaedia",
+        subtitle: "Test your Aircraft Encyclopaedia question game",
+        icon: AssetsPath.blackBox,
+      ),
     ];
     emit(GamesLoaded(games));
   }

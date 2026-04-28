@@ -104,8 +104,6 @@ class ConstantStrings {
   static const String avtarTRole = 'Role';
   static const String scientificCalculator = 'Calculator';
 
-
-
   // ─────────────────────────────
   // Create New Password
   // ─────────────────────────────
@@ -127,10 +125,11 @@ class ConstantStrings {
   static const String startGame = 'Start Game';
   static const String compare = 'Compare';
   static const String calculationsTitle = 'Calculations';
-  static const String triviaLockTitle= 'Trivia Levels';
-  static const String triviaTitle= 'Trivia';
+  static const String triviaLockTitle = 'Trivia Levels';
+  static const String triviaTitle = 'Trivia';
 
-  static const String imageBasedTitle= 'Planespotter';
+  static const String imageBasedTitle = 'Planespotter';
+  static const String aircraftEncyclopaediaTitle = 'Aircraft Encyclopaedia';
 }
 
 class SubscriptionTexts {
@@ -256,14 +255,16 @@ class ApiFunctionUrlGamesConstant {
   static const blackBoxSummary = "/blackbox/summary";
   static const blackBoxQuestions = "blackbox/question";
   static const blackBoxSubmit = "/submit";
-  //static const blackBox = "ai-engine/games/blackbox/";
+
   static const blackBox = "blackbox/";
   static const reportQuestion = "report";
   static const blackBoxTopic = "blackbox/";
   static const triviaTopic = "trivia/questions";
   static const trivia = "trivia/";
   static const imageBasedTopic = "image-game/questions/";
+  static const encyclopaediaTopics = "encyclopaedia/questions/";
   static const imageBased = "image-game/";
+  static const encyclopaedia = "encyclopaedia/";
 }
 
 class ApiGameBadges {
@@ -277,7 +278,6 @@ class ApiFunctionUrlMapSectionConstant {
   static const aircraftFlyingList = "aircraft/flying-area/";
   static const aircraftStationList = "airport/?";
   static const String airCraftListNew = 'airport/new';
-
 }
 
 class ApiServiceUrlGamesConstant {
@@ -293,19 +293,22 @@ class ApiServiceUrlGamesConstant {
   static String submitQuizResults(int gameNumber) =>
       "${ApiFunctionUrlGamesConstant.quiz}$gameNumber/submit/";
 
-  static String submitImageBasedResults = "${ApiFunctionUrlGamesConstant.imageBased}submit/";
+  static String submitImageBasedResults =
+      "${ApiFunctionUrlGamesConstant.imageBased}submit/";
 
-  static String submitTriviaResults = "${ApiFunctionUrlGamesConstant.trivia}submit/";
+  static String submitTriviaResults =
+      "${ApiFunctionUrlGamesConstant.trivia}submit/";
 
+  static String encyclopaediaResults =
+      "${ApiFunctionUrlGamesConstant.encyclopaedia}submit/";
 }
 
 class MapFlightAircraftSectionConstant {
   static String baseUrl = "https://fr24api.flightradar24.com/api/live";
   static String baseUrlDetail =
       "https://fr24api.flightradar24.com/api/flight-summary/full";
-   static String baseUrlSearch =
-       "https://www.flightradar24.com/v1/search/web/find?query=";
-   static String baseUrlForFlightPosition =
-       "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
+  static String baseUrlSearch =
+      "https://www.flightradar24.com/v1/search/web/find?query=";
+  static String baseUrlForFlightPosition =
+      "https://fr24api.flightradar24.com/api/live/flight-positions/full?bounds=";
 }
-

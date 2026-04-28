@@ -42,7 +42,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
   final ScrollController _scrollController = ScrollController();
 
   final TransformationController _transformationController =
-  TransformationController();
+      TransformationController();
 
   @override
   void initState() {
@@ -100,18 +100,21 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               rightButton: isNeedToShowFlagOptions == false
                   ? null
                   : IconButton(
-                icon: const Icon(Icons.flag, color: Colors.white),
-                onPressed: () async {
-                  _showRadioPopup(context);
-                },
-              ),
+                      icon: const Icon(Icons.flag, color: Colors.white),
+                      onPressed: () async {
+                        _showRadioPopup(context);
+                      },
+                    ),
               leftButton: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () async {
+                  final cubit = context.read<QuizQuestionCubit>();
+                  final gameName = cubit.returnGameName();
+
                   final shouldExit = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text("Exit Quiz?"),
+                      title: Text("Exit $gameName"),
                       backgroundColor: Colors.white,
                       content: const Text(
                         "Are you sure you want to exit? Your progress will be lost.",
@@ -201,7 +204,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                               totalQuestions: quizCubit.maxQuestions,
                               secondsRemaining: state.timer,
                               transformationController:
-                              _transformationController,
+                                  _transformationController,
                               onOptionSelected: (index) {
                                 if (state.timer.toInt() != 0 &&
                                     !state.showAnswer) {
@@ -224,7 +227,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                                   Future.delayed(
                                     const Duration(milliseconds: 300),
-                                        () {
+                                    () {
                                       if (_scrollController.hasClients) {
                                         _scrollController.animateTo(
                                           _scrollController
@@ -685,18 +688,18 @@ class QuizProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                    CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                  )
+                          CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        )
                       : Icon(
-                    Icons.access_time,
-                    size: 30,
-                    color: secondsRemaining == 0
-                        ? Colors.red
-                        : Colors.blue,
-                  ),
+                          Icons.access_time,
+                          size: 30,
+                          color: secondsRemaining == 0
+                              ? Colors.red
+                              : Colors.blue,
+                        ),
 
                   const SizedBox(width: 4),
                   SizedBox(
@@ -763,8 +766,8 @@ class _RadioPopupState extends State<RadioPopup> {
 
     final bool canSubmit =
         _selectedOption != null &&
-            (!isOtherSelected || _otherIssueController.text.trim().isNotEmpty) &&
-            _errorText == null;
+        (!isOtherSelected || _otherIssueController.text.trim().isNotEmpty) &&
+        _errorText == null;
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -920,14 +923,14 @@ class _RadioPopupState extends State<RadioPopup> {
                         ),
                         onPressed: canSubmit
                             ? () {
-                          widget.onSelected(
-                            _selectedOption ==
-                                widget.options.indexOf('Other Issue')
-                                ? _otherIssueController.text.trim()
-                                : widget.options[_selectedOption!],
-                          );
-                          Navigator.of(context).pop();
-                        }
+                                widget.onSelected(
+                                  _selectedOption ==
+                                          widget.options.indexOf('Other Issue')
+                                      ? _otherIssueController.text.trim()
+                                      : widget.options[_selectedOption!],
+                                );
+                                Navigator.of(context).pop();
+                              }
                             : null,
                         child: const Text(
                           'Report',
@@ -945,4 +948,3 @@ class _RadioPopupState extends State<RadioPopup> {
     );
   }
 }
-

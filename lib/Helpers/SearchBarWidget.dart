@@ -48,7 +48,6 @@ class SearchBarWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// CLOSE BUTTON
               if (enableCloseScreen)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -101,7 +100,6 @@ class SearchBarWidget extends StatelessWidget {
                             18.67,
                           ).copyWith(height: 1.0, color: AppColors.grayLight),
 
-                          /// ✅ FILTER ICON (WORKING)
                           suffixIcon: enableFilter
                               ? GestureDetector(
                                   onTap: onFilterTap,
@@ -148,7 +146,7 @@ class SearchBarWidget extends StatelessWidget {
                               color: (isComeFromMapSection == true
                                   ? Colors.transparent
                                   : Colors.black),
-                              width: 1.3,
+                              width: 1.0,
                             ),
                           ),
 

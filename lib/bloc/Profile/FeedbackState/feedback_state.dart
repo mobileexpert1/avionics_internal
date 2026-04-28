@@ -19,7 +19,8 @@ class FeedbackState {
       "Passenger",
       "Military and Government",
       "Cargo",
-      "General Aviation","Jets"
+      "General Aviation",
+      "Jets",
     ],
   });
 
@@ -41,7 +42,6 @@ class FeedbackState {
       selectedCategories: selectedCategories ?? this.selectedCategories,
       showCategories: showCategories ?? this.showCategories,
       categories: categories ?? this.categories,
-
     );
   }
 }

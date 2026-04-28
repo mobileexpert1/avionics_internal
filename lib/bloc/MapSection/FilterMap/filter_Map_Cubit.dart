@@ -83,7 +83,9 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
         showCategories: true,
         showMap: true,
         showAircraftLabels: true,
-        mapType: CustomMapType.standard, // reset to default
+        mapType: CustomMapType.standard,
+        numberOfFlights: 1,
+        searchRadius: 1,
       ),
     );
   }

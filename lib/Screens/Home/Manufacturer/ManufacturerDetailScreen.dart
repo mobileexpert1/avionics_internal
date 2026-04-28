@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
@@ -15,6 +14,7 @@ import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
+import '../../../bloc/home/manufacturer/ProductItemModel.dart';
 import '../../Profile/SettingScreen/SettingScreen.dart';
 import '../HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
@@ -265,7 +265,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 color: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
-                                ), // Internal padding
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -485,7 +485,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   ) {
                                     final product = staticProducts[index];
                                     final isExpanded = expandedIndex == index;
-
                                     return Padding(
                                       padding: const EdgeInsets.only(
                                         bottom: 12,
@@ -525,11 +524,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                 child: Row(
                                                   children: [
                                                     Container(
-                                                      width: 8,
-                                                      height: 8,
+                                                      width: 10,
+                                                      height: 10,
                                                       decoration:
                                                           const BoxDecoration(
-                                                            color: Colors.blue,
+                                                            color: AppColors
+                                                                .primaryBlue,
                                                             shape:
                                                                 BoxShape.circle,
                                                           ),
@@ -538,12 +538,21 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                     Expanded(
                                                       child: Text(
                                                         product.title,
+                                                        style:
+                                                            AppTextStyles.bold(
+                                                              16,
+                                                            ).copyWith(
+                                                              color: AppColors
+                                                                  .black,
+                                                            ),
                                                       ),
                                                     ),
                                                     Icon(
                                                       isExpanded
                                                           ? Icons.remove
                                                           : Icons.add,
+                                                      color:
+                                                          AppColors.grayMedium,
                                                     ),
                                                   ],
                                                 ),
@@ -571,49 +580,61 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                       12,
                                                     ),
                                                 child: Column(
-                                                  children: List.generate(
-                                                    product.items.length,
-                                                    (i) {
-                                                      final item =
-                                                          product.items[i];
+                                                  children: List.generate(product.items.length, (
+                                                    i,
+                                                  ) {
+                                                    final item =
+                                                        product.items[i];
 
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              bottom: 8,
-                                                            ),
-                                                        child: Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Text(
-                                                                item.name,
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        8,
-                                                                    vertical: 4,
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            bottom: 8,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              item.name,
+                                                              style:
+                                                                  AppTextStyles.regular(
+                                                                    16,
+                                                                  ).copyWith(
+                                                                    color: AppColors
+                                                                        .black,
                                                                   ),
-                                                              decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade200,
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      6,
-                                                                    ),
-                                                              ),
-                                                              child: Text(
-                                                                item.tag,
-                                                              ),
                                                             ),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
+                                                          ),
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5,
+                                                                ),
+                                                            decoration: BoxDecoration(
+                                                              color: AppColors
+                                                                  .backgroundColourForManufacturer,
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    6,
+                                                                  ),
+                                                            ),
+                                                            child: Text(
+                                                              item.tag,
+                                                              style:
+                                                                  AppTextStyles.regular(
+                                                                    16,
+                                                                  ).copyWith(
+                                                                    color: AppColors
+                                                                        .lightGreyBackgroundColour,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
                                                 ),
                                               ),
                                           ],
@@ -623,68 +644,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   }),
                                 ),
                               ),
-
-                            // Padding(
-                            //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                            //   child: Column(
-                            //     children: List.generate(
-                            //       detail.product.length,
-                            //           (index) {
-                            //         final product = detail.product[index];
-                            //
-                            //         return Padding(
-                            //           padding: const EdgeInsets.only(bottom: 12),
-                            //           child: Container(
-                            //             padding: const EdgeInsets.symmetric(
-                            //               horizontal: 16,
-                            //               vertical: 14,
-                            //             ),
-                            //             decoration: BoxDecoration(
-                            //               color: Colors.white,
-                            //               borderRadius: BorderRadius.circular(12),
-                            //               boxShadow: [
-                            //                 BoxShadow(
-                            //                   color: Colors.black.withOpacity(0.06),
-                            //                   blurRadius: 8,
-                            //                   offset: const Offset(0, 3),
-                            //                 ),
-                            //               ],
-                            //             ),
-                            //             child: Row(
-                            //               children: [
-                            //                 Container(
-                            //                   width: 8,
-                            //                   height: 8,
-                            //                   decoration: const BoxDecoration(
-                            //                     color: Colors.blue,
-                            //                     shape: BoxShape.circle,
-                            //                   ),
-                            //                 ),
-                            //                 const SizedBox(width: 12),
-                            //
-                            //                 Expanded(
-                            //                   child: Text(
-                            //                     product.series,
-                            //                     style: AppTextStyles.regular(16).copyWith(
-                            //                       fontWeight: FontWeight.w600,
-                            //                       color: Colors.black38,
-                            //                     ),
-                            //                   ),
-                            //                 ),
-                            //
-                            //                 Icon(
-                            //                   Icons.add,
-                            //                   size: 20,
-                            //                   color: Colors.grey.shade600,
-                            //                 ),
-                            //               ],
-                            //             ),
-                            //           ),
-                            //         );
-                            //       },
-                            //     ),
-                            //   ),
-                            // ),
                             _buildSectionHeader(
                               title: "INTERESTING FACTS",
                               isExpanded: showInterestingFacts,
@@ -696,45 +655,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                             ),
                             const SizedBox(height: 10),
                             if (showInterestingFacts)
-                              // Padding(
-                              //   padding: const EdgeInsets.symmetric(
-                              //     horizontal: 25,
-                              //   ),
-                              //   child: Column(
-                              //     crossAxisAlignment: CrossAxisAlignment.end,
-                              //     children: List.generate(
-                              //       // show 2 facts by default, full list if expanded
-                              //       showInterestingFacts
-                              //           ? (detail.interestingFacts?.length ?? 0)
-                              //           : (detail.interestingFacts?.length ?? 0)
-                              //                 .clamp(0, 1),
-                              //       (index) {
-                              //         final fact =
-                              //             detail.interestingFacts?[index] ?? "";
-                              //         return Container(
-                              //           margin: const EdgeInsets.only(
-                              //             bottom: 12,
-                              //           ),
-                              //           padding: const EdgeInsets.all(12),
-                              //           decoration: BoxDecoration(
-                              //             color: Colors.grey.shade100,
-                              //             borderRadius: BorderRadius.circular(
-                              //               8,
-                              //             ),
-                              //           ),
-                              //           child: Text(
-                              //             "• $fact",
-                              //             style: AppTextStyles.regular(16).copyWith(
-                              //               height: 1.4,
-                              //               color:
-                              //               AppColors.textColour,
-                              //             ),
-                              //           ),
-                              //         );
-                              //       },
-                              //     ),
-                              //   ),
-                              // ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
@@ -775,30 +695,16 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              //  Yellow Arrow
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                   top: 4,
                                                 ),
                                                 child: Icon(
-                                                  Icons.arrow_right,
+                                                  Icons.double_arrow_outlined,
                                                   color: Colors.amber,
                                                   size: 20,
                                                 ),
                                               ),
-
-                                              ///   in svg
-                                              ///
-                                              ///
-                                              // Padding(
-                                              //   padding: const EdgeInsets.only(top: 4),
-                                              //   child: SvgPicture.asset(
-                                              //    set assets
-                                              //     width: 16,
-                                              //     height: 16,
-                                              //     color: Colors.amber,
-                                              //   ),
-                                              // ),
                                               const SizedBox(width: 8),
                                               Expanded(
                                                 child: Text(
@@ -809,7 +715,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                       ).copyWith(
                                                         height: 1.5,
                                                         color: AppColors
-                                                            .textColour,
+                                                            .greyForTextfield,
                                                       ),
                                                 ),
                                               ),
@@ -826,7 +732,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                         const SizedBox(height: 50),
                       ],
                     ),
-
                     if (kIsWeb == false)
                       Positioned(
                         top: screenHeight * 0.21,
@@ -835,8 +740,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                           child: Container(
                             width: screenWidth * 0.22,
                             height: screenWidth * 0.22,
-                            color:
-                                Colors.grey.shade200, // Background circle color
+                            color: Colors.grey.shade200,
                             child: Builder(
                               builder: (context) {
                                 final logoUrl =
@@ -1066,40 +970,5 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         ],
       ),
     );
-  }
-}
-
-class ProductItemModel {
-  final String name;
-  final String tag;
-
-  ProductItemModel({required this.name, required this.tag});
-
-  factory ProductItemModel.fromJson(Map<String, dynamic> json) {
-    return ProductItemModel(name: json['name'] ?? '', tag: json['tag'] ?? '');
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'name': name, 'tag': tag};
-  }
-}
-
-class ProductModel {
-  final String title;
-  final List<ProductItemModel> items;
-
-  ProductModel({required this.title, required this.items});
-
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
-      title: json['title'] ?? '',
-      items: (json['items'] as List<dynamic>? ?? [])
-          .map((e) => ProductItemModel.fromJson(e))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'title': title, 'items': items.map((e) => e.toJson()).toList()};
   }
 }

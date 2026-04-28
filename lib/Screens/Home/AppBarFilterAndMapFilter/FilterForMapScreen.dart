@@ -4,15 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
 import '../../MapSection/MapHelpers/CustomSliderSection.dart';
+import 'ExpandableSection.dart';
+import 'SegmentedControl.dart';
 
 class FilterResult {
   final CustomMapType mapType;
@@ -66,11 +68,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                 padding: const EdgeInsets.only(left: 10, top: 10),
                 child: Text(
                   "Filter",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primaryDark,
-                  ),
+                  style: AppTextStyles.bold(
+                    20,
+                  ).copyWith(height: 1.0, color: AppColors.primaryDark),
                 ),
               );
             },
@@ -95,8 +95,8 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
+                      horizontal: 14,
+                      vertical: 8,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.primaryDark,
@@ -104,11 +104,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                     ),
                     child: Text(
                       "Apply",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white, // contrast text
-                      ),
+                      style: AppTextStyles.semiRegular(
+                        18,
+                      ).copyWith(height: 1.0, color: AppColors.white),
                     ),
                   ),
                 ),
@@ -118,330 +116,285 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(25.0),
-          child: _FilterContent(),
-        ),
-      ),
-    );
-  }
-}
+          child: BlocBuilder<FilterMapMainCubit, FilterMapState>(
+            builder: (context, state) {
+              final cubit = context.read<FilterMapMainCubit>();
+              final aircraftCubit = context.watch<AircraftListDataCubit>();
+              return ListView(
+                children: [
+                  ExpandableSection(
+                    isComeFromManufactureScreen: false,
+                    title: "NUMBER OF FLIGHTS",
+                    expanded: cubit.state.showNumberOfFlights,
+                    onToggle: cubit.togglesNumberOfFlightsSection,
+                    child: CustomSliderSection(
+                      value: state.numberOfFlights.toDouble(),
+                      min: 1,
+                      max: 200,
+                      label: "${state.numberOfFlights} Flights",
+                      onChanged: (val) {
+                        cubit.updateFlights(val.toInt());
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 25),
 
-class _FilterContent extends StatelessWidget {
-  const _FilterContent({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FilterMapMainCubit, FilterMapState>(
-      builder: (context, state) {
-        final cubit = context.read<FilterMapMainCubit>();
-        final aircraftCubit = context.watch<AircraftListDataCubit>();
-        return ListView(
-          children: [
-            ExpandableSection(
-              isComeFromManufactureScreen: false,
-              title: "NUMBER OF FLIGHTS",
-              expanded: cubit.state.showNumberOfFlights,
-              onToggle: cubit.togglesNumberOfFlightsSection,
-              child: CustomSliderSection(
-                value: state.numberOfFlights.toDouble(),
-                min: 1,
-                max: 200,
-                label: "${state.numberOfFlights} Flights",
-                onChanged: (val) {
-                  cubit.updateFlights(val.toInt());
-                },
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            ExpandableSection(
-              isComeFromManufactureScreen: false,
-              title: "SEARCH RADIUS (NM)",
-              expanded: cubit.state.showSearchInRadius,
-              onToggle: cubit.toggleSearchInRadiusSection,
-              child: CustomSliderSection(
-                value: state.searchRadius.toDouble(),
-                min: 1,
-                max: 200,
-                label: "${state.searchRadius} NM",
-                onChanged: (val) {
-                  cubit.updateRadius(val.toInt());
-                },
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            ExpandableSection(
-              isComeFromManufactureScreen: false,
-              title: "CATEGORIES",
-              expanded: state.showCategories,
-              onToggle: cubit.toggleCategoriesSection,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: ["CARGO", "BUSINESS_JETS", "PASSENGER", "GLIDERS"]
-                    .map((label) {
-                      final isSelected = state.selectedCategories.contains(
-                        label,
-                      );
-                      return GestureDetector(
-                        onTap: () => cubit.toggleCategory(label),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.primaryBlue
-                                : AppColors.grayForFeedbackAndText,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                label,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                  ExpandableSection(
+                    isComeFromManufactureScreen: false,
+                    title: "SEARCH RADIUS (NM)",
+                    expanded: cubit.state.showSearchInRadius,
+                    onToggle: cubit.toggleSearchInRadiusSection,
+                    child: CustomSliderSection(
+                      value: state.searchRadius.toDouble(),
+                      min: 1,
+                      max: 200,
+                      label: "${state.searchRadius} NM",
+                      onChanged: (val) {
+                        cubit.updateRadius(val.toInt());
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  ExpandableSection(
+                    isComeFromManufactureScreen: false,
+                    title: "CATEGORIES",
+                    expanded: state.showCategories,
+                    onToggle: cubit.toggleCategoriesSection,
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children:
+                          [
+                            "CARGO",
+                            "BUSINESS_JETS",
+                            "PASSENGER",
+                            "GLIDERS",
+                          ].map((label) {
+                            final isSelected = state.selectedCategories
+                                .contains(label);
+                            return GestureDetector(
+                              onTap: () => cubit.toggleCategory(label),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColors.white
-                                      : AppColors.grayMedium,
+                                      ? AppColors.primaryBlue
+                                      : AppColors.grayForFeedbackAndText,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      label,
+                                      style: AppTextStyles.regular(12).copyWith(
+                                        height: 1.0,
+                                        color: isSelected
+                                            ? AppColors.white
+                                            : AppColors.grayMedium,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    })
-                    .toList(),
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            /// Map Section
-            ExpandableSection(
-              isComeFromManufactureScreen: false,
-              title: "MAP",
-              expanded: state.showMap,
-              onToggle: cubit.toggleMapSection,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedControl(
-                    options: const [
-                      'Standard',
-                      'Satellite',
-                      'Hybrid',
-                      'FIR Borders',
-                    ],
-                    selectedValue: cubit.getMapTypeName(),
-                    onChanged: cubit.changeMapTypeByName,
+                            );
+                          }).toList(),
+                    ),
                   ),
-                ],
-              ),
-            ),
+                  const SizedBox(height: 25),
 
-            const SizedBox(height: 40),
-            ExpandableSection(
-              isComeFromManufactureScreen: false,
-              title: "AIRCRAFT ICAO CODE",
-              expanded: cubit.state.showAircraftLabels,
-              onToggle: cubit.toggleAircraftLabels,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.push<List<AircraftModel>>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: aircraftCubit,
-                            child: AircraftSearchScreen(
-                              initialSelected: aircraftCubit.selectedAircraft,
+                  /// Map Section
+                  ExpandableSection(
+                    isComeFromManufactureScreen: false,
+                    title: "MAP",
+                    expanded: state.showMap,
+                    onToggle: cubit.toggleMapSection,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SegmentedControl(
+                          options: const [
+                            'Standard',
+                            'Satellite',
+                            'Hybrid',
+                            'FIR Borders',
+                          ],
+                          selectedValue: cubit.getMapTypeName(),
+                          onChanged: cubit.changeMapTypeByName,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  ExpandableSection(
+                    isComeFromManufactureScreen: false,
+                    title: "AIRCRAFT ICAO CODE",
+                    expanded: cubit.state.showAircraftLabels,
+                    onToggle: cubit.toggleAircraftLabels,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            final result =
+                                await Navigator.push<List<AircraftModel>>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: aircraftCubit,
+                                      child: AircraftSearchScreen(
+                                        initialSelected:
+                                            aircraftCubit.selectedAircraft,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                            if (result != null) {
+                              aircraftCubit.setSelectedAircraft(result);
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Container(
+                              alignment: AlignmentGeometry.topLeft,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 15,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.greyForAirportDetailCard,
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Text(
+                                "+ Add Aircraft ICAO Code",
+                                style: AppTextStyles.regular(16).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.grayMedium,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      );
-                      // if (result != null) {
-                      //   for (var aircraft in result) {
-                      //     await aircraftCubit.addSelectedAircraft(aircraft);
-                      //   }
-                      // }
-                      if (result != null) {
-                        aircraftCubit.setSelectedAircraft(result);
-                      }
+
+                        ...aircraftCubit.selectedAircraft.map((aircraft) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  CommonUi.setSvgImage(
+                                    AssetsPath.generalCompare,
+                                  ),
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    aircraft.manufacturer?.companyName ?? "-",
+                                    style: AppTextStyles.regular(16).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    aircraft.aircraftModel,
+                                    style: AppTextStyles.regular(16).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        AppColors.colorForSearchListBackground,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 0.2,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    aircraft.icaoTypeCode,
+                                    style: AppTextStyles.bold(12).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.darkValueTextColour,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                GestureDetector(
+                                  onTap: () =>
+                                      aircraftCubit.removeSelectedAircraft(
+                                        aircraft.icaoTypeCode,
+                                      ),
+                                  child: SvgPicture.asset(
+                                    CommonUi.setSvgImage(AssetsPath.closeIcon),
+                                    width: 25,
+                                    height: 25,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  /// Reset Button
+                  ElevatedButton(
+                    onPressed: () {
+                      cubit.resetFilter();
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.only(bottom: 12.0),
-                      child: Center(
-                        child: Text(
-                          "+ Add Aircraft ICAO Code",
-                          style: TextStyle(
-                            color: Color(0xFF3E3C55),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: const BorderSide(
+                        color: AppColors.dividerLineColourForComparison,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.rotate_left_outlined,
+                          color: Colors.black,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "Reset Filter",
+                          style: AppTextStyles.semiBold(16).copyWith(
+                            height: 1.4,
+                            letterSpacing: 1,
+                            color: AppColors.primaryDark,
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-
-                  ...aircraftCubit.selectedAircraft.map((aircraft) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.aircraftIconmap),
-                            height: 20,
-                            width: 20,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              aircraft.manufacturer?.companyName ?? "-",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Color(0xFF3E3C55),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              aircraft.aircraftModel,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Color(0xFF3E3C55),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 0.2,
-                              ),
-                            ),
-                            child: Text(
-                              aircraft.icaoTypeCode,
-                              style: const TextStyle(
-                                color: Color(0xFF3E3C55),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () => aircraftCubit.removeSelectedAircraft(
-                              aircraft.icaoTypeCode,
-                            ),
-                            child: SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.closeIcon),
-                              width: 20,
-                              height: 20,
-                            ),
-                          ),
-                          const CustomDivider(),
-                        ],
-                      ),
-                    );
-                  }).toList(),
                 ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            /// Reset Button
-            ElevatedButton(
-              onPressed: () {
-                cubit.resetFilter();
-                // aircraftCubit.clearSelectedAircraft();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                side: const BorderSide(color: Color(0xFF3E3C55)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              child: const Text(
-                "Reset Filter",
-                style: TextStyle(fontSize: 16, color: Color(0xFF3E3C55)),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-/// 🔹 Expandable Section with Show More/Less toggle
-class ExpandableSection extends StatelessWidget {
-  final bool? isComeFromManufactureScreen;
-  final String title;
-  final bool expanded;
-  final VoidCallback onToggle;
-  final Widget child;
-
-  const ExpandableSection({
-    Key? key,
-    required this.title,
-    required this.expanded,
-    required this.onToggle,
-    required this.child,
-    this.isComeFromManufactureScreen,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (isComeFromManufactureScreen == false) ...[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF3E3C55),
-                ),
-              ),
-              InkWell(
-                onTap: onToggle,
-                child: Row(
-                  children: [
-                    Text(expanded ? "Show Less" : "Show More"),
-                    const SizedBox(width: 4),
-                    Icon(
-                      expanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              );
+            },
           ),
-        ],
-        if (expanded) ...[const SizedBox(height: 10), child],
-      ],
+        ),
+      ),
     );
   }
 }
@@ -464,7 +417,7 @@ class CategoryChip extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(5),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           border: Border.all(color: isSelected ? Colors.black : Colors.grey),
           borderRadius: BorderRadius.circular(6),
@@ -490,57 +443,6 @@ class CategoryChip extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// 🔹 Segmented Control
-class SegmentedControl extends StatelessWidget {
-  final List<String> options;
-  final String selectedValue;
-  final Function(String) onChanged;
-
-  const SegmentedControl({
-    Key? key,
-    required this.options,
-    required this.selectedValue,
-    required this.onChanged,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.greyForAirportDetailCard,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: options.map((option) {
-          final isSelected = option == selectedValue;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onChanged(option),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 5,
-                  horizontal: 7.5,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? Colors.white
-                      : AppColors.greyForAirportDetailCard,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  option,
-                  style: const TextStyle(color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

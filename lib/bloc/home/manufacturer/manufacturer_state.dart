@@ -33,10 +33,8 @@ class ManufacturerState {
     this.selectedCategories = const [],
     this.showCategories = true,
     this.categories = const [
-      "Passenger",
-      "Military and Government",
-      "Cargo",
-      "General Aviation","Jets"
+      "AIRPLANES",
+      "HELICOPTERS (ROTOR CRAFTS)",
     ],
   });
 

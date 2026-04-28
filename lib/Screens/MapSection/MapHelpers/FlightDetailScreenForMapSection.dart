@@ -45,34 +45,37 @@ class _FlightDetailScreenForMapSectionState
     extends State<FlightDetailScreenForMapSection> {
   int mainTab = 0;
   int subTab = 0;
-
-  final mainTabs = ["Live Information", "Encyclopedic Information"];
-
-  final subTabs = [
-    "Identification & Position",
-    "Flight Plan",
-    "Tracking Status",
-  ];
-
-  final sub2Tabs = [
-    "IDENTIFICATION & CLASSIFICATION",
-    "POWERPLANT & PROPULSION",
-    "DIMENSIONS",
-    "WEIGHTS",
-    "PERFORMANCE",
-    "OPERATIONAL LIMITATIONS",
-    "LANDING GEAR",
-    "CERTIFICATION",
-  ];
-
   double progress = 0.6;
+  bool _isLoadingProgress = false;
 
   List<String> get activeTabs {
     return mainTab == 0 ? subTabs : sub2Tabs;
   }
 
-  FlightAircraftDetail? _currentFlightDetail;
+  int _currentIndex = 0;
+  late PageController _pageController = PageController();
+
   bool _isLoadingFullDetails = false;
+  FlightAircraftDetail? _currentFlightDetail;
+
+  final ScrollController _subTabScrollController = ScrollController();
+
+  final mainTabs = ["Live Information", "Encyclopedic Information"];
+  final subTabs = [
+    "Identification & Position",
+    "Flight Plan",
+    "Tracking Status",
+  ];
+  final sub2Tabs = [
+    "Identification & Classification",
+    "Powerplant & Propulsion",
+    "Dimensions",
+    "Weights",
+    "Performance",
+    "Operational Limitations",
+    "Landing Gear",
+    "Certification",
+  ];
 
   @override
   void initState() {
@@ -209,11 +212,24 @@ class _FlightDetailScreenForMapSectionState
     }
   }
 
+  void _scrollToSelectedSubTab(int index) {
+    const itemWidth = 140.0;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final targetOffset =
+        (index * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+
+    _subTabScrollController.animateTo(
+      targetOffset.clamp(0.0, _subTabScrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AirCraftDetailCubit, AirCraftDetailState>(
       builder: (context, state) {
-        if (state.isLoading) {
+        if (state.isLoading || _isLoadingProgress == true) {
           return const Scaffold(
             backgroundColor: Colors.white,
             body: Center(child: CircularProgressIndicator()),
@@ -240,6 +256,12 @@ class _FlightDetailScreenForMapSectionState
                 if (widget.fromSavedFlight) {
                   await _loadFullFlightDetailsFromSaved();
                 } else {
+                  setState(() {
+                    _isLoadingProgress = true;
+                  });
+
+                  await Future.delayed(const Duration(seconds: 1));
+
                   final flightNumber = widget.flightDetail?.flightNumber ?? '';
                   if (flightNumber.isNotEmpty) {
                     await context.read<FlightMapCubit>().refreshFlightPosition(
@@ -273,6 +295,9 @@ class _FlightDetailScreenForMapSectionState
                       }
                     }
                   }
+                  setState(() {
+                    _isLoadingProgress = false;
+                  });
                 }
               },
             ),
@@ -310,7 +335,6 @@ class _FlightDetailScreenForMapSectionState
                         Row(
                           children: List.generate(mainTabs.length, (index) {
                             final isSelected = mainTab == index;
-
                             return SizedBox(
                               width: tabWidth,
                               child: GestureDetector(
@@ -331,7 +355,7 @@ class _FlightDetailScreenForMapSectionState
                                         height: 1.0,
                                         color: isSelected
                                             ? Colors.black
-                                            : Colors.white70,
+                                            : Colors.white,
                                       ),
                                     ),
                                   ),
@@ -351,6 +375,7 @@ class _FlightDetailScreenForMapSectionState
               SizedBox(
                 height: 40,
                 child: ListView.separated(
+                  controller: _subTabScrollController,
                   scrollDirection: Axis.horizontal,
                   itemCount: activeTabs.length,
                   padding: EdgeInsets.zero,
@@ -367,7 +392,10 @@ class _FlightDetailScreenForMapSectionState
                   itemBuilder: (context, index) {
                     final isSelected = subTab == index;
                     return GestureDetector(
-                      onTap: () => setState(() => subTab = index),
+                      onTap: () {
+                        setState(() => subTab = index);
+                        _scrollToSelectedSubTab(index);
+                      },
                       child: Container(
                         height: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -430,31 +458,38 @@ class _FlightDetailScreenForMapSectionState
                       icon: const Icon(Icons.arrow_back_ios),
                       onPressed: () {
                         if (subTab > 0) {
-                          setState(() => subTab--);
+                          final newIndex = subTab - 1;
+                          setState(() {
+                            subTab = newIndex;
+                          });
+                          _scrollToSelectedSubTab(newIndex);
                         }
                       },
                     ),
 
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
+                        horizontal: 7,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: AppColors.primaryDark,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: List.generate(activeTabs.length, (index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
-                            width: 6,
+                          final isActive = subTab == index;
+
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: isActive ? 20 : 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: subTab == index
-                                  ? Colors.white
-                                  : Colors.grey,
-                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           );
                         }),
@@ -465,7 +500,11 @@ class _FlightDetailScreenForMapSectionState
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {
                         if (subTab < activeTabs.length - 1) {
-                          setState(() => subTab++);
+                          final newIndex = subTab + 1;
+                          setState(() {
+                            subTab = newIndex;
+                          });
+                          _scrollToSelectedSubTab(newIndex);
                         }
                       },
                     ),
@@ -484,91 +523,173 @@ class _FlightDetailScreenForMapSectionState
     List<AircraftImage> coverImages,
   ) {
     if (coverImages.isEmpty) return const SizedBox.shrink();
-    return SizedBox(
-      height: screenHeight * 0.18,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: coverImages.length,
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          final image = coverImages[index];
-          final isSingleImage = coverImages.length == 1;
-          final imageWidth = isSingleImage
-              ? MediaQuery.of(context).size.width - 30
-              : 300.0;
-          final imagePadding = isSingleImage
-              ? const EdgeInsets.symmetric(horizontal: 0)
-              : const EdgeInsets.only(right: 10);
-          final hasCopyright = image.cc.isNotEmpty;
 
-          return Padding(
-            padding: imagePadding,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: Stack(
-                children: [
-                  Image.network(
-                    image.url,
-                    width: imageWidth,
-                    height: screenHeight * 0.18,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: imageWidth,
-                      height: screenHeight * 0.18,
-                      color: Colors.grey.shade300,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.broken_image),
-                    ),
-                  ),
-                  if (hasCopyright)
-                    Positioned(
-                      left: 8,
-                      bottom: 8,
-                      child: GestureDetector(
-                        onTap: () async {
-                          final uri = Uri.tryParse(image.source);
-                          if (uri != null && await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not open URL.'),
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return SizedBox(
+          height: screenHeight * 0.20,
+          child: Stack(
+            children: [
+              PageView.builder(
+                controller: _pageController,
+                itemCount: coverImages.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final image = coverImages[index];
+                  final hasCopyright = image.cc.isNotEmpty;
+
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          image.url,
+                          width: double.infinity,
+                          height: screenHeight * 0.20,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: Colors.grey.shade300,
+                                alignment: Alignment.center,
+                                child: const Icon(Icons.broken_image),
                               ),
-                            );
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          constraints: const BoxConstraints(maxWidth: 250),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '© ${image.cc}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                          ),
                         ),
+
+                        if (hasCopyright)
+                          Positioned(
+                            left: 8,
+                            bottom: 8,
+                            child: GestureDetector(
+                              onTap: () async {
+                                final uri = Uri.tryParse(image.source);
+                                if (uri != null && await canLaunchUrl(uri)) {
+                                  await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Could not open URL.'),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '© ${image.cc}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
+              Positioned(
+                left: 5,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_currentIndex > 0) {
+                        _pageController.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 14,
                       ),
                     ),
-                ],
+                  ),
+                ),
               ),
-            ),
-          );
-        },
-      ),
+
+              Positioned(
+                right: 5,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_currentIndex < coverImages.length - 1) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              Positioned(
+                bottom: 6,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(coverImages.length, (index) {
+                    final isActive = index == _currentIndex;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: isActive ? 20 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -665,7 +786,7 @@ class _FlightDetailScreenForMapSectionState
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -675,38 +796,7 @@ class _FlightDetailScreenForMapSectionState
                 flex: 3,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: Colors.grey,
-                        color: Colors.blue,
-                        minHeight: 5,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '$groundSpeed km/h',
-                          style: AppTextStyles.regular(
-                            14,
-                          ).copyWith(height: 1.0, color: AppColors.primaryBlue),
-                        ),
-                        const SizedBox(width: 10),
-                        const Text("•", style: TextStyle(color: Colors.grey)),
-                        const SizedBox(width: 10),
-                        Text(
-                          '$altitude m',
-                          style: AppTextStyles.regular(
-                            14,
-                          ).copyWith(height: 1.0, color: AppColors.primaryBlue),
-                        ),
-                      ],
-                    ),
+                    buildCustomProgressBar(progress, groundSpeed, altitude),
                   ],
                 ),
               ),
@@ -1249,4 +1339,89 @@ class _FlightDetailScreenForMapSectionState
       },
     );
   }
+}
+
+Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
+  return Container(
+    color: Colors.white,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: 40,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final totalWidth = constraints.maxWidth;
+              const padding = 5.0;
+              const indicatorSize = 18.0;
+              final usableWidth = totalWidth - (padding * 2);
+              final indicatorCenterX = padding + (usableWidth * progress);
+              const overlap = 2.0;
+              return Stack(
+                children: [
+                  Positioned(
+                    left: indicatorCenterX - overlap,
+                    right: padding,
+                    top: 30,
+                    child: Container(height: 2.5, color: Colors.grey.shade300),
+                  ),
+
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                    left: (indicatorCenterX - indicatorSize / 2).clamp(
+                      padding,
+                      totalWidth - padding - indicatorSize,
+                    ),
+                    top: 22,
+                    child: Container(
+                      width: indicatorSize,
+                      height: indicatorSize,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    left: padding,
+                    top: 30,
+                    width: (indicatorCenterX - padding + overlap).clamp(
+                      0,
+                      usableWidth,
+                    ),
+                    child: Container(height: 2.5, color: Colors.black),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '$groundSpeed km/h',
+              style: AppTextStyles.regular(
+                14,
+              ).copyWith(height: 1.0, color: AppColors.primaryBlue),
+            ),
+            const SizedBox(width: 10),
+            const Text("•", style: TextStyle(color: Colors.grey)),
+            const SizedBox(width: 10),
+            Text(
+              '$altitude m',
+              style: AppTextStyles.regular(
+                14,
+              ).copyWith(height: 1.0, color: AppColors.primaryBlue),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }

@@ -1,7 +1,12 @@
+import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/SearchBarWidget.dart';
 import '../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_State.dart';
@@ -40,17 +45,17 @@ class _AircraftSearchView extends StatefulWidget {
 }
 
 class _AircraftSearchViewState extends State<_AircraftSearchView> {
-  late TextEditingController searchController;
+  late TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    searchController = TextEditingController();
+    _searchController = TextEditingController();
   }
 
   @override
   void dispose() {
-    searchController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -65,79 +70,42 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AircraftListDataCubit>();
-
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "Search",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
+      appBar: CustomAppBar(
+        title: "    Search",
         centerTitle: false,
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pop(
-              context,
-              List<AircraftModel>.from(cubit.selectedAircraft),
-            ),
-            icon: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.closeIconsearch),
-              height: 22,
-              width: 22,
-            ),
+        rightButton: IconButton(
+          onPressed: () => Navigator.pop(
+            context,
+            List<AircraftModel>.from(cubit.selectedAircraft),
           ),
-          const SizedBox(width: 8),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: Colors.grey.shade300, height: 1),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.closeIconsearch),
+            height: 22,
+            width: 22,
+          ),
         ),
       ),
 
       body: Column(
         children: [
-          // --- Search Bar ---
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: TextField(
-              controller: searchController,
-              onChanged: (value) {
-                final query = value.trim();
-                if (query.length >= 3) {
-                  cubit.searchAircraftByICAO(icaoCode: query, context: context);
-                } else {
-                  cubit.clearResults();
-                }
-              },
-              decoration: InputDecoration(
-                hintText: "Search aircraft ICAO",
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.only(left: 20, right: 2),
-                  child: Icon(Icons.search, color: Colors.grey),
-                ),
-                prefixIconConstraints: const BoxConstraints(
-                  minWidth: 35,
-                  maxHeight: 25,
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 10,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
+          SearchBarWidget(
+            enableGestureMode: false,
+            enableBackArrow: false,
+            enableFilter: false,
+            enableCloseScreen: false,
+            isComeFromMapSection: false,
+            controller: _searchController,
+            searchTitle: 'Search Aircraft',
+            onChanged: (value) {
+              final query = value.trim();
+              if (query.length >= 3) {
+                cubit.searchAircraftByICAO(icaoCode: query, context: context);
+              } else {
+                cubit.clearResults();
+              }
+            },
           ),
 
           // --- Divider ---
@@ -155,8 +123,8 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                       .where(
                         (a) => !selected.any(
                           (s) => s.icaoTypeCode == a.icaoTypeCode,
-                    ),
-                  )
+                        ),
+                      )
                       .toList();
 
                   if (state.isLoading) {
@@ -174,42 +142,47 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                     children: [
                       // --- Selected Aircraft ---
                       if (selected.isNotEmpty) ...[
-                        Text(
-                          "Selected Aircraft (${selected.length}/5)",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Selected Aircraft (${selected.length}/5)",
+                            style: AppTextStyles.bold(
+                              18,
+                            ).copyWith(height: 1.0, color: AppColors.black),
                           ),
                         ),
-                        const SizedBox(height: 10),
+
+                        const SizedBox(height: 30),
                         ...selected.map(
-                              (aircraft) => Padding(
+                          (aircraft) => Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 10,
-                                horizontal: 5,
+                                horizontal: 10,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD2E6FC),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey.shade300),
+                                color: AppColors.colorForSearchListBackground,
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Text(
                                       aircraft.manufacturer?.companyName ?? "-",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
+                                      style: AppTextStyles.bold(16.34).copyWith(
+                                        height: 1.4,
+                                        color: AppColors.primaryDark,
                                       ),
                                     ),
                                   ),
                                   Expanded(
                                     child: Text(
                                       aircraft.aircraftModel,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
+                                      style: AppTextStyles.bold(16.34).copyWith(
+                                        height: 1.4,
+                                        letterSpacing: 1,
+                                        color: AppColors.primaryDark,
                                       ),
                                     ),
                                   ),
@@ -221,33 +194,29 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
-                                        color: Colors.grey,
-                                        width: 0.2,
+                                        color: AppColors.colorForFilterScreen,
+                                        width: 1,
                                       ),
                                     ),
                                     child: Text(
                                       aircraft.icaoTypeCode,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
+                                      style: AppTextStyles.bold(12).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.darkValueTextColour,
                                       ),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
-                                      // ✅ Remove selected aircraft
                                       cubit.removeSelectedAircraft(
                                         aircraft.icaoTypeCode,
                                       );
                                       _notifySelectionChanged(cubit);
                                     },
-                                    child: SvgPicture.asset(
-                                      CommonUi.setSvgImage(
-                                        AssetsPath.closeIconsearch,
-                                      ),
-                                      height: 22,
-                                      width: 22,
+                                    child: const Icon(
+                                      Icons.cancel_outlined,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ],
@@ -255,14 +224,12 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                             ),
                           ),
                         ),
-                        const Divider(height: 30, color: Colors.grey),
                       ],
 
-                      // --- Search Results ---
+                      //--- Search Results ---
                       ...filtered.map(
-                            (aircraft) => GestureDetector(
+                        (aircraft) => GestureDetector(
                           onTap: () {
-                            // ✅ Limit max 5 selections
                             if (cubit.selectedAircraft.length >= 5) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -274,8 +241,6 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                               );
                               return;
                             }
-
-                            // ✅ Add selected aircraft
                             cubit.addSelectedAircraft(aircraft);
                             _notifySelectionChanged(cubit);
                           },
@@ -294,16 +259,19 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                 Expanded(
                                   child: Text(
                                     aircraft.manufacturer?.companyName ?? "-",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
+                                    style: AppTextStyles.bold(16.34).copyWith(
+                                      height: 1.4,
+                                      color: AppColors.primaryDark,
                                     ),
                                   ),
                                 ),
                                 Expanded(
                                   child: Text(
                                     aircraft.aircraftModel,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
+                                    style: AppTextStyles.bold(16.34).copyWith(
+                                      height: 1.4,
+                                      letterSpacing: 1,
+                                      color: AppColors.primaryDark,
                                     ),
                                   ),
                                 ),
@@ -321,9 +289,9 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                                   ),
                                   child: Text(
                                     aircraft.icaoTypeCode,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13,
+                                    style: AppTextStyles.bold(12).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.darkValueTextColour,
                                     ),
                                   ),
                                 ),
@@ -351,11 +319,11 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                   child: ElevatedButton(
                     onPressed: hasSelection
                         ? () {
-                      Navigator.pop(
-                        context,
-                        List<AircraftModel>.from(cubit.selectedAircraft),
-                      );
-                    }
+                            Navigator.pop(
+                              context,
+                              List<AircraftModel>.from(cubit.selectedAircraft),
+                            );
+                          }
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: hasSelection

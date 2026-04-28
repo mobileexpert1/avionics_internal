@@ -399,9 +399,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       AppSnackBar.custom(
                         context,
                         message: 'Logged out',
-                        svgAsset: CommonUi.setSvgImage(
-                          AssetsPath.logoutProfile,
-                        ),
+                        svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
                       );
                       _clearAllDataAndRedirectToSplashScreen(context);
                       AnalyticsService.instance.buttonPressed(

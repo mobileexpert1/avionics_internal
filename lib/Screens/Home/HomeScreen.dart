@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
@@ -13,6 +14,7 @@ import '../../CustomFiles/CustomAppBar.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppText.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
@@ -20,6 +22,7 @@ import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
+import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
@@ -192,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   title: "Compare Aircraft",
                                   headerColor: AppColors.primaryDark,
                                   arrowBackgroundColor:
-                                  AppColors.extraDarkYellow,
+                                      AppColors.extraDarkYellow,
                                   arrowFrontColor: Colors.black,
                                   isExpandedViewAvailable: true,
                                   isExpanded: false,
@@ -230,15 +233,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     title: "Manufacturer Library",
                                     headerColor: AppColors.primaryDark,
                                     arrowBackgroundColor:
-                                    AppColors.extraDarkYellow,
+                                        AppColors.extraDarkYellow,
                                     arrowFrontColor: Colors.black,
                                     isExpandedViewAvailable: true,
                                     fontStyle: AppTextStyles.regular(16)
                                         .copyWith(
-                                      height: 1.0,
-                                      color: AppColors
-                                          .whiteWithExpandableTitle,
-                                    ),
+                                          height: 1.0,
+                                          color: AppColors
+                                              .whiteWithExpandableTitle,
+                                        ),
                                     isLeftImage: IconButton(
                                       icon: SvgPicture.asset(
                                         CommonUi.setSvgImage(
@@ -253,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onHeaderTap: () {
                                       setState(() {
                                         expandedManufacturerTab =
-                                        !expandedManufacturerTab;
+                                            !expandedManufacturerTab;
                                       });
                                     },
                                     child: _buildManufacturerBody(
@@ -280,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   title: "Flight Tracker",
                                   headerColor: AppColors.primaryDark,
                                   arrowBackgroundColor:
-                                  AppColors.extraDarkYellow,
+                                      AppColors.extraDarkYellow,
                                   arrowFrontColor: Colors.black,
                                   isExpandedViewAvailable: true,
                                   fontStyle: AppTextStyles.regular(16).copyWith(
@@ -302,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onHeaderTap: () {
                                     setState(() {
                                       expandFlyingInTheAreaTab =
-                                      !expandFlyingInTheAreaTab;
+                                          !expandFlyingInTheAreaTab;
                                     });
                                   },
                                   child: _buildFlyingInTheAreaBody(screenWidth),
@@ -315,10 +318,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: kIsWeb
                                 ? screenWidth * 0.02
                                 : screenWidth *
-                                ((expandedManufacturerTab == true &&
-                                    expandFlyingInTheAreaTab == true)
-                                    ? 0.0
-                                    : 0.35),
+                                      ((expandedManufacturerTab == true &&
+                                              expandFlyingInTheAreaTab == true)
+                                          ? 0.0
+                                          : 0.35),
                           ),
                         ],
                       ),
@@ -335,9 +338,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildManufacturerBody(
-      List<ManufacturerListModel> category,
-      double screenWidth,
-      ) {
+    List<ManufacturerListModel> category,
+    double screenWidth,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.greyForConversionScreen,
@@ -449,33 +452,51 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () async {},
             ),
-            onHeaderTap: () {
-              AnalyticsService.instance.buttonPressed(
-                FirebaseEvents.flightMapScreen,
-                FirebaseEvents.exploreScreen,
+            onHeaderTap: () async {
+              final bool success = await CreditManager().tryUseCredit(
+                amount: 8,
+                isComeFromTabbar: true,
+                onError: (String message) async {
+                  if (mounted) {
+                    Future.microtask(() {
+                      AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                        context: context,
+                        title: "Subscription Required",
+                        message: message,
+                        navigateTo: const AppleSubscriptionScreen(),
+                      );
+                    });
+                  }
+                },
               );
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) {
-                      final mapCubit = FlightMapCubit();
-                      final firstFlight = mapCubit.state.flights?.first;
-                      if (firstFlight != null) {
-                        mapCubit.setSelectedFlight(firstFlight);
-                        mapCubit.clearSelectedFlightDetail();
-                      }
-                      return mapCubit;
-                    },
-                    child: FlightMapScreen(
-                      onGoToFirstTab: () {},
-                      skipInitialPopup: true,
-                      openMode: 1,
+              if (success && mounted) {
+                AnalyticsService.instance.buttonPressed(
+                  FirebaseEvents.flightMapScreen,
+                  FirebaseEvents.exploreScreen,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) {
+                        final mapCubit = FlightMapCubit();
+                        final firstFlight = mapCubit.state.flights?.first;
+                        if (firstFlight != null) {
+                          mapCubit.setSelectedFlight(firstFlight);
+                          mapCubit.clearSelectedFlightDetail();
+                        }
+                        return mapCubit;
+                      },
+                      child: FlightMapScreen(
+                        onGoToFirstTab: () {},
+                        skipInitialPopup: true,
+                        openMode: 1,
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              }
             },
           ),
 
@@ -512,33 +533,51 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () async {},
             ),
-            onHeaderTap: () {
-              AnalyticsService.instance.buttonPressed(
-                FirebaseEvents.flightMapScreen,
-                FirebaseEvents.exploreScreen,
+            onHeaderTap: () async {
+              final bool success = await CreditManager().tryUseCredit(
+                amount: 8,
+                isComeFromTabbar: true,
+                onError: (String message) async {
+                  if (mounted) {
+                    Future.microtask(() {
+                      AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                        context: context,
+                        title: "Subscription Required",
+                        message: message,
+                        navigateTo: const AppleSubscriptionScreen(),
+                      );
+                    });
+                  }
+                },
               );
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) {
-                      final mapCubit = FlightMapCubit();
-                      final firstFlight = mapCubit.state.flights?.first;
-                      if (firstFlight != null) {
-                        mapCubit.setSelectedFlight(firstFlight);
-                        mapCubit.clearSelectedFlightDetail();
-                      }
-                      return mapCubit;
-                    },
-                    child: FlightMapScreen(
-                      onGoToFirstTab: () {},
-                      skipInitialPopup: true,
-                      openMode: 1,
+              if (success && mounted) {
+                AnalyticsService.instance.buttonPressed(
+                  FirebaseEvents.flightMapScreen,
+                  FirebaseEvents.exploreScreen,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (_) {
+                        final mapCubit = FlightMapCubit();
+                        final firstFlight = mapCubit.state.flights?.first;
+                        if (firstFlight != null) {
+                          mapCubit.setSelectedFlight(firstFlight);
+                          mapCubit.clearSelectedFlightDetail();
+                        }
+                        return mapCubit;
+                      },
+                      child: FlightMapScreen(
+                        onGoToFirstTab: () {},
+                        skipInitialPopup: true,
+                        openMode: 1,
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              }
             },
           ),
           const SizedBox(height: 6),

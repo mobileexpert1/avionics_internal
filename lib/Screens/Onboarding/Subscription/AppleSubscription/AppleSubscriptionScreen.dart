@@ -33,13 +33,6 @@ class AppleSubscriptionScreen extends StatefulWidget {
 class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   late AppleSubscriptionCubit _cubit;
 
-  String getTrialText(String description) {
-    if (description.toLowerCase().contains('7 days')) {
-      return "+ 7 days free trial";
-    }
-    return "";
-  }
-
   @override
   void initState() {
     super.initState();
@@ -76,7 +69,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
       create: (_) => _cubit,
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
-        (prev.error != curr.error && curr.error != null) ||
+            (prev.error != curr.error && curr.error != null) ||
             (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
           if (state.error != null) {
@@ -99,7 +92,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-                    (route) => false,
+                (route) => false,
               );
             }
           }
@@ -107,7 +100,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
         builder: (context, state) {
           final products = [...state.products]
             ..sort(
-                  (a, b) => _cleanProductTitle(a).compareTo(_cleanProductTitle(b)),
+              (a, b) => _cleanProductTitle(a).compareTo(_cleanProductTitle(b)),
             );
 
           ProductDetails? selected;
@@ -115,8 +108,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             selected = state.selectedProduct;
           } else {
             final activePlans = state.products.where(
-                  (p) =>
-              p.id == state.subscription?.productId &&
+              (p) =>
+                  p.id == state.subscription?.productId &&
                   state.subscription?.status == "active",
             );
             selected = activePlans.isNotEmpty ? activePlans.first : null;
@@ -128,27 +121,27 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   title:
-                  (widget.isComeFromSignup == false ||
-                      widget.isComeFromSignup == null)
+                      (widget.isComeFromSignup == false ||
+                          widget.isComeFromSignup == null)
                       ? SubscriptionTexts.currentSubTitle
                       : ConstantStrings.startSubscription,
                   centerTitle:
-                  (widget.isComeFromSignup == false ||
-                      widget.isComeFromSignup == null)
+                      (widget.isComeFromSignup == false ||
+                          widget.isComeFromSignup == null)
                       ? false
                       : true,
                   leftButton:
-                  (widget.isComeFromSignup == false ||
-                      widget.isComeFromSignup == null)
+                      (widget.isComeFromSignup == false ||
+                          widget.isComeFromSignup == null)
                       ? IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
                       : Wrap(),
                 ),
                 body: Padding(
@@ -197,7 +190,11 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         ...products.map((product) {
                           final bool isActive =
                               state.subscription?.productId == product.id &&
-                                  state.subscription?.status == "active";
+                              state.subscription?.status == "active";
+
+                          final bool isExpired =
+                              state.subscription?.productId == product.id &&
+                              state.subscription?.status == "expired";
 
                           final bool isSelected = selected?.id == product.id;
 
@@ -207,9 +204,9 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                               product: product,
                               isSelected: isSelected,
                               isActive: isActive,
+                              isExpired: isExpired,
                               startDate: state.subscription?.startDate,
                               endDate: state.subscription?.expiryDate,
-                              trialText: getTrialText(product.description),
                               onTap: () {
                                 context
                                     .read<AppleSubscriptionCubit>()
@@ -383,7 +380,7 @@ class _SubscriptionCard extends StatelessWidget {
   final ProductDetails product;
   final bool isSelected; // tapped by user
   final bool isActive; // actually active subscription
-  final String trialText;
+  final bool isExpired;
   final VoidCallback onTap;
   final String? startDate;
   final String? endDate;
@@ -392,7 +389,7 @@ class _SubscriptionCard extends StatelessWidget {
     required this.product,
     required this.isSelected,
     required this.isActive,
-    required this.trialText,
+    required this.isExpired,
     required this.onTap,
     this.startDate,
     this.endDate,
@@ -411,21 +408,16 @@ class _SubscriptionCard extends StatelessWidget {
     if (date == null) return "-";
 
     const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
 
-    return "${date.day.toString().padLeft(2, '0')}-${monthNames[date.month - 1]}-${date.year}";
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+
+    return "${date.day.toString().padLeft(2, '0')}-"
+        "${monthNames[date.month - 1]}-${date.year} "
+        "$hour:$minute";
   }
 
   @override
@@ -437,20 +429,28 @@ class _SubscriptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: showActiveDates ? Colors.blue.shade50 : Colors.white,
+          color: isActive
+              ? Colors.blue.shade50
+              : isExpired
+              ? Colors.red.shade50
+              : Colors.white,
           border: Border.all(
-            color: isSelected ? Colors.black : Colors.grey.shade300,
+            color: isActive
+                ? Colors.blue
+                : isExpired
+                ? Colors.red
+                : (isSelected ? Colors.black : Colors.grey.shade300),
             width: 2,
           ),
           borderRadius: BorderRadius.circular(6),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
               : [],
         ),
         child: Row(
@@ -467,20 +467,34 @@ class _SubscriptionCard extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                if (trialText.isNotEmpty)
-                  Text(trialText, style: const TextStyle(fontSize: 12)),
+
+                /// ✅ ACTIVE DATES
                 if (showActiveDates &&
                     startDate != null &&
                     endDate != null) ...[
                   const SizedBox(height: 6),
-                  Text(
-                    "Start: ${formatDate(startDate)}",
-                    style: const TextStyle(fontSize: 12),
+                  Text("Start: ${formatDate(startDate)}"),
+                  Text("End: ${formatDate(endDate)}"),
+                ],
+
+                /// ✅ EXPIRED UI (FIXED)
+                if (isExpired) ...[
+                  const SizedBox(height: 6),
+                  const Text(
+                    "Previously Selected Plan",
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
-                  Text(
-                    "End: ${formatDate(endDate)}",
-                    style: const TextStyle(fontSize: 12),
-                  ),
+                ],
+
+                /// ✅ EXPIRED DATES
+                if (isExpired && startDate != null && endDate != null) ...[
+                  const SizedBox(height: 4),
+                  Text("Start: ${formatDate(startDate)}"),
+                  Text("Expired on: ${formatDate(endDate)}"),
                 ],
               ],
             ),

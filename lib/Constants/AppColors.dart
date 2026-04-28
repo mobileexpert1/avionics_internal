@@ -17,6 +17,7 @@ class AppColors {
   static const Color textColour = Color(0xFF626262);
   static const Color textHomeColour = Color(0xFF565656);
   static const Color saveButtonColour = Color(0xFFD2E6FC);
+  static const Color backgroundColourForManufacturer = Color(0xFFE6E6E6);
 
   static const Color primaryDark = Color(0xFF201E48);
   static const Color primaryBlue = Color(0xFF4797DB);
@@ -42,6 +43,7 @@ class AppColors {
   static const Color calculatorTextColour = Color(0xFF171C22);
 
   static const Color primaryValueColour = Color(0xFF1B1748);
+  static const Color darkValueTextColour = Color(0xFF62748E);
   static const Color avtarTitleColour = Color(0xFF1A1848);
 
   static const Color accentCyan = Color(0xFF00D9FF);
@@ -49,8 +51,12 @@ class AppColors {
   static const Color greyForTextfield = Color(0xFF575757);
   static const Color blackForNavTitle = Color(0xFF3F3D56);
   static const Color greyFlightDetailText = Color(0xFF959595);
+  static const Color colorForFilterScreen = Color(0xFFE2E8F0);
+
+  static const Color colorForSearchListBackground = Color(0xFFF1F5F9);
 
   static const Color lightGreyTextFieldHeading = Color(0xFF6B6B6B);
+  static const Color lightGreyBackgroundColour = Color(0xFF242154);
 
   static const LinearGradient panelGradient = LinearGradient(
     begin: Alignment.topLeft,

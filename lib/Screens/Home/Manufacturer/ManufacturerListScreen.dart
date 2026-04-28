@@ -127,8 +127,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                             onTap: () => cubit.toggleCategory(label, context),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
+                                horizontal: 7,
+                                vertical: 7,
                               ),
                               decoration: BoxDecoration(
                                 color: isSelected
@@ -142,9 +142,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               ),
                               child: Text(
                                 label,
-                                style: AppTextStyles.regular(
-                                  18.67,
-                                ).copyWith(height: 1.0, color: AppColors.primaryDark),
+                                style: AppTextStyles.regular(15.67).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.primaryDark,
+                                ),
                               ),
                             ),
                           );
@@ -240,10 +241,13 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                           Expanded(
                                             child: Text(
                                               item.companyName,
-                                              style: AppTextStyles.regular(
-                                                14.09,
-                                              ).copyWith(height: 1.0, color: AppColors.black),
-
+                                              style:
+                                                  AppTextStyles.regular(
+                                                    14.09,
+                                                  ).copyWith(
+                                                    height: 1.0,
+                                                    color: AppColors.black,
+                                                  ),
 
                                               // const TextStyle(
                                               //   fontSize: 14,

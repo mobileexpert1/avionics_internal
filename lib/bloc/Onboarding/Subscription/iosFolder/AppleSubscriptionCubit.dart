@@ -433,8 +433,10 @@ Map<String, dynamic> decodeJwt(String token) {
 }
 
 String formatDate(int millis) {
-  final date = DateTime.fromMillisecondsSinceEpoch(millis, isUtc: true)
-      .toLocal();
+  final date = DateTime.fromMillisecondsSinceEpoch(
+    millis,
+    isUtc: true,
+  ).toLocal();
 
   return "${date.day}/${date.month}/${date.year} "
       "${date.hour}:${date.minute}";

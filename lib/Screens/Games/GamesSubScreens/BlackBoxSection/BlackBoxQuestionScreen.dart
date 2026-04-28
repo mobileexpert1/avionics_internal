@@ -15,7 +15,6 @@ import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_question
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
 
-
 class BlackBoxScreen extends StatefulWidget {
   const BlackBoxScreen({
     super.key,
@@ -151,7 +150,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                   final shouldExit = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text("Exit BlackBox?"),
+                      title: const Text("Exit Black Box Game?"),
                       backgroundColor: Colors.white,
                       content: const Text(
                         "Are you sure you want to exit? Your progress will be lost.",
@@ -458,7 +457,7 @@ class BlackBoxCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                                child: FormattedText(text: hintText),
+                              child: FormattedText(text: hintText),
                             ),
                           ),
                         ],
@@ -996,18 +995,18 @@ class BlackBoxProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                    CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                  )
+                          CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        )
                       : Icon(
-                    Icons.access_time,
-                    size: 30,
-                    color: secondsRemaining == 0
-                        ? Colors.red
-                        : Colors.blue,
-                  ),
+                          Icons.access_time,
+                          size: 30,
+                          color: secondsRemaining == 0
+                              ? Colors.red
+                              : Colors.blue,
+                        ),
 
                   const SizedBox(width: 4),
                   SizedBox(

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Constants/AppColors.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class CustomSliderSection extends StatelessWidget {
   final double value;
   final double min;
@@ -25,31 +28,29 @@ class CustomSliderSection extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFE6EAF2),
+              color: AppColors.colorForFilterScreen,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xFF3E3C55),
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTextStyles.bold(
+                12,
+              ).copyWith(height: 1.0, color: AppColors.darkValueTextColour),
             ),
           ),
         ),
 
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            trackHeight: 3,
-            activeTrackColor: const Color(0xFF4A90E2),
-            inactiveTrackColor: const Color(0xFFE0E0E0),
-            thumbColor: const Color(0xFF4A90E2),
+            trackHeight: 5,
+            activeTrackColor: AppColors.colorForFilterScreen,
+            inactiveTrackColor: AppColors.colorForFilterScreen,
+            thumbColor: AppColors.primaryBlue,
             overlayColor: Colors.transparent,
             thumbShape: const RoundSliderThumbShape(
-              enabledThumbRadius: 8, // small dot
+              enabledThumbRadius: 10,
               elevation: 0,
               pressedElevation: 0,
             ),
@@ -59,22 +60,32 @@ class CustomSliderSection extends StatelessWidget {
           child: Slider(value: value, min: min, max: max, onChanged: onChanged),
         ),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              min.toInt().toString(),
-              style: const TextStyle(fontSize: 11, color: Colors.grey),
-            ),
-            Text(
-              ((min + max) ~/ 2).toString(),
-              style: const TextStyle(fontSize: 11, color: Colors.grey),
-            ),
-            Text(
-              max.toInt().toString(),
-              style: const TextStyle(fontSize: 11, color: Colors.grey),
-            ),
-          ],
+        SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                min.toInt().toString(),
+                style: AppTextStyles.regular(
+                  12,
+                ).copyWith(height: 1.0, color: AppColors.black),
+              ),
+              Text(
+                ((min + max) ~/ 2).toString(),
+                style: AppTextStyles.regular(
+                  12,
+                ).copyWith(height: 1.0, color: AppColors.black),
+              ),
+              Text(
+                max.toInt().toString(),
+                style: AppTextStyles.regular(
+                  12,
+                ).copyWith(height: 1.0, color: AppColors.black),
+              ),
+            ],
+          ),
         ),
       ],
     );
