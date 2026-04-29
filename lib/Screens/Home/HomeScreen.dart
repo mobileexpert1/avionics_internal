@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 body: Center(child: CircularProgressIndicator()),
               );
             } else if (state is HomeError) {
-              return Center(child: Text('Error: ${state.message}'));
+              return Center(child: Text(state.message));
             } else if (state is HomeLoaded) {
               return Align(
                 alignment: Alignment.topCenter,

@@ -40,23 +40,32 @@ class CachedAnyImage extends StatelessWidget {
         return _fixedBox(
           useCache
               ? CachedSvgImage(imageUrl: imagePath, fit: contentImage)
-              : SvgPicture.network(imagePath, fit: contentImage),
+              : _networkSvg(),
         );
       }
 
       return _fixedBox(
         useCache
             ? CachedNetworkImage(
+                httpHeaders: {"User-Agent": "Mozilla/5.0"},
                 cacheManager: CustomCacheManager.instance,
                 imageUrl: imagePath,
                 fit: contentImage,
                 placeholder: (_, _) => _loader(),
-                errorWidget: (_, _, _) => _errorIcon(isForPlaneList),
+                errorWidget: (_, url, error) {
+                  debugPrint("❌ Image load failed: $url");
+                  debugPrint("❌ Error: $error");
+                  return _errorIcon(isForPlaneList);
+                },
               )
             : Image.network(
                 imagePath,
                 fit: contentImage,
-                errorBuilder: (_, __, ___) => _errorIcon(isForPlaneList),
+                errorBuilder: (_, error, stackTrace) {
+                  debugPrint("❌ Image.network failed: $imagePath");
+                  debugPrint("❌ Error: $error");
+                  return _errorIcon(isForPlaneList);
+                },
               ),
       );
     }
@@ -70,9 +79,28 @@ class CachedAnyImage extends StatelessWidget {
       Image.asset(
         imagePath,
         fit: contentImage,
-        errorBuilder: (_, __, ___) => _errorIcon(isForPlaneList),
+        errorBuilder: (_, error, stackTrace) {
+          debugPrint("❌ Asset load failed: $imagePath");
+          debugPrint("❌ Error: $error");
+          return _errorIcon(isForPlaneList);
+        },
       ),
     );
+  }
+
+  Widget _networkSvg() {
+    try {
+      return SvgPicture.network(
+        imagePath,
+        fit: contentImage,
+        placeholderBuilder: (_) => _loader(),
+      );
+    } catch (e, s) {
+      debugPrint("❌ SVG load failed: $imagePath");
+      debugPrint("❌ Error: $e");
+      debugPrint("$s");
+      return _errorIcon(isForPlaneList);
+    }
   }
 
   ///HELPERS

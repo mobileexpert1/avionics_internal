@@ -12,6 +12,10 @@ import 'chat_model.dart';
 
 class ChatCubit extends Cubit<List<Map<String, String>>> {
   VoidCallback? onSessionExpired;
+  VoidCallback? onAccessTokenExpired;
+
+  bool isSessionExpired = false;
+  bool isAccessTokenExpired = false;
 
   ChatCubit({
     required String accessToken,
@@ -32,10 +36,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   final _internetStatusController = StreamController<bool>.broadcast();
   bool _isConnected = true;
 
-  bool _isStopped = false;
-
   Timer? _responseTimer;
-  bool isSessionExpired = false;
+  bool _isStopped = false;
 
   bool get isConnected => _isConnected;
 
@@ -48,6 +50,14 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         ..removeWhere((m) => m['type'] == 'analyzing');
       emit(next);
       onSessionExpired?.call();
+    });
+
+    _repo.setAccessTokenExpiredCallback(() {
+      isAccessTokenExpired = true;
+      final next = List<Map<String, String>>.from(state)
+        ..removeWhere((m) => m['type'] == 'analyzing');
+      emit(next);
+      onAccessTokenExpired?.call();
     });
 
     if (!isNewSession && sessionId.isNotEmpty) {
@@ -88,7 +98,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     BuildContext context,
     bool isReceivedTokenFullWarning,
   ) {
-    if (CreditManager().remainingToken <= 0 || isReceivedTokenFullWarning == true ) {
+    if (CreditManager().remainingToken <= 0 ||
+        isReceivedTokenFullWarning == true) {
       Future.microtask(() {
         AlertHelperForSubsPopup.showSubscriptionEndAlert(
           isFromTrackingClass: false,
@@ -108,6 +119,12 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       onSessionExpired?.call();
       return;
     }
+
+    if (isAccessTokenExpired) {
+      onAccessTokenExpired?.call();
+      return;
+    }
+
     _isStopped = false;
     final next = List<Map<String, String>>.from(state)
       ..removeWhere((m) => m['type'] == 'analyzing');
@@ -155,14 +172,18 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         filtered.add(m);
       }
     }
-
     return filtered;
   }
 
   void _onSocketMessage(ChatMessage msg) {
     if (msg.text == "__SESSION_EXPIRED__") {
       isSessionExpired = true;
+      emit(List<Map<String, String>>.from(state));
+      return;
+    }
 
+    if (msg.text.contains("token")) {
+      isAccessTokenExpired = true;
       emit(List<Map<String, String>>.from(state));
       return;
     }

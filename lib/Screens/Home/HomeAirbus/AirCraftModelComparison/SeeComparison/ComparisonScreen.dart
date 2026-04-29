@@ -66,9 +66,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         centerTitle: false,
         leftButton: IconButton(
           icon: const Icon(
-            Icons.arrow_back_ios_new,
+            Icons.arrow_back_ios,
             color: Colors.white,
-            size: 27,
+            size: 30,
           ),
           onPressed: () => Navigator.pop(context),
         ),

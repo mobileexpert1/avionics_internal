@@ -525,7 +525,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                   top: 40,
                   left: 10,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black,size: 30),
                     onPressed: () {
                       flightMapCubit.stopTrackingFlight();
                       Navigator.pop(context, widget.flightId);

@@ -11,6 +11,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
+import '../../../Onboarding/Login/LoginScreen.dart';
 import '../../../Onboarding/Subscription/SubscriptionScreen.dart';
 import 'ChatHistoryScreen.dart';
 
@@ -158,13 +159,27 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
         cubit.onSessionExpired = () {
           isReceivedTokenFullWarning = true;
-
           AlertHelperForSubsPopup.showSubscriptionEndAlert(
             context: context,
             title: "Session Expired",
             message: "Your session has expired or limit exceeded.",
             navigateTo: SubscriptionScreen(),
           );
+        };
+
+        cubit.onAccessTokenExpired = () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Session expired. Please login again.'),
+            ),
+          );
+
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => LoginScreen()),
+              (route) => false,
+            );
+          });
         };
         return cubit;
       },
@@ -176,8 +191,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               ? const SizedBox()
               : IconButton(
                   icon: const Icon(
-                    Icons.arrow_back_ios_new,
+                    Icons.arrow_back_ios,
                     color: Colors.white,
+                    size: 30,
                   ),
                   onPressed: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);

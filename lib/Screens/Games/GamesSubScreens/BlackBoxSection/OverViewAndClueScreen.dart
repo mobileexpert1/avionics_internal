@@ -55,7 +55,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
         appBar: CustomAppBar(
           title: 'Overview & Clue Deck',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),

@@ -96,7 +96,8 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                 IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios,
-                    color: Colors.white,
+                    color: Colors.white
+                      ,size: 30
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -235,7 +236,7 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                         icon: const Icon(
                           Icons.arrow_back_ios,
                           color: Colors.white,
-                          size: 27,
+                          size: 30,
                         ),
                         onPressed: () {
                           Navigator.pop(context);

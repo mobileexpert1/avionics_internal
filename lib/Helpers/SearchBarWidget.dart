@@ -65,8 +65,8 @@ class SearchBarWidget extends StatelessWidget {
                     GestureDetector(
                       onTap: onBackButtonTap,
                       child: Icon(
-                        Icons.arrow_back_ios_new,
-                        size: isComeFromMapSection == true ? 25 : 20,
+                        Icons.arrow_back_ios,
+                        size: isComeFromMapSection == true ? 30 : 20,
                         color: Colors.black87,
                       ),
                     ),

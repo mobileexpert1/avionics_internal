@@ -51,7 +51,13 @@ class HomeCubit extends Cubit<HomeState> {
       }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(HomeError(e.toString()));
+      final errorMessage = e.toString().toLowerCase();
+      if (errorMessage.contains("unauthorized") ||
+          errorMessage.contains("401")) {
+        emit(HomeError("Session expired. Please login again."));
+      } else {
+        emit(HomeError(e.toString()));
+      }
     }
   }
 }

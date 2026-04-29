@@ -53,7 +53,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           title: ConstantStrings.reviewTitle,
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
             onPressed: () => Navigator.pop(context),
           ),
         ),

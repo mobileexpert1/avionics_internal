@@ -14,6 +14,7 @@ import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionState.dart';
 import '../../../Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Login/LoginScreen.dart';
 
 class AppleSubscriptionScreen extends StatefulWidget {
   final bool? isComeFromSignup;
@@ -73,9 +74,25 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             (prev.purchased != curr.purchased && curr.purchased),
         listener: (context, state) {
           if (state.error != null) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.error!)));
+            if (state.error!.contains("unauthorized") ||
+                state.error!.contains("401")) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Session expired. Please login again.'),
+                ),
+              );
+
+              Future.delayed(const Duration(seconds: 1), () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
+                );
+              });
+            } else {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.error!)));
+            }
           }
 
           if (state.purchased) {
@@ -137,6 +154,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           icon: const Icon(
                             Icons.arrow_back_ios,
                             color: Colors.white,
+                            size: 30,
                           ),
                           onPressed: () {
                             Navigator.pop(context);
@@ -326,17 +344,16 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           const SizedBox(height: 20),
                         ],
 
-                        if (selected != null)
-                          Text(
-                            "Free for 7 days then ${selected.price}\nCancel anytime.",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Color(0xFF626262),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-
+                        // if (selected != null)
+                        //   Text(
+                        //     "Free for 7 days then ${selected.price}\nCancel anytime.",
+                        //     textAlign: TextAlign.center,
+                        //     style: const TextStyle(
+                        //       color: Color(0xFF626262),
+                        //       fontSize: 13,
+                        //       fontWeight: FontWeight.w700,
+                        //     ),
+                        //   ),
                         const SizedBox(height: 30),
                       ],
                     ),
@@ -397,27 +414,47 @@ class _SubscriptionCard extends StatelessWidget {
 
   String cleanTitle(String title) {
     if (title.contains("(")) {
-      return title.substring(0, title.indexOf("(")).trim();
+      title = title.substring(0, title.indexOf("(")).trim();
+    }
+    final lower = title.toLowerCase();
+    if (lower.contains("monthly")) {
+      return "Basic";
+    } else if (lower.contains("yearly")) {
+      return "Premium";
     }
     return title;
   }
 
   String formatDate(String? isoDate) {
     if (isoDate == null) return "-";
-    final date = DateTime.tryParse(isoDate);
+
+    final date = DateTime.tryParse("${isoDate}Z")?.toLocal();
     if (date == null) return "-";
 
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
 
-    final hour = date.hour.toString().padLeft(2, '0');
-    final minute = date.minute.toString().padLeft(2, '0');
+    int hour = date.hour % 12;
+    if (hour == 0) hour = 12;
+
+    final amPm = date.hour >= 12 ? "PM" : "AM";
 
     return "${date.day.toString().padLeft(2, '0')}-"
         "${monthNames[date.month - 1]}-${date.year} "
-        "$hour:$minute";
+        "${hour.toString().padLeft(2, '0')}:"
+        "${date.minute.toString().padLeft(2, '0')} $amPm";
   }
 
   @override
@@ -456,7 +493,6 @@ class _SubscriptionCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            /// LEFT SIDE
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -468,7 +504,6 @@ class _SubscriptionCard extends StatelessWidget {
                   ),
                 ),
 
-                /// ✅ ACTIVE DATES
                 if (showActiveDates &&
                     startDate != null &&
                     endDate != null) ...[
@@ -477,7 +512,6 @@ class _SubscriptionCard extends StatelessWidget {
                   Text("End: ${formatDate(endDate)}"),
                 ],
 
-                /// ✅ EXPIRED UI (FIXED)
                 if (isExpired) ...[
                   const SizedBox(height: 6),
                   const Text(
@@ -490,7 +524,6 @@ class _SubscriptionCard extends StatelessWidget {
                   ),
                 ],
 
-                /// ✅ EXPIRED DATES
                 if (isExpired && startDate != null && endDate != null) ...[
                   const SizedBox(height: 4),
                   Text("Start: ${formatDate(startDate)}"),
@@ -499,7 +532,6 @@ class _SubscriptionCard extends StatelessWidget {
               ],
             ),
 
-            /// RIGHT SIDE (PRICE + tick)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(

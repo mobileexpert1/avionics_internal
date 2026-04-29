@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../Avtar/AvtarScreen.dart';
+import '../ContactSupportScreen/ContactSupportScreen.dart';
 import '../Feedback/FeedbackScreen.dart';
 import '../ManageAccount/ManageAccountScreen.dart';
 import '../ProfileScreen.dart';
@@ -284,7 +285,14 @@ class _SettingScreenState extends State<SettingScreen> {
                         AssetsPath.customerSupportProfile,
                       ),
                       title: "Customer Support",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ContactSupportScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -338,7 +346,7 @@ class _SettingScreenState extends State<SettingScreen> {
         title: ConstantStrings.settingScreen,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
           onPressed: () {
             Navigator.pop(context);
           },

@@ -305,10 +305,10 @@ class QuizQuestionRepository {
           "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitImageBasedResults}";
     } else if (gameId == "trivia") {
       submitUrl =
-      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitTriviaResults}";
+          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.submitTriviaResults}";
     } else if (gameId == "aircraftEncyclopaedia") {
       submitUrl =
-      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.encyclopaediaResults}";
+          "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlGamesConstant.encyclopaediaResults}";
     } else {
       throw Exception('Invalid gameId: $gameId');
     }

@@ -19,6 +19,7 @@ class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl();
 
   VoidCallback? _onSessionExpired;
+  VoidCallback? _onAccessTokenExpired;
 
   final _controller = StreamController<ChatMessage>.broadcast();
   final _uuid = Uuid();
@@ -116,7 +117,13 @@ class ChatRepositoryImpl implements ChatRepository {
           break;
 
         case 2:
+          _closing = true;
           _onSessionExpired?.call();
+          break;
+
+        case 4:
+          _closing = true;
+          _onAccessTokenExpired?.call();
           break;
 
         default:
@@ -157,6 +164,10 @@ class ChatRepositoryImpl implements ChatRepository {
 
   void setSessionExpiredCallback(VoidCallback callback) {
     _onSessionExpired = callback;
+  }
+
+  void setAccessTokenExpiredCallback(VoidCallback callback) {
+    _onAccessTokenExpired = callback;
   }
 
   // void _onData(dynamic data) async {

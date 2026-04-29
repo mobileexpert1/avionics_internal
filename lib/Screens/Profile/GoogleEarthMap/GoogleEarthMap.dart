@@ -340,7 +340,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
       appBar: CustomAppBar(
         title: "Google Earth Map",
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
           onPressed: () {
             _isActive = false;
             Navigator.pop(context);

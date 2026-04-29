@@ -109,7 +109,7 @@ class TestColourScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: "App Colors Code Used",
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
           onPressed: () {
             Navigator.pop(context);
           },

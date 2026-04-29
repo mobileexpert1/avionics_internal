@@ -56,7 +56,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
         title: ConstantStrings.avtarTRole,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => LoginScreen()),

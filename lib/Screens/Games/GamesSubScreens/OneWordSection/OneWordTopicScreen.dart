@@ -55,7 +55,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
             icon: Icon(
               Icons.arrow_back_ios,
               color: Colors.white,
-              size: isWeb ? 28 : 20,
+              size: 30,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),

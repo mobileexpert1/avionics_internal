@@ -101,7 +101,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
         //'Search ${widget.manufacturerName} Models',
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
           onPressed: () => Navigator.of(context).pop(),
         ),
         rightButton: IconButton(

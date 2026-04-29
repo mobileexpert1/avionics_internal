@@ -106,7 +106,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       },
                     ),
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
                 onPressed: () async {
                   final cubit = context.read<QuizQuestionCubit>();
                   final gameName = cubit.returnGameName();

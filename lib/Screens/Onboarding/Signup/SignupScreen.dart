@@ -72,7 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   isClearBackgroundColour: true,
                   title: ConstantStrings.CreateAccount,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
                     onPressed: () {
                       if (!mounted) return;
                       Navigator.of(context).pushAndRemoveUntil(

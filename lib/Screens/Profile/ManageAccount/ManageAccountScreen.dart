@@ -85,7 +85,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
               title: ConstantStrings.manageAccount,
               centerTitle: false,
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
                 onPressed: () => Navigator.pop(context),
               ),
               rightButton: isRightButtonShow

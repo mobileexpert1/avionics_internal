@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Helpers/push_notifications/LocalNotificationHelper.dart';
@@ -432,12 +433,32 @@ Map<String, dynamic> decodeJwt(String token) {
   return jsonDecode(decodedString);
 }
 
-String formatDate(int millis) {
-  final date = DateTime.fromMillisecondsSinceEpoch(
-    millis,
-    isUtc: true,
-  ).toLocal();
+String formatDateUniversal(
+  dynamic input, {
+  bool toIST = true,
+  bool use12Hour = false,
+}) {
+  if (input == null) return "-";
 
-  return "${date.day}/${date.month}/${date.year} "
-      "${date.hour}:${date.minute}";
+  DateTime? date;
+
+  if (input is int) {
+    date = DateTime.fromMillisecondsSinceEpoch(input, isUtc: true);
+  } else if (input is String) {
+    date = DateTime.tryParse("${input}Z");
+  }
+
+  if (date == null) return "-";
+
+  if (toIST) {
+    date = date.toLocal();
+  } else {
+    date = date.toUtc();
+  }
+
+  final format = use12Hour
+      ? DateFormat("dd-MMM-yyyy hh:mm a")
+      : DateFormat("dd-MMM-yyyy HH:mm");
+
+  return format.format(date);
 }

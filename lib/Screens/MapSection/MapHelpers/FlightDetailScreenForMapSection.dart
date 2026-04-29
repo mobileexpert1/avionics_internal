@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +11,7 @@ import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
@@ -247,7 +249,11 @@ class _FlightDetailScreenForMapSectionState
                 : 'N/A',
             centerTitle: false,
             leftButton: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 30,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
             rightButton: IconButton(
@@ -313,6 +319,7 @@ class _FlightDetailScreenForMapSectionState
                     final tabWidth = constraints.maxWidth / mainTabs.length;
                     return Stack(
                       children: [
+                        // 2. Replace the AnimatedPositioned child
                         AnimatedPositioned(
                           duration: const Duration(milliseconds: 250),
                           curve: Curves.easeInOut,
@@ -320,13 +327,12 @@ class _FlightDetailScreenForMapSectionState
                           width: tabWidth,
                           top: 5,
                           bottom: 0,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 2),
-                            decoration: const BoxDecoration(
-                              color: AppColors.extraDarkYellow,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(14),
-                                topRight: Radius.circular(14),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: CustomPaint(
+                              painter: BrowserTabPainter(
+                                tabColor: AppColors.extraDarkYellow,
+                                topRadius: 16.0,
                               ),
                             ),
                           ),
@@ -546,19 +552,13 @@ class _FlightDetailScreenForMapSectionState
                     borderRadius: BorderRadius.circular(6),
                     child: Stack(
                       children: [
-                        Image.network(
-                          image.url,
+                        CachedAnyImage(
+                          isForPlaneList: true,
+                          imagePath: image.url,
                           width: double.infinity,
                           height: screenHeight * 0.20,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                color: Colors.grey.shade300,
-                                alignment: Alignment.center,
-                                child: const Icon(Icons.broken_image),
-                              ),
+                          contentImage: kIsWeb ? BoxFit.contain : BoxFit.cover,
                         ),
-
                         if (hasCopyright)
                           Positioned(
                             left: 8,
@@ -1424,4 +1424,32 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
       ],
     ),
   );
+}
+
+class BrowserTabPainter extends CustomPainter {
+  final Color tabColor;
+  final double topRadius;
+
+  const BrowserTabPainter({required this.tabColor, required this.topRadius});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final tr = topRadius;
+
+    final tabPath = Path()
+      ..moveTo(tr, 0)
+      ..lineTo(w - tr, 0)
+      ..quadraticBezierTo(w, 0, w, tr)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..lineTo(0, tr)
+      ..quadraticBezierTo(0, 0, tr, 0)
+      ..close();
+    canvas.drawPath(tabPath, Paint()..color = tabColor);
+  }
+
+  @override
+  bool shouldRepaint(BrowserTabPainter old) => tabColor != old.tabColor;
 }

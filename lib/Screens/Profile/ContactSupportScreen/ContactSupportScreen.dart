@@ -65,9 +65,14 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
       value: _cubit,
       child: Scaffold(
         appBar: CustomAppBar(
+          centerTitle: false,
           title: "Contact Support",
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: 30,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -185,15 +190,19 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                                   SizedBox(
                                     width: double.infinity,
                                     child: CustomBottomButton(
-                                      fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                        height: 1.0,
-                                        color: !state.isSubmitting &&
-                                            state.email.isNotEmpty &&
-                                            cubit.isValidEmail(state.email) &&
-                                            state.message.isNotEmpty
-                                            ? Colors.white
-                                            : Colors.grey.shade600,
-                                      ),
+                                      fontStyle: AppTextStyles.regular(21.46)
+                                          .copyWith(
+                                            height: 1.0,
+                                            color:
+                                                !state.isSubmitting &&
+                                                    state.email.isNotEmpty &&
+                                                    cubit.isValidEmail(
+                                                      state.email,
+                                                    ) &&
+                                                    state.message.isNotEmpty
+                                                ? Colors.white
+                                                : Colors.grey.shade600,
+                                          ),
                                       title: state.isSubmitting ? "" : "Submit",
                                       backgroundColor: const Color.fromRGBO(
                                         63,

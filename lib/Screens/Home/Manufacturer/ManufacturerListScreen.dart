@@ -64,7 +64,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         title: 'Manufacturers Library',
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
           onPressed: () => Navigator.pop(context),
         ),
         rightButton: IconButton(

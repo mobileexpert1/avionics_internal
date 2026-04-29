@@ -54,7 +54,11 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
           title: 'Aviation Quiz',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: 30,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
           rightButton: IconButton(
@@ -100,6 +104,7 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
                         children: List.generate(state.games.length, (index) {
                           final game = state.games[index];
                           return AtmosLayer(
+                            infoDetails: game.info.first,
                             index: index,
                             title: game.title,
                             isLocked: game.isLocked,
@@ -111,7 +116,7 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
                                     builder: (_) => QuizQuestionScreen(
                                       sectionId: game.gameNumber,
                                       sectionTitle:
-                                      ConstantStrings.aviationQuizTitle,
+                                          ConstantStrings.aviationQuizTitle,
                                       gameId: "quiz",
                                     ),
                                   ),
@@ -155,6 +160,7 @@ double getHeight(int index) {
 
 class AtmosLayer extends StatefulWidget {
   final String title;
+  final String infoDetails;
   final bool isLocked;
   final VoidCallback onTap;
   final int index;
@@ -162,6 +168,7 @@ class AtmosLayer extends StatefulWidget {
   const AtmosLayer({
     super.key,
     required this.title,
+    required this.infoDetails,
     required this.isLocked,
     required this.onTap,
     required this.index,
@@ -194,8 +201,10 @@ class _AtmosLayerState extends State<AtmosLayer> {
               CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(-135, widget.index == 4 ? -60 : -15),
+                offset: Offset(-135, widget.index == 4 ? -80 : -15),
                 child: ArrowPopup(
+                  isLocked: widget.isLocked,
+                  infoDetails: widget.infoDetails,
                   onStart: () {
                     _hidePopup();
                     widget.onTap();
@@ -249,7 +258,7 @@ class _AtmosLayerState extends State<AtmosLayer> {
                 CompositedTransformTarget(
                   link: _layerLink,
                   child: GestureDetector(
-                    onTap: widget.isLocked ? null : _showPopup,
+                    onTap: _showPopup,
                     child: Container(
                       height: 55,
                       width: 55,
@@ -277,8 +286,15 @@ class _AtmosLayerState extends State<AtmosLayer> {
 
 class ArrowPopup extends StatelessWidget {
   final VoidCallback onStart;
+  final String infoDetails;
+  final bool isLocked;
 
-  const ArrowPopup({super.key, required this.onStart});
+  const ArrowPopup({
+    super.key,
+    required this.onStart,
+    required this.infoDetails,
+    required this.isLocked,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -297,32 +313,33 @@ class ArrowPopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Where all weather happens, and most aircraft fly.",
+              infoDetails,
               textAlign: TextAlign.left,
               style: AppTextStyles.regular(
                 16,
               ).copyWith(height: 1.0, color: AppColors.grayMedium),
             ),
 
-            const SizedBox(height: 12),
+            //const SizedBox(height: 12),
 
-            Text(
-              "The beginning of your journey.",
-              textAlign: TextAlign.left,
-              style: AppTextStyles.bold(
-                16,
-              ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
-            ),
-
+            // Text(
+            //   "The beginning of your journey.",
+            //   textAlign: TextAlign.left,
+            //   style: AppTextStyles.bold(
+            //     16,
+            //   ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
+            // ),
+            //
             const SizedBox(height: 25),
-
             CustomHeaderViewExpandable(
               isNeedToShowLeftRightBottomBorder: false,
               isNeedToShowLeftImage: true,
               isExpanded: false,
               title: "START GAME",
               headerColor: AppColors.primaryDark,
-              arrowBackgroundColor: AppColors.extraDarkYellow,
+              arrowBackgroundColor: isLocked
+                  ? AppColors.white
+                  : AppColors.extraDarkYellow,
               arrowFrontColor: Colors.black,
               isExpandedViewAvailable: true,
               fontStyle: AppTextStyles.regular(16).copyWith(
@@ -331,15 +348,14 @@ class ArrowPopup extends StatelessWidget {
               ),
               isLeftImage: IconButton(
                 icon: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.homeManufacturerLibrary),
+                  CommonUi.setSvgImage(AssetsPath.quizLockArrow),
                   width: 30,
                   height: 30,
                 ),
                 onPressed: () {},
               ),
-              onHeaderTap: onStart,
+              onHeaderTap: isLocked ? null : onStart,
             ),
-
             const SizedBox(height: 12),
           ],
         ),

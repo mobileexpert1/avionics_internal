@@ -83,7 +83,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
           title: 'Models Lists',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
             onPressed: () {
               Navigator.pop(context);
             },

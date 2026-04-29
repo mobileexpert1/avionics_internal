@@ -135,7 +135,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => MapSearchAircraftListCubit()),
         BlocProvider(create: (_) => BlackboxCubit()),
         BlocProvider(create: (_) => FlightMapCubit()),
-        BlocProvider(create: (_) => FlightMapCubit()),
         ChangeNotifierProvider(create: (_) => Calculations()),
         ChangeNotifierProvider(create: (_) => History()),
       ],

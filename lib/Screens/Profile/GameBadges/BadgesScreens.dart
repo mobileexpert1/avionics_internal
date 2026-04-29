@@ -71,7 +71,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
           title: 'Badges',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
             onPressed: () {
               if (widget.fromResultScreen) {
                 Navigator.push(
