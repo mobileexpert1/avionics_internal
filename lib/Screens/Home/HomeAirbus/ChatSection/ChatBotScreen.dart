@@ -11,6 +11,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
+import '../../../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
 import '../../../Onboarding/Login/LoginScreen.dart';
 import '../../../Onboarding/Subscription/SubscriptionScreen.dart';
 import 'ChatHistoryScreen.dart';
@@ -157,29 +158,46 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         );
         _listenToInternet(cubit);
 
-        cubit.onSessionExpired = () {
-          isReceivedTokenFullWarning = true;
-          AlertHelperForSubsPopup.showSubscriptionEndAlert(
-            context: context,
-            title: "Session Expired",
-            message: "Your session has expired or limit exceeded.",
-            navigateTo: SubscriptionScreen(),
-          );
-        };
+        cubit.onResponse = (status) {
+          switch (status) {
+            case ChatResponseStatus.tokenLimitExpired:
+              isReceivedTokenFullWarning = true;
+              AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                context: context,
+                title: "Token limit exhausted",
+                message:
+                    "Your token limit has been exhausted. Please purchase a subscription.",
+                navigateTo: SubscriptionScreen(),
+              );
+              break;
 
-        cubit.onAccessTokenExpired = () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Session expired. Please login again.'),
-            ),
-          );
+            case ChatResponseStatus.creditLimitExpired:
+              AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                context: context,
+                title: "Credit limit exhausted",
+                message:
+                    "Your credit limit has been exhausted. Please purchase a subscription.",
+                navigateTo: SubscriptionScreen(),
+              );
+              break;
 
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => LoginScreen()),
-              (route) => false,
-            );
-          });
+            case ChatResponseStatus.accessTokenExpired:
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Session expired. Please login again.'),
+                ),
+              );
+
+              Future.delayed(const Duration(seconds: 1), () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
+                );
+              });
+              break;
+            default:
+              break;
+          }
         };
         return cubit;
       },

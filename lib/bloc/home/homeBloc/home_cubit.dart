@@ -21,15 +21,16 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final data = await repository.getHomeData();
       if (data.isActiveSubscription == false) {
-        Navigator.of(context).push(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
                 ? AppleSubscriptionScreen(isComeFromSignup: true)
                 : AppleSubscriptionScreen(
-                    isComeFromSignup: true,
-                    isComeFromSocialLogin: true,
-                  )),
+              isComeFromSignup: true,
+              isComeFromSocialLogin: true,
+            )),
           ),
+              (route) => false,
         );
         return;
       } else {

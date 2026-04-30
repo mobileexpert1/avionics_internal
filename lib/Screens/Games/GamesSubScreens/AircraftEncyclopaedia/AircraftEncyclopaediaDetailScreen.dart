@@ -78,7 +78,7 @@ class _AircraftEncyclopaediaDetailScreenState
               padding: EdgeInsets.all(isWeb ? screenWidth * 0.02 : 16),
               child: GameDetailCard(
                 onStartGame: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (_) => QuizQuestionScreen(

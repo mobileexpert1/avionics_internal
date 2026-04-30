@@ -80,7 +80,7 @@ class HomeRepository {
           : response as Map<String, dynamic>;
       final homeData = HomeResponse.fromJson(json);
 
-      await _manufacturers.insertAll(homeData.manufacturers);
+      //await _manufacturers.insertAll(homeData.manufacturers);
       // await _favorites.insertAll(homeData.favourites);
 
       return homeData;

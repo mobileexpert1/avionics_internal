@@ -15,11 +15,25 @@ import 'ChatSocket_model.dart';
 import 'chat_model.dart';
 import 'chat_repository.dart';
 
+enum ChatResponseStatus {
+  success,
+  error,
+  tokenLimitExpired,
+  creditLimitExpired,
+  accessTokenExpired,
+}
+
+class ChatResponseEvent {
+  final ChatResponseStatus status;
+  final String? message;
+
+  ChatResponseEvent({required this.status, this.message});
+}
+
 class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl();
 
-  VoidCallback? _onSessionExpired;
-  VoidCallback? _onAccessTokenExpired;
+  void Function(ChatResponseEvent event)? _onResponseEvent;
 
   final _controller = StreamController<ChatMessage>.broadcast();
   final _uuid = Uuid();
@@ -115,17 +129,24 @@ class ChatRepositoryImpl implements ChatRepository {
         case 0:
           _pushSystem("Something went wrong");
           break;
-
         case 2:
           _closing = true;
-          _onSessionExpired?.call();
+          _onResponseEvent?.call(
+            ChatResponseEvent(status: ChatResponseStatus.tokenLimitExpired),
+          );
           break;
-
+        case 3:
+          _closing = true;
+          _onResponseEvent?.call(
+            ChatResponseEvent(status: ChatResponseStatus.creditLimitExpired),
+          );
+          break;
         case 4:
           _closing = true;
-          _onAccessTokenExpired?.call();
+          _onResponseEvent?.call(
+            ChatResponseEvent(status: ChatResponseStatus.accessTokenExpired),
+          );
           break;
-
         default:
           _pushSystem("Unexpected response ⚠️");
       }
@@ -162,12 +183,8 @@ class ChatRepositoryImpl implements ChatRepository {
     }
   }
 
-  void setSessionExpiredCallback(VoidCallback callback) {
-    _onSessionExpired = callback;
-  }
-
-  void setAccessTokenExpiredCallback(VoidCallback callback) {
-    _onAccessTokenExpired = callback;
+  void setResponseCallback(void Function(ChatResponseEvent event) callback) {
+    _onResponseEvent = callback;
   }
 
   // void _onData(dynamic data) async {

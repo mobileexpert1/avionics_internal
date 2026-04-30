@@ -88,6 +88,17 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                   (route) => false,
                 );
               });
+            }
+            if (state.error!.toLowerCase().contains(
+              "400 Sorry, we could not find your subscription.".toLowerCase(),
+            )) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "We could not find your subscription. Please buy subscription.",
+                  ),
+                ),
+              );
             } else {
               ScaffoldMessenger.of(
                 context,
@@ -235,6 +246,32 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         }),
 
                         const SizedBox(height: 20),
+                        CustomBottomButton(
+                          fontStyle: AppTextStyles.regular(
+                            21.46,
+                          ).copyWith(height: 1.0, color: Colors.white),
+                          backgroundColor: const Color.fromRGBO(
+                            30,
+                            128,
+                            242,
+                            1.0,
+                          ),
+                          textColor: Colors.white,
+                          title: SubscriptionTexts.restoreSubTitle,
+                          icon: const SizedBox(),
+                          isEnabled: true,
+                          onPressed: () {
+                            context
+                                .read<AppleSubscriptionCubit>()
+                                .restorePurchases();
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.subscriptionScreen,
+                              FirebaseEvents.restoreSubscriptionButton,
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
 
                         // Bottom Buttons
                         if (widget.isComeFromSignup == false ||
@@ -270,36 +307,9 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           ),
                           const SizedBox(height: 20),
                           CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(21.46).copyWith(
-                              height: 1.0,
-                              color: true ? Colors.white : Colors.grey.shade600,
-                            ),
-                            backgroundColor: const Color.fromRGBO(
-                              30,
-                              128,
-                              242,
-                              1.0,
-                            ),
-                            textColor: Colors.white,
-                            title: SubscriptionTexts.restoreSubTitle,
-                            icon: const SizedBox(),
-                            isEnabled: true,
-                            onPressed: () {
-                              context
-                                  .read<AppleSubscriptionCubit>()
-                                  .restorePurchases();
-                              AnalyticsService.instance.buttonPressed(
-                                FirebaseEvents.subscriptionScreen,
-                                FirebaseEvents.restoreSubscriptionButton,
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(21.46).copyWith(
-                              height: 1.0,
-                              color: true ? Colors.white : Colors.grey.shade600,
-                            ),
+                            fontStyle: AppTextStyles.regular(
+                              21.46,
+                            ).copyWith(height: 1.0, color: Colors.white),
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
                             title: SubscriptionTexts.cancelTitle,
@@ -491,60 +501,88 @@ class _SubscriptionCard extends StatelessWidget {
               : [],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cleanTitle(product.title),
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-
-                if (showActiveDates &&
-                    startDate != null &&
-                    endDate != null) ...[
-                  const SizedBox(height: 6),
-                  Text("Start: ${formatDate(startDate)}"),
-                  Text("End: ${formatDate(endDate)}"),
-                ],
-
-                if (isExpired) ...[
-                  const SizedBox(height: 6),
-                  const Text(
-                    "Previously Selected Plan",
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
+            // LEFT SIDE (takes remaining space)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    cleanTitle(product.title),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                ],
 
-                if (isExpired && startDate != null && endDate != null) ...[
-                  const SizedBox(height: 4),
-                  Text("Start: ${formatDate(startDate)}"),
-                  Text("Expired on: ${formatDate(endDate)}"),
+                  if (showActiveDates &&
+                      startDate != null &&
+                      endDate != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      "Start: ${formatDate(startDate)}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      "End: ${formatDate(endDate)}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+
+                  if (isExpired) ...[
+                    const SizedBox(height: 6),
+                    const Text(
+                      "Previously Selected Plan",
+                      style: TextStyle(fontSize: 10, color: Colors.red),
+                    ),
+                  ],
+
+                  if (isExpired && startDate != null && endDate != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      "Start: ${formatDate(startDate)}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      "Expired on: ${formatDate(endDate)}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
 
+            const SizedBox(width: 10),
+
             Container(
+              constraints: const BoxConstraints(minWidth: 90, maxWidth: 100),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
                 color: isSelected ? Colors.blue.shade100 : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    product.price,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      product.price,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 6),

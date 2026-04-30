@@ -171,8 +171,8 @@ class CurrentPlan {
   final String name;
   final double price;
   final String billingCycle;
-  final DateTime startDate;
-  final DateTime expiryDate;
+  final String startDate;
+  final String expiryDate;
   final double totalToken;
   final double totalCredit;
   final double tokenUsage;
@@ -200,8 +200,8 @@ class CurrentPlan {
       name: json['name'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       billingCycle: json['billing_cycle'] ?? '',
-      startDate: DateTime.parse(json['start_date']),
-      expiryDate: DateTime.parse(json['expiry_date']),
+      startDate: (json['start_date']),
+      expiryDate: (json['expiry_date']),
       totalToken: (json['total_token'] ?? 0).toDouble(),
       totalCredit: (json['total_credit'] ?? 0).toDouble(),
       tokenUsage: (json['token_usage'] ?? 0).toDouble(),

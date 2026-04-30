@@ -11,11 +11,7 @@ import 'chat_implementation.dart';
 import 'chat_model.dart';
 
 class ChatCubit extends Cubit<List<Map<String, String>>> {
-  VoidCallback? onSessionExpired;
-  VoidCallback? onAccessTokenExpired;
-
-  bool isSessionExpired = false;
-  bool isAccessTokenExpired = false;
+  void Function(ChatResponseStatus status)? onResponse;
 
   ChatCubit({
     required String accessToken,
@@ -44,20 +40,30 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   Stream<bool> get internetStream => _internetStatusController.stream;
 
   Future<void> _init(String token, String sessionId, bool isNewSession) async {
-    _repo.setSessionExpiredCallback(() {
-      isSessionExpired = true;
-      final next = List<Map<String, String>>.from(state)
-        ..removeWhere((m) => m['type'] == 'analyzing');
-      emit(next);
-      onSessionExpired?.call();
-    });
+    _repo.setResponseCallback((event) {
+      switch (event.status) {
+        case ChatResponseStatus.tokenLimitExpired:
+          final next = List<Map<String, String>>.from(state)
+            ..removeWhere((m) => m['type'] == 'analyzing');
+          emit(next);
+          onResponse?.call(ChatResponseStatus.tokenLimitExpired);
+          break;
+        case ChatResponseStatus.creditLimitExpired:
+          final next = List<Map<String, String>>.from(state)
+            ..removeWhere((m) => m['type'] == 'analyzing');
+          emit(next);
+          onResponse?.call(ChatResponseStatus.creditLimitExpired);
+          break;
 
-    _repo.setAccessTokenExpiredCallback(() {
-      isAccessTokenExpired = true;
-      final next = List<Map<String, String>>.from(state)
-        ..removeWhere((m) => m['type'] == 'analyzing');
-      emit(next);
-      onAccessTokenExpired?.call();
+        case ChatResponseStatus.accessTokenExpired:
+          final next = List<Map<String, String>>.from(state)
+            ..removeWhere((m) => m['type'] == 'analyzing');
+          emit(next);
+          onResponse?.call(ChatResponseStatus.accessTokenExpired);
+          break;
+        default:
+          break;
+      }
     });
 
     if (!isNewSession && sessionId.isNotEmpty) {
@@ -104,24 +110,12 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         AlertHelperForSubsPopup.showSubscriptionEndAlert(
           isFromTrackingClass: false,
           context: context,
-          title: "Subscription Required",
-          message: "Tokens finished. Please buy subscription.",
+          title: "Token limit exhausted",
+          message:
+              "Your token limit has been exhausted. Please purchase a subscription.",
           navigateTo: AppleSubscriptionScreen(),
-          onGoToFirstTab: () {
-            RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
-          },
         );
       });
-      return;
-    }
-
-    if (isSessionExpired) {
-      onSessionExpired?.call();
-      return;
-    }
-
-    if (isAccessTokenExpired) {
-      onAccessTokenExpired?.call();
       return;
     }
 
@@ -177,13 +171,11 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   void _onSocketMessage(ChatMessage msg) {
     if (msg.text == "__SESSION_EXPIRED__") {
-      isSessionExpired = true;
       emit(List<Map<String, String>>.from(state));
       return;
     }
 
     if (msg.text.contains("token")) {
-      isAccessTokenExpired = true;
       emit(List<Map<String, String>>.from(state));
       return;
     }
