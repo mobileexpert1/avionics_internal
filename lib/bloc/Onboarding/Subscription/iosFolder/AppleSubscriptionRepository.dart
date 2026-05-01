@@ -31,28 +31,28 @@ class AppleSubscriptionRepository {
 
       printFullText(token);
 
-      final decoded = decodeJwt(token);
-
-      print("FULL PAYLOAD => $decoded");
-
-      final expiry = decoded['expiresDate'];
-      final purchaseDate = decoded['purchaseDate'];
-
-      if (expiry != null) {
-        print("Expiry (IST 12h) => ${formatDateUniversal(expiry, toIST: true, use12Hour: true)}");
-        print("Expiry (IST 24h) => ${formatDateUniversal(expiry, toIST: true, use12Hour: false)}");
-
-        print("Expiry (UTC 12h) => ${formatDateUniversal(expiry, toIST: false, use12Hour: true)}");
-        print("Expiry (UTC 24h) => ${formatDateUniversal(expiry, toIST: false, use12Hour: false)}");
-      }
-
-      if (purchaseDate != null) {
-        print("Purchase (IST 12h) => ${formatDateUniversal(purchaseDate, toIST: true, use12Hour: true)}");
-        print("Purchase (IST 24h) => ${formatDateUniversal(purchaseDate, toIST: true, use12Hour: false)}");
-
-        print("Purchase (UTC 12h) => ${formatDateUniversal(purchaseDate, toIST: false, use12Hour: true)}");
-        print("Purchase (UTC 24h) => ${formatDateUniversal(purchaseDate, toIST: false, use12Hour: false)}");
-      }
+      // final decoded = decodeJwt(token);
+      //
+      // print("FULL PAYLOAD => $decoded");
+      //
+      // final expiry = decoded['expiresDate'];
+      // final purchaseDate = decoded['purchaseDate'];
+      //
+      // if (expiry != null) {
+      //   print("Expiry (IST 12h) => ${formatDateUniversal(expiry, toIST: true, use12Hour: true)}");
+      //   print("Expiry (IST 24h) => ${formatDateUniversal(expiry, toIST: true, use12Hour: false)}");
+      //
+      //   print("Expiry (UTC 12h) => ${formatDateUniversal(expiry, toIST: false, use12Hour: true)}");
+      //   print("Expiry (UTC 24h) => ${formatDateUniversal(expiry, toIST: false, use12Hour: false)}");
+      // }
+      //
+      // if (purchaseDate != null) {
+      //   print("Purchase (IST 12h) => ${formatDateUniversal(purchaseDate, toIST: true, use12Hour: true)}");
+      //   print("Purchase (IST 24h) => ${formatDateUniversal(purchaseDate, toIST: true, use12Hour: false)}");
+      //
+      //   print("Purchase (UTC 12h) => ${formatDateUniversal(purchaseDate, toIST: false, use12Hour: true)}");
+      //   print("Purchase (UTC 24h) => ${formatDateUniversal(purchaseDate, toIST: false, use12Hour: false)}");
+     // }
 
       // int? expiry1 = decoded['expiresDate'] is int
       //     ? decoded['expiresDate']
@@ -78,10 +78,9 @@ class AppleSubscriptionRepository {
       //   print("IST Purchase Date => $purchase1");
       // }
 
-
-      print("TransactionId => ${decoded['transactionId']}");
-      print("OriginalTransactionId => ${decoded['originalTransactionId']}");
-      print("Environment => ${decoded['environment']}");
+      // print("TransactionId => ${decoded['transactionId']}");
+      // print("OriginalTransactionId => ${decoded['originalTransactionId']}");
+      // print("Environment => ${decoded['environment']}");
 
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {

@@ -15,7 +15,7 @@ class SharedPrefsHelper {
   static const String apiFetchKeyFromSever = 'api_Fetch_Key_From_Sever';
   static const String fetchSubsIsTrueKey = 'fetchSubsIsTrue';
   static const String _isAvtarForProfileUrlKey = 'avtarForProfileUrlKey';
-  static const String  _userProfileNameKey  = 'userProfileNameKey';
+  static const String _userProfileNameKey = 'userProfileNameKey';
 
   static Future<void> save(String uid) async {
     final prefs = await SharedPreferences.getInstance();

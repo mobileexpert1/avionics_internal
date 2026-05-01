@@ -19,7 +19,7 @@ class RootTabbarscreen extends StatefulWidget {
   static final GlobalKey<RootTabbarScreenState> globalKey =
   GlobalKey<RootTabbarScreenState>();
 
-  RootTabbarscreen({Key? key}) : super(key: globalKey);
+  const RootTabbarscreen({Key? key}) : super(key: key);
 
   @override
   State<RootTabbarscreen> createState() => RootTabbarScreenState();

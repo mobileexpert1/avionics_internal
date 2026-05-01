@@ -14,6 +14,7 @@ import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'login_repository.dart';
 import 'login_response_model.dart';
 import 'login_state.dart';
@@ -304,7 +305,6 @@ class LoginCubit extends Cubit<LoginState> {
     BuildContext context,
     LoginResponseModel result,
   ) async {
-
     if (!context.mounted) return;
 
     if (result.userDetails != null) {
@@ -320,6 +320,9 @@ class LoginCubit extends Cubit<LoginState> {
         '${result.userDetails?.firstName ?? ''} ${result.userDetails?.lastName ?? ''}'
             .trim(),
       );
+
+      final cubit = context.read<AppleSubscriptionCubit>();
+      await cubit.loginUser(result.userDetails?.email ?? "");
 
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');

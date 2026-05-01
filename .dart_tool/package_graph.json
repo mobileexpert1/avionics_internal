@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "avionics_internal",
-      "version": "1.0.0+10",
+      "version": "1.0.1+1",
       "dependencies": [
         "animated_text_kit",
         "cached_network_image",
@@ -33,12 +33,12 @@
         "geolocator",
         "google_maps_flutter",
         "google_sign_in",
-        "in_app_purchase",
         "intl",
         "path",
         "path_provider",
         "permission_handler",
         "pinput",
+        "purchases_flutter",
         "responsive_sizer",
         "shared_preferences",
         "sign_in_with_apple",
@@ -259,16 +259,6 @@
         "geolocator_platform_interface",
         "geolocator_web",
         "geolocator_windows"
-      ]
-    },
-    {
-      "name": "in_app_purchase",
-      "version": "3.2.3",
-      "dependencies": [
-        "flutter",
-        "in_app_purchase_android",
-        "in_app_purchase_platform_interface",
-        "in_app_purchase_storekit"
       ]
     },
     {
@@ -543,6 +533,16 @@
         "flutter",
         "http",
         "vector_math"
+      ]
+    },
+    {
+      "name": "purchases_flutter",
+      "version": "10.0.1",
+      "dependencies": [
+        "equatable",
+        "flutter",
+        "flutter_web_plugins",
+        "web"
       ]
     },
     {
@@ -1028,33 +1028,6 @@
         "meta",
         "plugin_platform_interface",
         "vector_math"
-      ]
-    },
-    {
-      "name": "in_app_purchase_storekit",
-      "version": "0.4.7",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "in_app_purchase_platform_interface",
-        "json_annotation"
-      ]
-    },
-    {
-      "name": "in_app_purchase_platform_interface",
-      "version": "1.4.0",
-      "dependencies": [
-        "flutter",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "in_app_purchase_android",
-      "version": "0.4.0+8",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "in_app_purchase_platform_interface"
       ]
     },
     {

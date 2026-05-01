@@ -29,7 +29,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
 
   String buttonBottomTitle = ConstantStrings.changePassword;
   bool isRightButtonShow = true;
-  bool isTextfiledEnabled = false;
+  bool isTextFiledEnabled = false;
   bool isSocialLogin = false;
 
   @override
@@ -100,7 +100,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                   ),
                   onTap: () {
                     setState(() {
-                      isTextfiledEnabled = true;
+                      isTextFiledEnabled = true;
                       isRightButtonShow = false;
                       buttonBottomTitle = ConstantStrings.saveTitle;
                     });
@@ -131,7 +131,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             onChanged: (val) => context
                                 .read<ManageaccCubit>()
                                 .firstNameChanged(val),
-                            enabled: isTextfiledEnabled,
+                            enabled: isTextFiledEnabled,
                           ),
                           const SizedBox(height: 15),
                           CustomTextField(
@@ -141,7 +141,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             onChanged: (val) => context
                                 .read<ManageaccCubit>()
                                 .lastNameChanged(val),
-                            enabled: isTextfiledEnabled,
+                            enabled: isTextFiledEnabled,
                           ),
                           const SizedBox(height: 15),
                           CustomTextField(
@@ -181,7 +181,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                 if (cubit.validateFields()) {
                                   await cubit.updateUserDetails(context);
                                   setState(() {
-                                    isTextfiledEnabled = false;
+                                    isTextFiledEnabled = false;
                                     isRightButtonShow = true;
                                     buttonBottomTitle =
                                         ConstantStrings.changePassword;

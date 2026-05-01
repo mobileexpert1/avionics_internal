@@ -1,8 +1,10 @@
+import '../../../Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Login/LoginScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ConstantStrings.dart';
@@ -13,8 +15,6 @@ import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionState.dart';
-import '../../../Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Login/LoginScreen.dart';
 
 class AppleSubscriptionScreen extends StatefulWidget {
   final bool? isComeFromSignup;
@@ -27,7 +27,7 @@ class AppleSubscriptionScreen extends StatefulWidget {
   });
 
   @override
-  _AppleSubscriptionScreenState createState() =>
+  State<AppleSubscriptionScreen> createState() =>
       _AppleSubscriptionScreenState();
 }
 
@@ -37,31 +37,21 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    _cubit = AppleSubscriptionCubit(autoRestore: true);
-
-    if (kIsWeb) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<AppleSubscriptionCubit>().handleWebRedirectionIfNeeded();
-      });
-    }
+    _cubit = AppleSubscriptionCubit();
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
+    // if (kIsWeb) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     context.read<AppleSubscriptionCubit>().handleWebRedirectionIfNeeded();
+    //   });
+    // }
   }
 
   @override
   void dispose() {
-    _cubit.globalWebRedirectDone = false;
     _cubit.close();
     super.dispose();
-  }
-
-  String _cleanProductTitle(ProductDetails product) {
-    final title = product.title;
-    if (title.contains("(")) {
-      return title.substring(0, title.indexOf("(")).trim().toLowerCase();
-    }
-    return title.toLowerCase();
   }
 
   @override
@@ -70,8 +60,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
       create: (_) => _cubit,
       child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
         listenWhen: (prev, curr) =>
-            (prev.error != curr.error && curr.error != null) ||
-            (prev.purchased != curr.purchased && curr.purchased),
+            prev.error != curr.error || prev.purchased != curr.purchased,
         listener: (context, state) {
           if (state.error != null) {
             if (state.error!.contains("unauthorized") ||
@@ -88,8 +77,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                   (route) => false,
                 );
               });
-            }
-            if (state.error!.toLowerCase().contains(
+            } else if (state.error!.toLowerCase().contains(
               "400 Sorry, we could not find your subscription.".toLowerCase(),
             )) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +104,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
             );
 
             if (widget.isComeFromSignup == true) {
-              //_navigated = true;
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => RootTabbarscreen()),
@@ -126,22 +113,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
           }
         },
         builder: (context, state) {
-          final products = [...state.products]
-            ..sort(
-              (a, b) => _cleanProductTitle(a).compareTo(_cleanProductTitle(b)),
-            );
-
-          ProductDetails? selected;
-          if (state.selectedProduct != null) {
-            selected = state.selectedProduct;
-          } else {
-            final activePlans = state.products.where(
-              (p) =>
-                  p.id == state.subscription?.productId &&
-                  state.subscription?.status == "active",
-            );
-            selected = activePlans.isNotEmpty ? activePlans.first : null;
-          }
+          final packages = state.offerings?.current?.availablePackages ?? [];
+          Package? selected = state.selectedPackage;
 
           return Stack(
             children: [
@@ -186,7 +159,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         ),
                         const SizedBox(height: 30),
 
-                        // Features
                         _buildFeatureRow(
                           iconWidget: SvgPicture.asset(
                             CommonUi.setSvgImage(AssetsPath.starIcon),
@@ -215,22 +187,28 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Subscription Plans
-                        ...products.map((product) {
+                        ...packages.map((package) {
+                          final product = package.storeProduct;
+
                           final bool isActive =
-                              state.subscription?.productId == product.id &&
-                              state.subscription?.status == "active";
+                              (state.subscription?.productId ==
+                                      product.identifier &&
+                                  state.subscription?.status == "active") ||
+                              (state.activeProductId == product.identifier &&
+                                  state.purchased);
 
                           final bool isExpired =
-                              state.subscription?.productId == product.id &&
+                              state.subscription?.productId ==
+                                  product.identifier &&
                               state.subscription?.status == "expired";
 
-                          final bool isSelected = selected?.id == product.id;
+                          final bool isSelected =
+                              selected?.identifier == package.identifier;
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: _SubscriptionCard(
-                              product: product,
+                              package: package,
                               isSelected: isSelected,
                               isActive: isActive,
                               isExpired: isExpired,
@@ -239,13 +217,14 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                               onTap: () {
                                 context
                                     .read<AppleSubscriptionCubit>()
-                                    .selectPlan(product);
+                                    .selectPackage(package);
                               },
                             ),
                           );
                         }),
 
                         const SizedBox(height: 20),
+
                         CustomBottomButton(
                           fontStyle: AppTextStyles.regular(
                             21.46,
@@ -273,7 +252,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 
                         const SizedBox(height: 20),
 
-                        // Bottom Buttons
                         if (widget.isComeFromSignup == false ||
                             widget.isComeFromSignup == null) ...[
                           CustomBottomButton(
@@ -339,7 +317,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                             title: "Go Premium",
                             icon: const SizedBox(),
                             isEnabled: selected != null,
-                            onPressed: () async {
+                            onPressed: () {
                               if (selected != null) {
                                 context
                                     .read<AppleSubscriptionCubit>()
@@ -354,16 +332,6 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           const SizedBox(height: 20),
                         ],
 
-                        // if (selected != null)
-                        //   Text(
-                        //     "Free for 7 days then ${selected.price}\nCancel anytime.",
-                        //     textAlign: TextAlign.center,
-                        //     style: const TextStyle(
-                        //       color: Color(0xFF626262),
-                        //       fontSize: 13,
-                        //       fontWeight: FontWeight.w700,
-                        //     ),
-                        //   ),
                         const SizedBox(height: 30),
                       ],
                     ),
@@ -404,7 +372,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 }
 
 class _SubscriptionCard extends StatelessWidget {
-  final ProductDetails product;
+  final Package package;
   final bool isSelected; // tapped by user
   final bool isActive; // actually active subscription
   final bool isExpired;
@@ -413,7 +381,7 @@ class _SubscriptionCard extends StatelessWidget {
   final String? endDate;
 
   const _SubscriptionCard({
-    required this.product,
+    required this.package,
     required this.isSelected,
     required this.isActive,
     required this.isExpired,
@@ -435,11 +403,15 @@ class _SubscriptionCard extends StatelessWidget {
     return title;
   }
 
-  String formatDate(String? isoDate) {
-    if (isoDate == null) return "-";
+  String formatDate(String? dateStr) {
+    if (dateStr == null) return "-";
 
-    final date = DateTime.tryParse("${isoDate}Z")?.toLocal();
-    if (date == null) return "-";
+    // Convert backend string → UTC
+    final utcDate = DateTime.tryParse("${dateStr.replaceFirst(" ", "T")}Z");
+
+    if (utcDate == null) return "-";
+
+    final localDate = utcDate.toLocal();
 
     const monthNames = [
       'Jan',
@@ -456,20 +428,15 @@ class _SubscriptionCard extends StatelessWidget {
       'Dec',
     ];
 
-    int hour = date.hour % 12;
-    if (hour == 0) hour = 12;
-
-    final amPm = date.hour >= 12 ? "PM" : "AM";
-
-    return "${date.day.toString().padLeft(2, '0')}-"
-        "${monthNames[date.month - 1]}-${date.year} "
-        "${hour.toString().padLeft(2, '0')}:"
-        "${date.minute.toString().padLeft(2, '0')} $amPm";
+    return "${localDate.day.toString().padLeft(2, '0')}-"
+        "${monthNames[localDate.month - 1]}-${localDate.year} "
+        "${localDate.hour.toString().padLeft(2, '0')}:"
+        "${localDate.minute.toString().padLeft(2, '0')}";
   }
 
   @override
   Widget build(BuildContext context) {
-    final showActiveDates = isActive && isSelected;
+    final showActiveDates = isActive;
 
     return GestureDetector(
       onTap: onTap,
@@ -508,7 +475,7 @@ class _SubscriptionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    cleanTitle(product.title),
+                    cleanTitle(package.storeProduct.title),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -576,7 +543,7 @@ class _SubscriptionCard extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      product.price,
+                      package.storeProduct.priceString,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

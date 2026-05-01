@@ -1,4 +1,5 @@
 import 'package:flutter_svg/svg.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -366,6 +367,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Future<void> _clearAllDataAndRedirectToSplashScreen(
     BuildContext context,
   ) async {
+    await Purchases.logOut();
     await SharedPrefsHelper.clearAll([], false);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginScreen()),
