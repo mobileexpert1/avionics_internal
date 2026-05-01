@@ -8,6 +8,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'AppleSubscriptionRepository.dart';
 import 'AppleSubscriptionState.dart';
@@ -27,7 +28,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
-  // Debounce timer for purchase updates
   bool globalWebRedirectDone = false;
   Timer? _debounceTimer;
   final Set<String> _processedTransactions = {};
@@ -64,10 +64,11 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       );
 
       await _loadProducts();
+      await getSubscriptionsFromBackendServer();
 
-      if (autoRestore) {
-        await restorePurchases();
-      }
+      // if (autoRestore) {
+      //   await restorePurchases();
+      // }
     }
   }
 
@@ -94,7 +95,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- PRODUCTS ----------------
-
   Future<void> _loadProducts() async {
     try {
       final productIds = kIsWeb
@@ -127,13 +127,11 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- PLAN SELECTION ----------------
-
   void selectPlan(ProductDetails product) {
     emit(state.copyWith(selectedProduct: product));
   }
 
   // ---------------- BUY ----------------
-
   Future<void> buySelected() async {
     final product = state.selectedProduct;
 
@@ -144,7 +142,12 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
     emit(state.copyWith(loading: true));
 
-    final purchaseParam = PurchaseParam(productDetails: product);
+    final name = await SharedPrefsHelper.getUserProfileName();
+
+    final purchaseParam = PurchaseParam(
+      productDetails: product,
+      applicationUserName: "user_$name",
+    );
 
     try {
       print(" ${product.id}");
@@ -168,64 +171,75 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- PURCHASE STREAM (DEBOUNCED) ----------------
-
   void _onPurchaseUpdated(List<PurchaseDetails> purchases) {
     _debounceTimer?.cancel();
 
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       if (purchases.isEmpty) return;
 
-      final latest = purchases
+      final candidates = purchases
           .where(
             (p) =>
                 p.status == PurchaseStatus.purchased ||
                 p.status == PurchaseStatus.restored,
           )
-          .toList()
-          .last;
+          .map((p) {
+            final decoded = decodeJwt(
+              p.verificationData.serverVerificationData,
+            );
+            return (purchase: p, decoded: decoded);
+          })
+          .toList();
 
-      final token = latest.verificationData.serverVerificationData;
+      if (candidates.isEmpty) return;
 
-      final decoded = decodeJwt(token);
+      candidates.sort((a, b) {
+        final aMs = (a.decoded['purchaseDate'] as num?)?.toInt() ?? 0;
+        final bMs = (b.decoded['purchaseDate'] as num?)?.toInt() ?? 0;
+        return bMs.compareTo(aMs);
+      });
 
+      final latest = candidates.first;
+
+      final token = latest.purchase.verificationData.serverVerificationData;
+      final decoded = latest.decoded;
       final transactionId = decoded['transactionId'];
 
-      print("Latest Transaction ID: $transactionId");
+      print("Token: $token");
+      print("Decoded payload: $decoded");
+      print("Transaction ID: $transactionId");
+      print("Expires Date: ${decoded['expiresDate']}");
 
       if (_processedPurchaseIds.contains(transactionId)) {
-        print("Already processed");
+        print("Already processed: $transactionId");
         return;
       }
 
       _processedPurchaseIds.add(transactionId);
 
-      print("Purchase Event -> ${latest.productID} | ${latest.status}");
-
-      switch (latest.status) {
+      switch (latest.purchase.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
-          await _handlePurchase(latest, decoded);
+          await _handlePurchase(latest.purchase, decoded);
           break;
-
         case PurchaseStatus.pending:
           emit(state.copyWith(loading: true));
           break;
-
         case PurchaseStatus.error:
           emit(
             state.copyWith(
               loading: false,
-              error: latest.error?.message ?? "Purchase failed",
+              error: latest.purchase.error?.message ?? "Purchase failed",
             ),
           );
           break;
-
         case PurchaseStatus.canceled:
           emit(state.copyWith(loading: false, error: "Purchase cancelled"));
           break;
       }
     });
   }
+
 
   Future<void> _handlePurchase(
     PurchaseDetails purchase,
@@ -242,8 +256,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
     try {
       final token = purchase.verificationData.serverVerificationData;
-
-      final productId = decoded['productId'];
 
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
@@ -269,7 +281,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
           purchased: backendResponse.data?.status == "active",
           loading: false,
           status: CommonApiStatus.success,
-          activeProductId: productId,
+          activeProductId: backendResponse.data?.productId,
           subscription: backendResponse.data,
         ),
       );
@@ -284,7 +296,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- RESTORE ----------------
-
   Future<void> restorePurchases() async {
     _isRestoring = true;
     _processedPurchaseIds.clear();
@@ -313,14 +324,13 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
   // ---------------- CANCEL SUBSCRIPTION ----------------
   Future<void> guideUserToCancelSubscription() async {
-    if (state.activeProductId == null) {
-      emit(state.copyWith(error: "No active subscription to cancel"));
+    if (!state.purchased) {
+      emit(state.copyWith(error: "No active subscription"));
       return;
     }
 
     try {
       if (Platform.isIOS) {
-        // Open Apple subscriptions page
         const url = 'https://apps.apple.com/account/subscriptions';
         if (await canLaunchUrl(Uri.parse(url))) {
           await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -330,7 +340,6 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
           );
         }
       } else if (Platform.isAndroid) {
-        // Open Google Play subscriptions page
         const url = 'https://play.google.com/store/account/subscriptions';
         if (await canLaunchUrl(Uri.parse(url))) {
           await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -383,30 +392,25 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
   }
 
   // ---------------- BACKEND SYNC ----------------
-  Future<void> getSubscriptionsFromBackendServer(String activeProductId) async {
-    emit(state.copyWith(loading: true, status: CommonApiStatus.initial));
+  Future<void> getSubscriptionsFromBackendServer() async {
+    emit(state.copyWith(loading: true));
 
     try {
       final response = await AppleSubscriptionRepository()
           .getSubscriptionDetails();
 
+      final isActive = response.data?.status == "active";
+
       emit(
         state.copyWith(
           subscription: response.data,
-          purchased: response.data?.status == "active",
-          activeProductId: activeProductId,
+          purchased: isActive,
+          activeProductId: isActive ? response.data?.productId : null,
           loading: false,
-          status: CommonApiStatus.success,
         ),
       );
     } catch (e) {
-      emit(
-        state.copyWith(
-          loading: false,
-          status: CommonApiStatus.failure,
-          error: "Failed to fetch subscription: $e",
-        ),
-      );
+      emit(state.copyWith(loading: false, error: e.toString()));
     }
   }
 
