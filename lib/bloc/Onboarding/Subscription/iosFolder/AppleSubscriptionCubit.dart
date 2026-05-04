@@ -185,7 +185,24 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         );
       }
     } catch (e) {
-      emit(state.copyWith(loading: false, error: "Restore failed: $e"));
+      if (e is PlatformException &&
+          e.details != null &&
+          e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
+        emit(
+          state.copyWith(
+            loading: false,
+            error:
+                "This Apple ID is already linked with another account. Please login with the original account.",
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            loading: false,
+            error: "Restore failed. Please try again.",
+          ),
+        );
+      }
     }
   }
 
