@@ -145,6 +145,21 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           },
                         )
                       : Wrap(),
+                  rightButton:
+                  (widget.isComeFromSignup == true)
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            context
+                                .read<AppleSubscriptionCubit>()
+                                .clearAllDataAndRedirectToSplashScreen(context);
+                          },
+                        )
+                      : Wrap(),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(20.0),

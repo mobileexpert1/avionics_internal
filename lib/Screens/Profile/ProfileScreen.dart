@@ -1,38 +1,47 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../Constants/AppColors.dart';
+import '../../Constants/constantImages.dart';
+import '../../CustomFiles/CustomAppBar.dart';
+import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+
+import '../../bloc/home/homeBloc/home_cubit.dart';
+import '../../bloc/Profile/ProfileMain/profile_cubit.dart';
+import '../../bloc/Profile/ProfileMain/profile_state.dart';
+import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../bloc/Profile/Glossary/glossary_cubit.dart';
+import '../../bloc/Profile/FormulaSection/formula_cubit.dart';
+import '../../bloc/Profile/ConversionSection/conversion_cubit.dart';
+
+import '../Home/SavedFlights/SavedFlighScreen.dart';
 import 'SettingsSectionHeader.dart';
 import 'GameBadges/BadgesScreens.dart';
 import 'Glossary/GlossaryScreen.dart';
-import 'package:flutter/material.dart';
-import '../../Constants/AppColors.dart';
-import 'package:flutter/foundation.dart';
-import '../../Constants/constantImages.dart';
-import '../../CustomFiles/CustomAppBar.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Home/SavedFlights/SavedFlighScreen.dart';
-import '../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../bloc/Profile/Glossary/glossary_cubit.dart';
-import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'ScientificCalculator/screens/calculator_home_main_screen.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_state.dart';
-import 'package:avionics_internal/bloc/Profile/FormulaSection/formula_cubit.dart';
-import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingScreen.dart';
-import 'package:avionics_internal/Screens/Profile/FormulaSection/FormulaScreen.dart';
-import 'package:avionics_internal/bloc/Profile/ConversionSection/conversion_cubit.dart';
-import 'package:avionics_internal/Screens/Profile/ConversionSection/ConversionScreen.dart';
+import 'FormulaSection/FormulaScreen.dart';
+import 'ConversionSection/ConversionScreen.dart';
+import 'SettingScreen/SettingScreen.dart';
+
+class ProfileScreenWrapper extends StatelessWidget {
+  const ProfileScreenWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => DeleteCubit(),
+      child: const ProfileScreen(),
+    );
+  }
+}
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return BlocProvider<DeleteCubit>(
-      create: (_) => DeleteCubit(),
-      child: ProfileScreen(),
-    );
-  }
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -41,29 +50,47 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String userAvtarTypeUrl = '';
   String userName = '';
+  late HomeCubit homeCubit;
 
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
+    AnalyticsService.instance
+        .logVisibleScreen(FirebaseEvents.profileScreen);
+
+    homeCubit = HomeCubit();
+    homeCubit.fetchHomeData(context);
+
     setLocalData();
+  }
+
+
+  @override
+  void dispose() {
+    homeCubit.close();
+    super.dispose();
   }
 
   Future<void> setLocalData() async {
     final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
     final name = await SharedPrefsHelper.getUserProfileName();
 
+    if (!mounted) return;
+
     setState(() {
       userAvtarTypeUrl = avatarUrl ?? '';
       userName = name ?? '';
     });
 
-    print("Saved Avatar URL: $userAvtarTypeUrl");
+    if (kDebugMode) {
+      print("Saved Avatar URL: $userAvtarTypeUrl");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget content = BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
+    Widget content =
+    BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
       builder: (context, state) {
         if (state.isLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -79,14 +106,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+
                 Center(
                   child: Column(
                     children: [
                       Container(
                         width: 85,
                         height: 85,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.primaryBlue,
                         ),
@@ -95,25 +123,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.all(20),
                             child: userAvtarTypeUrl.isNotEmpty
                                 ? SvgPicture.network(
-                                    userAvtarTypeUrl,
-                                    color: Colors.white,
-                                    fit: BoxFit.contain,
-                                    placeholderBuilder: (context) =>
-                                        SvgPicture.asset(
-                                          CommonUi.setSvgImage(
-                                            AssetsPath.manuFirstImage,
-                                          ),
-                                        ),
-                                  )
-                                : SvgPicture.asset(
+                              userAvtarTypeUrl,
+                              color: Colors.white,
+                              fit: BoxFit.contain,
+                              placeholderBuilder: (_) =>
+                                  SvgPicture.asset(
                                     CommonUi.setSvgImage(
                                       AssetsPath.manuFirstImage,
                                     ),
                                   ),
+                            )
+                                : SvgPicture.asset(
+                              CommonUi.setSvgImage(
+                                AssetsPath.manuFirstImage,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         userName,
                         style: AppTextStyles.bold(22).copyWith(
@@ -125,7 +153,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                // USER Section
                 SettingsListGroup(
                   headerTitle: "Learning Tools",
                   items: [
@@ -138,12 +165,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CalculatorHomeMainScreen(),
+                            builder: (_) =>
+                            const CalculatorHomeMainScreen(),
                           ),
                         );
                       },
                     ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.conversionProfile,
@@ -155,13 +182,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           MaterialPageRoute(
                             builder: (_) => BlocProvider(
                               create: (_) => ConversionCubit(),
-                              child: ConversionsScreen(),
+                              child: const ConversionsScreen(),
                             ),
                           ),
                         );
                       },
                     ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.formulasProfile,
@@ -173,13 +199,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           MaterialPageRoute(
                             builder: (_) => BlocProvider(
                               create: (_) => FormulaCubit(),
-                              child: FormulasScreen(),
+                              child: const FormulasScreen(),
                             ),
                           ),
                         );
                       },
                     ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,
@@ -189,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BlocProvider(
+                            builder: (_) => BlocProvider(
                               create: (_) => GlossaryCubit(context),
                               child: const GlossaryScreen(),
                             ),
@@ -200,7 +225,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
 
-                // USER Section
                 SettingsListGroup(
                   headerTitle: "Your Progress",
                   items: [
@@ -218,7 +242,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.progressProfile,
@@ -226,7 +249,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: "Progress / Stats",
                       onTap: () {},
                     ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.savedProfile,
@@ -236,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
+                            builder: (_) =>
                                 SavedFlighScreen(showTabs: true),
                           ),
                         );
@@ -244,6 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 50),
               ],
             ),
@@ -251,6 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       },
     );
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -260,8 +284,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeLeftMainLogo),
             width: 120,
-            height: 31,
-            fit: BoxFit.cover,
           ),
           onPressed: () {},
         ),
@@ -269,26 +291,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeRightSetting),
             width: 35,
-            height: 31,
-            fit: BoxFit.cover,
           ),
-          onPressed: () async {
+          onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            ).then((value) {
-              setLocalData();
-            });
+              MaterialPageRoute(
+                builder: (_) => const SettingScreen(),
+              ),
+            ).then((_) => setLocalData());
           },
         ),
       ),
       body: kIsWeb
           ? Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1500),
-                child: content,
-              ),
-            )
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1500),
+          child: content,
+        ),
+      )
           : content,
     );
   }

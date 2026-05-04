@@ -321,9 +321,7 @@ class LoginCubit extends Cubit<LoginState> {
             .trim(),
       );
 
-      final cubit = context.read<AppleSubscriptionCubit>();
-      await cubit.loginUser(result.userDetails?.email ?? "");
-
+      await SharedPrefsHelper.saveEmail(result.userDetails?.email ?? '');
       await SharedPrefsHelper.setUserAccessToken(result.accessToken ?? '');
       await SharedPrefsHelper.setUserRefreshToken(result.refreshToken ?? '');
       await SharedPrefsHelper.saveIsUserLogin(true);

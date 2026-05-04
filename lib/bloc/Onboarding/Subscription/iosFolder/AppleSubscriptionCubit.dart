@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
 import 'AppleSubscriptionState.dart';
 import 'AppleSubscriptionRepository.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
@@ -33,15 +36,18 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
     if (kIsWeb) return;
     emit(state.copyWith(loading: true));
     try {
+      final email = await SharedPrefsHelper.getEmail();
+      print("Email Id For Login:- $email");
       await Purchases.setLogLevel(LogLevel.debug);
-      await Purchases.configure(
-        PurchasesConfiguration(
-          Platform.isIOS ? _rcAppleApiKey : _rcAndroidApiKey,
-        ),
-      );
+      final configuration =
+          PurchasesConfiguration(
+              Platform.isIOS ? _rcAppleApiKey : _rcAndroidApiKey,
+            )
+            ..appUserID = email
+            ..diagnosticsEnabled = true;
+      await Purchases.configure(configuration);
       _isConfigured = true;
       Purchases.addCustomerInfoUpdateListener(_handleCustomerInfo);
-      final email = await SharedPrefsHelper.getEmail();
       if (email != null && email.isNotEmpty) {
         await _ensureLoggedIn(email);
       }
@@ -49,10 +55,26 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       await getSubscriptionsFromBackendServer();
     } catch (e) {
       if (!isClosed) {
+        debugPrint("RC login: ${e.toString()}");
         emit(
           state.copyWith(loading: false, error: "RevenueCat init failed: $e"),
         );
       }
+    }
+  }
+
+  Future<void> clearAllDataAndRedirectToSplashScreen(
+    BuildContext context,
+  ) async {
+    try {
+      await Purchases.logOut();
+      await SharedPrefsHelper.clearAll([], false);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 
@@ -78,9 +100,9 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
 
       final rcUserId = _getRCUserId(email);
       final result = await Purchases.logIn(rcUserId);
-      debugPrint("RC login: $result");
+      debugPrint("RC Success login: $result");
     } catch (e) {
-      debugPrint("RC login failed: $e");
+      debugPrint("RC False login failed: $e");
     }
   }
 
@@ -131,6 +153,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       }
     } catch (e) {
       if (!isClosed) {
+        debugPrint("${e.toString()}");
         emit(
           state.copyWith(loading: false, error: "Failed to load offerings: $e"),
         );
@@ -163,10 +186,12 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
       debugPrint("Active entitlements: ${customerInfo.entitlements.active}");
       debugPrint("RC User ID: ${customerInfo.originalAppUserId}");
     } on PlatformException catch (e) {
+      debugPrint(e.toString());
       emit(
         state.copyWith(loading: false, error: e.message ?? "Purchase failed"),
       );
     } catch (e) {
+      debugPrint(e.toString());
       emit(state.copyWith(loading: false, error: "Unexpected error: $e"));
     }
   }
@@ -185,6 +210,8 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         );
       }
     } catch (e) {
+      debugPrint(e.toString());
+
       if (e is PlatformException &&
           e.details != null &&
           e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
@@ -264,6 +291,7 @@ class AppleSubscriptionCubit extends Cubit<AppleSubscriptionState> {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
+      debugPrint(e.toString());
       emit(state.copyWith(error: "Failed to open subscription page: $e"));
     }
   }

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../../Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
 import 'home_state.dart';
 import 'home_repository.dart';
 
@@ -20,6 +21,11 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoading());
     try {
       final data = await repository.getHomeData();
+
+      final email = await SharedPrefsHelper.getEmail();
+      final cubit = context.read<AppleSubscriptionCubit>();
+      await cubit.loginUser(email ?? "");
+
       if (data.isActiveSubscription == false) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -54,9 +60,13 @@ class HomeCubit extends Cubit<HomeState> {
       final errorMessage = e.toString().toLowerCase();
       if (errorMessage.contains("unauthorized") ||
           errorMessage.contains("401")) {
-        emit(HomeError("Session expired. Please login again."));
+        if (!isClosed) {
+          emit(HomeError("Session expired. Please login again."));
+        }
       } else {
-        emit(HomeError(e.toString()));
+        if (!isClosed) {
+          emit(HomeError(e.toString()));
+        }
       }
     }
   }
