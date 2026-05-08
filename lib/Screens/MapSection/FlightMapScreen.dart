@@ -24,7 +24,6 @@ import 'package:flutter/services.dart';
 import 'MapHelpers/MapToggleButtons.dart';
 import '../../Helpers/SearchBarWidget.dart';
 import '../../Constants/constantImages.dart';
-import 'MapHelpers/MapTrackingModePopup.dart';
 import 'MapHelpers/TrackAndSeacrhFlight.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -54,10 +53,10 @@ class FlightMapScreen extends StatefulWidget {
   });
 
   @override
-  State<FlightMapScreen> createState() => _FlightMapscreenState();
+  State<FlightMapScreen> createState() => _FlightMapScreenState();
 }
 
-class _FlightMapscreenState extends State<FlightMapScreen> {
+class _FlightMapScreenState extends State<FlightMapScreen> {
   FlightMapCubit get _mapCubit => context.read<FlightMapCubit>();
 
   BoxConstraints? firstTimeConstraints;
@@ -208,7 +207,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
           strokeWidth: isSelected ? 2 : 1,
           strokeColor: isSelected ? Colors.purple : Colors.red,
           fillColor: isSelected
-              ? Colors.yellow.withOpacity(0.25)
+              ? Colors.yellow.withValues(alpha: 0.25)
               : Colors.transparent,
 
           consumeTapEvents: true,
@@ -1598,7 +1597,7 @@ class _FlightMapscreenState extends State<FlightMapScreen> {
 
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
-            width: 300,
+            width: 400,
             height: segmentHeight,
             child: CustomSegmentController(
               segments: ["Airport details", "More Details"],

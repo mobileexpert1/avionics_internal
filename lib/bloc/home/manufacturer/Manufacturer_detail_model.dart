@@ -16,7 +16,7 @@ class ManufacturerData {
   final String id;
   final General general;
   final Company company;
-  final List<Product> product;
+  final List<ProductModel> product;
   final List<String>? interestingFacts;
 
   ManufacturerData({
@@ -33,7 +33,7 @@ class ManufacturerData {
       general: General.fromJson(json['general']),
       company: Company.fromJson(json['company']),
       product: (json['product'] as List<dynamic>)
-          .map((e) => Product.fromJson(e))
+          .map((e) => ProductModel.fromJson(e))
           .toList(),
       interestingFacts: (json['interesting_facts'] as List<dynamic>?)
           ?.map((e) => e.toString())
@@ -89,7 +89,7 @@ class CoverPhoto {
       url: json['url'] ?? '', // default empty string if missing
       license: json['license'] ?? 'Unknown',
       author: json['author'], // nullable
-      wiki: json['wiki'],     // nullable
+      wiki: json['wiki'], // nullable
     );
   }
 }
@@ -108,13 +108,22 @@ class Company {
   }
 }
 
-class Product {
+class ProductModel {
   final String series;
-  final String description;
+  final List<String> description;
 
-  Product({required this.series, required this.description});
+  ProductModel({required this.series, required this.description});
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(series: json['series'], description: json['description']);
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      series: json['series'] ?? '',
+      description:
+          (json['data'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'series': series, 'data': description};
   }
 }

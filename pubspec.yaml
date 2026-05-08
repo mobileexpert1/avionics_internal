@@ -34,6 +34,7 @@ dependencies:
 
   flutter:
     sdk: flutter
+  webview_flutter: ^4.13.1
   purchases_flutter:
   flutter_earth_globe:
   eval_ex: ^1.1.6

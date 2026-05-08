@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +23,8 @@ import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
-import '../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
+import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
 import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
@@ -40,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late HomeCubit homeCubit;
   bool expandedManufacturerTab = false;
   bool expandFlyingInTheAreaTab = false;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -142,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1500),
                     child: SingleChildScrollView(
+                      controller: scrollController,
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Column(
@@ -302,11 +306,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     onPressed: () async {},
                                   ),
-                                  onHeaderTap: () {
+                                  onHeaderTap: () async {
                                     setState(() {
                                       expandFlyingInTheAreaTab =
                                           !expandFlyingInTheAreaTab;
                                     });
+
+                                    if (expandFlyingInTheAreaTab) {
+                                      await Future.delayed(
+                                        const Duration(milliseconds: 100),
+                                      );
+
+                                      if (scrollController.hasClients) {
+                                        scrollController.animateTo(
+                                          scrollController
+                                              .position
+                                              .maxScrollExtent,
+                                          duration: const Duration(
+                                            milliseconds: 500,
+                                          ),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      }
+                                    }
                                   },
                                   child: _buildFlyingInTheAreaBody(screenWidth),
                                 ),
@@ -386,12 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                      create: (_) => ManufacturerCubit(),
-                      child: ManufacturerScreen(),
-                    ),
-                  ),
+                  MaterialPageRoute(builder: (context) => ManufacturerScreen()),
                 );
               },
               child: Text(
@@ -463,7 +480,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         title: "Subscription Required",
                         message: message,
-                        navigateTo: const AppleSubscriptionScreen(),
+                        navigateTo: const SubscriptionPlanDetailScreen(
+                          isComeFromSignup: true,
+                        ),
                       );
                     });
                   }
@@ -544,7 +563,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         title: "Subscription Required",
                         message: message,
-                        navigateTo: const AppleSubscriptionScreen(),
+                        navigateTo: const SubscriptionPlanDetailScreen(
+                          isComeFromSignup: true,
+                        ),
                       );
                     });
                   }

@@ -11,12 +11,14 @@ class InfoBottomSheet extends StatelessWidget {
   final VoidCallback onYes;
   final VoidCallback onNo;
   final bool isComeFromLogout;
+  final bool? isComeFromSubscription;
 
   const InfoBottomSheet({
     super.key,
     required this.onYes,
     required this.onNo,
     required this.isComeFromLogout,
+    this.isComeFromSubscription,
   });
 
   @override
@@ -44,9 +46,11 @@ class InfoBottomSheet extends StatelessWidget {
 
               SvgPicture.asset(
                 CommonUi.setSvgImage(
-                  isComeFromLogout == true
-                      ? AssetsPath.logoutProfile
-                      : AssetsPath.deleteProfile,
+                  isComeFromSubscription == false
+                      ? (isComeFromLogout == true
+                            ? AssetsPath.logoutProfile
+                            : AssetsPath.deleteProfile)
+                      : AssetsPath.crossIconSubscription,
                 ),
                 width: 80,
                 height: 80,
@@ -54,9 +58,11 @@ class InfoBottomSheet extends StatelessWidget {
               const SizedBox(height: 20),
 
               Text(
-                isComeFromLogout
-                    ? "Do you want to Logout\n account?"
-                    : "Do you want to Delete\n account?",
+                isComeFromSubscription == false
+                    ? (isComeFromLogout
+                          ? "Do you want to Logout\n account?"
+                          : "Do you want to Delete\n account?")
+                    : "Do you want to Cancel\n Subscription?",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bold(
                   22,

@@ -49,7 +49,8 @@
         "universal_html",
         "url_launcher",
         "video_player",
-        "web_socket_channel"
+        "web_socket_channel",
+        "webview_flutter"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -543,6 +544,16 @@
         "flutter",
         "flutter_web_plugins",
         "web"
+      ]
+    },
+    {
+      "name": "webview_flutter",
+      "version": "4.13.1",
+      "dependencies": [
+        "flutter",
+        "webview_flutter_android",
+        "webview_flutter_platform_interface",
+        "webview_flutter_wkwebview"
       ]
     },
     {
@@ -1573,6 +1584,34 @@
       "dependencies": [
         "intl",
         "rational"
+      ]
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "version": "3.25.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "path",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_platform_interface",
+      "version": "2.15.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_android",
+      "version": "4.12.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter_platform_interface"
       ]
     },
     {

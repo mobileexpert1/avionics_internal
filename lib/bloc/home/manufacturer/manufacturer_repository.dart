@@ -15,6 +15,8 @@ class ManufacturerRepository {
   Future<PaginatedList<ManufacturerListModel>> getListOfManufacturers({
     String? query,
     int page = 1,
+    bool helicopter = false,
+    bool airplane = false,
   }) async {
     // Not working in the web section
     // if (!await GenericMethods.hasInternet()) {
@@ -29,7 +31,13 @@ class ManufacturerRepository {
     // }
 
     final uri = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListManufacturer}?page=$page${query != null && query.isNotEmpty ? '&q=$query' : ''}",
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+      "${ApiServiceUrlAirplaneConstant.getListManufacturer}"
+      "?page=$page"
+      "${query != null && query.isNotEmpty ? '&q=$query' : ''}"
+      "&helicopter=$helicopter"
+      "&airplane=$airplane",
     );
 
     try {

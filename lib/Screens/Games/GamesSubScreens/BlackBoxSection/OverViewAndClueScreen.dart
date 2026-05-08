@@ -257,9 +257,8 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                             child: CustomBottomButton(
                               fontStyle: AppTextStyles.regular(21.46).copyWith(
                                 height: 1.0,
-                                color: true
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
+                                color:  Colors.white
+                                    ,
                               ),
                               title: ConstantStrings.next,
                               backgroundColor: isLastPage

@@ -4,12 +4,6 @@ import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
 import 'AppTextStyles/AppTextStyles.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../Constants/AppColors.dart';
-import '../Constants/constantImages.dart';
-import 'AppTextStyles/AppTextStyles.dart';
-
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback? onFilterTap;

@@ -14,7 +14,8 @@ import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
+import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
 import 'FilterMap/filter_Map_State.dart';
@@ -62,7 +63,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
               context: context,
               title: "Subscription Required",
               message: message,
-              navigateTo: AppleSubscriptionScreen(),
+              navigateTo: SubscriptionPlanDetailScreen(
+                isComeFromSignup: true,
+              ),
               onGoToFirstTab: () {
                 RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
               },

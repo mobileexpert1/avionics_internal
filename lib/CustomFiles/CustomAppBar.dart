@@ -37,13 +37,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         border: isForComparison == true
             ? null
             : Border(
-          bottom: BorderSide(
-            color: isHideTopGradient == true
-                ? Colors.white
-                : AppColors.separatorColourAppBar,
-            width: 1.0,
-          ),
-        ),
+                bottom: BorderSide(
+                  color: isHideTopGradient == true
+                      ? Colors.white
+                      : AppColors.separatorColourAppBar,
+                  width: 1.0,
+                ),
+              ),
       ),
       child: AppBar(
         backgroundColor: isClearBackgroundColour == true
@@ -68,24 +68,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         titleSpacing: centerTitle == true ? titleSpacing : 0,
         leading: leftButton != null
             ? Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: leftButton!,
-          ),
-        )
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: leftButton!,
+                ),
+              )
             : null,
-        leadingWidth: isForHomeScreen == true ? 200 : 50,
+        leadingWidth: isForHomeScreen == true ? 200 : 60,
         actions: rightButton != null
             ? [
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: rightButton!,
-            ),
-          ),
-        ]
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: rightButton!,
+                  ),
+                ),
+              ]
             : null,
       ),
     );

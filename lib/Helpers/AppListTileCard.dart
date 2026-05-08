@@ -28,7 +28,6 @@ class AppListTileCard extends StatelessWidget {
 
     final horizontalPadding = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.01;
     final iconSize = kIsWeb ? screenWidth * 0.055 : screenWidth * 0.10;
-    final fontSize = kIsWeb ? screenWidth * 0.02 : screenWidth * 0.038;
 
     return Column(
       children: [

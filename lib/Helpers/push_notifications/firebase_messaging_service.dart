@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
+import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 
 final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -150,7 +151,8 @@ class FirebaseMessagingService {
           break;
         case 'profiless': // Subscription
           tabIndex = 4;
-          nextScreen = AppleSubscriptionScreen(isComeFromSignup: false);
+          nextScreen = SubscriptionPlanDetailScreen(
+              isComeFromSignup: true);
           break;
         case 'badgess_quiz':
           tabIndex = 2;

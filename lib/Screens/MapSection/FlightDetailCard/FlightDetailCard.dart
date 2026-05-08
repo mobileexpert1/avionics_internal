@@ -8,9 +8,11 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomDivider.dart';
+import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/MapSection/flight_map_state.dart';
@@ -19,7 +21,7 @@ import '../MapHelpers/FlightDetailScreen.dart';
 import '../MapHelpers/FlightDetailScreenForMapSection.dart';
 import '../MapHelpers/LiveBadge.dart';
 
-class FlightDetailCard extends StatelessWidget {
+class FlightDetailCard extends StatefulWidget {
   final FlightAircraftDetail? flightDetail;
   final bool? isComeFromLiveTracking;
   final VoidCallback? callBackForHideFlightCard;
@@ -30,6 +32,13 @@ class FlightDetailCard extends StatelessWidget {
     this.flightDetail,
     this.isComeFromLiveTracking,
   });
+
+  @override
+  State<FlightDetailCard> createState() => _FlightDetailCardState();
+}
+
+class _FlightDetailCardState extends State<FlightDetailCard> {
+  bool isFavLocal = false;
 
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
@@ -46,13 +55,25 @@ class FlightDetailCard extends StatelessWidget {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final state = context.read<FlightMapCubit>().state;
+
+    final selectedFlight = state.selectedFlight;
+    final detail = widget.flightDetail;
+    isFavLocal = detail?.isFavorite ?? selectedFlight?.isFavorite ?? false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
       child: BlocBuilder<FlightMapCubit, FlightMapState>(
+        //Sham
         builder: (context, state) {
           final selectedFlight = state.selectedFlight;
-          final detail = flightDetail;
+          final detail = widget.flightDetail;
 
           if (selectedFlight == null && detail == null) {
             return const Text('No flight selected');
@@ -118,7 +139,7 @@ class FlightDetailCard extends StatelessWidget {
           final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
 
           return GestureDetector(
-            onTap: callBackForHideFlightCard,
+            onTap: widget.callBackForHideFlightCard,
             child: Card(
               color: Colors.white,
               shape: const RoundedRectangleBorder(
@@ -259,7 +280,8 @@ class FlightDetailCard extends StatelessWidget {
                                   InkWell(
                                     borderRadius: BorderRadius.circular(6),
                                     onTap: () {
-                                      if (isComeFromLiveTracking == true) {
+                                      if (widget.isComeFromLiveTracking ==
+                                          true) {
                                         context
                                             .read<FlightMapCubit>()
                                             .stopTrackingFlight();
@@ -299,13 +321,55 @@ class FlightDetailCard extends StatelessWidget {
                                 ],
                                 InkWell(
                                   borderRadius: BorderRadius.circular(6),
-                                  onTap: () {},
+                                  onTap: () async {
+                                    if (widget.isComeFromLiveTracking == true) {
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .stopTrackingFlight();
+
+                                      Navigator.pop(context, flightId);
+                                    } else {
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.favOrUnFavFlightButton,
+                                        FirebaseEvents.trackScreen,
+                                      );
+
+                                      final cubit = context
+                                          .read<AllPlanesCubit>();
+
+                                      await cubit.planFavOrUnfav1(
+                                        detail?.aircraftModelId ?? "",
+                                        callSign,
+                                        flightNumber,
+                                        flightId,
+                                        context,
+                                      );
+
+                                      context
+                                          .read<FlightMapCubit>()
+                                          .toggleFavoriteByCallSign(callSign);
+
+                                      setState(() {
+                                        isFavLocal = !isFavLocal;
+                                      });
+
+                                      AppSnackBar.custom(
+                                        context,
+                                        message: isFavLocal
+                                            ? "Airline Favorite"
+                                            : "Airline Unfavorite",
+                                        svgAsset: "",
+                                      );
+                                    }
+                                  },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4),
                                     child: state.isTracking
                                         ? const LiveBadge()
-                                        : const Icon(
-                                            Icons.star_border,
+                                        : Icon(
+                                            isFavLocal
+                                                ? Icons.star
+                                                : Icons.star_border,
                                             color: Colors.yellow,
                                             size: 30,
                                           ),

@@ -74,6 +74,8 @@ abstract class AssetsPath {
   static const String aboutProfile = "41About";
   static const String liveTrackImage = "47LiveTrackImage";
   static const String quizLockArrow = "48QuizLockArrow";
+  static const String crossIconSubscription = "49CrossIcon";
+
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";

@@ -19,6 +19,8 @@ class ManageaccCubit extends Cubit<ManageAccState> {
     required String lastName,
     required String email,
     required String authType,
+    required double tokenUsagePercentage,
+    required double creditUsagePercentage,
   }) {
     emit(
       state.copyWith(
@@ -27,6 +29,8 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         email: email,
         authType: authType,
         isButtonEnabled: firstName.isNotEmpty && lastName.isNotEmpty,
+        tokenUsagePercentage: tokenUsagePercentage ?? 0.0,
+        creditUsagePercentage: creditUsagePercentage ?? 0.0,
       ),
     );
   }
@@ -67,11 +71,13 @@ class ManageaccCubit extends Cubit<ManageAccState> {
   }
 
   Future<void> fetchUserDetails(BuildContext context) async {
-    emit(state.copyWith(
-      isLoading: true,
-      status: CommonApiStatus.submitting,
-      errorMessage: null,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        status: CommonApiStatus.submitting,
+        errorMessage: null,
+      ),
+    );
     try {
       final user = await repository.getUserDetail();
 
@@ -80,18 +86,23 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         lastName: user.lastName,
         email: user.email,
         authType: user.authType,
+        tokenUsagePercentage: user.tokenUsagePercentage ?? 0.0,
+        creditUsagePercentage: user.creditUsagePercentage ?? 0.0,
       );
 
       await SharedPrefsHelper.setAvtarUserType(user.userType);
       await SharedPrefsHelper.setAvtarUserUrl(user.userTypeUrl ?? '');
 
-      emit(state.copyWith(
-        isLoading: false,
-        status: CommonApiStatus.success,
-      ));
+      emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(status: CommonApiStatus.failure,isLoading: false, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          isLoading: false,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 

@@ -10,7 +10,8 @@ import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapScreen.dart';
-import '../../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
+import '../../Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
+import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Profile/ProfileScreen.dart';
 import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
 import '../HomeScreen.dart';
@@ -77,7 +78,8 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
                 context: context,
                 title: "Subscription Required",
                 message: message,
-                navigateTo: const AppleSubscriptionScreen(),
+                navigateTo: const SubscriptionPlanDetailScreen(
+                    isComeFromSignup: true),
               );
             });
           }

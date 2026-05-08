@@ -64,7 +64,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         title: 'Manufacturers Library',
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
           onPressed: () => Navigator.pop(context),
         ),
         rightButton: IconButton(
@@ -123,28 +123,37 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                           final isSelected = state.selectedCategories.contains(
                             label,
                           );
-                          return GestureDetector(
-                            onTap: () => cubit.toggleCategory(label, context),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 7,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AppColors.extraDarkYellow
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: AppColors.black,
-                                  width: 1,
+
+                          return Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(14),
+                              onTap: () {
+                                debugPrint("Tapped: $label");
+
+                                cubit.toggleCategory(label, context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 7,
                                 ),
-                              ),
-                              child: Text(
-                                label,
-                                style: AppTextStyles.regular(15.67).copyWith(
-                                  height: 1.0,
-                                  color: AppColors.primaryDark,
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.extraDarkYellow
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: AppColors.black,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  label,
+                                  style: AppTextStyles.regular(15.67).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.primaryDark,
+                                  ),
                                 ),
                               ),
                             ),
@@ -166,7 +175,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                     ),
                     child: BlocBuilder<ManufacturerCubit, ManufacturerState>(
                       builder: (context, state) {
-                        if (state.isLoading) {
+                        if (state.isLoading && state.manufacturers.isEmpty) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );

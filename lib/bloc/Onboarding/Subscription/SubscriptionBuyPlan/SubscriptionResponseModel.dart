@@ -1,11 +1,11 @@
-class SubscriptionResponseModel {
+class SubscriptionBuyPlanStateModel {
   final String detail;
   final SubscriptionData? data;
 
-  SubscriptionResponseModel({required this.detail, required this.data});
+  SubscriptionBuyPlanStateModel({required this.detail, required this.data});
 
-  factory SubscriptionResponseModel.fromJson(Map<String, dynamic> json) {
-    return SubscriptionResponseModel(
+  factory SubscriptionBuyPlanStateModel.fromJson(Map<String, dynamic> json) {
+    return SubscriptionBuyPlanStateModel(
       detail: json['detail'] ?? '',
       data: json['data'] != null
           ? SubscriptionData.fromJson(json['data'])

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:avionics_internal/Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +14,7 @@ import '../../../../Constants/constantImages.dart';
 import '../../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import '../../../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
 import '../../../Onboarding/Login/LoginScreen.dart';
-import '../../../Onboarding/Subscription/SubscriptionScreen.dart';
+import '../../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {
@@ -167,7 +168,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 title: "Token limit exhausted",
                 message:
                     "Your token limit has been exhausted. Please purchase a subscription.",
-                navigateTo: SubscriptionScreen(),
+                navigateTo: SubscriptionPlanDetailScreen(
+                    isComeFromSignup: false),
               );
               break;
 
@@ -177,7 +179,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 title: "Credit limit exhausted",
                 message:
                     "Your credit limit has been exhausted. Please purchase a subscription.",
-                navigateTo: SubscriptionScreen(),
+                navigateTo: SubscriptionPlanDetailScreen(
+                    isComeFromSignup: true),
               );
               break;
 

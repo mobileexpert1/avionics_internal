@@ -2,10 +2,11 @@ import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dar
 import 'package:flutter/cupertino.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../subscriptionResponseModel.dart';
-import 'AppleSubscriptionCubit.dart';
+import '../OldSubs/subscriptionResponseModel.dart';
+import 'SubscriptionBuyPlanCubit.dart';
+import 'SubscriptionResponseModel.dart';
 
-class AppleSubscriptionRepository {
+class SubscriptionBuyPlanRepository {
   Future<BaseDetailResponseModel> postSubscriptionApi({
     required String token,
     required String selectedSubscriptionId,
@@ -88,7 +89,7 @@ class AppleSubscriptionRepository {
     }
   }
 
-  Future<SubscriptionResponseModel> getSubscriptionDetails() async {
+  Future<SubscriptionBuyPlanStateModel> getSubscriptionDetails() async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -96,13 +97,13 @@ class AppleSubscriptionRepository {
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-      return SubscriptionResponseModel.fromJson(jsonData);
+      return SubscriptionBuyPlanStateModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();
     }
   }
 
-  Future<WebSessionResponseModel> getSubscriptionSessionToken() async {
+  Future<SubscriptionBuyPlanStateModel> getSubscriptionSessionToken() async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -111,7 +112,7 @@ class AppleSubscriptionRepository {
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-      return WebSessionResponseModel.fromJson(jsonData);
+      return SubscriptionBuyPlanStateModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();
     }

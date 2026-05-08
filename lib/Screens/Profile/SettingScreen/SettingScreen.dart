@@ -6,9 +6,10 @@ import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/home/homeBloc/home_cubit.dart';
 import '../Avtar/AvtarScreen.dart';
 import '../ContactSupportScreen/ContactSupportScreen.dart';
+import '../CreditsTokenUsage/CreditsTokenUsageScreen.dart';
 import '../Feedback/FeedbackScreen.dart';
 import '../ManageAccount/ManageAccountScreen.dart';
-import '../ProfileScreen.dart';
+import '../MySubscription/MySubscriptionScreen.dart';
 import '../SettingsSectionHeader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +28,6 @@ import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
 import '../VideoPlayer/VideoPlayerScreen.dart';
 import 'InfoBottomSheet.dart';
 
@@ -210,12 +210,19 @@ class _SettingScreenState extends State<SettingScreen> {
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.subscriptionProfile,
                       ),
-                      title: "Subscription",
-                      onTap: () => _navigate(
-                        context,
-                        AppleSubscriptionScreen(isComeFromSignup: false),
-                      ),
+                      title: "My Subscription",
+                      onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
+
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subscriptionProfile,
+                      ),
+                      title: "Credits/Token Usage",
+                      onTap: () =>
+                          _navigate(context, CreditsTokenUsageScreen()),
+                    ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.logoutProfile,
@@ -374,6 +381,7 @@ class _SettingScreenState extends State<SettingScreen> {
             child: Builder(
               builder: (innerContext) {
                 return InfoBottomSheet(
+                  isComeFromSubscription: false,
                   isComeFromLogout: isComeFromLogout,
                   onYes: () {
                     if (isComeFromLogout) {

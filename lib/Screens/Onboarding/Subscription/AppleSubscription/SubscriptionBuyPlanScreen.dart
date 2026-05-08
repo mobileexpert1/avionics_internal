@@ -1,3 +1,6 @@
+/*
+import '../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
+import '../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
 import '../../../Home/RootTabbar/RootTabbarScreen.dart';
 import '../../Login/LoginScreen.dart';
 import 'package:flutter/foundation.dart';
@@ -13,8 +16,6 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
-import '../../../../bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionState.dart';
 
 class AppleSubscriptionScreen extends StatefulWidget {
   final bool? isComeFromSignup;
@@ -32,20 +33,17 @@ class AppleSubscriptionScreen extends StatefulWidget {
 }
 
 class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
-  late AppleSubscriptionCubit _cubit;
+  late SubscriptionBuyPlanCubit _cubit;
+  bool isActive = false;
 
   @override
   void initState() {
     super.initState();
-    _cubit = AppleSubscriptionCubit();
+    _cubit = SubscriptionBuyPlanCubit();
+    _cubit.initRevenueCat();
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
-    // if (kIsWeb) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     context.read<AppleSubscriptionCubit>().handleWebRedirectionIfNeeded();
-    //   });
-    // }
   }
 
   @override
@@ -58,7 +56,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => _cubit,
-      child: BlocConsumer<AppleSubscriptionCubit, AppleSubscriptionState>(
+      child: BlocConsumer<SubscriptionBuyPlanCubit, SubscriptionBuyPlanState>(
         listenWhen: (prev, curr) =>
             prev.error != curr.error || prev.purchased != curr.purchased,
         listener: (context, state) {
@@ -88,6 +86,15 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                 ),
               );
             } else {
+              if (state.isBlocked == true) {
+                Future.delayed(const Duration(seconds: 1), () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => LoginScreen()),
+                    (route) => false,
+                  );
+                });
+              }
+
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.error!)));
@@ -144,10 +151,7 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                             Navigator.pop(context);
                           },
                         )
-                      : Wrap(),
-                  rightButton:
-                  (widget.isComeFromSignup == true)
-                      ? IconButton(
+                      : IconButton(
                           icon: const Icon(
                             Icons.logout,
                             color: Colors.white,
@@ -155,11 +159,10 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                           ),
                           onPressed: () {
                             context
-                                .read<AppleSubscriptionCubit>()
+                                .read<SubscriptionBuyPlanCubit>()
                                 .clearAllDataAndRedirectToSplashScreen(context);
                           },
-                        )
-                      : Wrap(),
+                        ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -205,17 +208,18 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         ...packages.map((package) {
                           final product = package.storeProduct;
 
-                          final bool isActive =
-                              (state.subscription?.productId ==
+                          isActive =
+                              (state.subscription?.data?.productId ==
                                       product.identifier &&
-                                  state.subscription?.status == "active") ||
+                                  state.subscription?.data?.status ==
+                                      "active") ||
                               (state.activeProductId == product.identifier &&
                                   state.purchased);
 
                           final bool isExpired =
-                              state.subscription?.productId ==
+                              state.subscription?.data?.productId ==
                                   product.identifier &&
-                              state.subscription?.status == "expired";
+                              state.subscription?.data?.status == "expired";
 
                           final bool isSelected =
                               selected?.identifier == package.identifier;
@@ -227,11 +231,11 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                               isSelected: isSelected,
                               isActive: isActive,
                               isExpired: isExpired,
-                              startDate: state.subscription?.startDate,
-                              endDate: state.subscription?.expiryDate,
+                              startDate: state.subscription?.data?.startDate,
+                              endDate: state.subscription?.data?.expiryDate,
                               onTap: () {
                                 context
-                                    .read<AppleSubscriptionCubit>()
+                                    .read<SubscriptionBuyPlanCubit>()
                                     .selectPackage(package);
                               },
                             ),
@@ -239,114 +243,123 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
                         }),
 
                         const SizedBox(height: 20),
-
-                        CustomBottomButton(
-                          fontStyle: AppTextStyles.regular(
-                            21.46,
-                          ).copyWith(height: 1.0, color: Colors.white),
-                          backgroundColor: const Color.fromRGBO(
-                            30,
-                            128,
-                            242,
-                            1.0,
-                          ),
-                          textColor: Colors.white,
-                          title: SubscriptionTexts.restoreSubTitle,
-                          icon: const SizedBox(),
-                          isEnabled: true,
-                          onPressed: () {
-                            context
-                                .read<AppleSubscriptionCubit>()
-                                .restorePurchases();
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.subscriptionScreen,
-                              FirebaseEvents.restoreSubscriptionButton,
-                            );
-                          },
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        if (widget.isComeFromSignup == false ||
-                            widget.isComeFromSignup == null) ...[
-                          CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(21.46).copyWith(
-                              height: 1.0,
-                              color: selected != null && !state.loading
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
-                            ),
-                            backgroundColor: const Color.fromRGBO(
-                              63,
-                              61,
-                              81,
-                              1.0,
-                            ),
-                            textColor: Colors.white,
-                            title: SubscriptionTexts.changeSubPlanTitle,
-                            icon: const SizedBox(),
-                            isEnabled: selected != null && !state.loading,
-                            onPressed: () {
-                              if (selected != null) {
-                                context
-                                    .read<AppleSubscriptionCubit>()
-                                    .buySelected();
-                                AnalyticsService.instance.buttonPressed(
-                                  FirebaseEvents.subscriptionScreen,
-                                  FirebaseEvents.goPremiumSubscriptionButton,
-                                );
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 20),
+                        if (state.isBlocked == false) ...[
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(
                               21.46,
                             ).copyWith(height: 1.0, color: Colors.white),
-                            backgroundColor: Colors.red,
+                            backgroundColor: const Color.fromRGBO(
+                              30,
+                              128,
+                              242,
+                              1.0,
+                            ),
                             textColor: Colors.white,
-                            title: SubscriptionTexts.cancelTitle,
+                            title: SubscriptionTexts.restoreSubTitle,
                             icon: const SizedBox(),
                             isEnabled: true,
                             onPressed: () {
                               context
-                                  .read<AppleSubscriptionCubit>()
-                                  .guideUserToCancelSubscription();
+                                  .read<SubscriptionBuyPlanCubit>()
+                                  .restorePurchases();
                               AnalyticsService.instance.buttonPressed(
                                 FirebaseEvents.subscriptionScreen,
-                                FirebaseEvents.cancelSubscriptionButton,
+                                FirebaseEvents.restoreSubscriptionButton,
                               );
                             },
                           ),
+
                           const SizedBox(height: 20),
-                        ] else ...[
-                          CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(21.46).copyWith(
-                              height: 1.0,
-                              color: selected != null
-                                  ? Colors.white
-                                  : Colors.grey.shade600,
+
+                          if (widget.isComeFromSignup == false ||
+                              widget.isComeFromSignup == null) ...[
+                            CustomBottomButton(
+                              fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                height: 1.0,
+                                color: selected != null && !state.loading
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
+                              ),
+                              backgroundColor: const Color.fromRGBO(
+                                63,
+                                61,
+                                81,
+                                1.0,
+                              ),
+                              textColor: Colors.white,
+                              title: isActive == true
+                                  ? SubscriptionTexts.changeSubPlanTitle
+                                  : SubscriptionTexts.goPremiumTitle,
+                              icon: const SizedBox(),
+                              isEnabled: selected != null && !state.loading,
+                              onPressed: () {
+                                if (selected != null) {
+                                  context
+                                      .read<SubscriptionBuyPlanCubit>()
+                                      .buySelected();
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.subscriptionScreen,
+                                    FirebaseEvents.goPremiumSubscriptionButton,
+                                  );
+                                }
+                              },
                             ),
-                            backgroundColor: const Color(0xFF3F3D51),
-                            textColor: Colors.white,
-                            title: "Go Premium",
-                            icon: const SizedBox(),
-                            isEnabled: selected != null,
-                            onPressed: () {
-                              if (selected != null) {
-                                context
-                                    .read<AppleSubscriptionCubit>()
-                                    .buySelected();
-                                AnalyticsService.instance.buttonPressed(
-                                  FirebaseEvents.subscriptionScreen,
-                                  FirebaseEvents.goPremiumSubscriptionButton,
-                                );
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 20),
+
+                            const SizedBox(height: 20),
+                            if (isActive == true) ...[
+                              CustomBottomButton(
+                                fontStyle: AppTextStyles.regular(
+                                  21.46,
+                                ).copyWith(height: 1.0, color: Colors.white),
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                title: SubscriptionTexts.cancelTitle,
+                                icon: const SizedBox(),
+                                isEnabled: true,
+                                onPressed: () {
+                                  context
+                                      .read<SubscriptionBuyPlanCubit>()
+                                      .guideUserToCancelSubscription();
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.subscriptionScreen,
+                                    FirebaseEvents.cancelSubscriptionButton,
+                                  );
+                                },
+                              ),
+                            ],
+                            const SizedBox(height: 20),
+                          ],
                         ],
 
+                        if (widget.isComeFromSignup == true) ...[
+                          if (state.isBlocked == false) ...[
+                            CustomBottomButton(
+                              fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                height: 1.0,
+                                color: selected != null
+                                    ? Colors.white
+                                    : Colors.grey.shade600,
+                              ),
+                              backgroundColor: const Color(0xFF3F3D51),
+                              textColor: Colors.white,
+                              title: SubscriptionTexts.goPremiumTitle,
+                              icon: const SizedBox(),
+                              isEnabled: selected != null,
+                              onPressed: () {
+                                if (selected != null) {
+                                  context
+                                      .read<SubscriptionBuyPlanCubit>()
+                                      .buySelected();
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.subscriptionScreen,
+                                    FirebaseEvents.goPremiumSubscriptionButton,
+                                  );
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        ],
                         const SizedBox(height: 30),
                       ],
                     ),
@@ -388,8 +401,8 @@ class _AppleSubscriptionScreenState extends State<AppleSubscriptionScreen> {
 
 class _SubscriptionCard extends StatelessWidget {
   final Package package;
-  final bool isSelected; // tapped by user
-  final bool isActive; // actually active subscription
+  final bool isSelected;
+  final bool isActive;
   final bool isExpired;
   final VoidCallback onTap;
   final String? startDate;
@@ -404,50 +417,6 @@ class _SubscriptionCard extends StatelessWidget {
     this.startDate,
     this.endDate,
   });
-
-  String cleanTitle(String title) {
-    if (title.contains("(")) {
-      title = title.substring(0, title.indexOf("(")).trim();
-    }
-    final lower = title.toLowerCase();
-    if (lower.contains("monthly")) {
-      return "Basic";
-    } else if (lower.contains("yearly")) {
-      return "Premium";
-    }
-    return title;
-  }
-
-  String formatDate(String? dateStr) {
-    if (dateStr == null) return "-";
-
-    // Convert backend string → UTC
-    final utcDate = DateTime.tryParse("${dateStr.replaceFirst(" ", "T")}Z");
-
-    if (utcDate == null) return "-";
-
-    final localDate = utcDate.toLocal();
-
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    return "${localDate.day.toString().padLeft(2, '0')}-"
-        "${monthNames[localDate.month - 1]}-${localDate.year} "
-        "${localDate.hour.toString().padLeft(2, '0')}:"
-        "${localDate.minute.toString().padLeft(2, '0')}";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -520,7 +489,7 @@ class _SubscriptionCard extends StatelessWidget {
                   if (isExpired) ...[
                     const SizedBox(height: 6),
                     const Text(
-                      "Previously Selected Plan",
+                      "Previously Selected Plan is Expired",
                       style: TextStyle(fontSize: 10, color: Colors.red),
                     ),
                   ],
@@ -584,3 +553,4 @@ class _SubscriptionCard extends StatelessWidget {
     );
   }
 }
+*/

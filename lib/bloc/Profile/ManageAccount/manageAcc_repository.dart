@@ -30,7 +30,7 @@ class ManageAccountRepository {
       final profile = ManageAccountModel.fromJson(json);
 
       await SharedPrefsHelper.save(profile.id);
-      await _profiles.insertAll([profile]);
+      //await _profiles.insertAll([profile]);
 
       return profile;
     }

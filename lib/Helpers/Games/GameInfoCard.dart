@@ -198,9 +198,7 @@ class GameDetailCard extends StatelessWidget {
                     child: CustomBottomButton(
                       fontStyle: AppTextStyles.regular(21.46).copyWith(
                         height: 1.0,
-                        color: true
-                            ? Colors.white
-                            : Colors.grey.shade600,
+                        color: Colors.white,
                       ),
                       title: "Start Game",
                       backgroundColor: AppColors.customBottomEnabledColour,
@@ -446,9 +444,8 @@ class GameDetailCardBlackBox extends StatelessWidget {
                       child: CustomBottomButton(
                         fontStyle: AppTextStyles.regular(21.46).copyWith(
                           height: 1.0,
-                          color: true
-                              ? Colors.white
-                              : Colors.grey.shade600,
+                          color:  Colors.white
+                              ,
                         ),
                         title: ConstantStrings.startGame,
                         backgroundColor: AppColors.customBottomEnabledColour,

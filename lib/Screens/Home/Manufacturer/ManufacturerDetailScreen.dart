@@ -11,10 +11,10 @@ import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
+import '../../../Helpers/StringCommonMethods.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
-import '../../../bloc/home/manufacturer/ProductItemModel.dart';
 import '../../Profile/SettingScreen/SettingScreen.dart';
 import '../HomeAirbus/AllPlaneListAndDetails/AllPlaneListScreen.dart';
 
@@ -38,42 +38,42 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showInterestingFacts = false;
   int expandedIndex = -1;
 
-  final List<ProductModel> staticProducts = [
-    ProductModel(
-      title: "Airbus Helicopters",
-      items: [
-        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-        ProductItemModel(name: "EC-135", tag: "EC35"),
-        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-        ProductItemModel(name: "EC-135", tag: "EC35"),
-        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-        ProductItemModel(name: "EC-135", tag: "EC35"),
-        ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-        ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-        ProductItemModel(name: "EC-135", tag: "EC35"),
-      ],
-    ),
-    ProductModel(
-      title: "Airbus Airplanes",
-      items: [
-        ProductItemModel(name: "H-160", tag: "H160"),
-        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-        ProductItemModel(name: "H-160", tag: "H160"),
-        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-        ProductItemModel(name: "H-160", tag: "H160"),
-        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-        ProductItemModel(name: "H-160", tag: "H160"),
-        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-        ProductItemModel(name: "H-160", tag: "H160"),
-        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-        ProductItemModel(name: "H-160", tag: "H160"),
-        ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-      ],
-    ),
-  ];
+  // final List<ProductModel> staticProducts = [
+  //   ProductModel(
+  //     title: "Airbus Helicopters",
+  //     items: [
+  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+  //       ProductItemModel(name: "EC-135", tag: "EC35"),
+  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+  //       ProductItemModel(name: "EC-135", tag: "EC35"),
+  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+  //       ProductItemModel(name: "EC-135", tag: "EC35"),
+  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
+  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
+  //       ProductItemModel(name: "EC-135", tag: "EC35"),
+  //     ],
+  //   ),
+  //   ProductModel(
+  //     title: "Airbus Airplanes",
+  //     items: [
+  //       ProductItemModel(name: "H-160", tag: "H160"),
+  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+  //       ProductItemModel(name: "H-160", tag: "H160"),
+  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+  //       ProductItemModel(name: "H-160", tag: "H160"),
+  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+  //       ProductItemModel(name: "H-160", tag: "H160"),
+  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+  //       ProductItemModel(name: "H-160", tag: "H160"),
+  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+  //       ProductItemModel(name: "H-160", tag: "H160"),
+  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
+  //     ],
+  //   ),
+  // ];
 
   @override
   void initState() {
@@ -118,7 +118,11 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
             title: detail.general.companyName,
             centerTitle: false,
             leftButton: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 30,
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             rightButton: IconButton(
@@ -480,10 +484,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   horizontal: 20,
                                 ),
                                 child: Column(
-                                  children: List.generate(staticProducts.length, (
+                                  children: List.generate(detail.product.length, (
                                     index,
                                   ) {
-                                    final product = staticProducts[index];
+                                    final product = detail.product[index];
                                     final isExpanded = expandedIndex == index;
                                     return Padding(
                                       padding: const EdgeInsets.only(
@@ -497,8 +501,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(
-                                                0.06,
+                                              color: Colors.black.withValues(
+                                                alpha: 0.06,
                                               ),
                                               blurRadius: 8,
                                               offset: const Offset(0, 3),
@@ -537,7 +541,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                     const SizedBox(width: 12),
                                                     Expanded(
                                                       child: Text(
-                                                        product.title,
+                                                        product.series,
                                                         style:
                                                             AppTextStyles.bold(
                                                               16,
@@ -580,11 +584,14 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                       12,
                                                     ),
                                                 child: Column(
-                                                  children: List.generate(product.items.length, (
+                                                  children: List.generate(product.description.length, (
                                                     i,
                                                   ) {
                                                     final item =
-                                                        product.items[i];
+                                                        product.description[i];
+
+                                                    final data =
+                                                        splitAircraftName(item);
 
                                                     return Padding(
                                                       padding:
@@ -595,7 +602,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                         children: [
                                                           Expanded(
                                                             child: Text(
-                                                              item.name,
+                                                              data["title"] ??
+                                                                  "",
                                                               style:
                                                                   AppTextStyles.regular(
                                                                     16,
@@ -605,32 +613,37 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                                   ),
                                                             ),
                                                           ),
-                                                          Container(
-                                                            padding:
-                                                                const EdgeInsets.symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 5,
-                                                                ),
-                                                            decoration: BoxDecoration(
-                                                              color: AppColors
-                                                                  .backgroundColourForManufacturer,
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    6,
+
+                                                          if ((data["code"] ??
+                                                                  "")
+                                                              .isNotEmpty)
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical: 5,
                                                                   ),
+                                                              decoration: BoxDecoration(
+                                                                color: AppColors
+                                                                    .backgroundColourForManufacturer,
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      6,
+                                                                    ),
+                                                              ),
+                                                              child: Text(
+                                                                data["code"] ??
+                                                                    "",
+                                                                style:
+                                                                    AppTextStyles.regular(
+                                                                      16,
+                                                                    ).copyWith(
+                                                                      color: AppColors
+                                                                          .lightGreyBackgroundColour,
+                                                                    ),
+                                                              ),
                                                             ),
-                                                            child: Text(
-                                                              item.tag,
-                                                              style:
-                                                                  AppTextStyles.regular(
-                                                                    16,
-                                                                  ).copyWith(
-                                                                    color: AppColors
-                                                                        .lightGreyBackgroundColour,
-                                                                  ),
-                                                            ),
-                                                          ),
                                                         ],
                                                       ),
                                                     );
@@ -666,7 +679,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.09),
+                                        color: Colors.black.withValues(
+                                          alpha: (0.09),
+                                        ),
                                         blurRadius: 8,
                                         offset: const Offset(0, 3),
                                       ),
@@ -951,7 +966,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                   ),
                   constraints: const BoxConstraints(maxWidth: 250),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: ((0.6))),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(

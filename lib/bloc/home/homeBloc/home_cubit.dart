@@ -2,10 +2,9 @@ import 'package:avionics_internal/Constants/ApiClass/SessionTokenClass/session_C
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
-import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
-import '../../Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
+import '../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
+import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'home_state.dart';
 import 'home_repository.dart';
 
@@ -21,21 +20,10 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoading());
     try {
       final data = await repository.getHomeData();
-
-      final email = await SharedPrefsHelper.getEmail();
-      final cubit = context.read<AppleSubscriptionCubit>();
-      await cubit.loginUser(email ?? "");
-
       if (data.isActiveSubscription == false) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => (defaultTargetPlatform == TargetPlatform.iOS
-                ? AppleSubscriptionScreen(isComeFromSignup: true)
-                : AppleSubscriptionScreen(
-                    isComeFromSignup: true,
-                    isComeFromSocialLogin: true,
-                  )),
-          ),
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => SubscriptionPlanDetailScreen(isComeFromSignup: true)),
+              (_) => false,
         );
         return;
       } else {

@@ -27,6 +27,8 @@ class ManageAccountModel extends BaseModel {
   final String state;
   final String zipCode;
   final String country;
+  final double? tokenUsagePercentage;
+  final double? creditUsagePercentage;
 
   ManageAccountModel({
     required this.id,
@@ -51,6 +53,8 @@ class ManageAccountModel extends BaseModel {
     this.zipCode = '',
     this.country = '',
     this.userId,
+    this.tokenUsagePercentage,
+    this.creditUsagePercentage,
   });
 
   factory ManageAccountModel.fromJson(Map<String, dynamic> json) =>
@@ -77,6 +81,8 @@ class ManageAccountModel extends BaseModel {
         zipCode: json['zip_code'] ?? '',
         country: json['country'] ?? '',
         userId: json['user_id'],
+        tokenUsagePercentage: json['token_usage_percentage'],
+        creditUsagePercentage: json['credit_usage_percentage'],
       );
 
   factory ManageAccountModel.fromMap(Map<String, dynamic> m) =>
@@ -103,6 +109,8 @@ class ManageAccountModel extends BaseModel {
         zipCode: m['zip_code'],
         country: m['country'],
         userId: m['user_id'],
+        tokenUsagePercentage: m['token_usage_percentage'],
+        creditUsagePercentage: m['credit_usage_percentage'],
       );
 
   @override
@@ -129,6 +137,8 @@ class ManageAccountModel extends BaseModel {
     'zip_code': zipCode,
     'country': country,
     'user_id': userId,
+    'tokenUsagePercentage': tokenUsagePercentage,
+    'creditUsagePercentage': creditUsagePercentage,
   };
 
   Map<String, dynamic> toJson() => {

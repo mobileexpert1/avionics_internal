@@ -79,6 +79,7 @@ class FlightAircraftDetail extends Equatable {
   final int? vspeed;
 
   // Aircraft fields
+  final String? aircraftModelId;
   final String? aircraftModel;
   final bool? isFavorite;
   final String? icaoTypeCode;
@@ -125,6 +126,7 @@ class FlightAircraftDetail extends Equatable {
     this.vspeed,
 
     // Aircraft
+    this.aircraftModelId,
     this.aircraftModel,
     this.isFavorite,
     this.icaoTypeCode,
@@ -185,6 +187,7 @@ class FlightAircraftDetail extends Equatable {
       vspeed: json['vspeed'],
 
       // Aircraft
+      aircraftModelId: json['id'],
       aircraftModel: json['Aircraft_Model'],
       isFavorite: json['IsFavorite'],
       icaoTypeCode: json['ICAO_Type_Code'],
@@ -243,6 +246,7 @@ class FlightAircraftDetail extends Equatable {
     squawk,
     source,
     vspeed,
+    aircraftModelId,
     aircraftModel,
     isFavorite,
     icaoTypeCode,
@@ -381,6 +385,7 @@ extension FlightAircraftDetailCopy on FlightAircraftDetail {
 
       // ── PRESERVE STATIC FIELDS ──
       category: category,
+      aircraftModelId: aircraftModelId,
       aircraftModel: aircraftModel,
       isFavorite: isFavorite,
       icaoTypeCode: icaoTypeCode,

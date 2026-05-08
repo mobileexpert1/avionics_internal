@@ -32,6 +32,9 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   bool isTextFiledEnabled = false;
   bool isSocialLogin = false;
 
+  double tokenUsagePercentage = 0.0;
+  double creditUsagePercentage = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -59,8 +62,11 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
             lastNameController.text = state.lastName;
             emailController.text = state.email;
 
+            tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
+            creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
+
             isSocialLogin =
-            (state.authType == "apple" ||
+                (state.authType == "apple" ||
                 state.authType == "facebook" ||
                 state.authType == "google");
           } else if (state.status == CommonApiStatus.failure) {
@@ -85,28 +91,32 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
               title: ConstantStrings.manageAccount,
               centerTitle: false,
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 30,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
               rightButton: isRightButtonShow
                   ? Padding(
-                padding: const EdgeInsets.all(15),
-                child: GestureDetector(
-                  child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.editIcon),
-                    width: 20,
-                    height: 20,
-                    color: Colors.white,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      isTextFiledEnabled = true;
-                      isRightButtonShow = false;
-                      buttonBottomTitle = ConstantStrings.saveTitle;
-                    });
-                  },
-                ),
-              )
+                      padding: const EdgeInsets.all(15),
+                      child: GestureDetector(
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.editIcon),
+                          width: 20,
+                          height: 20,
+                          color: Colors.white,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            isTextFiledEnabled = true;
+                            isRightButtonShow = false;
+                            buttonBottomTitle = ConstantStrings.saveTitle;
+                          });
+                        },
+                      ),
+                    )
                   : null,
             ),
             body: LayoutBuilder(
@@ -150,6 +160,19 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             errorText: state.emailError,
                             enabled: false,
                           ),
+
+                          // const SizedBox(height: 20),
+                          // Padding(
+                          //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+                          //   child: Text(
+                          //     "Token Usage Percentage:- $tokenUsagePercentage%\n\nCredit Usage Percentage:- $creditUsagePercentage%",
+                          //     style: AppTextStyles.bold(20).copyWith(
+                          //       height: 1,
+                          //       color: AppColors.primaryValueColour,
+                          //     ),
+                          //   ),
+                          // ),
+
                           const SizedBox(height: 30),
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(
@@ -162,7 +185,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             textColor: Colors.white,
                             icon: const SizedBox(width: 0),
                             isEnabled:
-                            (buttonBottomTitle == ConstantStrings.saveTitle)
+                                (buttonBottomTitle == ConstantStrings.saveTitle)
                                 ? state.isButtonEnabled
                                 : !isSocialLogin && state.isButtonEnabled,
                             onPressed: () async {

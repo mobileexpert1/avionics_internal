@@ -22,17 +22,28 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       return;
     }
 
-
     if (isLoadMore) {
       emit(state.copyWith(isFetchingMore: true));
     } else {
       emit(state.copyWith(isLoading: true, currentPage: 1, totalPages: 1));
     }
 
+    final isHelicopter = state.selectedCategories.contains(
+      "HELICOPTERS (ROTOR CRAFTS)",
+    );
+
+    final isAirplane = state.selectedCategories.contains("AIRPLANES");
+
+    print("Selected: ${state.selectedCategories}");
+    print("Helicopter: $isHelicopter");
+    print("Airplane: $isAirplane");
+
     try {
       final paginated = await repository.getListOfManufacturers(
         query: query,
         page: page,
+        helicopter: isHelicopter,
+        airplane: isAirplane,
       );
 
       final updatedList = isLoadMore
@@ -102,7 +113,7 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
     }
   }
 
-  void toggleCategory(String category, BuildContext context) {
+  Future<void> toggleCategory(String category, BuildContext context) async {
     final updated = List<String>.from(state.selectedCategories);
 
     if (updated.contains(category)) {
@@ -110,11 +121,10 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
     } else {
       updated.add(category);
     }
+
     emit(state.copyWith(selectedCategories: updated));
-    // loadListOfManufacturers(
-    //   context: context,
-    //   page: 1,
-    // );
+
+    await loadListOfManufacturers(context: context, page: 1);
   }
 
   void toggleCategoriesSection() {

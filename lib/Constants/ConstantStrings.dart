@@ -103,6 +103,7 @@ class ConstantStrings {
   static const String avtarTitle = 'Choose Your Avatar';
   static const String avtarTRole = 'Role';
   static const String scientificCalculator = 'Calculator';
+  static const String creditTokenTitle = "Credit & Token Usage";
 
   // ─────────────────────────────
   // Create New Password
@@ -141,9 +142,11 @@ class SubscriptionTexts {
   static const String goPremiumTitle = 'Go Premium';
   static const String changeSubPlanTitle = 'Change Subscription Plan';
   static const String restoreSubTitle = 'Restore Subscription';
-  static const String currentSubTitle = 'Current Subscription';
+  static const String currentSubTitle = 'My Subscription';
   static const String currentPlanTitle = 'Current Plan';
   static const String cancelTitle = 'Cancel Subscription';
+  static const String billingDetailsTitle = 'Billing Detail';
+
 
   // ─────────────────────────────
   // Monthly Plan
@@ -193,6 +196,7 @@ class ApiServiceUrlConstant {
   static const String verfiyPostSubscrition = 'subscription/verify';
   static const String fetchAvatars = 'user/avatar';
   static const String checkoutSession = 'checkout-session';
+  static const String historySubscription = 'history';
 
   //Profile
   static const String getUnitselection = 'user/measurement';

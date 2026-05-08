@@ -13,8 +13,9 @@ import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../../Screens/Onboarding/Subscription/AppleSubscription/AppleSubscriptionScreen.dart';
-import '../Subscription/iosFolder/AppleSubscriptionCubit.dart';
+import '../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
+import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import 'login_repository.dart';
 import 'login_response_model.dart';
 import 'login_state.dart';
@@ -341,16 +342,11 @@ class LoginCubit extends Cubit<LoginState> {
         );
         return;
       } else if (result.userDetails!.isActiveSubscription == false) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => defaultTargetPlatform == TargetPlatform.iOS
-                ? AppleSubscriptionScreen(isComeFromSignup: true)
-                : AppleSubscriptionScreen(
-                    isComeFromSignup: true,
-                    isComeFromSocialLogin: true,
-                  ),
-          ),
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => SubscriptionPlanDetailScreen(isComeFromSignup: true)),
+              (_) => false,
         );
+
         return;
       } else {
         AppSnackBar.custom(

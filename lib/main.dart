@@ -17,8 +17,11 @@ import 'Database/db_helper.dart';
 import 'Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
+import 'Screens/Profile/MySubscription/MySubscriptionDetailScreen.dart';
+import 'Screens/Profile/MySubscription/MySubscriptionScreen.dart';
 import 'Screens/Profile/ScientificCalculator/providers/calculations.dart';
 import 'Screens/Profile/ScientificCalculator/providers/history.dart';
+import 'Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -26,11 +29,12 @@ import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
-import 'bloc/Onboarding/Subscription/iosFolder/AppleSubscriptionCubit.dart';
+import 'bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import 'bloc/Onboarding/login/login_cubit.dart';
 import 'bloc/Onboarding/signup/signup_cubit.dart';
 import 'bloc/Profile/Avtar/avtar_cubit.dart';
+import 'bloc/Profile/MySubscription/my_subscription_cubit.dart';
 import 'bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
 import 'bloc/home/Filter/filter_cubit.dart';
 import 'bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
@@ -44,7 +48,7 @@ import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
-import 'firebase_options.dart';
+import 'Helpers/Firebase_Options.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -128,7 +132,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => AvtarCubit()),
         BlocProvider(create: (_) => ComparisonCubit()),
         BlocProvider(create: (_) => ChatHistoryCubit()),
-        BlocProvider(create: (_) => AppleSubscriptionCubit()),
+        BlocProvider(create: (_) => SubscriptionBuyPlanCubit()),
         BlocProvider(create: (_) => GamesCubit()),
         BlocProvider(create: (_) => QuizCubit()),
         BlocProvider(create: (_) => ComparisonFilterCubit1()),
@@ -137,13 +141,13 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => FlightMapCubit()),
         ChangeNotifierProvider(create: (_) => Calculations()),
         ChangeNotifierProvider(create: (_) => History()),
+        BlocProvider(create: (_) => MySubscriptionCubit()),
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
-
             theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit'),
             home: const SplashScreen(),
           );

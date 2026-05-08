@@ -7,6 +7,9 @@ class ManageAccState extends Equatable {
   final String email;
   final String authType;
 
+  final double? tokenUsagePercentage;
+  final double? creditUsagePercentage;
+
   final String? firstNameError;
   final String? lastNameError;
   final String? emailError;
@@ -19,6 +22,8 @@ class ManageAccState extends Equatable {
   final String? errorMessage;
 
   const ManageAccState({
+    this.tokenUsagePercentage = 0.0,
+    this.creditUsagePercentage = 0.0,
     this.firstName = '',
     this.lastName = '',
     this.email = '',
@@ -34,6 +39,8 @@ class ManageAccState extends Equatable {
   });
 
   ManageAccState copyWith({
+    double? tokenUsagePercentage,
+    double? creditUsagePercentage,
     String? firstName,
     String? lastName,
     String? email,
@@ -48,6 +55,9 @@ class ManageAccState extends Equatable {
     String? errorMessage,
   }) {
     return ManageAccState(
+      tokenUsagePercentage: tokenUsagePercentage ?? this.tokenUsagePercentage,
+      creditUsagePercentage: creditUsagePercentage ?? this.creditUsagePercentage,
+
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
@@ -65,6 +75,8 @@ class ManageAccState extends Equatable {
 
   @override
   List<Object?> get props => [
+    tokenUsagePercentage,
+    creditUsagePercentage,
     firstName,
     lastName,
     email,

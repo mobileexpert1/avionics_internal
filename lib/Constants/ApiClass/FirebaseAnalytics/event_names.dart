@@ -65,6 +65,7 @@ class FirebaseEvents {
   static const feedbackScreen = 'feedback_Screen';
   static const contactSupportScreen = 'contact_Support_Screen';
   static const changePasswordScreen = 'change_Password_Screen';
+  static const creditTokenScreen = 'credit_Token_Screen';
 
   // =====================================================
   // PROFILE – ACTION EVENTS
