@@ -20,20 +20,32 @@ class FilterResult {
   final CustomMapType mapType;
   final List<String> categories;
   final List<String> aircraftIcaos;
+  final int numberOfFlights;
+  final int searchRadius;
 
-  FilterResult(this.mapType, this.categories, this.aircraftIcaos);
+  FilterResult(
+    this.mapType,
+    this.categories,
+    this.aircraftIcaos,
+    this.numberOfFlights,
+    this.searchRadius,
+  );
 }
 
 class FilterForMapScreen extends StatefulWidget {
   final CustomMapType initialMapType;
   final List<String>? initialCategories;
   final List<String>? initialAircraftIcaos;
+  final int? numberOfFlights;
+  final int? searchRadius;
 
   const FilterForMapScreen({
     Key? key,
     required this.initialMapType,
     this.initialCategories,
     this.initialAircraftIcaos,
+    this.numberOfFlights,
+    this.searchRadius,
   }) : super(key: key);
 
   @override
@@ -90,6 +102,8 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                             .map((a) => a.icaoTypeCode)
                             .where((c) => c.isNotEmpty)
                             .toList(),
+                        state.numberOfFlights,
+                        state.searchRadius,
                       ),
                     );
                   },

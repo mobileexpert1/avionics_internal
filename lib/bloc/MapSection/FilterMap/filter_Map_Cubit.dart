@@ -12,8 +12,20 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
     emit(state.copyWith(searchRadius: value));
   }
 
-  void setInitialMapType(CustomMapType type) {
-    emit(state.copyWith(mapType: type));
+  void setInitialMapType(
+    CustomMapType type,
+    List<String> categories,
+    int numberOfFlights,
+    int searchRadius,
+  ) {
+    emit(
+      state.copyWith(
+        mapType: type,
+        selectedCategories: List.from(categories),
+        searchRadius: searchRadius,
+        numberOfFlights: numberOfFlights,
+      ),
+    );
   }
 
   void toggleCategoriesSection() {
@@ -88,9 +100,5 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
         searchRadius: 1,
       ),
     );
-  }
-
-  void setInitialCategories(List<String> categories) {
-    emit(state.copyWith(selectedCategories: List.from(categories)));
   }
 }

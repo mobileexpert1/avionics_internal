@@ -23,8 +23,6 @@ String formatDate(String? dateStr) {
 
   if (utcDate == null) return "-";
 
-  final localDate = utcDate.toLocal();
-
   const monthNames = [
     'Jan',
     'Feb',
@@ -40,10 +38,10 @@ String formatDate(String? dateStr) {
     'Dec',
   ];
 
-  return "${localDate.day.toString().padLeft(2, '0')}-"
-      "${monthNames[localDate.month - 1]}-${localDate.year} "
-      "${localDate.hour.toString().padLeft(2, '0')}:"
-      "${localDate.minute.toString().padLeft(2, '0')}";
+  return "${utcDate.day.toString().padLeft(2, '0')}-"
+      "${monthNames[utcDate.month - 1]}-${utcDate.year} "
+      "${utcDate.hour.toString().padLeft(2, '0')}:"
+      "${utcDate.minute.toString().padLeft(2, '0')}";
 }
 
 class SubscriptionPlanDetailScreen extends StatefulWidget {
@@ -65,7 +63,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
   void initState() {
     super.initState();
     _cubit = SubscriptionBuyPlanCubit();
-    _cubit.isComeFromSignup = widget.isComeFromSignup!;
+    _cubit.isComeFromSignup = widget.isComeFromSignup ?? false;
     _cubit.initRevenueCat();
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
@@ -75,6 +73,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
   @override
   void dispose() {
     _cubit.close();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -94,6 +93,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
               );
 
               Future.delayed(const Duration(seconds: 1), () {
+                if (!context.mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => LoginScreen()),
                   (route) => false,
@@ -112,6 +112,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
             } else {
               if (state.isBlocked == true) {
                 Future.delayed(const Duration(seconds: 1), () {
+                  if (!context.mounted) return;
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (_) => LoginScreen()),
                     (route) => false,
@@ -125,8 +126,10 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
             }
           }
           if (_cubit.isComeFromSignup == true) {
-            if (state.purchased && !state.waitingForBackendConfirmation!) {
+            if (state.purchased &&
+                state.waitingForBackendConfirmation != true) {
               Future.delayed(const Duration(seconds: 2), () {
+                if (!context.mounted) return;
                 AppSnackBar.custom(
                   context,
                   message: (widget.isComeFromSignup == true
@@ -211,11 +214,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                             return _PlanCard(
                               state: state,
                               package: packages[index],
-                              isCurrentPlan: true,
                               isLoading: state.loading,
-                              onPurchase: () {
-                                print(packages[index]);
-                              },
                             );
                           },
                         ),
@@ -258,17 +257,13 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
 
 class _PlanCard extends StatelessWidget {
   final Package package;
-  final bool isCurrentPlan;
   final bool isLoading;
-  final VoidCallback? onPurchase;
   final SubscriptionBuyPlanState state;
 
   const _PlanCard({
     required this.state,
     required this.package,
-    this.isCurrentPlan = false,
     this.isLoading = false,
-    this.onPurchase,
   });
 
   @override
@@ -276,6 +271,15 @@ class _PlanCard extends StatelessWidget {
     final boolIsPremium = package.storeProduct.title.toLowerCase().contains(
       "basic".toLowerCase(),
     );
+
+    final isUpcomingPlan = state.subscription?.upcoming;
+
+    final bool isUpcoming =
+        (state.subscription?.data?.productId ==
+                package.storeProduct.identifier &&
+            state.subscription?.data?.status == "active") ||
+        (state.activeProductId == package.storeProduct.identifier &&
+            state.purchased);
 
     final bool isActive =
         (state.subscription?.data?.productId ==
@@ -347,6 +351,43 @@ class _PlanCard extends StatelessWidget {
                             ),
                           ),
 
+                          if (isUpcomingPlan != null && boolIsPremium) ...[
+                            const SizedBox(height: 10),
+                            Text(
+                              "Your plan downgrade is scheduled.",
+                              style: AppTextStyles.semiBold(12).copyWith(
+                                height: 1.0,
+                                color: boolIsPremium
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            Text(
+                              "Premium access ends on ${isUpcomingPlan.expiryDate} UTC",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.regular(12).copyWith(
+                                height: 1.0,
+                                color: boolIsPremium
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "Basic plan starts on ${isUpcomingPlan.expiryDate} UTC",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.regular(12).copyWith(
+                                height: 1.0,
+                                color: boolIsPremium
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ),
+                          ],
                           if (isActive &&
                               state.subscription?.data?.startDate != null &&
                               state.subscription?.data?.expiryDate != null) ...[
@@ -452,7 +493,9 @@ class _PlanCard extends StatelessWidget {
                         width: 8,
                         height: 8,
                         decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: isActive
+                              ? Colors.green
+                              : (isExpired ? Colors.red : Colors.grey),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -463,6 +506,7 @@ class _PlanCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -488,7 +532,11 @@ class _PlanCard extends StatelessWidget {
                   ? SubscriptionTexts.changeSubPlanTitle
                   : "Get ${boolIsPremium ? "Basic" : "Premium "} - ${package.storeProduct.priceString}/Month",
               icon: const SizedBox(),
-              isEnabled: !state.loading,
+              isEnabled:
+                  (boolIsPremium == true
+                      ? (isUpcomingPlan == null ? true : false)
+                      : true) &&
+                  !state.loading,
               onPressed: () {
                 context.read<SubscriptionBuyPlanCubit>().selectPackage(package);
                 context.read<SubscriptionBuyPlanCubit>().buySelected();

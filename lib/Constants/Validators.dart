@@ -1,9 +1,14 @@
 class Validators {
   String? validateEmail(String value) {
+    if (value != value.trim()) {
+      return 'Email cannot contain spaces';
+    }
     // only lowercase letters allowed
     final emailRegex = RegExp(r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$');
     if (value.isEmpty) return 'Email is required';
-    if (!emailRegex.hasMatch(value)) return 'Enter a valid email (lowercase only)';
+    if (!emailRegex.hasMatch(value)) {
+      return 'Enter a valid email (lowercase only)';
+    }
     return null;
   }
 
@@ -18,7 +23,6 @@ class Validators {
     return null;
   }
 
-
   String? validateConfirmPassword(String? password, String? confirmPassword) {
     if (confirmPassword == null || confirmPassword.isEmpty) {
       return 'Confirm password is required';
@@ -28,11 +32,10 @@ class Validators {
     return null;
   }
 
-
   String? validateName(String value) {
     if (value.isEmpty) return 'This field is required';
-    if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) return 'Only letters and numbers allowed';
+    if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value))
+      return 'Only letters and numbers allowed';
     return null;
   }
 }
-

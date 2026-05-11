@@ -35,7 +35,7 @@ class FlightRepository {
 
   Future<List<FlightModel>> getFlights({
     required String bounds,
-    int limit = 20,
+    required flightLimit,
     String? aircraft,
     String? categories,
     required BuildContext context,
@@ -57,7 +57,7 @@ class FlightRepository {
 
       if (CreditManager().remainingCredit <= 10 &&
           CreditManager().remainingCredit >= 8) {
-        limit = 1;
+        flightLimit = 1;
       } else {
         if (CreditManager().remainingCredit <= 8) {
           Future.microtask(() {
@@ -77,7 +77,7 @@ class FlightRepository {
       final url = Uri.parse(
         "$baseUrl?"
         "bounds=$bounds"
-        "&limit=$limit"
+        "&limit=$flightLimit"
         "&aircraft=$finalAircraft"
         "&altitude_ranges=0-46000"
         "&categories=$finalCategories",

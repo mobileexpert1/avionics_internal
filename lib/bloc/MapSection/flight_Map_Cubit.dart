@@ -35,11 +35,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     isFromTrackingClass = false;
   }
 
+  void updateTheNumberOfFlightAndRadius(int numberOfFlights, int radius) {
+    emit(
+      state.copyWith(numberOfFlights: numberOfFlights, searchRadius: radius),
+    );
+  }
+
   Future<void> submitFlightCreditApi(
-      int type,
-      int credit,
-      BuildContext context,
-      ) async {
+    int type,
+    int credit,
+    BuildContext context,
+  ) async {
     try {
       final response = await FlightRepository().postFlightCreditApi(
         type: type,
@@ -63,9 +69,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
               context: context,
               title: "Subscription Required",
               message: message,
-              navigateTo: SubscriptionPlanDetailScreen(
-                isComeFromSignup: true,
-              ),
+              navigateTo: SubscriptionPlanDetailScreen(isComeFromSignup: true),
               onGoToFirstTab: () {
                 RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
               },
@@ -157,7 +161,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
               status: CommonApiStatus.failure,
               isLoading: false,
               errorMessage:
-              'Location permissions are permanently denied.\n   Please enable them from settings.',
+                  'Location permissions are permanently denied.\n   Please enable them from settings.',
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(
@@ -177,7 +181,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             status: CommonApiStatus.failure,
             isLoading: false,
             errorMessage:
-            'Location permissions are permanently denied.\n   Please enable them from settings.',
+                'Location permissions are permanently denied.\n   Please enable them from settings.',
           ),
         );
 
@@ -236,9 +240,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   // fetch Aircraft Details From Flights List...... For The Map List.....
   Future<void> fetchAircraftDetailsFromFlightsList(
-      List<String> uniqueTypes,
-      BuildContext context,
-      ) async {
+    List<String> uniqueTypes,
+    BuildContext context,
+  ) async {
     try {
       final flightsDetails = await AircraftListDataRepository()
           .getListOfAllPlanes(aircraftIds: uniqueTypes);
@@ -285,10 +289,11 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> fetchFlightsByBounds({
-    required bool isNeedToRefresh,
     required LatLngBounds bounds,
     required BuildContext context,
     required LatLng currentCenterLatLong,
+    required int flightLimit,
+    required int radiusNm,
   }) async {
     try {
       final boundsString =
@@ -297,12 +302,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
       final hasAircraftFilter =
           state.selectedAircraftIcaos != null &&
-              state.selectedAircraftIcaos!.isNotEmpty;
+          state.selectedAircraftIcaos!.isNotEmpty;
       final hasCategoryFilter =
           state.selectedCategories != null &&
-              state.selectedCategories!.isNotEmpty;
+          state.selectedCategories!.isNotEmpty;
 
       final flights = await FlightRepository().getFlights(
+        flightLimit: flightLimit,
         context: context,
         bounds: boundsString,
         aircraft: hasAircraftFilter
@@ -310,21 +316,22 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             : null,
         categories: hasCategoryFilter
             ? state.selectedCategories!
-            .map((cat) => _getCategoryCode(cat))
-            .join(',')
+                  .map((cat) => _getCategoryCode(cat))
+                  .join(',')
             : null,
       );
 
       final airportList = await AircraftStationListRepository()
           .getListOfAllAircraftStationAccordingToLatLong(
-        longitude: currentCenterLatLong.longitude.toString(),
-        latitude: currentCenterLatLong.latitude.toString(),
-      );
+            longitude: currentCenterLatLong.longitude.toString(),
+            latitude: currentCenterLatLong.latitude.toString(),
+          );
 
       debugPrint("Flights fetched: ${flights.length}");
       debugPrint("Airport list count: ${airportList.data.length}");
 
       onFlightsLoaded(flights, context);
+
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -375,13 +382,13 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<List<FlightModel>> mergeFlightsWithDetails(
-      List<FlightModel> flights,
-      List<AircraftModel> aircraftDetails,
-      ) async {
+    List<FlightModel> flights,
+    List<AircraftModel> aircraftDetails,
+  ) async {
     return flights.map((flight) {
       final matchingDetail = aircraftDetails.firstWhere(
-            (detail) =>
-        detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
+        (detail) =>
+            detail.icaoTypeCode.toUpperCase() == flight.type.toUpperCase(),
         orElse: () => AircraftModel(
           aircraftId: '',
           aircraftModel: '',
@@ -441,9 +448,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> startTrackingFlight(
-      String flightId,
-      BuildContext context,
-      ) async {
+    String flightId,
+    BuildContext context,
+  ) async {
     if (_trackingTimer != null && _trackingTimer!.isActive) {
       return;
     }
@@ -461,9 +468,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   Future<void> _fetchAndUpdateFlight(
-      String flightNumber,
-      BuildContext context,
-      ) async {
+    String flightNumber,
+    BuildContext context,
+  ) async {
     if (isClosed) return;
 
     try {

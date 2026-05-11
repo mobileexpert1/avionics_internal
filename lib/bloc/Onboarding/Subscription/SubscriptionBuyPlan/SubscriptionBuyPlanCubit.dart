@@ -20,7 +20,6 @@ const String _rcAndroidApiKey = 'goog_nQAujUhKgFBEPESGnzMOczSTIOv';
 
 class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   bool _isConfigured = false;
-  bool _isConfiguredInt = false;
   bool isComeFromSignup = false;
 
   static const avioflaiPRO = 'Avioflai Pro';
@@ -33,8 +32,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   }
 
   Future<void> initRevenueCat() async {
-    if (_isConfiguredInt) return;
-
     if (kIsWeb) return;
     emit(state.copyWith(loading: true));
     try {
@@ -59,9 +56,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         await Purchases.configure(configuration);
       }
 
-      _isConfiguredInt = true;
-
-      //await loginUser(rcUserId);
+      await loginUser(rcUserId);
 
       if (!_isConfigured) {
         Purchases.addCustomerInfoUpdateListener(_handleCustomerInfo);
@@ -95,7 +90,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       // await getSubscriptionsFromBackendServer();
     } catch (e) {
       if (!isClosed) {
-        _isConfiguredInt = false;
         debugPrint("RC login: ${e.toString()}");
         emit(
           state.copyWith(loading: false, error: "RevenueCat init failed: $e"),
@@ -235,6 +229,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
             isBlocked: false,
           ),
         );
+        return;
       }
       emit(
         state.copyWith(
@@ -246,9 +241,19 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       );
     } catch (e) {
       await Future.delayed(Duration(seconds: 2));
-
       try {
         final offerings = await Purchases.getOfferings();
+        if (offerings.current == null) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              loading: false,
+              error: 'No offerings',
+              isBlocked: false,
+            ),
+          );
+          return;
+        }
         emit(
           state.copyWith(
             loading: false,
@@ -282,13 +287,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       final customerInfo = await Purchases.purchase(
         PurchaseParams.package(package),
       );
-
       await _handleCustomerInfo(customerInfo.customerInfo);
       final entitlements = customerInfo.customerInfo.entitlements.active;
-
       final isPro = entitlements.containsKey(avioflaiPRO);
-      final isBasic = entitlements.containsKey(avioflaiBASIC);
-
       final activeProductId = isPro
           ? entitlements[avioflaiPRO]?.productIdentifier
           : entitlements[avioflaiBASIC]?.productIdentifier;
@@ -302,8 +303,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         );
         return;
       }
-
-      await waitForBackendConfirmation(isPro, activeProductId);
     } on PlatformException catch (e) {
       _handlePurchaseError(e);
     }
@@ -339,33 +338,33 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     }
   }
 
-  bool _isSyncing = false;
+  //  bool _isSyncing = false;
 
-  // ================= BACKEND FETCH =================
-  Future<void> getSubscriptionsFromBackendServer() async {
-    if (_isSyncing) return;
-    _isSyncing = true;
-
-    try {
-      final response = await SubscriptionBuyPlanRepository()
-          .getSubscriptionDetails();
-      final rcActive = state.purchased;
-      emit(
-        state.copyWith(
-          subscription: response,
-          purchased: rcActive,
-          activeProductId: state.activeProductId,
-          isBlocked: false,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(loading: false, error: e.toString(), isBlocked: false),
-      );
-    } finally {
-      _isSyncing = false;
-    }
-  }
+  // // ================= BACKEND FETCH =================
+  // Future<void> getSubscriptionsFromBackendServer() async {
+  //   if (_isSyncing) return;
+  //   _isSyncing = true;
+  //
+  //   try {
+  //     final response = await SubscriptionBuyPlanRepository()
+  //         .getSubscriptionDetails();
+  //     final rcActive = state.purchased;
+  //     emit(
+  //       state.copyWith(
+  //         subscription: response,
+  //         purchased: rcActive,
+  //         activeProductId: state.activeProductId,
+  //         isBlocked: false,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     emit(
+  //       state.copyWith(loading: false, error: e.toString(), isBlocked: false),
+  //     );
+  //   } finally {
+  //     _isSyncing = false;
+  //   }
+  // }
 
   // ================= CANCEL GUIDE =================
   Future<void> guideUserToCancelSubscription() async {

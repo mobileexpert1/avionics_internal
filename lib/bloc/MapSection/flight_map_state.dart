@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:avionics_internal/bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_detailModel.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,16 +29,15 @@ class FlightMapState {
   final Set<Marker> markers;
   final int animationDuration;
 
+  final int activeCard;
   final List<AircraftStationModel>? airports;
   final AircraftStationModel? selectedAirport;
-
-
   final List<String>? selectedCategories;
   final List<String>? selectedAircraftIcaos;
-
-  final int activeCard;
-
   final SavedFlightResponse? savedFlights;
+
+  final int? numberOfFlights;
+  final int? searchRadius;
 
   FlightMapState({
     this.openAiKey,
@@ -63,8 +64,10 @@ class FlightMapState {
     this.selectedCategories,
     this.selectedAircraftIcaos,
 
-    this.savedFlights
+    this.savedFlights,
 
+    this.numberOfFlights,
+    this.searchRadius,
   });
 
   FlightMapState copyWith({
@@ -89,10 +92,12 @@ class FlightMapState {
     AircraftStationModel? selectedAirport,
     int? activeCard,
 
-
     List<String>? selectedCategories,
     List<String>? selectedAircraftIcaos,
     SavedFlightResponse? savedFlights,
+
+    int? numberOfFlights,
+    int? searchRadius,
   }) {
     return FlightMapState(
       openAiKey: openAiKey ?? this.openAiKey,
@@ -118,8 +123,59 @@ class FlightMapState {
       activeCard: activeCard ?? this.activeCard,
 
       selectedCategories: selectedCategories ?? this.selectedCategories,
-      selectedAircraftIcaos: selectedAircraftIcaos ?? this.selectedAircraftIcaos,
+      selectedAircraftIcaos:
+          selectedAircraftIcaos ?? this.selectedAircraftIcaos,
       savedFlights: savedFlights ?? this.savedFlights,
+
+      numberOfFlights: numberOfFlights ?? this.numberOfFlights,
+      searchRadius: searchRadius ?? this.searchRadius,
     );
   }
+}
+
+LatLngBounds getBoundsFromRadius({
+  required LatLng center,
+  required double radiusMeters,
+}) {
+  const double earthRadius = 6378137;
+
+  final lat = center.latitude * math.pi / 180;
+  final lng = center.longitude * math.pi / 180;
+
+  final angularDistance = radiusMeters / earthRadius;
+
+  final minLat = lat - angularDistance;
+  final maxLat = lat + angularDistance;
+
+  final deltaLng = math.asin(math.sin(angularDistance) / math.cos(lat));
+
+  final minLng = lng - deltaLng;
+  final maxLng = lng + deltaLng;
+
+  return LatLngBounds(
+    southwest: LatLng(minLat * 180 / math.pi, minLng * 180 / math.pi),
+    northeast: LatLng(maxLat * 180 / math.pi, maxLng * 180 / math.pi),
+  );
+}
+
+LatLng getBoundsCenter(LatLngBounds bounds) {
+  return LatLng(
+    (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
+    (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
+  );
+}
+
+double getZoomLevelFromRadius(int radiusNm) {
+  if (radiusNm <= 1) return 13.5;
+  if (radiusNm <= 5) return 11.8;
+  if (radiusNm <= 10) return 10.8;
+  if (radiusNm <= 25) return 9.8;
+  if (radiusNm <= 50) return 8.8;
+  if (radiusNm <= 100) return 7.8;
+  if (radiusNm <= 150) return 7.2;
+  return 6.8;
+}
+
+double convertNmToMeters(int nm) {
+  return nm * 1852;
 }

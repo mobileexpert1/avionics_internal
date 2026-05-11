@@ -55,6 +55,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
             final current = state.subscriptionData?.data.current;
 
+            final isUpcomingPlan = state.subscriptionData?.data.upcoming;
+
             final namePlan = current?.plan.name ?? "";
 
             var isPremiumPlan = current?.plan.name == "Premium Plan";
@@ -83,6 +85,71 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (isUpcomingPlan != null) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: const Icon(
+                              Icons.add_alert_rounded,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                          ),
+
+                          const SizedBox(width: 10),
+
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        'Your plan downgrade is scheduled.\n\n',
+                                    style: AppTextStyles.regular(14).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+
+                                  TextSpan(
+                                    text:
+                                        'Premium access ends on ${isUpcomingPlan.expiryDate} UTC\nBasic plan starts on ${isUpcomingPlan.expiryDate} UTC',
+                                    style: AppTextStyles.regular(13).copyWith(
+                                      height: 1.5,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+
+                  const SizedBox(height: 10),
+
                   SubscriptionPlanCard(
                     isPremiumPlan: isPremiumPlan,
                     isPlanExpired: isPlanExpired,

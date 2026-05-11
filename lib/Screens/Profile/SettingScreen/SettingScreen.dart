@@ -340,9 +340,13 @@ class _SettingScreenState extends State<SettingScreen> {
     BuildContext context,
   ) async {
     try {
-      await Purchases.logOut();
+      try {
+        await Purchases.getCustomerInfo();
+        await Purchases.logOut();
+      } catch (e) {
+        debugPrint("RevenueCat not configured yet: $e");
+      }
       await SharedPrefsHelper.clearAll([], false);
-
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
         (_) => false,

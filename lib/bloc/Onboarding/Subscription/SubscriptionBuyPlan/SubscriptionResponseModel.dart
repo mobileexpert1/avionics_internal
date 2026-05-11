@@ -1,14 +1,24 @@
+import '../../../Profile/MySubscription/my_subscription_model.dart';
+
 class SubscriptionBuyPlanStateModel {
   final String detail;
   final SubscriptionData? data;
+  final MySubscriptionItem? upcoming;
 
-  SubscriptionBuyPlanStateModel({required this.detail, required this.data});
+  SubscriptionBuyPlanStateModel({
+    required this.detail,
+    required this.data,
+    required this.upcoming,
+  });
 
   factory SubscriptionBuyPlanStateModel.fromJson(Map<String, dynamic> json) {
     return SubscriptionBuyPlanStateModel(
       detail: json['detail'] ?? '',
       data: json['data'] != null
           ? SubscriptionData.fromJson(json['data'])
+          : null,
+      upcoming: json['upcoming'] != null
+          ? MySubscriptionItem.fromJson(json['upcoming'])
           : null,
     );
   }
@@ -81,4 +91,3 @@ class SubscriptionData {
     };
   }
 }
-

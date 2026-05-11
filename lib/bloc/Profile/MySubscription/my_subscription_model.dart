@@ -20,14 +20,22 @@ class MySubscriptionResponseModel {
 
 class MySubscriptionData {
   final MySubscriptionItem? current;
+  final MySubscriptionItem? upcoming;
   final List<MySubscriptionItem> old;
 
-  MySubscriptionData({required this.current, required this.old});
+  MySubscriptionData({
+    required this.current,
+    required this.upcoming,
+    required this.old,
+  });
 
   factory MySubscriptionData.fromJson(Map<String, dynamic> json) {
     return MySubscriptionData(
       current: json['current'] != null
           ? MySubscriptionItem.fromJson(json['current'])
+          : null,
+      upcoming: json['upcoming'] != null
+          ? MySubscriptionItem.fromJson(json['upcoming'])
           : null,
       old:
           (json['old'] as List<dynamic>?)
@@ -40,6 +48,7 @@ class MySubscriptionData {
   Map<String, dynamic> toJson() {
     return {
       'current': current?.toJson(),
+      'upcoming': upcoming?.toJson(),
       'old': old.map((e) => e.toJson()).toList(),
     };
   }
@@ -56,7 +65,7 @@ class MySubscriptionItem {
   final String price;
   final dynamic priceInPurchasedCurrency;
   final double taxPercentage;
-  final double taxAmount;
+   final double taxAmount;
   final String originalTransactionId;
   final MySubscriptionPlanModel plan;
   final String currencySymbol;
