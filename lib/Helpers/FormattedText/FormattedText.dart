@@ -21,8 +21,8 @@ class FormattedText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: _buildFormattedText(text),
+    return SelectableText.rich(
+      _buildFormattedText(text),
       textAlign: TextAlign.start,
     );
   }

@@ -268,18 +268,11 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final boolIsPremium = package.storeProduct.title.toLowerCase().contains(
-      "basic".toLowerCase(),
+    final bool isBasicPlan = package.storeProduct.title.toLowerCase().contains(
+      "basic",
     );
 
     final isUpcomingPlan = state.subscription?.upcoming;
-
-    final bool isUpcoming =
-        (state.subscription?.data?.productId ==
-                package.storeProduct.identifier &&
-            state.subscription?.data?.status == "active") ||
-        (state.activeProductId == package.storeProduct.identifier &&
-            state.purchased);
 
     final bool isActive =
         (state.subscription?.data?.productId ==
@@ -305,7 +298,7 @@ class _PlanCard extends StatelessWidget {
                   child: ClipPath(
                     clipper: CardWithBadgeClipper(),
                     child: Container(
-                      color: boolIsPremium
+                      color: isBasicPlan
                           ? AppColors.grayForFeedbackAndText
                           : AppColors.primaryBlue,
                       padding: const EdgeInsets.fromLTRB(22, 25, 22, 22),
@@ -316,9 +309,7 @@ class _PlanCard extends StatelessWidget {
                             "${package.storeProduct.title} ",
                             style: AppTextStyles.semiBold(18).copyWith(
                               height: 1.0,
-                              color: boolIsPremium
-                                  ? Colors.black
-                                  : Colors.white,
+                              color: isBasicPlan ? Colors.black : Colors.white,
                             ),
                           ),
                           const SizedBox(height: 15),
@@ -326,9 +317,7 @@ class _PlanCard extends StatelessWidget {
                             package.storeProduct.priceString,
                             style: AppTextStyles.semiBold(26).copyWith(
                               height: 1.0,
-                              color: boolIsPremium
-                                  ? Colors.black
-                                  : Colors.white,
+                              color: isBasicPlan ? Colors.black : Colors.white,
                             ),
                           ),
                           const SizedBox(height: 13),
@@ -336,7 +325,7 @@ class _PlanCard extends StatelessWidget {
                             "per user/month",
                             style: AppTextStyles.regular(14).copyWith(
                               height: 1.0,
-                              color: boolIsPremium ? Colors.grey : Colors.white,
+                              color: isBasicPlan ? Colors.grey : Colors.white,
                             ),
                           ),
                           const SizedBox(height: 15),
@@ -346,18 +335,20 @@ class _PlanCard extends StatelessWidget {
                               itemCount: state.features.length,
                               itemBuilder: (_, i) => _FeatureRow(
                                 text: state.features[i],
-                                isPremium: boolIsPremium,
+                                isPremium: isBasicPlan,
                               ),
                             ),
                           ),
 
-                          if (isUpcomingPlan != null && boolIsPremium) ...[
+                          if (isUpcomingPlan?.id != "" &&
+                              isUpcomingPlan?.plan != null &&
+                              isBasicPlan) ...[
                             const SizedBox(height: 10),
                             Text(
                               "Your plan downgrade is scheduled.",
                               style: AppTextStyles.semiBold(12).copyWith(
                                 height: 1.0,
-                                color: boolIsPremium
+                                color: isBasicPlan
                                     ? Colors.black
                                     : Colors.white,
                               ),
@@ -365,24 +356,24 @@ class _PlanCard extends StatelessWidget {
                             const SizedBox(height: 10),
 
                             Text(
-                              "Premium access ends on ${isUpcomingPlan.expiryDate} UTC",
+                              "Premium access ends on ${isUpcomingPlan?.expiryDate} UTC",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
                                 height: 1.0,
-                                color: boolIsPremium
+                                color: isBasicPlan
                                     ? Colors.black
                                     : Colors.white,
                               ),
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              "Basic plan starts on ${isUpcomingPlan.expiryDate} UTC",
+                              "Basic plan starts on ${isUpcomingPlan?.expiryDate} UTC",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
                                 height: 1.0,
-                                color: boolIsPremium
+                                color: isBasicPlan
                                     ? Colors.black
                                     : Colors.white,
                               ),
@@ -396,7 +387,7 @@ class _PlanCard extends StatelessWidget {
                               "Plan Duration",
                               style: AppTextStyles.semiBold(12).copyWith(
                                 height: 1.0,
-                                color: boolIsPremium
+                                color: isBasicPlan
                                     ? Colors.black
                                     : Colors.white,
                               ),
@@ -409,7 +400,7 @@ class _PlanCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
                                 height: 1.0,
-                                color: boolIsPremium
+                                color: isBasicPlan
                                     ? Colors.black
                                     : Colors.white,
                               ),
@@ -421,7 +412,7 @@ class _PlanCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
                                 height: 1.0,
-                                color: boolIsPremium
+                                color: isBasicPlan
                                     ? Colors.black
                                     : Colors.white,
                               ),
@@ -447,7 +438,7 @@ class _PlanCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.semiBold(12).copyWith(
                                   height: 1.0,
-                                  color: boolIsPremium
+                                  color: isBasicPlan
                                       ? Colors.black
                                       : Colors.white,
                                 ),
@@ -459,7 +450,7 @@ class _PlanCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.semiBold(12).copyWith(
                                   height: 1.0,
-                                  color: boolIsPremium
+                                  color: isBasicPlan
                                       ? Colors.black
                                       : Colors.white,
                                 ),
@@ -474,7 +465,7 @@ class _PlanCard extends StatelessWidget {
 
                 Positioned(
                   top: 5,
-                  right: boolIsPremium ? 10 : 5,
+                  right: isBasicPlan ? 10 : 5,
                   child: Row(
                     children: [
                       Container(
@@ -483,7 +474,7 @@ class _PlanCard extends StatelessWidget {
                           vertical: 6,
                         ),
                         child: Text(
-                          boolIsPremium ? "Starter Plan" : "Premium",
+                          isBasicPlan ? "Starter Plan" : "Premium",
                           style: AppTextStyles.bold(
                             14,
                           ).copyWith(height: 1.0, color: Colors.black),
@@ -530,13 +521,9 @@ class _PlanCard extends StatelessWidget {
               textColor: Colors.white,
               title: isActive == true
                   ? SubscriptionTexts.changeSubPlanTitle
-                  : "Get ${boolIsPremium ? "Basic" : "Premium "} - ${package.storeProduct.priceString}/Month",
+                  : "Get ${isBasicPlan ? "Basic" : "Premium "} - ${package.storeProduct.priceString}/Month",
               icon: const SizedBox(),
-              isEnabled:
-                  (boolIsPremium == true
-                      ? (isUpcomingPlan == null ? true : false)
-                      : true) &&
-                  !state.loading,
+              isEnabled: !state.loading,
               onPressed: () {
                 context.read<SubscriptionBuyPlanCubit>().selectPackage(package);
                 context.read<SubscriptionBuyPlanCubit>().buySelected();

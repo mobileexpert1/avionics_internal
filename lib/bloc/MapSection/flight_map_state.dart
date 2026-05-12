@@ -165,6 +165,18 @@ LatLng getBoundsCenter(LatLngBounds bounds) {
   );
 }
 
+//for 200
+// double getZoomLevelFromRadius(int radiusNm) {
+//   if (radiusNm <= 1) return 13.5;
+//   if (radiusNm <= 5) return 11.8;
+//   if (radiusNm <= 10) return 10.8;
+//   if (radiusNm <= 25) return 9.8;
+//   if (radiusNm <= 50) return 8.8;
+//   if (radiusNm <= 100) return 7.8;
+//   if (radiusNm <= 150) return 7.2;
+//   return 6.8;
+// }
+
 double getZoomLevelFromRadius(int radiusNm) {
   if (radiusNm <= 1) return 13.5;
   if (radiusNm <= 5) return 11.8;
@@ -172,8 +184,13 @@ double getZoomLevelFromRadius(int radiusNm) {
   if (radiusNm <= 25) return 9.8;
   if (radiusNm <= 50) return 8.8;
   if (radiusNm <= 100) return 7.8;
-  if (radiusNm <= 150) return 7.2;
-  return 6.8;
+  if (radiusNm <= 200) return 7.0;
+  if (radiusNm <= 350) return 6.5;
+  if (radiusNm <= 500) return 6.0;
+  if (radiusNm <= 750) return 5.5;
+  if (radiusNm <= 1050) return 5.0;
+
+  return 4.5;
 }
 
 double convertNmToMeters(int nm) {

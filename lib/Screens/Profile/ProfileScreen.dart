@@ -55,15 +55,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance
-        .logVisibleScreen(FirebaseEvents.profileScreen);
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
 
     homeCubit = HomeCubit();
     homeCubit.fetchHomeData(context);
 
     setLocalData();
   }
-
 
   @override
   void dispose() {
@@ -89,8 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content =
-    BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
+    Widget content = BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
       builder: (context, state) {
         if (state.isLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -123,21 +120,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.all(20),
                             child: userAvtarTypeUrl.isNotEmpty
                                 ? SvgPicture.network(
-                              userAvtarTypeUrl,
-                              color: Colors.white,
-                              fit: BoxFit.contain,
-                              placeholderBuilder: (_) =>
-                                  SvgPicture.asset(
+                                    userAvtarTypeUrl,
+                                    color: Colors.white,
+                                    fit: BoxFit.contain,
+                                    placeholderBuilder: (_) => SvgPicture.asset(
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.manuFirstImage,
+                                      ),
+                                    ),
+                                  )
+                                : SvgPicture.asset(
                                     CommonUi.setSvgImage(
                                       AssetsPath.manuFirstImage,
                                     ),
                                   ),
-                            )
-                                : SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                AssetsPath.manuFirstImage,
-                              ),
-                            ),
                           ),
                         ),
                       ),
@@ -165,8 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                            const CalculatorHomeMainScreen(),
+                            builder: (_) => const CalculatorHomeMainScreen(),
                           ),
                         );
                       },
@@ -258,8 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                SavedFlighScreen(showTabs: true),
+                            builder: (_) => SavedFlighScreen(showTabs: true),
                           ),
                         );
                       },
@@ -284,6 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeLeftMainLogo),
             width: 120,
+            height: 31,
           ),
           onPressed: () {},
         ),
@@ -291,24 +286,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeRightSetting),
             width: 35,
+            height: 31,
           ),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const SettingScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const SettingScreen()),
             ).then((_) => setLocalData());
           },
         ),
       ),
       body: kIsWeb
           ? Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: content,
-        ),
-      )
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1500),
+                child: content,
+              ),
+            )
           : content,
     );
   }

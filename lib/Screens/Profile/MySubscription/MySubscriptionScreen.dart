@@ -85,7 +85,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isUpcomingPlan != null) ...[
+                  if (isUpcomingPlan?.id != "" &&
+                      isUpcomingPlan?.plan != null) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 15,
@@ -132,11 +133,12 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
                                   TextSpan(
                                     text:
-                                        'Premium access ends on ${isUpcomingPlan.expiryDate} UTC\nBasic plan starts on ${isUpcomingPlan.expiryDate} UTC',
+                                        'Premium access ends on ${isUpcomingPlan?.expiryDate} UTC\nBasic plan starts on ${isUpcomingPlan?.expiryDate} UTC',
                                     style: AppTextStyles.regular(13).copyWith(
                                       height: 1.5,
                                       color: AppColors.black,
                                     ),
+
                                   ),
                                 ],
                               ),

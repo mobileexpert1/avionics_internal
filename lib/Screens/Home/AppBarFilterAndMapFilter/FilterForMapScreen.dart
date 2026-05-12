@@ -144,7 +144,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                     child: CustomSliderSection(
                       value: state.numberOfFlights.toDouble(),
                       min: 1,
-                      max: 200,
+                      max: 30,
                       label: "${state.numberOfFlights} Flights",
                       onChanged: (val) {
                         cubit.updateFlights(val.toInt());
@@ -161,7 +161,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                     child: CustomSliderSection(
                       value: state.searchRadius.toDouble(),
                       min: 1,
-                      max: 200,
+                      max: 1050,
                       label: "${state.searchRadius} NM",
                       onChanged: (val) {
                         cubit.updateRadius(val.toInt());
