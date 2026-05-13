@@ -8,6 +8,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -47,17 +48,16 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       FirebaseEvents.comparisonScreen,
     );
 
-    final result = await Navigator.push<AircraftModel>(
+    final result = await AppNavigator.push<AircraftModel>(
       context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => AircraftComparisonCubit(),
-          child: AircraftComparisonScreen(
-            selectedModel1: modelNumber == 1 ? model2?.id : model1?.id,
-            selectedModel2: modelNumber == 1 ? null : model1?.id,
-          ),
-        ),
+      AircraftComparisonScreen(
+        selectedModel1: modelNumber == 1 ? model2?.id : model1?.id,
+        selectedModel2: modelNumber == 1 ? null : model1?.id,
       ),
+      multiBlocProviders: [
+        BlocProvider(create: (_) => AircraftComparisonCubit()),
+      ],
+      disableSwipeBack: true,
     );
 
     if (result != null) {
@@ -90,147 +90,8 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
 
           kIsWeb
               ? Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white
-                      ,size: 30
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          )
-              : const SizedBox.shrink(),
-
-          // Foreground UI
-          SafeArea(
-            child: kIsWeb
-                ? Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          const SizedBox(height: 15),
-                          SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.compareLogo),
-                            width: 130,
-                          ),
-                          const SizedBox(height: 25),
-                          const Text(
-                            "Compare every detail\nfrom engines to dimensions",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              height: 1.5,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 42),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              "Compare Aircraft Specifications",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            _buildRadioOption(
-                              "Select Model 1",
-                              model1,
-                                  () => _navigateAndSelectModel(1),
-                            ),
-                            const Divider(height: 1),
-                            _buildRadioOption(
-                              "Select Model 2",
-                              model2,
-                                  () => _navigateAndSelectModel(2),
-                            ),
-                            const SizedBox(height: 24),
-                            CustomBottomButton(
-                              fontStyle: AppTextStyles.regular(21.46)
-                                  .copyWith(
-                                height: 1.0,
-                                color: isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
-                              ),
-                              isComeFromCompare: true,
-                              title: ConstantStrings.compare,
-                              backgroundColor: isButtonEnabled
-                                  ? AppColors.primaryValueColour
-                                  : AppColors.darkSeparatorColourAppBar,
-                              textColor: Colors.white,
-                              icon: const SizedBox(width: 0),
-                              isEnabled: isButtonEnabled,
-                              onPressed: () {
-                                if (!isButtonEnabled) return;
-                                AnalyticsService.instance.buttonPressed(
-                                  FirebaseEvents.comparedbuttons,
-                                  FirebaseEvents.modelCompareScreen,
-                                );
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BlocProvider(
-                                      create: (_) =>
-                                          ComparisonFilterCubit1(),
-                                      child: ComparisonScreen(
-                                        model1: model1!.id,
-                                        model2: model2!.id,
-                                        model1Name: model1!.aircraftModel,
-                                        model2Name: model2!.aircraftModel,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                ),
-              ),
-            )
-                : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Row(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     children: [
                       IconButton(
                         icon: const Icon(
@@ -244,146 +105,288 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                       ),
                     ],
                   ),
-                  SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.compareLogo),
-                    width: 90,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Compare every detail\nfrom engines to dimensions",
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.semiBold(19.37).copyWith(
-                      height: 1.0,
-                      color: AppColors.white,
-                      letterSpacing: 0.02 * 19,
-                    ),
-                  ),
-                  const SizedBox(height: 60),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
+                )
+              : const SizedBox.shrink(),
+
+          // Foreground UI
+          SafeArea(
+            child: kIsWeb
+                ? Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          children: [
+                            Column(
+                              children: [
+                                const SizedBox(height: 15),
+                                SvgPicture.asset(
+                                  CommonUi.setSvgImage(AssetsPath.compareLogo),
+                                  width: 130,
+                                ),
+                                const SizedBox(height: 25),
+                                const Text(
+                                  "Compare every detail\nfrom engines to dimensions",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    height: 1.5,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 42),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 24,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    "Compare Aircraft Specifications",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  _buildRadioOption(
+                                    "Select Model 1",
+                                    model1,
+                                    () => _navigateAndSelectModel(1),
+                                  ),
+                                  const Divider(height: 1),
+                                  _buildRadioOption(
+                                    "Select Model 2",
+                                    model2,
+                                    () => _navigateAndSelectModel(2),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  CustomBottomButton(
+                                    fontStyle: AppTextStyles.regular(21.46)
+                                        .copyWith(
+                                          height: 1.0,
+                                          color: isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade600,
+                                        ),
+                                    isComeFromCompare: true,
+                                    title: ConstantStrings.compare,
+                                    backgroundColor: isButtonEnabled
+                                        ? AppColors.primaryValueColour
+                                        : AppColors.darkSeparatorColourAppBar,
+                                    textColor: Colors.white,
+                                    icon: const SizedBox(width: 0),
+                                    isEnabled: isButtonEnabled,
+                                    onPressed: () {
+                                      if (!isButtonEnabled) return;
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.comparedbuttons,
+                                        FirebaseEvents.modelCompareScreen,
+                                      );
+
+                                      AppNavigator.push(
+                                        context,
+                                        ComparisonScreen(
+                                          model1: model1!.id,
+                                          model2: model2!.id,
+                                          model1Name: model1!.aircraftModel,
+                                          model2Name: model2!.aircraftModel,
+                                        ),
+                                        multiBlocProviders: [
+                                          BlocProvider(
+                                            create: (_) =>
+                                                ComparisonFilterCubit1(),
+                                          ),
+                                        ],
+                                        disableSwipeBack: true,
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
                       ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
                     ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          "Compare Aircraft Specifications",
-                          style: AppTextStyles.bold(
-                            18,
-                          ).copyWith(height: 1.0, color: AppColors.black),
-                        ),
-                        const SizedBox(height: 20),
-
-                        _buildCardOption(
-                          title: "Primary Model",
-                          hint: "Select first model",
-                          value: model1,
-                          onTap: () => _navigateAndSelectModel(1),
-                          onClear: () {
-                            setState(() => model1 = null);
-                          },
-                        ),
-
-                        const SizedBox(height: 12),
-
                         Row(
                           children: [
-                            const Expanded(
-                              child: Divider(thickness: 0.5),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 8,
+                            IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.white,
+                                size: 30,
                               ),
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.swap_horiz_outlined,
-                                size: 16,
-                              ),
-                            ),
-                            const Expanded(
-                              child: Divider(thickness: 0.5),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
                           ],
                         ),
+                        SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.compareLogo),
+                          width: 90,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Compare every detail\nfrom engines to dimensions",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.semiBold(19.37).copyWith(
+                            height: 1.0,
+                            color: AppColors.white,
+                            letterSpacing: 0.02 * 19,
+                          ),
+                        ),
+                        const SizedBox(height: 60),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 24,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Compare Aircraft Specifications",
+                                style: AppTextStyles.bold(
+                                  18,
+                                ).copyWith(height: 1.0, color: AppColors.black),
+                              ),
+                              const SizedBox(height: 20),
 
-                        const SizedBox(height: 12),
+                              _buildCardOption(
+                                title: "Primary Model",
+                                hint: "Select first model",
+                                value: model1,
+                                onTap: () => _navigateAndSelectModel(1),
+                                onClear: () {
+                                  setState(() => model1 = null);
+                                },
+                              ),
 
-                        _buildCardOption(
-                          title: "Comparison Model",
-                          hint: "Select second model",
-                          value: model2,
-                          onTap: () => _navigateAndSelectModel(2),
-                          onClear: () {
-                            setState(() => model2 = null);
+                              const SizedBox(height: 12),
+
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: Divider(thickness: 0.5),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.swap_horiz_outlined,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  const Expanded(
+                                    child: Divider(thickness: 0.5),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              _buildCardOption(
+                                title: "Comparison Model",
+                                hint: "Select second model",
+                                value: model2,
+                                onTap: () => _navigateAndSelectModel(2),
+                                onClear: () {
+                                  setState(() => model2 = null);
+                                },
+                              ),
+                              const SizedBox(height: 15),
+                            ],
+                          ),
+                        ),
+                        CustomBottomButton(
+                          fontStyle: AppTextStyles.regular(16).copyWith(
+                            height: 1.0,
+                            color: isButtonEnabled
+                                ? Colors.white
+                                : Colors.grey.shade600,
+                          ),
+                          isComeFromCompare: true,
+                          title: ConstantStrings.compare,
+                          backgroundColor: isButtonEnabled
+                              ? AppColors.primaryValueColour
+                              : AppColors.darkSeparatorColourAppBar,
+                          textColor: Colors.white,
+                          icon: const SizedBox(),
+                          isEnabled: isButtonEnabled,
+                          onPressed: () {
+                            if (!isButtonEnabled) return;
+
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.comparedbuttons,
+                              FirebaseEvents.modelCompareScreen,
+                            );
+
+                            AppNavigator.push(
+                              context,
+                              ComparisonScreen(
+                                model1: model1!.id,
+                                model2: model2!.id,
+                                model1Name: model1!.aircraftModel,
+                                model2Name: model2!.aircraftModel,
+                              ),
+                              multiBlocProviders: [
+                                BlocProvider(
+                                  create: (_) => ComparisonFilterCubit1(),
+                                ),
+                              ],
+                              disableSwipeBack: true,
+                            );
                           },
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 40),
                       ],
                     ),
                   ),
-                  CustomBottomButton(
-                    fontStyle: AppTextStyles.regular(16).copyWith(
-                      height: 1.0,
-                      color: isButtonEnabled
-                          ? Colors.white
-                          : Colors.grey.shade600,
-                    ),
-                    isComeFromCompare: true,
-                    title: ConstantStrings.compare,
-                    backgroundColor: isButtonEnabled
-                        ? AppColors.primaryValueColour
-                        : AppColors.darkSeparatorColourAppBar,
-                    textColor: Colors.white,
-                    icon: const SizedBox(),
-                    isEnabled: isButtonEnabled,
-                    onPressed: () {
-                      if (!isButtonEnabled) return;
-
-                      AnalyticsService.instance.buttonPressed(
-                        FirebaseEvents.comparedbuttons,
-                        FirebaseEvents.modelCompareScreen,
-                      );
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider(
-                            create: (_) => ComparisonFilterCubit1(),
-                            child: ComparisonScreen(
-                              model1: model1!.id,
-                              model2: model2!.id,
-                              model1Name: model1!.aircraftModel,
-                              model2Name: model2!.aircraftModel,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
           ),
         ],
       ),
@@ -460,10 +463,10 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
   }
 
   Widget _buildRadioOption(
-      String text,
-      AircraftModel? value,
-      VoidCallback onTap,
-      ) {
+    String text,
+    AircraftModel? value,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.radio_button_unchecked, color: Colors.blue),
@@ -474,17 +477,17 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       onTap: onTap,
       trailing: value != null
           ? IconButton(
-        icon: const Icon(Icons.close_rounded, color: Colors.grey),
-        onPressed: () {
-          setState(() {
-            if (text.contains("1")) {
-              model1 = null;
-            } else if (text.contains("2")) {
-              model2 = null;
-            }
-          });
-        },
-      )
+              icon: const Icon(Icons.close_rounded, color: Colors.grey),
+              onPressed: () {
+                setState(() {
+                  if (text.contains("1")) {
+                    model1 = null;
+                  } else if (text.contains("2")) {
+                    model2 = null;
+                  }
+                });
+              },
+            )
           : null,
     );
   }

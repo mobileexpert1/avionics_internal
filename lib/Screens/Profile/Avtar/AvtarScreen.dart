@@ -62,7 +62,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                   MaterialPageRoute(builder: (_) => LoginScreen()),
                   (route) => false,
                 )
-              : Navigator.pop(context)),
+              : Navigator.pop(context,true)),
         ),
         rightButton: widget.isComeFromSettingScreen == false
             ? IconButton(

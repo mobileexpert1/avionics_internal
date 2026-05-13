@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:avionics_internal/bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_detailModel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
@@ -178,19 +179,24 @@ LatLng getBoundsCenter(LatLngBounds bounds) {
 // }
 
 double getZoomLevelFromRadius(int radiusNm) {
-  if (radiusNm <= 1) return 13.5;
-  if (radiusNm <= 5) return 11.8;
-  if (radiusNm <= 10) return 10.8;
-  if (radiusNm <= 25) return 9.8;
-  if (radiusNm <= 50) return 8.8;
-  if (radiusNm <= 100) return 7.8;
-  if (radiusNm <= 200) return 7.0;
-  if (radiusNm <= 350) return 6.5;
-  if (radiusNm <= 500) return 6.0;
-  if (radiusNm <= 750) return 5.5;
-  if (radiusNm <= 1050) return 5.0;
+  debugPrint("Radius NM: $radiusNm");
 
-  return 4.5;
+  if (radiusNm <= 1) return 14.0;
+  if (radiusNm <= 2) return 12.7;
+  if (radiusNm <= 5) return 11.5;
+  if (radiusNm <= 10) return 10.5;
+  if (radiusNm <= 25) return 9.1;
+  if (radiusNm <= 50) return 8.1;
+  if (radiusNm <= 75) return 7.5;
+  if (radiusNm <= 100) return 7.1;
+  if (radiusNm <= 150) return 6.5;
+  if (radiusNm <= 200) return 6.1;
+  if (radiusNm <= 300) return 5.5;
+  if (radiusNm <= 400) return 5.1;
+  if (radiusNm <= 500) return 4.8;
+  if (radiusNm <= 750) return 4.3;
+  if (radiusNm <= 1050) return 3.7;
+  return 3.4;
 }
 
 double convertNmToMeters(int nm) {

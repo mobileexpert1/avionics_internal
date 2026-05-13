@@ -27,13 +27,14 @@ class HomeLoaded extends HomeState {
   });
 }
 
-
 class HomeError extends HomeState {
   final String message;
+
   HomeError(this.message);
 }
 
 class HomeTabChanged extends HomeState {
   final int index;
+
   HomeTabChanged(this.index);
 }

@@ -46,6 +46,7 @@ class SubscriptionBuyPlanState {
   final Package? selectedPackage;
   final bool? isBlocked;
   final bool? waitingForBackendConfirmation;
+  final bool? isComeFromProfile;
 
   SubscriptionBuyPlanState({
     this.isUserAlreadyPremium = false,
@@ -61,6 +62,7 @@ class SubscriptionBuyPlanState {
     this.selectedPackage,
     this.isBlocked,
     this.waitingForBackendConfirmation,
+    this.isComeFromProfile,
   });
 
   SubscriptionBuyPlanState copyWith({
@@ -77,6 +79,7 @@ class SubscriptionBuyPlanState {
     Package? selectedPackage,
     bool? isBlocked,
     bool? waitingForBackendConfirmation,
+    bool? isComeFromProfile,
   }) {
     return SubscriptionBuyPlanState(
       isUserAlreadyPremium: isUserAlreadyPremium ?? this.isUserAlreadyPremium,
@@ -93,6 +96,7 @@ class SubscriptionBuyPlanState {
       isBlocked: isBlocked ?? this.isBlocked,
       waitingForBackendConfirmation:
           waitingForBackendConfirmation ?? this.waitingForBackendConfirmation,
+      isComeFromProfile: isComeFromProfile ?? this.isComeFromProfile,
     );
   }
 

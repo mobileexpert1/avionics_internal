@@ -16,38 +16,15 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
 
-String formatDate(String? dateStr) {
-  if (dateStr == null) return "-";
-
-  final utcDate = DateTime.tryParse("${dateStr.replaceFirst(" ", "T")}Z");
-
-  if (utcDate == null) return "-";
-
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
-  return "${utcDate.day.toString().padLeft(2, '0')}-"
-      "${monthNames[utcDate.month - 1]}-${utcDate.year} "
-      "${utcDate.hour.toString().padLeft(2, '0')}:"
-      "${utcDate.minute.toString().padLeft(2, '0')}";
-}
-
 class SubscriptionPlanDetailScreen extends StatefulWidget {
   final bool? isComeFromSignup;
+  final bool? isComeFromProfile;
 
-  const SubscriptionPlanDetailScreen({super.key, this.isComeFromSignup});
+  const SubscriptionPlanDetailScreen({
+    super.key,
+    this.isComeFromSignup,
+    this.isComeFromProfile,
+  });
 
   @override
   State<SubscriptionPlanDetailScreen> createState() =>
@@ -56,6 +33,8 @@ class SubscriptionPlanDetailScreen extends StatefulWidget {
 
 class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
   late SubscriptionBuyPlanCubit _cubit;
+  bool _hasNavigated = false;
+
   int currentPage = 0;
   final PageController _controller = PageController();
 
@@ -64,7 +43,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
     super.initState();
     _cubit = SubscriptionBuyPlanCubit();
     _cubit.isComeFromSignup = widget.isComeFromSignup ?? false;
-    _cubit.initRevenueCat();
+    _cubit.initRevenueCat(widget.isComeFromProfile ?? false);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
@@ -118,18 +97,26 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                     (route) => false,
                   );
                 });
+              } else if (state.isComeFromProfile == true) {
+                Future.delayed(const Duration(seconds: 1), () {
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                });
               }
-
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.error!)));
             }
           }
+
           if (_cubit.isComeFromSignup == true) {
             if (state.purchased &&
-                state.waitingForBackendConfirmation != true) {
+                state.waitingForBackendConfirmation != true &&
+                !_hasNavigated) {
               Future.delayed(const Duration(seconds: 2), () {
                 if (!context.mounted) return;
+                _hasNavigated = true;
+
                 AppSnackBar.custom(
                   context,
                   message: (widget.isComeFromSignup == true
@@ -171,7 +158,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                             .read<SubscriptionBuyPlanCubit>()
                             .clearAllDataAndRedirectToSplashScreen(context);
                       } else {
-                        Navigator.pop(context);
+                        Navigator.pop(context,true);
                       }
                     },
                   ),
@@ -223,11 +210,12 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                   ),
                 ),
               ),
-              if (state.loading)
+              if (state.loading) ...[
                 Container(
                   color: Colors.black.withValues(alpha: 0.3),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
+              ],
             ],
           );
         },
@@ -356,7 +344,7 @@ class _PlanCard extends StatelessWidget {
                             const SizedBox(height: 10),
 
                             Text(
-                              "Premium access ends on ${isUpcomingPlan?.expiryDate} UTC",
+                              "Premium access ends on ${(isUpcomingPlan?.expiryDateLocal)}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
@@ -368,7 +356,7 @@ class _PlanCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              "Basic plan starts on ${isUpcomingPlan?.expiryDate} UTC",
+                              "Basic plan starts on ${(isUpcomingPlan?.expiryDateLocal)}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
@@ -395,7 +383,7 @@ class _PlanCard extends StatelessWidget {
                             const SizedBox(height: 10),
 
                             Text(
-                              "Start: ${formatDate(state.subscription?.data?.startDate)} UTC",
+                              "Start: ${(state.subscription?.data?.startDateLocal)}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
@@ -407,7 +395,7 @@ class _PlanCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              "End: ${formatDate(state.subscription?.data?.expiryDate)} UTC",
+                              "End: ${(state.subscription?.data?.expiryDateLocal)}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.regular(12).copyWith(
@@ -433,7 +421,7 @@ class _PlanCard extends StatelessWidget {
                                     null) ...[
                               const SizedBox(height: 10),
                               Text(
-                                "Start: ${formatDate(state.subscription?.data?.startDate)} UTC",
+                                "Start: ${(state.subscription?.data?.startDateLocal)}",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.semiBold(12).copyWith(
@@ -445,7 +433,7 @@ class _PlanCard extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                "Expired on: ${formatDate(state.subscription?.data?.expiryDate)} UTC",
+                                "Expired on: ${(state.subscription?.data?.expiryDateLocal)}",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.semiBold(12).copyWith(
@@ -553,6 +541,7 @@ class _PlanCard extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 20),
           ],
         ],
       ),

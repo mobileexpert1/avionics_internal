@@ -6,6 +6,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../Login/LoginScreen.dart';
 import '../Signup/SignupScreen.dart';
 
@@ -128,12 +129,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => SignupScreen(),
-                                  ),
-                                );
+                                AppNavigator.push(context, SignupScreen(), disableSwipeBack: true);
                               },
                               child: const Text(
                                 ConstantStrings.CreateAccount,
@@ -164,12 +160,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const LoginScreen(),
-                                  ),
-                                );
+                                AppNavigator.push(context, LoginScreen(), disableSwipeBack: true);
                               },
                               child: const Text(
                                 ConstantStrings.loginButton,

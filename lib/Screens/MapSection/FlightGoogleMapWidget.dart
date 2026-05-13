@@ -88,7 +88,7 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
       zoomControlsEnabled: widget.zoomControlsEnabled,
       myLocationButtonEnabled: widget.myLocationButtonEnabled,
       rotateGesturesEnabled: widget.rotateGesturesEnabled,
-      minMaxZoomPreference: MinMaxZoomPreference(5, 12),
+      minMaxZoomPreference: MinMaxZoomPreference(0, 15),
       myLocationEnabled: widget.myLocationEnabled,
       mapType: widget.mapType,
       polygons: widget.polygons,

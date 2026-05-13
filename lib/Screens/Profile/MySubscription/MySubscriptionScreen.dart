@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppText.dart';
 import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Feedback/FeedbackScreen.dart';
@@ -78,7 +79,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                     .capitalize() ??
                 "";
 
-            final expiryDate = "${current?.expiryDate ?? ""} UTC";
+            final expiryDate = current?.expiryDateLocal ?? "";
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -133,12 +134,11 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
                                   TextSpan(
                                     text:
-                                        'Premium access ends on ${isUpcomingPlan?.expiryDate} UTC\nBasic plan starts on ${isUpcomingPlan?.expiryDate} UTC',
+                                        'Premium access ends on ${isUpcomingPlan?.expiryDateLocal}\nBasic plan starts on ${isUpcomingPlan?.expiryDateLocal}',
                                     style: AppTextStyles.regular(13).copyWith(
                                       height: 1.5,
                                       color: AppColors.black,
                                     ),
-
                                   ),
                                 ],
                               ),
@@ -160,21 +160,25 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                     expiryDate: expiryDate,
                     isPlanActive: isPlanActive,
                     showActions: true,
-                    onModifyTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SubscriptionPlanDetailScreen(
-                            isComeFromSignup: false,
-                          ),
+                    onModifyTap: () async {
+                      final result = await AppNavigator.push(
+                        context,
+                        SubscriptionPlanDetailScreen(
+                          isComeFromSignup: false,
+                          isComeFromProfile: true,
                         ),
+                        disableSwipeBack: true,
                       );
+                      if (result == true) {
+                        _cubit.loadSubscriptionsHistory();
+                      }
                     },
-
                     onCancelTap: () {
                       if (isPlanExpired) {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => FeedbackScreen()),
+                          FeedbackScreen(),
+                          disableSwipeBack: true,
                         );
                       } else {
                         showDeleteConfirmation(context);
@@ -203,13 +207,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                       return BillingHistoryCard(
                         item: item,
                         onTapGesture: () {
-                          Navigator.push(
+                          AppNavigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => MySubscriptionDetailScreen(
-                                subscriptionItem: item,
-                              ),
-                            ),
+                            MySubscriptionDetailScreen(subscriptionItem: item),
+                            disableSwipeBack: true,
                           );
                         },
                       );
@@ -336,7 +337,7 @@ class BillingHistoryCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        "${item.startDate} - ${item.expiryDate} UTC",
+                        "${item.startDateLocal} - ${item.expiryDateLocal}",
                         style: AppTextStyles.regular(12).copyWith(
                           height: 1.0,
                           color: AppColors.greyForTextSubscription,

@@ -12,6 +12,7 @@ import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/signup/signup_cubit.dart';
 import '../../../bloc/Onboarding/signup/signup_state.dart';
@@ -75,10 +76,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
                     onPressed: () {
                       if (!mounted) return;
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                            (route) => false,
-                      );
+                      AppNavigator.pushAndRemoveUntil(context, LoginScreen(), disableSwipeBack: true);
                     },
                   ),
                 ),
@@ -236,12 +234,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 onPressed: () {
                                   if (!mounted) return;
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const LoginScreen(),
-                                    ),
-                                  );
+                                  AppNavigator.push(context, LoginScreen(), disableSwipeBack: true);
 
                                   AnalyticsService.instance.buttonPressed(
                                     FirebaseEvents.loginButton,

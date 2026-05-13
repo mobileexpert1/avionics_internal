@@ -34,6 +34,10 @@ class SubscriptionData {
   final String type;
   final String startDate;
   final String expiryDate;
+
+  final String startDateLocal;
+  final String expiryDateLocal;
+
   final String? cancellationDate;
   final String currency;
   final String price;
@@ -49,6 +53,9 @@ class SubscriptionData {
     required this.type,
     required this.startDate,
     required this.expiryDate,
+    required this.startDateLocal,
+    required this.expiryDateLocal,
+
     this.cancellationDate,
     required this.currency,
     required this.price,
@@ -56,6 +63,9 @@ class SubscriptionData {
   });
 
   factory SubscriptionData.fromJson(Map<String, dynamic> json) {
+    final startDate = json['start_date'] ?? '';
+    final expiryDate = json['expiry_date'] ?? '';
+
     return SubscriptionData(
       userId: json['user_id'] ?? '',
       platform: json['platform'] ?? '',
@@ -64,12 +74,15 @@ class SubscriptionData {
       originalTransactionId: json['original_transaction_id'] ?? '',
       status: json['status'] ?? '',
       type: json['type'] ?? '',
-      startDate: json['start_date'] ?? '',
-      expiryDate: json['expiry_date'] ?? '',
+      startDate: startDate,
+      expiryDate: expiryDate,
       cancellationDate: json['cancellation_date'],
       currency: json['currency'] ?? '',
       price: json['price'] ?? '',
       appTransactionId: json['app_transaction_id'] ?? '',
+
+      startDateLocal: convertUtcToLocal24Hour(startDate),
+      expiryDateLocal: convertUtcToLocal24Hour(expiryDate),
     );
   }
 

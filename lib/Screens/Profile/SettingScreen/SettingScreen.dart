@@ -1,6 +1,7 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/home/homeBloc/home_cubit.dart';
@@ -47,10 +48,8 @@ class _SettingScreenState extends State<SettingScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.settingScreen);
-    _setLocalData();
-
     homeCubit = HomeCubit();
-    homeCubit.fetchHomeData(context);
+    setLocalUserData();
   }
 
   @override
@@ -59,21 +58,19 @@ class _SettingScreenState extends State<SettingScreen> {
     super.dispose();
   }
 
-  Future<void> _setLocalData() async {
-    final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
-    final avatarType = await SharedPrefsHelper.getAvtarUserType();
-
-    if (!mounted) return;
-
-    setState(() {
-      userAvtarTypeUrl = avatarUrl ?? '';
-      avatarTypeName = avatarType ?? '';
-    });
+  Future<void> setLocalUserData() async {
+    final userDetails = await homeCubit.fetchHomeData(context);
+    if (userDetails != null) {
+      setState(() {
+        userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
+        avatarTypeName = userDetails.firstName + userDetails.lastName;
+      });
+    }
   }
 
   /// ---------------- COMMON NAVIGATION ----------------
   void _navigate(BuildContext context, Widget screen) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    AppNavigator.push(context, screen, disableSwipeBack: true);
   }
 
   /// ---------------- COMMON TILE DECORATION ----------------
@@ -99,15 +96,19 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget _avatarWidget() {
     return InkWell(
       onTap: () async {
-        _navigate(
+        final result = await AppNavigator.push(
           context,
           AvtarScreen(
             isComeFromSignupScreen: false,
             isComeFromSettingScreen: true,
             signupData: {},
           ),
+          disableSwipeBack: true,
         );
-        _setLocalData();
+
+        if (result == true) {
+          setLocalUserData();
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
@@ -321,7 +322,9 @@ class _SettingScreenState extends State<SettingScreen> {
         centerTitle: false,
         leftButton: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
         ),
       ),
       body: kIsWeb

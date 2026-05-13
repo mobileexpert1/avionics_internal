@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/Validators.dart';
+import '../../../Helpers/AppNavigator.dart';
 import 'forgot_repository.dart';
 import 'forgot_state.dart';
 
@@ -45,13 +46,10 @@ class ForgotCubit extends Cubit<ForgotState> {
       emit(state.copyWith(status: CommonApiStatus.success));
 
       if (!context.mounted) return;
-
-      Navigator.push(
+      AppNavigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) =>
-              OtpScreen(email: state.email, isComeFromSignup: false),
-        ),
+        OtpScreen(email: state.email, isComeFromSignup: false),
+        disableSwipeBack: true,
       );
     } catch (e) {
       if (context.mounted) {

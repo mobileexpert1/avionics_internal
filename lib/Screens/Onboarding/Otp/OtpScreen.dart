@@ -100,11 +100,16 @@ class _OtpScreenState extends State<OtpScreen> {
                 resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
+                  isClearBackgroundColour: true,
                   title: widget.isComeFromSignup == true
                       ? ConstantStrings.appBarTitleOTPScreen
                       : ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.black,
+                      size: 30,
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
                     },

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
+import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -56,11 +57,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
-
     homeCubit = HomeCubit();
-    homeCubit.fetchHomeData(context);
-
-    setLocalData();
+    setLocalUserData();
   }
 
   @override
@@ -69,19 +67,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> setLocalData() async {
-    final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
-    final name = await SharedPrefsHelper.getUserProfileName();
-
-    if (!mounted) return;
-
-    setState(() {
-      userAvtarTypeUrl = avatarUrl ?? '';
-      userName = name ?? '';
-    });
-
-    if (kDebugMode) {
-      print("Saved Avatar URL: $userAvtarTypeUrl");
+  Future<void> setLocalUserData() async {
+    final userDetails = await homeCubit.fetchHomeData(context);
+    if (userDetails != null) {
+      setState(() {
+        userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
+        userName = userDetails.firstName + userDetails.lastName;
+      });
     }
   }
 
@@ -158,11 +150,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Calculator",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const CalculatorHomeMainScreen(),
-                          ),
+                          const CalculatorHomeMainScreen(),
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -172,14 +163,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Unit Conversions",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => ConversionCubit(),
-                              child: const ConversionsScreen(),
-                            ),
-                          ),
+                          const ConversionsScreen(),
+                          multiBlocProviders: [
+                            BlocProvider(create: (_) => ConversionCubit()),
+                          ],
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -189,14 +179,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Formulas",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => FormulaCubit(),
-                              child: const FormulasScreen(),
-                            ),
-                          ),
+                          const FormulasScreen(),
+                          multiBlocProviders: [
+                            BlocProvider(create: (_) => FormulaCubit()),
+                          ],
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -206,14 +195,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Glossary",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => GlossaryCubit(context),
-                              child: const GlossaryScreen(),
-                            ),
-                          ),
+                          const GlossaryScreen(),
+                          multiBlocProviders: [
+                            BlocProvider(create: (_) => GlossaryCubit(context)),
+                          ],
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -229,11 +217,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Badges",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const BadgesScreen(),
-                          ),
+                          const BadgesScreen(),
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -250,11 +237,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Saved",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => SavedFlighScreen(showTabs: true),
-                          ),
+                          const SavedFlighScreen(showTabs: true),
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -288,11 +274,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 35,
             height: 31,
           ),
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            final result = await AppNavigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const SettingScreen()),
-            ).then((_) => setLocalData());
+              const SettingScreen(),
+              disableSwipeBack: true,
+            );
+            if (result == true) {
+              setLocalUserData();
+            }
           },
         ),
       ),

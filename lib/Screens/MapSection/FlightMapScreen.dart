@@ -64,6 +64,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   int _activeCard = 0;
 
   bool? isFirstTimeUserCome = true;
+  bool _isProgrammaticMove = false;
 
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
@@ -111,6 +112,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
               _isForFlyingInTheArea = 1;
             });
             _resetFlightSelection();
+            _handleFilterTap(context);
           } else if (widget.openMode == 2) {
             setState(() {
               _activeCard = 0;
@@ -201,6 +203,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     required int radiusNm,
     required LatLng center,
     required int numberOfFlight,
+    required bool isComeFromFilterSection,
   }) async {
     final controller = _mapController;
 
@@ -223,6 +226,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     if (mounted) {
       setState(() {
+        _isUserGesture = true;
         _mapCubit.updateTheNumberOfFlightAndRadius(
           numberOfFlight.toInt(),
           radiusNm.toInt(),
@@ -232,14 +236,18 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       print(_mapCubit.state.searchRadius);
     }
 
-    // Animate Camera
-    //_isProgrammaticMove = true;
+    _isProgrammaticMove = true;
 
-    // await controller.animateCamera(
-    //   CameraUpdate.newCameraPosition(
-    //     CameraPosition(target: center, zoom: zoomLevel),
-    //   ),
-    // );
+    if (isComeFromFilterSection == false) return;
+
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: center,
+          zoom: getZoomLevelFromRadius(_mapCubit.state.searchRadius ?? 0),
+        ),
+      ),
+    );
   }
 
   // ── STATE / LOGIC ──────────────────────────────────────────────────────────
@@ -280,7 +288,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     }
   }
 
-  void _fetchFlightsWithDebounce(BoxConstraints constraints) {
+  void _fetchFlightsWithDebounce(
+    BoxConstraints constraints,
+    bool isComeFromFilterSection,
+  ) {
     if (_activeCard != 0) return;
     if (_mapController == null) return;
     _hasFetchedDetails = false;
@@ -307,6 +318,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         numberOfFlight: (_mapCubit.state.numberOfFlights ?? 0) > 0
             ? _mapCubit.state.numberOfFlights!
             : 50,
+        isComeFromFilterSection: isComeFromFilterSection,
       );
     });
   }
@@ -317,6 +329,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     required BuildContext context,
     required int radiusNm,
     required int numberOfFlight,
+    required bool isComeFromFilterSection,
   }) async {
     final radiusMeters = convertNmToMeters(radiusNm);
 
@@ -329,6 +342,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       radiusNm: radiusNm,
       center: centerLatLng,
       numberOfFlight: numberOfFlight,
+      isComeFromFilterSection: isComeFromFilterSection,
     );
 
     _mapCubit.fetchFlightsByBounds(
@@ -666,6 +680,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     );
 
     if (result != null && result is FlightResult) {
+      _isProgrammaticMove = true;
+
       _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(
           LatLng(
@@ -978,18 +994,26 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                     : null,
 
                                 onCameraIdle: () {
+                                  if (_isProgrammaticMove) {
+                                    _isProgrammaticMove = false;
+                                    return;
+                                  }
+
                                   if (!_isUserGesture) return;
 
                                   _isUserGesture = false;
 
                                   if (isFirstTimeUserCome == false) {
-                                    _fetchFlightsWithDebounce(constraints);
-                                  } else if (widget.openMode == 1) {
-                                    _fetchFlightsWithDebounce(constraints);
+                                    _fetchFlightsWithDebounce(
+                                      constraints,
+                                      false,
+                                    );
                                   }
                                 },
 
                                 onCameraMoveStarted: () {
+                                  if (_isProgrammaticMove) return;
+
                                   _isUserGesture = true;
                                 },
 
@@ -1172,13 +1196,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
         final visibleRegion = await controller.getVisibleRegion();
         final centerLatLng = getBoundsCenter(visibleRegion);
-
         await _refreshMapData(
           centerLatLng: centerLatLng,
           bounds: visibleRegion,
           context: context,
           numberOfFlight: filterResult.numberOfFlights.toInt(),
           radiusNm: filterResult.searchRadius.toInt(),
+          isComeFromFilterSection: true,
         );
       } catch (e) {
         debugPrint('Filter fetch skipped: $e');
@@ -1352,6 +1376,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                       _mapCubit.setSelectedFlight(data);
                                     });
                                   });
+
+                                  _isProgrammaticMove = true;
 
                                   _mapController?.animateCamera(
                                     CameraUpdate.newLatLngZoom(

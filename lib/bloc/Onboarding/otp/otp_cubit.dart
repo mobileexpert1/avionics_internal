@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'otp_repository.dart';
 import 'otp_state.dart';
@@ -36,15 +37,12 @@ class OtpCubit extends Cubit<OtpState> {
         await SharedPrefsHelper.saveIsUserLogin(true);
       }
 
-      Navigator.pushReplacement(
+      AppNavigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => (isFromSignup == true)
-              ? SubscriptionPlanDetailScreen(
-            isComeFromSignup: true,
-          )
-              : CreateNewPasswordScreen(email: email),
-        ),
+        (isFromSignup == true)
+            ? SubscriptionPlanDetailScreen(isComeFromSignup: true)
+            : CreateNewPasswordScreen(email: email),
+        disableSwipeBack: true,
       );
     } catch (e) {
       emit(

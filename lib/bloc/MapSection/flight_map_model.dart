@@ -236,7 +236,6 @@ class FlightModel {
     'takeoff_time': takeoffTime?.toUtc().toIso8601String(),
     'flight_time': flightTime,
 
-    // ✅ New fields
     'first_seen': firstSeen?.toUtc().toIso8601String(),
     'last_seen': lastSeen?.toUtc().toIso8601String(),
     'flight_ended': flightEnded,

@@ -58,9 +58,9 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
                 .capitalize();
 
             final expiryDate =
-                "${widget.subscriptionItem.startDate} - ${widget.subscriptionItem.expiryDate} UTC";
+                "${widget.subscriptionItem.startDateLocal} - ${widget.subscriptionItem.expiryDateLocal}";
 
-            final startDate = "${widget.subscriptionItem.startDate} UTC";
+            final startDate = widget.subscriptionItem.startDateLocal;
 
             final transactionId = widget.subscriptionItem.originalTransactionId;
 

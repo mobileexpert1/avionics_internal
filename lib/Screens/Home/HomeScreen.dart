@@ -1,18 +1,17 @@
 import 'package:avionics_internal/Screens/Home/HomeAirbus/AirCraftSection/SelectModelCompareScreen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
-import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../Helpers/AppListTileCard.dart';
+import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppText.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
@@ -23,10 +22,9 @@ import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../MapSection/FlightMapScreen.dart';
-import '../Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import 'HomeAirbus/ChatSection/ChatBotScreen.dart';
+import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
 
@@ -81,9 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
               fit: BoxFit.cover,
             ),
             onPressed: () async {
-              Navigator.push(
+              AppNavigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingScreen()),
+                SettingScreen(),
+                disableSwipeBack: true,
               );
             },
           ),
@@ -101,17 +100,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.openAskWilcoChatButton,
                   FirebaseEvents.exploreScreen,
                 );
-
-                Navigator.push(
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => AskWilcoScreen(
-                      accessToken: token,
-                      isComeFromTab: false,
-                      sessionId: '',
-                      title: '',
-                    ),
+                  AskWilcoScreen(
+                    accessToken: token,
+                    isComeFromTab: false,
+                    sessionId: '',
+                    title: '',
                   ),
+                  disableSwipeBack: true,
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -212,13 +209,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       FirebaseEvents.selectModelCompareScreen,
                                       FirebaseEvents.exploreScreen,
                                     );
-
-                                    Navigator.push(
+                                    AppNavigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            SelectModelCompareScreen(),
-                                      ),
+                                      SelectModelCompareScreen(),
+                                      disableSwipeBack: true,
                                     );
                                   },
                                 ),
@@ -380,17 +374,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.manufacturerDetailScreen,
                   FirebaseEvents.exploreScreen,
                 );
-
-                Navigator.push(
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                      create: (_) => ManufacturerCubit(),
-                      child: ManufacturerDetailScreen(
-                        manufacturerDetailId: formula.id,
-                      ),
-                    ),
-                  ),
+                  ManufacturerDetailScreen(manufacturerDetailId: formula.id),
+                  multiBlocProviders: [
+                    BlocProvider(create: (_) => ManufacturerCubit()),
+                  ],
+                  disableSwipeBack: true,
                 );
               },
               isSvg: (formula.icon ?? '').contains(".svg"),
@@ -406,9 +396,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.exploreScreen,
                 );
 
-                Navigator.push(
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ManufacturerScreen()),
+                  ManufacturerScreen(),
+                  disableSwipeBack: true,
                 );
               },
               child: Text(
@@ -494,10 +485,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.flightMapScreen,
                   FirebaseEvents.exploreScreen,
                 );
-                Navigator.push(
+
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider(
+                  FlightMapScreen(
+                    onGoToFirstTab: () {},
+                    skipInitialPopup: true,
+                    openMode: 1,
+                  ),
+                  multiBlocProviders: [
+                    BlocProvider(
                       create: (_) {
                         final mapCubit = FlightMapCubit();
                         final firstFlight = mapCubit.state.flights?.first;
@@ -507,13 +504,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         return mapCubit;
                       },
-                      child: FlightMapScreen(
-                        onGoToFirstTab: () {},
-                        skipInitialPopup: true,
-                        openMode: 1,
-                      ),
                     ),
-                  ),
+                  ],
+                  disableSwipeBack: true,
                 );
               }
             },
@@ -577,10 +570,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.flightMapScreen,
                   FirebaseEvents.exploreScreen,
                 );
-                Navigator.push(
+
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider(
+                  FlightMapScreen(
+                    onGoToFirstTab: () {},
+                    skipInitialPopup: true,
+                    openMode: 2,
+                  ),
+                  multiBlocProviders: [
+                    BlocProvider(
                       create: (_) {
                         final mapCubit = FlightMapCubit();
                         final firstFlight = mapCubit.state.flights?.first;
@@ -590,13 +589,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         return mapCubit;
                       },
-                      child: FlightMapScreen(
-                        onGoToFirstTab: () {},
-                        skipInitialPopup: true,
-                        openMode: 1,
-                      ),
                     ),
-                  ),
+                  ],
+                  disableSwipeBack: true,
                 );
               }
             },

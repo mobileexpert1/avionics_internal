@@ -21,6 +21,7 @@ const String _rcAndroidApiKey = 'goog_nQAujUhKgFBEPESGnzMOczSTIOv';
 class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   bool _isConfigured = false;
   bool isComeFromSignup = false;
+  bool isProductChangeRequest = false;
 
   static const avioflaiPRO = 'Avioflai Pro';
   static const avioflaiBASIC = 'Avioflai';
@@ -31,9 +32,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     return email.trim().toLowerCase();
   }
 
-  Future<void> initRevenueCat() async {
+  Future<void> initRevenueCat(bool isComeFromProfile) async {
     if (kIsWeb) return;
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loading: true, isComeFromProfile: isComeFromProfile));
     try {
       final email = await SharedPrefsHelper.getEmail();
 
@@ -63,31 +64,31 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         _isConfigured = true;
       }
 
-      // final info = await Purchases.getCustomerInfo();
-      // if (info.entitlements.active.isNotEmpty) {
-      //   _handleCustomerInfo(info);
-      // } else {
-      //   try {
-      //     await Purchases.restorePurchases();
-      //   } catch (e) {
-      //     if (e is PlatformException &&
-      //         e.details != null &&
-      //         e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
-      //       emit(
-      //         state.copyWith(
-      //           isBlocked: true,
-      //           loading: false,
-      //           error:
-      //               "This Apple/Google account is already linked with another account. Please login with the original account.",
-      //         ),
-      //       );
-      //       return;
-      //     }
-      //   }
-      // }
+      final info = await Purchases.getCustomerInfo();
+      if (info.entitlements.active.isNotEmpty) {
+        _handleCustomerInfo(info);
+      }
+
+      try {
+        await Purchases.restorePurchases();
+      } catch (e) {
+        if (e is PlatformException &&
+            e.details != null &&
+            e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
+          emit(
+            state.copyWith(
+              isBlocked: isComeFromProfile == true ? false : true,
+              loading: false,
+              error: isComeFromProfile == true
+                  ? "This account is already linked to another ${Platform.isIOS ? "Apple" : "Google"} account. Please log in with the original account to access this feature."
+                  : "This account is already linked with another ${Platform.isIOS ? "Apple" : "Google"}. Please log in with the original account to access this feature.",
+            ),
+          );
+          return;
+        }
+      }
 
       await loadOfferings();
-      // await getSubscriptionsFromBackendServer();
     } catch (e) {
       if (!isClosed) {
         debugPrint("RC login: ${e.toString()}");
@@ -151,18 +152,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     } else {
       emit(state.copyWith(purchased: false, loading: false));
     }
-
-    // if (!isClosed) {
-    //   emit(
-    //     state.copyWith(
-    //       purchased: isActive,
-    //       isProUser: isPro,
-    //       loading: false,
-    //       activeProductId: activeProductId,
-    //       status: CommonApiStatus.success,
-    //     ),
-    //   );
-    // }
   }
 
   Future<void> waitForBackendConfirmation(
@@ -192,15 +181,13 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
               status: CommonApiStatus.success,
             ),
           );
-
           return;
         }
       } catch (e) {
         //emit(state.copyWith(error: e.toString()));
       }
-      await Future.delayed(const Duration(seconds: 4));
+      await Future.delayed(const Duration(seconds: 6));
     }
-
     emit(
       state.copyWith(
         purchased: false,
@@ -396,7 +383,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
     switch (errorCode) {
       case PurchasesErrorCode.purchaseCancelledError:
-        emit(state.copyWith(loading: false));
+        emit(state.copyWith(loading: false, error: "Purchase was cancelled."));
         return;
 
       case PurchasesErrorCode.networkError:

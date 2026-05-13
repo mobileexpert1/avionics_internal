@@ -60,12 +60,15 @@ class MySubscriptionItem {
   final String platform;
   final String startDate;
   final String expiryDate;
+
+  final String startDateLocal;
+  final String expiryDateLocal;
   final String? cancellationDate;
   final String currency;
   final String price;
   final dynamic priceInPurchasedCurrency;
   final double taxPercentage;
-   final double taxAmount;
+  final double taxAmount;
   final String originalTransactionId;
   final MySubscriptionPlanModel plan;
   final String currencySymbol;
@@ -76,6 +79,10 @@ class MySubscriptionItem {
     required this.platform,
     required this.startDate,
     required this.expiryDate,
+
+    required this.startDateLocal,
+    required this.expiryDateLocal,
+
     required this.cancellationDate,
     required this.currency,
     required this.price,
@@ -89,13 +96,19 @@ class MySubscriptionItem {
 
   factory MySubscriptionItem.fromJson(Map<String, dynamic> json) {
     final currencyCode = json['currency'] ?? '';
+    final startDate = json['start_date'] ?? '';
+    final expiryDate = json['expiry_date'] ?? '';
 
     return MySubscriptionItem(
       id: json['id'] ?? '',
       status: json['status'] ?? '',
       platform: json['platform'] ?? '',
-      startDate: json['start_date'] ?? '',
-      expiryDate: json['expiry_date'] ?? '',
+      startDate: startDate,
+      expiryDate: expiryDate,
+
+      startDateLocal: convertUtcToLocal24Hour(startDate),
+      expiryDateLocal: convertUtcToLocal24Hour(expiryDate),
+
       cancellationDate: json['cancellation_date'],
       currency: currencyCode,
       price: json['price'] ?? '',
@@ -129,6 +142,35 @@ class MySubscriptionItem {
 
   static String getCurrencySymbol(String currencyCode) {
     return NumberFormat.simpleCurrency(name: currencyCode).currencySymbol;
+  }
+}
+
+String convertUtcToLocal24Hour(String utcDate) {
+  try {
+    final cleanDate = utcDate.replaceAll(" UTC", "").trim();
+
+    final formattedDate = cleanDate
+        .split(' ')
+        .asMap()
+        .entries
+        .map((entry) {
+          if (entry.key == 1) {
+            final month = entry.value;
+            return month[0].toUpperCase() + month.substring(1).toLowerCase();
+          }
+          return entry.value;
+        })
+        .join(' ');
+
+    final utcDateTime = DateFormat(
+      'dd MMM yyyy, HH:mm',
+    ).parseUtc(formattedDate);
+
+    final localDateTime = utcDateTime.toLocal();
+
+    return DateFormat('dd MMM yyyy, HH:mm').format(localDateTime);
+  } catch (e) {
+    return utcDate;
   }
 }
 

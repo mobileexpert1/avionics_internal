@@ -7,6 +7,7 @@ import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../ChangePassword/ChangePasswordScreen.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -172,7 +173,6 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           //     ),
                           //   ),
                           // ),
-
                           const SizedBox(height: 30),
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(
@@ -191,12 +191,10 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                             onPressed: () async {
                               if (buttonBottomTitle ==
                                   ConstantStrings.changePassword) {
-                                Navigator.push(
+                                AppNavigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChangePasswordScreen(),
-                                  ),
+                                  ChangePasswordScreen(),
+                                  disableSwipeBack: true,
                                 );
                               } else if (buttonBottomTitle ==
                                   ConstantStrings.saveTitle) {

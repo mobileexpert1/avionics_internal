@@ -14,6 +14,7 @@ import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../CustomFiles/CustomSocialLoginButtons.dart';
 import '../../../CustomFiles/CustomTextField.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/login/login_cubit.dart';
 import '../../../bloc/Onboarding/login/login_state.dart';
@@ -165,13 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextButton(
                               onPressed: () {
                                 if (!mounted) return;
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ForgotScreen(),
-                                  ),
-                                );
+                                AppNavigator.push(context, ForgotScreen(), disableSwipeBack: true);
 
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.forgotButton,
@@ -264,14 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextButton(
                               onPressed: () {
                                 if (!mounted) return;
-
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const SignupScreen(),
-                                  ),
-                                );
-
+                                AppNavigator.pushReplacement(context, SignupScreen(), disableSwipeBack: true);
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.signupButton,
                                   FirebaseEvents.loginScreen,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../Home/RootTabbar/RootDecider.dart';
 import 'onboarding_screen.dart';
 
@@ -32,13 +33,9 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!isFirst) {
       await SharedPrefsHelper.setFirstLaunchDone();
       if (!mounted) return;
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => OnboardingScreen()));
+      AppNavigator.pushReplacement(context, OnboardingScreen(), disableSwipeBack: true);
     } else {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => RootDecider()));
+      AppNavigator.pushReplacement(context, RootDecider(), disableSwipeBack: true);
     }
   }
 

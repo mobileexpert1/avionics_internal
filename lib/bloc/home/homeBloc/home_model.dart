@@ -8,6 +8,7 @@ class HomeResponse {
   final List<Flight> flights;
   final List<Favourite> favourites;
   final CurrentPlan? currentPlan;
+  final UserDetails? userDetails;
 
   HomeResponse({
     required this.detail,
@@ -16,6 +17,7 @@ class HomeResponse {
     required this.flights,
     required this.favourites,
     this.currentPlan,
+    this.userDetails,
   });
 
   factory HomeResponse.fromJson(Map<String, dynamic> json) => HomeResponse(
@@ -32,6 +34,9 @@ class HomeResponse {
         .toList(),
     currentPlan: json['current_plan'] != null
         ? CurrentPlan.fromJson(json['current_plan'])
+        : null,
+    userDetails: json['user'] != null
+        ? UserDetails.fromJson(json['user'])
         : null,
   );
 }
@@ -179,7 +184,6 @@ class CurrentPlan {
   final double creditUsage;
   final double creditLimit;
 
-
   CurrentPlan({
     required this.id,
     required this.name,
@@ -207,6 +211,32 @@ class CurrentPlan {
       tokenUsage: (json['token_usage'] ?? 0).toDouble(),
       creditUsage: (json['credit_usage'] ?? 0).toDouble(),
       creditLimit: json['credit_usage'] ?? '',
+    );
+  }
+}
+
+class UserDetails {
+  final String id;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String userTypeUrl;
+
+  UserDetails({
+    required this.id,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.userTypeUrl,
+  });
+
+  factory UserDetails.fromJson(Map<String, dynamic> json) {
+    return UserDetails(
+      id: json['id'] ?? '',
+      email: json['email'] ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      userTypeUrl: json['user_type_url'] ?? '',
     );
   }
 }
