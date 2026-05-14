@@ -226,13 +226,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.progressProfile,
-                      ),
-                      title: "Progress / Stats",
-                      onTap: () {},
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.savedProfile,
                       ),
                       title: "Saved",

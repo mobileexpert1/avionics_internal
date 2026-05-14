@@ -296,6 +296,12 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "flutter_animate",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_animate-4.5.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter_bloc",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_bloc-9.1.1",
       "packageUri": "lib/",
@@ -402,6 +408,12 @@
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_shaders",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_shaders-0.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "flutter_slidable",

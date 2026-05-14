@@ -31,58 +31,6 @@ class SubscriptionBuyPlanRepository {
       );
 
       printFullText(token);
-
-      // final decoded = decodeJwt(token);
-      //
-      // print("FULL PAYLOAD => $decoded");
-      //
-      // final expiry = decoded['expiresDate'];
-      // final purchaseDate = decoded['purchaseDate'];
-      //
-      // if (expiry != null) {
-      //   print("Expiry (IST 12h) => ${formatDateUniversal(expiry, toIST: true, use12Hour: true)}");
-      //   print("Expiry (IST 24h) => ${formatDateUniversal(expiry, toIST: true, use12Hour: false)}");
-      //
-      //   print("Expiry (UTC 12h) => ${formatDateUniversal(expiry, toIST: false, use12Hour: true)}");
-      //   print("Expiry (UTC 24h) => ${formatDateUniversal(expiry, toIST: false, use12Hour: false)}");
-      // }
-      //
-      // if (purchaseDate != null) {
-      //   print("Purchase (IST 12h) => ${formatDateUniversal(purchaseDate, toIST: true, use12Hour: true)}");
-      //   print("Purchase (IST 24h) => ${formatDateUniversal(purchaseDate, toIST: true, use12Hour: false)}");
-      //
-      //   print("Purchase (UTC 12h) => ${formatDateUniversal(purchaseDate, toIST: false, use12Hour: true)}");
-      //   print("Purchase (UTC 24h) => ${formatDateUniversal(purchaseDate, toIST: false, use12Hour: false)}");
-     // }
-
-      // int? expiry1 = decoded['expiresDate'] is int
-      //     ? decoded['expiresDate']
-      //     : int.tryParse(decoded['expiresDate'].toString());
-      //
-      // int? purchaseDate1 = decoded['purchaseDate'] is int
-      //     ? decoded['purchaseDate']
-      //     : int.tryParse(decoded['purchaseDate'].toString());
-
-      // if (expiry1 != null) {
-      //   final expiryDate1 = DateTime
-      //       .fromMillisecondsSinceEpoch(expiry1, isUtc: true)
-      //       .toLocal(); // ✅ IST
-      //
-      //   print("IST Expiry Date => $expiryDate1");
-      // }
-      //
-      // if (purchaseDate1 != null) {
-      //   final purchase1 = DateTime
-      //       .fromMillisecondsSinceEpoch(purchaseDate1, isUtc: true)
-      //       .toLocal(); // ✅ IST
-      //
-      //   print("IST Purchase Date => $purchase1");
-      // }
-
-      // print("TransactionId => ${decoded['transactionId']}");
-      // print("OriginalTransactionId => ${decoded['originalTransactionId']}");
-      // print("Environment => ${decoded['environment']}");
-
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();

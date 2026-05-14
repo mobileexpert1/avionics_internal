@@ -325,34 +325,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     }
   }
 
-  //  bool _isSyncing = false;
-
-  // // ================= BACKEND FETCH =================
-  // Future<void> getSubscriptionsFromBackendServer() async {
-  //   if (_isSyncing) return;
-  //   _isSyncing = true;
-  //
-  //   try {
-  //     final response = await SubscriptionBuyPlanRepository()
-  //         .getSubscriptionDetails();
-  //     final rcActive = state.purchased;
-  //     emit(
-  //       state.copyWith(
-  //         subscription: response,
-  //         purchased: rcActive,
-  //         activeProductId: state.activeProductId,
-  //         isBlocked: false,
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     emit(
-  //       state.copyWith(loading: false, error: e.toString(), isBlocked: false),
-  //     );
-  //   } finally {
-  //     _isSyncing = false;
-  //   }
-  // }
-
   // ================= CANCEL GUIDE =================
   Future<void> guideUserToCancelSubscription() async {
     if (!state.purchased) {
