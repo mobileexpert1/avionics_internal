@@ -22,6 +22,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   bool _isConfigured = false;
   bool isComeFromSignup = false;
   bool isProductChangeRequest = false;
+  bool globalWebRedirectDone = false;
 
   static const avioflaiPRO = 'Avioflai Pro';
   static const avioflaiBASIC = 'Avioflai';
@@ -30,6 +31,31 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
   String _getRCUserId(String email) {
     return email.trim().toLowerCase();
+  }
+
+  Future<void> handleWebRedirectionIfNeeded() async {
+    if (globalWebRedirectDone) return;
+    globalWebRedirectDone = true;
+
+    final webSessionToken = await SubscriptionBuyPlanRepository()
+        .getSubscriptionSessionToken();
+
+    if (webSessionToken.session == "" || webSessionToken.session == null) {
+      return;
+    }
+    final callback = Uri.encodeComponent(Uri.base.toString());
+
+    final url =
+        "https://avionica.csdevhub.com/user-service/subscription/choose/${webSessionToken.session}?callback=$callback";
+
+    print(url);
+
+    final uri = Uri.parse(url);
+    if (kIsWeb) {
+      await launchUrl(uri, webOnlyWindowName: '_self');
+    } else {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Future<void> initRevenueCat(bool isComeFromProfile) async {

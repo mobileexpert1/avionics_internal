@@ -4,11 +4,13 @@ class SubscriptionBuyPlanStateModel {
   final String detail;
   final SubscriptionData? data;
   final MySubscriptionItem? upcoming;
+  final String? session;
 
   SubscriptionBuyPlanStateModel({
     required this.detail,
     required this.data,
     required this.upcoming,
+    required this.session,
   });
 
   factory SubscriptionBuyPlanStateModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class SubscriptionBuyPlanStateModel {
       upcoming: json['upcoming'] != null
           ? MySubscriptionItem.fromJson(json['upcoming'])
           : null,
+      session: json['session'] ?? '',
     );
   }
 }
