@@ -22,12 +22,11 @@ class LevelNodeModel {
       position: position,
       isUnlocked: isUnlocked ?? this.isUnlocked,
       isCompleted: isCompleted ?? this.isCompleted,
-      isLeftSide: isLeftSide ?? this.isLeftSide,
+      isLeftSide: isLeftSide ?? isLeftSide,
     );
   }
 }
 
-// ✅ FIX 1: cubicTo use kiya — proper S-curve banata hai screenshot jaisa
 class AnimatedPathPainter extends CustomPainter {
   final List<Offset> points;
   final double progress;
@@ -142,15 +141,17 @@ class LevelNodeWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: isLeftSide
-            ? [label, const SizedBox(width: 8), icon] // text → icon
-            : [icon, const SizedBox(width: 8), label], // icon → text
+            ? [label, const SizedBox(width: 8), icon]
+            : [icon, const SizedBox(width: 8), label],
       ),
     );
   }
 }
 
 class PlaneWidget extends StatelessWidget {
-  const PlaneWidget({super.key});
+  final bool isMovingLeft;
+
+  const PlaneWidget({super.key, required this.isMovingLeft});
 
   @override
   Widget build(BuildContext context) {
@@ -161,10 +162,16 @@ class PlaneWidget extends StatelessWidget {
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10),
         ],
       ),
-      child: const Icon(Icons.flight_takeoff, color: Color(0xFF1E1B5E)),
+
+      child: Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.identity()..scale(isMovingLeft ? -1.0 : 1.0, 1.0),
+
+        child: const Icon(Icons.flight_takeoff, color: Color(0xFF1E1B5E)),
+      ),
     );
   }
 }
@@ -353,6 +360,8 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
     final points = levels.map((e) => e.position).toList();
     final double contentHeight = _contentHeight;
 
+    bool isLeft = false;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -372,11 +381,10 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
                     painter: AnimatedPathPainter(points: points, progress: 1.0),
                     size: Size.infinite,
                   ),
-
                   ...levels.asMap().entries.map((entry) {
                     final index = entry.key;
                     final level = entry.value;
-                    final bool isLeft = index.isEven;
+                    isLeft = index.isEven;
                     return Positioned(
                       left: level.position.dx - (isLeft ? 65 : 18),
                       top: level.position.dy - 20,
@@ -389,7 +397,6 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
                       ),
                     );
                   }),
-
                   if (isPlaneVisible)
                     AnimatedBuilder(
                       animation: controller,
@@ -399,10 +406,22 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
                           currentSegment,
                           controller.value,
                         );
+
+                        final start = levels[currentSegment].position;
+
+                        final end =
+                            levels[(currentSegment + 1).clamp(
+                                  0,
+                                  levels.length - 1,
+                                )]
+                                .position;
+
+                        final isMovingLeft = end.dx < start.dx;
+
                         return Positioned(
                           left: pos.dx - 22,
                           top: pos.dy - 22,
-                          child: const PlaneWidget(),
+                          child: PlaneWidget(isMovingLeft: isMovingLeft),
                         );
                       },
                     ),
@@ -441,8 +460,64 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
               ),
             ),
           ),
+
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 100,
+            child: GestureDetector(
+              onTap: () => _moveToIndex(9),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Jump to Level 5',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _moveToIndex(int targetIndex) async {
+    if (targetIndex <= currentSegment) return;
+    if (targetIndex >= levels.length) return;
+    if (controller.isAnimating) return;
+
+    while (currentSegment < targetIndex) {
+      setState(() => isPlaneVisible = true);
+
+      await controller.forward(from: 0);
+
+      setState(() {
+        levels[currentSegment] = levels[currentSegment].copyWith(
+          isCompleted: true,
+        );
+        currentSegment++;
+        levels[currentSegment] = levels[currentSegment].copyWith(
+          isUnlocked: true,
+        );
+        isPlaneVisible = false;
+      });
+      if (currentSegment <= 6) {
+        await _scrollController.animateTo(
+          _scrollController.offset - _levelSpacing,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+        );
+      }
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
   }
 }

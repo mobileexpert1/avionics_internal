@@ -455,17 +455,17 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       case 2:
       case 3:
       case 4:
-        return kIsWeb ? 30 : 80;
+        return kIsWeb ? 30 : 50;
       case 5:
       case 6:
       case 7:
-        return kIsWeb ? 50 : 100;
+        return kIsWeb ? 50 : 60;
       case 8:
       case 9:
       case 10:
-        return kIsWeb ? 80 : 150;
+        return kIsWeb ? 80 : 70;
       default:
-        return kIsWeb ? 100 : 180;
+        return 100;
     }
   }
 
@@ -1135,6 +1135,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 initialCategories: currentCategories,
                 numberOfFlights: currentNumberOfFlight,
                 searchRadius: currentSearchRadius,
+                onTapBackButton: () {
+                  _showInitialTrackingModePopup(context);
+                },
               ),
             ),
           ),
