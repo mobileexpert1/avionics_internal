@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'game_model.dart';
 
-
 @immutable
 abstract class GamesState {}
 

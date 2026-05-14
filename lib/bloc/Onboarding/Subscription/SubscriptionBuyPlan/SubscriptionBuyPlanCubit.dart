@@ -174,7 +174,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
     if (isActive) {
       emit(state.copyWith(waitingForBackendConfirmation: true, loading: true));
-      await waitForBackendConfirmation(isPro, activeProductId ?? "");
+      if (!isClosed) {
+        await waitForBackendConfirmation(isPro, activeProductId ?? "");
+      }
     } else {
       emit(state.copyWith(purchased: false, loading: false));
     }
@@ -212,16 +214,20 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       } catch (e) {
         //emit(state.copyWith(error: e.toString()));
       }
-      await Future.delayed(const Duration(seconds: 6));
+      if (!isClosed) {
+        await Future.delayed(const Duration(seconds: 6));
+      }
     }
-    emit(
-      state.copyWith(
-        purchased: false,
-        waitingForBackendConfirmation: false,
-        loading: false,
-        error: "Subscription verification taking longer than expected",
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          purchased: false,
+          waitingForBackendConfirmation: false,
+          loading: false,
+          error: "Subscription verification taking longer than expected",
+        ),
+      );
+    }
   }
 
   Future<void> isRefreshTheScreen(bool isRefresh) async {
