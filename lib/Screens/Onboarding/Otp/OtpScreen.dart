@@ -105,10 +105,9 @@ class _OtpScreenState extends State<OtpScreen> {
                       ? ConstantStrings.appBarTitleOTPScreen
                       : ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.black,
-                      size: 30,
+                    icon: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      fit: BoxFit.cover,
                     ),
                     onPressed: () {
                       Navigator.pop(context);

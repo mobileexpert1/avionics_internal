@@ -1,6 +1,8 @@
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:flutter_svg/svg.dart';
+import '../AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
+import 'InfoBottomSheet.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -27,11 +29,8 @@ import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
 import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../VideoPlayer/VideoPlayerScreen.dart';
-import '../demoAnimation/DemoAnimation.dart';
-import 'InfoBottomSheet.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});

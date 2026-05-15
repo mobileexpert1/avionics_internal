@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
@@ -69,10 +71,9 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
               isForComparison: true,
               centerTitle: false,
               leftButton: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 30,
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
                 ),
                 onPressed: () => Navigator.pop(context),
               ),

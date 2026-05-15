@@ -249,10 +249,9 @@ class _FlightDetailScreenForMapSectionState
                 : 'N/A',
             centerTitle: false,
             leftButton: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 30,
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                fit: BoxFit.cover,
               ),
               onPressed: () => Navigator.pop(context),
             ),
@@ -625,10 +624,9 @@ class _FlightDetailScreenForMapSectionState
                         color: Colors.black45,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                        size: 14,
+                      child:SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

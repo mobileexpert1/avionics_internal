@@ -17,6 +17,7 @@ import 'Database/db_helper.dart';
 import 'Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
+import 'Screens/Profile/AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
 import 'Screens/Profile/ScientificCalculator/providers/calculations.dart';
 import 'Screens/Profile/ScientificCalculator/providers/history.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
@@ -146,7 +147,7 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit'),
-            home: SplashScreen(),
+            home: InfoWrongGameScreen(),
           );
         },
       ),

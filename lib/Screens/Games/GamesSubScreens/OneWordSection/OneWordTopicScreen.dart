@@ -3,8 +3,10 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneW
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/LockedGameCard.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
@@ -52,10 +54,9 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
         appBar: CustomAppBar(
           title: 'One word game',
           leftButton: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 30,
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),

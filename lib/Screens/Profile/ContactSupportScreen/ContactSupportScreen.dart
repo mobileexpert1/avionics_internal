@@ -1,7 +1,11 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -19,7 +23,6 @@ class ContactSupportScreen extends StatefulWidget {
 class _ContactSupportScreenState extends State<ContactSupportScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController messageController = TextEditingController();
-  bool _loadingUser = true;
 
   late final ContactSupportCubit _cubit;
 
@@ -34,17 +37,10 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
   }
 
   Future<void> _loadUserEmail() async {
-    try {
-      final user = await ManageAccountRepository().getUserDetail();
-      if (user.email.isNotEmpty) {
-        emailController.text = user.email;
-        _cubit.updateEmail(user.email);
-      }
-    } catch (_) {
-    } finally {
-      setState(() {
-        _loadingUser = false;
-      });
+    var userEmail = await SharedPrefsHelper.getEmail();
+    if (userEmail != "" && userEmail != null) {
+      emailController.text = userEmail;
+      _cubit.updateEmail(userEmail);
     }
   }
 
@@ -68,193 +64,256 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
           centerTitle: false,
           title: "Contact Support",
           leftButton: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 30,
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
             ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: _loadingUser
-              ? const Center(child: CircularProgressIndicator())
-              : Align(
-                  alignment: Alignment.topCenter,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxWidth),
-                    child: BlocListener<ContactSupportCubit, ContactSupportState>(
-                      listenWhen: (previous, current) =>
-                          current.submissionSuccess &&
-                          !previous.submissionSuccess,
-                      listener: (context, state) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Your message has been sent successfully.",
-                            ),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: BlocBuilder<ContactSupportCubit, ContactSupportState>(
-                        builder: (context, state) {
-                          final cubit = _cubit;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 25,
-                              vertical: 30,
-                            ),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Enter your email",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF3F3D56),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: BlocListener<ContactSupportCubit, ContactSupportState>(
+                listenWhen: (previous, current) =>
+                    current.submissionSuccess && !previous.submissionSuccess,
+                listener: (context, state) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Your message has been sent successfully."),
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+                child: BlocBuilder<ContactSupportCubit, ContactSupportState>(
+                  builder: (context, state) {
+                    final cubit = _cubit;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 18,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            /// TOP IMAGE
+                            Center(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                constraints: const BoxConstraints(
+                                  maxWidth: 220,
+                                ),
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: SvgPicture.asset(
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.contactSupport,
                                     ),
+                                    fit: BoxFit.contain,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF5F5F5),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 18),
+
+                            // TITLE
+                            const Text(
+                              "Contact Support",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              ),
+                            ),
+
+                            const SizedBox(height: 22),
+
+                            /// EMAIL FIELD
+                            Container(
+                              height: 58,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.extraLightGrey,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withValues(alpha: 0.5),
+                                    spreadRadius: 0,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.mail_outline_sharp,
+                                    color: AppColors.primaryBlue,
+                                    size: 30,
+                                  ),
+
+                                  const SizedBox(width: 10),
+                                  Expanded(
                                     child: TextField(
+                                      readOnly: true,
                                       controller: emailController,
                                       decoration: const InputDecoration(
-                                        hintText: "Enter your email address",
+                                        hintText: "Enter your email",
+
                                         border: InputBorder.none,
+                                        hintStyle: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF8A8A8A),
+                                        ),
                                       ),
                                       keyboardType: TextInputType.emailAddress,
                                       onChanged: (value) =>
                                           cubit.updateEmail(value.trim()),
                                     ),
                                   ),
-                                  if (state.email.isNotEmpty &&
-                                      !cubit.isValidEmail(state.email)) ...[
-                                    const SizedBox(height: 6),
-                                    const Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Please enter a valid email address",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    "Enter description",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF3F3D56),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF5F5F5),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: TextField(
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 12,
-                                      ),
-                                      controller: messageController,
-                                      maxLines: 10,
-                                      decoration: const InputDecoration(
-                                        hintText:
-                                            "Enter your message or details...",
-                                        border: InputBorder.none,
-                                      ),
-                                      onChanged: (value) =>
-                                          cubit.updateMessage(value.trim()),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: CustomBottomButton(
-                                      fontStyle: AppTextStyles.regular(21.46)
-                                          .copyWith(
-                                            height: 1.0,
-                                            color:
-                                                !state.isSubmitting &&
-                                                    state.email.isNotEmpty &&
-                                                    cubit.isValidEmail(
-                                                      state.email,
-                                                    ) &&
-                                                    state.message.isNotEmpty
-                                                ? Colors.white
-                                                : Colors.grey.shade600,
-                                          ),
-                                      title: state.isSubmitting ? "" : "Submit",
-                                      backgroundColor: const Color.fromRGBO(
-                                        63,
-                                        61,
-                                        81,
-                                        1.0,
-                                      ),
-                                      textColor: Colors.white,
-                                      icon: state.isSubmitting
-                                          ? const SizedBox(
-                                              height: 24,
-                                              width: 24,
-                                              child: CircularProgressIndicator(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
-                                                strokeWidth: 2,
-                                              ),
-                                            )
-                                          : const SizedBox(width: 0),
-                                      isEnabled:
-                                          !state.isSubmitting &&
-                                          state.email.isNotEmpty &&
-                                          cubit.isValidEmail(state.email) &&
-                                          state.message.isNotEmpty,
-                                      onPressed: () {
-                                        FocusScope.of(context).unfocus();
-                                        if (state.email.isNotEmpty &&
-                                            cubit.isValidEmail(state.email) &&
-                                            state.message.isNotEmpty) {
-                                          cubit.submitSupport(context);
-                                          AnalyticsService.instance
-                                              .buttonPressed(
-                                                FirebaseEvents
-                                                    .contactSupportButton,
-                                                FirebaseEvents
-                                                    .contactSupportScreen,
-                                              );
-                                        }
-                                      },
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
-                          );
-                        },
+
+                            if (state.email.isNotEmpty &&
+                                !cubit.isValidEmail(state.email)) ...[
+                              const SizedBox(height: 6),
+
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Please enter a valid email address",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+
+                            const SizedBox(height: 14),
+
+                            /// DESCRIPTION BOX
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.28,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.extraLightGrey,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withValues(alpha: 0.5),
+                                    spreadRadius: 0,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+
+                              child: TextField(
+                                controller: messageController,
+                                maxLines: 10,
+                                minLines: 8,
+                                textAlignVertical: TextAlignVertical.top,
+
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+
+                                decoration: const InputDecoration(
+                                  hintText: "Description",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 14,
+                                  ),
+                                ),
+
+                                onChanged: (value) =>
+                                    cubit.updateMessage(value.trim()),
+                              ),
+                            ),
+
+                            const SizedBox(height: 28),
+
+                            /// SUBMIT BUTTON
+                            SizedBox(
+                              width: double.infinity,
+                              height: 56,
+
+                              child: CustomBottomButton(
+                                fontStyle: AppTextStyles.regular(
+                                  18,
+                                ).copyWith(color: Colors.white, height: 1),
+
+                                title: state.isSubmitting ? "" : "Submit",
+
+                                backgroundColor: const Color(0xFF1B1453),
+
+                                textColor: Colors.white,
+
+                                icon: state.isSubmitting
+                                    ? const SizedBox(
+                                        height: 22,
+                                        width: 22,
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+
+                                isEnabled:
+                                    !state.isSubmitting &&
+                                    state.email.isNotEmpty &&
+                                    cubit.isValidEmail(state.email) &&
+                                    state.message.isNotEmpty,
+
+                                onPressed: () {
+                                  FocusScope.of(context).unfocus();
+
+                                  if (state.email.isNotEmpty &&
+                                      cubit.isValidEmail(state.email) &&
+                                      state.message.isNotEmpty) {
+                                    cubit.submitSupport(context);
+
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.contactSupportButton,
+                                      FirebaseEvents.contactSupportScreen,
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
+              ),
+            ),
+          ),
         ),
       ),
     );
