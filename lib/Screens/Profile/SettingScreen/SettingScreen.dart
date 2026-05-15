@@ -1,3 +1,5 @@
+import 'package:avionics_internal/Screens/Profile/AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:flutter_svg/svg.dart';
 import '../AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
@@ -258,6 +260,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       title: "Trivia Level Demo Screen",
                       onTap: () => _navigate(context, AnimatedLevelMapScreen()),
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.manageAccountProfile,
+                      ),
+                      title: "Game Info Hint Screen",
+                      onTap: () => _navigate(context, InfoWrongGameScreen()),
                     ),
                   ],
                 ),

@@ -12,11 +12,9 @@ class InfoWrongGameScreen extends StatefulWidget {
 }
 
 class _InfoWrongGameState extends State<InfoWrongGameScreen> {
-
   @override
   void initState() {
     print(CommonUi.setSvgImage(AssetsPath.infoWrongFirst));
-
   }
 
   @override
@@ -76,14 +74,13 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
 
               const SizedBox(height: 28),
 
-              Container(
-                height: MediaQuery.of(context).size.width * 0.5,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.infoWrongFirst),
-                  fit: BoxFit.cover,
-                  height: MediaQuery.of(context).size.width * 0.5,
-                  width: MediaQuery.of(context).size.width * 0.5,
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.6,
+                width: MediaQuery.of(context).size.width * 0.7,
+
+                child: Image.asset(
+                  CommonUi.setPngImage(AssetsPath.infoWrongFirst),
+                  fit: BoxFit.contain,
                 ),
               ),
 

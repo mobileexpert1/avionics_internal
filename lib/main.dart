@@ -147,7 +147,7 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit'),
-            home: InfoWrongGameScreen(),
+            home: SplashScreen(),
           );
         },
       ),

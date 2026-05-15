@@ -83,9 +83,9 @@ abstract class AssetsPath {
   static const String backArrowButton = "56BackArrowButton";
   static const String contactSupport = "57ContactSupport";
 
-  static const String infoWrongFirst = "58InfoWrongGameIco";
-  static const String infoWrongSecond = "59InfoWrongGameIco";
-  static const String infoWrongThird = "60InfoWrongGameIco";
+  static const String infoWrongFirst = "58InfoWrongGameIcon";
+  static const String infoWrongSecond = "59InfoWrongGameIcon";
+  static const String infoWrongThird = "60InfoWrongGameIcon";
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
