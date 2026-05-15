@@ -1,6 +1,7 @@
-// EXPANDABLE WIDGET
+// // EXPANDABLE WIDGET
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class CustomHeaderViewExpandable extends StatelessWidget {
   final bool isNeedToShowLeftRightBottomBorder;
@@ -52,8 +53,13 @@ class CustomHeaderViewExpandable extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isNeedToShowLeftImage ? 10 : 15,
-                    vertical: isNeedToShowLeftImage ? 03 : 16,
+                    horizontal: isNeedToShowLeftImage
+                        ? (kIsWeb ? 16 : 10)
+                        : (kIsWeb ? 20 : 15),
+
+                    vertical: isNeedToShowLeftImage
+                        ? (kIsWeb ? 12 : 3)
+                        : (kIsWeb ? 22 : 16),
                   ),
                   decoration: BoxDecoration(
                     color: headerColor,
@@ -66,10 +72,19 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                     children: [
                       if (isNeedToShowLeftImage) ...[
                         isLeftImage!,
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 8),
                       ],
-                      Expanded(child: Text(title, style: fontStyle)),
-                      const SizedBox(width: 50),
+
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: fontStyle,
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: kIsWeb ? 70 : 50,
+                      ),
                     ],
                   ),
                 ),
@@ -79,7 +94,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                   top: 0,
                   bottom: 0,
                   child: Container(
-                    width: 52,
+                    width: kIsWeb ? 65 : 52,
                     decoration: BoxDecoration(
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded
@@ -95,7 +110,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         child: Icon(
                           Icons.arrow_forward_ios_sharp,
                           color: arrowFrontColor,
-                          size: 20,
+                          size: kIsWeb ? 24 : 20,
                         ),
                       ),
                     ),

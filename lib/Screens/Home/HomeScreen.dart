@@ -154,16 +154,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : screenWidth * 0.05,
                           ),
                           SizedBox(
-                            width: kIsWeb ? size.width : double.infinity,
+                            width: kIsWeb ? size.width * 0.8 : double.infinity,
                             height: kIsWeb
-                                ? screenWidth * 0.09
+                                // ? screenWidth * 0.09
+                                ? screenWidth * 0.22
                                 : screenWidth * 0.53,
                             child: SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                kIsWeb
-                                    ? AssetsPath.WebAppLogo
-                                    : AssetsPath.avionicaHome,
-                              ),
+                              CommonUi.setSvgImage(AssetsPath.avionicaHome),
                               fit: kIsWeb ? BoxFit.contain : BoxFit.fill,
                             ),
                           ),
@@ -387,29 +384,67 @@ class _HomeScreenState extends State<HomeScreen> {
               isNetwork: true,
             );
           }),
-
           Center(
-            child: TextButton(
-              onPressed: () {
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.manufacturerScreen,
-                  FirebaseEvents.exploreScreen,
-                );
+            child: Container(
+              width: kIsWeb ? 260 : null,
+              padding: EdgeInsets.symmetric(
+                vertical: kIsWeb ? 8 : 0,
+              ),
+              alignment: Alignment.center,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: Size(
+                    kIsWeb ? 240 : 0,
+                    kIsWeb ? 50 : 40,
+                  ),
+                ),
+                onPressed: () {
+                  AnalyticsService.instance.buttonPressed(
+                    FirebaseEvents.manufacturerScreen,
+                    FirebaseEvents.exploreScreen,
+                  );
 
-                AppNavigator.push(
-                  context,
-                  ManufacturerScreen(),
-                  disableSwipeBack: true,
-                );
-              },
-              child: Text(
-                'See All',
-                style: AppTextStyles.bold(
-                  kIsWeb ? screenWidth * 0.02 : 16,
-                ).copyWith(height: 1.0, color: AppColors.black),
+                  AppNavigator.push(
+                    context,
+                    ManufacturerScreen(),
+                    disableSwipeBack: true,
+                  );
+                },
+                child: Text(
+                  'See All',
+                  style: AppTextStyles.bold(
+                    kIsWeb ? screenWidth * 0.012 : 16,
+                  ).copyWith(
+                    height: kIsWeb ? 0.8 : 1.0,
+                    color: AppColors.black,
+                  ),
+                ),
               ),
             ),
           ),
+
+          // Center(
+          //   child: TextButton(
+          //     onPressed: () {
+          //       AnalyticsService.instance.buttonPressed(
+          //         FirebaseEvents.manufacturerScreen,
+          //         FirebaseEvents.exploreScreen,
+          //       );
+          //
+          //       AppNavigator.push(
+          //         context,
+          //         ManufacturerScreen(),
+          //         disableSwipeBack: true,
+          //       );
+          //     },
+          //     child: Text(
+          //       'See All',
+          //       style: AppTextStyles.bold(
+          //         kIsWeb ? screenWidth * 0.012 : 16,
+          //       ).copyWith(height: kIsWeb ? 0.8 : 1.0, color: AppColors.black),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -429,6 +464,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: kIsWeb ? screenWidth * 0.01 : 0),
           Text(
             "Choose Your Tracking Mode",
             style: AppTextStyles.bold(
@@ -437,7 +473,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           SizedBox(height: screenWidth * 0.02),
-
           CustomHeaderViewExpandable(
             isNeedToShowLeftRightBottomBorder: false,
             isNeedToShowLeftImage: true,

@@ -241,29 +241,27 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-
                                       // --- TITLE + SUBTITLE ---
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              detail.general.companyName,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                          ],
-                                        ),
-                                      ),
+                                      // Expanded(
+                                      //   child: Column(
+                                      //     crossAxisAlignment:
+                                      //         CrossAxisAlignment.start,
+                                      //     children: [
+                                      //       Text(
+                                      //         detail.general.companyName,
+                                      //         style: const TextStyle(
+                                      //           fontSize: 20,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),
+                                      //       ),
+                                      //       const SizedBox(height: 4),
+                                      //     ],
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
                               ),
-                            if (!kIsWeb)
                               Container(
                                 width: double.infinity,
                                 color: Colors.white,
@@ -316,53 +314,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   ],
                                 ),
                               ),
-
-                            //const SizedBox(height: 20),
-
-                            // All List Of Airplane
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (_) => AllPlanesListScreen(
-                            //           selectedAirbusId: detail.id,
-                            //           manufacturerName:
-                            //               detail.general.companyName,
-                            //         ),
-                            //       ),
-                            //     );
-                            //   },
-                            //   child: Container(
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 25,
-                            //       vertical: 5,
-                            //     ),
-                            //
-                            //     child: Row(
-                            //       children: [
-                            //         SvgPicture.asset(
-                            //           CommonUi.setSvgImage(AssetsPath.Plane1),
-                            //         ),
-                            //         const SizedBox(width: 12),
-                            //         const Expanded(
-                            //           child: Text(
-                            //             "List of All Planes",
-                            //             style: TextStyle(fontSize: 16),
-                            //           ),
-                            //         ),
-                            //         const Icon(Icons.chevron_right),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 10),
-
-                            // const Divider(
-                            //   height: 0,
-                            //   thickness: 3,
-                            //   color: AppColors.separatorColourAppBar,
-                            // ),
                             _buildSectionHeader(
                               title: "GENERAL INFORMATION",
                               isExpanded: showMoreGeneralInfo,
