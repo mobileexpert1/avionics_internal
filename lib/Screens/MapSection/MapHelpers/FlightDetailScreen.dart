@@ -2,6 +2,7 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,6 +13,7 @@ import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/MapSection/flight_map_repository.dart';
@@ -323,7 +325,10 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                 : 'N/A',
             centerTitle: true,
             leftButton: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                fit: BoxFit.cover,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
             rightButton: IconButton(

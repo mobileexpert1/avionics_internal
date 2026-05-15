@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
@@ -47,7 +49,10 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
           title: 'Unit Conversion',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),

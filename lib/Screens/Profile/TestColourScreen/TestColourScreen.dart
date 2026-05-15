@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 
 class TestColourScreen extends StatelessWidget {
@@ -109,7 +111,10 @@ class TestColourScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: "App Colors Code Used",
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },

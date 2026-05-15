@@ -56,13 +56,16 @@ class _AvtarScreenState extends State<AvtarScreen> {
         title: ConstantStrings.avtarTRole,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => (widget.isComeFromSocialLogin == true
               ? Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => LoginScreen()),
                   (route) => false,
                 )
-              : Navigator.pop(context,true)),
+              : Navigator.pop(context, true)),
         ),
         rightButton: widget.isComeFromSettingScreen == false
             ? IconButton(
@@ -114,40 +117,79 @@ class _AvtarScreenState extends State<AvtarScreen> {
                   final userType = state.avatars[index];
                   final isSelected = state.selectedUserType == userType.key;
 
+                  final isAtsep = userType.key == "atsep";
+
+                  final imageUrl = isAtsep && isSelected
+                      ? (userType.selectedIcon ?? "")
+                      : userType.logo;
+
+                  final logoWidget = userType.logo.isNotEmpty
+                      ? SvgPicture.network(
+                          imageUrl,
+                          width: 44,
+                          height: 44,
+                          fit: BoxFit.contain,
+                          color: !isAtsep
+                              ? (isSelected
+                                    ? AppColors.white
+                                    : AppColors.primaryDark)
+                              : null,
+                          placeholderBuilder: (context) => const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.avtarSecond),
+                          width: 44,
+                          height: 44,
+                          fit: BoxFit.contain,
+                        );
+
                   return GestureDetector(
                     onTap: () {
                       final cubit = context.read<AvtarCubit>();
+
                       if (widget.isComeFromSignupScreen ||
                           widget.isComeFromSocialLogin) {
                         cubit.selectAvatarTypeOnly(userType.key);
                       } else {
-                        cubit.selectAvatar(
-                          userType.key,
-                          widget.isComeFromSignupScreen,
-                          widget.isComeFromSocialLogin,
-                          context,
-                          {},
-                        );
+                        if (state.selectedUserType != userType.key) {
+                          cubit.selectAvatar(
+                            userType.key == "atsep"
+                                ? userType.selectedIcon ?? ""
+                                : userType.logo,
+                            userType.key,
+                            widget.isComeFromSignupScreen,
+                            widget.isComeFromSocialLogin,
+                            context,
+                            {},
+                          );
+                        }
                       }
+
                       AnalyticsService.instance.buttonPressed(
                         FirebaseEvents.avtarScreen,
                         FirebaseEvents.updatedAvtarButtonTap,
                       );
                     },
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 8,
+                      ),
                       child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 20,
+                        ),
                         decoration: BoxDecoration(
-                          color: isSelected == true
+                          color: isSelected
                               ? AppColors.primaryBlue
                               : AppColors.white,
                           border: Border.all(color: AppColors.primaryDark),
                           borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 20,
                         ),
                         child: Row(
                           children: [
@@ -166,7 +208,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
                                           : AppColors.avtarTitleColour,
                                     ),
                                   ),
+
                                   const SizedBox(height: 10),
+
                                   Text(
                                     userType.description,
                                     maxLines: 2,
@@ -184,33 +228,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
 
                             const SizedBox(width: 10),
 
-                            // Logo
-                            (userType.logo.isNotEmpty)
-                                ? SvgPicture.network(
-                                    userType.logo,
-                                    width: 44,
-                                    height: 44,
-                                    fit: BoxFit.contain,
-                                    color: isSelected
-                                        ? AppColors.white
-                                        : AppColors.black,
-                                    placeholderBuilder: (context) =>
-                                        const SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        ),
-                                  )
-                                : SvgPicture.asset(
-                                    CommonUi.setSvgImage(
-                                      AssetsPath.avtarSecond,
-                                    ),
-                                    width: 44,
-                                    height: 44,
-                                    fit: BoxFit.contain,
-                                  ),
+                            logoWidget,
 
                             const SizedBox(width: 8),
                           ],
@@ -254,6 +272,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                             context.read<AvtarCubit>().state.selectedUserType ??
                             '';
                         context.read<AvtarCubit>().selectAvatar(
+                          "",
                           selectedUserType,
                           widget.isComeFromSignupScreen,
                           widget.isComeFromSocialLogin,

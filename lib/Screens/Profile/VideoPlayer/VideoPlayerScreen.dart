@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Profile/VideoPlayer/video_player_cubit.dart';
 import '../../../bloc/Profile/VideoPlayer/video_player_state.dart';
@@ -53,7 +55,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 title: ConstantStrings.tutorialScreen,
                 centerTitle: false,
                 leftButton: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                  icon: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                    fit: BoxFit.cover,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -68,7 +73,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               title: ConstantStrings.tutorialScreen,
               centerTitle: false,
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),

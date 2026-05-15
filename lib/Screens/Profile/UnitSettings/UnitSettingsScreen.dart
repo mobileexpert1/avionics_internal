@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import '../../../bloc/Profile/UnitSelection/unit_selection_state.dart';
 
@@ -16,7 +18,10 @@ class UnitSelectionScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: ConstantStrings.unitsMeasurmentsTitle,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),

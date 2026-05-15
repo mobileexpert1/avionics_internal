@@ -5,7 +5,9 @@ import 'package:flutter_earth_globe/point.dart';
 import 'package:flutter_earth_globe/point_connection.dart';
 import 'package:flutter_earth_globe/point_connection_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import 'coordinate_state.dart';
 import 'globe_controls_state.dart';
@@ -340,7 +342,10 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
       appBar: CustomAppBar(
         title: "Google Earth Map",
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon:SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () {
             _isActive = false;
             Navigator.pop(context);

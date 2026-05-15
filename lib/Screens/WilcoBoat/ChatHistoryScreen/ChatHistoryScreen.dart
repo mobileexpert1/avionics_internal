@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
 import '../../../bloc/home/chatSection/ChatHistory/chat_history_state.dart';
@@ -40,7 +42,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         title: ConstantStrings.chatHistoryTitle,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),

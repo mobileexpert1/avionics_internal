@@ -65,12 +65,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         centerTitle: centerTitle ?? true,
-        titleSpacing: centerTitle == true ? titleSpacing : 0,
+        titleSpacing: centerTitle == true ? titleSpacing : -10,
         leading: leftButton != null
             ? Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: leftButton!,
                 ),
               )

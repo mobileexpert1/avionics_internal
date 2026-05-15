@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
 
 class LevelNodeModel {
   final int level;
@@ -23,6 +26,26 @@ class LevelNodeModel {
       isUnlocked: isUnlocked ?? this.isUnlocked,
       isCompleted: isCompleted ?? this.isCompleted,
       isLeftSide: isLeftSide ?? isLeftSide,
+    );
+  }
+}
+
+class ApiLevelModel {
+  final int level;
+  final bool isUnlocked;
+  final bool isCompleted;
+
+  ApiLevelModel({
+    required this.level,
+    required this.isUnlocked,
+    required this.isCompleted,
+  });
+
+  factory ApiLevelModel.fromJson(Map<String, dynamic> json) {
+    return ApiLevelModel(
+      level: json['level'],
+      isUnlocked: json['is_unlocked'],
+      isCompleted: json['is_completed'],
     );
   }
 }
@@ -74,8 +97,8 @@ class AnimatedPathPainter extends CustomPainter {
   }
 
   void _drawDashedPath(Canvas canvas, Path path, Paint paint) {
-    const dashWidth = 6.0;
-    const dashSpace = 5.0;
+    const dashWidth = 8.0;
+    const dashSpace = 4.0;
 
     for (final metric in path.computeMetrics()) {
       double distance = 0;
@@ -90,61 +113,6 @@ class AnimatedPathPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant AnimatedPathPainter oldDelegate) {
     return oldDelegate.progress != progress || oldDelegate.points != points;
-  }
-}
-
-class LevelNodeWidget extends StatelessWidget {
-  final int level;
-  final bool isUnlocked;
-  final bool isCompleted;
-  final bool isLeftSide;
-  final VoidCallback onTap;
-
-  const LevelNodeWidget({
-    super.key,
-    required this.level,
-    required this.isUnlocked,
-    required this.isCompleted,
-    required this.isLeftSide,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final bool active = isUnlocked || isCompleted;
-    final Color bgColor = active
-        ? const Color(0xFF1E1B5E)
-        : Colors.grey.shade400;
-
-    final icon =
-        Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-              child: const Icon(Icons.flight, color: Colors.white),
-            )
-            .animate(target: active ? 1 : 0)
-            .scale(
-              begin: const Offset(0.85, 0.85),
-              end: const Offset(1.0, 1.0),
-              duration: 700.ms,
-              curve: Curves.easeOutBack,
-            );
-
-    final label = Text(
-      'Level $level',
-      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-    );
-
-    return GestureDetector(
-      onTap: active ? onTap : null,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: isLeftSide
-            ? [label, const SizedBox(width: 8), icon]
-            : [icon, const SizedBox(width: 8), label],
-      ),
-    );
   }
 }
 
@@ -176,22 +144,67 @@ class PlaneWidget extends StatelessWidget {
   }
 }
 
-class ApiLevelModel {
+class LevelNodeWidget extends StatelessWidget {
   final int level;
   final bool isUnlocked;
   final bool isCompleted;
+  final bool isLeftSide;
+  final bool isCurrent; // ✅ naya parameter
+  final VoidCallback onTap;
 
-  ApiLevelModel({
+  const LevelNodeWidget({
+    super.key,
     required this.level,
     required this.isUnlocked,
     required this.isCompleted,
+    required this.isLeftSide,
+    required this.isCurrent, // ✅
+    required this.onTap,
   });
 
-  factory ApiLevelModel.fromJson(Map<String, dynamic> json) {
-    return ApiLevelModel(
-      level: json['level'],
-      isUnlocked: json['is_unlocked'],
-      isCompleted: json['is_completed'],
+  @override
+  Widget build(BuildContext context) {
+    // ✅ 4 states ke liye 4 colors
+    final Color bgColor = isCompleted
+        ? Colors
+              .green // completed → green
+        : isCurrent
+        ? Colors
+              .red // current level → red
+        : isUnlocked
+        ? const Color(0xFF1E1B5E) // unlocked → blue
+        : Colors.grey.shade400; // locked → grey
+
+    final bool active = isUnlocked || isCompleted;
+
+    final icon =
+        Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+              child: const Icon(Icons.flight, color: Colors.white, size: 18),
+            )
+            .animate(target: active ? 1 : 0)
+            .scale(
+              begin: const Offset(0.85, 0.85),
+              end: const Offset(1.0, 1.0),
+              duration: 700.ms,
+              curve: Curves.easeOutBack,
+            );
+
+    final label = Text(
+      'Level $level',
+      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+    );
+
+    return GestureDetector(
+      onTap: active ? onTap : null,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: isLeftSide
+            ? [label, const SizedBox(width: 8), icon]
+            : [icon, const SizedBox(width: 8), label],
+      ),
     );
   }
 }
@@ -210,6 +223,24 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
   int currentSegment = 0;
   bool isPlaneVisible = false;
   List<LevelNodeModel> levels = [];
+
+  static const int _levelsPerPage = 4;
+
+  int get _currentPage => currentSegment ~/ _levelsPerPage;
+
+  void _scrollToPage(int page) {
+    if (!_scrollController.hasClients) return;
+
+    final double maxScroll = _scrollController.position.maxScrollExtent;
+    final double targetOffset =
+        maxScroll - (page * _levelsPerPage * _levelSpacing);
+
+    _scrollController.animateTo(
+      targetOffset.clamp(0.0, maxScroll),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+    );
+  }
 
   static const double _levelSpacing = 130.0;
   static const double _topPadding = 120.0;
@@ -324,8 +355,37 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
     super.dispose();
   }
 
+  // void _moveToNext() {
+  //   if (currentSegment >= levels.length - 1 || controller.isAnimating) return;
+  //
+  //   setState(() => isPlaneVisible = true);
+  //
+  //   controller.forward(from: 0).then((_) {
+  //     setState(() {
+  //       levels[currentSegment] = levels[currentSegment].copyWith(
+  //         isCompleted: true,
+  //       );
+  //       currentSegment++;
+  //       levels[currentSegment] = levels[currentSegment].copyWith(
+  //         isUnlocked: true,
+  //       );
+  //       isPlaneVisible = false;
+  //     });
+  //
+  //     if (currentSegment <= 6) {
+  //       _scrollController.animateTo(
+  //         _scrollController.offset - _levelSpacing,
+  //         duration: const Duration(milliseconds: 400),
+  //         curve: Curves.easeOut,
+  //       );
+  //     }
+  //   });
+  // }
+
   void _moveToNext() {
     if (currentSegment >= levels.length - 1 || controller.isAnimating) return;
+
+    final int prevPage = _currentPage;
 
     setState(() => isPlaneVisible = true);
 
@@ -341,12 +401,9 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
         isPlaneVisible = false;
       });
 
-      if (currentSegment <= 6) {
-        _scrollController.animateTo(
-          _scrollController.offset - _levelSpacing,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOut,
-        );
+      final int newPage = _currentPage;
+      if (newPage > prevPage) {
+        _scrollToPage(newPage);
       }
     });
   }
@@ -364,9 +421,18 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1B5E),
-        title: const Text('Demo SS', style: TextStyle(color: Colors.white)),
+      appBar: CustomAppBar(
+        title: "Trivia Level Demo Screen",
+        centerTitle: false,
+        leftButton: IconButton(
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+        ),
       ),
       body: Stack(
         children: [
@@ -384,7 +450,7 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
                   ...levels.asMap().entries.map((entry) {
                     final index = entry.key;
                     final level = entry.value;
-                    isLeft = index.isEven;
+                    final bool isLeft = index.isEven;
                     return Positioned(
                       left: level.position.dx - (isLeft ? 65 : 18),
                       top: level.position.dy - 20,
@@ -393,6 +459,7 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
                         isUnlocked: level.isUnlocked,
                         isCompleted: level.isCompleted,
                         isLeftSide: isLeft,
+                        isCurrent: index == currentSegment,
                         onTap: () => debugPrint("Tapped Level ${level.level}"),
                       ),
                     );
@@ -433,6 +500,31 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
           Positioned(
             left: 20,
             right: 20,
+            bottom: 100,
+            child: GestureDetector(
+              onTap: () => _moveToIndex(9),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Jump to Level 9',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            left: 20,
+            right: 20,
             bottom: 25,
             child: GestureDetector(
               onTap: _moveToNext,
@@ -448,36 +540,11 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
                 child: Center(
                   child: Text(
                     currentSegment >= levels.length - 1
-                        ? 'Journey Complete! 🎉'
+                        ? 'Journey Complete! '
                         : 'Start your journey',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 100,
-            child: GestureDetector(
-              onTap: () => _moveToIndex(9),
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Center(
-                  child: Text(
-                    'Jump to Level 5',
-                    style: TextStyle(
-                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -496,8 +563,9 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
     if (controller.isAnimating) return;
 
     while (currentSegment < targetIndex) {
-      setState(() => isPlaneVisible = true);
+      final int prevPage = _currentPage; // ✅ pehle note karo
 
+      setState(() => isPlaneVisible = true);
       await controller.forward(from: 0);
 
       setState(() {
@@ -510,14 +578,45 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
         );
         isPlaneVisible = false;
       });
-      if (currentSegment <= 6) {
-        await _scrollController.animateTo(
-          _scrollController.offset - _levelSpacing,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOut,
-        );
+
+      if (_currentPage > prevPage) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        _scrollToPage(_currentPage);
+        await Future.delayed(const Duration(milliseconds: 700));
+      } else {
+        await Future.delayed(const Duration(milliseconds: 200));
       }
-      await Future.delayed(const Duration(milliseconds: 200));
     }
   }
+
+  // Future<void> _moveToIndex(int targetIndex) async {
+  //   if (targetIndex <= currentSegment) return;
+  //   if (targetIndex >= levels.length) return;
+  //   if (controller.isAnimating) return;
+  //
+  //   while (currentSegment < targetIndex) {
+  //     setState(() => isPlaneVisible = true);
+  //
+  //     await controller.forward(from: 0);
+  //
+  //     setState(() {
+  //       levels[currentSegment] = levels[currentSegment].copyWith(
+  //         isCompleted: true,
+  //       );
+  //       currentSegment++;
+  //       levels[currentSegment] = levels[currentSegment].copyWith(
+  //         isUnlocked: true,
+  //       );
+  //       isPlaneVisible = false;
+  //     });
+  //     if (currentSegment <= 6) {
+  //       await _scrollController.animateTo(
+  //         _scrollController.offset - _levelSpacing,
+  //         duration: const Duration(milliseconds: 400),
+  //         curve: Curves.easeOut,
+  //       );
+  //     }
+  //     await Future.delayed(const Duration(milliseconds: 200));
+  //   }
+  // }
 }

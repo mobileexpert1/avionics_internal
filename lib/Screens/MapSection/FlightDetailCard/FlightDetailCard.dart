@@ -366,12 +366,17 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     padding: const EdgeInsets.all(4),
                                     child: state.isTracking
                                         ? const LiveBadge()
-                                        : Icon(
-                                            isFavLocal
-                                                ? Icons.star
-                                                : Icons.star_border,
+                                        : isFavLocal
+                                        ? SvgPicture.asset(
+                                            CommonUi.setSvgImage(
+                                              AssetsPath.highlightStar,
+                                            ),
+                                            height: 25,
+                                          )
+                                        : const Icon(
+                                            Icons.star_border,
                                             color: Colors.yellow,
-                                            size: 30,
+                                            size: 25,
                                           ),
                                   ),
                                 ),

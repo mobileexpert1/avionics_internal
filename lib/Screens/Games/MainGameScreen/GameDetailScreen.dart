@@ -47,7 +47,10 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
         title: "gameDetails.title",
         centerTitle: false,
         leftButton: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

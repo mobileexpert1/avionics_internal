@@ -3,10 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackBox_state.dart'
@@ -55,7 +57,10 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
         appBar: CustomAppBar(
           title: 'Overview & Clue Deck',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppText.dart';
 import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
@@ -43,7 +45,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
         title: SubscriptionTexts.currentSubTitle,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
@@ -59,7 +61,10 @@ class _BlackBoxResultScreenState extends State<BlackBoxResultScreen> {
         appBar: CustomAppBar(
           title: "Result",
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () =>
                 Navigator.of(context).popUntil((route) => route.isFirst),
           ),

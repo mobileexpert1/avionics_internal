@@ -71,7 +71,10 @@ class _BadgesScreenState extends State<BadgesScreen> {
           title: 'Badges',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () {
               if (widget.fromResultScreen) {
                 Navigator.push(

@@ -73,7 +73,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   isClearBackgroundColour: true,
                   title: ConstantStrings.CreateAccount,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                    icon: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      fit: BoxFit.cover,
+                    ),
                     onPressed: () {
                       if (!mounted) return;
                       AppNavigator.pushAndRemoveUntil(context, LoginScreen(), disableSwipeBack: true);

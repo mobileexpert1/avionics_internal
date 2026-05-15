@@ -71,7 +71,10 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
           title: ConstantStrings.scientificCalculator,
           centerTitle:false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },

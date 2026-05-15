@@ -46,7 +46,6 @@ import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
 import 'Helpers/Firebase_Options.dart';
-import 'demoAnimation/demoAnimation/demoAnimation.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

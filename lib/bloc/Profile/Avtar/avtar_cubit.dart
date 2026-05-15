@@ -20,6 +20,7 @@ class AvtarCubit extends Cubit<AvtarState> {
   }
 
   Future<void> selectAvatar(
+    String userTypeUrl,
     String userType,
     bool isComeFromSignup,
     bool? isComeFromSocialLogin,
@@ -55,10 +56,14 @@ class AvtarCubit extends Cubit<AvtarState> {
           ),
         );
       } else {
-        await AvtarRepository().setAvtarForProfile(userType: userType,context: context);
+        await AvtarRepository().setAvtarForProfile(
+          userType: userType,
+          context: context,
+        );
       }
 
       await SharedPrefsHelper.setAvtarUserType(userType);
+      await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
       emit(state.copyWith(status: CommonApiStatus.success));
 
       if (isComeFromSignup) {
@@ -79,9 +84,8 @@ class AvtarCubit extends Cubit<AvtarState> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => SubscriptionPlanDetailScreen(
-                isComeFromSignup: true,
-              ),
+              builder: (_) =>
+                  SubscriptionPlanDetailScreen(isComeFromSignup: true),
             ),
           );
         }
@@ -109,7 +113,11 @@ class AvtarCubit extends Cubit<AvtarState> {
         userType = '';
       }
       emit(
-        state.copyWith(status: CommonApiStatus.success, avatars: response.data,selectedUserType: userType,),
+        state.copyWith(
+          status: CommonApiStatus.success,
+          avatars: response.data,
+          selectedUserType: userType,
+        ),
       );
     } catch (e) {
       emit(

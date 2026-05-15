@@ -5,10 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomTabBar.dart';
 import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
@@ -287,7 +289,10 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
         title: "Saved",
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },

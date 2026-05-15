@@ -30,6 +30,7 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../VideoPlayer/VideoPlayerScreen.dart';
+import '../demoAnimation/DemoAnimation.dart';
 import 'InfoBottomSheet.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -49,7 +50,7 @@ class _SettingScreenState extends State<SettingScreen> {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.settingScreen);
     homeCubit = HomeCubit();
-    setLocalUserData();
+    setLocalData();
   }
 
   @override
@@ -58,15 +59,27 @@ class _SettingScreenState extends State<SettingScreen> {
     super.dispose();
   }
 
-  Future<void> setLocalUserData() async {
-    final userDetails = await homeCubit.fetchHomeData(context);
-    if (userDetails != null) {
-      setState(() {
-        userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
-        avatarTypeName = userDetails.firstName + userDetails.lastName;
-      });
-    }
+  Future<void> setLocalData() async {
+    final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
+    final name = await SharedPrefsHelper.getUserProfileName();
+
+    if (!mounted) return;
+
+    setState(() {
+      userAvtarTypeUrl = avatarUrl ?? '';
+      avatarTypeName = name ?? '';
+    });
   }
+
+  // Future<void> setLocalUserData() async {
+  //   final userDetails = await homeCubit.fetchHomeData(context);
+  //   if (userDetails != null) {
+  //     setState(() {
+  //       userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
+  //       avatarTypeName = userDetails.firstName + userDetails.lastName;
+  //     });
+  //   }
+  // }
 
   /// ---------------- COMMON NAVIGATION ----------------
   void _navigate(BuildContext context, Widget screen) {
@@ -107,7 +120,7 @@ class _SettingScreenState extends State<SettingScreen> {
         );
 
         if (result == true) {
-          setLocalUserData();
+          setLocalData();
         }
       },
       child: Container(
@@ -128,7 +141,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       ? SvgPicture.network(
                           userAvtarTypeUrl,
                           fit: BoxFit.contain,
-                          color: Colors.white,
+                          color: userAvtarTypeUrl.contains("57ATSEPWhite.svg")
+                              ? null
+                              : Colors.white,
                           placeholderBuilder: (_) => SvgPicture.asset(
                             CommonUi.setSvgImage(AssetsPath.manuFirstImage),
                           ),
@@ -238,6 +253,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       title: "Delete Account",
                       onTap: () => showDeleteConfirmation(context, false),
                     ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.manageAccountProfile,
+                      ),
+                      title: "Trivia Level Demo Screen",
+                      onTap: () => _navigate(context, AnimatedLevelMapScreen()),
+                    ),
                   ],
                 ),
 
@@ -321,7 +343,10 @@ class _SettingScreenState extends State<SettingScreen> {
         title: ConstantStrings.settingScreen,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () {
             Navigator.pop(context, true);
           },

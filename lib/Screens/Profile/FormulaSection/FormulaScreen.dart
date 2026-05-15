@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/AppColors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -48,7 +50,10 @@ class _FormulasScreenState extends State<FormulasScreen> {
           centerTitle: false,
           title: 'Formulas',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -53,7 +54,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           title: ConstantStrings.reviewTitle,
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ),

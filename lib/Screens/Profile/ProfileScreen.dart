@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
     homeCubit = HomeCubit();
-    setLocalUserData();
+    setLocalData();
   }
 
   @override
@@ -67,15 +67,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> setLocalUserData() async {
-    final userDetails = await homeCubit.fetchHomeData(context);
-    if (userDetails != null) {
-      setState(() {
-        userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
-        userName = userDetails.firstName + userDetails.lastName;
-      });
-    }
+  Future<void> setLocalData() async {
+    final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
+    final name = await SharedPrefsHelper.getUserProfileName();
+
+    if (!mounted) return;
+
+    setState(() {
+      userAvtarTypeUrl = avatarUrl ?? '';
+      userName = name ?? '';
+    });
   }
+
+  // Future<void> setLocalUserData() async {
+  //   final userDetails = await homeCubit.fetchHomeData(context);
+  //   if (userDetails != null) {
+  //     setState(() {
+  //       userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
+  //       userName = userDetails.firstName + userDetails.lastName;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +125,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: userAvtarTypeUrl.isNotEmpty
                                 ? SvgPicture.network(
                                     userAvtarTypeUrl,
-                                    color: Colors.white,
                                     fit: BoxFit.contain,
+                                    color:
+                                        userAvtarTypeUrl.contains(
+                                          "57ATSEPWhite.svg",
+                                        )
+                                        ? null
+                                        : Colors.white,
                                     placeholderBuilder: (_) => SvgPicture.asset(
                                       CommonUi.setSvgImage(
                                         AssetsPath.manuFirstImage,
@@ -274,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               disableSwipeBack: true,
             );
             if (result == true) {
-              setLocalUserData();
+              setLocalData();
             }
           },
         ),
