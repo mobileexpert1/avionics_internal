@@ -5,6 +5,7 @@ import 'package:avionics_internal/bloc/MapSection/flight_map_detailModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../Home/SavedFlighDetails/savedFlight_model.dart';
@@ -189,4 +190,17 @@ double getZoomLevelFromRadius(int radiusNm) {
   if (radiusNm <= 750) return 4.3;
   if (radiusNm <= 1050) return 3.7;
   return 3.4;
+}
+
+double getVisualRadiusBufferNm(int radiusNm) {
+  debugPrint("Radius NM: $radiusNm");
+  if (radiusNm <= 50) return 40;
+  if (radiusNm <= 100) return 60;
+  if (radiusNm <= 200) return 80;
+  if (radiusNm <= 300) return 100;
+  if (radiusNm <= 400) return 130;
+  if (radiusNm <= 500) return 150;
+  if (radiusNm <= 750) return 170;
+  if (radiusNm <= 1050) return 200;
+  return 30;
 }

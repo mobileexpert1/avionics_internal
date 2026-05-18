@@ -87,6 +87,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   int selectedSegmentIndex = 0;
 
   final Set<Circle> _circles = {};
+  final Set<Polygon> _polygonsForRectangleShape = {};
 
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
@@ -186,60 +187,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     }
   }
 
-  // ── MAP UTILITIES ──────────────────────────────────────────────────────────
-
-  Future<void> updateSearchRadius({
-    required int radiusNm,
-    required LatLng center,
-    required int numberOfFlight,
-    required bool isComeFromFilterSection,
-  }) async {
-    final controller = _mapController;
-
-    if (controller == null) return;
-
-    final radiusMeters = convertNmToMeters(radiusNm);
-
-    _circles.clear();
-
-    _circles.add(
-      Circle(
-        circleId: const CircleId('radius_circle'),
-        center: center,
-        radius: radiusMeters,
-        // Need to add More Value.
-        strokeWidth: 2,
-        strokeColor: Colors.blue,
-        fillColor: Colors.blue.withValues(alpha: 0.2),
-      ),
-    );
-
-    if (mounted) {
-      setState(() {
-        _isUserGesture = true;
-        _mapCubit.updateTheNumberOfFlightAndRadius(
-          numberOfFlight.toInt(),
-          radiusNm.toInt(),
-        );
-      });
-      print(_mapCubit.state.numberOfFlights);
-      print(_mapCubit.state.searchRadius);
-    }
-
-    _isProgrammaticMove = true;
-
-    if (isComeFromFilterSection == false) return;
-
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: center,
-          zoom: getZoomLevelFromRadius(_mapCubit.state.searchRadius ?? 0),
-        ),
-      ),
-    );
-  }
-
   // ── STATE / LOGIC ──────────────────────────────────────────────────────────
 
   void _resetFlightSelection({bool cleanupOnly = false}) {
@@ -313,6 +260,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     });
   }
 
+  static const int _visualRadiusBufferNm = 70;
+
   Future<void> _refreshMapData({
     required LatLng centerLatLng,
     required LatLngBounds bounds,
@@ -321,15 +270,18 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     required int numberOfFlight,
     required bool isComeFromFilterSection,
   }) async {
-    final radiusMeters = convertNmToMeters(radiusNm);
+    final radiusMeters = convertNmToMeters(radiusNm); // Original ✅
 
     final radiusBounds = getBoundsFromRadius(
       center: centerLatLng,
-      radiusMeters: radiusMeters,
+      radiusMeters: radiusMeters, // API ko original bounds ✅
     );
 
+    /// Draw larger bounds
+    drawRadiusBounds(radiusBounds);
+
     await updateSearchRadius(
-      radiusNm: radiusNm,
+      radiusNm: radiusNm, // Original pass karo, andar buffer add hoga ✅
       center: centerLatLng,
       numberOfFlight: numberOfFlight,
       isComeFromFilterSection: isComeFromFilterSection,
@@ -338,9 +290,92 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     _mapCubit.fetchFlightsByBounds(
       currentCenterLatLong: centerLatLng,
       bounds: radiusBounds,
+      // Original bounds API ko ✅
       context: context,
       flightLimit: numberOfFlight,
-      radiusNm: radiusNm,
+      radiusNm: radiusNm, // Original NM API ko ✅
+    );
+  }
+
+  void drawRadiusBounds(LatLngBounds bounds) {
+    _polygonsForRectangleShape.clear();
+
+    _polygonsForRectangleShape.add(
+      Polygon(
+        polygonId: const PolygonId('radius_bounds'),
+        points: [
+          LatLng(bounds.northeast.latitude, bounds.northeast.longitude),
+          LatLng(bounds.northeast.latitude, bounds.southwest.longitude),
+          LatLng(bounds.southwest.latitude, bounds.southwest.longitude),
+          LatLng(bounds.southwest.latitude, bounds.northeast.longitude),
+        ],
+        strokeWidth: 2,
+        strokeColor: Colors.green,
+        fillColor: Colors.green.withValues(alpha: 0.15),
+      ),
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> updateSearchRadius({
+    required int radiusNm,
+    required LatLng center,
+    required int numberOfFlight,
+    required bool isComeFromFilterSection,
+  }) async {
+    final controller = _mapController;
+
+    if (controller == null) return;
+
+    final visualRadiusNm = radiusNm + getVisualRadiusBufferNm(radiusNm).toInt();
+    final visualRadiusMeters = convertNmToMeters(
+      visualRadiusNm,
+    ); // Sirf circle draw ke liye
+
+    final actualRadiusMeters = convertNmToMeters(
+      radiusNm,
+    ); // API ke liye original
+
+    _circles.clear();
+
+    _circles.add(
+      Circle(
+        circleId: const CircleId('radius_circle'),
+        center: center,
+        radius: visualRadiusMeters,
+        // ✅ Bada circle dikhao
+        strokeWidth: 2,
+        strokeColor: Colors.blue,
+        fillColor: Colors.blue.withValues(alpha: 0.2),
+      ),
+    );
+
+    if (mounted) {
+      setState(() {
+        _isUserGesture = true;
+        _mapCubit.updateTheNumberOfFlightAndRadius(
+          numberOfFlight.toInt(),
+          radiusNm.toInt(),
+        );
+      });
+      print(_mapCubit.state.numberOfFlights);
+      print(_mapCubit.state.searchRadius);
+    }
+
+    _isProgrammaticMove = true;
+
+    if (isComeFromFilterSection == false) return;
+
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: center,
+          zoom: getZoomLevelFromRadius(_mapCubit.state.searchRadius ?? 0),
+        ),
+      ),
     );
   }
 
@@ -942,7 +977,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                               return FlightGoogleMapWidget(
                                 mapType: _mapCubit.state.mapType
                                     .toGoogleMapType(),
-                                polygons: polygons,
+                                polygons: _polygonsForRectangleShape,
 
                                 initialCameraPosition: CameraPosition(
                                   target: LatLng(
@@ -1049,7 +1084,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   // ── WIDGET BUILDERS ────────────────────────────────────────────────────────
-
   Widget _buildSearchBar(BuildContext context, FlightMapState state) {
     return Positioned(
       top: kIsWeb ? 10 : 0,
