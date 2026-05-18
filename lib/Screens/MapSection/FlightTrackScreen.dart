@@ -79,10 +79,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     _addStaticAirportMarkers();
 
     // start flight tracking
-    flightMapCubit.startTrackingFlight(
-      widget.flightNumber,
-      context,
-    );
+    flightMapCubit.startTrackingFlight(widget.flightNumber, context);
 
     // observe lifecycle only on mobile
     if (defaultTargetPlatform == TargetPlatform.android ||
@@ -524,12 +521,13 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                   ),
                 ),
                 Positioned(
-                  top: 40,
+                  top: 50,
                   left: 10,
                   child: IconButton(
                     icon: SvgPicture.asset(
                       CommonUi.setSvgImage(AssetsPath.backArrowButton),
                       fit: BoxFit.cover,
+                      color: Colors.black,
                     ),
                     onPressed: () {
                       flightMapCubit.stopTrackingFlight();

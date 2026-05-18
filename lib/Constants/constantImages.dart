@@ -80,12 +80,15 @@ abstract class AssetsPath {
   static const String wilcoChatMic = "53WilcoMic";
   static const String wilcoAttention = "54WilcoAttention";
   static const String highlightStar = "55HighlightStar";
+  static const String unHighlightStar = "55_1UnHighlightStar";
   static const String backArrowButton = "56BackArrowButton";
   static const String contactSupport = "57ContactSupport";
 
   static const String infoWrongFirst = "58InfoWrongGameIcon";
   static const String infoWrongSecond = "59InfoWrongGameIcon";
   static const String infoWrongThird = "60InfoWrongGameIcon";
+  static const String gameInfoClose = "61GameInfoClose";
+
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";

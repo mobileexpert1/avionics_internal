@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Helpers/CustomHeaderViewExpandable.dart';
 
 class InfoWrongGameScreen extends StatefulWidget {
   const InfoWrongGameScreen({super.key});
@@ -22,7 +25,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: "Trivia Level Demo Screen",
+        title: "Game Info Hint Screen",
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -36,43 +39,42 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
       ),
       body: Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.92,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          width: MediaQuery.of(context).size.width * 0.9,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xff2F9BFF), width: 2),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.black, width: 1),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// Top Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 24),
-                  const Text(
-                    "Turbulence happens!",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
+                  const SizedBox(width: 25),
+                  SizedBox(
+                    height: 30,
+                    width: 30,
+                    child: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.gameInfoClose),
                     ),
                   ),
-
-                  Container(
-                    height: 28,
-                    width: 28,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black54),
-                    ),
-                    child: const Icon(Icons.close, size: 18),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Turbulence happens!",
+                    style: AppTextStyles.bold(
+                      20,
+                    ).copyWith(height: 1.0, color: AppColors.black),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 30),
 
               SizedBox(
                 height: MediaQuery.of(context).size.width * 0.6,
@@ -84,73 +86,52 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                 ),
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 30),
 
-              /// Description
-              const Text(
+              Text(
                 "Not every flight is smooth. Adjust your\ncourse and keep climbing.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  height: 1.5,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: AppTextStyles.semiRegular(
+                  18,
+                ).copyWith(height: 1.4, color: AppColors.black),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
 
-              const Text(
+              Text(
                 "You've got this!",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                ),
+                style: AppTextStyles.semiRegular(
+                  18,
+                ).copyWith(height: 1.0, color: AppColors.black),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
-              // Button
-              Container(
-                height: 58,
-                decoration: BoxDecoration(
-                  color: const Color(0xff1A1647),
-                  borderRadius: BorderRadius.circular(14),
+              CustomHeaderViewExpandable(
+                isNeedToShowLeftRightBottomBorder: false,
+                isNeedToShowLeftImage: false,
+                isExpanded: false,
+                title: "Try Next Round",
+                headerColor: AppColors.primaryDark,
+                arrowBackgroundColor: AppColors.extraDarkYellow,
+                arrowFrontColor: Colors.black,
+                isExpandedViewAvailable: true,
+                fontStyle: AppTextStyles.regular(18).copyWith(
+                  height: 1.4,
+                  color: AppColors.white,
+                  letterSpacing: 0.2,
                 ),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Try Next Round",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      height: 58,
-                      width: 58,
-                      decoration: const BoxDecoration(
-                        color: Color(0xffFFC928),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(14),
-                          bottomRight: Radius.circular(14),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+                isLeftImage: IconButton(
+                  icon: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                    color: Colors.white,
+                  ),
+                  onPressed: () async {},
                 ),
+                onHeaderTap: () async {},
               ),
             ],
           ),

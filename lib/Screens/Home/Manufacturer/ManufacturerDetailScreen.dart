@@ -8,6 +8,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
@@ -133,9 +134,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                 fit: BoxFit.cover,
               ),
               onPressed: () async {
-                Navigator.push(
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingScreen()),
+                  SettingScreen(),
+                  disableSwipeBack: true,
                 );
               },
             ),
@@ -301,68 +303,20 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       isExpandedViewAvailable: true,
                                       isExpanded: false,
                                       onHeaderTap: () {
-                                        Navigator.push(
+                                        AppNavigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (_) => AllPlanesListScreen(
-                                              selectedAirbusId: detail.id,
-                                              manufacturerName:
-                                                  detail.general.companyName,
-                                            ),
+                                          AllPlanesListScreen(
+                                            selectedAirbusId: detail.id,
+                                            manufacturerName:
+                                                detail.general.companyName,
                                           ),
+                                          disableSwipeBack: true,
                                         );
                                       },
                                     ),
                                   ],
                                 ),
                               ),
-
-                            //const SizedBox(height: 20),
-
-                            // All List Of Airplane
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (_) => AllPlanesListScreen(
-                            //           selectedAirbusId: detail.id,
-                            //           manufacturerName:
-                            //               detail.general.companyName,
-                            //         ),
-                            //       ),
-                            //     );
-                            //   },
-                            //   child: Container(
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 25,
-                            //       vertical: 5,
-                            //     ),
-                            //
-                            //     child: Row(
-                            //       children: [
-                            //         SvgPicture.asset(
-                            //           CommonUi.setSvgImage(AssetsPath.Plane1),
-                            //         ),
-                            //         const SizedBox(width: 12),
-                            //         const Expanded(
-                            //           child: Text(
-                            //             "List of All Planes",
-                            //             style: TextStyle(fontSize: 16),
-                            //           ),
-                            //         ),
-                            //         const Icon(Icons.chevron_right),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                            // const SizedBox(height: 10),
-
-                            // const Divider(
-                            //   height: 0,
-                            //   thickness: 3,
-                            //   color: AppColors.separatorColourAppBar,
-                            // ),
                             _buildSectionHeader(
                               title: "GENERAL INFORMATION",
                               isExpanded: showMoreGeneralInfo,

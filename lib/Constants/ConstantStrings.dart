@@ -35,6 +35,9 @@ class ConstantStrings {
   // ─────────────────────────────
   static const String skip = "Skip";
   static const String next = "Next";
+  static const String beginAnalysisText = "Begin Analysis";
+  static const String startInvestigationText = "  Start Investigation";
+
 
   // ─────────────────────────────
   // Authentication

@@ -624,7 +624,7 @@ class _FlightDetailScreenForMapSectionState
                         color: Colors.black45,
                         shape: BoxShape.circle,
                       ),
-                      child:SvgPicture.asset(
+                      child: SvgPicture.asset(
                         CommonUi.setSvgImage(AssetsPath.backArrowButton),
                         fit: BoxFit.cover,
                       ),
@@ -1412,7 +1412,7 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
             const Text("•", style: TextStyle(color: Colors.grey)),
             const SizedBox(width: 10),
             Text(
-              '$altitude m',
+              '$altitude ft',
               style: AppTextStyles.regular(
                 14,
               ).copyWith(height: 1.0, color: AppColors.primaryBlue),

@@ -9,6 +9,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomDivider.dart';
@@ -291,21 +292,21 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                           FirebaseEvents.trackAFlightButton,
                                           FirebaseEvents.trackScreen,
                                         );
-
-                                        Navigator.push(
+                                        AppNavigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (_) => BlocProvider.value(
+                                          TrackFlightScreen(
+                                            flightNumber: flightNumber,
+                                            initialFlight: selectedFlight,
+                                            initialFlightDetail: detail,
+                                            flightId: flightId,
+                                          ),
+                                          multiBlocProviders: [
+                                            BlocProvider.value(
                                               value: context
                                                   .read<FlightMapCubit>(),
-                                              child: TrackFlightScreen(
-                                                flightNumber: flightNumber,
-                                                initialFlight: selectedFlight,
-                                                initialFlightDetail: detail,
-                                                flightId: flightId,
-                                              ),
                                             ),
-                                          ),
+                                          ],
+                                          disableSwipeBack: true,
                                         );
                                       }
                                     },
@@ -366,17 +367,13 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     padding: const EdgeInsets.all(4),
                                     child: state.isTracking
                                         ? const LiveBadge()
-                                        : isFavLocal
-                                        ? SvgPicture.asset(
+                                        : SvgPicture.asset(
                                             CommonUi.setSvgImage(
-                                              AssetsPath.highlightStar,
+                                              isFavLocal
+                                                  ? AssetsPath.highlightStar
+                                                  : AssetsPath.unHighlightStar,
                                             ),
                                             height: 25,
-                                          )
-                                        : const Icon(
-                                            Icons.star_border,
-                                            color: Colors.yellow,
-                                            size: 25,
                                           ),
                                   ),
                                 ),
@@ -534,17 +531,18 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                             FirebaseEvents.trackScreen,
                           );
 
-                          Navigator.push(
+                          AppNavigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<FlightMapCubit>(),
-                                child: FlightDetailScreenForMapSection(
-                                  ICAOType: category,
-                                  flightDetail: combinedDetail,
-                                ),
-                              ),
+                            FlightDetailScreenForMapSection(
+                              ICAOType: category,
+                              flightDetail: combinedDetail,
                             ),
+                            multiBlocProviders: [
+                              BlocProvider.value(
+                                value: context.read<FlightMapCubit>(),
+                              ),
+                            ],
+                            disableSwipeBack: true,
                           );
                         },
                         child: Container(

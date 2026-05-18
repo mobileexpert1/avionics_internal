@@ -12,6 +12,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/FormattedText/FormattedText.dart';
 import '../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
@@ -232,9 +233,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               );
 
               Future.delayed(const Duration(seconds: 1), () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => LoginScreen()),
-                  (route) => false,
+                AppNavigator.pushAndRemoveUntil(
+                  context,
+                  LoginScreen(),
+                  disableSwipeBack: true,
                 );
               });
 
@@ -270,9 +272,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             borderRadius: BorderRadius.circular(30),
 
             onTap: () {
-              Navigator.push(
+              AppNavigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ChatHistoryScreen()),
+                ChatHistoryScreen(),
+                disableSwipeBack: true,
               );
             },
 

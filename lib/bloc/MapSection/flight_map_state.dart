@@ -134,6 +134,10 @@ class FlightMapState {
   }
 }
 
+double convertNmToMeters(int nm) {
+  return nm * 1852;
+}
+
 LatLngBounds getBoundsFromRadius({
   required LatLng center,
   required double radiusMeters,
@@ -166,18 +170,6 @@ LatLng getBoundsCenter(LatLngBounds bounds) {
   );
 }
 
-//for 200
-// double getZoomLevelFromRadius(int radiusNm) {
-//   if (radiusNm <= 1) return 13.5;
-//   if (radiusNm <= 5) return 11.8;
-//   if (radiusNm <= 10) return 10.8;
-//   if (radiusNm <= 25) return 9.8;
-//   if (radiusNm <= 50) return 8.8;
-//   if (radiusNm <= 100) return 7.8;
-//   if (radiusNm <= 150) return 7.2;
-//   return 6.8;
-// }
-
 double getZoomLevelFromRadius(int radiusNm) {
   debugPrint("Radius NM: $radiusNm");
 
@@ -197,8 +189,4 @@ double getZoomLevelFromRadius(int radiusNm) {
   if (radiusNm <= 750) return 4.3;
   if (radiusNm <= 1050) return 3.7;
   return 3.4;
-}
-
-double convertNmToMeters(int nm) {
-  return nm * 1852;
 }

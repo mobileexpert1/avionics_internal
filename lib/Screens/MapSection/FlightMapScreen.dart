@@ -1,44 +1,46 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+
 import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/AppColors.dart';
+import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
+import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../Helpers/CustomSegmentController/CustomSegmentController.dart';
+import '../../Helpers/MapSection/rotatePlane_icon.dart';
+import '../../Helpers/SearchBarWidget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
-import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
+import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import '../../bloc/MapSection/ParsedPolygon.dart';
+import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_model.dart';
+import '../../bloc/MapSection/flight_map_state.dart';
+import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
 import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
 import 'AirportStationDetailCard/AirportStationDetailCard.dart';
 import 'FlightDetailCard/FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'MapHelpers/MapToggleButtons.dart';
-import '../../Helpers/SearchBarWidget.dart';
-import '../../Constants/constantImages.dart';
 import 'MapHelpers/TrackAndSeacrhFlight.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../bloc/MapSection/flight_map_model.dart';
-import '../../bloc/MapSection/flight_map_state.dart';
-import '../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../Helpers/MapSection/rotatePlane_icon.dart';
-import '../../Helpers/CacheManger/CachedImageFile.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
-import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
-import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
-import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
@@ -124,7 +126,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         } else {
           _showInitialTrackingModePopup(context);
         }
-        await _loadFavoritesFlights();
+        await _mapCubit.loadFavoritesFlights();
       }
     });
 
@@ -155,18 +157,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     _sheetController.dispose();
     PaintingBinding.instance.imageCache.clear();
     super.dispose();
-  }
-
-  // ── DATA LOADING ───────────────────────────────────────────────────────────
-
-  Future<void> _loadFavoritesFlights() async {
-    final favCallSigns = await SavedFlightRepository().getFavoriteCallSigns();
-
-    debugPrint('Favorite CallSigns: $favCallSigns');
-
-    if (!mounted) return;
-
-    context.read<FlightMapCubit>().FavoriteFlights(favCallSigns);
   }
 
   Future<void> _loadGeoJson(BuildContext context) async {
@@ -217,6 +207,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         circleId: const CircleId('radius_circle'),
         center: center,
         radius: radiusMeters,
+        // Need to add More Value.
         strokeWidth: 2,
         strokeColor: Colors.blue,
         fillColor: Colors.blue.withValues(alpha: 0.2),
@@ -668,14 +659,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       FirebaseEvents.trackScreen,
     );
 
-    final result = await Navigator.push(
+    final result = await AppNavigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => MapSearchAircraftListCubit(),
-          child: const TrackAndSearchFlight(),
-        ),
-      ),
+      TrackAndSearchFlight(),
+      multiBlocProviders: [
+        BlocProvider(create: (_) => MapSearchAircraftListCubit()),
+      ],
+      disableSwipeBack: true,
     );
 
     if (result != null && result is FlightResult) {
@@ -876,7 +866,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   // ── BUILD ──────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -909,10 +898,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             fit: BoxFit.cover,
           ),
           onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            AppNavigator.push(context, SettingScreen(), disableSwipeBack: true);
           },
         ),
       ),
@@ -1248,23 +1234,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                           ),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Icon(Icons.radar, color: Colors.black, size: 30),
-                            SizedBox(width: 8),
-                            Text(
-                              "Flights in the area",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -1272,7 +1241,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final data = state.flights?[index];
                     if (data == null) return const SizedBox.shrink();
-
                     final aircraft = data.aircraftDetails;
                     final image = aircraft?.image ?? "";
                     final model = aircraft?.aircraftModel ?? "";
@@ -1292,313 +1260,357 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                         padding: EdgeInsets.symmetric(
                           vertical: kIsWeb
                               ? MediaQuery.of(context).size.width * 0.005
-                              : MediaQuery.of(context).size.width * 0.02,
+                              : MediaQuery.of(context).size.width * 0.016,
                           horizontal: kIsWeb
                               ? MediaQuery.of(context).size.width * 0.15
                               : 15,
                         ),
                         child: Stack(
                           children: [
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFD2E6FC),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(right: 15),
-                                child: Icon(
-                                  Icons.star,
-                                  color: isFavorite
-                                      ? Colors.black
-                                      : Colors.white,
-                                  size: kIsWeb ? 24 : 22,
-                                ),
-                              ),
-                            ),
-                            Slidable(
-                              key: ValueKey(data.id),
-                              closeOnScroll: true,
-                              endActionPane: ActionPane(
-                                motion: const BehindMotion(),
-                                extentRatio: 0.15,
-                                children: [
-                                  CustomSlidableAction(
-                                    onPressed: (_) async {
-                                      if (aircraft == null || data.id == null) {
-                                        debugPrint(
-                                          "Aircraft or Flight data is null",
-                                        );
-                                        return;
-                                      }
+                            InkWell(
+                              onTap: () {
+                                _buildSingleFlightMarker(data).then((marker) {
+                                  setState(() {
+                                    isMapViewSelected = true;
+                                    _isMapListViewShown = false;
+                                    _singleSearchMarker = marker;
+                                    selectedFlightId = data.id;
+                                    _mapCubit.setSelectedFlight(data);
+                                  });
+                                });
 
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.favOrUnFavFlightButton,
-                                        FirebaseEvents.trackScreen,
-                                      );
+                                _isProgrammaticMove = true;
 
-                                      final cubit = context
-                                          .read<AllPlanesCubit>();
-                                      await cubit.planFavOrUnfav1(
-                                        aircraft.aircraftId.toString(),
-                                        data.callSign,
-                                        data.flightNumber.toString(),
-                                        data.id.toString(),
-                                        context,
-                                      );
-
-                                      context
-                                          .read<FlightMapCubit>()
-                                          .toggleFavoriteByCallSign(
-                                            data.callSign,
-                                          );
-
-                                      AppSnackBar.custom(
-                                        context,
-                                        message: isFavorite
-                                            ? "Airline Unfavorite"
-                                            : "Airline Favorite",
-                                        svgAsset: "",
-                                      );
-                                    },
-                                    backgroundColor: Colors.transparent,
-                                    child: const SizedBox.shrink(),
+                                _mapController?.animateCamera(
+                                  CameraUpdate.newLatLngZoom(
+                                    LatLng(data.latitude, data.longitude),
+                                    8,
                                   ),
-                                ],
-                              ),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(8),
-                                onTap: () {
-                                  _buildSingleFlightMarker(data).then((marker) {
-                                    setState(() {
-                                      isMapViewSelected = true;
-                                      _isMapListViewShown = false;
-                                      _singleSearchMarker = marker;
-                                      selectedFlightId = data.id;
-                                      _mapCubit.setSelectedFlight(data);
-                                    });
-                                  });
+                                );
 
-                                  _isProgrammaticMove = true;
-
-                                  _mapController?.animateCamera(
-                                    CameraUpdate.newLatLngZoom(
-                                      LatLng(data.latitude, data.longitude),
-                                      8,
+                                _toggleFlightCard(flight: data.id);
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
+                                  _safeAnimate(0.01);
+                                });
+                              },
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final isWide = constraints.maxWidth > 600;
+                                  return Container(
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
                                     ),
-                                  );
-
-                                  _toggleFlightCard(flight: data.id);
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    _safeAnimate(0.01);
-                                  });
-                                },
-
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    final isWide = constraints.maxWidth > 600;
-
-                                    return Container(
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.08,
-                                            ),
-                                            blurRadius: 5,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      padding: EdgeInsets.all(isWide ? 14 : 10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              6,
-                                            ),
-                                            child: (image.isEmpty)
-                                                ? Image.asset(
-                                                    CommonUi.setPngImage(
-                                                      AssetsPath
-                                                          .aeroplaneComparison,
+                                    padding: EdgeInsets.all(isWide ? 14 : 0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              child: (image.isEmpty)
+                                                  ? Image.asset(
+                                                      CommonUi.setPngImage(
+                                                        AssetsPath
+                                                            .aeroplaneComparison,
+                                                      ),
+                                                      width: isWide ? 120 : 90,
+                                                      height: isWide ? 60 : 45,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : CachedAnyImage(
+                                                      imagePath: image,
+                                                      width: isWide ? 120 : 100,
+                                                      height: isWide ? 60 : 50,
+                                                      contentImage:
+                                                          BoxFit.cover,
                                                     ),
-                                                    width: isWide ? 120 : 90,
-                                                    height: isWide ? 60 : 45,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : CachedAnyImage(
-                                                    imagePath: image,
-                                                    width: isWide ? 120 : 90,
-                                                    height: isWide ? 60 : 45,
-                                                    contentImage: BoxFit.cover,
-                                                  ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Flexible(
-                                                      child: Text(
-                                                        model,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          fontSize: isWide
-                                                              ? 17
-                                                              : 15,
-                                                          color: const Color(
-                                                            0xFF3F3D55,
+                                            ),
+
+                                            const SizedBox(width: 10),
+
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Wrap(
+                                                          crossAxisAlignment:
+                                                              WrapCrossAlignment
+                                                                  .center,
+                                                          spacing: 10,
+                                                          runSpacing: 5,
+                                                          children: [
+                                                            Text(
+                                                              model,
+                                                              style:
+                                                                  AppTextStyles.bold(
+                                                                    16,
+                                                                  ).copyWith(
+                                                                    height: 1.0,
+                                                                    color: AppColors
+                                                                        .blackForNavTitle,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+
+                                                            if (icaoCode
+                                                                .isNotEmpty)
+                                                              Container(
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          6,
+                                                                      vertical:
+                                                                          3,
+                                                                    ),
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        6,
+                                                                      ),
+                                                                  border: Border.all(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade300,
+                                                                  ),
+                                                                ),
+                                                                child: Text(
+                                                                  icaoCode,
+                                                                  style:
+                                                                      AppTextStyles.bold(
+                                                                        16,
+                                                                      ).copyWith(
+                                                                        height:
+                                                                            1.0,
+                                                                        color: AppColors
+                                                                            .textColour,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          if (aircraft ==
+                                                              null) {
+                                                            debugPrint(
+                                                              "Aircraft or Flight data is null",
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          AnalyticsService
+                                                              .instance
+                                                              .buttonPressed(
+                                                                FirebaseEvents
+                                                                    .favOrUnFavFlightButton,
+                                                                FirebaseEvents
+                                                                    .trackScreen,
+                                                              );
+
+                                                          final cubit = context
+                                                              .read<
+                                                                AllPlanesCubit
+                                                              >();
+                                                          await cubit
+                                                              .planFavOrUnfav1(
+                                                                aircraft
+                                                                    .aircraftId
+                                                                    .toString(),
+                                                                data.callSign,
+                                                                data.flightNumber
+                                                                    .toString(),
+                                                                data.id
+                                                                    .toString(),
+                                                                context,
+                                                              );
+
+                                                          context
+                                                              .read<
+                                                                FlightMapCubit
+                                                              >()
+                                                              .toggleFavoriteByCallSign(
+                                                                data.callSign,
+                                                              );
+
+                                                          AppSnackBar.custom(
+                                                            context,
+                                                            message: isFavorite
+                                                                ? "Airline Unfavorite"
+                                                                : "Airline Favorite",
+                                                            svgAsset: "",
+                                                          );
+                                                        },
+                                                        child: SizedBox(
+                                                          child: SvgPicture.asset(
+                                                            CommonUi.setSvgImage(
+                                                              isFavorite
+                                                                  ? AssetsPath
+                                                                        .highlightStar
+                                                                  : AssetsPath
+                                                                        .unHighlightStar,
+                                                            ),
+                                                            height: 23,
                                                           ),
                                                         ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
                                                       ),
-                                                    ),
-                                                    const SizedBox(width: 6),
-                                                    if (icaoCode.isNotEmpty)
+                                                    ],
+                                                  ),
+
+                                                  const SizedBox(height: 13),
+
+                                                  // BOTTOM SECTION
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      /// MANUFACTURER
+                                                      Expanded(
+                                                        child: Row(
+                                                          children: [
+                                                            ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    4,
+                                                                  ),
+                                                              child:
+                                                                  manufacturerLogo
+                                                                      .isEmpty
+                                                                  ? SvgPicture.asset(
+                                                                      CommonUi.setSvgImage(
+                                                                        AssetsPath
+                                                                            .manufacturer,
+                                                                      ),
+                                                                      width:
+                                                                          isWide
+                                                                          ? 40
+                                                                          : 30,
+                                                                      height:
+                                                                          isWide
+                                                                          ? 26
+                                                                          : 20,
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                    )
+                                                                  : CachedAnyImage(
+                                                                      imagePath:
+                                                                          manufacturerLogo,
+                                                                      width:
+                                                                          isWide
+                                                                          ? 40
+                                                                          : 30,
+                                                                      height:
+                                                                          isWide
+                                                                          ? 30
+                                                                          : 20,
+                                                                      contentImage:
+                                                                          BoxFit
+                                                                              .contain,
+                                                                      useCache:
+                                                                          true,
+                                                                    ),
+                                                            ),
+
+                                                            const SizedBox(
+                                                              width: 10,
+                                                            ),
+
+                                                            Expanded(
+                                                              child: Text(
+                                                                manufacturer,
+                                                                style:
+                                                                    AppTextStyles.regular(
+                                                                      14,
+                                                                    ).copyWith(
+                                                                      height:
+                                                                          1.0,
+                                                                      color: AppColors
+                                                                          .textColour,
+                                                                    ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                      const SizedBox(width: 8),
+
+                                                      /// FLIGHT CODE
                                                       Container(
                                                         padding:
                                                             const EdgeInsets.symmetric(
-                                                              horizontal: 6,
-                                                              vertical: 2,
+                                                              horizontal: 8,
+                                                              vertical: 4,
                                                             ),
                                                         decoration: BoxDecoration(
-                                                          color: Colors.white,
+                                                          color: const Color(
+                                                            0xFF3F3D55,
+                                                          ),
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                 6,
                                                               ),
-                                                          border: Border.all(
-                                                            color: Colors
-                                                                .grey
-                                                                .shade300,
-                                                          ),
                                                         ),
                                                         child: Text(
-                                                          icaoCode,
-                                                          style: TextStyle(
-                                                            fontSize: isWide
-                                                                ? 12
-                                                                : 10,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 6),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                4,
+                                                          flightCode,
+                                                          style:
+                                                              AppTextStyles.bold(
+                                                                13,
+                                                              ).copyWith(
+                                                                height: 1.1,
+                                                                color: AppColors
+                                                                    .white,
                                                               ),
-                                                          child:
-                                                              manufacturerLogo
-                                                                  .isEmpty
-                                                              ? SvgPicture.asset(
-                                                                  CommonUi.setSvgImage(
-                                                                    AssetsPath
-                                                                        .manufacturer,
-                                                                  ),
-                                                                  width: isWide
-                                                                      ? 26
-                                                                      : 18,
-                                                                  height: isWide
-                                                                      ? 26
-                                                                      : 18,
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                )
-                                                              : CachedAnyImage(
-                                                                  imagePath:
-                                                                      manufacturerLogo,
-                                                                  width: isWide
-                                                                      ? 40
-                                                                      : 28,
-                                                                  height: isWide
-                                                                      ? 20
-                                                                      : 16,
-                                                                  contentImage:
-                                                                      BoxFit
-                                                                          .contain,
-                                                                  useCache:
-                                                                      true,
-                                                                ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 6,
-                                                        ),
-                                                        Text(
-                                                          manufacturer,
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: isWide
-                                                                ? 14
-                                                                : 12,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                          0xFF3F3D55,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        flightCode,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: isWide
-                                                              ? 13
-                                                              : 11,
-                                                          fontWeight:
-                                                              FontWeight.w600,
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
+                                          ],
+                                        ),
+
+                                        /// DIVIDER
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 10,
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                          child: Divider(
+                                            height: 1,
+                                            thickness: 1,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -1714,16 +1726,15 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 FirebaseEvents.trackScreen,
               );
 
-              Navigator.push(
+              AppNavigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => AskWilcoScreen(
-                    accessToken: token,
-                    isComeFromTab: false,
-                    sessionId: '',
-                    title: '',
-                  ),
+                AskWilcoScreen(
+                  accessToken: token,
+                  isComeFromTab: false,
+                  sessionId: '',
+                  title: '',
                 ),
+                disableSwipeBack: true,
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

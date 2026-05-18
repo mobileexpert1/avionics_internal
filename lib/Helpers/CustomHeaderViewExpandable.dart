@@ -1,5 +1,4 @@
 // EXPANDABLE WIDGET
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomHeaderViewExpandable extends StatelessWidget {
@@ -15,6 +14,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
   final VoidCallback? onHeaderTap;
   final Widget? child;
   final TextStyle fontStyle;
+  final TextAlign? textAlign;
 
   const CustomHeaderViewExpandable({
     super.key,
@@ -29,6 +29,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     this.onHeaderTap,
     this.isLeftImage,
     this.child,
+    this.textAlign,
     required this.fontStyle,
   });
 
@@ -68,7 +69,13 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         isLeftImage!,
                         const SizedBox(width: 5),
                       ],
-                      Expanded(child: Text(title, style: fontStyle)),
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: fontStyle,
+                          textAlign: textAlign,
+                        ),
+                      ),
                       const SizedBox(width: 50),
                     ],
                   ),
@@ -84,8 +91,8 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded
                           ? const BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      )
+                              top: Radius.circular(12),
+                            )
                           : BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -110,14 +117,14 @@ class CustomHeaderViewExpandable extends StatelessWidget {
             duration: const Duration(milliseconds: 250),
             child: isExpanded
                 ? Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(12),
-                ),
-              ),
-              child: child ?? const SizedBox(),
-            )
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(12),
+                      ),
+                    ),
+                    child: child ?? const SizedBox(),
+                  )
                 : const SizedBox(),
           ),
         ],

@@ -9,6 +9,7 @@ import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
@@ -115,10 +116,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             fit: BoxFit.cover,
           ),
           onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            AppNavigator.push(context, SettingScreen(), disableSwipeBack: true);
           },
         ),
       ),
@@ -271,18 +269,18 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             .manufacturerListItemButton,
                                         FirebaseEvents.allPlanesListScreen,
                                       );
-
-                                      Navigator.push(
+                                      AppNavigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
+                                        AirCraftDetailScreen(
+                                          aircraftId: model.id,
+                                        ),
+                                        multiBlocProviders: [
+                                          BlocProvider(
                                             create: (_) =>
                                                 AirCraftDetailCubit(),
-                                            child: AirCraftDetailScreen(
-                                              aircraftId: model.id,
-                                            ),
                                           ),
-                                        ),
+                                        ],
+                                        disableSwipeBack: true,
                                       );
                                     },
 
