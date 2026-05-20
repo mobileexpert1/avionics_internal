@@ -1,14 +1,29 @@
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Screens/Profile/AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
-
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import '../AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
-import 'InfoBottomSheet.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
+import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
+import '../../../bloc/Profile/ProfileMain/profile_state.dart';
 import '../../../bloc/home/homeBloc/home_cubit.dart';
+import '../../Onboarding/Login/LoginScreen.dart';
+import '../AboutTermsPrivacy/AboutTermsPrivacyScreen.dart';
+import '../AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
 import '../Avtar/AvtarScreen.dart';
 import '../ContactSupportScreen/ContactSupportScreen.dart';
 import '../CreditsTokenUsage/CreditsTokenUsageScreen.dart';
@@ -16,23 +31,8 @@ import '../Feedback/FeedbackScreen.dart';
 import '../ManageAccount/ManageAccountScreen.dart';
 import '../MySubscription/MySubscriptionScreen.dart';
 import '../SettingsSectionHeader.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import '../../../Constants/AppColors.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../Constants/constantImages.dart';
-import '../../../CustomFiles/CustomAppBar.dart';
-import '../../Onboarding/Login/LoginScreen.dart';
-import '../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../../bloc/Profile/ProfileMain/profile_state.dart';
-import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
-import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
-import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import '../VideoPlayer/VideoPlayerScreen.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import 'InfoBottomSheet.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -308,21 +308,48 @@ class _SettingScreenState extends State<SettingScreen> {
                         AssetsPath.privacyPolicyProfile,
                       ),
                       title: "Privacy Policy",
-                      onTap: () {},
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 0),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.termsAndConditionsProfile,
                       ),
                       title: "Terms of Service",
-                      onTap: () {},
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 1),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.aboutProfile,
                       ),
                       title: "About",
-                      onTap: () {},
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 2),
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.aboutProfile,
+                      ),
+                      title: "FAQ",
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 3),
+                        );
+                      },
                     ),
                   ],
                 ),

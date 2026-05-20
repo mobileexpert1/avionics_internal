@@ -173,21 +173,19 @@ LatLng getBoundsCenter(LatLngBounds bounds) {
 
 double getZoomLevelFromRadius(int radiusNm) {
   debugPrint("Radius NM: $radiusNm");
-
-  if (radiusNm <= 1) return 14.0;
-  if (radiusNm <= 2) return 12.7;
-  if (radiusNm <= 5) return 11.5;
-  if (radiusNm <= 10) return 10.5;
-  if (radiusNm <= 25) return 9.1;
-  if (radiusNm <= 50) return 8.1;
-  if (radiusNm <= 75) return 7.5;
-  if (radiusNm <= 100) return 7.1;
-  if (radiusNm <= 150) return 6.5;
-  if (radiusNm <= 200) return 6.1;
-  if (radiusNm <= 300) return 5.5;
-  if (radiusNm <= 400) return 5.1;
-  if (radiusNm <= 500) return 4.8;
-  if (radiusNm <= 750) return 4.3;
+  if (radiusNm <= 1) return 8.3;
+  if (radiusNm <= 5) return 8.2;
+  if (radiusNm <= 10) return 8.1;
+  if (radiusNm <= 25) return 7.6;
+  if (radiusNm <= 50) return 7.5;
+  if (radiusNm <= 75) return 6.9;
+  if (radiusNm <= 100) return 6.7;
+  if (radiusNm <= 150) return 6.2;
+  if (radiusNm <= 200) return 5.9;
+  if (radiusNm <= 300) return 5.4;
+  if (radiusNm <= 400) return 4.95;
+  if (radiusNm <= 500) return 4.7;
+  if (radiusNm <= 750) return 4.2;
   if (radiusNm <= 1050) return 3.7;
   return 3.4;
 }

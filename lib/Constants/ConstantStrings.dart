@@ -180,6 +180,13 @@ class ApiFunctionUrlConstant {
   static const String userService = 'user-service/';
 }
 
+class UrlConstantForPrivacyTermsAbout {
+  static const String aboutUrl = "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=about";
+  static const String privacyUrl = "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=privacy";
+  static const String termsUrl = "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=terms";
+  static const String faqUrl = "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=faq";
+}
+
 class ApiServiceUrlConstant {
   static const String authFetchMapKey = 'auth/secret/avioflai/fr24';
   static const String authFetchGoogleKey =
