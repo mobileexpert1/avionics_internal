@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -11,7 +10,6 @@ class FlightGoogleMapWidget extends StatefulWidget {
   final VoidCallback? onCameraIdle;
   final VoidCallback? onCameraMoveStarted;
   final ValueChanged<bool>? isAlreadyFetchedTheKey;
-
 
   final MapType mapType;
   final Set<Polygon> polygons;
@@ -66,7 +64,6 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
     if (apiTokenSever == true) {
       _isAlreadyFetchedTheKey = true;
       widget.isAlreadyFetchedTheKey?.call(true);
-
     } else {
       _isAlreadyFetchedTheKey = false;
       widget.isAlreadyFetchedTheKey?.call(false);

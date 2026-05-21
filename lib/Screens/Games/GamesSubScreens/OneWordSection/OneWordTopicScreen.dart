@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/Games/LockedGameCard.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
 
@@ -102,12 +104,12 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                         return GridView.builder(
                           itemCount: state.games.length,
                           gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: getCrossAxisCount(),
-                            crossAxisSpacing: isWeb ? 20 : 12,
-                            mainAxisSpacing: isWeb ? 20 : 12,
-                            childAspectRatio: getChildAspectRatio(),
-                          ),
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: getCrossAxisCount(),
+                                crossAxisSpacing: isWeb ? 20 : 12,
+                                mainAxisSpacing: isWeb ? 20 : 12,
+                                childAspectRatio: getChildAspectRatio(),
+                              ),
                           itemBuilder: (context, index) {
                             final game = state.games[index];
 
@@ -116,15 +118,14 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                               isLocked: false,
                               infoMessage: game.info,
                               onTap: () {
-                                Navigator.push(
+                                AppNavigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => QuizQuestionScreen(
-                                      sectionId: game.gameNumber,
-                                      sectionTitle: game.title,
-                                      gameId: "one_word",
-                                    ),
+                                  QuizQuestionScreen(
+                                    sectionId: game.gameNumber,
+                                    sectionTitle: game.title,
+                                    gameId: "one_word",
                                   ),
+                                  disableSwipeBack: true,
                                 );
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.oneWordTopicListScreen,
@@ -147,4 +148,3 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
     );
   }
 }
-

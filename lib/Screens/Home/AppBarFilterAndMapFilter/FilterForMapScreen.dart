@@ -1,9 +1,8 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Helpers/CustomDivider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -39,7 +38,6 @@ class FilterForMapScreen extends StatefulWidget {
   final int? numberOfFlights;
   final int? searchRadius;
   final VoidCallback onTapBackButton;
-
 
   const FilterForMapScreen({
     Key? key,

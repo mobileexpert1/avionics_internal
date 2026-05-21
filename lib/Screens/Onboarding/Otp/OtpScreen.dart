@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pinput/pinput.dart';
-import '../../../Constants/ConstantStrings.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Onboarding/otp/otp_cubit.dart';

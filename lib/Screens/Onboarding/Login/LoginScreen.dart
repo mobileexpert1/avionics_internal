@@ -3,8 +3,8 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/Screens/Onboarding/Signup/SignupScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             // -------- Password --------
                             BlocBuilder<LoginCubit, LoginState>(
                               buildWhen: (p, c) =>
-                              p.passwordError != c.passwordError,
+                                  p.passwordError != c.passwordError,
                               builder: (context, state) {
                                 return CustomTextField(
                                   label: ConstantStrings.passwordLabel,
@@ -137,12 +137,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               selector: (state) => state.isButtonEnabled,
                               builder: (_, enabled) {
                                 return CustomBottomButton(
-                                  fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                    height: 1.0,
-                                    color: enabled
-                                        ? Colors.white
-                                        : Colors.grey.shade600,
-                                  ),
+                                  fontStyle: AppTextStyles.regular(21.46)
+                                      .copyWith(
+                                        height: 1.0,
+                                        color: enabled
+                                            ? Colors.white
+                                            : Colors.grey.shade600,
+                                      ),
                                   title: ConstantStrings.loginButton,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour
@@ -166,7 +167,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextButton(
                               onPressed: () {
                                 if (!mounted) return;
-                                AppNavigator.push(context, ForgotScreen(), disableSwipeBack: true);
+                                AppNavigator.push(
+                                  context,
+                                  ForgotScreen(),
+                                  disableSwipeBack: true,
+                                );
 
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.forgotButton,
@@ -259,7 +264,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextButton(
                               onPressed: () {
                                 if (!mounted) return;
-                                AppNavigator.pushReplacement(context, SignupScreen(), disableSwipeBack: true);
+                                AppNavigator.pushReplacement(
+                                  context,
+                                  SignupScreen(),
+                                  disableSwipeBack: true,
+                                );
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.signupButton,
                                   FirebaseEvents.loginScreen,

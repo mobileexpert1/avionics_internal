@@ -3,8 +3,8 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
@@ -56,7 +56,6 @@ class _ForgotScreenState extends State<ForgotScreen> {
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
           if (!mounted) return;
-
 
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -130,12 +129,13 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                 return SizedBox(
                                   width: buttonWidth,
                                   child: CustomBottomButton(
-                                    fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                      height: 1.0,
-                                      color: isButtonEnabled
-                                          ? Colors.white
-                                          : Colors.grey.shade600,
-                                    ),
+                                    fontStyle: AppTextStyles.regular(21.46)
+                                        .copyWith(
+                                          height: 1.0,
+                                          color: isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade600,
+                                        ),
                                     title: ConstantStrings.sendEmailButton,
                                     backgroundColor: isButtonEnabled
                                         ? AppColors.primaryValueColour

@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
@@ -60,10 +61,9 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
           title: 'Quiz',
           centerTitle: false,
           leftButton: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 30,
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -77,9 +77,10 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
               padding: EdgeInsets.all(isWeb ? screenWidth * 0.02 : 16),
               child: GameDetailCard(
                 onStartGame: () {
-                  Navigator.push(
+                  AppNavigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const QuizLockScreen()),
+                    QuizLockScreen(),
+                    disableSwipeBack: true,
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.quizListButton,
@@ -94,4 +95,3 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
     );
   }
 }
-

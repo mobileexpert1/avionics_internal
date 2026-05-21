@@ -3,8 +3,8 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
 
   @override
   void initState() {
@@ -79,7 +79,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     onPressed: () {
                       if (!mounted) return;
-                      AppNavigator.pushAndRemoveUntil(context, LoginScreen(), disableSwipeBack: true);
+                      AppNavigator.pushAndRemoveUntil(
+                        context,
+                        LoginScreen(),
+                        disableSwipeBack: true,
+                      );
                     },
                   ),
                 ),
@@ -201,12 +205,13 @@ class _SignupScreenState extends State<SignupScreen> {
                               selector: (state) => state.isButtonEnabled,
                               builder: (_, enabled) {
                                 return CustomBottomButton(
-                                  fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                    height: 1.0,
-                                    color: enabled
-                                        ? Colors.white
-                                        : Colors.grey.shade600,
-                                  ),
+                                  fontStyle: AppTextStyles.regular(21.46)
+                                      .copyWith(
+                                        height: 1.0,
+                                        color: enabled
+                                            ? Colors.white
+                                            : Colors.grey.shade600,
+                                      ),
                                   title: ConstantStrings.next,
                                   backgroundColor: enabled
                                       ? AppColors.primaryValueColour
@@ -237,7 +242,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 onPressed: () {
                                   if (!mounted) return;
 
-                                  AppNavigator.push(context, LoginScreen(), disableSwipeBack: true);
+                                  AppNavigator.push(
+                                    context,
+                                    LoginScreen(),
+                                    disableSwipeBack: true,
+                                  );
 
                                   AnalyticsService.instance.buttonPressed(
                                     FirebaseEvents.loginButton,

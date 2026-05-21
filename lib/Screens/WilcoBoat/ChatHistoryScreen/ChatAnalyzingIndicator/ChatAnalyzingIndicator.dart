@@ -14,7 +14,7 @@ class ChatAnalyzingIndicator extends StatefulWidget {
 class _AnalyzingIndicatorState extends State<ChatAnalyzingIndicator>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl = AnimationController(
-    duration: const Duration(milliseconds: 1200), 
+    duration: const Duration(milliseconds: 1200),
     vsync: this,
   )..repeat();
 

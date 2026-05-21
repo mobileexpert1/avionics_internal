@@ -32,6 +32,7 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
     } catch (e) {
       emit(
         state.copyWith(
+          subscriptionData:null,
           isLoading: false,
           isSuccess: false,
           errorMessage: e.toString(),

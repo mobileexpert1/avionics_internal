@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/Screens/Profile/AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,17 +21,19 @@ import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
 import '../../../bloc/Profile/ProfileMain/profile_state.dart';
 import '../../../bloc/home/homeBloc/home_cubit.dart';
 import '../../Onboarding/Login/LoginScreen.dart';
-import '../AboutTermsPrivacy/AboutTermsPrivacyScreen.dart';
-import '../AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
-import '../Avtar/AvtarScreen.dart';
-import '../ContactSupportScreen/ContactSupportScreen.dart';
-import '../CreditsTokenUsage/CreditsTokenUsageScreen.dart';
-import '../Feedback/FeedbackScreen.dart';
-import '../ManageAccount/ManageAccountScreen.dart';
-import '../MySubscription/MySubscriptionScreen.dart';
-import '../SettingsSectionHeader.dart';
-import '../VideoPlayer/VideoPlayerScreen.dart';
+import '../ProfileMenuScreen/Avtar/AvtarScreen.dart';
+import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
+import 'SettingMenuScreen/0_PersonalData/ManageAccountScreen.dart';
+import 'SettingMenuScreen/1_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/2_AddOnPacks/AddOnPacksScreen.dart';
+import 'SettingMenuScreen/3_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
+import 'SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
+import 'SettingMenuScreen/4_5_AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
+import 'SettingMenuScreen/6_TutorialScreen/VideoPlayerScreen.dart';
+import 'SettingMenuScreen/7_Review/FeedbackScreen.dart';
+import 'SettingMenuScreen/8_ContactSupport/ContactSupportScreen.dart';
+import 'SettingMenuScreen/9_12_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -71,16 +72,6 @@ class _SettingScreenState extends State<SettingScreen> {
       avatarTypeName = name ?? '';
     });
   }
-
-  // Future<void> setLocalUserData() async {
-  //   final userDetails = await homeCubit.fetchHomeData(context);
-  //   if (userDetails != null) {
-  //     setState(() {
-  //       userAvtarTypeUrl = userDetails.userTypeUrl ?? '';
-  //       avatarTypeName = userDetails.firstName + userDetails.lastName;
-  //     });
-  //   }
-  // }
 
   /// ---------------- COMMON NAVIGATION ----------------
   void _navigate(BuildContext context, Widget screen) {
@@ -235,6 +226,14 @@ class _SettingScreenState extends State<SettingScreen> {
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.subscriptionProfile,
                       ),
+                      title: "Extra Add On Packs",
+                      onTap: () => _navigate(context, AddOnPacksScreen()),
+                    ),
+
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subscriptionProfile,
+                      ),
                       title: "Credits/Token Usage",
                       onTap: () =>
                           _navigate(context, CreditsTokenUsageScreen()),
@@ -273,7 +272,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                 /// -------- HELP --------
                 SettingsListGroup(
-                  headerTitle: "Help & Feedback",
+                  headerTitle: "Help & Review",
                   items: [
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

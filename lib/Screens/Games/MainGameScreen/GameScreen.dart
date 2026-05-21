@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/Games/GameCard.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
@@ -47,6 +48,11 @@ class _GamesScreenState extends State<GamesScreen> {
     return 2; // Mobile
   }
 
+  /// ---------------- COMMON NAVIGATION ----------------
+  void _navigate(BuildContext context, Widget screen) {
+    AppNavigator.push(context, screen, disableSwipeBack: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -80,69 +86,50 @@ class _GamesScreenState extends State<GamesScreen> {
                           onTap: () {
                             switch (game.id) {
                               case 'quiz':
-                                Navigator.push(
+                                _navigate(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        QuizDetailScreen(gameId: game.id),
-                                  ),
+                                  QuizDetailScreen(gameId: game.id),
                                 );
-                                break;
-                              case 'calculation':
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => CalculationDetailScreen(
-                                      gameId: game.id,
-                                    ),
-                                  ),
-                                );
-                                break;
 
+                                break;
                               case 'one_word':
-                                Navigator.push(
+                                _navigate(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        OneWordDetailScreen(gameId: game.id),
-                                  ),
+                                  OneWordDetailScreen(gameId: game.id),
                                 );
                                 break;
 
                               case 'black_box':
-                                Navigator.push(
+                                _navigate(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        BlackBoxStartScreen(gameId: game.id),
-                                  ),
+                                  BlackBoxStartScreen(gameId: game.id),
+                                );
+
+                                break;
+
+                              case 'calculation':
+                                _navigate(
+                                  context,
+                                  CalculationDetailScreen(gameId: game.id),
                                 );
                                 break;
-                              case 'trivia':
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        TriviaDetailScreen(gameId: game.id),
-                                  ),
-                                );
-                                break;
+
                               case 'imageBased':
-                                Navigator.push(
+                                _navigate(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        ImageBasedDetailScreen(gameId: game.id),
-                                  ),
+                                  ImageBasedDetailScreen(gameId: game.id),
+                                );
+
+                              case 'trivia':
+                                _navigate(
+                                  context,
+                                  TriviaDetailScreen(gameId: game.id),
                                 );
                                 break;
-                              case 'aircraftEncyclopaedia':
-                                Navigator.push(
+                                case 'aircraftEncyclopaedia':
+                                _navigate(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        AircraftEncyclopaediaDetailScreen(),
-                                  ),
+                                  AircraftEncyclopaediaDetailScreen(),
                                 );
                                 break;
                               default:

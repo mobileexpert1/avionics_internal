@@ -224,8 +224,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     TextButton(
                       onPressed: () {
                         if (!mounted) return;
-                        AppNavigator.pushReplacement(context, StartExploringApp(), disableSwipeBack: true);
-
+                        AppNavigator.pushReplacement(
+                          context,
+                          StartExploringApp(),
+                          disableSwipeBack: true,
+                        );
                       },
                       child: Text(
                         ConstantStrings.skip,
@@ -240,7 +243,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         if (!mounted) return;
 
                         if (onLastPage) {
-                          AppNavigator.pushReplacement(context, StartExploringApp(), disableSwipeBack: true);
+                          AppNavigator.pushReplacement(
+                            context,
+                            StartExploringApp(),
+                            disableSwipeBack: true,
+                          );
                         } else {
                           _controller.nextPage(
                             duration: const Duration(milliseconds: 300),

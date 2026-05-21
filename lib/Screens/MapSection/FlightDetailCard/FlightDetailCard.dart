@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +17,6 @@ import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/MapSection/flight_map_state.dart';
 import '../FlightTrackScreen.dart';
-import '../MapHelpers/FlightDetailScreen.dart';
 import '../MapHelpers/FlightDetailScreenForMapSection.dart';
 import '../MapHelpers/LiveBadge.dart';
 

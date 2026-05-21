@@ -2,7 +2,6 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../../bloc/Games/SubGameSection/OneWord_Section/oneWord_state.dart';
@@ -66,9 +66,10 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
               fit: BoxFit.cover,
             ),
             onPressed: () async {
-              Navigator.push(
+              AppNavigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingScreen()),
+                SettingScreen(),
+                disableSwipeBack: true,
               );
             },
           ),
@@ -107,18 +108,16 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
                             isLocked: game.isLocked,
                             onTap: () {
                               if (!game.isLocked) {
-                                Navigator.push(
+                                AppNavigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => QuizQuestionScreen(
-                                      sectionId: game.gameNumber,
-                                      sectionTitle:
-                                          ConstantStrings.aviationQuizTitle,
-                                      gameId: "quiz",
-                                    ),
+                                  QuizQuestionScreen(
+                                    sectionId: game.gameNumber,
+                                    sectionTitle:
+                                        ConstantStrings.aviationQuizTitle,
+                                    gameId: "quiz",
                                   ),
+                                  disableSwipeBack: true,
                                 );
-
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.quizListLockButton,
                                   FirebaseEvents.quizLockListScreen,

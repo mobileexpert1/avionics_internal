@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
@@ -71,11 +72,10 @@ class _CalculationDetailScreenState extends State<CalculationDetailScreen> {
               padding: const EdgeInsets.all(16.0),
               child: GameDetailCard(
                 onStartGame: () {
-                  Navigator.push(
+                  AppNavigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const CalculationLockScreen(),
-                    ),
+                    CalculationLockScreen(),
+                    disableSwipeBack: true,
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.calculationsListButton,

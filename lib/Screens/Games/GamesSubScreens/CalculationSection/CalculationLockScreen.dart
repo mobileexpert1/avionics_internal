@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/Games/LockedGameCard.dart';
 
 class CalculationLockScreen extends StatefulWidget {
@@ -100,16 +102,14 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
                         infoMessage: game.info,
                         onTap: () {
                           if (!game.isLocked) {
-                            Navigator.push(
+                            AppNavigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => QuizQuestionScreen(
-                                  sectionId: game.gameNumber,
-                                  sectionTitle:
-                                  ConstantStrings.calculationsTitle,
-                                  gameId: "calculation",
-                                ),
+                              QuizQuestionScreen(
+                                sectionId: game.gameNumber,
+                                sectionTitle: ConstantStrings.calculationsTitle,
+                                gameId: "calculation",
                               ),
+                              disableSwipeBack: true,
                             );
                             AnalyticsService.instance.buttonPressed(
                               FirebaseEvents.calculationsLockButton,
@@ -130,4 +130,3 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
     );
   }
 }
-

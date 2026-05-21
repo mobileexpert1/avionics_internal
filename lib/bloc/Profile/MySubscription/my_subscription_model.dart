@@ -23,20 +23,24 @@ class MySubscriptionData {
   final MySubscriptionItem? upcoming;
   final List<MySubscriptionItem> old;
 
-  MySubscriptionData({
-    required this.current,
-    required this.upcoming,
-    required this.old,
-  });
+  MySubscriptionData({this.current, this.upcoming, required this.old});
 
   factory MySubscriptionData.fromJson(Map<String, dynamic> json) {
     return MySubscriptionData(
-      current: json['current'] != null
+      current:
+          json['current'] != null &&
+              json['current'] is Map &&
+              (json['current'] as Map).isNotEmpty
           ? MySubscriptionItem.fromJson(json['current'])
           : null,
-      upcoming: json['upcoming'] != null
+
+      upcoming:
+          json['upcoming'] != null &&
+              json['upcoming'] is Map &&
+              (json['upcoming'] as Map).isNotEmpty
           ? MySubscriptionItem.fromJson(json['upcoming'])
           : null,
+
       old:
           (json['old'] as List<dynamic>?)
               ?.map((e) => MySubscriptionItem.fromJson(e))
@@ -57,32 +61,42 @@ class MySubscriptionData {
 class MySubscriptionItem {
   final String id;
   final String status;
+  final String type;
   final String platform;
+
   final String startDate;
   final String expiryDate;
 
   final String startDateLocal;
   final String expiryDateLocal;
+
   final String? cancellationDate;
+
   final String currency;
   final String price;
+
   final dynamic priceInPurchasedCurrency;
+
   final double taxPercentage;
   final double taxAmount;
+
   final String originalTransactionId;
+
   final MySubscriptionPlanModel plan;
+
   final String currencySymbol;
+
+  final List<AddOnModel> addOnPacksModel;
 
   MySubscriptionItem({
     required this.id,
     required this.status,
+    required this.type,
     required this.platform,
     required this.startDate,
     required this.expiryDate,
-
     required this.startDateLocal,
     required this.expiryDateLocal,
-
     required this.cancellationDate,
     required this.currency,
     required this.price,
@@ -92,17 +106,22 @@ class MySubscriptionItem {
     required this.originalTransactionId,
     required this.plan,
     required this.currencySymbol,
+    required this.addOnPacksModel,
   });
 
   factory MySubscriptionItem.fromJson(Map<String, dynamic> json) {
     final currencyCode = json['currency'] ?? '';
+
     final startDate = json['start_date'] ?? '';
+
     final expiryDate = json['expiry_date'] ?? '';
 
     return MySubscriptionItem(
       id: json['id'] ?? '',
       status: json['status'] ?? '',
+      type: json['type'] ?? '',
       platform: json['platform'] ?? '',
+
       startDate: startDate,
       expiryDate: expiryDate,
 
@@ -110,14 +129,28 @@ class MySubscriptionItem {
       expiryDateLocal: convertUtcToLocal24Hour(expiryDate),
 
       cancellationDate: json['cancellation_date'],
+
       currency: currencyCode,
-      price: json['price'] ?? '',
-      priceInPurchasedCurrency: json['price_in_purchased_currency'] ?? "",
-      taxPercentage: (json['tax_percentage'] ?? 0).toDouble(),
-      taxAmount: (json['tax_amount'] ?? 0).toDouble(),
+
+      price: json['price']?.toString() ?? '',
+
+      priceInPurchasedCurrency: json['price_in_purchased_currency'],
+
+      taxPercentage: (json['tax_percentage'] as num?)?.toDouble() ?? 0.0,
+
+      taxAmount: (json['tax_amount'] as num?)?.toDouble() ?? 0.0,
+
       originalTransactionId: json['original_transaction_id'] ?? '',
+
       plan: MySubscriptionPlanModel.fromJson(json['plan'] ?? {}),
+
       currencySymbol: getCurrencySymbol(currencyCode),
+
+      addOnPacksModel:
+          (json['add_on'] as List<dynamic>?)
+              ?.map((e) => AddOnModel.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 
@@ -125,6 +158,7 @@ class MySubscriptionItem {
     return {
       'id': id,
       'status': status,
+      'type': type,
       'platform': platform,
       'start_date': startDate,
       'expiry_date': expiryDate,
@@ -137,11 +171,96 @@ class MySubscriptionItem {
       'original_transaction_id': originalTransactionId,
       'plan': plan.toJson(),
       'currency_symbol': currencySymbol,
+      'add_on': addOnPacksModel.map((e) => e.toJson()).toList(),
     };
   }
+}
 
-  static String getCurrencySymbol(String currencyCode) {
-    return NumberFormat.simpleCurrency(name: currencyCode).currencySymbol;
+String getCurrencySymbol(String currencyCode) {
+  return NumberFormat.simpleCurrency(name: currencyCode).currencySymbol;
+}
+
+class AddOnModel {
+  final String id;
+  final String platform;
+  final String currency;
+
+  final String price;
+  final String priceInPurchasedCurrency;
+
+  final String purchaseDate;
+  final String purchaseDateLocal;
+
+  final double taxPercentage;
+  final double taxAmount;
+
+  final String type;
+
+  final int credit;
+  final int token;
+  final String currencySymbol;
+
+  AddOnModel({
+    required this.id,
+    required this.platform,
+    required this.currency,
+    required this.price,
+    required this.priceInPurchasedCurrency,
+    required this.purchaseDate,
+    required this.purchaseDateLocal,
+    required this.taxPercentage,
+    required this.taxAmount,
+    required this.type,
+    required this.credit,
+    required this.token,
+    required this.currencySymbol,
+  });
+
+  factory AddOnModel.fromJson(Map<String, dynamic> json) {
+    final currencyCode = json['currency'] ?? '';
+    final purchaseDateLocal = json['purchase_date'] ?? '';
+
+    return AddOnModel(
+      id: json['id'] ?? '',
+      platform: json['platform'] ?? '',
+      currency: currencyCode,
+
+      price: json['price']?.toString() ?? '',
+
+      priceInPurchasedCurrency:
+          json['price_in_purchased_currency']?.toString() ?? '',
+
+      purchaseDate: json['purchase_date'] ?? '',
+      purchaseDateLocal: convertUtcToLocal24Hour(purchaseDateLocal),
+
+
+      taxPercentage: (json['tax_percentage'] as num?)?.toDouble() ?? 0.0,
+
+      taxAmount: (json['tax_amount'] as num?)?.toDouble() ?? 0.0,
+
+      type: json['type'] ?? '',
+
+      credit: json['credit'] ?? 0,
+
+      token: json['token'] ?? 0,
+      currencySymbol: getCurrencySymbol(currencyCode),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'platform': platform,
+      'currency': currency,
+      'price': price,
+      'price_in_purchased_currency': priceInPurchasedCurrency,
+      'purchase_date': purchaseDate,
+      'tax_percentage': taxPercentage,
+      'tax_amount': taxAmount,
+      'type': type,
+      'credit': credit,
+      'token': token,
+    };
   }
 }
 

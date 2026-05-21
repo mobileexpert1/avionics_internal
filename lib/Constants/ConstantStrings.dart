@@ -90,7 +90,7 @@ class ConstantStrings {
   static const String saveTitle = 'Save';
   static const String exploring = 'Start Exploring';
   static const String contactSupport = 'Contact Support';
-  static const String reviewTitle = 'Your Feedback';
+  static const String reviewTitle = 'Your Review';
 
   // ─────────────────────────────
   // Section Titles

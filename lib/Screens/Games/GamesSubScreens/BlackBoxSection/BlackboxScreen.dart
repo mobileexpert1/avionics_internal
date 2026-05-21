@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
@@ -69,9 +70,11 @@ class _BlackBoxStartScreenState extends State<BlackBoxStartScreen> {
               padding: const EdgeInsets.all(16.0),
               child: GameDetailCardBlackBox(
                 onStartGame: () {
-                  Navigator.push(
+                  AppNavigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const BlackBoxLockScreen()),
+                    BlackBoxLockScreen(),
+
+                    disableSwipeBack: true,
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.quizListButton,

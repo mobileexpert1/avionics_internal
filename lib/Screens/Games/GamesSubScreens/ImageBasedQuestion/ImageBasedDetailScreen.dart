@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/Games/GameInfoCard.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_cubit.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
@@ -26,7 +27,9 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.imageBasedDetailLockScreen);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.imageBasedDetailLockScreen,
+    );
   }
 
   @override
@@ -60,10 +63,9 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
         appBar: CustomAppBar(
           title: 'Planespotter',
           leftButton: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 30,
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -77,16 +79,14 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
               padding: EdgeInsets.all(isWeb ? screenWidth * 0.02 : 16),
               child: GameDetailCard(
                 onStartGame: () {
-                  Navigator.push(
+                  AppNavigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => QuizQuestionScreen(
-                        sectionId: 0,
-                        sectionTitle:
-                        ConstantStrings.imageBasedTitle,
-                        gameId: "imageBased",
-                      ),
+                    QuizQuestionScreen(
+                      sectionId: 0,
+                      sectionTitle: ConstantStrings.imageBasedTitle,
+                      gameId: "imageBased",
                     ),
+                    disableSwipeBack: true,
                   );
                   AnalyticsService.instance.buttonPressed(
                     FirebaseEvents.imageBasedDetailLockScreen,
@@ -101,4 +101,3 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
     );
   }
 }
-

@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../bloc/Games/SubGameSection/BlackBox_Section/blackbox_cubit.dart';
 import 'OverViewAndClueScreen.dart';
 
@@ -95,13 +96,12 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
                         infoMessage: game.info,
                         onTap: () {
                           if (!game.isLocked) {
-                            Navigator.push(
+                            AppNavigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => OverviewAndClueDeckScreen(
-                                  gameNo: game.gameNumber,
-                                ),
+                              OverviewAndClueDeckScreen(
+                                gameNo: game.gameNumber,
                               ),
+                              disableSwipeBack: true,
                             );
 
                             AnalyticsService.instance.buttonPressed(
