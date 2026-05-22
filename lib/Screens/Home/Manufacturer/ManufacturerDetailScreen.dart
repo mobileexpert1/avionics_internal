@@ -618,7 +618,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 showInterestingFacts = !showInterestingFacts;
                               }),
                               isShowMoreLessOption:
-                                  (detail.interestingFacts?.length ?? 0) > 2,
+                                  (detail.interestingFacts?.length ?? 0) > 0,
                             ),
                             const SizedBox(height: 10),
                             if (showInterestingFacts)

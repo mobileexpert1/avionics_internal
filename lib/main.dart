@@ -19,6 +19,7 @@ import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/calculations.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/history.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/ExploreNewGames/ExploreNewGames.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -147,6 +148,7 @@ class _MyAppState extends State<MyApp> {
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit'),
             home: SplashScreen(),
+
           );
         },
       ),

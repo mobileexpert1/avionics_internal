@@ -88,6 +88,7 @@ abstract class AssetsPath {
   static const String infoWrongSecond = "59InfoWrongGameIcon";
   static const String infoWrongThird = "60InfoWrongGameIcon";
   static const String gameInfoClose = "61GameInfoClose";
+  static const String towerImageForGame = "62TowerImage";
 
 
   static const String ExploreIcon = "ExploreIcon";

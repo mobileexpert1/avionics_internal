@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/ExploreNewGames/ExploreNewGames.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -266,6 +267,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       title: "Game Info Hint Screen",
                       onTap: () => _navigate(context, InfoWrongGameScreen()),
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.manageAccountProfile,
+                      ),
+                      title: "Explore Games",
+                      onTap: () => _navigate(context, ExploreGamesScreen()),
                     ),
                   ],
                 ),
