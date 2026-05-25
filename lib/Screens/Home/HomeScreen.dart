@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
   bool expandedManufacturerTab = false;
-  bool expandFlyingInTheAreaTab = false;
+  bool expandFlyingInTheAreaTab = true;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -337,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ((expandedManufacturerTab == true &&
                                               expandFlyingInTheAreaTab == true)
                                           ? 0.0
-                                          : 0.35),
+                                          : 0.4),
                           ),
                         ],
                       ),

@@ -1,10 +1,8 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/ExploreNewGames/ExploreNewGames.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -14,7 +12,6 @@ import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppNavigator.dart';
-import '../../../Helpers/AppText.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
@@ -64,13 +61,32 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> setLocalData() async {
     final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
-    final name = await SharedPrefsHelper.getUserProfileName();
+    final name = await SharedPrefsHelper.getAvtarUserType();
 
     if (!mounted) return;
 
     setState(() {
       userAvtarTypeUrl = avatarUrl ?? '';
-      avatarTypeName = name ?? '';
+      switch (name.toLowerCase()) {
+        case 'student':
+          avatarTypeName = "Student";
+          break;
+        case 'atco':
+          avatarTypeName = "ATCO";
+          break;
+        case 'pilot':
+          avatarTypeName = "Pilot";
+          break;
+        case 'enthusiast':
+          avatarTypeName = "Enthusiast";
+          break;
+        case 'aircraft_engineer':
+          avatarTypeName = "Aircraft Engineer";
+          break;
+        default:
+          avatarTypeName = "ATSEP";
+          break;
+      }
     });
   }
 
@@ -151,10 +167,7 @@ class _SettingScreenState extends State<SettingScreen> {
             if (userAvtarTypeUrl.isNotEmpty)
               Expanded(
                 child: Text(
-                  avatarTypeName
-                      .toUpperCase()
-                      .replaceAll("_", " ")
-                      .capitalize(),
+                  avatarTypeName,
                   style: AppTextStyles.regular(
                     20,
                   ).copyWith(height: 1, color: AppColors.primaryValueColour),
@@ -223,13 +236,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
 
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.subscriptionProfile,
-                      ),
-                      title: "Extra Add On Packs",
-                      onTap: () => _navigate(context, AddOnPacksScreen()),
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.subscriptionProfile,
+                    //   ),
+                    //   title: "Extra Add On Packs",
+                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
+                    // ),
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -254,27 +267,20 @@ class _SettingScreenState extends State<SettingScreen> {
                       title: "Delete Account",
                       onTap: () => showDeleteConfirmation(context, false),
                     ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.manageAccountProfile,
-                      ),
-                      title: "Trivia Level Demo Screen",
-                      onTap: () => _navigate(context, AnimatedLevelMapScreen()),
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.manageAccountProfile,
-                      ),
-                      title: "Game Info Hint Screen",
-                      onTap: () => _navigate(context, InfoWrongGameScreen()),
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.manageAccountProfile,
-                      ),
-                      title: "Explore Games",
-                      onTap: () => _navigate(context, ExploreGamesScreen()),
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.manageAccountProfile,
+                    //   ),
+                    //   title: "Trivia Level Demo Screen",
+                    //   onTap: () => _navigate(context, AnimatedLevelMapScreen()),
+                    // ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.manageAccountProfile,
+                    //   ),
+                    //   title: "Game Info Hint Screen",
+                    //   onTap: () => _navigate(context, InfoWrongGameScreen()),
+                    // ),
                   ],
                 ),
 
@@ -410,12 +416,14 @@ class _SettingScreenState extends State<SettingScreen> {
     BuildContext context,
   ) async {
     try {
-      try {
-        await Purchases.getCustomerInfo();
-        await Purchases.logOut();
-      } catch (e) {
-        debugPrint("RevenueCat not configured yet: $e");
-      }
+      // try {
+      //   final info = await Purchases.getCustomerInfo();
+      //   if (info.originalAppUserId != "") {
+      //     await Purchases.logOut();
+      //   }
+      // } catch (e) {
+      //   debugPrint("RevenueCat not configured yet: $e");
+      // }
       await SharedPrefsHelper.clearAll([], false);
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),

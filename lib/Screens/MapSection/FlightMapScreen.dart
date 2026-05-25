@@ -70,7 +70,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
   bool _hasFetchedDetails = false;
-  bool _isNeedToStopViewMap = false;
 
   String? selectedFlightId;
 
@@ -114,7 +113,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
               _isForFlyingInTheArea = 1;
             });
             _resetFlightSelection();
+            _isUserGesture = false;
+            isFirstTimeUserCome = false;
             _handleFilterTap(context);
+
+            AnalyticsService.instance.buttonPressed(
+              FirebaseEvents.flyingInTheAreaButton,
+              FirebaseEvents.trackScreen,
+            );
           } else if (widget.openMode == 2) {
             setState(() {
               _activeCard = 0;
@@ -124,10 +130,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             });
             _handleTextTap(context);
           }
-        } else {
-          // if (_isNeedToStopViewMap) {
-          //   _showInitialTrackingModePopup(context);
-          // }
         }
         await _mapCubit.loadFavoritesFlights();
       }
@@ -865,7 +867,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       appBar: CustomAppBar(
         isForHomeScreen: true,
         title: '',
-        leftButton: widget.openMode == 1
+        leftButton: widget.openMode == 1 || widget.openMode == 2
             ? IconButton(
                 icon: const Icon(
                   Icons.arrow_back_ios,
@@ -934,8 +936,11 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                             builder: (_, polygons, __) {
                               return FlightGoogleMapWidget(
                                 isAlreadyFetchedTheKey: (value) {
-                                  _showInitialTrackingModePopup(context);
+                                  if (widget.openMode == null) {
+                                    _showInitialTrackingModePopup(context);
+                                  }
                                 },
+
                                 mapType: _mapCubit.state.mapType
                                     .toGoogleMapType(),
                                 polygons: polygons,

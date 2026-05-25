@@ -1,23 +1,25 @@
-class quizItem {
+import '../../../../Constants/constantImages.dart';
+
+class QuizPerItem {
   final String title;
   final bool isLocked;
   final int gameNumber;
   final List<String> info;
 
-  quizItem({
+  QuizPerItem({
     required this.title,
     required this.isLocked,
     required this.gameNumber,
     required this.info,
   });
 
-  quizItem copyWith({
+  QuizPerItem copyWith({
     String? title,
     bool? isLocked,
     int? gameNumber,
     List<String>? info,
   }) {
-    return quizItem(
+    return QuizPerItem(
       title: title ?? this.title,
       isLocked: isLocked ?? this.isLocked,
       gameNumber: gameNumber ?? this.gameNumber,

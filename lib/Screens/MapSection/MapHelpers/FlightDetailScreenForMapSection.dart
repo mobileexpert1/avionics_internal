@@ -62,7 +62,7 @@ class _FlightDetailScreenForMapSectionState
 
   final ScrollController _subTabScrollController = ScrollController();
 
-  final mainTabs = ["Live Information", "Encyclopedic Information"];
+  final mainTabs = ["Live", "Encyclopedia"];
   final subTabs = [
     "Identification & Position",
     "Flight Plan",
@@ -850,7 +850,7 @@ class _FlightDetailScreenForMapSectionState
             ['Track (degree)', flight.track?.toString() ?? 'N/A'],
             ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
             [
-              'Ground Speed (km/h)',
+              'Ground Speed (kts)',
               flight.groundSpeed?.toString() ?? 'N/A',
               true,
             ],
@@ -1403,7 +1403,7 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$groundSpeed km/h',
+              '$groundSpeed kts',
               style: AppTextStyles.regular(
                 14,
               ).copyWith(height: 1.0, color: AppColors.primaryBlue),

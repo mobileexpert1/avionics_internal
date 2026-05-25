@@ -1,8 +1,9 @@
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../Constants/AppColors.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Constants/constantImages.dart';
@@ -47,7 +48,9 @@ class GameDetailCard extends StatelessWidget {
                 Text(
                   game.title,
                   style: TextStyle(
-                    fontSize: game.title.toLowerCase().contains("image") ? 23 : 25,
+                    fontSize: game.title.toLowerCase().contains("image")
+                        ? 23
+                        : 25,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF3E3C55),
                   ),
@@ -62,7 +65,6 @@ class GameDetailCard extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 20),
-
 
                 if (!kIsWeb) ...[
                   // ---------------- MOBILE LAYOUT ----------------
@@ -105,7 +107,6 @@ class GameDetailCard extends StatelessWidget {
                   ),
                 ] else ...[
                   // ---------------- WEB LAYOUT (TWO COLUMNS) ----------------
-
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -114,7 +115,9 @@ class GameDetailCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                            ),
 
                             buildInfo(
                               CommonUi.setSvgImage(AssetsPath.clock),
@@ -141,7 +144,9 @@ class GameDetailCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                            ),
                           ],
                         ),
                       ),
@@ -150,7 +155,9 @@ class GameDetailCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                            ),
                           ],
                         ),
                       ),
@@ -159,7 +166,9 @@ class GameDetailCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                            ),
                             buildInfo(
                               CommonUi.setSvgImage(AssetsPath.Tik),
                               '+3 points for all correct answers',
@@ -180,13 +189,13 @@ class GameDetailCard extends StatelessWidget {
                 ],
 
                 if (kIsWeb)
-                Align(
-                  alignment: Alignment.center,
-                  child: buildInfo(
-                    CommonUi.setPngImage(AssetsPath.carFollowImage),
-                    'Need a route to the right answer? Follow Me!',
+                  Align(
+                    alignment: Alignment.center,
+                    child: buildInfo(
+                      CommonUi.setPngImage(AssetsPath.carFollowImage),
+                      'Need a route to the right answer? Follow Me!',
+                    ),
                   ),
-                ),
 
                 const SizedBox(height: 20),
 
@@ -196,10 +205,9 @@ class GameDetailCard extends StatelessWidget {
                         ? MediaQuery.of(context).size.width * 0.5
                         : double.infinity,
                     child: CustomBottomButton(
-                      fontStyle: AppTextStyles.regular(21.46).copyWith(
-                        height: 1.0,
-                        color: Colors.white,
-                      ),
+                      fontStyle: AppTextStyles.regular(
+                        21.46,
+                      ).copyWith(height: 1.0, color: Colors.white),
                       title: "Start Game",
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,
@@ -385,8 +393,9 @@ class GameDetailCardBlackBox extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.1,
+                              ),
                             ],
                           ),
                         ),
@@ -415,7 +424,6 @@ class GameDetailCardBlackBox extends StatelessWidget {
                                 CommonUi.setPngImage(AssetsPath.carFollowImage),
                                 'Need a route to the right answer? Follow Me!',
                               ),
-
                             ],
                           ),
                         ),
@@ -442,11 +450,9 @@ class GameDetailCardBlackBox extends StatelessWidget {
                           ? MediaQuery.of(context).size.width * 0.5
                           : double.infinity,
                       child: CustomBottomButton(
-                        fontStyle: AppTextStyles.regular(21.46).copyWith(
-                          height: 1.0,
-                          color:  Colors.white
-                              ,
-                        ),
+                        fontStyle: AppTextStyles.regular(
+                          21.46,
+                        ).copyWith(height: 1.0, color: Colors.white),
                         title: ConstantStrings.startGame,
                         backgroundColor: AppColors.customBottomEnabledColour,
                         textColor: Colors.white,
@@ -470,8 +476,8 @@ class GameDetailCardBlackBox extends StatelessWidget {
     final bool isSvg = path.endsWith('.svg');
     final bool isImg =
         path.endsWith('.png') ||
-            path.endsWith('.jpg') ||
-            path.endsWith('.jpeg');
+        path.endsWith('.jpg') ||
+        path.endsWith('.jpeg');
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -487,14 +493,10 @@ class GameDetailCardBlackBox extends StatelessWidget {
 
           const SizedBox(width: 12),
           Flexible(
-            child: Text(
-              text,
-              style: TextStyle(fontSize: kIsWeb ? 16 : 14),
-            ),
+            child: Text(text, style: TextStyle(fontSize: kIsWeb ? 16 : 14)),
           ),
         ],
       ),
     );
   }
 }
-

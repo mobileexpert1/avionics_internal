@@ -478,7 +478,7 @@ class _PlanCard extends StatelessWidget {
                           vertical: 6,
                         ),
                         child: Text(
-                          isBasicPlan ? "Starter Plan" : "Premium",
+                          isBasicPlan ? "Starter" : "Premium",
                           style: AppTextStyles.bold(
                             14,
                           ).copyWith(height: 1.0, color: Colors.black),

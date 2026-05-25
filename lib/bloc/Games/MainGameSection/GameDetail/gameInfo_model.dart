@@ -103,7 +103,6 @@ class GameMapper {
       ],
       isTopicWise: true,
     ),
-
     'one_word': GameInfoModel(
       title: 'One Word',
       description: 'Complete the aviation sentence',
@@ -225,7 +224,6 @@ class GameMapper {
       ],
       isTopicWise: true,
     ),
-
     'imageBased': GameInfoModel(
       title: 'Planespotter',
       description: 'Complete the aviation sentence',
@@ -262,7 +260,6 @@ class GameMapper {
       ],
       isTopicWise: true,
     ),
-
     'trivia': GameInfoModel(
       title: 'Trivia',
       description: 'Complete the aviation sentence',
@@ -299,7 +296,6 @@ class GameMapper {
       ],
       isTopicWise: true,
     ),
-
     'aircraftEncyclopaedia': GameInfoModel(
       title: 'Aircraft Encyclopaedia',
       description: 'Complete the aviation sentence',

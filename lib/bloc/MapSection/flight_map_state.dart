@@ -68,8 +68,8 @@ class FlightMapState {
 
     this.savedFlights,
 
-    this.numberOfFlights,
-    this.searchRadius,
+    this.numberOfFlights = 10,
+    this.searchRadius = 150,
   });
 
   FlightMapState copyWith({

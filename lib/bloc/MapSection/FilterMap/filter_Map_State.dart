@@ -48,8 +48,8 @@ class FilterMapState extends Equatable {
     return FilterMapState(
       showNumberOfFlights: true,
       showSearchInRadius: true,
-      numberOfFlights: 1,
-      searchRadius: 1,
+      numberOfFlights: 10,
+      searchRadius: 150,
       selectedCategories: const [],
       showCategories: true,
       showMap: true,

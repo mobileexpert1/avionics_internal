@@ -84,15 +84,15 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
           final eta = detail?.eta ?? selectedFlight?.eta;
           final takeoffTime = detail?.takeoffTime;
 
-          final aircraftType = detail?.aircraftModel ?? 'N/A';
-          final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
+          //final aircraftType = detail?.aircraftModel ?? 'N/A';
+          //final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
           final category = detail?.icaoTypeCode ?? detail?.type ?? "";
           final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
 
-          final airlineName =
-              (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
-              ? detail!.manufacturer!.airlineName!
-              : 'N/A';
+          // final airlineName =
+          //     (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
+          //     ? detail!.manufacturer!.airlineName!
+          //     : 'N/A';
 
           final manufacturerLogo = detail?.manufacturer?.logo ?? "";
           final callSign =
@@ -216,27 +216,26 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                             CommonUi.setSvgImage(
                                               AssetsPath.manufacturer,
                                             ),
-                                            width: 25,
-                                            height: 19,
+                                            width: 30,
+                                            height: 25,
                                             fit: BoxFit.fill,
                                           )
                                         : CachedAnyImage(
                                             imagePath: manufacturerLogo,
-                                            width: 25,
-                                            height: 19,
+                                            width: 30,
+                                            height: 30,
                                             contentImage: BoxFit.contain,
                                             useCache: false,
                                           ),
                                   ),
 
-                                  Text(
-                                    manufacturer,
-                                    style: AppTextStyles.semiBold(14).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.primaryValueColour,
-                                    ),
-                                  ),
-
+                                  // Text(
+                                  //   manufacturer,
+                                  //   style: AppTextStyles.semiBold(14).copyWith(
+                                  //     height: 1.0,
+                                  //     color: AppColors.primaryValueColour,
+                                  //   ),
+                                  // ),
                                   SizedBox(width: 5),
 
                                   Row(

@@ -316,16 +316,6 @@ class ArrowPopup extends StatelessWidget {
               ).copyWith(height: 1.0, color: AppColors.grayMedium),
             ),
 
-            //const SizedBox(height: 12),
-
-            // Text(
-            //   "The beginning of your journey.",
-            //   textAlign: TextAlign.left,
-            //   style: AppTextStyles.bold(
-            //     16,
-            //   ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
-            // ),
-            //
             const SizedBox(height: 25),
             CustomHeaderViewExpandable(
               isNeedToShowLeftRightBottomBorder: false,

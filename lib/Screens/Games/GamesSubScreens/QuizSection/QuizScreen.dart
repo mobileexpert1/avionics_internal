@@ -42,7 +42,7 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
     return BlocProvider(
       create: (_) => GameDetailCubit(
         GameInfo(
-          title: 'Quiz',
+          title: 'Aviation Quiz',
           description: 'Complete the aviation sentence',
           questions: 10,
           questionType: 'aviation fill-in-the-blanks',
@@ -58,7 +58,7 @@ class _QuizDetailScreenState extends State<QuizDetailScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'Quiz',
+          title: 'Aviation Quiz',
           centerTitle: false,
           leftButton: IconButton(
             icon: SvgPicture.asset(

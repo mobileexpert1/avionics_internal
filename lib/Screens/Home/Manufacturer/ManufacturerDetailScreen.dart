@@ -287,7 +287,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       isLeftImage: IconButton(
                                         icon: SvgPicture.asset(
                                           CommonUi.setSvgImage(
-                                            AssetsPath.homeCompareAircraft,
+                                            AssetsPath.aeroplaneManufacturer,
                                           ),
                                           width: 30,
                                           height: 30,
@@ -295,7 +295,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                         onPressed: () async {},
                                       ),
-                                      title: "See all aircraft",
+                                      title: "List of all models",
                                       headerColor: AppColors.primaryDark,
                                       arrowBackgroundColor:
                                           AppColors.extraDarkYellow,

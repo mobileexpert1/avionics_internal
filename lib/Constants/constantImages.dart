@@ -89,7 +89,17 @@ abstract class AssetsPath {
   static const String infoWrongThird = "60InfoWrongGameIcon";
   static const String gameInfoClose = "61GameInfoClose";
   static const String towerImageForGame = "62TowerImage";
+  static const String aeroplaneManufacturer = "63AeroplaneManufacturer";
 
+  static const String takeMeasureUnSelected = "65TakeMeasureUnSelected";
+  static const String flightMathUnSelected = "66FlightMathUnSelected";
+  static const String greenBlueUnSelected = "67GreenBlueUnSelected";
+  static const String mindSeparationUnSelected = "68MindSeparationUnSelected";
+
+  static const String takeMeasureSelected = "69TakeMeasureSelected";
+  static const String flightMathSelected = "70FlightMathSelected";
+  static const String greenBlueSelected = "71GreenBlueSelected";
+  static const String mindSeparationSelected = "72MindSeparationSelected";
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";

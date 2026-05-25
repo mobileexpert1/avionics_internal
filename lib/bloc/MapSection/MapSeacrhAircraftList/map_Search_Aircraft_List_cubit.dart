@@ -1,15 +1,16 @@
-import 'package:bloc/bloc.dart';
-import '../flight_map_model.dart';
-import 'package:flutter/material.dart';
-import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../MapAircraftList/aircraft_List_Data_Repository.dart';
-import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
-import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
-    as repo;
-import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_State.dart';
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_repository.dart';
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
+    as repo;
+import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
+import '../MapAircraftList/aircraft_List_Data_Repository.dart';
+import '../flight_map_model.dart';
 
 class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
   MapSearchAircraftListCubit() : super(MapSearchAircraftListState.initial());
@@ -186,7 +187,7 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
             selectedFlight: selected,
           ),
         );
-      }else{
+      } else {
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,

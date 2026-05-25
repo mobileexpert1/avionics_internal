@@ -45,7 +45,7 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
     return BlocProvider(
       create: (_) => GameDetailCubit(
         GameInfo(
-          title: 'Planespotter',
+          title: 'PlaneSpotter',
           description: 'Complete the aviation sentence',
           questions: 10,
           questionType: 'aviation fill-in-the-blanks',
@@ -61,7 +61,7 @@ class _ImageBasedDetailState extends State<ImageBasedDetailScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'Planespotter',
+          title: 'PlaneSpotter',
           leftButton: IconButton(
             icon: SvgPicture.asset(
               CommonUi.setSvgImage(AssetsPath.backArrowButton),

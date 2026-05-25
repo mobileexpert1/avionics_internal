@@ -36,6 +36,11 @@ class AvtarScreen extends StatefulWidget {
 
 class _AvtarScreenState extends State<AvtarScreen> {
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     context.read<AvtarCubit>().loadAvatars(
@@ -94,153 +99,163 @@ class _AvtarScreenState extends State<AvtarScreen> {
               ),
             );
             context.read<AvtarCubit>().resetStatus();
-          } else if (state.status == CommonApiStatus.initial) {
-            Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(child: CircularProgressIndicator()),
-            );
           }
           if (state.avatars.isEmpty) {
             Center(child: Text('No avatars found'));
           }
         },
         builder: (context, state) {
-          return Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 8,
-                ),
-                itemCount: state.avatars.length,
-                itemBuilder: (context, index) {
-                  final userType = state.avatars[index];
-                  final isSelected = state.selectedUserType == userType.key;
-
-                  final isAtsep = userType.key == "atsep";
-
-                  final imageUrl = isAtsep && isSelected
-                      ? (userType.selectedIcon ?? "")
-                      : userType.logo;
-
-                  final logoWidget = userType.logo.isNotEmpty
-                      ? SvgPicture.network(
-                          imageUrl,
-                          width: 44,
-                          height: 44,
-                          fit: BoxFit.contain,
-                          color: !isAtsep
-                              ? (isSelected
-                                    ? AppColors.white
-                                    : AppColors.primaryDark)
-                              : null,
-                          placeholderBuilder: (context) => const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        )
-                      : SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.avtarSecond),
-                          width: 44,
-                          height: 44,
-                          fit: BoxFit.contain,
-                        );
-
-                  return GestureDetector(
-                    onTap: () {
-                      final cubit = context.read<AvtarCubit>();
-
-                      if (widget.isComeFromSignupScreen ||
-                          widget.isComeFromSocialLogin) {
-                        cubit.selectAvatarTypeOnly(userType.key);
-                      } else {
-                        if (state.selectedUserType != userType.key) {
-                          cubit.selectAvatar(
-                            userType.key == "atsep"
-                                ? userType.selectedIcon ?? ""
-                                : userType.logo,
-                            userType.key,
-                            widget.isComeFromSignupScreen,
-                            widget.isComeFromSocialLogin,
-                            context,
-                            {},
-                          );
-                        }
-                      }
-
-                      AnalyticsService.instance.buttonPressed(
-                        FirebaseEvents.avtarScreen,
-                        FirebaseEvents.updatedAvtarButtonTap,
-                      );
-                    },
-                    child: Padding(
+          return (state.status == CommonApiStatus.initial)
+              ? Scaffold(
+                  backgroundColor: Colors.white,
+                  body: Center(child: CircularProgressIndicator()),
+                )
+              : Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: ListView.builder(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 5,
+                        vertical: 10,
                         horizontal: 8,
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 20,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primaryBlue
-                              : AppColors.white,
-                          border: Border.all(color: AppColors.primaryDark),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      itemCount: state.avatars.length,
+                      itemBuilder: (context, index) {
+                        final userType = state.avatars[index];
+                        final isSelected =
+                            state.selectedUserType == userType.key;
+
+                        final isAtsep = userType.key == "atsep";
+
+                        final imageUrl = isAtsep && isSelected
+                            ? (userType.selectedIcon ?? "")
+                            : userType.logo;
+
+                        final logoWidget = userType.logo.isNotEmpty
+                            ? SvgPicture.network(
+                                imageUrl,
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.contain,
+                                color: !isAtsep
+                                    ? (isSelected
+                                          ? AppColors.white
+                                          : AppColors.primaryDark)
+                                    : null,
+                                placeholderBuilder: (context) => const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            : SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.avtarSecond),
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.contain,
+                              );
+
+                        return GestureDetector(
+                          onTap: () {
+                            final cubit = context.read<AvtarCubit>();
+
+                            if (widget.isComeFromSignupScreen ||
+                                widget.isComeFromSocialLogin) {
+                              cubit.selectAvatarTypeOnly(userType.key);
+                            } else {
+                              if (state.selectedUserType != userType.key) {
+                                cubit.selectAvatar(
+                                  userType.key == "atsep"
+                                      ? userType.selectedIcon ?? ""
+                                      : userType.logo,
+                                  userType.key,
+                                  widget.isComeFromSignupScreen,
+                                  widget.isComeFromSocialLogin,
+                                  context,
+                                  {},
+                                );
+                              }
+                            }
+
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.avtarScreen,
+                              FirebaseEvents.updatedAvtarButtonTap,
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal: 8,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.primaryBlue
+                                    : AppColors.white,
+                                border: Border.all(
+                                  color: AppColors.primaryDark,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    userType.name,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTextStyles.bold(18).copyWith(
-                                      height: 1.0,
-                                      color: isSelected
-                                          ? AppColors.white
-                                          : AppColors.avtarTitleColour,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          userType.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: AppTextStyles.bold(18)
+                                              .copyWith(
+                                                height: 1.0,
+                                                color: isSelected
+                                                    ? AppColors.white
+                                                    : AppColors
+                                                          .avtarTitleColour,
+                                              ),
+                                        ),
+
+                                        const SizedBox(height: 10),
+
+                                        Text(
+                                          userType.description,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: AppTextStyles.regular(12)
+                                              .copyWith(
+                                                height: 1.0,
+                                                color: isSelected
+                                                    ? AppColors.white
+                                                    : AppColors
+                                                          .greyForTextfield,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
 
-                                  const SizedBox(height: 10),
+                                  const SizedBox(width: 10),
 
-                                  Text(
-                                    userType.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTextStyles.regular(12).copyWith(
-                                      height: 1.0,
-                                      color: isSelected
-                                          ? AppColors.white
-                                          : AppColors.greyForTextfield,
-                                    ),
-                                  ),
+                                  logoWidget,
+
+                                  const SizedBox(width: 8),
                                 ],
                               ),
                             ),
-
-                            const SizedBox(width: 10),
-
-                            logoWidget,
-
-                            const SizedBox(width: 8),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
-          );
+                  ),
+                );
         },
       ),
       bottomNavigationBar:
