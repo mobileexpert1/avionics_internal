@@ -106,7 +106,11 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       },
                     ),
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 30,
+                ),
                 onPressed: () async {
                   final cubit = context.read<QuizQuestionCubit>();
                   final gameName = cubit.returnGameName();
@@ -159,6 +163,34 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
             body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
+
+                if (state.showWrongAnswerPopup) {
+                  Future.microtask(() async {
+                    Widget screen;
+
+                    switch (state.wrongAnswerPopupCount) {
+                      case 1:
+                        screen = const WrongAnswerScreen1();
+                        break;
+
+                      case 2:
+                        screen = const WrongAnswerScreen2();
+                        break;
+
+                      default:
+                        screen = const WrongAnswerScreen3();
+                    }
+
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => screen),
+                    );
+
+                    context.read<QuizQuestionCubit>().continueAfterWrongPopup(
+                      context,
+                    );
+                  });
+                }
 
                 if (state.questions.isEmpty && state.isLoading) {
                   return const Center(child: CircularProgressIndicator());

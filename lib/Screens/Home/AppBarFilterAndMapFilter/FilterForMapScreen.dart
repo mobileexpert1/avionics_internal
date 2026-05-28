@@ -259,7 +259,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 20.0),
                             child: Container(
-                              alignment: AlignmentGeometry.topLeft,
+                              alignment: Alignment.topLeft,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 15,

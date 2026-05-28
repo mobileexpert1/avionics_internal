@@ -410,6 +410,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
     final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
 
+    // logic of continues 3 times wrong answer
+    int updatedWrongStreak = isCorrect
+        ? 0
+        : state.consecutiveWrongAnswers + 1;
+
+    bool shouldShowWrongPopup =
+        updatedWrongStreak == 3 &&
+            state.wrongAnswerPopupCount < 3 &&
+            state.currentIndex < maxQuestions - 1;
+
     int timeBonus = isCorrect && state.timer >= _totalDuration / 2 ? 1 : 0;
 
     int pointsThisQuestion = isCorrect ? 2 : 0;
@@ -451,6 +461,16 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         timeTaken: newTimeTaken,
         isTimerEnded: true,
         totalBonusPoints: state.totalBonusPoints + timeBonus,
+
+
+        consecutiveWrongAnswers:
+        shouldShowWrongPopup ? 0 : updatedWrongStreak,
+
+        wrongAnswerPopupCount: shouldShowWrongPopup
+            ? state.wrongAnswerPopupCount + 1
+            : state.wrongAnswerPopupCount,
+
+        showWrongAnswerPopup: shouldShowWrongPopup,
       ),
     );
   }
@@ -644,4 +664,15 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     _timer?.cancel();
     return super.close();
   }
+
+  ///new method for wrong answer
+  void continueAfterWrongPopup(BuildContext context) {
+    emit(
+      state.copyWith(
+        showWrongAnswerPopup: false,
+      ),
+    );
+    nextQuestion(context);
+  }
+
 }
