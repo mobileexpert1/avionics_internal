@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
@@ -47,7 +48,11 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
           title: 'Unit Conversion',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: 30,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -72,41 +77,49 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
               return const Center(child: Text("No conversions found"));
             }
 
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.categories.length,
-              itemBuilder: (context, index) {
-                final category = state.categories[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: CustomHeaderViewExpandable(
-                    // HEADER CONFIG
-                    isNeedToShowLeftRightBottomBorder: false,
-                    isNeedToShowLeftImage: false,
-                    isExpanded: expandedMap[index] ?? false,
-                    fontStyle: AppTextStyles.regular(
-                      16,
-                    ).copyWith(height: 1.4, color: AppColors.white),
-                    title: category.title,
-                    headerColor: expandedMap[index] ?? false
-                        ? AppColors.primaryDark
-                        : AppColors.grayMedium,
-                    arrowBackgroundColor: expandedMap[index] ?? false
-                        ? AppColors.extraDarkYellow
-                        : AppColors.lightGreyWithAlphaDecreased,
-                    arrowFrontColor: expandedMap[index] ?? false
-                        ? AppColors.black
-                        : AppColors.white,
-                    isExpandedViewAvailable: true,
-                    onHeaderTap: () {
-                      setState(() {
-                        expandedMap[index] = !(expandedMap[index] ?? false);
-                      });
-                    },
-                    child: _buildConversionBody(category),
-                  ),
-                );
-              },
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 1300 : double.infinity,
+                ),
+
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = state.categories[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: CustomHeaderViewExpandable(
+                        // HEADER CONFIG
+                        isNeedToShowLeftRightBottomBorder: false,
+                        isNeedToShowLeftImage: false,
+                        isExpanded: expandedMap[index] ?? false,
+                        fontStyle: AppTextStyles.regular(
+                          16,
+                        ).copyWith(height: 1.4, color: AppColors.white),
+                        title: category.title,
+                        headerColor: expandedMap[index] ?? false
+                            ? AppColors.primaryDark
+                            : AppColors.grayMedium,
+                        arrowBackgroundColor: expandedMap[index] ?? false
+                            ? AppColors.extraDarkYellow
+                            : AppColors.lightGreyWithAlphaDecreased,
+                        arrowFrontColor: expandedMap[index] ?? false
+                            ? AppColors.black
+                            : AppColors.white,
+                        isExpandedViewAvailable: true,
+                        onHeaderTap: () {
+                          setState(() {
+                            expandedMap[index] = !(expandedMap[index] ?? false);
+                          });
+                        },
+                        child: _buildConversionBody(category),
+                      ),
+                    );
+                  },
+                ),
+              ),
             );
           },
         ),
@@ -150,17 +163,18 @@ class _ConversionsScreenState extends State<ConversionsScreen> {
             children: [
               Container(
                 color: AppColors.grayLight,
-                child:
-                IntrinsicHeight(
+                child: IntrinsicHeight(
                   child: Row(
                     children: [
                       Expanded(
                         child: Center(
                           child: TextButton(
                             onPressed: () {},
-                            child: Text(item.fromTo,style: AppTextStyles.regular(
-                              16,
-                            ).copyWith(height: 1.4, color: AppColors.black),
+                            child: Text(
+                              item.fromTo,
+                              style: AppTextStyles.regular(
+                                16,
+                              ).copyWith(height: 1.4, color: AppColors.black),
                             ),
                           ),
                         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../Constants/AppColors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,7 +49,11 @@ class _FormulasScreenState extends State<FormulasScreen> {
           centerTitle: false,
           title: 'Formulas',
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: 30,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -71,41 +76,49 @@ class _FormulasScreenState extends State<FormulasScreen> {
               return const Center(child: Text("No formulas found"));
             }
 
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.categories.length,
-              itemBuilder: (context, index) {
-                final category = state.categories[index];
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 1300 : double.infinity,
+                ),
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: CustomHeaderViewExpandable(
-                    isNeedToShowLeftRightBottomBorder: false,
-                    isNeedToShowLeftImage: false,
-                    isExpanded: expandedMap[index] ?? false,
-                    title: category.name,
-                    fontStyle: AppTextStyles.regular(
-                      16,
-                    ).copyWith(height: 1.4, color: AppColors.white),
-                    headerColor: expandedMap[index] ?? false
-                        ? AppColors.primaryDark
-                        : AppColors.grayMedium,
-                    arrowBackgroundColor: expandedMap[index] ?? false
-                        ? AppColors.extraDarkYellow
-                        : AppColors.lightGreyWithAlphaDecreased,
-                    arrowFrontColor: expandedMap[index] ?? false
-                        ? AppColors.black
-                        : AppColors.white,
-                    isExpandedViewAvailable: true,
-                    onHeaderTap: () {
-                      setState(() {
-                        expandedMap[index] = !(expandedMap[index] ?? false);
-                      });
-                    },
-                    child: _buildFormulaBody(category),
-                  ),
-                );
-              },
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = state.categories[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: CustomHeaderViewExpandable(
+                        isNeedToShowLeftRightBottomBorder: false,
+                        isNeedToShowLeftImage: false,
+                        isExpanded: expandedMap[index] ?? false,
+                        title: category.name,
+                        fontStyle: AppTextStyles.regular(
+                          16,
+                        ).copyWith(height: 1.4, color: AppColors.white),
+                        headerColor: expandedMap[index] ?? false
+                            ? AppColors.primaryDark
+                            : AppColors.grayMedium,
+                        arrowBackgroundColor: expandedMap[index] ?? false
+                            ? AppColors.extraDarkYellow
+                            : AppColors.lightGreyWithAlphaDecreased,
+                        arrowFrontColor: expandedMap[index] ?? false
+                            ? AppColors.black
+                            : AppColors.white,
+                        isExpandedViewAvailable: true,
+                        onHeaderTap: () {
+                          setState(() {
+                            expandedMap[index] = !(expandedMap[index] ?? false);
+                          });
+                        },
+                        child: _buildFormulaBody(category),
+                      ),
+                    );
+                  },
+                ),
+              ),
             );
           },
         ),

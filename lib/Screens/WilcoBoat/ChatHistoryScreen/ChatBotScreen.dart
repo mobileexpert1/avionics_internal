@@ -309,140 +309,152 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           ),
         ),
 
-        body: BlocListener<ChatCubit, List<Map<String, String>>>(
-          listener: (_, _) => _scrollToBottom(),
-          child: Column(
-            children: [
-              Expanded(
-                child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
-                  builder: (context, messages) {
-                    return SelectableRegion(
-                      focusNode: _selectableFocusNode,
+        body: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: kIsWeb ? 900 : double.infinity,
+            ),
+            child: BlocListener<ChatCubit, List<Map<String, String>>>(
+              listener: (_, _) => _scrollToBottom(),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
+                      builder: (context, messages) {
+                        return SelectableRegion(
+                          focusNode: _selectableFocusNode,
 
-                      selectionControls: MaterialTextSelectionControls(),
+                          selectionControls: MaterialTextSelectionControls(),
 
-                      child: ListView.builder(
-                        controller: _scrollCtrl,
+                          child: ListView.builder(
+                            controller: _scrollCtrl,
 
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-
-                        itemCount: messages.length + 1,
-
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return _buildTopSection();
-                          }
-
-                          final message = messages[index - 1];
-
-                          if (message['type'] == 'analyzing') {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: ChatAnalyzingIndicator(),
-                            );
-                          }
-
-                          final isUser = message['type'] == 'user';
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-
-                              mainAxisAlignment: isUser
-                                  ? MainAxisAlignment.end
-                                  : MainAxisAlignment.start,
-
-                              children: [
-                                if (!isUser)
-                                  _buildBotAvatarOrUser(
-                                    true,
-                                    message['text'] ?? "",
-                                  ),
-
-                                Flexible(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                      vertical: 10,
-                                    ),
-
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 320,
-                                    ),
-
-                                    decoration: isUser
-                                        ? BoxDecoration(
-                                            color: AppColors.primaryDark,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              bottomLeft: Radius.circular(10),
-                                              bottomRight: Radius.circular(10),
-                                            ),
-
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.04,
-                                                ),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          )
-                                        : null,
-
-                                    child: isUser
-                                        ? SelectableText(
-                                            // user message as-is rehne do
-                                            message['text'] ?? '',
-                                            style: AppTextStyles.regular(15)
-                                                .copyWith(
-                                                  height: 1.5,
-                                                  color: Colors.white,
-                                                ),
-                                          )
-                                        : FormattedText(
-                                            text: message['text'] ?? '',
-                                            fontSize: 15,
-                                            normalColor: Colors.black87,
-                                            boldColor: Colors.black,
-                                            lineHeight: 1.5,
-                                          ),
-
-                                    // SelectableText(
-                                    //   message['text'] ?? '',
-                                    //   style: AppTextStyles.regular(15).copyWith(
-                                    //     height: 1.5,
-                                    //     color: isUser
-                                    //         ? Colors.white
-                                    //         : Colors.black87,
-                                    //   ),
-                                    // ),
-                                  ),
-                                ),
-
-                                if (isUser)
-                                  _buildBotAvatarOrUser(
-                                    false,
-                                    message['text'] ?? "",
-                                  ),
-                              ],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
 
-              _chatInput(context),
-            ],
+                            itemCount: messages.length + 1,
+
+                            itemBuilder: (context, index) {
+                              if (index == 0) {
+                                return _buildTopSection();
+                              }
+
+                              final message = messages[index - 1];
+
+                              if (message['type'] == 'analyzing') {
+                                return const Padding(
+                                  padding: EdgeInsets.only(top: 8),
+                                  child: ChatAnalyzingIndicator(),
+                                );
+                              }
+
+                              final isUser = message['type'] == 'user';
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                                  mainAxisAlignment: isUser
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start,
+
+                                  children: [
+                                    if (!isUser)
+                                      _buildBotAvatarOrUser(
+                                        true,
+                                        message['text'] ?? "",
+                                      ),
+
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                          vertical: 10,
+                                        ),
+
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 320,
+                                        ),
+
+                                        decoration: isUser
+                                            ? BoxDecoration(
+                                                color: AppColors.primaryDark,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  bottomLeft: Radius.circular(
+                                                    10,
+                                                  ),
+                                                  bottomRight: Radius.circular(
+                                                    10,
+                                                  ),
+                                                ),
+
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withValues(
+                                                          alpha: 0.04,
+                                                        ),
+                                                    blurRadius: 8,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
+                                              )
+                                            : null,
+
+                                        child: isUser
+                                            ? SelectableText(
+                                                // user message as-is rehne do
+                                                message['text'] ?? '',
+                                                style: AppTextStyles.regular(15)
+                                                    .copyWith(
+                                                      height: 1.5,
+                                                      color: Colors.white,
+                                                    ),
+                                              )
+                                            : FormattedText(
+                                                text: message['text'] ?? '',
+                                                fontSize: 15,
+                                                normalColor: Colors.black87,
+                                                boldColor: Colors.black,
+                                                lineHeight: 1.5,
+                                              ),
+
+                                        // SelectableText(
+                                        //   message['text'] ?? '',
+                                        //   style: AppTextStyles.regular(15).copyWith(
+                                        //     height: 1.5,
+                                        //     color: isUser
+                                        //         ? Colors.white
+                                        //         : Colors.black87,
+                                        //   ),
+                                        // ),
+                                      ),
+                                    ),
+
+                                    if (isUser)
+                                      _buildBotAvatarOrUser(
+                                        false,
+                                        message['text'] ?? "",
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  _chatInput(context),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -457,11 +469,11 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         children: [
           SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.wilcoChatLogo),
-            height: 140,
+            height: kIsWeb ? 180 : 140,
+            width: kIsWeb ? 300 : null,
+            fit: BoxFit.contain,
           ),
-
           const SizedBox(height: 10),
-
           Text(
             "Hey there!",
             style: AppTextStyles.bold(
