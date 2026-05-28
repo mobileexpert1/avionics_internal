@@ -24,10 +24,8 @@ import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
 import 'SettingMenuScreen/0_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/1_MySubscription/MySubscriptionScreen.dart';
-import 'SettingMenuScreen/2_AddOnPacks/AddOnPacksScreen.dart';
 import 'SettingMenuScreen/3_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
 import 'SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
-import 'SettingMenuScreen/4_5_AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
 import 'SettingMenuScreen/6_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/7_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/8_ContactSupport/ContactSupportScreen.dart';
@@ -243,7 +241,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   title: "Extra Add On Packs",
                     //   onTap: () => _navigate(context, AddOnPacksScreen()),
                     // ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.subscriptionProfile,
@@ -274,13 +271,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   title: "Trivia Level Demo Screen",
                     //   onTap: () => _navigate(context, AnimatedLevelMapScreen()),
                     // ),
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.manageAccountProfile,
-                    //   ),
-                    //   title: "Game Info Hint Screen",
-                    //   onTap: () => _navigate(context, InfoWrongGameScreen()),
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.manageAccountProfile,
+                      ),
+                      title: "Game Info Hint Screen",
+                      onTap: () => _navigate(context, InfoWrongGameScreen()),
+                    ),
                   ],
                 ),
 

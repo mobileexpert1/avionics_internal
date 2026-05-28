@@ -100,23 +100,20 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                 onPressed: () => Navigator.pop(context),
               ),
               rightButton: isRightButtonShow
-                  ? Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: GestureDetector(
-                        child: SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.editIcon),
-                          width: 20,
-                          height: 20,
-                          color: Colors.white,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            isTextFiledEnabled = true;
-                            isRightButtonShow = false;
-                            buttonBottomTitle = ConstantStrings.saveTitle;
-                          });
-                        },
+                  ? GestureDetector(
+                      child: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.manageEditIcon),
+                        width: 20,
+                        height: 20,
+                        color: Colors.white,
                       ),
+                      onTap: () {
+                        setState(() {
+                          isTextFiledEnabled = true;
+                          isRightButtonShow = false;
+                          buttonBottomTitle = ConstantStrings.saveTitle;
+                        });
+                      },
                     )
                   : null,
             ),
@@ -165,7 +162,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           const SizedBox(height: 30),
                           CustomBottomButton(
                             fontStyle: AppTextStyles.regular(
-                              21.46,
+                              18,
                             ).copyWith(height: 1.0, color: Colors.white),
                             title: buttonBottomTitle,
                             backgroundColor: state.isButtonEnabled

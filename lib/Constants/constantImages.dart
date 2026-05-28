@@ -113,6 +113,17 @@ abstract class AssetsPath {
   static const String editForChat = "81EditForChat";
   static const String deleteForChat = "82DeleteForChat";
 
+  static const String aeroplaneBasic = "84AeroplaneBasic";
+  static const String settingBasic = "85SettingBasic";
+  static const String trackBasic = "86TrackBasic";
+  static const String aeroplaneClouds = "87AeroplaneClouds";
+  static const String notesBasic = "88NotesBasic";
+  static const String userBasic = "89UserBasic";
+  static const String manageEditIcon = "90ManageEditIcon";
+
+  static const String visibilityOff = "91VisibilityOff";
+  static const String visibilityOn = "92VisibilityOn";
+
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
 

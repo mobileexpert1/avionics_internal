@@ -15,8 +15,12 @@ class InfoWrongGameScreen extends StatefulWidget {
 }
 
 class _InfoWrongGameState extends State<InfoWrongGameScreen> {
+  int changeTheCurrentImage = 0;
+
   @override
   Widget build(BuildContext context) {
+    final data = getImageAndDescription(changeTheCurrentImage);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -35,7 +39,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -61,7 +65,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Turbulence happens!",
+                    data["title"] ?? "",
                     style: AppTextStyles.bold(
                       20,
                     ).copyWith(height: 1.0, color: AppColors.black),
@@ -69,38 +73,50 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                 ],
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
 
               SizedBox(
                 height: MediaQuery.of(context).size.width * 0.6,
                 width: MediaQuery.of(context).size.width * 0.7,
 
                 child: Image.asset(
-                  CommonUi.setPngImage(AssetsPath.infoWrongFirst),
+                  CommonUi.setPngImage(data["image"] ?? ""),
                   fit: BoxFit.contain,
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
 
               Text(
-                "Not every flight is smooth. Adjust your\ncourse and keep climbing.",
+                data["description"] ?? "",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.semiRegular(
                   18,
                 ).copyWith(height: 1.4, color: AppColors.black),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
+
+              if (changeTheCurrentImage == 1 || changeTheCurrentImage == 2) ...[
+                Text(
+                  "Keep going!",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bold(
+                    18,
+                  ).copyWith(height: 1.4, color: AppColors.black),
+                ),
+                const SizedBox(height: 15),
+              ],
 
               Text(
-                "You've got this!",
+                data["hint"] ?? "",
+                textAlign: TextAlign.center,
                 style: AppTextStyles.semiRegular(
                   18,
                 ).copyWith(height: 1.0, color: AppColors.black),
               ),
 
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
 
               CustomHeaderViewExpandable(
                 isNeedToShowLeftRightBottomBorder: false,
@@ -126,12 +142,49 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                   ),
                   onPressed: () async {},
                 ),
-                onHeaderTap: () async {},
+                onHeaderTap: () async {
+                  setState(() {
+                    if (changeTheCurrentImage < 2) {
+                      changeTheCurrentImage++;
+                    } else {
+                      changeTheCurrentImage = 0;
+                    }
+                  });
+                },
               ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+Map<String, String> getImageAndDescription(int index) {
+  switch (index) {
+    case 0:
+      return {
+        "image": AssetsPath.infoWrongFirst,
+        "description":
+            "Not every flight is smooth. Adjust your course and keep climbing.",
+        "hint": "You've got this!",
+        "title": "Turbulence happens!",
+      };
+
+    case 1:
+      return {
+        "image": AssetsPath.infoWrongSecond,
+        "description": "You're navigating through some challenging airspace.",
+        "hint": "Every answer gets you closer to your destination.",
+        "title": "Your are still on course",
+      };
+
+    default:
+      return {
+        "image": AssetsPath.infoWrongThird,
+        "description": "You're navigating through some challenging airspace.",
+        "hint": "Every answer gets you closer to your destination.",
+        "title": "Your are still on course",
+      };
   }
 }
