@@ -54,7 +54,8 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'One word game',
+          centerTitle: false,
+          title: 'Basic Topics',
           leftButton: IconButton(
             icon: SvgPicture.asset(
               CommonUi.setSvgImage(AssetsPath.backArrowButton),

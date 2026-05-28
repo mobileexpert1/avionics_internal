@@ -101,6 +101,18 @@ abstract class AssetsPath {
   static const String greenBlueSelected = "71GreenBlueSelected";
   static const String mindSeparationSelected = "72MindSeparationSelected";
 
+  static const String timeLevelIcon = "73TimeIcon";
+  static const String questionLevelIcon = "74QuestionIcon";
+  static const String aeroplaneLevelIcon = "75AeroplaneIcon";
+  static const String correctLevelAnswer = "76CorrectAnswer";
+  static const String speedLevelBounce = "77SpeedBounce";
+  static const String perfectLevelBounce = "78PerfectBounce";
+  static const String winnerLevelIcon = "79WinnerIcon";
+  static const String carHelpLevelIcon = "80CarHelpIcon";
+
+  static const String editForChat = "81EditForChat";
+  static const String deleteForChat = "82DeleteForChat";
+
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
 

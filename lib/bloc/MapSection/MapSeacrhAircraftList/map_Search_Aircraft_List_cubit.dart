@@ -42,8 +42,10 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
 
       if (response.results.isNotEmpty) {
         final typeList = response.results.map((f) => f.detail.acType).toList();
-        final uniqueTypes = typeList.toSet().toList();
-        fetchAircraftDetailsFromFlightsList(uniqueTypes);
+        final callSignTypeList = response.results
+            .map((f) => f.detail.callsign)
+            .toList();
+        fetchAircraftDetailsFromFlightsList(typeList, callSignTypeList);
       }
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
@@ -60,9 +62,13 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
 
   Future<void> fetchAircraftDetailsFromFlightsList(
     List<String> uniqueTypes,
+    List<String> callSignListTypes,
   ) async {
     final flightsDetails = await AircraftListDataRepository()
-        .getListOfAllPlanes(aircraftIds: uniqueTypes);
+        .getListOfAllPlanes(
+          aircraftIds: uniqueTypes,
+          callSignListTypes: callSignListTypes,
+        );
 
     if (flightsDetails.data.isNotEmpty) {
       final enrichedFlights = await mergeFlightsWithDetails(

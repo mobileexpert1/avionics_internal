@@ -226,11 +226,12 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   Future<void> fetchAircraftDetailsFromFlightsList(
     List<String> uniqueTypes,
+      List<String> callSignListTypes,
     BuildContext context,
   ) async {
     try {
       final flightsDetails = await AircraftListDataRepository()
-          .getListOfAllPlanes(aircraftIds: uniqueTypes);
+          .getListOfAllPlanes(aircraftIds: uniqueTypes,callSignListTypes: callSignListTypes);
 
       if (flightsDetails.data.isNotEmpty) {
         await loadFavoritesFlights();
@@ -278,6 +279,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       final boundsString =
           "${bounds.northeast.latitude},${bounds.southwest.latitude},"
           "${bounds.southwest.longitude},${bounds.northeast.longitude}";
+
+      print("boundsString-=-=$boundsString");
 
       final hasAircraftFilter =
           state.selectedAircraftIcaos != null &&

@@ -96,7 +96,6 @@
 //   }
 // }
 
-
 import '../../../Database/db_helper.dart';
 
 class AircraftModel implements BaseModel {
@@ -143,26 +142,31 @@ class AircraftModel implements BaseModel {
   factory AircraftModel.fromJson(Map<String, dynamic> json) {
     return AircraftModel(
       aircraftId: json['id']?.toString() ?? '',
-      aircraftModel: json['Aircraft_Model']?.toString() ??
+      aircraftModel:
+          json['Aircraft_Model']?.toString() ??
           json['aircraftModel']?.toString() ??
           '-',
       isFavorite: (json['IsFavorite'] is bool)
           ? json['IsFavorite']
           : (json['IsFavorite'] == 1),
-      icaoTypeCode: json['ICAO_Type_Code']?.toString() ??
+      icaoTypeCode:
+          json['ICAO_Type_Code']?.toString() ??
           json['icaoTypeCode']?.toString() ??
           '',
       image: json['Image']?.toString() ?? json['image']?.toString() ?? '',
       manufacturer: json['Manufacturer'] != null
           ? ManufacturerModel.fromJson(
-          Map<String, dynamic>.from(json['Manufacturer']))
+              Map<String, dynamic>.from(json['Manufacturer']),
+            )
           : (json['manufacturerName'] != null
-          ? ManufacturerModel(
-        id: '',
-        companyName: json['manufacturerName'] ?? '',
-        logo: '',
-      )
-          : null),
+                ? ManufacturerModel(
+                    id: json['manufacturerId']?.toString() ?? '',
+                    companyName: json['manufacturerName']?.toString() ?? '',
+                    logo: json['manufacturerLogo']?.toString() ?? '',
+                    airlineLogo: json['airlineLogo']?.toString() ?? '',
+                    airlineName: json['airlineName']?.toString() ?? '',
+                  )
+                : null),
       userId: json['user_id']?.toString(),
     );
   }
@@ -179,6 +183,10 @@ class AircraftModel implements BaseModel {
       'id': id,
       'aircraftModel': aircraftModel,
       'manufacturerName': manufacturer?.companyName ?? '',
+      'manufacturerLogo': manufacturer?.logo ?? '',
+      'manufacturerId': manufacturer?.id ?? '',
+      'airlineLogo': manufacturer?.airlineLogo ?? '',
+      'airlineName': manufacturer?.airlineName ?? '',
       'user_id': userId,
       'icaoTypeCode': icaoTypeCode,
       'isFavorite': isFavorite ? 1 : 0,
@@ -191,20 +199,27 @@ class ManufacturerModel {
   final String id;
   final String companyName;
   final String logo;
+  final String airlineLogo;
+  final String airlineName;
 
   ManufacturerModel({
     required this.id,
     required this.companyName,
     required this.logo,
+    required this.airlineLogo,
+    required this.airlineName,
   });
 
   factory ManufacturerModel.fromJson(Map<String, dynamic> json) {
     return ManufacturerModel(
       id: json['id']?.toString() ?? '',
-      companyName: json['company_name']?.toString() ??
+      companyName:
+          json['company_name']?.toString() ??
           json['companyName']?.toString() ??
           '',
       logo: json['logo']?.toString() ?? '',
+      airlineLogo: json['airline_logo']?.toString() ?? '',
+      airlineName: json['airline_name']?.toString() ?? '',
     );
   }
 
@@ -213,6 +228,8 @@ class ManufacturerModel {
       'id': id,
       'company_name': companyName,
       'logo': logo,
+      'airline_logo': airlineLogo,
+      'airline_name': airlineName,
     };
   }
 }

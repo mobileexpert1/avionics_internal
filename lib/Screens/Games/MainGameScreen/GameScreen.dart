@@ -11,15 +11,9 @@ import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_model.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
-import '../GamesSubScreens/AircraftEncyclopaedia/AircraftEncyclopaediaDetailScreen.dart';
-import '../GamesSubScreens/BlackBoxSection/BlackboxScreen.dart';
-import '../GamesSubScreens/CalculationSection/CalculationScreen.dart';
-import '../GamesSubScreens/ImageBasedQuestion/ImageBasedDetailScreen.dart';
-import '../GamesSubScreens/OneWordSection/OneWordScreen.dart';
-import '../GamesSubScreens/QuizSection/QuizScreen.dart';
-import '../GamesSubScreens/TriviaSection/TriviaDetailScreen.dart';
 import '../MainGameExtraClasses/AllLinesPainter.dart';
 import '../MainGameExtraClasses/DoubleCenterLinePainter.dart';
+import 'BaseScreenForAllLevelDescriptions.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({super.key});
@@ -43,9 +37,15 @@ class _GamesScreenState extends State<GamesScreen> {
 
   Future<void> scrollToAboveScreen() async {
     await Future.delayed(const Duration(milliseconds: 100));
+
     if (scrollController.hasClients) {
-      scrollController.animateTo(
+      final target = (scrollController.position.maxScrollExtent - 30).clamp(
+        0.0,
         scrollController.position.maxScrollExtent,
+      );
+
+      scrollController.animateTo(
+        target,
         duration: const Duration(milliseconds: 1300),
         curve: Curves.easeInOut,
       );
@@ -67,7 +67,7 @@ class _GamesScreenState extends State<GamesScreen> {
   Widget build(BuildContext context) {
     final sw = MediaQuery.of(context).size.width;
     final cx = sw / 2;
-    final screenHeight = MediaQuery.sizeOf(context).height - 10;
+    final screenHeight = MediaQuery.sizeOf(context).height + 50;
 
     return BlocProvider.value(
       value: _gamesCubit,
@@ -118,6 +118,38 @@ class _GamesScreenState extends State<GamesScreen> {
                             ),
                           ),
                         ),
+                        Positioned(
+                          bottom: 190,
+                          left: -170,
+                          right: 0,
+
+                          child: Center(
+                            child: Container(
+                              width: 25,
+                              height: 25,
+                              decoration: const BoxDecoration(
+                                color: AppColors.citiusAltiusColorForGame,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 185,
+                          left: 0,
+                          right: -180,
+
+                          child: Center(
+                            child: Container(
+                              width: 80,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: AppColors.greenColourForPlan,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
 
                         SingleChildScrollView(
                           controller: scrollController,
@@ -132,7 +164,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                     Stack(
                                       children: [
                                         Positioned(
-                                          top: 365,
+                                          top: 390,
                                           left: cx - 5,
                                           width: 8,
                                           bottom: 0,
@@ -162,9 +194,11 @@ class _GamesScreenState extends State<GamesScreen> {
                                                   child: GameCard(
                                                     model: row.left!,
                                                     onTap: (id) {
-                                                      onGameTap(
+                                                      _navigate(
                                                         context,
-                                                        row.left!,
+                                                        BaseScreenForAllLevelDescriptions(
+                                                          gameId: row.left!.id,
+                                                        ),
                                                       );
                                                     },
                                                   ),
@@ -177,9 +211,11 @@ class _GamesScreenState extends State<GamesScreen> {
                                                   child: GameCard(
                                                     model: row.right!,
                                                     onTap: (id) {
-                                                      onGameTap(
+                                                      _navigate(
                                                         context,
-                                                        row.right!,
+                                                        BaseScreenForAllLevelDescriptions(
+                                                          gameId: row.right!.id,
+                                                        ),
                                                       );
                                                     },
                                                   ),
@@ -213,38 +249,6 @@ class _GamesScreenState extends State<GamesScreen> {
                             ),
                           ),
                         ),
-                        Positioned(
-                          bottom: 100,
-                          left: 0,
-                          right: -180,
-
-                          child: Center(
-                            child: Container(
-                              width: 100,
-                              height: 90,
-                              decoration: const BoxDecoration(
-                                color: AppColors.greenColourForPlan,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 150,
-                          left: -170,
-                          right: 0,
-
-                          child: Center(
-                            child: Container(
-                              width: 25,
-                              height: 25,
-                              decoration: const BoxDecoration(
-                                color: AppColors.citiusAltiusColorForGame,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -256,28 +260,6 @@ class _GamesScreenState extends State<GamesScreen> {
         ),
       ),
     );
-  }
-
-  void onGameTap(BuildContext context, GameCardModel game) {
-    final routes = {
-      'quiz': QuizDetailScreen(gameId: game.id),
-      'one_word': OneWordDetailScreen(gameId: game.id),
-      'black_box': BlackBoxStartScreen(gameId: game.id),
-      'calculation': CalculationDetailScreen(gameId: game.id),
-      'imageBased': ImageBasedDetailScreen(gameId: game.id),
-      'trivia': TriviaDetailScreen(gameId: game.id),
-      'aircraftEncyclopaedia': AircraftEncyclopaediaDetailScreen(),
-    };
-
-    final screen = routes[game.id];
-
-    if (screen != null) {
-      _navigate(context, screen);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Screen not available for ${game.title}')),
-      );
-    }
   }
 }
 
@@ -299,8 +281,8 @@ class GameCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              width: 110,
-              height: 55,
+              width: 120,
+              height: 65,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: model.color, width: 1.0),
@@ -312,21 +294,18 @@ class GameCard extends StatelessWidget {
                     bottom: 0,
                     right: 0,
                     child: CustomPaint(
-                      size: const Size(15, 15),
+                      size: const Size(14, 14),
                       painter: CornerPainter(color: model.color),
                     ),
                   ),
 
                   Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: Text(
-                        model.title,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.medium(
-                          14,
-                        ).copyWith(height: 1.1, color: AppColors.black),
-                      ),
+                    child: Text(
+                      model.title,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.medium(
+                        14,
+                      ).copyWith(height: 1.2, color: AppColors.black),
                     ),
                   ),
                 ],

@@ -63,13 +63,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   Timer? _debounce;
   int _activeCard = 0;
+  bool _hasTriggeredMapView = false;
 
   bool? isFirstTimeUserCome = true;
   bool _isProgrammaticMove = false;
 
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
-  bool _hasFetchedDetails = false;
 
   String? selectedFlightId;
 
@@ -135,7 +135,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       }
     });
 
-    _sheetController.addListener(_sheetListener);
+    _sheetController.addListener(_sheetListenerForChangeTheTap);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
   }
 
@@ -157,7 +157,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     _resetFlightSelection(cleanupOnly: true);
 
-    _sheetController.removeListener(_sheetListener);
+    _sheetController.removeListener(_sheetListenerForChangeTheTap);
     _searchController.dispose();
     _sheetController.dispose();
     PaintingBinding.instance.imageCache.clear();
@@ -217,15 +217,35 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     }
   }
 
-  void _sheetListener() {
-    if (!_hasFetchedDetails && _sheetController.size > 0.15) {
-      final flights = _mapCubit.state.flights ?? [];
-      if (flights.isNotEmpty) {
-        _hasFetchedDetails = true;
-        final typeList = flights.map((f) => f.type).toList();
-        final uniqueTypes = typeList.toSet().toList();
-        _mapCubit.fetchAircraftDetailsFromFlightsList(uniqueTypes, context);
+  void _sheetListenerForChangeTheTap() {
+    final currentSize = _sheetController.size;
+    if (currentSize > 0.15) {
+      _hasTriggeredMapView = false;
+      return;
+    }
+    if (_hasTriggeredMapView) return;
+    _hasTriggeredMapView = true;
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      if (_sheetController.size < 0.15) {
+        setState(() {
+          isMapViewSelected = true;
+          _activeCard = 0;
+        });
       }
+    });
+  }
+
+  void _sheetListener() {
+    final flights = _mapCubit.state.flights ?? [];
+    if (flights.isNotEmpty) {
+      final typeList = flights.map((f) => f.type).toList();
+      final callSignList = flights.map((f) => f.callSign).toList();
+      _mapCubit.fetchAircraftDetailsFromFlightsList(
+        typeList,
+        callSignList,
+        context,
+      );
     }
   }
 
@@ -235,7 +255,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   ) {
     if (_activeCard != 0) return;
     if (_mapController == null) return;
-    _hasFetchedDetails = false;
     _debounce?.cancel();
     _debounce = Timer(const Duration(seconds: 2), () async {
       if (!mounted) return;
@@ -247,7 +266,17 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         y: (constraints.maxHeight ~/ 2),
       );
 
-      final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
+      // final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
+
+      final centerLatLng = LatLng(
+        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
+            2,
+        (visibleRegion.northeast.longitude +
+                visibleRegion.southwest.longitude) /
+            2,
+      );
+
+      print("centerLatLng -=-=-=-= $centerLatLng");
 
       _refreshMapData(
         centerLatLng: centerLatLng,
@@ -302,10 +331,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     required bool isComeFromFilterSection,
   }) async {
     final controller = _mapController;
-
     if (controller == null) return;
+
+    _isProgrammaticMove = true;
+
     final visualRadiusNm = radiusNm + getVisualRadiusBufferNm(radiusNm).toInt();
     final visualRadiusMeters = convertNmToMeters(visualRadiusNm);
+
     _circles.clear();
     _circles.add(
       Circle(
@@ -328,8 +360,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       });
     }
 
-    _isProgrammaticMove = true;
-
     if (isComeFromFilterSection == false) return;
 
     await controller.animateCamera(
@@ -343,12 +373,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   void handleToggle(bool newIsMapViewSelected) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _safeAnimate(isMapViewSelected ? 0.00 : 0.75);
+    });
+
     setState(() {
       isMapViewSelected = newIsMapViewSelected;
       if (!isMapViewSelected) _activeCard = 0;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _safeAnimate(isMapViewSelected ? 0.01 : 0.78);
     });
   }
 
@@ -362,6 +393,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
+      if (size > 0.0) {
+        _sheetListener();
+      }
     } catch (_) {
       debugPrint("_safeAnimate");
     }
@@ -1205,8 +1239,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
       child: DraggableScrollableSheet(
         controller: _sheetController,
-        initialChildSize: 0.01,
-        minChildSize: 0.01,
+        initialChildSize: 0.00,
+        minChildSize: 0.00,
         maxChildSize: 0.75,
         snap: true,
         builder: (context, scrollController) {
@@ -1222,10 +1256,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Container(
                           height: 4,
-                          width: 40,
+                          width: 50,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade400,
                             borderRadius: BorderRadius.circular(10),
@@ -1240,11 +1274,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                     final data = state.flights?[index];
                     if (data == null) return const SizedBox.shrink();
                     final aircraft = data.aircraftDetails;
-                    final image = aircraft?.image ?? "";
+                    final image = aircraft?.manufacturer?.airlineLogo ?? "";
                     final model = aircraft?.aircraftModel ?? "";
                     final icaoCode = aircraft?.icaoTypeCode ?? "";
-                    final manufacturer =
-                        aircraft?.manufacturer?.companyName ?? "";
                     final isFavorite = data.isFavorite;
                     final flightCode =
                         (data?.callSign != null && data!.callSign!.isNotEmpty)
@@ -1323,15 +1355,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                     )
                                                   : CachedAnyImage(
                                                       imagePath: image,
-                                                      width: isWide ? 120 : 100,
+                                                      width: isWide ? 120 : 70,
                                                       height: isWide ? 60 : 50,
                                                       contentImage:
-                                                          BoxFit.cover,
+                                                          BoxFit.contain,
                                                     ),
                                             ),
-
                                             const SizedBox(width: 10),
-
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -1359,9 +1389,11 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                   AppTextStyles.bold(
                                                                     16,
                                                                   ).copyWith(
-                                                                    height: 1.0,
+                                                                    height: 1.4,
                                                                     color: AppColors
                                                                         .blackForNavTitle,
+                                                                    letterSpacing:
+                                                                        0.2,
                                                                   ),
                                                               overflow:
                                                                   TextOverflow
@@ -1412,9 +1444,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                         onTap: () async {
                                                           if (aircraft ==
                                                               null) {
-                                                            debugPrint(
-                                                              "Aircraft or Flight data is null",
-                                                            );
                                                             return;
                                                           }
 
@@ -1476,7 +1505,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                     ],
                                                   ),
 
-                                                  const SizedBox(height: 13),
+                                                  const SizedBox(height: 10),
 
                                                   // BOTTOM SECTION
                                                   Row(
@@ -1484,7 +1513,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      /// MANUFACTURER
                                                       Expanded(
                                                         child: Row(
                                                           children: [
@@ -1518,7 +1546,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                       width:
                                                                           isWide
                                                                           ? 40
-                                                                          : 30,
+                                                                          : 50,
                                                                       height:
                                                                           isWide
                                                                           ? 30
@@ -1535,23 +1563,23 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                               width: 10,
                                                             ),
 
-                                                            Expanded(
-                                                              child: Text(
-                                                                manufacturer,
-                                                                style:
-                                                                    AppTextStyles.regular(
-                                                                      14,
-                                                                    ).copyWith(
-                                                                      height:
-                                                                          1.0,
-                                                                      color: AppColors
-                                                                          .textColour,
-                                                                    ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
+                                                            // Expanded(
+                                                            //   child: Text(
+                                                            //     manufacturer,
+                                                            //     style:
+                                                            //         AppTextStyles.regular(
+                                                            //           14,
+                                                            //         ).copyWith(
+                                                            //           height:
+                                                            //               1.0,
+                                                            //           color: AppColors
+                                                            //               .textColour,
+                                                            //         ),
+                                                            //     overflow:
+                                                            //         TextOverflow
+                                                            //             .ellipsis,
+                                                            //   ),
+                                                            // ),
                                                           ],
                                                         ),
                                                       ),
@@ -1689,7 +1717,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3,
+          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3.2,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             width: 400,

@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/constantImages.dart';
 
@@ -28,28 +26,41 @@ class GameInfo {
 
 class GameInfoItem {
   final String asset;
-  final String text;
+  final String title;
+  final String value;
+  final String? subtitle;
 
-  const GameInfoItem({required this.asset, required this.text});
+  const GameInfoItem({
+    required this.asset,
+    required this.title,
+    required this.value,
+    this.subtitle,
+  });
 }
 
 class GameInfoModel {
   final String title;
   final String description;
-  final Widget imageWidget;
-
   final List<GameInfoItem> infoItems;
-
-  final bool isTopicWise;
-  final bool isCalculation;
+  final double progress;
+  final String winTitle;
+  final String winHighlightedText;
+  final String winNormalText;
+  final String? helpTitle;
+  final String? helpHighlightedTitle;
+  final String? helpDescription;
 
   const GameInfoModel({
     required this.title,
     required this.description,
-    required this.imageWidget,
     required this.infoItems,
-    this.isTopicWise = false,
-    this.isCalculation = false,
+    this.progress = 0.00,
+    this.winTitle = '',
+    this.winHighlightedText = '',
+    this.winNormalText = '',
+    this.helpTitle,
+    this.helpHighlightedTitle,
+    this.helpDescription,
   });
 
   static GameInfoModel fetch(String gameId) {
@@ -57,7 +68,6 @@ class GameInfoModel {
         const GameInfoModel(
           title: 'Game Detail',
           description: '',
-          imageWidget: SizedBox(),
           infoItems: [],
         );
   }
@@ -66,271 +76,374 @@ class GameInfoModel {
 class GameMapper {
   static final Map<String, GameInfoModel> games = {
     'quiz': GameInfoModel(
-      title: 'Quiz',
+      title: 'Aviation Quiz',
       description: 'Complete the aviation sentence',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.quizDetail),
-        width: kIsWeb ? 80 : 40,
-        height: kIsWeb ? 80 : 40,
-      ),
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '40 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: '10 aviation fill-in-the-blanks',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '40 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Topic wise modules'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2 points for correct answers',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: '20 questions',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for all correct answers',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Question type',
+          value: 'Topic wise modules',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: '+1 point if answered under 20s',
+          asset: AssetsPath.correctLevelAnswer,
+          title: 'Correct answer',
+          value: '+2 points',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score 80% or more = 1 win',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
-    ),
+
+      progress: 0.90,
+      winTitle: 'Score target to win',
+      winHighlightedText: '90%',
+      winNormalText: ' or higher',
+      helpTitle: 'Need a route to the right answer? ',
+      helpHighlightedTitle: 'Follow Me!',
+      helpDescription: 'Stay on course and reach the correct answer faster.',
+    ), // Done
     'one_word': GameInfoModel(
-      title: 'One Word',
+      title: 'Basic Topics',
+
       description: 'Complete the aviation sentence',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.onewordDetail),
-      ),
+
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '40 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: '10 aviation fill-in-the-blanks',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '40 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Topic wise modules'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2 points for correct answers',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: '10 questions',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for all correct answers',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Question type',
+          value: 'Fill in the blanks',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: '+1 point if answered under 20s',
+          asset: AssetsPath.correctLevelAnswer,
+          title: 'Correct answer',
+          value: '+2 points',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score 80% or more = 1 win',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
+      progress: 0.70,
+      winTitle: 'Score target to win',
+      winHighlightedText: '70%',
+      winNormalText: ' or higher',
+      helpTitle: 'Need a navigation assist? ',
+      helpHighlightedTitle: 'Follow me car!',
+      helpDescription: 'Stay on course and reach the correct answer faster.',
     ),
     'black_box': GameInfoModel(
       title: 'Black Box',
-      description: 'Analyze real world aviation \n scenarios',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.onewordDetail),
-      ),
+
+      description: 'Analyze real world aviation scenarios',
+
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '60 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Review factual clue cards and cockpit data',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '60 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Play more,earn more badges'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2/4 points for each correct answer',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: 'Review factual clue cards and cockpit data',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for full-case accuracy',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Questions Type',
+          value: 'Includes MCQs, sequencing, and multi-factor analysis',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: 'Interpret sequences and identify causal factors',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: 'Includes MCQs, sequencing, and multi-factor analysis',
-        ),
-        GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score ≥80% to achieve Investigator Pass',
-        ),
-        GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Play more cases to unlock new badges and scenarios',
-        ),
-        GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
-        ),
-        GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text:
-              'You’ll learn Real investigative reasoning, human-factor analysis, and system-failure interpretation—exactly as used in real crash investigations.',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
-    ),
+
+      progress: 0.60,
+      winTitle: 'Investigator Pass',
+      winHighlightedText: '60%',
+      winNormalText: ' or higher',
+      helpTitle: 'Need a route to the right answer? ',
+      helpHighlightedTitle: 'Follow Me!',
+      helpDescription:
+          'Learn real investigative reasoning and system-failure interpretation.',
+    ), // Done
     'calculation': GameInfoModel(
       title: 'Calculations',
       description: 'Complete the aviation sentence',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.calculationDetail),
-      ),
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '40 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: '10 aviation fill-in-the-blanks',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '40 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Topic wise modules'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2 points for correct answers',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: '10 calculation questions',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for all correct answers',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Question type',
+          value: 'Numerical aviation calculations',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: '+1 point if answered under 20s',
+          asset: AssetsPath.correctLevelAnswer,
+          title: 'Correct answer',
+          value: '+2 points',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score 80% or more = 1 win',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
-    ),
+
+      progress: 0.50,
+
+      winTitle: 'Score target to win',
+
+      winHighlightedText: '50%',
+
+      winNormalText: ' or higher',
+
+      helpTitle: 'Need help solving faster? ',
+
+      helpHighlightedTitle: 'Follow Me!',
+
+      helpDescription: 'Improve your aviation calculation speed and accuracy.',
+    ), // Done
     'imageBased': GameInfoModel(
-      title: 'Planespotter',
+      title: 'PlaneSpotter',
       description: 'Complete the aviation sentence',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.quizDetail),
-      ),
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '40 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: '10 aviation fill-in-the-blanks',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '40 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Topic wise modules'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2 points for correct answers',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: '10 aircraft image questions',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for all correct answers',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Question type',
+          value: 'Topic wise modules',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: '+1 point if answered under 20s',
+          asset: AssetsPath.correctLevelAnswer,
+          title: 'Correct answer',
+          value: '+2 points',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score 80% or more = 1 win',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
-    ),
+
+      progress: 0.50,
+      winTitle: 'Score target to win',
+      winHighlightedText: '50%',
+      winNormalText: ' or higher',
+      helpTitle: 'Need aircraft recognition help? ',
+      helpHighlightedTitle: 'Follow Me!',
+      helpDescription: 'Learn aircraft spotting and identification techniques.',
+    ), //Done
     'trivia': GameInfoModel(
-      title: 'Trivia',
+      title: 'Jetting Around The World',
       description: 'Complete the aviation sentence',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.quizDetail),
-      ),
+
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '40 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: '10 aviation fill-in-the-blanks',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '40 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Topic wise modules'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2 points for correct answers',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: '10 trivia questions',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for all correct answers',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Question type',
+          value: 'Topic wise modules',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: '+1 point if answered under 20s',
+          asset: AssetsPath.correctLevelAnswer,
+          title: 'Correct answer',
+          value: '+2 points',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score 80% or more = 1 win',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
-    ),
+
+      progress: 0.35,
+
+      winTitle: 'Score target to win',
+
+      winHighlightedText: '35%',
+
+      winNormalText: ' or higher',
+
+      helpTitle: 'Need help with trivia? ',
+
+      helpHighlightedTitle: 'Follow Me!',
+
+      helpDescription: 'Boost your aviation knowledge with guided hints.',
+    ), //Done
     'aircraftEncyclopaedia': GameInfoModel(
-      title: 'Aircraft Encyclopaedia',
+      title: 'Citius. Altius. Longius.',
       description: 'Complete the aviation sentence',
-      imageWidget: SvgPicture.asset(
-        CommonUi.setSvgImage(AssetsPath.quizDetail),
-      ),
+
       infoItems: [
-        GameInfoItem(asset: AssetsPath.clock, text: '40 seconds per question'),
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: '20 aviation fill-in-the-blanks',
+          asset: AssetsPath.timeLevelIcon,
+          title: 'Time per question',
+          value: '40 seconds',
         ),
-        GameInfoItem(asset: AssetsPath.Tik, text: 'Topic wise modules'),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+2 points for correct answers',
+          asset: AssetsPath.questionLevelIcon,
+          title: 'Questions',
+          value: '20 Questions',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Tik,
-          text: '+3 points for all correct answers',
+          asset: AssetsPath.aeroplaneLevelIcon,
+          title: 'Question type',
+          value: 'Topic wise modules',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.clock,
-          text: '+1 point if answered under 20s',
+          asset: AssetsPath.correctLevelAnswer,
+          title: 'Correct answer',
+          value: '+2 points',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.Trophy,
-          text: 'Score 80% or more = 1 win',
+          asset: AssetsPath.speedLevelBounce,
+          title: 'Speed bonus',
+          value: '+1 point',
+          subtitle: 'If answered under 20 sec',
         ),
+
         GameInfoItem(
-          asset: AssetsPath.carFollowImage,
-          text: 'Need a route to the right answer? Follow Me!',
+          asset: AssetsPath.perfectLevelBounce,
+          title: 'Perfect bonus',
+          value: '+3 points',
+          subtitle: 'For all correct answers',
         ),
       ],
-      isTopicWise: true,
-    ),
+
+      progress: 0.80,
+      winTitle: 'Score target to win',
+      winHighlightedText: '80%',
+      winNormalText: ' or higher',
+      helpTitle: 'Need aircraft guidance? ',
+      helpHighlightedTitle: 'Follow Me!',
+      helpDescription:
+          'Understand aircraft systems and aviation history faster.',
+    ), // Done
   };
 }

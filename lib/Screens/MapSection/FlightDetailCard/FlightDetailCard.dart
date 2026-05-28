@@ -84,7 +84,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
           final eta = detail?.eta ?? selectedFlight?.eta;
           final takeoffTime = detail?.takeoffTime;
 
-          //final aircraftType = detail?.aircraftModel ?? 'N/A';
+          final aircraftType = detail?.aircraftModel ?? 'N/A';
           //final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
           final category = detail?.icaoTypeCode ?? detail?.type ?? "";
           final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
@@ -172,7 +172,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                       maxWidth: 220,
                                     ),
                                     child: Text(
-                                      "A320-200",
+                                      aircraftType,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: AppTextStyles.bold(24).copyWith(
@@ -222,8 +222,8 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                           )
                                         : CachedAnyImage(
                                             imagePath: manufacturerLogo,
-                                            width: 30,
-                                            height: 30,
+                                            width: 75,
+                                            height: 25,
                                             contentImage: BoxFit.contain,
                                             useCache: false,
                                           ),
@@ -236,8 +236,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                   //     color: AppColors.primaryValueColour,
                                   //   ),
                                   // ),
-                                  SizedBox(width: 5),
-
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -406,39 +404,51 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        /// LEFT SIDE
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: Text.rich(
                             TextSpan(
                               children: [
                                 TextSpan(
                                   text: "$departureCity\n",
-                                  style: AppTextStyles.semiRegular(16).copyWith(
+                                  style: AppTextStyles.semiRegular(14).copyWith(
                                     height: 1.2,
                                     color: AppColors.black,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: "$departureIata\n",
                                   style: AppTextStyles.bold(20).copyWith(
-                                    height: 1.4,
+                                    height: 1.2,
                                     color: AppColors.primaryValueColour,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: timeSinceTakeoff,
                                   style: AppTextStyles.semiRegular(14).copyWith(
-                                    height: 1.6,
+                                    height: 1.2,
                                     color: AppColors.grayMedium,
                                   ),
                                 ),
                               ],
                             ),
+
+                            /// IMPORTANT FIXES
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+
+                        const SizedBox(width: 8),
+
+                        /// CENTER PROGRESS
                         Expanded(
                           flex: 3,
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               buildCustomProgressBar(
                                 progress,
@@ -448,35 +458,46 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                             ],
                           ),
                         ),
+
+                        const SizedBox(width: 8),
+
+                        /// RIGHT SIDE
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: Text.rich(
                             TextSpan(
                               children: [
                                 TextSpan(
                                   text: "$arrivalCity\n",
-                                  style: AppTextStyles.semiRegular(16).copyWith(
+                                  style: AppTextStyles.semiRegular(14).copyWith(
                                     height: 1.2,
                                     color: AppColors.black,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: "$arrivalIata\n",
                                   style: AppTextStyles.bold(20).copyWith(
-                                    height: 1.4,
+                                    height: 1.2,
                                     color: AppColors.primaryValueColour,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: timeToArrival,
                                   style: AppTextStyles.semiRegular(14).copyWith(
-                                    height: 1.6,
+                                    height: 1.2,
                                     color: AppColors.grayMedium,
                                   ),
                                 ),
                               ],
                             ),
+
                             textAlign: TextAlign.right,
+
+                            /// IMPORTANT FIXES
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

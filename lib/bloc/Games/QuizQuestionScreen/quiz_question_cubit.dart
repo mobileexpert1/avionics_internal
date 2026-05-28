@@ -45,13 +45,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       case "calculation":
         return "Calculation Game";
       case "one_word":
-        return "OneWord Game";
+        return "Basic Topics Game";
       case "trivia":
-        return "Trivia Game";
+        return "Jetting Around The World Game";
       case "imageBased":
         return "PlaneSpotter Game";
       case "aircraftEncyclopaedia":
-        return "Aircraft Encyclopaedia";
+        return "Citius. Altius. Longius. Game";
       default:
         return "Quiz Game";
     }

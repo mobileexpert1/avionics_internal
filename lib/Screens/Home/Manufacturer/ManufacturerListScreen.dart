@@ -152,7 +152,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                 ),
                                 child: Text(
                                   label,
-                                  style: AppTextStyles.regular(15.67).copyWith(
+                                  style: AppTextStyles.regular(15).copyWith(
                                     height: 1.0,
                                     color: AppColors.primaryDark,
                                   ),

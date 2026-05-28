@@ -21,28 +21,28 @@ class AllLinesPainter extends CustomPainter {
     final rightEnd = screenWidth - 80.0;
 
     final leftPath = Path();
-    leftPath.moveTo(cx - 1, 370);
-    leftPath.lineTo(cx - 1, 250);
-    leftPath.quadraticBezierTo(cx - 1, 215, cx - 40, 215);
-    leftPath.lineTo(leftEnd, 215);
+    leftPath.moveTo(cx - 2, 390);
+    leftPath.lineTo(cx - 2, 270);
+    leftPath.quadraticBezierTo(cx - 2, 225, cx - 40, 225);
+    leftPath.lineTo(leftEnd, 225);
     canvas.drawPath(leftPath, _linePaint(AppColors.greenColourForPlan));
 
     _drawPlane(
       canvas,
-      Offset(leftEnd, 250 - 35),
+      Offset(leftEnd, 260 - 35),
       AppColors.greenColourForPlan,
       true,
     );
 
     final rightPath = Path();
-    rightPath.moveTo(cx + 4.5, 370);
-    rightPath.lineTo(cx + 4.5, 250);
-    rightPath.quadraticBezierTo(cx + 4.5, 215, cx + 40, 215);
-    rightPath.lineTo(rightEnd, 215);
+    rightPath.moveTo(cx + 3.5, 390);
+    rightPath.lineTo(cx + 3.5, 270);
+    rightPath.quadraticBezierTo(cx + 3.5, 225, cx + 40, 225);
+    rightPath.lineTo(rightEnd, 225);
     canvas.drawPath(rightPath, _linePaint(AppColors.blackBoxColorForGame));
     _drawPlane(
       canvas,
-      Offset(rightEnd, 250 - 35),
+      Offset(rightEnd, 260 - 35),
       AppColors.blackBoxColorForGame,
       false,
     );
@@ -50,7 +50,7 @@ class AllLinesPainter extends CustomPainter {
     _drawHorizontalCurvedLine(
       canvas: canvas,
       cx: cx,
-      y: 370,
+      y: 380,
       leftColor: AppColors.citiusAltiusColorForGame,
       rightColor: AppColors.primaryBlue,
       showRight: true,
@@ -60,7 +60,7 @@ class AllLinesPainter extends CustomPainter {
     _drawHorizontalCurvedLine(
       canvas: canvas,
       cx: cx,
-      y: 490,
+      y: 500,
       leftColor: AppColors.primaryDark,
       rightColor: AppColors.planeSpotterColorForGame,
       showRight: true,
@@ -70,7 +70,7 @@ class AllLinesPainter extends CustomPainter {
     _drawHorizontalCurvedLine(
       canvas: canvas,
       cx: cx,
-      y: 610,
+      y: 620,
       leftColor: AppColors.greenColourForPlan,
       rightColor: Colors.transparent,
       showRight: true,
@@ -97,7 +97,7 @@ class AllLinesPainter extends CustomPainter {
     canvas.drawPath(leftPath, _linePaint(leftColor));
     _drawPlane(canvas, Offset(rightEnd, y - 35), rightColor, false);
 
-    _drawCenterDot(canvas, Offset(cx + 1, y));
+    _drawCenterDot(canvas, Offset(cx + 1, y+5));
 
     if (!showRight) return;
 

@@ -1,10 +1,11 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/cupertino.dart';
 
 class DoubleCenterLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF1A1A4E)
+      ..color = AppColors.primaryDark
       ..strokeWidth = 1.0;
     canvas.drawLine(const Offset(1, 0), Offset(1, size.height), paint);
     canvas.drawLine(

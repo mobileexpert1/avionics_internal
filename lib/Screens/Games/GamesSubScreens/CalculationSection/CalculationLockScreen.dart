@@ -16,6 +16,7 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Games/SubGameSection/Quiz_Section/quiz_model.dart';
+import '../QuizSection/QuizLockScreen.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
 
 class CalculationLockScreen extends StatefulWidget {
@@ -54,6 +55,7 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
+          centerTitle: false,
           title: ConstantStrings.calculationsTitle,
           leftButton: IconButton(
             icon: SvgPicture.asset(
@@ -207,10 +209,11 @@ class _CourseStepRowState extends State<_CourseStepRow> {
           ),
         ),
         Expanded(
-          child: GestureDetector(
+          child: _CourseCard(
             key: _cardKey,
-            onTap: widget.onTap,
-            child: _CourseCard(calculationGameItem: widget.calculationGameItem),
+            calculationGameItem: widget.calculationGameItem,
+            index: widget.index,
+            onTap: widget.onTap ?? () {},
           ),
         ),
       ],
@@ -218,89 +221,154 @@ class _CourseStepRowState extends State<_CourseStepRow> {
   }
 }
 
-class _CourseCard extends StatelessWidget {
+class _CourseCard extends StatefulWidget {
   final QuizPerItem calculationGameItem;
+  final int index;
+  final VoidCallback onTap;
 
-  const _CourseCard({required this.calculationGameItem});
+  const _CourseCard({
+    super.key,
+    required this.calculationGameItem,
+    required this.index,
+    required this.onTap,
+  });
+
+  @override
+  State<_CourseCard> createState() => _CourseCardState();
+}
+
+class _CourseCardState extends State<_CourseCard> {
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+
+  void _showPopup() {
+    if (_overlayEntry != null) return;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) {
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: _hidePopup,
+                ),
+              ),
+              CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: Offset(-13, 0),
+                child: ArrowPopup(
+                  isLocked: widget.calculationGameItem.isLocked,
+                  infoDetails: widget.calculationGameItem.info.first,
+                  onStart: () {
+                    _hidePopup();
+                    widget.onTap();
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    Overlay.of(context, rootOverlay: true).insert(_overlayEntry!);
+  }
+
+  void _hidePopup() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  @override
+  void dispose() {
+    _hidePopup();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bool isActive = !calculationGameItem.isLocked;
-    final infos = calculationGameItem.info
-        .where((e) => e.trim().isNotEmpty)
-        .toList();
+    final bool isActive = !widget.calculationGameItem.isLocked;
+    final images = returnCalculationImages(widget.calculationGameItem.title);
 
-    final String message = infos.isNotEmpty
-        ? infos.map((e) => e).join("\n")
-        : "No info available";
-
-    final images = returnCalculationImages(calculationGameItem.title);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: SvgPicture.asset(
-              isActive
-                  ? CommonUi.setSvgImage(images[1])
-                  : CommonUi.setSvgImage(images[0]),
-              width: 55,
-              height: 60,
-              fit: BoxFit.cover,
-            ),
-            onPressed: () async {},
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  calculationGameItem.title,
-                  style: AppTextStyles.bold(
-                    16,
-                  ).copyWith(height: 1.2, color: AppColors.primaryValueColour),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  returnCalculationDescription(calculationGameItem.title),
-                  style: AppTextStyles.regular(
-                    14,
-                  ).copyWith(height: 1.6, color: AppColors.grayMedium),
-                ),
-              ],
-            ),
-          ),
-
-          if (isActive)
-            Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(math.pi),
-              child: IconButton(
-                icon: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
-                  fit: BoxFit.cover,
-                  color: Colors.black,
-                ),
-                onPressed: () {},
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: GestureDetector(
+        // ← Pura card tappable
+        onTap: _showPopup, // ← Card tap = popup show
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-            ),
-        ],
+            ],
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: SvgPicture.asset(
+                  isActive
+                      ? CommonUi.setSvgImage(images[1])
+                      : CommonUi.setSvgImage(images[0]),
+                  width: 55,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+                onPressed: _showPopup, // ← Icon tap = bhi popup
+              ),
+
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.calculationGameItem.title,
+                      style: AppTextStyles.bold(16).copyWith(
+                        height: 1.2,
+                        color: AppColors.primaryValueColour,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      returnCalculationDescription(
+                        widget.calculationGameItem.title,
+                      ),
+                      style: AppTextStyles.regular(
+                        14,
+                      ).copyWith(height: 1.6, color: AppColors.grayMedium),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (isActive)
+                Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(math.pi),
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      fit: BoxFit.cover,
+                      color: Colors.black,
+                    ),
+                    onPressed: _showPopup, // ← Arrow tap = bhi popup
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
