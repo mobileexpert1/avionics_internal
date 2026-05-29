@@ -214,7 +214,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     child: manufacturerLogo.isEmpty
                                         ? SvgPicture.asset(
                                             CommonUi.setSvgImage(
-                                              AssetsPath.manufacturer,
+                                              AssetsPath.manuFirstImage,
                                             ),
                                             width: 30,
                                             height: 25,

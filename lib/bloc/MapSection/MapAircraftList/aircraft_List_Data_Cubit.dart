@@ -15,48 +15,6 @@ class AircraftListDataCubit extends Cubit<AircraftListDataState> {
       GenericMethods<AircraftModel>(AircraftModel.fromJson);
   List<AircraftModel> selectedAircraft = [];
 
-  // Future<void> loadListOfAllAirbusModels({
-  //   required List<String> selectedAirbusId,
-  //   required List<String> callSignListTypes,
-  //   required BuildContext context,
-  // }) async {
-  //   emit(
-  //     state.copyWith(
-  //       isLoading: true,
-  //       isSuccess: false,
-  //       status: CommonApiStatus.submitting,
-  //     ),
-  //   );
-  //
-  //   try {
-  //     final response = await AircraftListDataRepository().getListOfAllPlanes(
-  //       aircraftIds: selectedAirbusId,
-  //       callSignListTypes: callSignListTypes,
-  //     );
-  //
-  //     emit(
-  //       state.copyWith(
-  //         aircraftList: response.data,
-  //         detail: response.detail,
-  //         isLoading: false,
-  //         isSuccess: true,
-  //         status: CommonApiStatus.success,
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     SessionCommonTokenError.handleUnauthorizedError(context, e);
-  //
-  //     emit(
-  //       state.copyWith(
-  //         isLoading: false,
-  //         isSuccess: false,
-  //         status: CommonApiStatus.failure,
-  //         errorMessage: e.toString(),
-  //       ),
-  //     );
-  //   }
-  // }
-
   Future<void> searchAircraftByICAO({
     required String icaoCode,
     required BuildContext context,

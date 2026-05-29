@@ -14,7 +14,6 @@ import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';

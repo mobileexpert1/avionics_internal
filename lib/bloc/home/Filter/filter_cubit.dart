@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../home/Filter/filter_model.dart';
 import '../../home/Filter/filter_state.dart';
 
-/// Cubit responsible for managing the state of the Filter screen.
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit() : super(FilterState(filterCategories: []));
 
@@ -127,7 +126,6 @@ class FilterCubit extends Cubit<FilterState> {
     );
   }
 
-  /// Toggles the selection state of a specific filter option.
   void toggleFilterOption(String categoryId, String optionId) {
     final updatedCategories = state.filterCategories.map((category) {
       if (category.id == categoryId) {
@@ -144,7 +142,6 @@ class FilterCubit extends Cubit<FilterState> {
     emit(state.copyWith(filterCategories: updatedCategories, isApplied: false));
   }
 
-  /// Toggles the expanded state of a filter category.
   void toggleCategoryExpansion(String categoryId) {
     final updatedCategories = state.filterCategories.map((category) {
       if (category.id == categoryId) {
@@ -155,7 +152,6 @@ class FilterCubit extends Cubit<FilterState> {
     emit(state.copyWith(filterCategories: updatedCategories));
   }
 
-  /// Resets all filter options to unselected.
   void resetFilters() {
     final resetCategories = state.filterCategories.map((category) {
       final resetOptions = category.options.map((option) {
@@ -164,12 +160,11 @@ class FilterCubit extends Cubit<FilterState> {
       return category.copyWith(
         options: resetOptions,
         isExpanded: false,
-      ); // Reset expansion to true
+      );
     }).toList();
     emit(state.copyWith(filterCategories: resetCategories, isApplied: false));
   }
 
-  /// Simulates applying the filters.
   void applyFilters() {
     emit(state.copyWith(isApplied: true));
   }

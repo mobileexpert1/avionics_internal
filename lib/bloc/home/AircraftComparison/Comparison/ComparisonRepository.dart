@@ -7,11 +7,6 @@ class ComparisonRepository {
     required String aircraft1Id,
     required String aircraft2Id,
   }) async {
-    // Not working in Web section
-    // if (!await GenericMethods.hasInternet()) {
-    //   throw 'No internet connection';
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlAirplaneConstant.airplaneService}"

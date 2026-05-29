@@ -1,6 +1,5 @@
 import 'filter_model.dart';
 
-/// Represents the state of the Filter screen.
 class FilterState {
   final List<FilterCategory> filterCategories;
   final bool isLoading;
@@ -12,7 +11,6 @@ class FilterState {
     this.isApplied = false,
   });
 
-  /// Creates a copy of this state with updated values.
   FilterState copyWith({
     List<FilterCategory>? filterCategories,
     bool? isLoading,

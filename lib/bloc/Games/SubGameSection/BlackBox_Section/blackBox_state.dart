@@ -16,7 +16,7 @@ class BlackBoxState extends Equatable {
   final List<BlackBoxQuestion> questions;
   final int currentIndex;
   final int? selectedIndex;
-  final String? selectedAnswer; // For fill_in_the_blank
+  final String? selectedAnswer;
   final bool showAnswer;
   final int timer;
   final bool isTimerEnded;

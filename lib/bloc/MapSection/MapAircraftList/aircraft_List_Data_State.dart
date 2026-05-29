@@ -7,10 +7,7 @@ class AircraftListResponse {
   final String detail;
   final List<AircraftModel> data;
 
-  AircraftListResponse({
-    required this.detail,
-    required this.data,
-  });
+  AircraftListResponse({required this.detail, required this.data});
 
   factory AircraftListResponse.fromJson(Map<String, dynamic> json) {
     final List<dynamic> dataList = json['data'] ?? [];
@@ -22,7 +19,7 @@ class AircraftListResponse {
 }
 
 class AircraftListDataState {
-  final List<AircraftModel> aircraftList; // FIX: use AircraftListModel
+  final List<AircraftModel> aircraftList;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
@@ -50,12 +47,12 @@ class AircraftListDataState {
       status: CommonApiStatus.initial,
       aircraftList1: [],
 
-      selectedAircraftList: const [],
+      selectedAircraftList: [],
     );
   }
 
   AircraftListDataState copyWith({
-    List<AircraftModel>? aircraftList, // FIX
+    List<AircraftModel>? aircraftList,
     bool? isLoading,
     bool? isSuccess,
     String? errorMessage,

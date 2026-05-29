@@ -1527,7 +1527,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                   ? SvgPicture.asset(
                                                                       CommonUi.setSvgImage(
                                                                         AssetsPath
-                                                                            .manufacturer,
+                                                                            .manuFirstImage,
                                                                       ),
                                                                       width:
                                                                           isWide

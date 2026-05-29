@@ -1,4 +1,3 @@
-/// Represents a single selectable option within a filter category.
 class FilterOption {
   final String id;
   final String name;
@@ -6,7 +5,6 @@ class FilterOption {
 
   FilterOption({required this.id, required this.name, this.isSelected = false});
 
-  /// Creates a copy of this FilterOption instance with updated values.
   FilterOption copyWith({String? id, String? name, bool? isSelected}) {
     return FilterOption(
       id: id ?? this.id,
@@ -16,21 +14,19 @@ class FilterOption {
   }
 }
 
-/// Represents a category of filters, containing a list of FilterOption.
 class FilterCategory {
   final String id;
   final String name;
   final List<FilterOption> options;
-  bool isExpanded; // Added to control expansion/collapse of the category
+  bool isExpanded;
 
   FilterCategory({
     required this.id,
     required this.name,
     required this.options,
-    this.isExpanded = true, // Default to expanded
+    this.isExpanded = true,
   });
 
-  /// Creates a copy of this FilterCategory instance with updated values.
   FilterCategory copyWith({
     String? id,
     String? name,

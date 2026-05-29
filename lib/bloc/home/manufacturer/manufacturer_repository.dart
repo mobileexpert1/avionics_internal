@@ -18,18 +18,6 @@ class ManufacturerRepository {
     bool helicopter = false,
     bool airplane = false,
   }) async {
-    // Not working in the web section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return PaginatedList<ManufacturerListModel>(
-    //     results: await _getLocalData(),
-    //     count: 0,
-    //     totalPages: 1,
-    //     currentPage: 1,
-    //     hasNext: false,
-    //     hasPrevious: false,
-    //   );
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlAirplaneConstant.airplaneService}"
