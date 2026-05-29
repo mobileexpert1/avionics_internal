@@ -133,7 +133,6 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
 
                             const SizedBox(height: 22),
 
-                            /// EMAIL FIELD
                             Container(
                               height: 58,
                               padding: const EdgeInsets.symmetric(
@@ -156,12 +155,15 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.mail_outline_sharp,
-                                    color: AppColors.primaryBlue,
-                                    size: 30,
+                                  SvgPicture.asset(
+                                    CommonUi.setSvgImage(AssetsPath.emailIcon),
                                   ),
 
+                                  // Icon(
+                                  //   Icons.mail_outline_sharp,
+                                  //   color: AppColors.primaryBlue,
+                                  //   size: 30,
+                                  // ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: TextField(

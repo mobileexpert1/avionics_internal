@@ -318,7 +318,6 @@ class _FlightDetailScreenForMapSectionState
                     final tabWidth = constraints.maxWidth / mainTabs.length;
                     return Stack(
                       children: [
-                        // 2. Replace the AnimatedPositioned child
                         AnimatedPositioned(
                           duration: const Duration(milliseconds: 250),
                           curve: Curves.easeInOut,

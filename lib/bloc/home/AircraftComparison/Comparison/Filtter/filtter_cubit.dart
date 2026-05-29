@@ -132,17 +132,17 @@ class ComparisonFilterCubit1 extends Cubit<FilterState1> {
           filterCategories: [
             FilterCategory1(
               id: 'general',
-              name: 'GENERAL',
+              name: 'General',
               options: generalOptions,
             ),
             FilterCategory1(
               id: 'technical_data',
-              name: 'TECHNICAL DATA',
+              name: 'Technical data',
               options: technicalOptions,
             ),
             FilterCategory1(
               id: 'operational_data',
-              name: 'OPERATIONAL DATA',
+              name: 'Operational Data',
               options: operationalOptions,
             ),
           ],

@@ -123,6 +123,8 @@ abstract class AssetsPath {
 
   static const String visibilityOff = "91VisibilityOff";
   static const String visibilityOn = "92VisibilityOn";
+  static const String emailIcon = "93EmailIcon";
+  static const String bookMarkIcon = "94BookmarkIcon";
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
