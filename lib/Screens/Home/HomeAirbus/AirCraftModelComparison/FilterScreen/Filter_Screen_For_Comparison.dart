@@ -1,8 +1,9 @@
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/constantImages.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
@@ -141,9 +142,9 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                             option.name,
                                             style: AppTextStyles.regular(14)
                                                 .copyWith(
-                                              height: 1.0,
-                                              color: AppColors.black,
-                                            ),
+                                                  height: 1.0,
+                                                  color: AppColors.black,
+                                                ),
                                           ),
                                         ),
                                         Checkbox(
@@ -152,10 +153,10 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
                                             context
                                                 .read<ComparisonFilterCubit1>()
                                                 .toggleOption(
-                                              categoryId: category.id,
-                                              optionId: option.id,
-                                              isSelected: newValue ?? false,
-                                            );
+                                                  categoryId: category.id,
+                                                  optionId: option.id,
+                                                  isSelected: newValue ?? false,
+                                                );
                                           },
                                           activeColor: AppColors.primaryBlue,
                                         ),

@@ -91,8 +91,8 @@ class BlackboxCubit extends Cubit<BlackBoxState> {
         emit(state.copyWith(isLoading: false, games: []));
         return;
       }
-      final List<quizItem> gameList = response.data.map((game) {
-        return quizItem(
+      final List<QuizPerItem> gameList = response.data.map((game) {
+        return QuizPerItem(
           title: game.name,
           gameNumber: game.gameNumber,
           isLocked: !game.isEnable,

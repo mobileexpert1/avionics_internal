@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
@@ -6,14 +7,17 @@ import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_st
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
+import '../../../Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -106,7 +110,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       },
                     ),
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
+                ),
                 onPressed: () async {
                   final cubit = context.read<QuizQuestionCubit>();
                   final gameName = cubit.returnGameName();
@@ -156,13 +163,37 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 },
               ),
             ),
-            body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
+
+            body: BlocConsumer<QuizQuestionCubit, QuizQuestionState>(
+              listener: (context, state) async {
+
+                if (state.showWrongAnswerPopup) {
+                  print("wrongPopupCount :- ${state.wrongAnswerPopupCount}");
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InfoWrongGameScreen(
+                        screenIndex: state.wrongAnswerPopupCount,
+                        gameTitle: widget.sectionTitle,
+                      ),
+                    ),
+                  );
+
+                  if (context.mounted) {
+                    context
+                        .read<QuizQuestionCubit>()
+                        .continueAfterWrongPopup(context);
+                  }
+                }
+              },
+
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
 
                 if (state.questions.isEmpty && state.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
                 if (state.isTimerEnded && !isNeedToShowOrNot) {
                   Future.delayed(const Duration(milliseconds: 50), () {
                     setState(() {
@@ -186,10 +217,12 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                         horizontal: kIsWeb ? 200 : 10,
                       ),
                       child: SingleChildScrollView(
+                        key: ValueKey(state.currentIndex),
                         controller: _scrollController,
                         child: Column(
                           children: [
                             const SizedBox(height: 24),
+
                             QuizQuestionCard(
                               timeTaken: state.timeTaken,
                               hintText: state.currentQuestion.hint,
@@ -204,13 +237,15 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                               totalQuestions: quizCubit.maxQuestions,
                               secondsRemaining: state.timer,
                               transformationController:
-                                  _transformationController,
+                              _transformationController,
+
                               onOptionSelected: (index) {
                                 if (state.timer.toInt() != 0 &&
                                     !state.showAnswer) {
                                   quizCubit.selectOption(index);
                                 }
                               },
+
                               onNext: () {
                                 if (state.isTimerEnded) {
                                   setState(() {
@@ -218,16 +253,22 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                                     isNeedToShowOrNot = false;
                                   });
 
+
                                   _transformationController.value =
                                       Matrix4.identity();
+                                  if (_scrollController.hasClients) {
+                                    _scrollController.jumpTo(0);
+                                  }
                                   quizCubit.nextQuestion(context);
+
                                 } else if (state.selectedIndex != null ||
                                     state.showAnswer) {
+
                                   quizCubit.submitQuestion(context);
 
                                   Future.delayed(
                                     const Duration(milliseconds: 300),
-                                    () {
+                                        () {
                                       if (_scrollController.hasClients) {
                                         _scrollController.animateTo(
                                           _scrollController
@@ -244,20 +285,146 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                                 }
                               },
                             ),
+
                             const SizedBox(height: 20),
                           ],
                         ),
                       ),
                     ),
+
                     if (state.isLoading)
                       Container(
                         color: Colors.black.withOpacity(0.3),
-                        child: const Center(child: CircularProgressIndicator()),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       ),
                   ],
                 );
               },
             ),
+
+            // body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
+            //   builder: (context, state) {
+            //     final quizCubit = context.read<QuizQuestionCubit>();
+            //
+            //     if (state.showWrongAnswerPopup) {
+            //
+            //       Future.microtask(() async {
+            //
+            //         await Navigator.push(
+            //           context,
+            //           MaterialPageRoute(
+            //             builder: (_) => InfoWrongGameScreen(
+            //               screenIndex: state.wrongPopupCount,
+            //             ),
+            //           ),
+            //         );
+            //
+            //         context
+            //             .read<QuizQuestionCubit>()
+            //             .continueAfterWrongPopup(context);
+            //       });
+            //     }
+            //
+            //     if (state.questions.isEmpty && state.isLoading) {
+            //       return const Center(child: CircularProgressIndicator());
+            //     }
+            //     if (state.isTimerEnded && !isNeedToShowOrNot) {
+            //       Future.delayed(const Duration(milliseconds: 50), () {
+            //         setState(() {
+            //           isNeedToShowFlagOptions = true;
+            //           isNeedToShowOrNot = true;
+            //         });
+            //       });
+            //     }
+            //
+            //     if (state.selectedIndex == null &&
+            //         state.showAnswer == false &&
+            //         state.isTimerEnded == false) {
+            //       isNeedToShowOrNot = false;
+            //       isNeedToShowFlagOptions = false;
+            //     }
+            //
+            //     return Stack(
+            //       children: [
+            //         Padding(
+            //           padding: const EdgeInsets.symmetric(
+            //             horizontal: kIsWeb ? 200 : 10,
+            //           ),
+            //           child: SingleChildScrollView(
+            //             controller: _scrollController,
+            //             child: Column(
+            //               children: [
+            //                 const SizedBox(height: 24),
+            //                 QuizQuestionCard(
+            //                   timeTaken: state.timeTaken,
+            //                   hintText: state.currentQuestion.hint,
+            //                   imgUrl: state.currentQuestion.imgUrl,
+            //                   question: state.currentQuestion.question,
+            //                   options: state.currentQuestion.options,
+            //                   selectedOption: state.selectedIndex,
+            //                   correctOption: state.currentQuestion.correctIndex,
+            //                   isNeedToShowOrNot: isNeedToShowOrNot,
+            //                   isShowAnswers: state.showAnswer,
+            //                   currentQuestion: state.currentIndex + 1,
+            //                   totalQuestions: quizCubit.maxQuestions,
+            //                   secondsRemaining: state.timer,
+            //                   transformationController:
+            //                       _transformationController,
+            //                   onOptionSelected: (index) {
+            //                     if (state.timer.toInt() != 0 &&
+            //                         !state.showAnswer) {
+            //                       quizCubit.selectOption(index);
+            //                     }
+            //                   },
+            //                   onNext: () {
+            //                     if (state.isTimerEnded) {
+            //                       setState(() {
+            //                         isNeedToShowFlagOptions = false;
+            //                         isNeedToShowOrNot = false;
+            //                       });
+            //
+            //                       _transformationController.value =
+            //                           Matrix4.identity();
+            //                       quizCubit.nextQuestion(context);
+            //                     } else if (state.selectedIndex != null ||
+            //                         state.showAnswer) {
+            //                       quizCubit.submitQuestion(context);
+            //
+            //                       Future.delayed(
+            //                         const Duration(milliseconds: 300),
+            //                         () {
+            //                           if (_scrollController.hasClients) {
+            //                             _scrollController.animateTo(
+            //                               _scrollController
+            //                                   .position
+            //                                   .maxScrollExtent,
+            //                               duration: const Duration(
+            //                                 milliseconds: 400,
+            //                               ),
+            //                               curve: Curves.easeOut,
+            //                             );
+            //                           }
+            //                         },
+            //                       );
+            //                     }
+            //                   },
+            //                 ),
+            //                 const SizedBox(height: 20),
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            //         if (state.isLoading)
+            //           Container(
+            //             color: Colors.black.withOpacity(0.3),
+            //             child: const Center(child: CircularProgressIndicator()),
+            //           ),
+            //       ],
+            //     );
+            //   },
+            // ),
           );
         },
       ),

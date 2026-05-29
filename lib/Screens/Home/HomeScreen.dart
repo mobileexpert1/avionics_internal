@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
@@ -12,21 +13,20 @@ import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../Helpers/AppListTileCard.dart';
 import '../../Helpers/AppNavigator.dart';
-import '../../Helpers/AppText.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
-import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
+import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../MapSection/FlightMapScreen.dart';
 import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
 import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
-import 'Manufacturer/ManufacturerListScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
+import 'Manufacturer/ManufacturerListScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
   bool expandedManufacturerTab = false;
-  bool expandFlyingInTheAreaTab = false;
+  bool expandFlyingInTheAreaTab = true;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -337,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ((expandedManufacturerTab == true &&
                                               expandFlyingInTheAreaTab == true)
                                           ? 0.0
-                                          : 0.35),
+                                          : 0.4),
                           ),
                         ],
                       ),

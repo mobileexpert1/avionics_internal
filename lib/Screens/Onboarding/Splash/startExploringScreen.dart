@@ -129,7 +129,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                AppNavigator.push(context, SignupScreen(), disableSwipeBack: true);
+                                AppNavigator.push(
+                                  context,
+                                  SignupScreen(),
+                                  disableSwipeBack: true,
+                                );
                               },
                               child: const Text(
                                 ConstantStrings.CreateAccount,
@@ -160,7 +164,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                AppNavigator.push(context, LoginScreen(), disableSwipeBack: true);
+                                AppNavigator.push(
+                                  context,
+                                  LoginScreen(),
+                                  disableSwipeBack: true,
+                                );
                               },
                               child: const Text(
                                 ConstantStrings.loginButton,

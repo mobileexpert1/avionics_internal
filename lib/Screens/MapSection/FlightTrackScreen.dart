@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/constantImages.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../bloc/MapSection/flight_map_detailModel.dart';
@@ -77,10 +81,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     _addStaticAirportMarkers();
 
     // start flight tracking
-    flightMapCubit.startTrackingFlight(
-      widget.flightNumber,
-      context,
-    );
+    flightMapCubit.startTrackingFlight(widget.flightNumber, context);
 
     // observe lifecycle only on mobile
     if (defaultTargetPlatform == TargetPlatform.android ||
@@ -522,10 +523,14 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
                   ),
                 ),
                 Positioned(
-                  top: 40,
+                  top: 50,
                   left: 10,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black,size: 30),
+                    icon: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      fit: BoxFit.cover,
+                      color: Colors.black,
+                    ),
                     onPressed: () {
                       flightMapCubit.stopTrackingFlight();
                       Navigator.pop(context, widget.flightId);

@@ -31,6 +31,11 @@ class QuizQuestionState {
   final String setId;
   final List<CategoryType> categoryTypes;
 
+  final int consecutiveWrongAnswers;
+  final int wrongAnswerPopupCount;
+  final bool showWrongAnswerPopup;
+
+
   const QuizQuestionState({
     required this.setId,
     required this.imageBasedId,
@@ -58,6 +63,9 @@ class QuizQuestionState {
     required this.level,
     required this.difficulty,
     required this.categoryTypes,
+    this.consecutiveWrongAnswers = 0,
+    this.wrongAnswerPopupCount = 0,
+    this.showWrongAnswerPopup = false,
   });
 
   QuizQuestion get currentQuestion => questions[currentIndex];
@@ -89,6 +97,11 @@ class QuizQuestionState {
     String? level,
     String? difficulty,
     List<CategoryType>? categoryTypes,
+
+
+    int? consecutiveWrongAnswers,
+    int? wrongAnswerPopupCount,
+    bool? showWrongAnswerPopup,
   }) {
     return QuizQuestionState(
       setId: setId ?? this.setId,
@@ -117,6 +130,16 @@ class QuizQuestionState {
       level: level ?? this.level,
       difficulty: difficulty ?? this.difficulty,
       categoryTypes: categoryTypes ?? this.categoryTypes,
+
+      consecutiveWrongAnswers:
+      consecutiveWrongAnswers ?? this.consecutiveWrongAnswers,
+
+      wrongAnswerPopupCount:
+      wrongAnswerPopupCount ?? this.wrongAnswerPopupCount,
+
+      showWrongAnswerPopup:
+      showWrongAnswerPopup ?? this.showWrongAnswerPopup,
+
     );
   }
 
@@ -134,5 +157,9 @@ class QuizQuestionState {
     setId: '',
     imageBasedId: '',
     categoryTypes: [],
+
+    consecutiveWrongAnswers: 0,
+    wrongAnswerPopupCount: 0,
+    showWrongAnswerPopup: false,
   );
 }

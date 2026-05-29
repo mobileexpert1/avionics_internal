@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/FormattedText/FormattedText.dart';
 import '../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
@@ -232,9 +234,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               );
 
               Future.delayed(const Duration(seconds: 1), () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => LoginScreen()),
-                  (route) => false,
+                AppNavigator.pushAndRemoveUntil(
+                  context,
+                  LoginScreen(),
+                  disableSwipeBack: true,
                 );
               });
 
@@ -257,10 +260,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           leftButton: widget.isComeFromTab
               ? const SizedBox()
               : IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 28,
+                  icon: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                    fit: BoxFit.cover,
                   ),
                   onPressed: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -271,9 +273,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             borderRadius: BorderRadius.circular(30),
 
             onTap: () {
-              Navigator.push(
+              AppNavigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ChatHistoryScreen()),
+                ChatHistoryScreen(),
+                disableSwipeBack: true,
               );
             },
 

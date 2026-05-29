@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../../../bloc/Onboarding/splashInfo/onboarding_model.dart';
 import '../../../../bloc/Profile/VideoPlayer/video_player_cubit.dart';
 import '../../../../bloc/Profile/VideoPlayer/video_player_state.dart';
@@ -17,7 +18,8 @@ class OnboardingPage extends StatelessWidget {
 
     double responsiveFontSize(double baseSize) {
       final width = size.width;
-      if (kIsWeb) return (baseSize * (width / 600)).clamp(baseSize * 0.8, baseSize * 1.2);
+      if (kIsWeb)
+        return (baseSize * (width / 600)).clamp(baseSize * 0.8, baseSize * 1.2);
       return baseSize * (width / 375);
     }
 
@@ -27,17 +29,17 @@ class OnboardingPage extends StatelessWidget {
         fontSize: responsiveFontSize(baseSize),
         fontWeight: FontWeight.w600,
         color: const Color(0xFF2E2E3A),
-
       ),
     );
 
-    Widget buildDescription(String text, double baseSize, {Color? color}) => Text(
-      text,
-      style: TextStyle(
-        fontSize: responsiveFontSize(baseSize),
-        color: color ?? Colors.grey[600],
-      ),
-    );
+    Widget buildDescription(String text, double baseSize, {Color? color}) =>
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: responsiveFontSize(baseSize),
+            color: color ?? Colors.grey[600],
+          ),
+        );
 
     Widget buildVideo(double height) => BlocProvider(
       create: (_) => VideoPlayerCubit()..initialize(),
@@ -45,7 +47,8 @@ class OnboardingPage extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<VideoPlayerCubit>();
 
-          if (state.controller == null || !state.controller!.value.isInitialized) {
+          if (state.controller == null ||
+              !state.controller!.value.isInitialized) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -73,7 +76,10 @@ class OnboardingPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.replay_10, color: Colors.white),
+                          icon: const Icon(
+                            Icons.replay_10,
+                            color: Colors.white,
+                          ),
                           onPressed: cubit.seekBackward,
                         ),
                         IconButton(
@@ -84,7 +90,10 @@ class OnboardingPage extends StatelessWidget {
                           onPressed: cubit.playPause,
                         ),
                         IconButton(
-                          icon: const Icon(Icons.forward_10, color: Colors.white),
+                          icon: const Icon(
+                            Icons.forward_10,
+                            color: Colors.white,
+                          ),
                           onPressed: cubit.seekForward,
                         ),
                         IconButton(
@@ -139,9 +148,7 @@ class OnboardingPage extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (info.videoUrl != "") ...[
-                    buildVideo(maxH * 0.88),
-                  ],
+                  if (info.videoUrl != "") ...[buildVideo(maxH * 0.88)],
                 ],
               ),
             ),

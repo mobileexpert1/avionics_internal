@@ -1,9 +1,8 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:avionics_internal/Helpers/CustomDivider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -38,9 +37,11 @@ class FilterForMapScreen extends StatefulWidget {
   final List<String>? initialAircraftIcaos;
   final int? numberOfFlights;
   final int? searchRadius;
+  final VoidCallback onTapBackButton;
 
   const FilterForMapScreen({
     Key? key,
+    required this.onTapBackButton,
     required this.initialMapType,
     this.initialCategories,
     this.initialAircraftIcaos,
@@ -91,38 +92,54 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
           rightButton: BlocBuilder<FilterMapMainCubit, FilterMapState>(
             builder: (context, state) {
               return Padding(
-                padding: const EdgeInsets.only(right: 16, top: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop(
-                      FilterResult(
-                        state.mapType,
-                        state.selectedCategories,
-                        aircraftCubit.selectedAircraft
-                            .map((a) => a.icaoTypeCode)
-                            .where((c) => c.isNotEmpty)
-                            .toList(),
-                        state.numberOfFlights,
-                        state.searchRadius,
+                padding: const EdgeInsets.only(right: 0, top: 10),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop(
+                          FilterResult(
+                            state.mapType,
+                            state.selectedCategories,
+                            aircraftCubit.selectedAircraft
+                                .map((a) => a.icaoTypeCode)
+                                .where((c) => c.isNotEmpty)
+                                .toList(),
+                            state.numberOfFlights,
+                            state.searchRadius,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryDark,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          "Apply",
+                          style: AppTextStyles.semiRegular(
+                            18,
+                          ).copyWith(height: 1.0, color: AppColors.white),
+                        ),
                       ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryDark,
-                      borderRadius: BorderRadius.circular(20),
+                    SizedBox(width: 10),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.black,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        widget.onTapBackButton.call();
+                      },
                     ),
-                    child: Text(
-                      "Apply",
-                      style: AppTextStyles.semiRegular(
-                        18,
-                      ).copyWith(height: 1.0, color: AppColors.white),
-                    ),
-                  ),
+                  ],
                 ),
               );
             },
@@ -273,7 +290,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 20.0),
                             child: Container(
-                              alignment: AlignmentGeometry.topLeft,
+                              alignment: Alignment.topLeft,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 15,

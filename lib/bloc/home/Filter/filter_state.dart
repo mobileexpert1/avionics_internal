@@ -4,7 +4,7 @@ import 'filter_model.dart';
 class FilterState {
   final List<FilterCategory> filterCategories;
   final bool isLoading;
-  final bool isApplied; // To indicate if filters are applied
+  final bool isApplied;
 
   FilterState({
     required this.filterCategories,
