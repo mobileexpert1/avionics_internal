@@ -19,6 +19,7 @@ import '../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import '../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
 import '../../MapSection/MapHelpers/FlightDetailScreen.dart';
 import '../../MapSection/MapHelpers/FlightDetailScreenForMapSection.dart';
+import '../../WilcoBoat/ChatHistoryScreen/ChatHistoryScreen.dart';
 import '../HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class SavedFlighScreen extends StatefulWidget {
@@ -36,6 +37,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
 
   final List<String> mainTabs = ['Bookmark', 'Favorite'];
   int mainTab = 0;
+  bool _isDialogOpen = false;
 
   @override
   void initState() {
@@ -233,7 +235,15 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
 
                       GestureDetector(
                         onTap: () async {
+                          final confirmed = await _deleteChat(
+                            item.id.toString(),
+                            isSavedTab,
+                          );
+
+                          if (!confirmed) return;
+
                           final cubit = context.read<AllPlanesCubit>();
+
                           if (isSavedTab) {
                             await cubit.planFavOrUnfav(item.id, context);
                           } else {
@@ -245,11 +255,16 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               context,
                             );
                           }
-                          setState(() => list.removeAt(index));
+
+                          if (mounted) {
+                            setState(() {
+                              list.removeAt(index);
+                            });
+                          }
                         },
                         child: SvgPicture.asset(
                           CommonUi.setSvgImage(
-                            isSavedTab == true
+                            isSavedTab
                                 ? AssetsPath.bookMarkIcon
                                 : AssetsPath.highlightStar,
                           ),
@@ -270,6 +285,26 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
         );
       },
     );
+  }
+
+  Future<bool> _deleteChat(String sessionId, bool isComeFromBookMark) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) => CustomDialog(
+        title: isComeFromBookMark
+            ? 'Remove from Bookmark'
+            : 'Remove from Favourite',
+        description: 'Are you sure you want to remove this item?',
+        positiveButtonText: 'Yes',
+        positiveColor: AppColors.blackBoxColorForGame,
+        onPositiveTap: () {
+          Navigator.pop(dialogContext, true);
+        },
+      ),
+    );
+
+    return shouldDelete == true;
   }
 
   Widget _buildTabContent(SavedFlightState state) {

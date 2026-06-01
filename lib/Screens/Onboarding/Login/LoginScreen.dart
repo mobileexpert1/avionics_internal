@@ -52,7 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
           if (!mounted) return;
-
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? 'Login failed')),

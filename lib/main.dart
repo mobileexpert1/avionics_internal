@@ -43,7 +43,7 @@ import 'bloc/Profile/Glossary/glossary_cubit.dart';
 import 'bloc/Profile/MySubscription/my_subscription_cubit.dart';
 import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
-import 'bloc/home/Filter/filter_cubit.dart';
+import 'bloc/home/AircraftComparison/Comparison/Filter/filter_cubit.dart';
 import 'bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import 'bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
 import 'bloc/home/homeBloc/home_cubit.dart';

@@ -23,6 +23,7 @@ import '../MapHelpers/LiveBadge.dart';
 class FlightDetailCard extends StatefulWidget {
   final FlightAircraftDetail? flightDetail;
   final bool? isComeFromLiveTracking;
+  final bool? isFavFlightByS;
   final VoidCallback? callBackForHideFlightCard;
 
   const FlightDetailCard({
@@ -30,6 +31,7 @@ class FlightDetailCard extends StatefulWidget {
     this.callBackForHideFlightCard,
     this.flightDetail,
     this.isComeFromLiveTracking,
+    this.isFavFlightByS,
   });
 
   @override
@@ -58,10 +60,8 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
     super.didChangeDependencies();
 
     final state = context.read<FlightMapCubit>().state;
-
     final selectedFlight = state.selectedFlight;
     final detail = widget.flightDetail;
-    isFavLocal = detail?.isFavorite ?? selectedFlight?.isFavorite ?? false;
   }
 
   @override
@@ -136,6 +136,9 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
 
           final departureCity = detail?.originAirport?.city ?? 'N/A';
           final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
+
+          print("(widget.isFavFlightByS-=-=-=${widget.isFavFlightByS}");
+          isFavLocal = widget.isFavFlightByS ?? false;
 
           return GestureDetector(
             onTap: widget.callBackForHideFlightCard,

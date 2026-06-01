@@ -221,8 +221,6 @@ class FlightRepository {
           aircraftDetail?.originAirport ?? flightDetail.originAirport,
       destinationAirport:
           aircraftDetail?.destinationAirport ?? flightDetail.destinationAirport,
-      //Sham
-
       // Preserve other fields from flightDetail
       takeoffTime: flightDetail.takeoffTime,
       takeoffRunway: flightDetail.takeoffRunway,

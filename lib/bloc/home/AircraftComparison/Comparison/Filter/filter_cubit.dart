@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../home/Filter/filter_model.dart';
-import '../../home/Filter/filter_state.dart';
+import 'filter_model.dart';
+import 'filter_state.dart';
 
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit() : super(FilterState(filterCategories: []));

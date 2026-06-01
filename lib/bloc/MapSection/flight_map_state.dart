@@ -40,6 +40,7 @@ class FlightMapState {
 
   final int? numberOfFlights;
   final int? searchRadius;
+  final bool? isFavFlightByS;
 
   FlightMapState({
     this.openAiKey,
@@ -70,6 +71,7 @@ class FlightMapState {
 
     this.numberOfFlights = 10,
     this.searchRadius = 150,
+    this.isFavFlightByS = false,
   });
 
   FlightMapState copyWith({
@@ -100,6 +102,7 @@ class FlightMapState {
 
     int? numberOfFlights,
     int? searchRadius,
+    bool? isFavFlightByS,
   }) {
     return FlightMapState(
       openAiKey: openAiKey ?? this.openAiKey,
@@ -131,6 +134,7 @@ class FlightMapState {
 
       numberOfFlights: numberOfFlights ?? this.numberOfFlights,
       searchRadius: searchRadius ?? this.searchRadius,
+      isFavFlightByS: isFavFlightByS ?? this.isFavFlightByS,
     );
   }
 }

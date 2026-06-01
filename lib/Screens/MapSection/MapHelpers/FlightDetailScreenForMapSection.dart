@@ -242,8 +242,14 @@ class _FlightDetailScreenForMapSectionState
           backgroundColor: Colors.white,
           appBar: CustomAppBar(
             isForComparison: true,
-            title: _currentFlightDetail?.callsign?.isNotEmpty ?? false
-                ? _currentFlightDetail!.callsign!
+            title: mainTab == 0
+                ? _currentFlightDetail?.callsign?.isNotEmpty ?? false
+                      ? _currentFlightDetail!.callsign!
+                      : widget.callsign?.isNotEmpty ?? false
+                      ? widget.callsign!
+                      : 'N/A'
+                : _currentFlightDetail?.aircraftModel?.isNotEmpty ?? false
+                ? _currentFlightDetail!.aircraftModel!
                 : widget.callsign?.isNotEmpty ?? false
                 ? widget.callsign!
                 : 'N/A',

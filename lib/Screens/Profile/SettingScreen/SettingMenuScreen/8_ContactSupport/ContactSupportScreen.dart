@@ -167,7 +167,6 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: TextField(
-                                      readOnly: true,
                                       controller: emailController,
                                       decoration: const InputDecoration(
                                         hintText: "Enter your email",

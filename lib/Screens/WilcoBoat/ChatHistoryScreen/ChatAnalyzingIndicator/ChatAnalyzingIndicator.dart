@@ -39,9 +39,7 @@ class _AnalyzingIndicatorState extends State<ChatAnalyzingIndicator>
     return AnimatedBuilder(
       animation: _ctrl,
       builder: (_, _) {
-        // 0→1→2→3→0→1→2→3 (perfectly equal 300ms each)
         final step = (_ctrl.value * 4).floor() % 4;
-
         return Padding(
           padding: const EdgeInsets.only(top: 8, bottom: 8),
           child: Row(

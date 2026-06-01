@@ -42,9 +42,7 @@ class ForgotCubit extends Cubit<ForgotState> {
 
     try {
       await ForgotRepository().forgotUserApi(email: state.email);
-
       emit(state.copyWith(status: CommonApiStatus.success));
-
       if (!context.mounted) return;
       AppNavigator.push(
         context,

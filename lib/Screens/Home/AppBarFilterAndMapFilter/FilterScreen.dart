@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../bloc/home/Filter/filter_cubit.dart';
-import '../../../bloc/home/Filter/filter_model.dart';
-import '../../../bloc/home/Filter/filter_state.dart';
+import '../../../bloc/home/AircraftComparison/Comparison/Filter/filter_cubit.dart';
+import '../../../bloc/home/AircraftComparison/Comparison/Filter/filter_model.dart';
+import '../../../bloc/home/AircraftComparison/Comparison/Filter/filter_state.dart';
 
 class FilterScreen extends StatefulWidget {
   @override

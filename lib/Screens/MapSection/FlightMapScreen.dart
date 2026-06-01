@@ -92,8 +92,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
-  // ── LIFECYCLE ──────────────────────────────────────────────────────────────
-
   @override
   void initState() {
     super.initState();
@@ -260,13 +258,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       if (!mounted) return;
 
       final visibleRegion = await _mapController!.getVisibleRegion();
-
-      final screenCenter = ScreenCoordinate(
-        x: (constraints.maxWidth ~/ 2),
-        y: (constraints.maxHeight ~/ 2),
-      );
-
-      // final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
 
       final centerLatLng = LatLng(
         (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
@@ -1667,6 +1658,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           }
           return FlightDetailCard(
             flightDetail: state.selectedFlightDetail,
+            isFavFlightByS: state.isFavFlightByS ?? false,
             isComeFromLiveTracking: false,
             callBackForHideFlightCard: _resetFlightSelection,
           );

@@ -93,7 +93,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         onPopInvokedWithResult: (_, _) {
           _isDialogOpen = false;
         },
-        child: _CustomDialog(
+        child: CustomDialog(
           title: 'Rename Chat',
           content: TextField(
             controller: controller,
@@ -154,7 +154,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           _isDialogOpen = false;
         },
 
-        child: _CustomDialog(
+        child: CustomDialog(
           title: 'Delete chat',
           description: 'Are you sure you want to delete this chat?',
           positiveButtonText: 'Delete',
@@ -387,7 +387,7 @@ class _PopupMenuTile extends StatelessWidget {
   }
 }
 
-class _CustomDialog extends StatelessWidget {
+class CustomDialog extends StatelessWidget {
   final String title;
   final String? description;
   final Widget? content;
@@ -395,7 +395,7 @@ class _CustomDialog extends StatelessWidget {
   final VoidCallback onPositiveTap;
   final Color positiveColor;
 
-  const _CustomDialog({
+  const CustomDialog({
     required this.title,
     this.description,
     this.content,
