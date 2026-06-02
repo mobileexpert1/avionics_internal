@@ -112,6 +112,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
             ),
           ),
 
+          
           /// Expandable Custom View
           AnimatedSize(
             duration: const Duration(milliseconds: 250),
