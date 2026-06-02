@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../Constants/constantImages.dart';
+import '../../../Constants/AppColors.dart';
 import 'game_model.dart';
 import 'game_state.dart';
 
@@ -9,53 +9,62 @@ class GamesCubit extends Cubit<GamesState> {
   }
 
   void loadGames() {
-    final games = [
-      GameItem(
-        id: "quiz",
-        title: "Quiz",
-        subtitle: "Test your aviation\n knowledge with time\n question",
-        icon: AssetsPath.quiz,
-      ),
-      GameItem(
-        id: "one_word",
-        title: "One Word",
-        subtitle: "Complete aviation\n terms and\n procedures",
-        icon: AssetsPath.oneWord,
-      ),
-      GameItem(
-        id: "black_box",
-        title: "Black Box",
-        subtitle: "Emergency scenarios \nand decision making",
-        icon: AssetsPath.blackBox,
-      ),
-      GameItem(
-        id: "calculation",
-        title: "Calculations",
-        subtitle: "Test your aviation\n knowledge with time\n question",
-        icon: AssetsPath.calculations,
+    final List<GamePairItemModel> rowsGame = [
+      GamePairItemModel(
+        left: GameCardModel(
+          id: "quiz",
+          title: "Aviation\nQuiz",
+          color: AppColors.greenColourForPlan,
+          topValue: 250,
+        ),
+        right: GameCardModel(
+          id: "black_box",
+          title: "Black Box",
+          color: AppColors.blackBoxColorForGame,
+          topValue: 250,
+        ),
       ),
 
-      GameItem(
-        id: "imageBased",
-        title: "Planespotter",
-        subtitle: "Test your Image question game",
-        icon: AssetsPath.quiz,
+      GamePairItemModel(
+        left: GameCardModel(
+          id: "aircraftEncyclopaedia",
+          title: "Citius. Altius.\nLongius.",
+          color: AppColors.citiusAltiusColorForGame,
+          topValue: 370,
+        ),
+        right: GameCardModel(
+          id: "trivia",
+          title: "Jetting\nAround\nThe World",
+          color: AppColors.primaryBlue,
+          topValue: 370,
+        ),
       ),
 
-      GameItem(
-        id: "trivia",
-        title: "Trivia",
-        subtitle: "Test your trivia question game",
-        icon: AssetsPath.oneWord,
+      GamePairItemModel(
+        left: GameCardModel(
+          id: "one_word",
+          title: "Basic Topics",
+          color: AppColors.primaryDark,
+          topValue: 490,
+        ),
+        right: GameCardModel(
+          id: "imageBased",
+          title: "PlaneSpotter",
+          color: AppColors.planeSpotterColorForGame,
+          topValue: 490,
+        ),
       ),
 
-      GameItem(
-        id: "aircraftEncyclopaedia",
-        title: "Aircraft Encyclopaedia",
-        subtitle: "Test your Aircraft Encyclopaedia question game",
-        icon: AssetsPath.blackBox,
+      GamePairItemModel(
+        left: GameCardModel(
+          id: "calculation",
+          title: "Calculations",
+          color: AppColors.greenColourForPlan,
+          topValue: 610,
+        ),
       ),
     ];
-    emit(GamesLoaded(games));
+
+    emit(GamesLoaded(rowsGame));
   }
 }

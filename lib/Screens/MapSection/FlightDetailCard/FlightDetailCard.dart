@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +8,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomDivider.dart';
@@ -17,13 +17,13 @@ import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../bloc/MapSection/flight_map_state.dart';
 import '../FlightTrackScreen.dart';
-import '../MapHelpers/FlightDetailScreen.dart';
 import '../MapHelpers/FlightDetailScreenForMapSection.dart';
 import '../MapHelpers/LiveBadge.dart';
 
 class FlightDetailCard extends StatefulWidget {
   final FlightAircraftDetail? flightDetail;
   final bool? isComeFromLiveTracking;
+  final bool? isFavFlightByS;
   final VoidCallback? callBackForHideFlightCard;
 
   const FlightDetailCard({
@@ -31,6 +31,7 @@ class FlightDetailCard extends StatefulWidget {
     this.callBackForHideFlightCard,
     this.flightDetail,
     this.isComeFromLiveTracking,
+    this.isFavFlightByS,
   });
 
   @override
@@ -59,10 +60,8 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
     super.didChangeDependencies();
 
     final state = context.read<FlightMapCubit>().state;
-
     final selectedFlight = state.selectedFlight;
     final detail = widget.flightDetail;
-    isFavLocal = detail?.isFavorite ?? selectedFlight?.isFavorite ?? false;
   }
 
   @override
@@ -86,14 +85,14 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
           final takeoffTime = detail?.takeoffTime;
 
           final aircraftType = detail?.aircraftModel ?? 'N/A';
-          final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
+          //final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
           final category = detail?.icaoTypeCode ?? detail?.type ?? "";
           final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
 
-          final airlineName =
-              (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
-              ? detail!.manufacturer!.airlineName!
-              : 'N/A';
+          // final airlineName =
+          //     (detail?.manufacturer?.airlineName?.isNotEmpty ?? false)
+          //     ? detail!.manufacturer!.airlineName!
+          //     : 'N/A';
 
           final manufacturerLogo = detail?.manufacturer?.logo ?? "";
           final callSign =
@@ -138,6 +137,9 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
           final departureCity = detail?.originAirport?.city ?? 'N/A';
           final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
 
+          print("(widget.isFavFlightByS-=-=-=${widget.isFavFlightByS}");
+          isFavLocal = widget.isFavFlightByS ?? false;
+
           return GestureDetector(
             onTap: widget.callBackForHideFlightCard,
             child: Card(
@@ -173,7 +175,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                       maxWidth: 220,
                                     ),
                                     child: Text(
-                                      "A320-200",
+                                      aircraftType,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: AppTextStyles.bold(24).copyWith(
@@ -215,31 +217,28 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     child: manufacturerLogo.isEmpty
                                         ? SvgPicture.asset(
                                             CommonUi.setSvgImage(
-                                              AssetsPath.manufacturer,
+                                              AssetsPath.manuFirstImage,
                                             ),
-                                            width: 25,
-                                            height: 19,
+                                            width: 30,
+                                            height: 25,
                                             fit: BoxFit.fill,
                                           )
                                         : CachedAnyImage(
                                             imagePath: manufacturerLogo,
-                                            width: 25,
-                                            height: 19,
+                                            width: 75,
+                                            height: 25,
                                             contentImage: BoxFit.contain,
                                             useCache: false,
                                           ),
                                   ),
 
-                                  Text(
-                                    manufacturer,
-                                    style: AppTextStyles.semiBold(14).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.primaryValueColour,
-                                    ),
-                                  ),
-
-                                  SizedBox(width: 5),
-
+                                  // Text(
+                                  //   manufacturer,
+                                  //   style: AppTextStyles.semiBold(14).copyWith(
+                                  //     height: 1.0,
+                                  //     color: AppColors.primaryValueColour,
+                                  //   ),
+                                  // ),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -291,21 +290,21 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                           FirebaseEvents.trackAFlightButton,
                                           FirebaseEvents.trackScreen,
                                         );
-
-                                        Navigator.push(
+                                        AppNavigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (_) => BlocProvider.value(
+                                          TrackFlightScreen(
+                                            flightNumber: flightNumber,
+                                            initialFlight: selectedFlight,
+                                            initialFlightDetail: detail,
+                                            flightId: flightId,
+                                          ),
+                                          multiBlocProviders: [
+                                            BlocProvider.value(
                                               value: context
                                                   .read<FlightMapCubit>(),
-                                              child: TrackFlightScreen(
-                                                flightNumber: flightNumber,
-                                                initialFlight: selectedFlight,
-                                                initialFlightDetail: detail,
-                                                flightId: flightId,
-                                              ),
                                             ),
-                                          ),
+                                          ],
+                                          disableSwipeBack: true,
                                         );
                                       }
                                     },
@@ -366,12 +365,13 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     padding: const EdgeInsets.all(4),
                                     child: state.isTracking
                                         ? const LiveBadge()
-                                        : Icon(
-                                            isFavLocal
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.yellow,
-                                            size: 30,
+                                        : SvgPicture.asset(
+                                            CommonUi.setSvgImage(
+                                              isFavLocal
+                                                  ? AssetsPath.highlightStar
+                                                  : AssetsPath.unHighlightStar,
+                                            ),
+                                            height: 25,
                                           ),
                                   ),
                                 ),
@@ -407,39 +407,51 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        /// LEFT SIDE
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: Text.rich(
                             TextSpan(
                               children: [
                                 TextSpan(
                                   text: "$departureCity\n",
-                                  style: AppTextStyles.semiRegular(16).copyWith(
+                                  style: AppTextStyles.semiRegular(14).copyWith(
                                     height: 1.2,
                                     color: AppColors.black,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: "$departureIata\n",
                                   style: AppTextStyles.bold(20).copyWith(
-                                    height: 1.4,
+                                    height: 1.2,
                                     color: AppColors.primaryValueColour,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: timeSinceTakeoff,
                                   style: AppTextStyles.semiRegular(14).copyWith(
-                                    height: 1.6,
+                                    height: 1.2,
                                     color: AppColors.grayMedium,
                                   ),
                                 ),
                               ],
                             ),
+
+                            /// IMPORTANT FIXES
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+
+                        const SizedBox(width: 8),
+
+                        /// CENTER PROGRESS
                         Expanded(
                           flex: 3,
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               buildCustomProgressBar(
                                 progress,
@@ -449,35 +461,46 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                             ],
                           ),
                         ),
+
+                        const SizedBox(width: 8),
+
+                        /// RIGHT SIDE
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: Text.rich(
                             TextSpan(
                               children: [
                                 TextSpan(
                                   text: "$arrivalCity\n",
-                                  style: AppTextStyles.semiRegular(16).copyWith(
+                                  style: AppTextStyles.semiRegular(14).copyWith(
                                     height: 1.2,
                                     color: AppColors.black,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: "$arrivalIata\n",
                                   style: AppTextStyles.bold(20).copyWith(
-                                    height: 1.4,
+                                    height: 1.2,
                                     color: AppColors.primaryValueColour,
                                   ),
                                 ),
+
                                 TextSpan(
                                   text: timeToArrival,
                                   style: AppTextStyles.semiRegular(14).copyWith(
-                                    height: 1.6,
+                                    height: 1.2,
                                     color: AppColors.grayMedium,
                                   ),
                                 ),
                               ],
                             ),
+
                             textAlign: TextAlign.right,
+
+                            /// IMPORTANT FIXES
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -529,17 +552,18 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                             FirebaseEvents.trackScreen,
                           );
 
-                          Navigator.push(
+                          AppNavigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<FlightMapCubit>(),
-                                child: FlightDetailScreenForMapSection(
-                                  ICAOType: category,
-                                  flightDetail: combinedDetail,
-                                ),
-                              ),
+                            FlightDetailScreenForMapSection(
+                              ICAOType: category,
+                              flightDetail: combinedDetail,
                             ),
+                            multiBlocProviders: [
+                              BlocProvider.value(
+                                value: context.read<FlightMapCubit>(),
+                              ),
+                            ],
+                            disableSwipeBack: true,
                           );
                         },
                         child: Container(

@@ -7,7 +7,7 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 void main() {
   group('GLOSSARY API REAL SERVER TEST', () {
 
-    test('Fetch All Glossary → API → STATUS CODE CHECK', () async {
+    test('Fetch All 3_Glossary → API → STATUS CODE CHECK', () async {
       final url = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"
             "${ApiFunctionUrlConstant.userService}"
@@ -42,7 +42,7 @@ void main() {
       }
     });
 
-    test('Fetch Glossary with query → API → STATUS CODE CHECK', () async {
+    test('Fetch 3_Glossary with query → API → STATUS CODE CHECK', () async {
       final query = 'air';
       final url = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"

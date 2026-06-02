@@ -1,22 +1,24 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
-
-import '../Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:purchases_flutter/models/package_wrapper.dart';
+
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
-import '../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../Helpers/CardWithBadgeClipper.dart';
-import '../../Home/RootTabbar/RootTabbarScreen.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
+import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:purchases_flutter/models/package_wrapper.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Helpers/CardWithBadgeClipper.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
+import '../../Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/FeatureRow.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/StepIndicator.dart';
+import '../Login/LoginScreen.dart';
 
 class SubscriptionPlanDetailScreen extends StatefulWidget {
   final bool? isComeFromSignup;
@@ -116,6 +118,25 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
             }
           }
 
+          if (state.consumablePurchased == true && state.loading == false) {
+            context
+                .read<SubscriptionBuyPlanCubit>()
+                .resetConsumablePurchaseState();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Purchase successful. Extra data will be automatically added to your account.',
+                ),
+              ),
+            );
+
+            Future.delayed(const Duration(seconds: 2), () {
+              if (!context.mounted) return;
+              Navigator.pop(context);
+            });
+          }
+
           if (_cubit.isComeFromSignup == true) {
             if (state.purchased &&
                 state.waitingForBackendConfirmation != true &&
@@ -142,7 +163,8 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
           }
         },
         builder: (context, state) {
-          final packages = state.offerings?.current?.availablePackages ?? [];
+          final subscriptionPackages = state.subscriptionPackages;
+
           final isComeFromSignup = _cubit.isComeFromSignup;
           return Stack(
             children: [
@@ -165,7 +187,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                             .read<SubscriptionBuyPlanCubit>()
                             .clearAllDataAndRedirectToSplashScreen(context);
                       } else {
-                        Navigator.pop(context,true);
+                        Navigator.pop(context, true);
                       }
                     },
                   ),
@@ -190,7 +212,10 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                                 26,
                               ).copyWith(height: 1.0, color: AppColors.black),
                             ),
-                            _stepIndicator(packages.length),
+                            StepIndicator(
+                              total: subscriptionPackages.length,
+                              current: currentPage,
+                            ),
                           ],
                         ),
                       ),
@@ -200,14 +225,15 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                       Expanded(
                         child: PageView.builder(
                           controller: _controller,
-                          itemCount: packages.length,
+                          itemCount: subscriptionPackages.length,
                           onPageChanged: (index) {
                             setState(() => currentPage = index);
                           },
                           itemBuilder: (context, index) {
+                            final package = subscriptionPackages[index];
                             return _PlanCard(
                               state: state,
-                              package: packages[index],
+                              package: package,
                               isLoading: state.loading,
                             );
                           },
@@ -227,25 +253,6 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
           );
         },
       ),
-    );
-  }
-
-  // ── step indicator ───────────────────────────────────────────────────────
-  Widget _stepIndicator(int total) {
-    return Row(
-      children: List.generate(total, (index) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: index == currentPage
-                ? const Color(0xFF3D8EFF)
-                : const Color(0xFFD0D0DA),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        );
-      }),
     );
   }
 }
@@ -324,17 +331,15 @@ class _PlanCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 15),
-
                           Expanded(
                             child: ListView.builder(
                               itemCount: state.features.length,
-                              itemBuilder: (_, i) => _FeatureRow(
+                              itemBuilder: (_, i) => FeatureRow(
                                 text: state.features[i],
                                 isPremium: isBasicPlan,
                               ),
                             ),
                           ),
-
                           if (isUpcomingPlan?.id != "" &&
                               isUpcomingPlan?.plan != null &&
                               isBasicPlan) ...[
@@ -413,7 +418,6 @@ class _PlanCard extends StatelessWidget {
                               ),
                             ),
                           ],
-
                           if (isExpired) ...[
                             const SizedBox(height: 10),
                             Text(
@@ -469,7 +473,7 @@ class _PlanCard extends StatelessWidget {
                           vertical: 6,
                         ),
                         child: Text(
-                          isBasicPlan ? "Starter Plan" : "Premium",
+                          isBasicPlan ? "Starter" : "Premium",
                           style: AppTextStyles.bold(
                             14,
                           ).copyWith(height: 1.0, color: Colors.black),
@@ -491,8 +495,8 @@ class _PlanCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
 
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -522,6 +526,7 @@ class _PlanCard extends StatelessWidget {
               onPressed: () {
                 context.read<SubscriptionBuyPlanCubit>().selectPackage(package);
                 context.read<SubscriptionBuyPlanCubit>().buySelected();
+
                 AnalyticsService.instance.buttonPressed(
                   FirebaseEvents.subscriptionScreen,
                   FirebaseEvents.goPremiumSubscriptionButton,
@@ -530,7 +535,6 @@ class _PlanCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 10),
-
             CustomBottomButton(
               fontStyle: AppTextStyles.semiBold(
                 18,
@@ -550,39 +554,6 @@ class _PlanCard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class _FeatureRow extends StatelessWidget {
-  final String text;
-  final bool isPremium;
-
-  const _FeatureRow({required this.text, this.isPremium = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 10,
-            backgroundColor: AppColors.greenColourForPlan,
-            child: const Icon(Icons.check, size: 15, color: Colors.white),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: AppTextStyles.medium(14).copyWith(
-                height: 1.0,
-                color: isPremium ? Colors.black : Colors.white,
-              ),
-            ),
-          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../Constants/AppColors.dart';
 import '../Constants/constantImages.dart';
 import 'AppTextStyles/AppTextStyles.dart';
@@ -54,14 +55,13 @@ class SearchBarWidget extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  /// BACK BUTTON
                   if (enableBackArrow)
                     GestureDetector(
                       onTap: onBackButtonTap,
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        size: isComeFromMapSection == true ? 30 : 20,
-                        color: Colors.black87,
+                      child: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                        fit: BoxFit.cover,
+                        width: isComeFromMapSection == true ? 30 : 20,
                       ),
                     ),
 

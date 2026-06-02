@@ -4,14 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
-import '../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'home_state.dart';
 import 'home_repository.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final HomeRepository repository = HomeRepository();
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   HomeCubit() : super(HomeInitial());
 
@@ -58,7 +57,11 @@ class HomeCubit extends Cubit<HomeState> {
         }
       } else {
         if (!isClosed) {
-          emit(HomeError(e.toString()));
+          if (e.toString().contains("Handshake error")){
+            emit(HomeError("Something went wrong. Please check after sometime."));
+          }else{
+            emit(HomeError(e.toString()));
+          }
         }
       }
     }

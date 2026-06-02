@@ -1,4 +1,3 @@
-// Response Model
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../flight_map_model.dart';
 
@@ -17,7 +16,6 @@ class MapSearchAircraftListModel {
   }
 }
 
-/// Individual Flight Result
 class FlightResult {
   final String id;
   final String label;
@@ -63,7 +61,6 @@ class FlightResult {
   }
 }
 
-/// Flight Details
 class FlightDetail {
   final double lat;
   final double lon;
@@ -111,7 +108,6 @@ class FlightDetail {
   }
 }
 
-/// Stats section
 class FlightStats {
   final int total;
   final int count;

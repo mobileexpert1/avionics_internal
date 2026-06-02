@@ -1,45 +1,46 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui' as ui;
+
 import 'package:avionics_internal/bloc/MapSection/FilterMap/filter_Map_State.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/AppColors.dart';
+import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
+import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../Helpers/CustomSegmentController/CustomSegmentController.dart';
+import '../../Helpers/MapSection/rotatePlane_icon.dart';
+import '../../Helpers/SearchBarWidget.dart';
 import '../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
-import '../../bloc/Home/SavedFlighDetails/savedFlight_repository.dart';
+import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
+import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import '../../bloc/MapSection/ParsedPolygon.dart';
+import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_model.dart';
+import '../../bloc/MapSection/flight_map_state.dart';
+import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
+import '../WilcoBoat/ChatBotScreen.dart';
 import 'AirportStationDetailCard/AirportStationDetailCard.dart';
 import 'FlightDetailCard/FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'MapHelpers/MapToggleButtons.dart';
-import '../../Helpers/SearchBarWidget.dart';
-import '../../Constants/constantImages.dart';
 import 'MapHelpers/TrackAndSeacrhFlight.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../bloc/MapSection/flight_map_model.dart';
-import '../../bloc/MapSection/flight_map_state.dart';
-import '../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../Helpers/MapSection/rotatePlane_icon.dart';
-import '../../Helpers/CacheManger/CachedImageFile.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
-import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
-import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_Model.dart';
-import '../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 
 class FlightMapScreen extends StatefulWidget {
   final VoidCallback onGoToFirstTab;
@@ -62,36 +63,34 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   Timer? _debounce;
   int _activeCard = 0;
+  bool _hasTriggeredMapView = false;
 
   bool? isFirstTimeUserCome = true;
   bool _isProgrammaticMove = false;
 
   bool isMapViewSelected = true;
   bool _isMapListViewShown = true;
-  bool _hasFetchedDetails = false;
 
   String? selectedFlightId;
 
+  bool _isUserGesture = true;
   int _isForFlyingInTheArea = 0;
+
   Marker? _singleSearchMarker;
   GoogleMapController? _mapController;
-  bool _isUserGesture = true;
 
-  late final ValueNotifier<Set<Polygon>> polygonNotifier;
-  final Set<Polygon> cachedPolygons = <Polygon>{};
   bool showPolygon = false;
   String? _selectedPolygonId;
   List<ParsedPolygon> _parsedPolygons = [];
+  final Set<Polygon> cachedPolygons = <Polygon>{};
+  late final ValueNotifier<Set<Polygon>> polygonNotifier;
 
   int selectedSegmentIndex = 0;
-
   final Set<Circle> _circles = {};
 
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
-
-  // ── LIFECYCLE ──────────────────────────────────────────────────────────────
 
   @override
   void initState() {
@@ -112,7 +111,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
               _isForFlyingInTheArea = 1;
             });
             _resetFlightSelection();
+            _isUserGesture = false;
+            isFirstTimeUserCome = false;
             _handleFilterTap(context);
+
+            AnalyticsService.instance.buttonPressed(
+              FirebaseEvents.flyingInTheAreaButton,
+              FirebaseEvents.trackScreen,
+            );
           } else if (widget.openMode == 2) {
             setState(() {
               _activeCard = 0;
@@ -122,14 +128,12 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             });
             _handleTextTap(context);
           }
-        } else {
-          _showInitialTrackingModePopup(context);
         }
-        await _loadFavoritesFlights();
+        await _mapCubit.loadFavoritesFlights();
       }
     });
 
-    _sheetController.addListener(_sheetListener);
+    _sheetController.addListener(_sheetListenerForChangeTheTap);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
   }
 
@@ -151,23 +155,11 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     _resetFlightSelection(cleanupOnly: true);
 
-    _sheetController.removeListener(_sheetListener);
+    _sheetController.removeListener(_sheetListenerForChangeTheTap);
     _searchController.dispose();
     _sheetController.dispose();
     PaintingBinding.instance.imageCache.clear();
     super.dispose();
-  }
-
-  // ── DATA LOADING ───────────────────────────────────────────────────────────
-
-  Future<void> _loadFavoritesFlights() async {
-    final favCallSigns = await SavedFlightRepository().getFavoriteCallSigns();
-
-    debugPrint('Favorite CallSigns: $favCallSigns');
-
-    if (!mounted) return;
-
-    context.read<FlightMapCubit>().FavoriteFlights(favCallSigns);
   }
 
   Future<void> _loadGeoJson(BuildContext context) async {
@@ -197,59 +189,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     }
   }
 
-  // ── MAP UTILITIES ──────────────────────────────────────────────────────────
-
-  Future<void> updateSearchRadius({
-    required int radiusNm,
-    required LatLng center,
-    required int numberOfFlight,
-    required bool isComeFromFilterSection,
-  }) async {
-    final controller = _mapController;
-
-    if (controller == null) return;
-
-    final radiusMeters = convertNmToMeters(radiusNm);
-
-    _circles.clear();
-
-    _circles.add(
-      Circle(
-        circleId: const CircleId('radius_circle'),
-        center: center,
-        radius: radiusMeters,
-        strokeWidth: 2,
-        strokeColor: Colors.blue,
-        fillColor: Colors.blue.withValues(alpha: 0.2),
-      ),
-    );
-
-    if (mounted) {
-      setState(() {
-        _isUserGesture = true;
-        _mapCubit.updateTheNumberOfFlightAndRadius(
-          numberOfFlight.toInt(),
-          radiusNm.toInt(),
-        );
-      });
-      print(_mapCubit.state.numberOfFlights);
-      print(_mapCubit.state.searchRadius);
-    }
-
-    _isProgrammaticMove = true;
-
-    if (isComeFromFilterSection == false) return;
-
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: center,
-          zoom: getZoomLevelFromRadius(_mapCubit.state.searchRadius ?? 0),
-        ),
-      ),
-    );
-  }
-
   // ── STATE / LOGIC ──────────────────────────────────────────────────────────
 
   void _resetFlightSelection({bool cleanupOnly = false}) {
@@ -276,15 +215,35 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     }
   }
 
-  void _sheetListener() {
-    if (!_hasFetchedDetails && _sheetController.size > 0.15) {
-      final flights = _mapCubit.state.flights ?? [];
-      if (flights.isNotEmpty) {
-        _hasFetchedDetails = true;
-        final typeList = flights.map((f) => f.type).toList();
-        final uniqueTypes = typeList.toSet().toList();
-        _mapCubit.fetchAircraftDetailsFromFlightsList(uniqueTypes, context);
+  void _sheetListenerForChangeTheTap() {
+    final currentSize = _sheetController.size;
+    if (currentSize > 0.15) {
+      _hasTriggeredMapView = false;
+      return;
+    }
+    if (_hasTriggeredMapView) return;
+    _hasTriggeredMapView = true;
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      if (_sheetController.size < 0.15) {
+        setState(() {
+          isMapViewSelected = true;
+          _activeCard = 0;
+        });
       }
+    });
+  }
+
+  void _sheetListener() {
+    final flights = _mapCubit.state.flights ?? [];
+    if (flights.isNotEmpty) {
+      final typeList = flights.map((f) => f.type).toList();
+      final callSignList = flights.map((f) => f.callSign).toList();
+      _mapCubit.fetchAircraftDetailsFromFlightsList(
+        typeList,
+        callSignList,
+        context,
+      );
     }
   }
 
@@ -294,19 +253,21 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   ) {
     if (_activeCard != 0) return;
     if (_mapController == null) return;
-    _hasFetchedDetails = false;
     _debounce?.cancel();
     _debounce = Timer(const Duration(seconds: 2), () async {
       if (!mounted) return;
 
       final visibleRegion = await _mapController!.getVisibleRegion();
 
-      final screenCenter = ScreenCoordinate(
-        x: (constraints.maxWidth ~/ 2),
-        y: (constraints.maxHeight ~/ 2),
+      final centerLatLng = LatLng(
+        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
+            2,
+        (visibleRegion.northeast.longitude +
+                visibleRegion.southwest.longitude) /
+            2,
       );
 
-      final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
+      print("centerLatLng -=-=-=-= $centerLatLng");
 
       _refreshMapData(
         centerLatLng: centerLatLng,
@@ -354,13 +315,62 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     );
   }
 
+  Future<void> updateSearchRadius({
+    required int radiusNm,
+    required LatLng center,
+    required int numberOfFlight,
+    required bool isComeFromFilterSection,
+  }) async {
+    final controller = _mapController;
+    if (controller == null) return;
+
+    _isProgrammaticMove = true;
+
+    final visualRadiusNm = radiusNm + getVisualRadiusBufferNm(radiusNm).toInt();
+    final visualRadiusMeters = convertNmToMeters(visualRadiusNm);
+
+    _circles.clear();
+    _circles.add(
+      Circle(
+        circleId: const CircleId('radius_circle'),
+        center: center,
+        radius: visualRadiusMeters,
+        strokeWidth: 2,
+        strokeColor: Colors.blue,
+        fillColor: Colors.blue.withValues(alpha: 0.2),
+      ),
+    );
+
+    if (mounted) {
+      setState(() {
+        _isUserGesture = true;
+        _mapCubit.updateTheNumberOfFlightAndRadius(
+          numberOfFlight.toInt(),
+          radiusNm.toInt(),
+        );
+      });
+    }
+
+    if (isComeFromFilterSection == false) return;
+
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: center,
+          zoom: getZoomLevelFromRadius(_mapCubit.state.searchRadius ?? 0),
+        ),
+      ),
+    );
+  }
+
   void handleToggle(bool newIsMapViewSelected) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _safeAnimate(isMapViewSelected ? 0.00 : 0.75);
+    });
+
     setState(() {
       isMapViewSelected = newIsMapViewSelected;
       if (!isMapViewSelected) _activeCard = 0;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _safeAnimate(isMapViewSelected ? 0.01 : 0.78);
     });
   }
 
@@ -374,13 +384,15 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
+      if (size > 0.0) {
+        _sheetListener();
+      }
     } catch (_) {
       debugPrint("_safeAnimate");
     }
   }
 
   // ── MARKERS ────────────────────────────────────────────────────────────────
-
   Future<Marker> _createMarker({
     required FlightModel flight,
     required Color color,
@@ -455,17 +467,17 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       case 2:
       case 3:
       case 4:
-        return kIsWeb ? 30 : 80;
+        return kIsWeb ? 30 : 50;
       case 5:
       case 6:
       case 7:
-        return kIsWeb ? 50 : 100;
+        return kIsWeb ? 50 : 60;
       case 8:
       case 9:
       case 10:
-        return kIsWeb ? 80 : 150;
+        return kIsWeb ? 80 : 70;
       default:
-        return kIsWeb ? 100 : 180;
+        return 100;
     }
   }
 
@@ -602,7 +614,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   // ── POLYGON ────────────────────────────────────────────────────────────────
-
   Set<Polygon> _buildPolygon(BuildContext context, dynamic p) {
     final Set<Polygon> polygons = {};
     final bool isSelected = _selectedPolygonId == p.id;
@@ -651,7 +662,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   // ── USER INTERACTION ───────────────────────────────────────────────────────
-
   void _toggleFlightCard({required String flight}) {
     _mapCubit.clearSelectedFlightDetail();
     _mapCubit.fetchFlightDetails(flightId: flight, context: context);
@@ -669,14 +679,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       FirebaseEvents.trackScreen,
     );
 
-    final result = await Navigator.push(
+    final result = await AppNavigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => MapSearchAircraftListCubit(),
-          child: const TrackAndSearchFlight(),
-        ),
-      ),
+      TrackAndSearchFlight(),
+      multiBlocProviders: [
+        BlocProvider(create: (_) => MapSearchAircraftListCubit()),
+      ],
+      disableSwipeBack: true,
     );
 
     if (result != null && result is FlightResult) {
@@ -877,19 +886,17 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   // ── BUILD ──────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         isForHomeScreen: true,
         title: '',
-        leftButton: widget.openMode == 1
+        leftButton: widget.openMode == 1 || widget.openMode == 2
             ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 30,
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               )
@@ -910,10 +917,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             fit: BoxFit.cover,
           ),
           onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            AppNavigator.push(context, SettingScreen(), disableSwipeBack: true);
           },
         ),
       ),
@@ -955,10 +959,15 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                             valueListenable: polygonNotifier,
                             builder: (_, polygons, __) {
                               return FlightGoogleMapWidget(
+                                isAlreadyFetchedTheKey: (value) {
+                                  if (widget.openMode == null) {
+                                    _showInitialTrackingModePopup(context);
+                                  }
+                                },
+
                                 mapType: _mapCubit.state.mapType
                                     .toGoogleMapType(),
                                 polygons: polygons,
-
                                 initialCameraPosition: CameraPosition(
                                   target: LatLng(
                                     state.position!.latitude,
@@ -1012,8 +1021,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                 },
 
                                 onCameraMoveStarted: () {
-                                  if (_isProgrammaticMove) return;
-
+                                  _isProgrammaticMove = false;
                                   _isUserGesture = true;
                                 },
 
@@ -1064,7 +1072,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   // ── WIDGET BUILDERS ────────────────────────────────────────────────────────
-
   Widget _buildSearchBar(BuildContext context, FlightMapState state) {
     return Positioned(
       top: kIsWeb ? 10 : 0,
@@ -1135,6 +1142,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 initialCategories: currentCategories,
                 numberOfFlights: currentNumberOfFlight,
                 searchRadius: currentSearchRadius,
+                onTapBackButton: () {
+                  _showInitialTrackingModePopup(context);
+                },
               ),
             ),
           ),
@@ -1219,8 +1229,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
       child: DraggableScrollableSheet(
         controller: _sheetController,
-        initialChildSize: 0.01,
-        minChildSize: 0.01,
+        initialChildSize: 0.00,
+        minChildSize: 0.00,
         maxChildSize: 0.75,
         snap: true,
         builder: (context, scrollController) {
@@ -1236,31 +1246,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Container(
                           height: 4,
-                          width: 40,
+                          width: 50,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade400,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            Icon(Icons.radar, color: Colors.black, size: 30),
-                            SizedBox(width: 8),
-                            Text(
-                              "Flights in the area",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ],
@@ -1270,13 +1263,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final data = state.flights?[index];
                     if (data == null) return const SizedBox.shrink();
-
                     final aircraft = data.aircraftDetails;
-                    final image = aircraft?.image ?? "";
+                    final image = aircraft?.manufacturer?.airlineLogo ?? "";
                     final model = aircraft?.aircraftModel ?? "";
                     final icaoCode = aircraft?.icaoTypeCode ?? "";
-                    final manufacturer =
-                        aircraft?.manufacturer?.companyName ?? "";
                     final isFavorite = data.isFavorite;
                     final flightCode =
                         (data?.callSign != null && data!.callSign!.isNotEmpty)
@@ -1290,313 +1280,354 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                         padding: EdgeInsets.symmetric(
                           vertical: kIsWeb
                               ? MediaQuery.of(context).size.width * 0.005
-                              : MediaQuery.of(context).size.width * 0.02,
+                              : MediaQuery.of(context).size.width * 0.016,
                           horizontal: kIsWeb
                               ? MediaQuery.of(context).size.width * 0.15
                               : 15,
                         ),
                         child: Stack(
                           children: [
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFD2E6FC),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(right: 15),
-                                child: Icon(
-                                  Icons.star,
-                                  color: isFavorite
-                                      ? Colors.black
-                                      : Colors.white,
-                                  size: kIsWeb ? 24 : 22,
-                                ),
-                              ),
-                            ),
-                            Slidable(
-                              key: ValueKey(data.id),
-                              closeOnScroll: true,
-                              endActionPane: ActionPane(
-                                motion: const BehindMotion(),
-                                extentRatio: 0.15,
-                                children: [
-                                  CustomSlidableAction(
-                                    onPressed: (_) async {
-                                      if (aircraft == null || data.id == null) {
-                                        debugPrint(
-                                          "Aircraft or Flight data is null",
-                                        );
-                                        return;
-                                      }
+                            InkWell(
+                              onTap: () {
+                                _buildSingleFlightMarker(data).then((marker) {
+                                  setState(() {
+                                    isMapViewSelected = true;
+                                    _isMapListViewShown = false;
+                                    _singleSearchMarker = marker;
+                                    selectedFlightId = data.id;
+                                    _mapCubit.setSelectedFlight(data);
+                                  });
+                                });
 
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.favOrUnFavFlightButton,
-                                        FirebaseEvents.trackScreen,
-                                      );
+                                _isProgrammaticMove = true;
 
-                                      final cubit = context
-                                          .read<AllPlanesCubit>();
-                                      await cubit.planFavOrUnfav1(
-                                        aircraft.aircraftId.toString(),
-                                        data.callSign,
-                                        data.flightNumber.toString(),
-                                        data.id.toString(),
-                                        context,
-                                      );
-
-                                      context
-                                          .read<FlightMapCubit>()
-                                          .toggleFavoriteByCallSign(
-                                            data.callSign,
-                                          );
-
-                                      AppSnackBar.custom(
-                                        context,
-                                        message: isFavorite
-                                            ? "Airline Unfavorite"
-                                            : "Airline Favorite",
-                                        svgAsset: "",
-                                      );
-                                    },
-                                    backgroundColor: Colors.transparent,
-                                    child: const SizedBox.shrink(),
+                                _mapController?.animateCamera(
+                                  CameraUpdate.newLatLngZoom(
+                                    LatLng(data.latitude, data.longitude),
+                                    8,
                                   ),
-                                ],
-                              ),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(8),
-                                onTap: () {
-                                  _buildSingleFlightMarker(data).then((marker) {
-                                    setState(() {
-                                      isMapViewSelected = true;
-                                      _isMapListViewShown = false;
-                                      _singleSearchMarker = marker;
-                                      selectedFlightId = data.id;
-                                      _mapCubit.setSelectedFlight(data);
-                                    });
-                                  });
+                                );
 
-                                  _isProgrammaticMove = true;
-
-                                  _mapController?.animateCamera(
-                                    CameraUpdate.newLatLngZoom(
-                                      LatLng(data.latitude, data.longitude),
-                                      8,
+                                _toggleFlightCard(flight: data.id);
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
+                                  _safeAnimate(0.01);
+                                });
+                              },
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final isWide = constraints.maxWidth > 600;
+                                  return Container(
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
                                     ),
-                                  );
-
-                                  _toggleFlightCard(flight: data.id);
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    _safeAnimate(0.01);
-                                  });
-                                },
-
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    final isWide = constraints.maxWidth > 600;
-
-                                    return Container(
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.08,
-                                            ),
-                                            blurRadius: 5,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      padding: EdgeInsets.all(isWide ? 14 : 10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              6,
-                                            ),
-                                            child: (image.isEmpty)
-                                                ? Image.asset(
-                                                    CommonUi.setPngImage(
-                                                      AssetsPath
-                                                          .aeroplaneComparison,
+                                    padding: EdgeInsets.all(isWide ? 14 : 0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              child: (image.isEmpty)
+                                                  ? Image.asset(
+                                                      CommonUi.setPngImage(
+                                                        AssetsPath
+                                                            .aeroplaneComparison,
+                                                      ),
+                                                      width: isWide ? 120 : 90,
+                                                      height: isWide ? 60 : 45,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : CachedAnyImage(
+                                                      imagePath: image,
+                                                      isForPlaneList: true,
+                                                      width: isWide ? 120 : 70,
+                                                      height: isWide ? 60 : 50,
+                                                      contentImage:
+                                                          BoxFit.contain,
                                                     ),
-                                                    width: isWide ? 120 : 90,
-                                                    height: isWide ? 60 : 45,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : CachedAnyImage(
-                                                    imagePath: image,
-                                                    width: isWide ? 120 : 90,
-                                                    height: isWide ? 60 : 45,
-                                                    contentImage: BoxFit.cover,
-                                                  ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Flexible(
-                                                      child: Text(
-                                                        model,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          fontSize: isWide
-                                                              ? 17
-                                                              : 15,
-                                                          color: const Color(
-                                                            0xFF3F3D55,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Wrap(
+                                                          crossAxisAlignment:
+                                                              WrapCrossAlignment
+                                                                  .center,
+                                                          spacing: 10,
+                                                          runSpacing: 5,
+                                                          children: [
+                                                            Text(
+                                                              model,
+                                                              style:
+                                                                  AppTextStyles.bold(
+                                                                    16,
+                                                                  ).copyWith(
+                                                                    height: 1.4,
+                                                                    color: AppColors
+                                                                        .blackForNavTitle,
+                                                                    letterSpacing:
+                                                                        0.2,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+
+                                                            if (icaoCode
+                                                                .isNotEmpty)
+                                                              Container(
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          6,
+                                                                      vertical:
+                                                                          3,
+                                                                    ),
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        6,
+                                                                      ),
+                                                                  border: Border.all(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade300,
+                                                                  ),
+                                                                ),
+                                                                child: Text(
+                                                                  icaoCode,
+                                                                  style:
+                                                                      AppTextStyles.bold(
+                                                                        16,
+                                                                      ).copyWith(
+                                                                        height:
+                                                                            1.0,
+                                                                        color: AppColors
+                                                                            .textColour,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          if (aircraft ==
+                                                              null) {
+                                                            return;
+                                                          }
+
+                                                          AnalyticsService
+                                                              .instance
+                                                              .buttonPressed(
+                                                                FirebaseEvents
+                                                                    .favOrUnFavFlightButton,
+                                                                FirebaseEvents
+                                                                    .trackScreen,
+                                                              );
+
+                                                          final cubit = context
+                                                              .read<
+                                                                AllPlanesCubit
+                                                              >();
+                                                          await cubit
+                                                              .planFavOrUnfav1(
+                                                                aircraft
+                                                                    .aircraftId
+                                                                    .toString(),
+                                                                data.callSign,
+                                                                data.flightNumber
+                                                                    .toString(),
+                                                                data.id
+                                                                    .toString(),
+                                                                context,
+                                                              );
+
+                                                          context
+                                                              .read<
+                                                                FlightMapCubit
+                                                              >()
+                                                              .toggleFavoriteByCallSign(
+                                                                data.callSign,
+                                                              );
+
+                                                          AppSnackBar.custom(
+                                                            context,
+                                                            message: isFavorite
+                                                                ? "Airline Unfavorite"
+                                                                : "Airline Favorite",
+                                                            svgAsset: "",
+                                                          );
+                                                        },
+                                                        child: SizedBox(
+                                                          child: SvgPicture.asset(
+                                                            CommonUi.setSvgImage(
+                                                              isFavorite
+                                                                  ? AssetsPath
+                                                                        .highlightStar
+                                                                  : AssetsPath
+                                                                        .unHighlightStar,
+                                                            ),
+                                                            height: 23,
                                                           ),
                                                         ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
                                                       ),
-                                                    ),
-                                                    const SizedBox(width: 6),
-                                                    if (icaoCode.isNotEmpty)
+                                                    ],
+                                                  ),
+
+                                                  const SizedBox(height: 10),
+
+                                                  // BOTTOM SECTION
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Row(
+                                                          children: [
+                                                            ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    4,
+                                                                  ),
+                                                              child:
+                                                                  manufacturerLogo
+                                                                      .isEmpty
+                                                                  ? SvgPicture.asset(
+                                                                      CommonUi.setSvgImage(
+                                                                        AssetsPath
+                                                                            .manuFirstImage,
+                                                                      ),
+                                                                      width:
+                                                                          isWide
+                                                                          ? 40
+                                                                          : 30,
+                                                                      height:
+                                                                          isWide
+                                                                          ? 26
+                                                                          : 20,
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                    )
+                                                                  : CachedAnyImage(
+                                                                      imagePath:
+                                                                          manufacturerLogo,
+                                                                      width:
+                                                                          isWide
+                                                                          ? 40
+                                                                          : 50,
+                                                                      height:
+                                                                          isWide
+                                                                          ? 30
+                                                                          : 20,
+                                                                      contentImage:
+                                                                          BoxFit
+                                                                              .contain,
+                                                                      useCache:
+                                                                          true,
+                                                                    ),
+                                                            ),
+
+                                                            const SizedBox(
+                                                              width: 10,
+                                                            ),
+
+                                                            // Expanded(
+                                                            //   child: Text(
+                                                            //     manufacturer,
+                                                            //     style:
+                                                            //         AppTextStyles.regular(
+                                                            //           14,
+                                                            //         ).copyWith(
+                                                            //           height:
+                                                            //               1.0,
+                                                            //           color: AppColors
+                                                            //               .textColour,
+                                                            //         ),
+                                                            //     overflow:
+                                                            //         TextOverflow
+                                                            //             .ellipsis,
+                                                            //   ),
+                                                            // ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                      const SizedBox(width: 8),
+
+                                                      /// FLIGHT CODE
                                                       Container(
                                                         padding:
                                                             const EdgeInsets.symmetric(
-                                                              horizontal: 6,
-                                                              vertical: 2,
+                                                              horizontal: 8,
+                                                              vertical: 4,
                                                             ),
                                                         decoration: BoxDecoration(
-                                                          color: Colors.white,
+                                                          color: const Color(
+                                                            0xFF3F3D55,
+                                                          ),
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                 6,
                                                               ),
-                                                          border: Border.all(
-                                                            color: Colors
-                                                                .grey
-                                                                .shade300,
-                                                          ),
                                                         ),
                                                         child: Text(
-                                                          icaoCode,
-                                                          style: TextStyle(
-                                                            fontSize: isWide
-                                                                ? 12
-                                                                : 10,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 6),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                4,
+                                                          flightCode,
+                                                          style:
+                                                              AppTextStyles.bold(
+                                                                13,
+                                                              ).copyWith(
+                                                                height: 1.1,
+                                                                color: AppColors
+                                                                    .white,
                                                               ),
-                                                          child:
-                                                              manufacturerLogo
-                                                                  .isEmpty
-                                                              ? SvgPicture.asset(
-                                                                  CommonUi.setSvgImage(
-                                                                    AssetsPath
-                                                                        .manufacturer,
-                                                                  ),
-                                                                  width: isWide
-                                                                      ? 26
-                                                                      : 18,
-                                                                  height: isWide
-                                                                      ? 26
-                                                                      : 18,
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                )
-                                                              : CachedAnyImage(
-                                                                  imagePath:
-                                                                      manufacturerLogo,
-                                                                  width: isWide
-                                                                      ? 40
-                                                                      : 28,
-                                                                  height: isWide
-                                                                      ? 20
-                                                                      : 16,
-                                                                  contentImage:
-                                                                      BoxFit
-                                                                          .contain,
-                                                                  useCache:
-                                                                      true,
-                                                                ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 6,
-                                                        ),
-                                                        Text(
-                                                          manufacturer,
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: isWide
-                                                                ? 14
-                                                                : 12,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                          0xFF3F3D55,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        flightCode,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: isWide
-                                                              ? 13
-                                                              : 11,
-                                                          fontWeight:
-                                                              FontWeight.w600,
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
+                                          ],
+                                        ),
+
+                                        /// DIVIDER
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 10,
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                          child: Divider(
+                                            height: 1,
+                                            thickness: 1,
+                                            color: Colors.grey.shade300,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -1627,6 +1658,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           }
           return FlightDetailCard(
             flightDetail: state.selectedFlightDetail,
+            isFavFlightByS: state.isFavFlightByS ?? false,
             isComeFromLiveTracking: false,
             callBackForHideFlightCard: _resetFlightSelection,
           );
@@ -1677,7 +1709,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3,
+          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3.2,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             width: 400,
@@ -1712,16 +1744,15 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 FirebaseEvents.trackScreen,
               );
 
-              Navigator.push(
+              AppNavigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => AskWilcoScreen(
-                    accessToken: token,
-                    isComeFromTab: false,
-                    sessionId: '',
-                    title: '',
-                  ),
+                AskWilcoScreen(
+                  accessToken: token,
+                  isComeFromTab: false,
+                  sessionId: '',
+                  title: '',
                 ),
+                disableSwipeBack: true,
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

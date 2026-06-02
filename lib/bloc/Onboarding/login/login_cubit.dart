@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
-import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,16 +6,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/AppleSignInErrorHandler.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
-import '../Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/Avtar/AvtarScreen.dart';
 import 'login_repository.dart';
 import 'login_response_model.dart';
 import 'login_state.dart';
@@ -234,12 +234,9 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: CommonApiStatus.success));
       await _navigateAfterLogin(context, result);
     } catch (e) {
-      print(e.toString());
+      final message = AppleSignInErrorHandler.getMessage(e);
       emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CommonApiStatus.failure, errorMessage: message),
       );
     }
   }
@@ -274,9 +271,16 @@ class LoginCubit extends Cubit<LoginState> {
         result.userDetails?.userType ?? '',
       );
 
-      await SharedPrefsHelper.setAvtarUserUrl(
-        result.userDetails?.userTypeUrl ?? '',
-      );
+      String userTypeUrl = result.userDetails?.userTypeUrl ?? '';
+
+      if (result.userDetails!.userTypeUrl.toLowerCase().contains(
+        "Radar.svg".toLowerCase(),
+      )) {
+        userTypeUrl =
+            "https://avionica.csdevhub.com/s3/manufacturer/57ATSEPWhite.svg";
+      }
+
+      await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
 
       await SharedPrefsHelper.setUserProfileName(
         '${result.userDetails?.firstName ?? ''} ${result.userDetails?.lastName ?? ''}'

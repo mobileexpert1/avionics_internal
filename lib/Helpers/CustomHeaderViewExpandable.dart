@@ -1,4 +1,3 @@
-// // EXPANDABLE WIDGET
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +15,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
   final VoidCallback? onHeaderTap;
   final Widget? child;
   final TextStyle fontStyle;
+  final TextAlign? textAlign;
 
   const CustomHeaderViewExpandable({
     super.key,
@@ -30,6 +30,7 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     this.onHeaderTap,
     this.isLeftImage,
     this.child,
+    this.textAlign,
     required this.fontStyle,
   });
 
@@ -74,17 +75,14 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                         isLeftImage!,
                         const SizedBox(width: 8),
                       ],
-
                       Expanded(
                         child: Text(
                           title,
                           style: fontStyle,
+                          textAlign: textAlign,
                         ),
                       ),
-
-                      SizedBox(
-                        width: kIsWeb ? 70 : 50,
-                      ),
+                      SizedBox(width: kIsWeb ? 70 : 50),
                     ],
                   ),
                 ),

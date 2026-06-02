@@ -16,7 +16,7 @@ class BlackBoxState extends Equatable {
   final List<BlackBoxQuestion> questions;
   final int currentIndex;
   final int? selectedIndex;
-  final String? selectedAnswer; // For fill_in_the_blank
+  final String? selectedAnswer;
   final bool showAnswer;
   final int timer;
   final bool isTimerEnded;
@@ -38,7 +38,7 @@ class BlackBoxState extends Equatable {
   final List<int>? selectedSequence;
   final List<String>? selectedSequenceItems;
   final List<int>? selectedIndices;
-  final List<quizItem> games;
+  final List<QuizPerItem> games;
 
   const BlackBoxState({
     this.questionSetId,
@@ -109,7 +109,7 @@ class BlackBoxState extends Equatable {
     List<int>? selectedSequence,
     List<String>? selectedSequenceItems,
     List<int>? selectedIndices,
-    List<quizItem>? games,
+    List<QuizPerItem>? games,
   }) {
     return BlackBoxState(
       questionSetId: questionSetId ?? this.questionSetId,

@@ -2,10 +2,7 @@ class AvatarListResponseModel {
   final String? detail;
   final List<AvatarModel> data;
 
-  AvatarListResponseModel({
-    this.detail,
-    required this.data,
-  });
+  AvatarListResponseModel({this.detail, required this.data});
 
   factory AvatarListResponseModel.fromJson(Map<String, dynamic> json) {
     return AvatarListResponseModel(
@@ -17,13 +14,13 @@ class AvatarListResponseModel {
   }
 }
 
-
 class AvatarModel {
   final String id;
   final String name;
   final String description;
   final String logo;
   final String key;
+  final String? selectedIcon;
 
   AvatarModel({
     required this.id,
@@ -31,6 +28,7 @@ class AvatarModel {
     required this.description,
     required this.logo,
     required this.key,
+    this.selectedIcon,
   });
 
   factory AvatarModel.fromJson(Map<String, dynamic> json) {
@@ -40,7 +38,7 @@ class AvatarModel {
       description: json['description'] ?? '',
       logo: json['logo'] ?? '',
       key: json['key'] ?? '',
+      selectedIcon: json['logo_2'] ?? '',
     );
   }
-
 }

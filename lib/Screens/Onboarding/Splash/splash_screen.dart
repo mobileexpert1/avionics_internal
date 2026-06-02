@@ -33,9 +33,17 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!isFirst) {
       await SharedPrefsHelper.setFirstLaunchDone();
       if (!mounted) return;
-      AppNavigator.pushReplacement(context, OnboardingScreen(), disableSwipeBack: true);
+      AppNavigator.pushReplacement(
+        context,
+        OnboardingScreen(),
+        disableSwipeBack: true,
+      );
     } else {
-      AppNavigator.pushReplacement(context, RootDecider(), disableSwipeBack: true);
+      AppNavigator.pushReplacement(
+        context,
+        RootDecider(),
+        disableSwipeBack: true,
+      );
     }
   }
 

@@ -29,21 +29,18 @@ class CustomBottomButton extends StatelessWidget {
       height: 50,
       child: ElevatedButton.icon(
         icon: icon,
-        label: Text(
-          title,
-          style: fontStyle,
-        ),
+        label: Text(title, style: fontStyle),
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: isComeFromCompare == false
-                ? BorderRadius.circular(5)
+                ? BorderRadius.circular(10)
                 : BorderRadius.only(
-              bottomLeft: Radius.circular(15),
-              bottomRight: Radius.circular(15),
-            ),
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                  ),
           ),
         ),
       ),

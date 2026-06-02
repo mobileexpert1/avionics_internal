@@ -1,12 +1,14 @@
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../bloc/Onboarding/signup/signup_cubit.dart';
 import '../Login/LoginScreen.dart';
 import '../Signup/SignupScreen.dart';
 
@@ -129,7 +131,14 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                AppNavigator.push(context, SignupScreen(), disableSwipeBack: true);
+                                AppNavigator.push(
+                                  context,
+                                  SignupScreen(),
+                                  multiBlocProviders: [
+                                    BlocProvider(create: (_) => SignupCubit()),
+                                  ],
+                                  disableSwipeBack: true,
+                                );
                               },
                               child: const Text(
                                 ConstantStrings.CreateAccount,
@@ -160,7 +169,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                               ),
                               onPressed: () {
                                 if (!mounted) return;
-                                AppNavigator.push(context, LoginScreen(), disableSwipeBack: true);
+                                AppNavigator.push(
+                                  context,
+                                  LoginScreen(),
+                                  disableSwipeBack: true,
+                                );
                               },
                               child: const Text(
                                 ConstantStrings.loginButton,

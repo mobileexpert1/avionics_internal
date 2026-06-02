@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -10,6 +9,7 @@ class FlightGoogleMapWidget extends StatefulWidget {
   final void Function(GoogleMapController controller)? onMapCreated;
   final VoidCallback? onCameraIdle;
   final VoidCallback? onCameraMoveStarted;
+  final ValueChanged<bool>? isAlreadyFetchedTheKey;
 
   final MapType mapType;
   final Set<Polygon> polygons;
@@ -34,6 +34,7 @@ class FlightGoogleMapWidget extends StatefulWidget {
     this.onMapCreated,
     this.onCameraIdle,
     this.onCameraMoveStarted,
+    this.isAlreadyFetchedTheKey,
     this.zoomControlsEnabled = false,
     this.myLocationButtonEnabled = false,
     this.rotateGesturesEnabled = false,
@@ -62,8 +63,10 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
     bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
     if (apiTokenSever == true) {
       _isAlreadyFetchedTheKey = true;
+      widget.isAlreadyFetchedTheKey?.call(true);
     } else {
       _isAlreadyFetchedTheKey = false;
+      widget.isAlreadyFetchedTheKey?.call(false);
     }
   }
 
@@ -77,12 +80,12 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isAlreadyFetchedTheKey) {
-      return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    // if (!_isAlreadyFetchedTheKey) {
+    //   return const Scaffold(
+    //     backgroundColor: Colors.white,
+    //     body: Center(child: CircularProgressIndicator()),
+    //   );
+    // }
     return GoogleMap(
       key: ValueKey(widget.circles.hashCode),
       zoomControlsEnabled: widget.zoomControlsEnabled,
