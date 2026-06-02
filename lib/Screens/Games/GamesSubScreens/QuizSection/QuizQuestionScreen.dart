@@ -189,34 +189,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
 
-                if (state.showWrongAnswerPopup) {
-                  Future.microtask(() async {
-                    Widget screen;
-
-                    // switch (state.wrongAnswerPopupCount) {
-                    //   case 1:
-                    //     screen = const WrongAnswerScreen1();
-                    //     break;
-                    //
-                    //   case 2:
-                    //     screen = const WrongAnswerScreen2();
-                    //     break;
-                    //
-                    //   default:
-                    //     screen = const WrongAnswerScreen3();
-                    // }
-
-                    // await Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (_) => screen),
-                    // );
-
-                    context.read<QuizQuestionCubit>().continueAfterWrongPopup(
-                      context,
-                    );
-                  });
-                }
-
                 if (state.questions.isEmpty && state.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
