@@ -129,8 +129,6 @@ class QuizQuestionState {
       level: level ?? this.level,
       difficulty: difficulty ?? this.difficulty,
       categoryTypes: categoryTypes ?? this.categoryTypes,
-
-
       consecutiveWrongAnswers:
       consecutiveWrongAnswers ?? this.consecutiveWrongAnswers,
 

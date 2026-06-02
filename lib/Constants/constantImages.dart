@@ -23,7 +23,6 @@ class AtmosphereAssets {
   }
 }
 
-
 abstract class AssetsPath {
   /// svg Images
 
@@ -75,7 +74,44 @@ abstract class AssetsPath {
   static const String liveTrackImage = "47LiveTrackImage";
   static const String quizLockArrow = "48QuizLockArrow";
   static const String crossIconSubscription = "49CrossIcon";
+  static const String wilcoChatLogo = "50WilcoChatLogo";
+  static const String wilcoChatUser = "51ChatUser";
+  static const String wilcoChatBoat = "52ChatBoat";
+  static const String wilcoChatMic = "53WilcoMic";
+  static const String wilcoAttention = "54WilcoAttention";
+  static const String highlightStar = "55HighlightStar";
+  static const String unHighlightStar = "55_1UnHighlightStar";
+  static const String backArrowButton = "56BackArrowButton";
+  static const String contactSupport = "57ContactSupport";
 
+  static const String infoWrongFirst = "58InfoWrongGameIcon";
+  static const String infoWrongSecond = "59InfoWrongGameIcon";
+  static const String infoWrongThird = "60InfoWrongGameIcon";
+  static const String gameInfoClose = "61GameInfoClose";
+  static const String towerImageForGame = "62TowerImage";
+  static const String aeroplaneManufacturer = "63AeroplaneManufacturer";
+
+  static const String takeMeasureUnSelected = "65TakeMeasureUnSelected";
+  static const String flightMathUnSelected = "66FlightMathUnSelected";
+  static const String greenBlueUnSelected = "67GreenBlueUnSelected";
+  static const String mindSeparationUnSelected = "68MindSeparationUnSelected";
+
+  static const String takeMeasureSelected = "69TakeMeasureSelected";
+  static const String flightMathSelected = "70FlightMathSelected";
+  static const String greenBlueSelected = "71GreenBlueSelected";
+  static const String mindSeparationSelected = "72MindSeparationSelected";
+
+  static const String timeLevelIcon = "73TimeIcon";
+  static const String questionLevelIcon = "74QuestionIcon";
+  static const String aeroplaneLevelIcon = "75AeroplaneIcon";
+  static const String correctLevelAnswer = "76CorrectAnswer";
+  static const String speedLevelBounce = "77SpeedBounce";
+  static const String perfectLevelBounce = "78PerfectBounce";
+  static const String winnerLevelIcon = "79WinnerIcon";
+  static const String carHelpLevelIcon = "80CarHelpIcon";
+
+  static const String editForChat = "81EditForChat";
+  static const String deleteForChat = "82DeleteForChat";
 
   static const String ExploreIcon = "ExploreIcon";
   static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";

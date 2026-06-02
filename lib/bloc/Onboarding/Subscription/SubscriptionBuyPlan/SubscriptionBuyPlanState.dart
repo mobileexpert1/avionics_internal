@@ -2,8 +2,6 @@ import 'package:purchases_flutter/models/offerings_wrapper.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../OldSubs/subscriptionResponseModel.dart';
-import '../SubscriptionDetailPlan/SubscriptionDetailPlanModel.dart';
 import 'SubscriptionResponseModel.dart';
 
 class SubscriptionModel {
@@ -43,9 +41,16 @@ class SubscriptionBuyPlanState {
   final String? activeProductId;
   final SubscriptionBuyPlanStateModel? subscription;
   final Offerings? offerings;
-  final Package? selectedPackage;
   final bool? isBlocked;
   final bool? waitingForBackendConfirmation;
+  final bool? isComeFromProfile;
+
+  final List<Package> subscriptionPackages;
+  final List<Package> consumablePackages;
+  final Package? selectedConsumablePackage;
+  final Package? selectedPackage;
+  final bool consumablePurchased;
+
 
   SubscriptionBuyPlanState({
     this.isUserAlreadyPremium = false,
@@ -58,9 +63,15 @@ class SubscriptionBuyPlanState {
     this.activeProductId,
     this.subscription,
     this.offerings,
-    this.selectedPackage,
     this.isBlocked,
     this.waitingForBackendConfirmation,
+    this.isComeFromProfile,
+
+    this.selectedPackage,
+    this.subscriptionPackages = const [],
+    this.consumablePackages = const [],
+    this.selectedConsumablePackage,
+    this.consumablePurchased = false,
   });
 
   SubscriptionBuyPlanState copyWith({
@@ -74,9 +85,16 @@ class SubscriptionBuyPlanState {
     String? activeProductId,
     SubscriptionBuyPlanStateModel? subscription,
     Offerings? offerings,
-    Package? selectedPackage,
     bool? isBlocked,
     bool? waitingForBackendConfirmation,
+    bool? isComeFromProfile,
+
+    Package? selectedPackage,
+    List<Package>? subscriptionPackages,
+    List<Package>? consumablePackages,
+    Package? selectedConsumablePackage,
+    bool? consumablePurchased,
+
   }) {
     return SubscriptionBuyPlanState(
       isUserAlreadyPremium: isUserAlreadyPremium ?? this.isUserAlreadyPremium,
@@ -89,10 +107,19 @@ class SubscriptionBuyPlanState {
       status: status ?? this.status,
       activeProductId: activeProductId,
       offerings: offerings ?? this.offerings,
-      selectedPackage: selectedPackage ?? this.selectedPackage,
       isBlocked: isBlocked ?? this.isBlocked,
       waitingForBackendConfirmation:
           waitingForBackendConfirmation ?? this.waitingForBackendConfirmation,
+      isComeFromProfile: isComeFromProfile ?? this.isComeFromProfile,
+
+      subscriptionPackages: subscriptionPackages ?? this.subscriptionPackages,
+      selectedPackage: selectedPackage ?? this.selectedPackage,
+      consumablePackages: consumablePackages ?? this.consumablePackages,
+      selectedConsumablePackage:
+          selectedConsumablePackage ?? this.selectedConsumablePackage,
+      consumablePurchased:
+      consumablePurchased ??
+          this.consumablePurchased,
     );
   }
 

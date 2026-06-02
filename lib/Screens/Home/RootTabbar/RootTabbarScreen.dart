@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapScreen.dart';
-import '../../Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Profile/ProfileScreen.dart';
-import '../HomeAirbus/ChatSection/ChatBotScreen.dart';
+import '../../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
 import '../HomeScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {
   static final GlobalKey<RootTabbarScreenState> globalKey =
-  GlobalKey<RootTabbarScreenState>();
+      GlobalKey<RootTabbarScreenState>();
 
   const RootTabbarscreen({Key? key}) : super(key: key);
 
@@ -52,11 +52,11 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
         GamesScreen(),
         token != null && token.isNotEmpty
             ? AskWilcoScreen(
-          accessToken: token,
-          isComeFromTab: true,
-          title: '',
-          sessionId: '',
-        )
+                accessToken: token,
+                isComeFromTab: true,
+                title: '',
+                sessionId: '',
+              )
             : Center(child: Text("Token not found")),
         ProfileScreen(),
       ];
@@ -70,7 +70,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
     if (isRestrictedTab) {
       final bool success = await creditManager.tryUseCredit(
         amount: 8,
-        isComeFromTabbar:true,
+        isComeFromTabbar: true,
         onError: (String message) async {
           if (mounted) {
             Future.microtask(() {
@@ -79,7 +79,8 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
                 title: "Subscription Required",
                 message: message,
                 navigateTo: const SubscriptionPlanDetailScreen(
-                    isComeFromSignup: true),
+                  isComeFromSignup: true,
+                ),
               );
             });
           }
@@ -109,52 +110,52 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
       bottomNavigationBar: _isLoading
           ? null
           : Container(
-        height: 95,
-        color: Colors.white,
-        child: Row(
-          children: [
-            _buildNavItem(
-              0,
-              AssetsPath.exploreTabBarIcon,
-              AssetsPath.unExploreTabBarIcon,
-              'Explore',
+              height: 95,
+              color: Colors.white,
+              child: Row(
+                children: [
+                  _buildNavItem(
+                    0,
+                    AssetsPath.exploreTabBarIcon,
+                    AssetsPath.unExploreTabBarIcon,
+                    'Explore',
+                  ),
+                  _buildNavItem(
+                    1,
+                    AssetsPath.trackTabBarIcon,
+                    AssetsPath.unTrackTabBarIcon,
+                    'Track',
+                  ),
+                  _buildNavItem(
+                    2,
+                    AssetsPath.gamesTabBarIcon,
+                    AssetsPath.unGamesTabBarIcon,
+                    'Games',
+                  ),
+                  _buildNavItem(
+                    3,
+                    AssetsPath.wilcoTabBarIcon,
+                    AssetsPath.unWilcoTabBarIcon,
+                    'WILCO',
+                  ),
+                  _buildNavItem(
+                    4,
+                    AssetsPath.profileTabBarIcon,
+                    AssetsPath.unProfileTabBarIcon,
+                    'Profile',
+                  ),
+                ],
+              ),
             ),
-            _buildNavItem(
-              1,
-              AssetsPath.trackTabBarIcon,
-              AssetsPath.unTrackTabBarIcon,
-              'Track',
-            ),
-            _buildNavItem(
-              2,
-              AssetsPath.gamesTabBarIcon,
-              AssetsPath.unGamesTabBarIcon,
-              'Games',
-            ),
-            _buildNavItem(
-              3,
-              AssetsPath.wilcoTabBarIcon,
-              AssetsPath.unWilcoTabBarIcon,
-              'WILCO',
-            ),
-            _buildNavItem(
-              4,
-              AssetsPath.profileTabBarIcon,
-              AssetsPath.unProfileTabBarIcon,
-              'Profile',
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   Widget _buildNavItem(
-      int index,
-      String activeIcon,
-      String inactiveIcon,
-      String label,
-      ) {
+    int index,
+    String activeIcon,
+    String inactiveIcon,
+    String label,
+  ) {
     final isSelected = _selectedIndex == index;
 
     return Expanded(

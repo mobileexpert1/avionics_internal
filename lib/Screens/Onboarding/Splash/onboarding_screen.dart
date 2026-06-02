@@ -12,6 +12,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../bloc/Onboarding/splashInfo/onboarding_model.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -223,11 +224,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     TextButton(
                       onPressed: () {
                         if (!mounted) return;
-                        Navigator.pushReplacement(
+                        AppNavigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => StartExploringApp(),
-                          ),
+                          StartExploringApp(),
+                          disableSwipeBack: true,
                         );
                       },
                       child: Text(
@@ -243,11 +243,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         if (!mounted) return;
 
                         if (onLastPage) {
-                          Navigator.pushReplacement(
+                          AppNavigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => StartExploringApp(),
-                            ),
+                            StartExploringApp(),
+                            disableSwipeBack: true,
                           );
                         } else {
                           _controller.nextPage(

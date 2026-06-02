@@ -1,31 +1,30 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
+import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-
-import '../../bloc/home/homeBloc/home_cubit.dart';
+import '../../bloc/Profile/ConversionSection/conversion_cubit.dart';
+import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../bloc/Profile/FormulaSection/formula_cubit.dart';
+import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/ProfileMain/profile_cubit.dart';
 import '../../bloc/Profile/ProfileMain/profile_state.dart';
-import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
-import '../../bloc/Profile/Glossary/glossary_cubit.dart';
-import '../../bloc/Profile/FormulaSection/formula_cubit.dart';
-import '../../bloc/Profile/ConversionSection/conversion_cubit.dart';
-
+import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../Home/SavedFlights/SavedFlighScreen.dart';
-import 'SettingsSectionHeader.dart';
-import 'GameBadges/BadgesScreens.dart';
-import 'Glossary/GlossaryScreen.dart';
-import 'ScientificCalculator/screens/calculator_home_main_screen.dart';
-import 'FormulaSection/FormulaScreen.dart';
-import 'ConversionSection/ConversionScreen.dart';
+import 'ProfileMenuScreen/0_ScientificCalculator/screens/calculator_home_main_screen.dart';
+import 'ProfileMenuScreen/2_FormulaSection/FormulaScreen.dart';
+import 'ProfileMenuScreen/3_Glossary/GlossaryScreen.dart';
+import 'ProfileMenuScreen/4_GameBadges/BadgesScreens.dart';
+import 'ProfileMenuScreen/ConversionSection/ConversionScreen.dart';
+import 'ProfileSettingsSectionHeader.dart';
 import 'SettingScreen/SettingScreen.dart';
 
 class ProfileScreenWrapper extends StatelessWidget {
@@ -41,7 +40,7 @@ class ProfileScreenWrapper extends StatelessWidget {
 }
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -55,15 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance
-        .logVisibleScreen(FirebaseEvents.profileScreen);
-
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
     homeCubit = HomeCubit();
-    homeCubit.fetchHomeData(context);
-
     setLocalData();
   }
-
 
   @override
   void dispose() {
@@ -81,16 +75,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       userAvtarTypeUrl = avatarUrl ?? '';
       userName = name ?? '';
     });
-
-    if (kDebugMode) {
-      print("Saved Avatar URL: $userAvtarTypeUrl");
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget content =
-    BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
+    Widget content = BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
       builder: (context, state) {
         if (state.isLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -123,21 +112,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.all(20),
                             child: userAvtarTypeUrl.isNotEmpty
                                 ? SvgPicture.network(
-                              userAvtarTypeUrl,
-                              color: Colors.white,
-                              fit: BoxFit.contain,
-                              placeholderBuilder: (_) =>
-                                  SvgPicture.asset(
+                                    userAvtarTypeUrl,
+                                    fit: BoxFit.contain,
+                                    color:
+                                        userAvtarTypeUrl.contains(
+                                          "57ATSEPWhite.svg",
+                                        )
+                                        ? null
+                                        : Colors.white,
+                                    placeholderBuilder: (_) => SvgPicture.asset(
+                                      CommonUi.setSvgImage(
+                                        AssetsPath.manuFirstImage,
+                                      ),
+                                    ),
+                                  )
+                                : SvgPicture.asset(
                                     CommonUi.setSvgImage(
                                       AssetsPath.manuFirstImage,
                                     ),
                                   ),
-                            )
-                                : SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                AssetsPath.manuFirstImage,
-                              ),
-                            ),
                           ),
                         ),
                       ),
@@ -162,12 +155,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Calculator",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                            const CalculatorHomeMainScreen(),
-                          ),
+                          const CalculatorHomeMainScreen(),
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -177,14 +168,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Unit Conversions",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => ConversionCubit(),
-                              child: const ConversionsScreen(),
-                            ),
-                          ),
+                          const ConversionsScreen(),
+                          multiBlocProviders: [
+                            BlocProvider(create: (_) => ConversionCubit()),
+                          ],
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -194,14 +184,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Formulas",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => FormulaCubit(),
-                              child: const FormulasScreen(),
-                            ),
-                          ),
+                          const FormulasScreen(),
+                          multiBlocProviders: [
+                            BlocProvider(create: (_) => FormulaCubit()),
+                          ],
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -211,14 +200,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Glossary",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => GlossaryCubit(context),
-                              child: const GlossaryScreen(),
-                            ),
-                          ),
+                          const GlossaryScreen(),
+                          multiBlocProviders: [
+                            BlocProvider(create: (_) => GlossaryCubit(context)),
+                          ],
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -234,20 +222,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Badges",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const BadgesScreen(),
-                          ),
+                          const BadgesScreen(),
+                          disableSwipeBack: true,
                         );
                       },
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.progressProfile,
-                      ),
-                      title: "Progress / Stats",
-                      onTap: () {},
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -255,12 +235,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: "Saved",
                       onTap: () {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                SavedFlighScreen(showTabs: true),
-                          ),
+                          const SavedFlighScreen(showTabs: true),
+                          disableSwipeBack: true,
                         );
                       },
                     ),
@@ -284,6 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeLeftMainLogo),
             width: 120,
+            height: 31,
           ),
           onPressed: () {},
         ),
@@ -291,24 +270,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.homeRightSetting),
             width: 35,
+            height: 31,
           ),
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            final result = await AppNavigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const SettingScreen(),
-              ),
-            ).then((_) => setLocalData());
+              const SettingScreen(),
+              disableSwipeBack: true,
+            );
+            if (result == true) {
+              setLocalData();
+            }
           },
         ),
       ),
       body: kIsWeb
           ? Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: content,
-        ),
-      )
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1500),
+                child: content,
+              ),
+            )
           : content,
     );
   }

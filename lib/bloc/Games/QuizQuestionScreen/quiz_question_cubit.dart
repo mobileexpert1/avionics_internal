@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
-import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
@@ -45,13 +47,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       case "calculation":
         return "Calculation Game";
       case "one_word":
-        return "OneWord Game";
+        return "Basic Topics Game";
       case "trivia":
-        return "Trivia Game";
+        return "Jetting Around The World Game";
       case "imageBased":
         return "PlaneSpotter Game";
       case "aircraftEncyclopaedia":
-        return "Aircraft Encyclopaedia";
+        return "Citius. Altius. Longius. Game";
       default:
         return "Quiz Game";
     }
@@ -410,15 +412,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
     final isCorrect = state.selectedIndex == state.currentQuestion.correctIndex;
 
-    // logic of continues 3 times wrong answer
-    int updatedWrongStreak = isCorrect
-        ? 0
-        : state.consecutiveWrongAnswers + 1;
+    int updatedWrongStreak = isCorrect ? 0 : state.consecutiveWrongAnswers + 1;
 
     bool shouldShowWrongPopup =
-        updatedWrongStreak == 3 &&
-            state.wrongAnswerPopupCount < 3 &&
-            state.currentIndex < maxQuestions - 1;
+        updatedWrongStreak == 3 && state.currentIndex < maxQuestions - 1;
 
     int timeBonus = isCorrect && state.timer >= _totalDuration / 2 ? 1 : 0;
 
@@ -462,12 +459,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         isTimerEnded: true,
         totalBonusPoints: state.totalBonusPoints + timeBonus,
 
-
-        consecutiveWrongAnswers:
-        shouldShowWrongPopup ? 0 : updatedWrongStreak,
+        consecutiveWrongAnswers: shouldShowWrongPopup ? 0 : updatedWrongStreak,
 
         wrongAnswerPopupCount: shouldShowWrongPopup
-            ? state.wrongAnswerPopupCount + 1
+            ? (state.wrongAnswerPopupCount % 3) + 1
             : state.wrongAnswerPopupCount,
 
         showWrongAnswerPopup: shouldShowWrongPopup,
@@ -665,14 +660,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     return super.close();
   }
 
-  ///new method for wrong answer
   void continueAfterWrongPopup(BuildContext context) {
-    emit(
-      state.copyWith(
-        showWrongAnswerPopup: false,
-      ),
-    );
+    emit(state.copyWith(showWrongAnswerPopup: false));
+
     nextQuestion(context);
   }
-
 }

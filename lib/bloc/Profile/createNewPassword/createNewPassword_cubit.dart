@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/Validators.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Screens/Onboarding/Login/LoginScreen.dart';
 import 'createNewPassword_repository.dart';
 import 'createNewPassword_state.dart';
@@ -75,9 +76,10 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
       );
 
       Future.delayed(Duration(seconds: 1), () {
-        Navigator.pushReplacement(
+        AppNavigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          LoginScreen(),
+          disableSwipeBack: true,
         );
       });
     } catch (e) {

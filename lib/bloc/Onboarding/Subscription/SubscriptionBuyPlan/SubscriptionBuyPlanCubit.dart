@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,11 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
-import 'SubscriptionBuyPlanState.dart';
-import 'SubscriptionBuyPlanRepository.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
+import 'SubscriptionBuyPlanRepository.dart';
+import 'SubscriptionBuyPlanState.dart';
 
 // ---------------- RevenueCat Keys ----------------
 const String _rcAppleApiKey = 'appl_fyiYkNFxAHXQCEUVuZbxJsicfHX';
@@ -20,8 +20,9 @@ const String _rcAndroidApiKey = 'goog_nQAujUhKgFBEPESGnzMOczSTIOv';
 
 class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   bool _isConfigured = false;
-  bool _isConfiguredInt = false;
   bool isComeFromSignup = false;
+  bool isProductChangeRequest = false;
+  bool globalWebRedirectDone = false;
 
   static const avioflaiPRO = 'Avioflai Pro';
   static const avioflaiBASIC = 'Avioflai';
@@ -32,11 +33,34 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     return email.trim().toLowerCase();
   }
 
-  Future<void> initRevenueCat() async {
-    if (_isConfiguredInt) return;
+  Future<void> handleWebRedirectionIfNeeded() async {
+    if (globalWebRedirectDone) return;
+    globalWebRedirectDone = true;
 
+    final webSessionToken = await SubscriptionBuyPlanRepository()
+        .getSubscriptionSessionToken();
+
+    if (webSessionToken.session == "" || webSessionToken.session == null) {
+      return;
+    }
+    final callback = Uri.encodeComponent(Uri.base.toString());
+
+    final url =
+        "https://avionica.csdevhub.com/user-service/subscription/choose/${webSessionToken.session}?callback=$callback";
+
+    print(url);
+
+    final uri = Uri.parse(url);
+    if (kIsWeb) {
+      await launchUrl(uri, webOnlyWindowName: '_self');
+    } else {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> initRevenueCat(bool isComeFromProfile) async {
     if (kIsWeb) return;
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loading: true, isComeFromProfile: isComeFromProfile));
     try {
       final email = await SharedPrefsHelper.getEmail();
 
@@ -59,43 +83,40 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         await Purchases.configure(configuration);
       }
 
-      _isConfiguredInt = true;
-
-      //await loginUser(rcUserId);
+      await loginUser(rcUserId);
 
       if (!_isConfigured) {
         Purchases.addCustomerInfoUpdateListener(_handleCustomerInfo);
         _isConfigured = true;
       }
 
-      // final info = await Purchases.getCustomerInfo();
-      // if (info.entitlements.active.isNotEmpty) {
-      //   _handleCustomerInfo(info);
-      // } else {
-      //   try {
-      //     await Purchases.restorePurchases();
-      //   } catch (e) {
-      //     if (e is PlatformException &&
-      //         e.details != null &&
-      //         e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
-      //       emit(
-      //         state.copyWith(
-      //           isBlocked: true,
-      //           loading: false,
-      //           error:
-      //               "This Apple/Google account is already linked with another account. Please login with the original account.",
-      //         ),
-      //       );
-      //       return;
-      //     }
-      //   }
-      // }
+      final info = await Purchases.getCustomerInfo();
+      if (info.entitlements.active.isNotEmpty) {
+        _handleCustomerInfo(info);
+      }
+
+      try {
+        await Purchases.restorePurchases();
+      } catch (e) {
+        if (e is PlatformException &&
+            e.details != null &&
+            e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
+          emit(
+            state.copyWith(
+              isBlocked: isComeFromProfile == true ? false : true,
+              loading: false,
+              error: isComeFromProfile == true
+                  ? "This account is already linked to another ${Platform.isIOS ? "Apple" : "Google"} account. Please log in with the original account to access this feature."
+                  : "This account is already linked with another ${Platform.isIOS ? "Apple" : "Google"}. Please log in with the original account to access this feature.",
+            ),
+          );
+          return;
+        }
+      }
 
       await loadOfferings();
-      // await getSubscriptionsFromBackendServer();
     } catch (e) {
       if (!isClosed) {
-        _isConfiguredInt = false;
         debugPrint("RC login: ${e.toString()}");
         emit(
           state.copyWith(loading: false, error: "RevenueCat init failed: $e"),
@@ -153,22 +174,12 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
     if (isActive) {
       emit(state.copyWith(waitingForBackendConfirmation: true, loading: true));
-      await waitForBackendConfirmation(isPro, activeProductId ?? "");
+      if (!isClosed) {
+        await waitForBackendConfirmation(isPro, activeProductId ?? "");
+      }
     } else {
       emit(state.copyWith(purchased: false, loading: false));
     }
-
-    // if (!isClosed) {
-    //   emit(
-    //     state.copyWith(
-    //       purchased: isActive,
-    //       isProUser: isPro,
-    //       loading: false,
-    //       activeProductId: activeProductId,
-    //       status: CommonApiStatus.success,
-    //     ),
-    //   );
-    // }
   }
 
   Future<void> waitForBackendConfirmation(
@@ -198,23 +209,25 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
               status: CommonApiStatus.success,
             ),
           );
-
           return;
         }
       } catch (e) {
         //emit(state.copyWith(error: e.toString()));
       }
-      await Future.delayed(const Duration(seconds: 4));
+      if (!isClosed) {
+        await Future.delayed(const Duration(seconds: 6));
+      }
     }
-
-    emit(
-      state.copyWith(
-        purchased: false,
-        waitingForBackendConfirmation: false,
-        loading: false,
-        error: "Subscription verification taking longer than expected",
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          purchased: false,
+          waitingForBackendConfirmation: false,
+          loading: false,
+          error: "Subscription verification taking longer than expected",
+        ),
+      );
+    }
   }
 
   Future<void> isRefreshTheScreen(bool isRefresh) async {
@@ -224,8 +237,10 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   // ================= LOAD OFFERINGS =================
   Future<void> loadOfferings() async {
     emit(state.copyWith(loading: true));
+
     try {
       final offerings = await Purchases.getOfferings();
+
       if (offerings.current == null) {
         emit(
           state.copyWith(
@@ -235,20 +250,52 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
             isBlocked: false,
           ),
         );
+        return;
       }
+
+      final current = offerings.current!;
+
+      List<Package> subscriptionPackages = [];
+      List<Package> consumablePackages = [];
+
+      for (final package in current.availablePackages) {
+        final productId = package.storeProduct.identifier.toLowerCase();
+        // CONSUMABLES
+        if (productId.contains("token") || productId.contains("credit")) {
+          consumablePackages.add(package);
+        } else {
+          subscriptionPackages.add(package);
+        }
+      }
+
       emit(
         state.copyWith(
           loading: false,
           status: CommonApiStatus.success,
           offerings: offerings,
+
+          subscriptionPackages: subscriptionPackages,
+
+          consumablePackages: consumablePackages,
+
           isBlocked: false,
         ),
       );
     } catch (e) {
       await Future.delayed(Duration(seconds: 2));
-
       try {
         final offerings = await Purchases.getOfferings();
+        if (offerings.current == null) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              loading: false,
+              error: 'No offerings',
+              isBlocked: false,
+            ),
+          );
+          return;
+        }
         emit(
           state.copyWith(
             loading: false,
@@ -267,7 +314,44 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     emit(state.copyWith(selectedPackage: package));
   }
 
+  void selectConsumablePackage(Package package) {
+    emit(state.copyWith(selectedConsumablePackage: package));
+  }
+
   // ================= PURCHASE =================
+
+  void resetConsumablePurchaseState() {
+    emit(state.copyWith(consumablePurchased: false));
+  }
+
+  Future<void> buyConsumable() async {
+    final package = state.selectedConsumablePackage;
+
+    if (package == null) {
+      emit(state.copyWith(error: "No consumable selected"));
+
+      return;
+    }
+
+    emit(state.copyWith(loading: true, consumablePurchased: false));
+
+    try {
+      await Purchases.purchase(PurchaseParams.package(package));
+
+      debugPrint(
+        "Consumable purchased: "
+        "${package.storeProduct.identifier}",
+      );
+
+      emit(state.copyWith(loading: false, consumablePurchased: true));
+    } on PlatformException catch (e) {
+      if (!isClosed) {
+        emit(state.copyWith(loading: false, consumablePurchased: false));
+      }
+      _handlePurchaseError(e);
+    }
+  }
+
   Future<void> buySelected() async {
     final package = state.selectedPackage;
 
@@ -282,13 +366,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       final customerInfo = await Purchases.purchase(
         PurchaseParams.package(package),
       );
-
       await _handleCustomerInfo(customerInfo.customerInfo);
       final entitlements = customerInfo.customerInfo.entitlements.active;
-
       final isPro = entitlements.containsKey(avioflaiPRO);
-      final isBasic = entitlements.containsKey(avioflaiBASIC);
-
       final activeProductId = isPro
           ? entitlements[avioflaiPRO]?.productIdentifier
           : entitlements[avioflaiBASIC]?.productIdentifier;
@@ -302,8 +382,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         );
         return;
       }
-
-      await waitForBackendConfirmation(isPro, activeProductId);
     } on PlatformException catch (e) {
       _handlePurchaseError(e);
     }
@@ -339,34 +417,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     }
   }
 
-  bool _isSyncing = false;
-
-  // ================= BACKEND FETCH =================
-  Future<void> getSubscriptionsFromBackendServer() async {
-    if (_isSyncing) return;
-    _isSyncing = true;
-
-    try {
-      final response = await SubscriptionBuyPlanRepository()
-          .getSubscriptionDetails();
-      final rcActive = state.purchased;
-      emit(
-        state.copyWith(
-          subscription: response,
-          purchased: rcActive,
-          activeProductId: state.activeProductId,
-          isBlocked: false,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(loading: false, error: e.toString(), isBlocked: false),
-      );
-    } finally {
-      _isSyncing = false;
-    }
-  }
-
   // ================= CANCEL GUIDE =================
   Future<void> guideUserToCancelSubscription() async {
     if (!state.purchased) {
@@ -397,7 +447,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
     switch (errorCode) {
       case PurchasesErrorCode.purchaseCancelledError:
-        emit(state.copyWith(loading: false));
+        emit(state.copyWith(loading: false, error: "Purchase was cancelled."));
         return;
 
       case PurchasesErrorCode.networkError:

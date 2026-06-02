@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
@@ -6,14 +7,17 @@ import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_st
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
+import '../../../Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -106,10 +110,9 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       },
                     ),
               leftButton: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 30,
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
                 ),
                 onPressed: () async {
                   final cubit = context.read<QuizQuestionCubit>();
@@ -160,7 +163,29 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 },
               ),
             ),
-            body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
+
+            body: BlocConsumer<QuizQuestionCubit, QuizQuestionState>(
+              listener: (context, state) async {
+                if (state.showWrongAnswerPopup) {
+                  print("wrongPopupCount :- ${state.wrongAnswerPopupCount}");
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InfoWrongGameScreen(
+                        screenIndex: state.wrongAnswerPopupCount,
+                        gameTitle: widget.sectionTitle,
+                      ),
+                    ),
+                  );
+
+                  if (context.mounted) {
+                    context.read<QuizQuestionCubit>().continueAfterWrongPopup(
+                      context,
+                    );
+                  }
+                }
+              },
+
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
 
@@ -168,23 +193,23 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                   Future.microtask(() async {
                     Widget screen;
 
-                    switch (state.wrongAnswerPopupCount) {
-                      case 1:
-                        screen = const WrongAnswerScreen1();
-                        break;
+                    // switch (state.wrongAnswerPopupCount) {
+                    //   case 1:
+                    //     screen = const WrongAnswerScreen1();
+                    //     break;
+                    //
+                    //   case 2:
+                    //     screen = const WrongAnswerScreen2();
+                    //     break;
+                    //
+                    //   default:
+                    //     screen = const WrongAnswerScreen3();
+                    // }
 
-                      case 2:
-                        screen = const WrongAnswerScreen2();
-                        break;
-
-                      default:
-                        screen = const WrongAnswerScreen3();
-                    }
-
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => screen),
-                    );
+                    // await Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (_) => screen),
+                    // );
 
                     context.read<QuizQuestionCubit>().continueAfterWrongPopup(
                       context,
@@ -195,6 +220,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 if (state.questions.isEmpty && state.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
                 if (state.isTimerEnded && !isNeedToShowOrNot) {
                   Future.delayed(const Duration(milliseconds: 50), () {
                     setState(() {
@@ -218,10 +244,12 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                         horizontal: kIsWeb ? 200 : 10,
                       ),
                       child: SingleChildScrollView(
+                        key: ValueKey(state.currentIndex),
                         controller: _scrollController,
                         child: Column(
                           children: [
                             const SizedBox(height: 24),
+
                             QuizQuestionCard(
                               timeTaken: state.timeTaken,
                               hintText: state.currentQuestion.hint,
@@ -237,12 +265,14 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                               secondsRemaining: state.timer,
                               transformationController:
                                   _transformationController,
+
                               onOptionSelected: (index) {
                                 if (state.timer.toInt() != 0 &&
                                     !state.showAnswer) {
                                   quizCubit.selectOption(index);
                                 }
                               },
+
                               onNext: () {
                                 if (state.isTimerEnded) {
                                   setState(() {
@@ -252,6 +282,9 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                                   _transformationController.value =
                                       Matrix4.identity();
+                                  if (_scrollController.hasClients) {
+                                    _scrollController.jumpTo(0);
+                                  }
                                   quizCubit.nextQuestion(context);
                                 } else if (state.selectedIndex != null ||
                                     state.showAnswer) {
@@ -276,11 +309,13 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                                 }
                               },
                             ),
+
                             const SizedBox(height: 20),
                           ],
                         ),
                       ),
                     ),
+
                     if (state.isLoading)
                       Container(
                         color: Colors.black.withOpacity(0.3),

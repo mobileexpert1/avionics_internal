@@ -22,32 +22,34 @@ class GlossaryCubit extends Cubit<GlossaryState> {
     emit(state.copyWith(isLoading: true));
     try {
       final glossaryData = await repository.getGlossaryData(query: query);
-      emit(
-        GlossaryState(
-          glossaryData: glossaryData,
-          originalData: glossaryData,
-          isLoading: false,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          GlossaryState(
+            glossaryData: glossaryData,
+            originalData: glossaryData,
+            isLoading: false,
+          ),
+        );
 
-      if (isComeFromSearch == false) {
-        state.selectedLetter = "A";
-        filterByLetter(letter: state.selectedLetter ?? "", context: context);
-      }else{
-
+        if (isComeFromSearch == false) {
+          state.selectedLetter = "A";
+          filterByLetter(letter: state.selectedLetter ?? "", context: context);
+        } else {}
       }
     } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        GlossaryState(
-          glossaryData: {},
-          originalData: {},
-          isLetterQueryEmpty: false,
-          isLoading: false,
-          errorMessage: e.toString(),
-          status: CommonApiStatus.failure,
-        ),
-      );
+      if (!isClosed) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          GlossaryState(
+            glossaryData: {},
+            originalData: {},
+            isLetterQueryEmpty: false,
+            isLoading: false,
+            errorMessage: e.toString(),
+            status: CommonApiStatus.failure,
+          ),
+        );
+      }
     }
   }
 

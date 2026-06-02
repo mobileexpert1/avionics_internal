@@ -4,7 +4,7 @@ import 'oneWord_model.dart';
 
 class OneWordTopicState {
   final OneWordTopicModel? oneWordTopic;
-  final List<quizItem> games;
+  final List<QuizPerItem> games;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
@@ -23,7 +23,7 @@ class OneWordTopicState {
 
   OneWordTopicState copyWith({
     OneWordTopicModel? oneWordTopic,
-    List<quizItem>? games,
+    List<QuizPerItem>? games,
     bool? isLoading,
     bool? isSuccess,
     String? errorMessage,

@@ -62,7 +62,7 @@ class _FlightDetailScreenForMapSectionState
 
   final ScrollController _subTabScrollController = ScrollController();
 
-  final mainTabs = ["Live Information", "Encyclopedic Information"];
+  final mainTabs = ["Live", "Encyclopedia"];
   final subTabs = [
     "Identification & Position",
     "Flight Plan",
@@ -249,10 +249,9 @@ class _FlightDetailScreenForMapSectionState
                 : 'N/A',
             centerTitle: false,
             leftButton: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 30,
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                fit: BoxFit.cover,
               ),
               onPressed: () => Navigator.pop(context),
             ),
@@ -625,10 +624,9 @@ class _FlightDetailScreenForMapSectionState
                         color: Colors.black45,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                        size: 14,
+                      child: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -852,7 +850,7 @@ class _FlightDetailScreenForMapSectionState
             ['Track (degree)', flight.track?.toString() ?? 'N/A'],
             ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
             [
-              'Ground Speed (km/h)',
+              'Ground Speed (kts)',
               flight.groundSpeed?.toString() ?? 'N/A',
               true,
             ],
@@ -1405,7 +1403,7 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$groundSpeed km/h',
+              '$groundSpeed kts',
               style: AppTextStyles.regular(
                 14,
               ).copyWith(height: 1.0, color: AppColors.primaryBlue),
@@ -1414,7 +1412,7 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
             const Text("•", style: TextStyle(color: Colors.grey)),
             const SizedBox(width: 10),
             Text(
-              '$altitude m',
+              '$altitude ft',
               style: AppTextStyles.regular(
                 14,
               ).copyWith(height: 1.0, color: AppColors.primaryBlue),

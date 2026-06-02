@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../bloc/home/Filter/filter_cubit.dart';
 import '../../../bloc/home/Filter/filter_model.dart';
 import '../../../bloc/home/Filter/filter_state.dart';
@@ -32,23 +33,22 @@ class _FilterScreenState extends State<FilterScreen> {
             Navigator.of(context).pop();
           },
         ),
-          title: const Text("Filter", style: TextStyle(color: Colors.black)),
-          centerTitle: true,
+        title: const Text("Filter", style: TextStyle(color: Colors.black)),
+        centerTitle: true,
         actions: [
           BlocBuilder<FilterCubit, FilterState>(
             builder: (context, state) {
               // Calculate the number of applied filters
               final selectedCount = state.filterCategories.fold<int>(
                 0,
-                    (previousValue, category) =>
-                previousValue +
+                (previousValue, category) =>
+                    previousValue +
                     category.options
                         .where((option) => option.isSelected)
                         .length,
               );
               return TextButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 child: Row(
                   children: [
                     if (selectedCount != 0) ...[
@@ -94,11 +94,11 @@ class _FilterScreenState extends State<FilterScreen> {
 
                     // Get the list of options to display based on expansion state
                     final List<FilterOption> optionsToDisplay =
-                    category.isExpanded
+                        category.isExpanded
                         ? category.options
                         : category.options
-                        .take(visibleOptionCountWhenCollapsed)
-                        .toList();
+                              .take(visibleOptionCountWhenCollapsed)
+                              .toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,9 +172,9 @@ class _FilterScreenState extends State<FilterScreen> {
                                       context
                                           .read<FilterCubit>()
                                           .toggleFilterOption(
-                                        category.id,
-                                        option.id,
-                                      );
+                                            category.id,
+                                            option.id,
+                                          );
                                     },
                                     activeColor: Colors.blue,
                                   ),
@@ -206,9 +206,9 @@ class _FilterScreenState extends State<FilterScreen> {
                                       context
                                           .read<FilterCubit>()
                                           .toggleFilterOption(
-                                        category.id,
-                                        option.id,
-                                      );
+                                            category.id,
+                                            option.id,
+                                          );
                                     },
                                     activeColor: Colors.blue,
                                   ),
@@ -254,4 +254,3 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 }
-

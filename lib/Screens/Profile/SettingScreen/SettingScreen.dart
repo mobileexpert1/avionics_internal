@@ -1,35 +1,37 @@
-import 'package:flutter_svg/svg.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-
-import '../../../Helpers/AppText.dart';
-import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../bloc/home/homeBloc/home_cubit.dart';
-import '../Avtar/AvtarScreen.dart';
-import '../ContactSupportScreen/ContactSupportScreen.dart';
-import '../CreditsTokenUsage/CreditsTokenUsageScreen.dart';
-import '../Feedback/FeedbackScreen.dart';
-import '../ManageAccount/ManageAccountScreen.dart';
-import '../MySubscription/MySubscriptionScreen.dart';
-import '../SettingsSectionHeader.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/foundation.dart';
-import '../../../Constants/AppColors.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
+import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
-import '../../Onboarding/Login/LoginScreen.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../../bloc/Profile/ProfileMain/profile_state.dart';
-import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
+import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../../bloc/Profile/DeleteProfile/delete_state.dart';
-import 'package:avionics_internal/Constants/ConstantStrings.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../VideoPlayer/VideoPlayerScreen.dart';
+import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
+import '../../../bloc/Profile/ProfileMain/profile_state.dart';
+import '../../../bloc/home/homeBloc/home_cubit.dart';
+import '../../Onboarding/Login/LoginScreen.dart';
+import '../ProfileMenuScreen/Avtar/AvtarScreen.dart';
+import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
+import 'SettingMenuScreen/0_PersonalData/ManageAccountScreen.dart';
+import 'SettingMenuScreen/1_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/2_AddOnPacks/AddOnPacksScreen.dart';
+import 'SettingMenuScreen/3_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
+import 'SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
+import 'SettingMenuScreen/4_5_AllDemoScreen/TriviaAnimation/DemoAnimation.dart';
+import 'SettingMenuScreen/6_TutorialScreen/VideoPlayerScreen.dart';
+import 'SettingMenuScreen/7_Review/FeedbackScreen.dart';
+import 'SettingMenuScreen/8_ContactSupport/ContactSupportScreen.dart';
+import 'SettingMenuScreen/9_12_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -47,10 +49,8 @@ class _SettingScreenState extends State<SettingScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.settingScreen);
-    _setLocalData();
-
     homeCubit = HomeCubit();
-    homeCubit.fetchHomeData(context);
+    setLocalData();
   }
 
   @override
@@ -59,21 +59,40 @@ class _SettingScreenState extends State<SettingScreen> {
     super.dispose();
   }
 
-  Future<void> _setLocalData() async {
+  Future<void> setLocalData() async {
     final avatarUrl = await SharedPrefsHelper.getAvtarUserUrl();
-    final avatarType = await SharedPrefsHelper.getAvtarUserType();
+    final name = await SharedPrefsHelper.getAvtarUserType();
 
     if (!mounted) return;
 
     setState(() {
       userAvtarTypeUrl = avatarUrl ?? '';
-      avatarTypeName = avatarType ?? '';
+      switch (name.toLowerCase()) {
+        case 'student':
+          avatarTypeName = "Student";
+          break;
+        case 'atco':
+          avatarTypeName = "ATCO";
+          break;
+        case 'pilot':
+          avatarTypeName = "Pilot";
+          break;
+        case 'enthusiast':
+          avatarTypeName = "Enthusiast";
+          break;
+        case 'aircraft_engineer':
+          avatarTypeName = "Aircraft Engineer";
+          break;
+        default:
+          avatarTypeName = "ATSEP";
+          break;
+      }
     });
   }
 
   /// ---------------- COMMON NAVIGATION ----------------
   void _navigate(BuildContext context, Widget screen) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    AppNavigator.push(context, screen, disableSwipeBack: true);
   }
 
   /// ---------------- COMMON TILE DECORATION ----------------
@@ -99,15 +118,19 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget _avatarWidget() {
     return InkWell(
       onTap: () async {
-        _navigate(
+        final result = await AppNavigator.push(
           context,
           AvtarScreen(
             isComeFromSignupScreen: false,
             isComeFromSettingScreen: true,
             signupData: {},
           ),
+          disableSwipeBack: true,
         );
-        _setLocalData();
+
+        if (result == true) {
+          setLocalData();
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
@@ -127,7 +150,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       ? SvgPicture.network(
                           userAvtarTypeUrl,
                           fit: BoxFit.contain,
-                          color: Colors.white,
+                          color: userAvtarTypeUrl.contains("57ATSEPWhite.svg")
+                              ? null
+                              : Colors.white,
                           placeholderBuilder: (_) => SvgPicture.asset(
                             CommonUi.setSvgImage(AssetsPath.manuFirstImage),
                           ),
@@ -142,10 +167,7 @@ class _SettingScreenState extends State<SettingScreen> {
             if (userAvtarTypeUrl.isNotEmpty)
               Expanded(
                 child: Text(
-                  avatarTypeName
-                      .toUpperCase()
-                      .replaceAll("_", " ")
-                      .capitalize(),
+                  avatarTypeName,
                   style: AppTextStyles.regular(
                     20,
                   ).copyWith(height: 1, color: AppColors.primaryValueColour),
@@ -214,6 +236,14 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
 
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.subscriptionProfile,
+                    //   ),
+                    //   title: "Extra Add On Packs",
+                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
+                    // ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.subscriptionProfile,
@@ -237,12 +267,26 @@ class _SettingScreenState extends State<SettingScreen> {
                       title: "Delete Account",
                       onTap: () => showDeleteConfirmation(context, false),
                     ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.manageAccountProfile,
+                    //   ),
+                    //   title: "Trivia Level Demo Screen",
+                    //   onTap: () => _navigate(context, AnimatedLevelMapScreen()),
+                    // ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.manageAccountProfile,
+                    //   ),
+                    //   title: "Game Info Hint Screen",
+                    //   onTap: () => _navigate(context, InfoWrongGameScreen()),
+                    // ),
                   ],
                 ),
 
                 /// -------- HELP --------
                 SettingsListGroup(
-                  headerTitle: "Help & Feedback",
+                  headerTitle: "Help & Review",
                   items: [
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -277,21 +321,48 @@ class _SettingScreenState extends State<SettingScreen> {
                         AssetsPath.privacyPolicyProfile,
                       ),
                       title: "Privacy Policy",
-                      onTap: () {},
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 0),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.termsAndConditionsProfile,
                       ),
                       title: "Terms of Service",
-                      onTap: () {},
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 1),
+                        );
+                      },
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.aboutProfile,
                       ),
                       title: "About",
-                      onTap: () {},
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 2),
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.aboutProfile,
+                      ),
+                      title: "FAQ",
+                      onTap: () {
+                        _navigate(
+                          context,
+                          AboutTermsPrivacyScreen(urlForRequest: 3),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -320,8 +391,13 @@ class _SettingScreenState extends State<SettingScreen> {
         title: ConstantStrings.settingScreen,
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
-          onPressed: () => Navigator.pop(context),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
         ),
       ),
       body: kIsWeb
@@ -340,9 +416,15 @@ class _SettingScreenState extends State<SettingScreen> {
     BuildContext context,
   ) async {
     try {
-      await Purchases.logOut();
+      // try {
+      //   final info = await Purchases.getCustomerInfo();
+      //   if (info.originalAppUserId != "") {
+      //     await Purchases.logOut();
+      //   }
+      // } catch (e) {
+      //   debugPrint("RevenueCat not configured yet: $e");
+      // }
       await SharedPrefsHelper.clearAll([], false);
-
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
         (_) => false,

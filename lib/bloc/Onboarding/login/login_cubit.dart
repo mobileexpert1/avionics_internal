@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
-import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,15 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
-import '../Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/Avtar/AvtarScreen.dart';
 import 'login_repository.dart';
 import 'login_response_model.dart';
 import 'login_state.dart';
@@ -198,46 +198,6 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  // Future<void> signInWithFacebook(BuildContext context) async {
-  //   try {
-  //
-  //     final result = await FacebookAuth.instance.login(
-  //       permissions: ['email', 'public_profile'],
-  //       loginBehavior: LoginBehavior.dialogOnly,
-  //     );
-  //
-  //     if (result.status != LoginStatus.success) return;
-  //
-  //     final accessToken = result.accessToken!;
-  //     final credential = FacebookAuthProvider.credential(accessToken.token);
-  //     final userCredential = await _auth.signInWithCredential(credential);
-  //
-  //     debugPrint('userCredential User: ${userCredential.user?.displayName}');
-  //     debugPrint('credential User: $credential');
-  //     debugPrint('accessToken: $accessToken');
-  //
-  //     emit(state.copyWith(status: CommonApiStatus.submitting));
-  //
-  //     final resultResponse = await LoginRepository()
-  //         .loginUserWithSocialPlatform(
-  //           token: accessToken.token,
-  //           provider: 'facebook',
-  //         );
-  //
-  //     emit(state.copyWith(status: CommonApiStatus.success));
-  //     await _navigateAfterLogin(context, resultResponse);
-  //     debugPrint('Facebook User: ${userCredential.user?.displayName}');
-  //   } catch (e) {
-  //     print(e.toString());
-  //     emit(
-  //       state.copyWith(
-  //         status: CommonApiStatus.failure,
-  //         errorMessage: e.toString(),
-  //       ),
-  //     );
-  //   }
-  // }
-
   Future<void> signInWithApple(BuildContext context) async {
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
@@ -313,8 +273,17 @@ class LoginCubit extends Cubit<LoginState> {
         result.userDetails?.userType ?? '',
       );
 
+      String userTypeUrl = result.userDetails?.userTypeUrl ?? '';
+
+      if (result.userDetails!.userTypeUrl.toLowerCase().contains(
+        "Radar.svg".toLowerCase(),
+      )) {
+        userTypeUrl =
+            "https://avionica.csdevhub.com/s3/manufacturer/57ATSEPWhite.svg";
+      }
+
       await SharedPrefsHelper.setAvtarUserUrl(
-        result.userDetails?.userTypeUrl ?? '',
+        userTypeUrl,
       );
 
       await SharedPrefsHelper.setUserProfileName(
@@ -330,23 +299,22 @@ class LoginCubit extends Cubit<LoginState> {
       if (!context.mounted) return;
 
       if (result.userDetails!.userType == '') {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => AvtarScreen(
-              isComeFromSignupScreen: false,
-              signupData: {},
-              isComeFromSocialLogin: true,
-            ),
+        AppNavigator.pushAndRemoveUntil(
+          context,
+          AvtarScreen(
+            isComeFromSignupScreen: false,
+            signupData: {},
+            isComeFromSocialLogin: true,
           ),
-          (_) => false,
+          disableSwipeBack: true,
         );
         return;
       } else if (result.userDetails!.isActiveSubscription == false) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => SubscriptionPlanDetailScreen(isComeFromSignup: true)),
-              (_) => false,
+        AppNavigator.pushAndRemoveUntil(
+          context,
+          SubscriptionPlanDetailScreen(isComeFromSignup: true),
+          disableSwipeBack: true,
         );
-
         return;
       } else {
         AppSnackBar.custom(
@@ -354,10 +322,10 @@ class LoginCubit extends Cubit<LoginState> {
           message: 'Login Successfully',
           svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
         );
-
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => RootTabbarscreen()),
-          (_) => false,
+        AppNavigator.pushAndRemoveUntil(
+          context,
+          RootTabbarscreen(),
+          disableSwipeBack: true,
         );
       }
     } else if (result.isVerified == false) {
@@ -370,22 +338,21 @@ class LoginCubit extends Cubit<LoginState> {
         backgroundColor: const Color(0xFF3F3D56),
       );
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => OtpScreen(email: state.email, isComeFromSignup: true),
-        ),
+      AppNavigator.push(
+        context,
+        OtpScreen(email: state.email, isComeFromSignup: true),
+        disableSwipeBack: true,
       );
     } else if (result.isAvatar == false) {
       if (!context.mounted) return;
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => AvtarScreen(
-            isComeFromSignupScreen: true,
-            signupData: {'email': state.email},
-          ),
+      AppNavigator.pushAndRemoveUntil(
+        context,
+        AvtarScreen(
+          isComeFromSignupScreen: true,
+          signupData: {'email': state.email},
         ),
-        (_) => false,
+        disableSwipeBack: true,
       );
     }
   }

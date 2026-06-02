@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
@@ -101,7 +103,10 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
         //'Search ${widget.manufacturerName} Models',
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         rightButton: IconButton(
@@ -112,10 +117,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             fit: BoxFit.cover,
           ),
           onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            AppNavigator.push(context, SettingScreen(), disableSwipeBack: true);
           },
         ),
       ),
@@ -268,18 +270,18 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                             .manufacturerListItemButton,
                                         FirebaseEvents.allPlanesListScreen,
                                       );
-
-                                      Navigator.push(
+                                      AppNavigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (_) => BlocProvider(
+                                        AirCraftDetailScreen(
+                                          aircraftId: model.id,
+                                        ),
+                                        multiBlocProviders: [
+                                          BlocProvider(
                                             create: (_) =>
                                                 AirCraftDetailCubit(),
-                                            child: AirCraftDetailScreen(
-                                              aircraftId: model.id,
-                                            ),
                                           ),
-                                        ),
+                                        ],
+                                        disableSwipeBack: true,
                                       );
                                     },
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppText.dart';
 import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Feedback/FeedbackScreen.dart';
@@ -55,6 +56,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
             final current = state.subscriptionData?.data.current;
 
+            final isUpcomingPlan = state.subscriptionData?.data.upcoming;
+
             final namePlan = current?.plan.name ?? "";
 
             var isPremiumPlan = current?.plan.name == "Premium Plan";
@@ -76,13 +79,79 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                     .capitalize() ??
                 "";
 
-            final expiryDate = "${current?.expiryDate ?? ""} UTC";
+            final expiryDate = current?.expiryDateLocal ?? "";
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (isUpcomingPlan?.id != "" &&
+                      isUpcomingPlan?.plan != null) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: const Icon(
+                              Icons.add_alert_rounded,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                          ),
+
+                          const SizedBox(width: 10),
+
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        'Your plan downgrade is scheduled.\n\n',
+                                    style: AppTextStyles.regular(14).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+
+                                  TextSpan(
+                                    text:
+                                        'Premium access ends on ${isUpcomingPlan?.expiryDateLocal}\nBasic plan starts on ${isUpcomingPlan?.expiryDateLocal}',
+                                    style: AppTextStyles.regular(13).copyWith(
+                                      height: 1.5,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+
+                  const SizedBox(height: 10),
+
                   SubscriptionPlanCard(
                     isPremiumPlan: isPremiumPlan,
                     isPlanExpired: isPlanExpired,
@@ -91,21 +160,25 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                     expiryDate: expiryDate,
                     isPlanActive: isPlanActive,
                     showActions: true,
-                    onModifyTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SubscriptionPlanDetailScreen(
-                            isComeFromSignup: false,
-                          ),
+                    onModifyTap: () async {
+                      final result = await AppNavigator.push(
+                        context,
+                        SubscriptionPlanDetailScreen(
+                          isComeFromSignup: false,
+                          isComeFromProfile: true,
                         ),
+                        disableSwipeBack: true,
                       );
+                      if (result == true) {
+                        _cubit.loadSubscriptionsHistory();
+                      }
                     },
-
                     onCancelTap: () {
                       if (isPlanExpired) {
-                        Navigator.push(
+                        AppNavigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => FeedbackScreen()),
+                          FeedbackScreen(),
+                          disableSwipeBack: true,
                         );
                       } else {
                         showDeleteConfirmation(context);
@@ -134,13 +207,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                       return BillingHistoryCard(
                         item: item,
                         onTapGesture: () {
-                          Navigator.push(
+                          AppNavigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => MySubscriptionDetailScreen(
-                                subscriptionItem: item,
-                              ),
-                            ),
+                            MySubscriptionDetailScreen(subscriptionItem: item),
+                            disableSwipeBack: true,
                           );
                         },
                       );
@@ -267,7 +337,7 @@ class BillingHistoryCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        "${item.startDate} - ${item.expiryDate} UTC",
+                        "${item.startDateLocal} - ${item.expiryDateLocal}",
                         style: AppTextStyles.regular(12).copyWith(
                           height: 1.0,
                           color: AppColors.greyForTextSubscription,

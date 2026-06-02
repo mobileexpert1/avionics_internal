@@ -1,8 +1,9 @@
-import 'package:avionics_internal/Screens/Profile/Avtar/AvtarScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/Validators.dart';
+import '../../../Helpers/AppNavigator.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/Avtar/AvtarScreen.dart';
 import 'signup_repository.dart';
 import 'signup_state.dart';
 
@@ -158,12 +159,14 @@ class SignupCubit extends Cubit<SignupState> {
         'auth_type': '',
       };
 
-      Navigator.push(
+      AppNavigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) =>
-              AvtarScreen(isComeFromSignupScreen: true, signupData: signupData,isComeFromSettingScreen: true),
+        AvtarScreen(
+          isComeFromSignupScreen: true,
+          signupData: signupData,
+          isComeFromSettingScreen: true,
         ),
+        disableSwipeBack: true,
       );
     } catch (e) {
       emit(

@@ -3,8 +3,8 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
@@ -57,7 +57,6 @@ class _ForgotScreenState extends State<ForgotScreen> {
         listener: (context, state) {
           if (!mounted) return;
 
-
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -73,9 +72,14 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   isClearBackgroundColour: true,
+                  centerTitle: false,
                   title: ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                    icon: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      fit: BoxFit.cover,
+                      color: Colors.black,
+                    ),
                     onPressed: () {
                       if (!mounted) return;
                       Navigator.pop(context);
@@ -127,12 +131,13 @@ class _ForgotScreenState extends State<ForgotScreen> {
                                 return SizedBox(
                                   width: buttonWidth,
                                   child: CustomBottomButton(
-                                    fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                      height: 1.0,
-                                      color: isButtonEnabled
-                                          ? Colors.white
-                                          : Colors.grey.shade600,
-                                    ),
+                                    fontStyle: AppTextStyles.regular(21.46)
+                                        .copyWith(
+                                          height: 1.0,
+                                          color: isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade600,
+                                        ),
                                     title: ConstantStrings.sendEmailButton,
                                     backgroundColor: isButtonEnabled
                                         ? AppColors.primaryValueColour
