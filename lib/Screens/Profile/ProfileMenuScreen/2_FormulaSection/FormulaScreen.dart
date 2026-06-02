@@ -155,3 +155,4 @@ class _FormulasScreenState extends State<FormulasScreen> {
     );
   }
 }
+
