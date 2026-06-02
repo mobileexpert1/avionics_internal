@@ -99,26 +99,6 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
             height: screenHeight * 0.5,
             child: Container(color: AppColors.primaryValueColour),
           ),
-
-          kIsWeb
-              ? Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.backArrowButton),
-                          fit: BoxFit.cover,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink(),
-
           SafeArea(
             child: Center(
               child: ConstrainedBox(

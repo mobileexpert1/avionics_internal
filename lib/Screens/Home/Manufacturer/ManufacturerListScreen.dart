@@ -237,7 +237,8 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                         children: [
                                           item.icon != null
                                               ? CachedAnyImage(
-                                                  imagePath: item.icon ?? "",
+                                            useCache: true,
+                                                   imagePath: item.icon ?? "",
                                                   width: 40,
                                                   height: 40,
                                                   contentImage: BoxFit.contain,

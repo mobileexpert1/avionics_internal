@@ -1,6 +1,7 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -13,6 +14,7 @@ import '../../../Helpers/MainGameExtraClasses/DoubleCenterLinePainter.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_model.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
+import '../../Profile/SettingScreen/SettingScreen.dart';
 import 'BaseScreenForAllLevelDescriptions.dart';
 
 class GamesScreen extends StatefulWidget {
@@ -72,7 +74,34 @@ class _GamesScreenState extends State<GamesScreen> {
     return BlocProvider.value(
       value: _gamesCubit,
       child: Scaffold(
-        appBar: CustomAppBar(title: 'Games'),
+        appBar: CustomAppBar(
+          isForHomeScreen: true,
+          title: '',
+          leftButton: IconButton(
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.homeLeftMainLogo),
+              width: 120,
+              height: 31,
+              fit: BoxFit.cover,
+            ),
+            onPressed: () {},
+          ),
+          rightButton: IconButton(
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.homeRightSetting),
+              width: 35,
+              height: 31,
+              fit: BoxFit.cover,
+            ),
+            onPressed: () async {
+              AppNavigator.push(
+                context,
+                SettingScreen(),
+                disableSwipeBack: true,
+              );
+            },
+          ),
+        ),
         backgroundColor: Colors.white,
         body: BlocBuilder<GamesCubit, GamesState>(
           builder: (context, state) {

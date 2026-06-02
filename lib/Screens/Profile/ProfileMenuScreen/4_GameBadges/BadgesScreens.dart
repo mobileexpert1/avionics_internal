@@ -520,6 +520,7 @@ class _BadgeCard extends StatelessWidget {
                           topRight: Radius.circular(16),
                         ),
                         child: CachedAnyImage(
+                          useCache: true,
                           imagePath: badge.icon?.isNotEmpty == true
                               ? badge.icon!
                               : CommonUi.setPngImage(AssetsPath.badgeimg),
