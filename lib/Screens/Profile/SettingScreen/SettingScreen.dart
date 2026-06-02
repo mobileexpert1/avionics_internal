@@ -24,6 +24,7 @@ import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
 import 'SettingMenuScreen/0_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/1_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/2_AddOnPacks/AddOnPacksScreen.dart';
 import 'SettingMenuScreen/3_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
 import 'SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
 import 'SettingMenuScreen/6_TutorialScreen/VideoPlayerScreen.dart';
@@ -234,13 +235,14 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
 
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.subscriptionProfile,
-                    //   ),
-                    //   title: "Extra Add On Packs",
-                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subscriptionProfile,
+                      ),
+                      title: "Extra Add On Packs",
+                      onTap: () => _navigate(context, AddOnPacksScreen()),
+                    ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.subscriptionProfile,
