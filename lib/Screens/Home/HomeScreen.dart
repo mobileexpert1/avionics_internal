@@ -24,7 +24,7 @@ import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../MapSection/FlightMapScreen.dart';
 import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
+import '../WilcoBoat/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 

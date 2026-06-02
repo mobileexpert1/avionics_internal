@@ -4,12 +4,15 @@ import 'package:flutter_svg/svg.dart';
 import '../../Constants/AppColors.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 
-class SettingsSectionHeader extends StatelessWidget {
+class ProfileSettingsSectionHeader extends StatelessWidget {
   final String title;
   final TextStyle? textStyle;
 
-  const SettingsSectionHeader({Key? key, required this.title, this.textStyle})
-    : super(key: key);
+  const ProfileSettingsSectionHeader({
+    super.key,
+    required this.title,
+    this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +87,10 @@ class SettingsListGroup extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SettingsSectionHeader(title: headerTitle, textStyle: headerTextStyle),
+        ProfileSettingsSectionHeader(
+          title: headerTitle,
+          textStyle: headerTextStyle,
+        ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(

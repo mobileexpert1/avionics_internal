@@ -8,11 +8,11 @@ import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/MainGameExtraClasses/AllLinesPainter.dart';
+import '../../../Helpers/MainGameExtraClasses/DoubleCenterLinePainter.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
 import '../../../bloc/Games/MainGameSection/game_model.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
-import '../MainGameExtraClasses/AllLinesPainter.dart';
-import '../MainGameExtraClasses/DoubleCenterLinePainter.dart';
 import 'BaseScreenForAllLevelDescriptions.dart';
 
 class GamesScreen extends StatefulWidget {

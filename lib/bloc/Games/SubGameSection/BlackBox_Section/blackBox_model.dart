@@ -11,11 +11,10 @@ class BlackBoxSummaryModel {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        print('Parsing Data: $v'); // Debug
         data!.add(Data.fromJson(v));
       });
     } else {
-      print('No data field in JSON: $json'); // Debug
+      print('No data field in JSON: $json');
     }
   }
 
@@ -39,9 +38,8 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     title = json['title'];
-    description = json['expantion'] ?? json['expansion']; // Handle typo or API change
+    description = json['expantion'] ?? json['expansion'];
     type = json['type'];
-    print('Parsed Data - Title: $title, Description: $description, Type: $type'); // Debug
   }
 
   Map<String, dynamic> toJson() {

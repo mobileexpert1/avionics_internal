@@ -19,7 +19,7 @@ import '../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import '../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
 import '../../MapSection/MapHelpers/FlightDetailScreen.dart';
 import '../../MapSection/MapHelpers/FlightDetailScreenForMapSection.dart';
-import '../../WilcoBoat/ChatHistoryScreen/ChatHistoryScreen.dart';
+import '../../WilcoBoat/ChatHistoryScreen.dart';
 import '../HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class SavedFlighScreen extends StatefulWidget {

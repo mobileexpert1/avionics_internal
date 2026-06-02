@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-
 import '../../../../Constants/constantImages.dart';
 
 class GameInfo {

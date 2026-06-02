@@ -397,7 +397,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required String flightNumber,
     required BuildContext context,
   }) async {
-    emit(state.copyWith(isLoading: true));
+    //emit(state.copyWith(isLoading: true));
 
     try {
       final response = await FlightRepository().getFlightPositions(

@@ -13,7 +13,7 @@ import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import '../../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
-import '../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
+import '../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterCubit.dart';
 import '../AirCraftModelComparison/SeeComparison/ComparisonScreen.dart';
 import 'AircraftComparisonScreen.dart';
 
@@ -94,10 +94,9 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: 30,
+                        icon: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                          fit: BoxFit.cover,
                         ),
                         onPressed: () {
                           Navigator.pop(context);
@@ -235,10 +234,9 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                         Row(
                           children: [
                             IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                                size: 30,
+                              icon: SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                                fit: BoxFit.cover,
                               ),
                               onPressed: () {
                                 Navigator.pop(context);

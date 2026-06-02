@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 class ReusableWinRuleProgressModel {
   final double progress;
   final String title;

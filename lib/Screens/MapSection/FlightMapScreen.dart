@@ -35,7 +35,7 @@ import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
+import '../WilcoBoat/ChatBotScreen.dart';
 import 'AirportStationDetailCard/AirportStationDetailCard.dart';
 import 'FlightDetailCard/FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
@@ -894,10 +894,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         title: '',
         leftButton: widget.openMode == 1 || widget.openMode == 2
             ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 30,
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               )
@@ -1346,6 +1345,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                     )
                                                   : CachedAnyImage(
                                                       imagePath: image,
+                                                      isForPlaneList: true,
                                                       width: isWide ? 120 : 70,
                                                       height: isWide ? 60 : 50,
                                                       contentImage:

@@ -8,19 +8,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
-import '../../../Constants/AppColors.dart';
-import '../../../Constants/constantImages.dart';
-import '../../../Helpers/AppNavigator.dart';
-import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../Helpers/FormattedText/FormattedText.dart';
-import '../../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
-import '../../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
-import '../../Onboarding/Login/LoginScreen.dart';
-import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
-import 'ChatAnalyzingIndicator/ChatAnalyzingIndicator.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
+import '../../Constants/AppColors.dart';
+import '../../Constants/constantImages.dart';
+import '../../Helpers/AppNavigator.dart';
+import '../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../Helpers/ChatAnalyzingIndicator/ChatAnalyzingIndicator.dart';
+import '../../Helpers/FormattedText/FormattedText.dart';
+import '../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
+import '../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
+import '../Onboarding/Login/LoginScreen.dart';
+import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {

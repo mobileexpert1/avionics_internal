@@ -10,8 +10,8 @@ import '../../../../Helpers/Games/GameResultCard.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/GameResult/result_state.dart';
 
-class CalculationResultScreen extends StatefulWidget {
-  const CalculationResultScreen({
+class MainResultScreen extends StatefulWidget {
+  const MainResultScreen({
     super.key,
     required this.totalQuestion,
     required this.correctedAnswer,
@@ -29,11 +29,10 @@ class CalculationResultScreen extends StatefulWidget {
   final int bonusPoints;
 
   @override
-  _CalculationResultScreenState createState() =>
-      _CalculationResultScreenState();
+  _MainResultScreenState createState() => _MainResultScreenState();
 }
 
-class _CalculationResultScreenState extends State<CalculationResultScreen> {
+class _MainResultScreenState extends State<MainResultScreen> {
   @override
   void initState() {
     super.initState();
