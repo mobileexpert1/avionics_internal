@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'chat_history_model.dart';
@@ -8,27 +9,6 @@ import 'chat_history_state.dart';
 
 class ChatHistoryCubit extends Cubit<ChatHistoryState> {
   ChatHistoryCubit() : super(ChatHistoryState());
-
-  Future<void> fetchChatHistory(context) async {
-    emit(
-      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
-    );
-
-    try {
-      final List<ChatHistoryModel> chatList = await ChatHistoryRepository()
-          .fetchChatHistory();
-      emit(state.copyWith(status: CommonApiStatus.success, chatList: chatList));
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
 
   Future<void> loadChatHistory({
     required BuildContext context,
@@ -84,10 +64,9 @@ class ChatHistoryCubit extends Cubit<ChatHistoryState> {
   }
 
   Future<void> deleteSession(BuildContext context, String sessionId) async {
-    emit(state.copyWith(
-      status: CommonApiStatus.submitting,
-      errorMessage: null,
-    ));
+    emit(
+      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+    );
 
     try {
       await ChatHistoryRepository().deleteChatSession(sessionId);
@@ -96,33 +75,31 @@ class ChatHistoryCubit extends Cubit<ChatHistoryState> {
       final updatedList = List<ChatHistoryModel>.from(state.chatList)
         ..removeWhere((item) => item.id == sessionId);
 
-      emit(state.copyWith(
-        chatList: updatedList,
-        status: CommonApiStatus.success,
-      ));
+      emit(
+        state.copyWith(chatList: updatedList, status: CommonApiStatus.success),
+      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
 
-      emit(state.copyWith(
-        status: CommonApiStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
-
   Future<void> updateSessionTitle(
-      BuildContext context, {
-        required String sessionId,
-        required String newTitle,
-      }) async {
-    emit(state.copyWith(
-      status: CommonApiStatus.submitting,
-      errorMessage: null,
-    ));
+    BuildContext context, {
+    required String sessionId,
+    required String newTitle,
+  }) async {
+    emit(
+      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+    );
 
     try {
-
       await ChatHistoryRepository().updateChatTitle(
         sessionId: sessionId,
         newTitle: newTitle,
@@ -135,21 +112,18 @@ class ChatHistoryCubit extends Cubit<ChatHistoryState> {
         return item;
       }).toList();
 
-      emit(state.copyWith(
-        chatList: updatedList,
-        status: CommonApiStatus.success,
-      ));
+      emit(
+        state.copyWith(chatList: updatedList, status: CommonApiStatus.success),
+      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
 
-      emit(state.copyWith(
-        status: CommonApiStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
-
-
 }
-
-

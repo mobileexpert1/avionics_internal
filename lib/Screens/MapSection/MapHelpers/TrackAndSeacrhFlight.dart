@@ -1,6 +1,7 @@
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_State.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
@@ -24,7 +25,9 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackAndSearchFlight);
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.trackAndSearchFlight,
+    );
   }
 
   void _onSearch(String value) {
@@ -64,7 +67,8 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                         MapSearchAircraftListState
                       >(
                         builder: (context, state) {
-                          if (state.status == CommonApiStatus.failure && state.isLoading == false) {
+                          if (state.status == CommonApiStatus.failure &&
+                              state.isLoading == false) {
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +145,8 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                               .isNotEmpty ??
                                           false)
                                       ? data.aircraftDetails!.icaoTypeCode
-                                      : (data.detail.acType.isNotEmpty ? data.detail.acType
+                                      : (data.detail.acType.isNotEmpty
+                                            ? data.detail.acType
                                             : ""),
 
                                   // data.aircraftDetails?.icaoTypeCode ??

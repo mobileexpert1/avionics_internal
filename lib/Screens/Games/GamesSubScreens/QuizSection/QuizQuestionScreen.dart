@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
@@ -6,10 +7,12 @@ import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_st
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../../Constants/constantImages.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
@@ -106,7 +109,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       },
                     ),
               leftButton: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
+                ),
                 onPressed: () async {
                   final cubit = context.read<QuizQuestionCubit>();
                   final gameName = cubit.returnGameName();

@@ -81,7 +81,6 @@ class BadgesCubit extends Cubit<BadgesState> {
     }
   }
 
-  /// Change Tab
   Future<void> changeTab(
     String tabName, {
     required BuildContext context,

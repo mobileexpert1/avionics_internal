@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pinput/pinput.dart';
-import '../../../Constants/ConstantStrings.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../bloc/Onboarding/otp/otp_cubit.dart';
@@ -105,10 +107,9 @@ class _OtpScreenState extends State<OtpScreen> {
                       ? ConstantStrings.appBarTitleOTPScreen
                       : ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.black,
-                      size: 30,
+                    icon: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      fit: BoxFit.cover,
                     ),
                     onPressed: () {
                       Navigator.pop(context);

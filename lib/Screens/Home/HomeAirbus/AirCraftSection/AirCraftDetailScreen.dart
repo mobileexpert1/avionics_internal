@@ -69,14 +69,13 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 state.airCraftDetails?.results.identification.aircraftModel ??
                 "",
             centerTitle: false,
-              leftButton: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () => Navigator.pop(context),
+            leftButton: IconButton(
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                fit: BoxFit.cover,
               ),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
           body: SingleChildScrollView(
             child: Center(

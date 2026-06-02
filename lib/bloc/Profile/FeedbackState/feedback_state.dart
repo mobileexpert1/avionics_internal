@@ -16,11 +16,11 @@ class FeedbackState {
     this.selectedCategories = const [],
     this.showCategories = true,
     this.categories = const [
-      "Passenger",
-      "Military and Government",
-      "Cargo",
-      "General Aviation",
-      "Jets",
+      "App Performance",
+      "Customer Support",
+      "Easy to Use",
+      "Content Quality",
+      "Bug/Errors",
     ],
   });
 

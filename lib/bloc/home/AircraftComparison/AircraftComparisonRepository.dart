@@ -8,18 +8,6 @@ class AircraftRepository {
     String? query,
     int page = 1,
   }) async {
-    // Not working in Web section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return PaginatedList<AircraftModel>(
-    //     results: [],
-    //     count: 0,
-    //     totalPages: 1,
-    //     currentPage: 1,
-    //     hasNext: false,
-    //     hasPrevious: false,
-    //   );
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlAirplaneConstant.airplaneService}"

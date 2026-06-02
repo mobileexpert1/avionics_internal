@@ -21,28 +21,33 @@ class ChatSessionResponse {
 class ChatHistoryModel {
   final String id;
   final String title;
+  final String createdAt;
 
-  ChatHistoryModel({required this.id, required this.title});
+  ChatHistoryModel({
+    required this.id,
+    required this.title,
+    required this.createdAt,
+  });
 
   factory ChatHistoryModel.fromJson(Map<String, dynamic> json) {
-    return ChatHistoryModel(id: json['id'] ?? '', title: json['title'] ?? '');
+    return ChatHistoryModel(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      createdAt: json['created_at'] ?? '',
+    );
   }
 
-  ChatHistoryModel copyWith({
-    String? id,
-    String? title,
-  }) {
+  ChatHistoryModel copyWith({String? id, String? title, String? createdAt}) {
     return ChatHistoryModel(
       id: id ?? this.id,
       title: title ?? this.title,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
+
   // Map<String, dynamic> toJson() => {'id': id, 'title': title};
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-    };
+    return {'id': id, 'title': title, 'created_at': createdAt};
   }
 }

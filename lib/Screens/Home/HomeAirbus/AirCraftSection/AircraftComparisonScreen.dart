@@ -1,9 +1,11 @@
 import 'dart:ui';
+
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
@@ -83,7 +85,10 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
           title: 'Models Lists',
           centerTitle: false,
           leftButton: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,size: 30),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.backArrowButton),
+              fit: BoxFit.cover,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -147,349 +152,348 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                       Flexible(
                         child: models.isEmpty
                             ? const Center(
-                          child: Text(
-                            'No Compare models available',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        )
-                            : ScrollConfiguration(
-                          behavior: const ScrollBehavior().copyWith(
-                            scrollbars: true,
-                            dragDevices: {
-                              PointerDeviceKind.touch,
-                              PointerDeviceKind.mouse,
-                            },
-                          ),
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            padding: EdgeInsets.only(
-                              bottom: screenWidth * 0.05,
-                              left: screenWidth * 0.025,
-                              right: screenWidth * 0.025,
-                            ),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount:
-                            models.length +
-                                (state.isFetchingMore ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index >= models.length) {
-                                if (state.hasNextPage) {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                } else {
-                                  return Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Center(
-                                      child: Text(
-                                        "No more models",
-                                        style: AppTextStyles.medium(
-                                          14,
-                                        ).copyWith(height: 1.0, color: AppColors.grayMedium),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-
-                              final model = models[index];
-                              if (kIsWeb) {
-                                return Padding(
-                                  key: ValueKey(model.id),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10.0,
+                                child: Text(
+                                  'No Compare models available',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
                                   ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context, model);
-                                    },
-                                    child: Container(
-                                      height: cardHeight,
-                                      clipBehavior: Clip.hardEdge,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(5),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black
-                                                .withOpacity(0.08),
-                                            blurRadius: 5,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 1),
+                                ),
+                              )
+                            : ScrollConfiguration(
+                                behavior: const ScrollBehavior().copyWith(
+                                  scrollbars: true,
+                                  dragDevices: {
+                                    PointerDeviceKind.touch,
+                                    PointerDeviceKind.mouse,
+                                  },
+                                ),
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  padding: EdgeInsets.only(
+                                    bottom: screenWidth * 0.05,
+                                    left: screenWidth * 0.025,
+                                    right: screenWidth * 0.025,
+                                  ),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount:
+                                      models.length +
+                                      (state.isFetchingMore ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index >= models.length) {
+                                      if (state.hasNextPage) {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
                                           ),
-                                        ],
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                        children: [
-                                          CachedAnyImage(
-                                            key: ValueKey(model.image),
-                                            imagePath: model.image,
-                                            width: imageWidth,
-                                            height: imageHeight,
-                                            contentImage: BoxFit.cover,
-                                            isForPlaneList: true,
+                                        );
+                                      } else {
+                                        return Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: Text(
+                                              "No more models",
+                                              style: AppTextStyles.medium(14)
+                                                  .copyWith(
+                                                    height: 1.0,
+                                                    color: AppColors.grayMedium,
+                                                  ),
+                                            ),
                                           ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .center,
-                                                  children: [
-                                                    Text(
-                                                      model.aircraftModel,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w600,
-                                                        fontSize:
-                                                        bodyFontSize,
-                                                      ),
-                                                      overflow:
-                                                      TextOverflow
-                                                          .ellipsis,
-                                                    ),
-                                                    if (model
-                                                        .icaoTypeCode
-                                                        .isNotEmpty)
-                                                      Padding(
-                                                        padding:
-                                                        const EdgeInsets.only(
-                                                          left: 8.0,
-                                                        ),
-                                                        child: Container(
-                                                          padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal:
-                                                            6,
-                                                            vertical:
-                                                            2,
-                                                          ),
-                                                          decoration: BoxDecoration(
-                                                            color: Colors
-                                                                .white,
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                              4,
-                                                            ),
-                                                            boxShadow: const [
-                                                              BoxShadow(
-                                                                color: Colors
-                                                                    .grey,
-                                                                spreadRadius:
-                                                                0.1,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          child: Text(
-                                                            model
-                                                                .icaoTypeCode,
-                                                            style: const TextStyle(
-                                                              fontSize:
-                                                              12,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .w500,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
+                                        );
+                                      }
+                                    }
+
+                                    final model = models[index];
+                                    if (kIsWeb) {
+                                      return Padding(
+                                        key: ValueKey(model.id),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.pop(context, model);
+                                          },
+                                          child: Container(
+                                            height: cardHeight,
+                                            clipBehavior: Clip.hardEdge,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.08),
+                                                  blurRadius: 5,
+                                                  spreadRadius: 1,
+                                                  offset: const Offset(0, 1),
                                                 ),
-                                                const SizedBox(height: 6),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .center,
-                                                  children: [
-                                                    ClipRRect(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                        2,
+                                              ],
+                                            ),
+                                            padding: const EdgeInsets.all(10),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                CachedAnyImage(
+                                                  key: ValueKey(model.image),
+                                                  imagePath: model.image,
+                                                  width: imageWidth,
+                                                  height: imageHeight,
+                                                  contentImage: BoxFit.cover,
+                                                  isForPlaneList: true,
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Expanded(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            model.aircraftModel,
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize:
+                                                                  bodyFontSize,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                          if (model
+                                                              .icaoTypeCode
+                                                              .isNotEmpty)
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets.only(
+                                                                    left: 8.0,
+                                                                  ),
+                                                              child: Container(
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          6,
+                                                                      vertical:
+                                                                          2,
+                                                                    ),
+                                                                decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        4,
+                                                                      ),
+                                                                  boxShadow: const [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      spreadRadius:
+                                                                          0.1,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                child: Text(
+                                                                  model
+                                                                      .icaoTypeCode,
+                                                                  style: const TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                        ],
                                                       ),
-                                                      child: SizedBox(
-                                                        width: 40,
-                                                        height: 40,
-                                                        child: CachedAnyImage(
-                                                          imagePath:
-                                                          model
-                                                              .manufacturer
-                                                              ?.logo ??
-                                                              "",
-                                                          width: 40,
-                                                          height: 40,
-                                                          contentImage:
-                                                          BoxFit
-                                                              .contain,
-                                                          isForPlaneList:
-                                                          true,
-                                                        ),
+                                                      const SizedBox(height: 6),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  2,
+                                                                ),
+                                                            child: SizedBox(
+                                                              width: 40,
+                                                              height: 40,
+                                                              child: CachedAnyImage(
+                                                                imagePath:
+                                                                    model
+                                                                        .manufacturer
+                                                                        ?.logo ??
+                                                                    "",
+                                                                width: 40,
+                                                                height: 40,
+                                                                contentImage:
+                                                                    BoxFit
+                                                                        .contain,
+                                                                isForPlaneList:
+                                                                    true,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 8,
+                                                          ),
+                                                          if (model
+                                                                  .manufacturer
+                                                                  ?.companyName !=
+                                                              null)
+                                                            Text(
+                                                              model
+                                                                      .manufacturer
+                                                                      ?.companyName ??
+                                                                  "",
+                                                              style:
+                                                                  const TextStyle(
+                                                                    fontSize:
+                                                                        13,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                        ],
                                                       ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 8,
-                                                    ),
-                                                    if (model
-                                                        .manufacturer
-                                                        ?.companyName !=
-                                                        null)
-                                                      Text(
-                                                        model
-                                                            .manufacturer
-                                                            ?.companyName ??
-                                                            "",
-                                                        style:
-                                                        const TextStyle(
-                                                          fontSize:
-                                                          13,
-                                                        ),
-                                                        overflow:
-                                                        TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                  ],
+                                                    ],
+                                                  ),
+                                                ),
+                                                const Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  size: 30,
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          const Icon(
-                                            Icons.arrow_forward_ios,
-                                            size: 30,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context, model);
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.symmetric(
-                                          vertical: 5,
-                                          horizontal: 10,
                                         ),
-                                        child: Row(
+                                      );
+                                    } else {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context, model);
+                                        },
+                                        child: Column(
                                           children: [
-                                            model.image != null &&
-                                                model.image.isNotEmpty
-                                                ? CachedAnyImage(
-                                              imagePath:
-                                              model.image,
-                                              width: 70,
-                                              height: 70,
-                                              contentImage:
-                                              BoxFit.contain,
-                                              isForPlaneList:
-                                              true,
-
-                                            )
-                                                : SvgPicture.asset(
-                                              CommonUi.setSvgImage(
-                                                AssetsPath
-                                                    .manuFirstImage,
-                                              ),
-                                              width: 40,
-                                              height: 40,
-                                            ),
-
-                                            const SizedBox(width: 20),
-
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 5,
+                                                    horizontal: 10,
+                                                  ),
+                                              child: Row(
                                                 children: [
-                                                  Text(
-                                                    model.aircraftModel ??
-                                                        "",
-                                                    style:
-                                                    const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w500,
-                                                      color: Color(
-                                                        0xFF3F3D56,
-                                                      ),
+                                                  model.image != null &&
+                                                          model.image.isNotEmpty
+                                                      ? CachedAnyImage(
+                                                          imagePath:
+                                                              model.image,
+                                                          width: 70,
+                                                          height: 70,
+                                                          contentImage:
+                                                              BoxFit.contain,
+                                                          isForPlaneList: true,
+                                                        )
+                                                      : SvgPicture.asset(
+                                                          CommonUi.setSvgImage(
+                                                            AssetsPath
+                                                                .manuFirstImage,
+                                                          ),
+                                                          width: 40,
+                                                          height: 40,
+                                                        ),
+
+                                                  const SizedBox(width: 20),
+
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          model.aircraftModel ??
+                                                              "",
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: Color(
+                                                                  0xFF3F3D56,
+                                                                ),
+                                                              ),
+                                                        ),
+
+                                                        Row(
+                                                          children: [
+                                                            ClipRRect(
+                                                              child: SizedBox(
+                                                                width: 60,
+                                                                height: 15,
+                                                                child: CachedAnyImage(
+                                                                  imagePath:
+                                                                      model
+                                                                          .manufacturer
+                                                                          ?.logo ??
+                                                                      "",
+                                                                  width:
+                                                                      screenWidth *
+                                                                      0.06,
+                                                                  height:
+                                                                      screenWidth *
+                                                                      0.06,
+                                                                  contentImage:
+                                                                      BoxFit
+                                                                          .fill,
+                                                                  isForPlaneList:
+                                                                      true,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-
-                                                  Row(
-                                                    children: [
-                                                      ClipRRect(
-                                                        child: SizedBox(
-                                                          width: 60,
-                                                          height: 15,
-                                                          child: CachedAnyImage(
-                                                            imagePath:
-                                                            model
-                                                                .manufacturer
-                                                                ?.logo ??
-                                                                "",
-                                                            width:
-                                                            screenWidth *
-                                                                0.06,
-                                                            height:
-                                                            screenWidth *
-                                                                0.06,
-                                                            contentImage:
-                                                            BoxFit
-                                                                .fill,
-                                                            isForPlaneList:
-                                                            true,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                    ],
-                                                  ),
-
                                                 ],
                                               ),
                                             ),
+
+                                            Divider(
+                                              height: 1,
+                                              thickness: 1,
+                                              color: Colors.grey.shade300,
+                                            ),
                                           ],
                                         ),
-                                      ),
-
-                                      Divider(
-                                        height: 1,
-                                        thickness: 1,
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
                       ),
                     ],
                   );

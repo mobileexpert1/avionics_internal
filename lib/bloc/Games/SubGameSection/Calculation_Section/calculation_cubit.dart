@@ -13,8 +13,8 @@ class CalculationCubit extends Cubit<CalculationState> {
       final response = await OneWordTopicRepository().getCalculationTopic();
 
       if (response != null) {
-        final List<quizItem> gameList = response.data.map((oneWord) {
-          return quizItem(
+        final List<QuizPerItem> gameList = response.data.map((oneWord) {
+          return QuizPerItem(
             title: oneWord.name,
             isLocked: !(oneWord.isEnable),
             gameNumber: oneWord.gameNumber,

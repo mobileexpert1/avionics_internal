@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/constantImages.dart';
@@ -9,10 +10,10 @@ import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_model.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterCubit.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterModel.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparsionFilterState.dart';
 import '../../../../MapSection/AirportStationDetailCard/AirportStationDetailCard.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
 import '../FilterScreen/Filter_Screen_For_Comparison.dart';
 
 class ComparisonScreen extends StatefulWidget {
@@ -65,10 +66,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         title: "Comparison ${widget.model1Name}, ${widget.model2Name}",
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 30,
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -77,32 +77,32 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             final currentState = context.read<ComparisonFilterCubit1>().state;
 
             final selectedFilters =
-            await showModalBottomSheet<List<FilterCategory1>>(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-              ),
-              builder: (context) {
-                return BlocProvider.value(
-                  value: context.read<ComparisonFilterCubit1>(),
-                  child: FractionallySizedBox(
-                    heightFactor: 0.9,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                      child: FilterScreenForComparison(
-                        isAlreadyProcessing: currentState.isApplied,
-                        modelResponse: currentState,
-                      ),
+                await showModalBottomSheet<List<ComparisonFilterCategory>>(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
                     ),
                   ),
+                  builder: (context) {
+                    return BlocProvider.value(
+                      value: context.read<ComparisonFilterCubit1>(),
+                      child: FractionallySizedBox(
+                        heightFactor: 0.9,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                          child: FilterScreenForComparison(
+                            isAlreadyProcessing: currentState.isApplied,
+                            modelResponse: currentState,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
             if (selectedFilters != null) {
               context.read<ComparisonFilterCubit1>().updateSelectedFilters(
                 selectedFilters,
@@ -120,9 +120,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       ),
       body: BlocBuilder<ComparisonCubit, ComparisonState>(
         builder: (context, state) {
-          return BlocBuilder<ComparisonFilterCubit1, FilterState1>(
+          return BlocBuilder<ComparisonFilterCubit1, ComparisonFilterState>(
             buildWhen: (previous, current) =>
-            previous.filterCategories != current.filterCategories ||
+                previous.filterCategories != current.filterCategories ||
                 previous.isApplied != current.isApplied,
             builder: (context, filterState) {
               if (state.isLoading) {
@@ -141,9 +141,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 context
                     .read<ComparisonFilterCubit1>()
                     .loadFiltersFromComparison1(
-                  currentState.isApplied,
-                  currentState,
-                );
+                      currentState.isApplied,
+                      currentState,
+                    );
               }
 
               if (model == null) {
@@ -157,8 +157,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   : 'operational_data';
 
               final activeCategory = filterState.filterCategories.firstWhere(
-                    (cat) => cat.id == activeCategoryId,
-                orElse: () => FilterCategory1(id: '', name: '', options: []),
+                (cat) => cat.id == activeCategoryId,
+                orElse: () => ComparisonFilterCategory(id: '', name: '', options: []),
               );
 
               // Filter selected options with detailed debugging
@@ -217,7 +217,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                     a2Values.add(model.aircraft2.general.engineType);
                     break;
 
-                // TECHNICAL DATA
+                  // TECHNICAL DATA
                   case 'wingspan_m':
                     a1Values.add(model.aircraft1.technicalData.wingspan.meters);
                     a2Values.add(model.aircraft2.technicalData.wingspan.meters);
@@ -243,7 +243,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                     a2Values.add(model.aircraft2.technicalData.mlw);
                     break;
 
-                // OPERATIONAL DATA
+                  // OPERATIONAL DATA
                   case 'takeoff_speed_kts':
                     a1Values.add(
                       model.aircraft1.operationalData.takeoffSpeedKts,
@@ -446,75 +446,75 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                       padding: const EdgeInsets.all(15),
                       child: selectedOptions.isEmpty
                           ? const Center(
-                        child: Text(
-                          "No parameters selected for this category",
-                        ),
-                      )
+                              child: Text(
+                                "No parameters selected for this category",
+                              ),
+                            )
                           : Table(
-                        columnWidths: const {
-                          0: FlexColumnWidth(3),
-                          1: FlexColumnWidth(2),
-                          2: FlexColumnWidth(2),
-                        },
-                        border: TableBorder.all(
-                          color: AppColors.dividerLineColourForComparison,
-                          width: 1,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                              columnWidths: const {
+                                0: FlexColumnWidth(3),
+                                1: FlexColumnWidth(2),
+                                2: FlexColumnWidth(2),
+                              },
+                              border: TableBorder.all(
+                                color: AppColors.dividerLineColourForComparison,
+                                width: 1,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
 
-                        children: [
-                          for (int i = 0; i < labels.length; i++)
-                            TableRow(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Text(
-                                    labels[i],
-                                    style: AppTextStyles.bold(14)
-                                        .copyWith(
-                                      height: 1.3,
-                                      color: AppColors
-                                          .grayForCompareTextColour,
-                                    ),
-                                  ),
-                                ),
-
-                                TableCell(
-                                  verticalAlignment:
-                                  TableCellVerticalAlignment.fill,
-                                  child: Container(
-                                    color: AppColors.grayForCompareItem,
-                                    padding: const EdgeInsets.all(10),
-                                    child: Center(
-                                      child: Text(
-                                        a1Values[i],
-                                        style: AppTextStyles.regular(15)
-                                            .copyWith(
-                                          height: 1.3,
-                                          color: AppColors.black,
+                                for (int i = 0; i < labels.length; i++)
+                                  TableRow(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Text(
+                                          labels[i],
+                                          style: AppTextStyles.bold(14)
+                                              .copyWith(
+                                                height: 1.3,
+                                                color: AppColors
+                                                    .grayForCompareTextColour,
+                                              ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
 
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Center(
-                                    child: Text(
-                                      a2Values[i],
-                                      style: AppTextStyles.regular(15)
-                                          .copyWith(
-                                        height: 1.3,
-                                        color: AppColors.black,
+                                      TableCell(
+                                        verticalAlignment:
+                                            TableCellVerticalAlignment.fill,
+                                        child: Container(
+                                          color: AppColors.grayForCompareItem,
+                                          padding: const EdgeInsets.all(10),
+                                          child: Center(
+                                            child: Text(
+                                              a1Values[i],
+                                              style: AppTextStyles.regular(15)
+                                                  .copyWith(
+                                                    height: 1.3,
+                                                    color: AppColors.black,
+                                                  ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+
+                                      Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Center(
+                                          child: Text(
+                                            a2Values[i],
+                                            style: AppTextStyles.regular(15)
+                                                .copyWith(
+                                                  height: 1.3,
+                                                  color: AppColors.black,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
                               ],
                             ),
-                        ],
-                      ),
                     ),
                   ),
                 ],

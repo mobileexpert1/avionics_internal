@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../Constants/AppColors.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
@@ -186,8 +186,7 @@ class RadioChips extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        mainAxisSize:
-        isForFlightScreen ? MainAxisSize.max : MainAxisSize.min,
+        mainAxisSize: isForFlightScreen ? MainAxisSize.max : MainAxisSize.min,
         children: List.generate(values.length, (index) {
           final selected = index == selectedIndex;
           return GestureDetector(
@@ -205,12 +204,9 @@ class RadioChips extends StatelessWidget {
               ),
               child: Text(
                 values[index],
-                style:
-                AppTextStyles.bold(12).copyWith(
+                style: AppTextStyles.bold(12).copyWith(
                   height: 1.0,
-                  color: selected
-                      ? AppColors.white
-                      : AppColors.grayMedium,
+                  color: selected ? AppColors.white : AppColors.grayMedium,
                 ),
               ),
             ),
@@ -249,4 +245,3 @@ void _openUrl(String url) async {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }
-

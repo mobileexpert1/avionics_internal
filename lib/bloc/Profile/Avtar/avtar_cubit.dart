@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
-import '../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Onboarding/signup/signup_repository.dart';
 import 'avtar_state.dart';
@@ -20,21 +19,25 @@ class AvtarCubit extends Cubit<AvtarState> {
   }
 
   Future<void> selectAvatar(
-    String userType,
-    bool isComeFromSignup,
-    bool? isComeFromSocialLogin,
-    BuildContext context,
-    Map<String, String> signupData,
-  ) async {
+      String userTypeUrl,
+      String userType,
+      bool isComeFromSignup,
+      bool? isComeFromSocialLogin,
+      BuildContext context,
+      Map<String, String> signupData,
+      ) async {
+
     emit(
       state.copyWith(
-        status: CommonApiStatus.submitting,
+        status: CommonApiStatus.initial,
         selectedUserType: userType,
       ),
     );
 
     try {
+
       if (isComeFromSignup) {
+
         await SignupRepository().registerUser(
           first_name: signupData['first_name'] ?? '',
           last_name: signupData['last_name'] ?? '',
@@ -47,21 +50,40 @@ class AvtarCubit extends Cubit<AvtarState> {
           auth_type: 'email',
         );
 
+        if (!context.mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Avatar selected successfully! Verify your email.'),
+            content: Text(
+              'Avatar selected successfully! Verify your email.',
+            ),
             behavior: SnackBarBehavior.floating,
             duration: Duration(seconds: 2),
           ),
         );
+
       } else {
-        await AvtarRepository().setAvtarForProfile(userType: userType,context: context);
+
+        await AvtarRepository().setAvtarForProfile(
+          userType: userType,
+          context: context,
+        );
+
       }
 
       await SharedPrefsHelper.setAvtarUserType(userType);
-      emit(state.copyWith(status: CommonApiStatus.success));
+      await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
+
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.success,
+        ),
+      );
+
+      if (!context.mounted) return;
 
       if (isComeFromSignup) {
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -71,11 +93,17 @@ class AvtarCubit extends Cubit<AvtarState> {
             ),
           ),
         );
+
       } else {
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Avatar updated successfully')),
+          const SnackBar(
+            content: Text('Avatar updated successfully'),
+          ),
         );
+
         if (isComeFromSocialLogin == true) {
+
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -84,10 +112,19 @@ class AvtarCubit extends Cubit<AvtarState> {
               ),
             ),
           );
+
         }
       }
+
     } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+      if (context.mounted) {
+        SessionCommonTokenError.handleUnauthorizedError(
+          context,
+          e,
+        );
+      }
+
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -101,7 +138,7 @@ class AvtarCubit extends Cubit<AvtarState> {
     bool isComeFromSignup,
     bool isComeFromSocialLogin,
   ) async {
-    emit(state.copyWith(status: CommonApiStatus.initial, errorMessage: null));
+    emit(state.copyWith(status: CommonApiStatus.initial));
     try {
       final response = await AvtarRepository().loadAvatars();
       var userType = await SharedPrefsHelper.getAvtarUserType();
@@ -109,7 +146,11 @@ class AvtarCubit extends Cubit<AvtarState> {
         userType = '';
       }
       emit(
-        state.copyWith(status: CommonApiStatus.success, avatars: response.data,selectedUserType: userType,),
+        state.copyWith(
+          status: CommonApiStatus.success,
+          avatars: response.data,
+          selectedUserType: userType,
+        ),
       );
     } catch (e) {
       emit(

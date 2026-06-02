@@ -18,7 +18,6 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
     emit(state.copyWith(
       password: password,
       isButtonEnabled: isButtonEnabled,
-      // Clear previous error only when user edits
       passwordError: null,
     ));
   }
@@ -30,7 +29,6 @@ class CreateNewPasswordCubit extends Cubit<CreateNewPasswordState> {
     emit(state.copyWith(
       confirmPassword: confirmPassword,
       isButtonEnabled: isButtonEnabled,
-      // Clear previous error only when user edits
       confirmPasswordError: null,
     ));
   }

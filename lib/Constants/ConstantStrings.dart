@@ -35,6 +35,8 @@ class ConstantStrings {
   // ─────────────────────────────
   static const String skip = "Skip";
   static const String next = "Next";
+  static const String beginAnalysisText = "Begin Analysis";
+  static const String startInvestigationText = "  Start Investigation";
 
   // ─────────────────────────────
   // Authentication
@@ -96,7 +98,7 @@ class ConstantStrings {
   static const String signupTitle = 'Sign up';
   static const String submitTitle = 'Submit';
   static const String startSubscription = 'Start Subscription';
-  static const String manageAccount = 'Manage Your Account';
+  static const String manageAccount = 'Manage Account';
   static const String tutorialScreen = 'Tutorial Screen';
   static const String profileTitle = 'Profile';
   static const String glossaryTitle = 'Glossary';
@@ -147,7 +149,6 @@ class SubscriptionTexts {
   static const String cancelTitle = 'Cancel Subscription';
   static const String billingDetailsTitle = 'Billing Detail';
 
-
   // ─────────────────────────────
   // Monthly Plan
   // ─────────────────────────────
@@ -175,6 +176,17 @@ class ApiBaseUrlConstant {
 
 class ApiFunctionUrlConstant {
   static const String userService = 'user-service/';
+}
+
+class UrlConstantForPrivacyTermsAbout {
+  static const String aboutUrl =
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=about";
+  static const String privacyUrl =
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=privacy";
+  static const String termsUrl =
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=terms";
+  static const String faqUrl =
+      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}site-content?tab=faq";
 }
 
 class ApiServiceUrlConstant {

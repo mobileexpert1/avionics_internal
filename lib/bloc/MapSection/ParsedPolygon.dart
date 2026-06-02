@@ -23,40 +23,31 @@ List<ParsedPolygon> parseGeoJson(String jsonStr) {
     final List<List<List<double>>> polygons = [];
 
     if (type == 'Polygon') {
-      // Polygon → coordinates: [ [ [lng, lat], ... ] ]
       final List rings = geometry['coordinates'];
-
       final List<List<double>> outerRing = [];
       for (final coord in rings[0]) {
         outerRing.add([
-          (coord[0] as num).toDouble(), // lng
-          (coord[1] as num).toDouble(), // lat
+          (coord[0] as num).toDouble(),
+          (coord[1] as num).toDouble(),
         ]);
       }
-
       polygons.add(outerRing);
     } else if (type == 'MultiPolygon') {
-      // MultiPolygon → [ [ [ [lng, lat] ] ], ... ]
       final List multi = geometry['coordinates'];
-
       for (final polygon in multi) {
         final List<List<double>> outerRing = [];
-
         for (final coord in polygon[0]) {
           outerRing.add([
-            (coord[0] as num).toDouble(), // lng
-            (coord[1] as num).toDouble(), // lat
+            (coord[0] as num).toDouble(),
+            (coord[1] as num).toDouble(),
           ]);
         }
-
         polygons.add(outerRing);
       }
     } else {
-      continue; // Ignore unsupported geometry
+      continue;
     }
-
     result.add(ParsedPolygon(id: 'fir_$id', name: name, polygons: polygons));
-
     id++;
   }
 

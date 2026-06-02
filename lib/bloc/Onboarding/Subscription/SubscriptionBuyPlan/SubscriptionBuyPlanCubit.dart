@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,13 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
-import 'SubscriptionBuyPlanState.dart';
-import 'SubscriptionBuyPlanRepository.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
+import 'SubscriptionBuyPlanRepository.dart';
+import 'SubscriptionBuyPlanState.dart';
 
-// ---------------- RevenueCat Keys ----------------
 const String _rcAppleApiKey = 'appl_fyiYkNFxAHXQCEUVuZbxJsicfHX';
 const String _rcAndroidApiKey = 'goog_nQAujUhKgFBEPESGnzMOczSTIOv';
 
@@ -174,7 +173,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
     if (isActive) {
       emit(state.copyWith(waitingForBackendConfirmation: true, loading: true));
-      await waitForBackendConfirmation(isPro, activeProductId ?? "");
+      if (!isClosed) {
+        await waitForBackendConfirmation(isPro, activeProductId ?? "");
+      }
     } else {
       emit(state.copyWith(purchased: false, loading: false));
     }
@@ -212,16 +213,20 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       } catch (e) {
         //emit(state.copyWith(error: e.toString()));
       }
-      await Future.delayed(const Duration(seconds: 6));
+      if (!isClosed) {
+        await Future.delayed(const Duration(seconds: 6));
+      }
     }
-    emit(
-      state.copyWith(
-        purchased: false,
-        waitingForBackendConfirmation: false,
-        loading: false,
-        error: "Subscription verification taking longer than expected",
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          purchased: false,
+          waitingForBackendConfirmation: false,
+          loading: false,
+          error: "In Progress to verification",
+        ),
+      );
+    }
   }
 
   Future<void> isRefreshTheScreen(bool isRefresh) async {
@@ -231,8 +236,10 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
   // ================= LOAD OFFERINGS =================
   Future<void> loadOfferings() async {
     emit(state.copyWith(loading: true));
+
     try {
       final offerings = await Purchases.getOfferings();
+
       if (offerings.current == null) {
         emit(
           state.copyWith(
@@ -244,11 +251,32 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         );
         return;
       }
+
+      final current = offerings.current!;
+
+      List<Package> subscriptionPackages = [];
+      List<Package> consumablePackages = [];
+
+      for (final package in current.availablePackages) {
+        final productId = package.storeProduct.identifier.toLowerCase();
+        // CONSUMABLES
+        if (productId.contains("token") || productId.contains("credit")) {
+          consumablePackages.add(package);
+        } else {
+          subscriptionPackages.add(package);
+        }
+      }
+
       emit(
         state.copyWith(
           loading: false,
           status: CommonApiStatus.success,
           offerings: offerings,
+
+          subscriptionPackages: subscriptionPackages,
+
+          consumablePackages: consumablePackages,
+
           isBlocked: false,
         ),
       );
@@ -285,7 +313,44 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     emit(state.copyWith(selectedPackage: package));
   }
 
+  void selectConsumablePackage(Package package) {
+    emit(state.copyWith(selectedConsumablePackage: package));
+  }
+
   // ================= PURCHASE =================
+
+  void resetConsumablePurchaseState() {
+    emit(state.copyWith(consumablePurchased: false));
+  }
+
+  Future<void> buyConsumable() async {
+    final package = state.selectedConsumablePackage;
+
+    if (package == null) {
+      emit(state.copyWith(error: "No consumable selected"));
+
+      return;
+    }
+
+    emit(state.copyWith(loading: true, consumablePurchased: false));
+
+    try {
+      await Purchases.purchase(PurchaseParams.package(package));
+
+      debugPrint(
+        "Consumable purchased: "
+        "${package.storeProduct.identifier}",
+      );
+
+      emit(state.copyWith(loading: false, consumablePurchased: true));
+    } on PlatformException catch (e) {
+      if (!isClosed) {
+        emit(state.copyWith(loading: false, consumablePurchased: false));
+      }
+      _handlePurchaseError(e);
+    }
+  }
+
   Future<void> buySelected() async {
     final package = state.selectedPackage;
 

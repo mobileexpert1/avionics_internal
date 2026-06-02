@@ -90,9 +90,6 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         creditUsagePercentage: user.creditUsagePercentage ?? 0.0,
       );
 
-      await SharedPrefsHelper.setAvtarUserType(user.userType);
-      await SharedPrefsHelper.setAvtarUserUrl(user.userTypeUrl ?? '');
-
       emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);

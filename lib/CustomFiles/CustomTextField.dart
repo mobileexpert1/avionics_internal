@@ -1,6 +1,8 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../Helpers/AppTextStyles/AppTextStyles.dart';
 
@@ -84,9 +86,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ? IconButton(
                   padding: EdgeInsets.zero,
                   iconSize: 20.0,
-                  icon: Icon(
-                    _isObscure ? Icons.visibility_off : Icons.visibility,
-                    color: _isObscure ? Colors.grey : AppColors.primaryDark,
+                  icon: SvgPicture.asset(
+                    CommonUi.setSvgImage(
+                      _isObscure == true
+                          ? AssetsPath.visibilityOff
+                          : AssetsPath.visibilityOn,
+                    ),
                   ),
                   onPressed: () {
                     setState(() {

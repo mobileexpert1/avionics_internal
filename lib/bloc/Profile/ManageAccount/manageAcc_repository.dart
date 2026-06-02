@@ -23,15 +23,10 @@ class ManageAccountRepository {
 
     try {
       final raw = await ApiService.get(url: url);
-
       final Map<String, dynamic> json =
       raw is String ? jsonDecode(raw) as Map<String, dynamic> : raw;
-
       final profile = ManageAccountModel.fromJson(json);
-
       await SharedPrefsHelper.save(profile.id);
-      //await _profiles.insertAll([profile]);
-
       return profile;
     }
     on HttpStatusException catch (e) {
@@ -73,7 +68,6 @@ class ManageAccountRepository {
     }
 
     final profile = await _profiles.getById('user_profile', uid);
-
     if (profile == null) {
       throw Exception('No cached profile available for user $uid');
     }

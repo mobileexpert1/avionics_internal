@@ -2,7 +2,6 @@ import 'package:avionics_internal/bloc/Home/AircraftComparison/Comparison/Compar
 import 'package:equatable/equatable.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 
-
 class ComparisonState extends Equatable {
   final ComparisonModel? comparisonModel;
   final bool isLoading;

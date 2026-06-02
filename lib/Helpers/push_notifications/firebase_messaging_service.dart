@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 
 final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =

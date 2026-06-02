@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/SearchBarWidget.dart';
@@ -64,7 +66,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
         title: 'Manufacturers Library',
         centerTitle: false,
         leftButton: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+          icon: SvgPicture.asset(
+            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            fit: BoxFit.cover,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         rightButton: IconButton(
@@ -74,10 +79,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
             height: 31,
           ),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingScreen()),
-            );
+            AppNavigator.push(context, SettingScreen(), disableSwipeBack: true);
           },
         ),
       ),
@@ -150,7 +152,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                 ),
                                 child: Text(
                                   label,
-                                  style: AppTextStyles.regular(15.67).copyWith(
+                                  style: AppTextStyles.regular(15).copyWith(
                                     height: 1.0,
                                     color: AppColors.primaryDark,
                                   ),
@@ -210,17 +212,18 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     FirebaseEvents.manufacturerScreen,
                                   );
 
-                                  Navigator.push(
+                                  AppNavigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                        create: (_) => ManufacturerCubit(),
-                                        child: ManufacturerDetailScreen(
-                                          key: ValueKey(item.id),
-                                          manufacturerDetailId: item.id,
-                                        ),
-                                      ),
+                                    ManufacturerDetailScreen(
+                                      key: ValueKey(item.id),
+                                      manufacturerDetailId: item.id,
                                     ),
+                                    multiBlocProviders: [
+                                      BlocProvider(
+                                        create: (_) => ManufacturerCubit(),
+                                      ),
+                                    ],
+                                    disableSwipeBack: true,
                                   );
                                 },
                                 child: Column(

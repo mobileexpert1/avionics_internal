@@ -3,6 +3,7 @@ import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_reposistory.
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 
@@ -89,7 +90,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         flightId: flightId,
         flightNumber: flightNumber,
       );
-      // updateFlightFavoriteByCallSign(callSign);
+       updateFlightFavoriteByCallSign(callSign);
       emit(state.copyWith(status: CommonApiStatus.success));
     } catch (e) {
       updateFlightFavoriteByCallSign(callSign);

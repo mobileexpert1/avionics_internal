@@ -1,9 +1,6 @@
 import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
-import 'package:flutter/cupertino.dart';
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
-import '../OldSubs/subscriptionResponseModel.dart';
-import 'SubscriptionBuyPlanCubit.dart';
 import 'SubscriptionResponseModel.dart';
 
 class SubscriptionBuyPlanRepository {

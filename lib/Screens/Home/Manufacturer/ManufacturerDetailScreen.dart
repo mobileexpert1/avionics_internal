@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
@@ -37,44 +39,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreProducts = false;
   bool showInterestingFacts = false;
   int expandedIndex = -1;
-
-  // final List<ProductModel> staticProducts = [
-  //   ProductModel(
-  //     title: "Airbus Helicopters",
-  //     items: [
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //     ],
-  //   ),
-  //   ProductModel(
-  //     title: "Airbus Airplanes",
-  //     items: [
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //     ],
-  //   ),
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -118,10 +82,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
             title: detail.general.companyName,
             centerTitle: false,
             leftButton: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 30,
+              icon: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                fit: BoxFit.cover,
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -133,9 +96,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                 fit: BoxFit.cover,
               ),
               onPressed: () async {
-                Navigator.push(
+                AppNavigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingScreen()),
+                  SettingScreen(),
+                  disableSwipeBack: true,
                 );
               },
             ),
@@ -283,7 +247,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       isLeftImage: IconButton(
                                         icon: SvgPicture.asset(
                                           CommonUi.setSvgImage(
-                                            AssetsPath.homeCompareAircraft,
+                                            AssetsPath.aeroplaneManufacturer,
                                           ),
                                           width: 30,
                                           height: 30,
@@ -291,7 +255,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                         onPressed: () async {},
                                       ),
-                                      title: "See all aircraft",
+                                      title: "List of all models",
                                       headerColor: AppColors.primaryDark,
                                       arrowBackgroundColor:
                                           AppColors.extraDarkYellow,
@@ -299,15 +263,14 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       isExpandedViewAvailable: true,
                                       isExpanded: false,
                                       onHeaderTap: () {
-                                        Navigator.push(
+                                        AppNavigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (_) => AllPlanesListScreen(
-                                              selectedAirbusId: detail.id,
-                                              manufacturerName:
-                                                  detail.general.companyName,
-                                            ),
+                                          AllPlanesListScreen(
+                                            selectedAirbusId: detail.id,
+                                            manufacturerName:
+                                                detail.general.companyName,
                                           ),
+                                          disableSwipeBack: true,
                                         );
                                       },
                                     ),
@@ -615,7 +578,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                 showInterestingFacts = !showInterestingFacts;
                               }),
                               isShowMoreLessOption:
-                                  (detail.interestingFacts?.length ?? 0) > 2,
+                                  (detail.interestingFacts?.length ?? 0) > 0,
                             ),
                             const SizedBox(height: 10),
                             if (showInterestingFacts)
