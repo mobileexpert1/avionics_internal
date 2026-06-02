@@ -10,9 +10,9 @@ import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import '../../../../../bloc/Home/AircraftComparison/Comparison/ComparisonState.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_model.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterCubit.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterModel.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparsionFilterState.dart';
 import '../../../../MapSection/AirportStationDetailCard/AirportStationDetailCard.dart';
 import '../FilterScreen/Filter_Screen_For_Comparison.dart';
 
@@ -77,7 +77,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             final currentState = context.read<ComparisonFilterCubit1>().state;
 
             final selectedFilters =
-                await showModalBottomSheet<List<FilterCategory1>>(
+                await showModalBottomSheet<List<ComparisonFilterCategory>>(
                   context: context,
                   isScrollControlled: true,
                   shape: const RoundedRectangleBorder(
@@ -120,7 +120,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       ),
       body: BlocBuilder<ComparisonCubit, ComparisonState>(
         builder: (context, state) {
-          return BlocBuilder<ComparisonFilterCubit1, FilterState1>(
+          return BlocBuilder<ComparisonFilterCubit1, ComparisonFilterState>(
             buildWhen: (previous, current) =>
                 previous.filterCategories != current.filterCategories ||
                 previous.isApplied != current.isApplied,
@@ -158,7 +158,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
               final activeCategory = filterState.filterCategories.firstWhere(
                 (cat) => cat.id == activeCategoryId,
-                orElse: () => FilterCategory1(id: '', name: '', options: []),
+                orElse: () => ComparisonFilterCategory(id: '', name: '', options: []),
               );
 
               // Filter selected options with detailed debugging

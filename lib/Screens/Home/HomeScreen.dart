@@ -24,7 +24,7 @@ import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../MapSection/FlightMapScreen.dart';
 import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
+import '../WilcoBoat/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   late HomeCubit homeCubit;
   bool expandedManufacturerTab = false;
-  bool expandFlyingInTheAreaTab = false;
+  bool expandFlyingInTheAreaTab = true;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -337,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ((expandedManufacturerTab == true &&
                                               expandFlyingInTheAreaTab == true)
                                           ? 0.0
-                                          : 0.35),
+                                          : 0.4),
                           ),
                         ],
                       ),

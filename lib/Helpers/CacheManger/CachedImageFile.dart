@@ -1,11 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../../Constants/constantImages.dart';
-import 'CustomCacheManager.dart';
-import 'cached_svg.dart';
+import 'dart:typed_data';
 
-class CachedAnyImage extends StatelessWidget {
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../Constants/constantImages.dart';
+
+class CachedAnyImage extends StatefulWidget {
   final String imagePath;
   final double width;
   final double height;
@@ -23,108 +25,191 @@ class CachedAnyImage extends StatelessWidget {
     this.isForPlaneList = false,
   });
 
-  bool get _isNetwork =>
-      imagePath.startsWith('http://') || imagePath.startsWith('https://');
+  @override
+  State<CachedAnyImage> createState() => _CachedAnyImageState();
+}
 
-  bool get _isSvg => imagePath.toLowerCase().endsWith('.svg');
+class _CachedAnyImageState extends State<CachedAnyImage> {
+  static final Map<String, Uint8List> _svgMemoryCache = {};
+
+  Future<Uint8List>? _svgFuture;
+
+  bool get _isNetwork =>
+      widget.imagePath.startsWith('http://') ||
+      widget.imagePath.startsWith('https://');
+
+  bool get _isSvg => widget.imagePath.toLowerCase().endsWith('.svg');
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (_isNetwork && _isSvg) {
+      _prepareSvg();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CachedAnyImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.imagePath != widget.imagePath && _isNetwork && _isSvg) {
+      _prepareSvg();
+    }
+  }
+
+  Future<void> _prepareSvg() async {
+    if (_svgMemoryCache.containsKey(widget.imagePath)) {
+      _svgFuture = Future.value(_svgMemoryCache[widget.imagePath]);
+      return;
+    }
+
+    _svgFuture = CustomCacheManager.instance
+        .getSingleFile(widget.imagePath)
+        .then((file) async {
+          final bytes = await file.readAsBytes();
+
+          _svgMemoryCache[widget.imagePath] = bytes;
+
+          debugPrint(file.path);
+          return bytes;
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (imagePath.isEmpty) {
-      return _errorIcon(isForPlaneList);
+    if (widget.imagePath.isEmpty) {
+      return _errorWidget();
     }
 
-    ///NETWORK
     if (_isNetwork) {
       if (_isSvg) {
-        return _fixedBox(
-          useCache
-              ? CachedSvgImage(imageUrl: imagePath, fit: contentImage)
-              : _networkSvg(),
-        );
+        return _svgWidget();
       }
 
-      return _fixedBox(
-        useCache
-            ? CachedNetworkImage(
-                httpHeaders: {"User-Agent": "Mozilla/5.0"},
-                cacheManager: CustomCacheManager.instance,
-                imageUrl: imagePath,
-                fit: contentImage,
-                placeholder: (_, _) => _loader(),
-                errorWidget: (_, url, error) {
-                  debugPrint("❌ Image load failed: $url");
-                  debugPrint("❌ Error: $error");
-                  return _errorIcon(isForPlaneList);
-                },
-              )
-            : Image.network(
-                imagePath,
-                fit: contentImage,
-                errorBuilder: (_, error, stackTrace) {
-                  debugPrint("❌ Image.network failed: $imagePath");
-                  debugPrint("❌ Error: $error");
-                  return _errorIcon(isForPlaneList);
-                },
+      return _networkImageWidget();
+    }
+
+    return _assetWidget();
+  }
+
+  Widget _svgWidget() {
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+
+      child: FutureBuilder<Uint8List>(
+        future: _svgFuture,
+
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _loader();
+          }
+
+          if (snapshot.hasData) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+
+              child: SvgPicture.memory(
+                snapshot.data!,
+                fit: widget.contentImage,
+                width: widget.width,
+                height: widget.height,
               ),
-      );
-    }
+            );
+          }
 
-    ///ASSETS
-    if (_isSvg) {
-      return _fixedBox(SvgPicture.asset(imagePath, fit: contentImage));
-    }
-
-    return _fixedBox(
-      Image.asset(
-        imagePath,
-        fit: contentImage,
-        errorBuilder: (_, error, stackTrace) {
-          debugPrint("❌ Asset load failed: $imagePath");
-          debugPrint("❌ Error: $error");
-          return _errorIcon(isForPlaneList);
+          return _errorWidget();
         },
       ),
     );
   }
 
-  Widget _networkSvg() {
-    try {
-      return SvgPicture.network(
-        imagePath,
-        fit: contentImage,
-        placeholderBuilder: (_) => _loader(),
-      );
-    } catch (e, s) {
-      debugPrint("❌ SVG load failed: $imagePath");
-      debugPrint("❌ Error: $e");
-      debugPrint("$s");
-      return _errorIcon(isForPlaneList);
-    }
+  Widget _networkImageWidget() {
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+
+        child: widget.useCache
+            ? CachedNetworkImage(
+                imageUrl: widget.imagePath,
+                cacheManager: CustomCacheManager.instance,
+                fit: widget.contentImage,
+
+                httpHeaders: const {"User-Agent": "Mozilla/5.0"},
+
+                placeholder: (_, _) => _loader(),
+
+                errorWidget: (_, _, _) {
+                  return _errorWidget();
+                },
+              )
+            : Image.network(
+                widget.imagePath,
+                fit: widget.contentImage,
+
+                errorBuilder: (_, _, _) {
+                  return _errorWidget();
+                },
+              ),
+      ),
+    );
   }
 
-  ///HELPERS
-  Widget _fixedBox(Widget child) => SizedBox(
-    width: width,
-    height: height,
-    child: ClipRRect(borderRadius: BorderRadius.circular(6), child: child),
-  );
+  Widget _assetWidget() {
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
 
-  Widget _loader() =>
-      const Center(child: CircularProgressIndicator(strokeWidth: 1.5));
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
 
-  Widget _errorIcon(bool isPlaneList) => SizedBox(
-    width: width,
-    height: height,
-    child: isPlaneList
-        ? Center(
-            child: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.Plane1),
-              height: height,
-              width: width,
-              fit: BoxFit.cover,
-            ),
-          )
-        : const Center(child: Icon(Icons.error, color: Colors.red)),
+        child: _isSvg
+            ? SvgPicture.asset(widget.imagePath, fit: widget.contentImage)
+            : Image.asset(
+                widget.imagePath,
+                fit: widget.contentImage,
+
+                errorBuilder: (_, _, _) {
+                  return _errorWidget();
+                },
+              ),
+      ),
+    );
+  }
+
+  Widget _loader() {
+    return const Center(child: CircularProgressIndicator(strokeWidth: 1.5));
+  }
+
+  Widget _errorWidget() {
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+
+      child: widget.isForPlaneList
+          ? Center(
+              child: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.Plane1),
+                fit: BoxFit.cover,
+              ),
+            )
+          : const Center(child: Icon(Icons.error, color: Colors.red)),
+    );
+  }
+}
+
+class CustomCacheManager {
+  static const key = "customCache";
+
+  static final CacheManager instance = CacheManager(
+    Config(
+      key,
+      stalePeriod: const Duration(days: 30),
+      maxNrOfCacheObjects: 1000,
+    ),
   );
 }

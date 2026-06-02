@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_repository.dart';
+import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_model.dart';
-import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_state.dart';
+
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
+import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
@@ -45,13 +47,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       case "calculation":
         return "Calculation Game";
       case "one_word":
-        return "OneWord Game";
+        return "Basic Topics Game";
       case "trivia":
-        return "Trivia Game";
+        return "Jetting Around The World Game";
       case "imageBased":
         return "PlaneSpotter Game";
       case "aircraftEncyclopaedia":
-        return "Aircraft Encyclopaedia";
+        return "Citius. Altius. Longius. Game";
       default:
         return "Quiz Game";
     }
@@ -579,7 +581,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => CalculationResultScreen(
+                builder: (_) => MainResultScreen(
                   correctedAnswer: data.correctAnswers,
                   totalQuestion: data.totalQuestions,
                   score: data.earnedPoints,

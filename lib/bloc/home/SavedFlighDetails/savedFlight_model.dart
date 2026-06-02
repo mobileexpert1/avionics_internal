@@ -11,14 +11,16 @@ class SavedFlightResponse {
 
   factory SavedFlightResponse.fromJson(Map<String, dynamic> json) {
     return SavedFlightResponse(
-      detail: json['detail'] ?? '',
-      favorite: (json['favorite'] as List<dynamic>?)
-          ?.map((e) => AircraftItem.fromJson(e))
-          .toList() ??
+      detail: json['detail'] as String? ?? '',
+      favorite:
+          (json['favorite'] as List<dynamic>?)
+              ?.map((e) => AircraftItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
           [],
-      saved: (json['saved'] as List<dynamic>?)
-          ?.map((e) => AircraftItem.fromJson(e))
-          .toList() ??
+      saved:
+          (json['saved'] as List<dynamic>?)
+              ?.map((e) => AircraftItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
           [],
     );
   }
@@ -46,6 +48,7 @@ class AircraftItem {
   final String? callsign;
   final String? flightNumber;
   final String? flightId;
+  final AirlineModel? airline;
 
   AircraftItem({
     required this.id,
@@ -57,19 +60,23 @@ class AircraftItem {
     this.callsign,
     this.flightNumber,
     this.flightId,
+    this.airline,
   });
 
   factory AircraftItem.fromJson(Map<String, dynamic> json) {
     return AircraftItem(
-      id: json['id'] ?? '',
-      aircraftModel: json['Aircraft_Model'] ?? '',
-      isFavorite: json['IsFavorite'] ?? false,
-      icaoTypeCode: json['ICAO_Type_Code'] ?? '',
-      image: json['Image'] ?? '',
-      isActive: json['is_active'] ?? false,
-      callsign: json['callsign'],
-      flightId: json['flight_id'],
-      flightNumber: json['flight_number'],
+      id: json['id'] as String? ?? '',
+      aircraftModel: json['Aircraft_Model'] as String? ?? '',
+      isFavorite: json['IsFavorite'] as bool? ?? false,
+      icaoTypeCode: json['ICAO_Type_Code'] as String? ?? '',
+      image: json['Image'] as String? ?? '',
+      isActive: json['is_active'] as bool? ?? false,
+      callsign: json['callsign'] as String?,
+      flightId: json['flight_id'] as String?,
+      flightNumber: json['flight_number'] as String?,
+      airline: json['airline'] != null
+          ? AirlineModel.fromJson(json['airline'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -84,6 +91,23 @@ class AircraftItem {
       'callsign': callsign,
       'flight_id': flightId,
       'flight_number': flightNumber,
+      if (airline != null) 'airline': airline!.toJson(),
     };
   }
+}
+
+class AirlineModel {
+  final String name;
+  final String logo;
+
+  const AirlineModel({required this.name, required this.logo});
+
+  factory AirlineModel.fromJson(Map<String, dynamic> json) {
+    return AirlineModel(
+      name: json['name'] as String? ?? '',
+      logo: json['logo'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {'name': name, 'logo': logo};
 }

@@ -48,7 +48,6 @@ class FlightModel {
   final DateTime? takeoffTime;
   final String? flightTime;
 
-  // ✅ New fields
   final DateTime? firstSeen;
   final DateTime? lastSeen;
   final bool? flightEnded;
@@ -201,7 +200,6 @@ class FlightModel {
       takeoffTime: _parseDate(json['datetime_takeoff']),
       flightTime: _str(json['flight_time']),
 
-      // ✅ New fields
       firstSeen: _parseDate(json['first_seen']),
       lastSeen: _parseDate(json['last_seen']),
       flightEnded: json['flight_ended'] as bool?,

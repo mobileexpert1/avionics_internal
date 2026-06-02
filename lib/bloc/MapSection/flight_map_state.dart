@@ -40,6 +40,7 @@ class FlightMapState {
 
   final int? numberOfFlights;
   final int? searchRadius;
+  final bool? isFavFlightByS;
 
   FlightMapState({
     this.openAiKey,
@@ -68,8 +69,9 @@ class FlightMapState {
 
     this.savedFlights,
 
-    this.numberOfFlights,
-    this.searchRadius,
+    this.numberOfFlights = 10,
+    this.searchRadius = 150,
+    this.isFavFlightByS = false,
   });
 
   FlightMapState copyWith({
@@ -100,6 +102,7 @@ class FlightMapState {
 
     int? numberOfFlights,
     int? searchRadius,
+    bool? isFavFlightByS,
   }) {
     return FlightMapState(
       openAiKey: openAiKey ?? this.openAiKey,
@@ -131,6 +134,7 @@ class FlightMapState {
 
       numberOfFlights: numberOfFlights ?? this.numberOfFlights,
       searchRadius: searchRadius ?? this.searchRadius,
+      isFavFlightByS: isFavFlightByS ?? this.isFavFlightByS,
     );
   }
 }
@@ -153,14 +157,25 @@ LatLngBounds getBoundsFromRadius({
   final minLat = lat - angularDistance;
   final maxLat = lat + angularDistance;
 
-  final deltaLng = math.asin(math.sin(angularDistance) / math.cos(lat));
+  final sinVal = math.sin(angularDistance) / math.cos(lat);
+  final clampedSinVal = sinVal.clamp(-1.0, 1.0);
+  final deltaLng = math.asin(clampedSinVal);
 
   final minLng = lng - deltaLng;
   final maxLng = lng + deltaLng;
 
+  final clampedMinLat = (minLat * 180 / math.pi).clamp(-90.0, 90.0);
+  final clampedMaxLat = (maxLat * 180 / math.pi).clamp(-90.0, 90.0);
+
+  double clampedMinLng = (minLng * 180 / math.pi);
+  double clampedMaxLng = (maxLng * 180 / math.pi);
+
+  if (clampedMinLng < -180) clampedMinLng += 360;
+  if (clampedMaxLng > 180) clampedMaxLng -= 360;
+
   return LatLngBounds(
-    southwest: LatLng(minLat * 180 / math.pi, minLng * 180 / math.pi),
-    northeast: LatLng(maxLat * 180 / math.pi, maxLng * 180 / math.pi),
+    southwest: LatLng(clampedMinLat, clampedMinLng),
+    northeast: LatLng(clampedMaxLat, clampedMaxLng),
   );
 }
 

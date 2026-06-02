@@ -3,28 +3,35 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/BlackBox_Section/bla
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_Map_Cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
+import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import 'Constants/ApiClass/shared_prefs_helper.dart';
 import 'Database/db_helper.dart';
+import 'Helpers/Firebase_Options.dart';
 import 'Helpers/push_notifications/LocalNotificationHelper.dart';
 import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/calculations.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/history.dart';
-import 'Screens/Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/ExploreNewGames/ExploreNewGames.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
-import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
+// import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import 'bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
@@ -32,21 +39,14 @@ import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import 'bloc/Onboarding/login/login_cubit.dart';
 import 'bloc/Onboarding/signup/signup_cubit.dart';
 import 'bloc/Profile/Avtar/avtar_cubit.dart';
+import 'bloc/Profile/Glossary/glossary_cubit.dart';
 import 'bloc/Profile/MySubscription/my_subscription_cubit.dart';
+import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
-import 'bloc/home/Filter/filter_cubit.dart';
+import 'bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterCubit.dart';
 import 'bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import 'bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
 import 'bloc/home/homeBloc/home_cubit.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/Profile/Glossary/glossary_cubit.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ProfileMain/profile_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
-import 'package:avionics_internal/bloc/Profile/ChangePassword/changePassword_cubit.dart';
-import 'Helpers/Firebase_Options.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -108,6 +108,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -117,7 +122,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => ForgotCubit()),
         BlocProvider(create: (_) => CreateNewPasswordCubit()),
         BlocProvider(create: (_) => ManufacturerCubit()),
-        BlocProvider(create: (_) => FilterCubit()),
         BlocProvider(create: (_) => SavedFlightCubit()),
         BlocProvider(create: (_) => AllPlanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),
@@ -148,7 +152,6 @@ class _MyAppState extends State<MyApp> {
             title: 'Avioflai',
             theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Outfit'),
             home: SplashScreen(),
-
           );
         },
       ),

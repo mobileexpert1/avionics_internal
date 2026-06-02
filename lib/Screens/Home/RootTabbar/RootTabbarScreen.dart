@@ -13,7 +13,7 @@ import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../MapSection/FlightMapScreen.dart';
 import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Profile/ProfileScreen.dart';
-import '../../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
+import '../../WilcoBoat/ChatBotScreen.dart';
 import '../HomeScreen.dart';
 
 class RootTabbarscreen extends StatefulWidget {

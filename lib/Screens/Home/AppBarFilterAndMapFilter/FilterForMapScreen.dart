@@ -112,7 +112,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
+                          horizontal: 10,
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(

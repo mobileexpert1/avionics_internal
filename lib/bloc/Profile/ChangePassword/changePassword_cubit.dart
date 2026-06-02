@@ -44,7 +44,6 @@ class ChangePasswordCubit extends Cubit<ChangeNewPasswordState> {
     );
   }
 
-  /// 🔍 Validates fields and returns true if valid, false otherwise.
   bool validateFields() {
     final oldPasswordError = Validators().validatePassword(state.oldPassword);
     final passwordError = Validators().validatePassword(state.password);

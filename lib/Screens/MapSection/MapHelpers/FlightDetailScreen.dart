@@ -898,7 +898,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '$groundSpeed km/h',
+                                  '$groundSpeed kts',
                                   style: const TextStyle(
                                     color: Colors.blue,
                                     fontWeight: FontWeight.w400,
@@ -992,7 +992,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                 ['Track (degree)', flight.track?.toString() ?? 'N/A'],
                 ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
                 [
-                  'Ground Speed (km/h)',
+                  'Ground Speed (kts)',
                   flight.groundSpeed?.toString() ?? 'N/A',
                   true,
                 ],

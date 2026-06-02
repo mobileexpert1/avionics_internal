@@ -1,20 +1,19 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'package:avionics_internal/Screens/Games/GamesSubScreens/BlackBoxSection/BlackboxScreen.dart';
-import 'package:avionics_internal/Screens/Games/GamesSubScreens/CalculationSection/CalculationScreen.dart';
-import 'package:avionics_internal/Screens/Games/GamesSubScreens/OneWordSection/OneWordScreen.dart';
-import 'package:avionics_internal/Screens/Games/GamesSubScreens/QuizSection/QuizScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
-import '../../../Helpers/Games/GameCard.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/MainGameExtraClasses/AllLinesPainter.dart';
+import '../../../Helpers/MainGameExtraClasses/DoubleCenterLinePainter.dart';
 import '../../../bloc/Games/MainGameSection/game_cubit.dart';
+import '../../../bloc/Games/MainGameSection/game_model.dart';
 import '../../../bloc/Games/MainGameSection/game_state.dart';
-import '../GamesSubScreens/AircraftEncyclopaedia/AircraftEncyclopaediaDetailScreen.dart';
-import '../GamesSubScreens/ImageBasedQuestion/ImageBasedDetailScreen.dart';
-import '../GamesSubScreens/TriviaSection/TriviaDetailScreen.dart';
+import 'BaseScreenForAllLevelDescriptions.dart';
 
 class GamesScreen extends StatefulWidget {
   const GamesScreen({super.key});
@@ -25,6 +24,7 @@ class GamesScreen extends StatefulWidget {
 
 class _GamesScreenState extends State<GamesScreen> {
   late GamesCubit _gamesCubit;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -32,20 +32,30 @@ class _GamesScreenState extends State<GamesScreen> {
     _gamesCubit = GamesCubit();
     _gamesCubit.loadGames();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.gamesScreen);
+    scrollToAboveScreen();
+  }
+
+  Future<void> scrollToAboveScreen() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (scrollController.hasClients) {
+      final target = (scrollController.position.maxScrollExtent - 30).clamp(
+        0.0,
+        scrollController.position.maxScrollExtent,
+      );
+
+      scrollController.animateTo(
+        target,
+        duration: const Duration(milliseconds: 1300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
   void dispose() {
     _gamesCubit.close();
     super.dispose();
-  }
-
-  int getCrossAxisCount(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width >= 1400) return 4;
-    if (width >= 1100) return 4;
-    if (width >= 800) return 3;
-    return 2; // Mobile
   }
 
   /// ---------------- COMMON NAVIGATION ----------------
@@ -55,11 +65,15 @@ class _GamesScreenState extends State<GamesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final sw = MediaQuery.of(context).size.width;
+    final cx = sw / 2;
+    final screenHeight = MediaQuery.sizeOf(context).height + 50;
+
     return BlocProvider.value(
       value: _gamesCubit,
       child: Scaffold(
         appBar: CustomAppBar(title: 'Games'),
-        backgroundColor: const Color(0xFF35314B),
+        backgroundColor: Colors.white,
         body: BlocBuilder<GamesCubit, GamesState>(
           builder: (context, state) {
             if (state is GamesLoaded) {
@@ -68,91 +82,237 @@ class _GamesScreenState extends State<GamesScreen> {
                   constraints: const BoxConstraints(maxWidth: 1500),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 5,
+                      horizontal: 0,
+                      vertical: 0,
                     ),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: getCrossAxisCount(context),
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                        childAspectRatio: 0.85,
-                      ),
-                      itemCount: state.games.length,
-                      itemBuilder: (context, index) {
-                        final game = state.games[index];
-                        return GameCard(
-                          item: game,
-                          onTap: () {
-                            switch (game.id) {
-                              case 'quiz':
-                                _navigate(
-                                  context,
-                                  QuizDetailScreen(gameId: game.id),
-                                );
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 25,
+                          left: -100,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              width: 55,
+                              height: 55,
+                              decoration: const BoxDecoration(
+                                color: AppColors.citiusAltiusColorForGame,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 300,
+                          left: 0,
+                          right: -70,
 
-                                break;
-                              case 'one_word':
-                                _navigate(
-                                  context,
-                                  OneWordDetailScreen(gameId: game.id),
-                                );
-                                break;
+                          child: Center(
+                            child: Container(
+                              width: 25,
+                              height: 25,
+                              decoration: const BoxDecoration(
+                                color: AppColors.citiusAltiusColorForGame,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 190,
+                          left: -170,
+                          right: 0,
 
-                              case 'black_box':
-                                _navigate(
-                                  context,
-                                  BlackBoxStartScreen(gameId: game.id),
-                                );
+                          child: Center(
+                            child: Container(
+                              width: 25,
+                              height: 25,
+                              decoration: const BoxDecoration(
+                                color: AppColors.citiusAltiusColorForGame,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 185,
+                          left: 0,
+                          right: -180,
 
-                                break;
+                          child: Center(
+                            child: Container(
+                              width: 80,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: AppColors.greenColourForPlan,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ),
 
-                              case 'calculation':
-                                _navigate(
-                                  context,
-                                  CalculationDetailScreen(gameId: game.id),
-                                );
-                                break;
+                        SingleChildScrollView(
+                          controller: scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: screenHeight,
+                                width: double.infinity,
+                                child: Stack(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 390,
+                                          left: cx - 5,
+                                          width: 8,
+                                          bottom: 0,
+                                          child: CustomPaint(
+                                            painter: DoubleCenterLinePainter(),
+                                          ),
+                                        ),
 
-                              case 'imageBased':
-                                _navigate(
-                                  context,
-                                  ImageBasedDetailScreen(gameId: game.id),
-                                );
+                                        Positioned.fill(
+                                          child: CustomPaint(
+                                            painter: AllLinesPainter(
+                                              screenWidth: sw,
+                                            ),
+                                          ),
+                                        ),
 
-                              case 'trivia':
-                                _navigate(
-                                  context,
-                                  TriviaDetailScreen(gameId: game.id),
-                                );
-                                break;
-                                case 'aircraftEncyclopaedia':
-                                _navigate(
-                                  context,
-                                  AircraftEncyclopaediaDetailScreen(),
-                                );
-                                break;
-                              default:
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Screen not available for ${game.title}',
+                                        ...List.generate(state.games.length, (
+                                          index,
+                                        ) {
+                                          final row = state.games[index];
+                                          return Stack(
+                                            children: [
+                                              if (row.left != null)
+                                                Positioned(
+                                                  top: row.left!.topValue,
+                                                  left: 30,
+                                                  child: GameCard(
+                                                    model: row.left!,
+                                                    onTap: (id) {
+                                                      _navigate(
+                                                        context,
+                                                        BaseScreenForAllLevelDescriptions(
+                                                          gameId: row.left!.id,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+
+                                              if (row.right != null)
+                                                Positioned(
+                                                  top: row.right!.topValue,
+                                                  right: 30,
+                                                  child: GameCard(
+                                                    model: row.right!,
+                                                    onTap: (id) {
+                                                      _navigate(
+                                                        context,
+                                                        BaseScreenForAllLevelDescriptions(
+                                                          gameId: row.right!.id,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        }),
+                                      ],
                                     ),
-                                  ),
-                                );
-                            }
-                          },
-                        );
-                      },
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: IgnorePointer(
+                            child: Container(
+                              color: Colors.white,
+                              child: Image.asset(
+                                CommonUi.setPngImage(
+                                  AssetsPath.towerImageForGame,
+                                ),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.bottomCenter,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               );
             }
-
             return const Center(child: CircularProgressIndicator());
           },
         ),
+      ),
+    );
+  }
+}
+
+class GameCard extends StatelessWidget {
+  final GameCardModel model;
+  final Function(String id) onTap;
+
+  const GameCard({super.key, required this.model, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        onTap.call(model.id);
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 120,
+              height: 65,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: model.color, width: 1.0),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CustomPaint(
+                      size: const Size(14, 14),
+                      painter: CornerPainter(color: model.color),
+                    ),
+                  ),
+
+                  Center(
+                    child: Text(
+                      model.title,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.medium(
+                        14,
+                      ).copyWith(height: 1.2, color: AppColors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

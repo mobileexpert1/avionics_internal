@@ -16,7 +16,6 @@ import '../../../Helpers/CardWithBadgeClipper.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
 import '../../Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/EmptyPackagesView.dart';
 import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/FeatureRow.dart';
 import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/StepIndicator.dart';
 import '../Login/LoginScreen.dart';
@@ -194,58 +193,54 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                   ),
                 ),
                 body: SafeArea(
-                  child: subscriptionPackages.isEmpty
-                      ? EmptyPackagesView(isLoading: state.loading)
-                      : Column(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 16,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(height: 15),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 16,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    isComeFromSignup
-                                        ? 'Choose Your Plan'
-                                        : 'Manage Your Plan',
-                                    style: AppTextStyles.bold(26).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.black,
-                                    ),
-                                  ),
-                                  StepIndicator(
-                                    total: subscriptionPackages.length,
-                                    current: currentPage,
-                                  ),
-                                ],
-                              ),
+                            Text(
+                              isComeFromSignup
+                                  ? 'Choose Your Plan'
+                                  : 'Manage Your Plan',
+                              style: AppTextStyles.bold(
+                                26,
+                              ).copyWith(height: 1.0, color: AppColors.black),
                             ),
-
-                            SizedBox(height: 10),
-
-                            Expanded(
-                              child: PageView.builder(
-                                controller: _controller,
-                                itemCount: subscriptionPackages.length,
-                                onPageChanged: (index) {
-                                  setState(() => currentPage = index);
-                                },
-                                itemBuilder: (context, index) {
-                                  final package = subscriptionPackages[index];
-                                  return _PlanCard(
-                                    state: state,
-                                    package: package,
-                                    isLoading: state.loading,
-                                  );
-                                },
-                              ),
+                            StepIndicator(
+                              total: subscriptionPackages.length,
+                              current: currentPage,
                             ),
                           ],
                         ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Expanded(
+                        child: PageView.builder(
+                          controller: _controller,
+                          itemCount: subscriptionPackages.length,
+                          onPageChanged: (index) {
+                            setState(() => currentPage = index);
+                          },
+                          itemBuilder: (context, index) {
+                            final package = subscriptionPackages[index];
+                            return _PlanCard(
+                              state: state,
+                              package: package,
+                              isLoading: state.loading,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               if (state.loading) ...[
@@ -478,7 +473,7 @@ class _PlanCard extends StatelessWidget {
                           vertical: 6,
                         ),
                         child: Text(
-                          isBasicPlan ? "Starter Plan" : "Premium",
+                          isBasicPlan ? "Starter" : "Premium",
                           style: AppTextStyles.bold(
                             14,
                           ).copyWith(height: 1.0, color: Colors.black),

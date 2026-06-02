@@ -80,12 +80,12 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isAlreadyFetchedTheKey) {
-      return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    // if (!_isAlreadyFetchedTheKey) {
+    //   return const Scaffold(
+    //     backgroundColor: Colors.white,
+    //     body: Center(child: CircularProgressIndicator()),
+    //   );
+    // }
     return GoogleMap(
       key: ValueKey(widget.circles.hashCode),
       zoomControlsEnabled: widget.zoomControlsEnabled,

@@ -91,8 +91,8 @@ class CustomHeaderViewExpandable extends StatelessWidget {
                       color: arrowBackgroundColor,
                       borderRadius: isExpanded
                           ? const BorderRadius.vertical(
-                              top: Radius.circular(12),
-                            )
+                        top: Radius.circular(12),
+                      )
                           : BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -117,14 +117,14 @@ class CustomHeaderViewExpandable extends StatelessWidget {
             duration: const Duration(milliseconds: 250),
             child: isExpanded
                 ? Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(12),
-                      ),
-                    ),
-                    child: child ?? const SizedBox(),
-                  )
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(12),
+                ),
+              ),
+              child: child ?? const SizedBox(),
+            )
                 : const SizedBox(),
           ),
         ],
@@ -132,3 +132,4 @@ class CustomHeaderViewExpandable extends StatelessWidget {
     );
   }
 }
+

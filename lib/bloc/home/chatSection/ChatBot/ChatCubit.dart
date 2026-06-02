@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Helpers/CreditManager/CreditManager.dart';
-import '../../../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'chat_implementation.dart';
 import 'chat_model.dart';
@@ -19,7 +18,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     required bool isNewSession,
   }) : _repo = ChatRepositoryImpl(),
        super([
-         //{'type': 'bot', 'text': 'Hey there!'},
          {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
        ]) {
     _init(accessToken, existingSessionId, isNewSession);

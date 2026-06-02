@@ -39,44 +39,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreProducts = false;
   bool showInterestingFacts = false;
   int expandedIndex = -1;
-
-  // final List<ProductModel> staticProducts = [
-  //   ProductModel(
-  //     title: "Airbus Helicopters",
-  //     items: [
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //     ],
-  //   ),
-  //   ProductModel(
-  //     title: "Airbus Airplanes",
-  //     items: [
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //     ],
-  //   ),
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -287,7 +249,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                       isLeftImage: IconButton(
                                         icon: SvgPicture.asset(
                                           CommonUi.setSvgImage(
-                                            AssetsPath.homeCompareAircraft,
+                                            AssetsPath.aeroplaneManufacturer,
                                           ),
                                           width: 30,
                                           height: 30,
@@ -295,7 +257,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                         onPressed: () async {},
                                       ),
-                                      title: "See all aircraft",
+                                      title: "List of all models",
                                       headerColor: AppColors.primaryDark,
                                       arrowBackgroundColor:
                                           AppColors.extraDarkYellow,

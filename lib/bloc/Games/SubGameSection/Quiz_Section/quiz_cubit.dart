@@ -16,8 +16,8 @@ class QuizCubit extends Cubit<OneWordTopicState> {
       final response = await OneWordTopicRepository().getQuizTopic();
 
       if (response != null) {
-        final List<quizItem> gameList = response.data.map((oneWord) {
-          return quizItem(
+        final List<QuizPerItem> gameList = response.data.map((oneWord) {
+          return QuizPerItem(
             title: oneWord.name,
             isLocked: !(oneWord.isEnable),
             gameNumber: oneWord.gameNumber,
@@ -25,10 +25,7 @@ class QuizCubit extends Cubit<OneWordTopicState> {
           );
         }).toList();
 
-        emit(state.copyWith(
-          games: gameList,
-          isLoading: false,
-        ));
+        emit(state.copyWith(games: gameList, isLoading: false));
       } else {
         emit(state.copyWith(isLoading: false));
       }

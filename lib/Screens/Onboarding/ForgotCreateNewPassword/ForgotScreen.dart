@@ -72,11 +72,13 @@ class _ForgotScreenState extends State<ForgotScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   isClearBackgroundColour: true,
+                  centerTitle: false,
                   title: ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
                     icon: SvgPicture.asset(
                       CommonUi.setSvgImage(AssetsPath.backArrowButton),
                       fit: BoxFit.cover,
+                      color: Colors.black,
                     ),
                     onPressed: () {
                       if (!mounted) return;

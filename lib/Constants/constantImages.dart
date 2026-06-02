@@ -89,13 +89,44 @@ abstract class AssetsPath {
   static const String infoWrongThird = "60InfoWrongGameIcon";
   static const String gameInfoClose = "61GameInfoClose";
   static const String towerImageForGame = "62TowerImage";
+  static const String aeroplaneManufacturer = "63AeroplaneManufacturer";
 
+  static const String takeMeasureUnSelected = "65TakeMeasureUnSelected";
+  static const String flightMathUnSelected = "66FlightMathUnSelected";
+  static const String greenBlueUnSelected = "67GreenBlueUnSelected";
+  static const String mindSeparationUnSelected = "68MindSeparationUnSelected";
 
-  static const String ExploreIcon = "ExploreIcon";
-  static const String ExploreUnSelectedIcon = "ExploreIconUnSelected";
+  static const String takeMeasureSelected = "69TakeMeasureSelected";
+  static const String flightMathSelected = "70FlightMathSelected";
+  static const String greenBlueSelected = "71GreenBlueSelected";
+  static const String mindSeparationSelected = "72MindSeparationSelected";
+
+  static const String timeLevelIcon = "73TimeIcon";
+  static const String questionLevelIcon = "74QuestionIcon";
+  static const String aeroplaneLevelIcon = "75AeroplaneIcon";
+  static const String correctLevelAnswer = "76CorrectAnswer";
+  static const String speedLevelBounce = "77SpeedBounce";
+  static const String perfectLevelBounce = "78PerfectBounce";
+  static const String winnerLevelIcon = "79WinnerIcon";
+  static const String carHelpLevelIcon = "80CarHelpIcon";
+
+  static const String editForChat = "81EditForChat";
+  static const String deleteForChat = "82DeleteForChat";
+
+  static const String aeroplaneBasic = "84AeroplaneBasic";
+  static const String settingBasic = "85SettingBasic";
+  static const String trackBasic = "86TrackBasic";
+  static const String aeroplaneClouds = "87AeroplaneClouds";
+  static const String notesBasic = "88NotesBasic";
+  static const String userBasic = "89UserBasic";
+  static const String manageEditIcon = "90ManageEditIcon";
+
+  static const String visibilityOff = "91VisibilityOff";
+  static const String visibilityOn = "92VisibilityOn";
+  static const String emailIcon = "93EmailIcon";
+  static const String bookMarkIcon = "94BookmarkIcon";
 
   static const String MapIcon = "MapIcon";
-  static const String gameIcon = "gameIcon";
   static const String chatIcon = "chatIcon";
   static const String ProfileIcon = "ProfileIcon";
 
@@ -110,14 +141,10 @@ abstract class AssetsPath {
   static const String google = "Google";
   static const String logoMain = "mainLogo";
   static const String splashLogo = "splashLogo";
-  static const String manufacturer = "manufacturer";
-  static const String starIcon = "StarIcon";
-  static const String star = "star";
   static const String trackIcon = "TrackIcon";
   static const String tickIcon = "TickIcon";
   static const String sliders = "Sliders";
   static const String WebAppLogo = "WebAppLogo";
-  static const String search = "search";
   static const String comparsion = "Comparsion";
   static const String selectModel = "SelectModel";
   static const String Chatbot = "Chatbot";
@@ -137,17 +164,12 @@ abstract class AssetsPath {
   static const String resultIcon = "resultIcon";
   static const String Tik = "TickIcon";
   static const String Trophy = "Trophy";
-  static const String clock = "clock";
   static const String quizDetail = "quizICon2";
   static const String onewordDetail = "oneWordICon2";
   static const String calculationDetail = "calculationIcon2";
   static const String compare1 = "compare1";
-  static const String backgroundImageComapre = "backgroundImageComapre";
-
-  static const String contactAcc = "Contact";
 
   static const String avtarAcc = "Avatar";
-  static const String editIcon = "EditIcon";
   static const String bagdestarIcon = "bagdestarIcon";
 
   static const String avtarSecond = "AvtarSecond";
@@ -156,7 +178,6 @@ abstract class AssetsPath {
   static const String otpIcon = "otpIcon";
   static const String signinIcon = "signinIcon";
 
-  static const String quiz = "quizIcon";
   static const String oneWord = "oneWorldIcon";
   static const String blackBox = "blackBoxIcon";
   static const String calculations = "calculationIcon";
@@ -164,21 +185,14 @@ abstract class AssetsPath {
 
   static const String mapPopupAircraft = "MapPopupAircraft";
   static const String mapPopupLivearea = "MapPopupLivearea";
-  static const String aircraftIconmap = "aircraftIconmap";
   static const String closeIcon = "closeMapIcon";
   static const String closeIconsearch = "closeIconsearch";
   static const String infoIcon2 = "infoIcon2";
 
-  /// png
-  static const String CompareIcon = "CompareIcon";
-
-  static const String SavedIcon = "SavedIcon";
   static const String airbus = "airbus";
   static const String aeroplaneComparison = "aeroplaneComparison";
   static const String boeinglogo = "boeinglogo";
-  static const String DhcLogo = "DhcLogo";
   static const String airbusplane = "airbusplane";
-  static const String HistoryImg = "HistoryImg";
   static const String badgeimg = "badgeimg";
   static const String carFollowImage = "CarFollowIcon";
 
