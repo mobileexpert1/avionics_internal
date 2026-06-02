@@ -22,7 +22,6 @@ class FlightDetailResponse {
       );
     }
 
-    // Case 2: Single result response (aircraft details)
     if (json['results'] != null) {
       return FlightDetailResponse(
         detail: json['detail'],

@@ -9,6 +9,8 @@ import '../../../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import '../../../../bloc/Profile/UnitSelection/unit_selection_state.dart';
 
 class UnitSelectionScreen extends StatelessWidget {
+  const UnitSelectionScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     double maxWidth = MediaQuery.of(context).size.width > 1500

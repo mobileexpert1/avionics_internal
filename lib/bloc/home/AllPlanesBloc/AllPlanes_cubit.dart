@@ -90,7 +90,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         flightId: flightId,
         flightNumber: flightNumber,
       );
-      // updateFlightFavoriteByCallSign(callSign);
+       updateFlightFavoriteByCallSign(callSign);
       emit(state.copyWith(status: CommonApiStatus.success));
     } catch (e) {
       updateFlightFavoriteByCallSign(callSign);

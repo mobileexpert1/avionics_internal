@@ -6,7 +6,6 @@ import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
-import '../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import 'flight_key_values_model.dart';
 import 'flight_map_detailModel.dart';
@@ -222,8 +221,6 @@ class FlightRepository {
           aircraftDetail?.originAirport ?? flightDetail.originAirport,
       destinationAirport:
           aircraftDetail?.destinationAirport ?? flightDetail.destinationAirport,
-      //Sham
-
       // Preserve other fields from flightDetail
       takeoffTime: flightDetail.takeoffTime,
       takeoffRunway: flightDetail.takeoffRunway,

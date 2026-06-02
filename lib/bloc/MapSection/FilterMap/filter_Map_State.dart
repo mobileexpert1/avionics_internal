@@ -55,7 +55,6 @@ class FilterMapState extends Equatable {
       showMap: true,
       showAircraftLabels: true,
       mapType: CustomMapType.standard,
-      // default
       categories: const ["Commercial", "Cargo", "Business", "Other"],
     );
   }
@@ -92,21 +91,13 @@ class FilterMapState extends Equatable {
   List<Object?> get props => [
     showNumberOfFlights,
     showSearchInRadius,
-
     numberOfFlights,
-
     searchRadius,
-
     selectedCategories,
-
     showCategories,
-
     showMap,
-
     showAircraftLabels,
-
     mapType,
-
     categories,
   ];
 }

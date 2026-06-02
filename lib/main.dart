@@ -31,7 +31,7 @@ import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
-import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
+// import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import 'bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
@@ -43,7 +43,7 @@ import 'bloc/Profile/Glossary/glossary_cubit.dart';
 import 'bloc/Profile/MySubscription/my_subscription_cubit.dart';
 import 'bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import 'bloc/Profile/createNewPassword/createNewPassword_cubit.dart';
-import 'bloc/home/Filter/filter_cubit.dart';
+import 'bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterCubit.dart';
 import 'bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import 'bloc/home/chatSection/ChatHistory/chat_history_cubit.dart';
 import 'bloc/home/homeBloc/home_cubit.dart';
@@ -108,6 +108,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -117,7 +122,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => ForgotCubit()),
         BlocProvider(create: (_) => CreateNewPasswordCubit()),
         BlocProvider(create: (_) => ManufacturerCubit()),
-        BlocProvider(create: (_) => FilterCubit()),
         BlocProvider(create: (_) => SavedFlightCubit()),
         BlocProvider(create: (_) => AllPlanesCubit()),
         BlocProvider(create: (_) => AirCraftDetailCubit()),

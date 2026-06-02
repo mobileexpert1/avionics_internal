@@ -1,29 +1,30 @@
 import 'dart:async';
+
+import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     hide Position;
-import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Screens/Onboarding/Subscription/AppleSubscription/SubscriptionBuyPlanScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
 import 'FilterMap/filter_Map_State.dart';
 import 'MapAircraftList/aircraft_List_Data_Repository.dart';
+import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
 import 'flight_map_state.dart';
-import 'flight_map_detailModel.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
   // ── FIELDS ─────────────────────────────────────────────────────────────────
@@ -60,6 +61,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     emit(state.copyWith(selectedAirport: airportModel));
   }
 
+  void clearSelectedFlightDetail() {
+    emit(state.copyWith(selectedFlightDetail: null));
+  }
+
   void setFilters(List<String> categories, List<String> aircraftIcaos) {
     emit(
       state.copyWith(
@@ -69,13 +74,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     );
   }
 
-  void clearSelectedFlightDetail() {
-    emit(state.copyWith(selectedFlightDetail: null));
-  }
-
   void toggleFavoriteByCallSign(String? callSign) {
     if (callSign == null || state.flights == null) return;
-
     final updatedFlights = state.flights!.map((flight) {
       if (flight.callSign == callSign) {
         return flight.copyWith(isFavorite: !(flight.isFavorite));
@@ -84,6 +84,15 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }).toList();
 
     emit(state.copyWith(flights: updatedFlights));
+    print("before state.isFavFlightByS-=-=-=-${state.isFavFlightByS}");
+    final newValueForFavUnFavFlights = state.isFavFlightByS ?? false;
+    print("after state.isFavFlightByS-=-=-=-${!newValueForFavUnFavFlights}");
+    emit(
+      state.copyWith(
+        flights: updatedFlights,
+        isFavFlightByS: !newValueForFavUnFavFlights,
+      ),
+    );
   }
 
   // ── LOCATION ───────────────────────────────────────────────────────────────
@@ -226,17 +235,18 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   Future<void> fetchAircraftDetailsFromFlightsList(
     List<String> uniqueTypes,
-      List<String> callSignListTypes,
+    List<String> callSignListTypes,
     BuildContext context,
   ) async {
     try {
       final flightsDetails = await AircraftListDataRepository()
-          .getListOfAllPlanes(aircraftIds: uniqueTypes,callSignListTypes: callSignListTypes);
+          .getListOfAllPlanes(
+            aircraftIds: uniqueTypes,
+            callSignListTypes: callSignListTypes,
+          );
 
       if (flightsDetails.data.isNotEmpty) {
         await loadFavoritesFlights();
-
-
         final enrichedFlights = await mergeFlightsWithDetails(
           state.flights ?? [],
           flightsDetails.data,
@@ -362,11 +372,14 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         // TRACK_FLIGHT = 2
         // EMPTY_REQUEST = 3
         submitFlightCreditApi(1, 2, context);
+        print("flightDetail.isFavorite-=-=-=${flightDetail.isFavorite}");
+        clearSelectedFlightDetail();
         emit(
           state.copyWith(
             selectedFlightDetail: flightDetail,
             status: CommonApiStatus.success,
             isLoading: false,
+            isFavFlightByS: flightDetail.isFavorite,
           ),
         );
       }
@@ -385,8 +398,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required String flightNumber,
     required BuildContext context,
   }) async {
-    emit(state.copyWith(isLoading: true));
-
+    //emit(state.copyWith(isLoading: true));
     try {
       final response = await FlightRepository().getFlightPositions(
         flightNumber,

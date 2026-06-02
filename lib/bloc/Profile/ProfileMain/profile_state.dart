@@ -1,28 +1,17 @@
-class ProfileScreenState  {
-  // final List<SavedFlightAndProfileSectionModel> savedflight;
+class ProfileScreenState {
   final bool isLoading;
 
-  const ProfileScreenState({
-    // required this.savedflight,
-    this.isLoading = false,
-  });
+  const ProfileScreenState({this.isLoading = false});
 
   ProfileScreenState copyWith({
-    // List<SavedFlightAndProfileSectionModel>? savedflight,
     bool? isLoading,
     bool? isProUser,
     String? errorMessage,
     bool? logoutSuccess,
     bool? deleteAccountSuccess,
   }) {
-    return ProfileScreenState(
-      // savedflight: savedflight ?? this.savedflight,
-      isLoading: isLoading ?? this.isLoading,
-    );
+    return ProfileScreenState(isLoading: isLoading ?? this.isLoading);
   }
 
-  List<Object?> get props => [
-    // savedflight,
-    isLoading,
-  ];
+  List<Object?> get props => [isLoading];
 }

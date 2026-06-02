@@ -24,10 +24,16 @@ class KeyData {
 
   factory KeyData.fromJson(Map<String, dynamic> json) {
     return KeyData(
-      fr24: json['fr24'] != null && json['fr24'] is String && (json['fr24'] as String).isNotEmpty
+      fr24:
+          json['fr24'] != null &&
+              json['fr24'] is String &&
+              (json['fr24'] as String).isNotEmpty
           ? json['fr24'] as String
           : null,
-      googleMapsKey: json['avioflai-google-maps'] != null && json['avioflai-google-maps'] is String && (json['avioflai-google-maps'] as String).isNotEmpty
+      googleMapsKey:
+          json['avioflai-google-maps'] != null &&
+              json['avioflai-google-maps'] is String &&
+              (json['avioflai-google-maps'] as String).isNotEmpty
           ? json['avioflai-google-maps'] as String
           : null,
     );

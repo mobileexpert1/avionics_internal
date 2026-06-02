@@ -54,8 +54,10 @@ class _FlightDetailScreenForMapSectionState
     return mainTab == 0 ? subTabs : sub2Tabs;
   }
 
-  int _currentIndex = 0;
-  late PageController _pageController = PageController();
+  // ── Separate controllers for image carousel and tab swipe ──
+  int _currentImageIndex = 0;
+  late PageController _imagePageController = PageController();
+  late PageController _tabPageController = PageController();
 
   bool _isLoadingFullDetails = false;
   FlightAircraftDetail? _currentFlightDetail;
@@ -89,7 +91,6 @@ class _FlightDetailScreenForMapSectionState
       context,
     );
 
-    // Only from Saved Flight → load full details + live refresh
     if (widget.fromSavedFlight) {
       _loadFullFlightDetailsFromSaved();
     }
@@ -97,6 +98,27 @@ class _FlightDetailScreenForMapSectionState
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.flightDetailScreen,
     );
+  }
+
+  @override
+  void dispose() {
+    _imagePageController.dispose();
+    _tabPageController.dispose();
+    _subTabScrollController.dispose();
+    super.dispose();
+  }
+
+  // ── Go to sub tab (syncs header tabs + PageView + scroll) ──
+  void _goToSubTab(int index) {
+    setState(() => subTab = index);
+    _scrollToSelectedSubTab(index);
+    if (_tabPageController.hasClients) {
+      _tabPageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   Future<void> _loadFullFlightDetailsFromSaved() async {
@@ -151,21 +173,16 @@ class _FlightDetailScreenForMapSectionState
 
         if (liveFlight != null) {
           mergedDetail = fullFlightDetail.copyWith(
-            // === LIVE POSITION ===
             latitude: liveFlight.latitude,
             longitude: liveFlight.longitude,
             altitude: liveFlight.altitude,
             groundSpeed: liveFlight.groundSpeed,
             vspeed: liveFlight.verticalSpeed,
             track: liveFlight.track,
-
-            // === LIVE IDENTIFIERS (SAFE) ===
             callsign: liveFlight.callSign,
             squawk: liveFlight.squawk,
             source: liveFlight.source,
             hex: liveFlight.hex,
-
-            // === LIVE TIMING ===
             firstSeen: liveFlight.firstSeen ?? fullFlightDetail.firstSeen,
             lastSeen: liveFlight.lastSeen ?? fullFlightDetail.lastSeen,
             flightEnded: liveFlight.flightEnded ?? fullFlightDetail.flightEnded,
@@ -173,20 +190,14 @@ class _FlightDetailScreenForMapSectionState
             eta: liveFlight.eta ?? fullFlightDetail.eta,
             takeoffTime: liveFlight.takeoffTime ?? fullFlightDetail.takeoffTime,
             flightTime: liveFlight.flightTime ?? fullFlightDetail.flightTime,
-
-            // === ICAO / IATA ===
             departureIcao: liveFlight.departureIcao,
             departureIata: liveFlight.departureIata,
             arrivalIcao: liveFlight.arrivalIcao,
             arrivalIata: liveFlight.arrivalIata,
-
-            // === AIRCRAFT INFO ===
             registration: liveFlight.registration,
             type: liveFlight.type,
             paintedAs: liveFlight.paintedAs,
             operatingAs: liveFlight.operatingAs,
-
-            // === DISTANCE / RUNWAY (API DATA) ===
             takeoffRunway: fullFlightDetail.takeoffRunway,
             landingRunway: fullFlightDetail.landingRunway,
             actualDistance: fullFlightDetail.actualDistance,
@@ -220,11 +231,16 @@ class _FlightDetailScreenForMapSectionState
     final targetOffset =
         (index * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
 
-    _subTabScrollController.animateTo(
-      targetOffset.clamp(0.0, _subTabScrollController.position.maxScrollExtent),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    if (_subTabScrollController.hasClients) {
+      _subTabScrollController.animateTo(
+        targetOffset.clamp(
+          0.0,
+          _subTabScrollController.position.maxScrollExtent,
+        ),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -242,8 +258,14 @@ class _FlightDetailScreenForMapSectionState
           backgroundColor: Colors.white,
           appBar: CustomAppBar(
             isForComparison: true,
-            title: _currentFlightDetail?.callsign?.isNotEmpty ?? false
-                ? _currentFlightDetail!.callsign!
+            title: mainTab == 0
+                ? _currentFlightDetail?.callsign?.isNotEmpty ?? false
+                      ? _currentFlightDetail!.callsign!
+                      : widget.callsign?.isNotEmpty ?? false
+                      ? widget.callsign!
+                      : 'N/A'
+                : _currentFlightDetail?.aircraftModel?.isNotEmpty ?? false
+                ? _currentFlightDetail!.aircraftModel!
                 : widget.callsign?.isNotEmpty ?? false
                 ? widget.callsign!
                 : 'N/A',
@@ -309,6 +331,7 @@ class _FlightDetailScreenForMapSectionState
           ),
           body: Column(
             children: [
+              // ── MAIN TABS (Live / Encyclopedia) ──
               Container(
                 height: 40,
                 color: AppColors.primaryDark,
@@ -318,7 +341,6 @@ class _FlightDetailScreenForMapSectionState
                     final tabWidth = constraints.maxWidth / mainTabs.length;
                     return Stack(
                       children: [
-                        // 2. Replace the AnimatedPositioned child
                         AnimatedPositioned(
                           duration: const Duration(milliseconds: 250),
                           curve: Curves.easeInOut,
@@ -336,7 +358,6 @@ class _FlightDetailScreenForMapSectionState
                             ),
                           ),
                         ),
-
                         Row(
                           children: List.generate(mainTabs.length, (index) {
                             final isSelected = mainTab == index;
@@ -348,6 +369,10 @@ class _FlightDetailScreenForMapSectionState
                                     mainTab = index;
                                     subTab = 0;
                                   });
+                                  // Reset tab PageView to first page
+                                  if (_tabPageController.hasClients) {
+                                    _tabPageController.jumpToPage(0);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -377,6 +402,7 @@ class _FlightDetailScreenForMapSectionState
 
               Container(height: 5, color: AppColors.extraDarkYellow),
 
+              // ── SUB TABS (scrollable header) ──
               SizedBox(
                 height: 40,
                 child: ListView.separated(
@@ -397,10 +423,7 @@ class _FlightDetailScreenForMapSectionState
                   itemBuilder: (context, index) {
                     final isSelected = subTab == index;
                     return GestureDetector(
-                      onTap: () {
-                        setState(() => subTab = index);
-                        _scrollToSelectedSubTab(index);
-                      },
+                      onTap: () => _goToSubTab(index),
                       child: Container(
                         height: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -420,6 +443,7 @@ class _FlightDetailScreenForMapSectionState
                 ),
               ),
 
+              // ── LIVE BADGE ──
               if (mainTab == 0)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -436,39 +460,47 @@ class _FlightDetailScreenForMapSectionState
                   ),
                 ),
 
+              // ── FLIGHT PROGRESS BAR ──
               if (mainTab == 0)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: _buildFlightDataSection(context),
                 ),
 
+              // ── TAB CONTENT (swipeable PageView) ──
               if (_currentFlightDetail != null) ...[
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _getTabContent(_currentFlightDetail!, details),
+                  child: PageView.builder(
+                    controller: _tabPageController,
+                    itemCount: activeTabs.length,
+                    onPageChanged: (index) {
+                      setState(() => subTab = index);
+                      _scrollToSelectedSubTab(index);
+                    },
+                    itemBuilder: (context, index) {
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: _getTabContentByIndex(
+                          index,
+                          _currentFlightDetail!,
+                          details,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
 
+              // ── BOTTOM NAV ARROWS + DOTS ──
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios),
                       onPressed: () {
-                        if (subTab > 0) {
-                          final newIndex = subTab - 1;
-                          setState(() {
-                            subTab = newIndex;
-                          });
-                          _scrollToSelectedSubTab(newIndex);
-                        }
+                        if (subTab > 0) _goToSubTab(subTab - 1);
                       },
                     ),
 
@@ -485,16 +517,18 @@ class _FlightDetailScreenForMapSectionState
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(activeTabs.length, (index) {
                           final isActive = subTab == index;
-
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 250),
-                            curve: Curves.easeInOut,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: isActive ? 20 : 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                          return GestureDetector(
+                            onTap: () => _goToSubTab(index),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeInOut,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: isActive ? 20 : 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                             ),
                           );
                         }),
@@ -505,11 +539,7 @@ class _FlightDetailScreenForMapSectionState
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {
                         if (subTab < activeTabs.length - 1) {
-                          final newIndex = subTab + 1;
-                          setState(() {
-                            subTab = newIndex;
-                          });
-                          _scrollToSelectedSubTab(newIndex);
+                          _goToSubTab(subTab + 1);
                         }
                       },
                     ),
@@ -523,6 +553,7 @@ class _FlightDetailScreenForMapSectionState
     );
   }
 
+  // ── IMAGE CAROUSEL (uses _imagePageController) ──
   Widget _buildImageCoverScroller(
     double screenHeight,
     List<AircraftImage> coverImages,
@@ -536,11 +567,11 @@ class _FlightDetailScreenForMapSectionState
           child: Stack(
             children: [
               PageView.builder(
-                controller: _pageController,
+                controller: _imagePageController,
                 itemCount: coverImages.length,
                 onPageChanged: (index) {
                   setState(() {
-                    _currentIndex = index;
+                    _currentImageIndex = index;
                   });
                 },
                 itemBuilder: (context, index) {
@@ -611,22 +642,22 @@ class _FlightDetailScreenForMapSectionState
                 child: Center(
                   child: GestureDetector(
                     onTap: () {
-                      if (_currentIndex > 0) {
-                        _pageController.previousPage(
+                      if (_currentImageIndex > 0) {
+                        _imagePageController.previousPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.black45,
                         shape: BoxShape.circle,
                       ),
-                      child: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.backArrowButton),
-                        fit: BoxFit.cover,
+                      child: const Icon(
+                        Icons.chevron_left,
+                        color: Colors.white,
+                        size: 27,
                       ),
                     ),
                   ),
@@ -640,23 +671,22 @@ class _FlightDetailScreenForMapSectionState
                 child: Center(
                   child: GestureDetector(
                     onTap: () {
-                      if (_currentIndex < coverImages.length - 1) {
-                        _pageController.nextPage(
+                      if (_currentImageIndex < coverImages.length - 1) {
+                        _imagePageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.black45,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.arrow_forward_ios,
+                        Icons.chevron_right,
                         color: Colors.white,
-                        size: 14,
+                        size: 27,
                       ),
                     ),
                   ),
@@ -670,7 +700,7 @@ class _FlightDetailScreenForMapSectionState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(coverImages.length, (index) {
-                    final isActive = index == _currentIndex;
+                    final isActive = index == _currentImageIndex;
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -730,7 +760,6 @@ class _FlightDetailScreenForMapSectionState
     final flight = _currentFlightDetail;
     if (flight == null) return const SizedBox.shrink();
 
-    // === Extract Data ===
     final departureCity = flight.originAirport?.city ?? 'N/A';
     final arrivalCity = flight.destinationAirport?.city ?? 'N/A';
     final departureIata = flight.departureIcao ?? 'N/A';
@@ -738,7 +767,6 @@ class _FlightDetailScreenForMapSectionState
     final groundSpeed = flight.groundSpeed ?? 0;
     final altitude = flight.altitude ?? 0;
 
-    // === Time & Progress Logic ===
     DateTime? takeoffTime = flight.takeoffTime;
     DateTime? eta = flight.eta;
 
@@ -775,7 +803,6 @@ class _FlightDetailScreenForMapSectionState
           .toUtc()
           .difference(takeoffTime)
           .inMilliseconds;
-
       if (total > 0) {
         progress = (elapsed / total).clamp(0.0, 1.0);
       }
@@ -798,7 +825,6 @@ class _FlightDetailScreenForMapSectionState
                   ],
                 ),
               ),
-
               SizedBox(width: 10),
               _cityColumn(
                 arrivalCity,
@@ -809,21 +835,23 @@ class _FlightDetailScreenForMapSectionState
             ],
           ),
         ),
-
         const SizedBox(height: 20),
-
         const Divider(
           height: 0,
           thickness: 1,
           color: AppColors.dividerLineColour,
         ),
-
         const SizedBox(height: 15),
       ],
     );
   }
 
-  Widget _getTabContent(FlightAircraftDetail flight, AircraftResult? detail) {
+  // ── TAB CONTENT BY INDEX (replaces _getTabContent) ──
+  Widget _getTabContentByIndex(
+    int index,
+    FlightAircraftDetail flight,
+    AircraftResult? detail,
+  ) {
     final screenHeight = MediaQuery.of(context).size.height;
     final aircraftData = context
         .read<AirCraftDetailCubit>()
@@ -832,16 +860,17 @@ class _FlightDetailScreenForMapSectionState
         ?.results;
     final hasValidImages =
         aircraftData?.images != null && aircraftData!.images.isNotEmpty;
+
     if (mainTab == 0) {
-      switch (subTab) {
+      switch (index) {
         case 0:
           return _buildFieldRows([
             ['Call Sign', flight.callsign ?? 'N/A'],
             ['Flight Code', flight.flightNumber ?? 'N/A'],
             ['Squawk', flight.squawk ?? 'N/A', true],
             ['ADS-B Hex', flight.hex ?? 'N/A', true],
-            ['Latitude', flight.latitude.toStringAsFixed(6) ?? 'N/A', true],
-            ['Longitude', flight.longitude.toStringAsFixed(6) ?? 'N/A', true],
+            ['Latitude', flight.latitude.toStringAsFixed(6), true],
+            ['Longitude', flight.longitude.toStringAsFixed(6), true],
             ['Registration', flight.registration ?? 'N/A', true],
             ['Data Source', flight.source ?? 'N/A', true],
           ]);
@@ -907,7 +936,7 @@ class _FlightDetailScreenForMapSectionState
           ]);
       }
     } else {
-      switch (subTab) {
+      switch (index) {
         case 0:
           return Column(
             children: [
@@ -979,7 +1008,6 @@ class _FlightDetailScreenForMapSectionState
               ]),
             ],
           );
-
         case 1:
           return _buildFieldRows([
             [
@@ -1293,13 +1321,9 @@ class _FlightDetailScreenForMapSectionState
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 20),
-
                     Container(height: 1, color: Colors.white24),
-
                     const SizedBox(height: 20),
-
                     Text(
                       content,
                       style: AppTextStyles.regular(
@@ -1308,7 +1332,6 @@ class _FlightDetailScreenForMapSectionState
                     ),
                   ],
                 ),
-
                 Positioned(
                   top: 0,
                   right: 0,
@@ -1339,6 +1362,7 @@ class _FlightDetailScreenForMapSectionState
   }
 }
 
+// ── PROGRESS BAR ──────────────────────────────────────────────────────────────
 Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
   return Container(
     color: Colors.white,
@@ -1363,7 +1387,6 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
                     top: 30,
                     child: Container(height: 2.5, color: Colors.grey.shade300),
                   ),
-
                   AnimatedPositioned(
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
@@ -1381,7 +1404,6 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
                       ),
                     ),
                   ),
-
                   Positioned(
                     left: padding,
                     top: 30,
@@ -1396,9 +1418,7 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
             },
           ),
         ),
-
         const SizedBox(height: 10),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1424,6 +1444,7 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
   );
 }
 
+// ── BROWSER TAB PAINTER ───────────────────────────────────────────────────────
 class BrowserTabPainter extends CustomPainter {
   final Color tabColor;
   final double topRadius;

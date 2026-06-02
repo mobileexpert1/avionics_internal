@@ -3,7 +3,6 @@ import '../../../Constants/ConstantStrings.dart';
 import 'gameBadges_model.dart';
 
 class BadgesRepository {
-  // Fetch Quiz Badges (Local Mock Data)
   Future<BadgeResponse> getQuizBadges() async {
     try {
       final uri = Uri.parse(
@@ -19,7 +18,6 @@ class BadgesRepository {
     }
   }
 
-  // Fetch One Word Badges
   Future<BadgeResponse> getOneWordBadges() async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
@@ -35,7 +33,6 @@ class BadgesRepository {
     }
   }
 
-  // Fetch Black Box Badges
   Future<BadgeResponse> getBlackBoxBadges() async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"

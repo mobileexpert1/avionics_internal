@@ -17,18 +17,6 @@ class AllPlanesReposistory {
     int page = 1,
     required String selectedAirbusId,
   }) async {
-    // Not Working in web section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return PaginatedList<AircraftListModel>(
-    //     results: await _getLocalData(),
-    //     count: 0,
-    //     totalPages: 1,
-    //     currentPage: 1,
-    //     hasNext: false,
-    //     hasPrevious: false,
-    //   );
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlAirplaneConstant.airplaneService}"

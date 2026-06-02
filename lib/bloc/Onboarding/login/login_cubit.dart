@@ -13,6 +13,7 @@ import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/AppleSignInErrorHandler.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../../Screens/Profile/ProfileMenuScreen/Avtar/AvtarScreen.dart';
@@ -233,12 +234,9 @@ class LoginCubit extends Cubit<LoginState> {
       emit(state.copyWith(status: CommonApiStatus.success));
       await _navigateAfterLogin(context, result);
     } catch (e) {
-      print(e.toString());
+      final message = AppleSignInErrorHandler.getMessage(e);
       emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CommonApiStatus.failure, errorMessage: message),
       );
     }
   }
@@ -281,10 +279,7 @@ class LoginCubit extends Cubit<LoginState> {
         userTypeUrl =
             "https://avionica.csdevhub.com/s3/manufacturer/57ATSEPWhite.svg";
       }
-
-      await SharedPrefsHelper.setAvtarUserUrl(
-        userTypeUrl,
-      );
+      await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
 
       await SharedPrefsHelper.setUserProfileName(
         '${result.userDetails?.firstName ?? ''} ${result.userDetails?.lastName ?? ''}'

@@ -16,7 +16,6 @@ class NoSwipeMaterialPageRoute<T> extends MaterialPageRoute<T> {
 }
 
 class AppNavigator {
-  /// PUSH
   static Future<T?> push<T extends Object?>(
       BuildContext context,
       Widget destination, {

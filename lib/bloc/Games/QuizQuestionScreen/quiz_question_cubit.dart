@@ -13,7 +13,7 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
-import '../../../Screens/Games/GamesSubScreens/CalculationSection/CalculationResultScreen.dart';
+import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
@@ -594,7 +594,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => CalculationResultScreen(
+                builder: (_) => MainResultScreen(
                   correctedAnswer: data.correctAnswers,
                   totalQuestion: data.totalQuestions,
                   score: data.earnedPoints,

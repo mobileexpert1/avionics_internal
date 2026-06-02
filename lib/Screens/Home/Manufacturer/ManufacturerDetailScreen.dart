@@ -39,44 +39,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreProducts = false;
   bool showInterestingFacts = false;
   int expandedIndex = -1;
-
-  // final List<ProductModel> staticProducts = [
-  //   ProductModel(
-  //     title: "Airbus Helicopters",
-  //     items: [
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //       ProductItemModel(name: "AS-332C Super Puma", tag: "AS32"),
-  //       ProductItemModel(name: "AS-350 Ecureuil", tag: "AS50"),
-  //       ProductItemModel(name: "EC-135", tag: "EC35"),
-  //     ],
-  //   ),
-  //   ProductModel(
-  //     title: "Airbus Airplanes",
-  //     items: [
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //       ProductItemModel(name: "H-160", tag: "H160"),
-  //       ProductItemModel(name: "H-225 Super Puma Mk2+", tag: "EC25"),
-  //     ],
-  //   ),
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -243,29 +205,27 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-
                                       // --- TITLE + SUBTITLE ---
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              detail.general.companyName,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                          ],
-                                        ),
-                                      ),
+                                      // Expanded(
+                                      //   child: Column(
+                                      //     crossAxisAlignment:
+                                      //         CrossAxisAlignment.start,
+                                      //     children: [
+                                      //       Text(
+                                      //         detail.general.companyName,
+                                      //         style: const TextStyle(
+                                      //           fontSize: 20,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),
+                                      //       ),
+                                      //       const SizedBox(height: 4),
+                                      //     ],
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
                               ),
-                            if (!kIsWeb)
                               Container(
                                 width: double.infinity,
                                 color: Colors.white,

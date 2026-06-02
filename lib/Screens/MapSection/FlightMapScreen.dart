@@ -35,7 +35,7 @@ import '../../bloc/MapSection/flight_map_model.dart';
 import '../../bloc/MapSection/flight_map_state.dart';
 import '../Home/AppBarFilterAndMapFilter/FilterForMapScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import '../WilcoBoat/ChatHistoryScreen/ChatBotScreen.dart';
+import '../WilcoBoat/ChatBotScreen.dart';
 import 'AirportStationDetailCard/AirportStationDetailCard.dart';
 import 'FlightDetailCard/FlightDetailCard.dart';
 import 'FlightGoogleMapWidget.dart';
@@ -91,8 +91,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   late final TextEditingController _searchController = TextEditingController();
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
-
-  // ── LIFECYCLE ──────────────────────────────────────────────────────────────
 
   @override
   void initState() {
@@ -261,19 +259,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
       final visibleRegion = await _mapController!.getVisibleRegion();
 
-      final screenCenter = ScreenCoordinate(
-        x: (constraints.maxWidth ~/ 2),
-        y: (constraints.maxHeight ~/ 2),
-      );
-
-      // final LatLng centerLatLng = await _mapController!.getLatLng(screenCenter);
-
       final centerLatLng = LatLng(
-        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
-        (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+        (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) /
+            2,
+        (visibleRegion.northeast.longitude +
+                visibleRegion.southwest.longitude) /
+            2,
       );
-
-      print("centerLatLng -=-=-=-= $centerLatLng");
 
       _refreshMapData(
         centerLatLng: centerLatLng,
@@ -340,10 +332,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     final visualRadiusNm = radiusNm + getVisualRadiusBufferNm(radiusNm).toInt();
     final visualRadiusMeters = convertNmToMeters(visualRadiusNm);
 
-    print(
-      "center-=-=$center,\nvisualRadiusNm -=-=$visualRadiusNm,\nvisualRadiusMeters-=-=$visualRadiusMeters",
-    );
-
     _circles.clear();
     _circles.add(
       Circle(
@@ -365,7 +353,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         );
       });
     }
-
 
     if (isComeFromFilterSection == false) return;
 
@@ -910,10 +897,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         title: '',
         leftButton: widget.openMode == 1 || widget.openMode == 2
             ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 30,
+                icon: SvgPicture.asset(
+                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                  fit: BoxFit.cover,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               )
@@ -1042,7 +1028,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                 },
 
                                 onCameraMoveStarted: () {
-                                  debugPrint("🟡 onCameraMoveStarted");
                                   _isProgrammaticMove = false;
                                   _isUserGesture = true;
                                 },
@@ -1367,6 +1352,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                     )
                                                   : CachedAnyImage(
                                                       imagePath: image,
+                                                      isForPlaneList: true,
                                                       width: isWide ? 120 : 70,
                                                       height: isWide ? 60 : 50,
                                                       contentImage:
@@ -1456,9 +1442,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                         onTap: () async {
                                                           if (aircraft ==
                                                               null) {
-                                                            debugPrint(
-                                                              "Aircraft or Flight data is null",
-                                                            );
                                                             return;
                                                           }
 
@@ -1542,7 +1525,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                   ? SvgPicture.asset(
                                                                       CommonUi.setSvgImage(
                                                                         AssetsPath
-                                                                            .manufacturer,
+                                                                            .manuFirstImage,
                                                                       ),
                                                                       width:
                                                                           isWide
@@ -1682,6 +1665,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           }
           return FlightDetailCard(
             flightDetail: state.selectedFlightDetail,
+            isFavFlightByS: state.isFavFlightByS ?? false,
             isComeFromLiveTracking: false,
             callBackForHideFlightCard: _resetFlightSelection,
           );
@@ -1732,7 +1716,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3,
+          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3.2,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             width: 400,

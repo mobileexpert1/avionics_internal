@@ -57,7 +57,6 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
             controller.loadRequest(Uri.parse(url));
           }
         },
-        
         builder: (context, state) {
           if (state.isLoading) {
             return const Scaffold(

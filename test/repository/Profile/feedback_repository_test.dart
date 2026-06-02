@@ -9,7 +9,7 @@ import '../../Helper/test_token.dart';
 
 void main() {
   group('FEEDBACK API REAL SERVER TEST', () {
-    test('Submit Feedback / Review → API → STATUS CODE CHECK', () async {
+    test('Submit Review / Review → API → STATUS CODE CHECK', () async {
       final url = Uri.parse(
         ApiBaseUrlConstant.baseUrl +
             ApiFunctionUrlConstant.userService +

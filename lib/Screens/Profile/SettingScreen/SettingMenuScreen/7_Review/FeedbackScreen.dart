@@ -241,7 +241,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               ),
                               child: Stack(
                                 children: [
-                                  /// TEXT FIELD
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
                                       12,
@@ -315,7 +314,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                     ),
                                 title: state.isSubmitting
                                     ? ""
-                                    : "Submit Review",
+                                    : "Submit Feedback",
                                 backgroundColor: AppColors.primaryValueColour,
                                 textColor: Colors.white,
                                 icon: state.isSubmitting

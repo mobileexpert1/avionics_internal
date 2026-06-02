@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
-import '../../../../../bloc/Home/AircraftComparison/Comparison/Filtter/filtter_state.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparisonFilterCubit.dart';
+import '../../../../../bloc/home/AircraftComparison/Comparison/Filter/ComparsionFilterState.dart';
 
 class FilterScreenForComparison extends StatefulWidget {
   final bool isAlreadyProcessing;
-  final FilterState1? modelResponse;
+  final ComparisonFilterState? modelResponse;
 
   const FilterScreenForComparison({
     super.key,
@@ -38,7 +38,7 @@ class _FilterScreenForComparisonState extends State<FilterScreenForComparison> {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      body: BlocBuilder<ComparisonFilterCubit1, FilterState1>(
+      body: BlocBuilder<ComparisonFilterCubit1, ComparisonFilterState>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());

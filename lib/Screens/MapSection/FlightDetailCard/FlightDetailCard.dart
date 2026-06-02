@@ -23,6 +23,7 @@ import '../MapHelpers/LiveBadge.dart';
 class FlightDetailCard extends StatefulWidget {
   final FlightAircraftDetail? flightDetail;
   final bool? isComeFromLiveTracking;
+  final bool? isFavFlightByS;
   final VoidCallback? callBackForHideFlightCard;
 
   const FlightDetailCard({
@@ -30,6 +31,7 @@ class FlightDetailCard extends StatefulWidget {
     this.callBackForHideFlightCard,
     this.flightDetail,
     this.isComeFromLiveTracking,
+    this.isFavFlightByS,
   });
 
   @override
@@ -58,10 +60,8 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
     super.didChangeDependencies();
 
     final state = context.read<FlightMapCubit>().state;
-
     final selectedFlight = state.selectedFlight;
     final detail = widget.flightDetail;
-    isFavLocal = detail?.isFavorite ?? selectedFlight?.isFavorite ?? false;
   }
 
   @override
@@ -84,7 +84,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
           final eta = detail?.eta ?? selectedFlight?.eta;
           final takeoffTime = detail?.takeoffTime;
 
-          //final aircraftType = detail?.aircraftModel ?? 'N/A';
+          final aircraftType = detail?.aircraftModel ?? 'N/A';
           //final manufacturer = detail?.manufacturer?.companyName ?? "N/A";
           final category = detail?.icaoTypeCode ?? detail?.type ?? "";
           final airlineLogo = detail?.manufacturer?.airlineLogo ?? "";
@@ -137,6 +137,9 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
           final departureCity = detail?.originAirport?.city ?? 'N/A';
           final arrivalCity = detail?.destinationAirport?.city ?? 'N/A';
 
+          print("(widget.isFavFlightByS-=-=-=${widget.isFavFlightByS}");
+          isFavLocal = widget.isFavFlightByS ?? false;
+
           return GestureDetector(
             onTap: widget.callBackForHideFlightCard,
             child: Card(
@@ -172,7 +175,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                       maxWidth: 220,
                                     ),
                                     child: Text(
-                                      "A320-200",
+                                      aircraftType,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: AppTextStyles.bold(24).copyWith(
@@ -214,7 +217,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     child: manufacturerLogo.isEmpty
                                         ? SvgPicture.asset(
                                             CommonUi.setSvgImage(
-                                              AssetsPath.manufacturer,
+                                              AssetsPath.manuFirstImage,
                                             ),
                                             width: 30,
                                             height: 25,
@@ -388,10 +391,11 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     )
                                   : CachedAnyImage(
                                       imagePath: airlineLogo,
+                                      isForPlaneList: true,
                                       width: 100,
                                       height: 30,
                                       contentImage: BoxFit.contain,
-                                      useCache: false,
+                                      useCache: true,
                                     ),
                             ),
                           ],

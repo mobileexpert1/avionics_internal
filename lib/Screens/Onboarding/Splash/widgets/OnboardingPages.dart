@@ -18,8 +18,9 @@ class OnboardingPage extends StatelessWidget {
 
     double responsiveFontSize(double baseSize) {
       final width = size.width;
-      if (kIsWeb)
+      if (kIsWeb) {
         return (baseSize * (width / 600)).clamp(baseSize * 0.8, baseSize * 1.2);
+      }
       return baseSize * (width / 375);
     }
 

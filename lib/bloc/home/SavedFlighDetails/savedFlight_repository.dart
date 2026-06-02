@@ -6,9 +6,8 @@ class SavedFlightRepository {
   Future<SavedFlightResponse> getSavedAndFavoriteAircrafts() async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-          "${ApiServiceUrlAirplaneConstant.getListAirbus}save-favorite",
-
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+      "${ApiServiceUrlAirplaneConstant.getListAirbus}save-favorite",
     );
 
     try {
@@ -19,13 +18,9 @@ class SavedFlightRepository {
     }
   }
 
-
   Future<Set<String>> getFavoriteCallSigns() async {
     final response = await getSavedAndFavoriteAircrafts();
 
-    return response.favorite
-        .map((e) => e.callsign)
-        .whereType<String>()
-        .toSet();
+    return response.favorite.map((e) => e.callsign).whereType<String>().toSet();
   }
 }

@@ -11,8 +11,6 @@ class SubscriptionPlanCard extends StatelessWidget {
   final String planPriceWithSymbol;
   final String expiryDate;
   final String isPlanActive;
-
-  /// true = show modify/cancel buttons
   final bool showActions;
 
   final VoidCallback? onModifyTap;

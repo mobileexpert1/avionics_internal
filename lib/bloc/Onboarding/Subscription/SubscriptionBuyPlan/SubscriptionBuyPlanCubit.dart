@@ -14,7 +14,6 @@ import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
 import 'SubscriptionBuyPlanRepository.dart';
 import 'SubscriptionBuyPlanState.dart';
 
-// ---------------- RevenueCat Keys ----------------
 const String _rcAppleApiKey = 'appl_fyiYkNFxAHXQCEUVuZbxJsicfHX';
 const String _rcAndroidApiKey = 'goog_nQAujUhKgFBEPESGnzMOczSTIOv';
 
@@ -224,7 +223,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
           purchased: false,
           waitingForBackendConfirmation: false,
           loading: false,
-          error: "Subscription verification taking longer than expected",
+          error: "In Progress to verification",
         ),
       );
     }

@@ -4,11 +4,6 @@ import '../../../../Constants/ConstantStrings.dart';
 
 class OneWordTopicRepository {
   Future<OneWordTopicModel?> getOneWordTopic() async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.oneWord}",
@@ -27,11 +22,6 @@ class OneWordTopicRepository {
   }
 
   Future<OneWordTopicModel?> getQuizTopic() async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.quiz}",
@@ -51,11 +41,6 @@ class OneWordTopicRepository {
 
 
   Future<OneWordTopicModel?> getCalculationTopic() async {
-    // Not Working in Web Section
-    // if (!await GenericMethods.hasInternet()) {
-    //   return null;
-    // }
-
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
           "${ApiFunctionUrlGamesConstant.calculation}",

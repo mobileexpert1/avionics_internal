@@ -20,7 +20,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   final String questionNo;
   int _totalDuration = 60;
   DateTime? _startTime;
-  bool? selectedAnswer; // default is null, do NOT initialize as false
+  bool? selectedAnswer;
   bool showAnswer = false;
 
   BlackBoxQuestionCubit(
