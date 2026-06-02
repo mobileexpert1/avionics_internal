@@ -23,8 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "com.avioflai.aviation"
-        minSdk = 23
-//        minSdk = flutter.minSdkVersion
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
