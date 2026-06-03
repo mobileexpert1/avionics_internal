@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../Constants/AppColors.dart';
-import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../Constants/AppColors.dart';
+import 'AppTextStyles/AppTextStyles.dart';
 
 class CustomSliderSection extends StatelessWidget {
   final double value;

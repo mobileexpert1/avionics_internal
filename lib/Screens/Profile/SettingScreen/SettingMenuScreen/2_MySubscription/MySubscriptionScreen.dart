@@ -16,7 +16,7 @@ import '../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
 import '../../../../../bloc/Profile/MySubscription/my_subscription_state.dart';
 import '../../../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../InfoBottomSheet.dart';
-import '../7_Review/FeedbackScreen.dart';
+import '../8_Review/FeedbackScreen.dart';
 import 'EmptyPackagesView.dart';
 import 'MySubscriptionDetailScreen.dart';
 import 'SubscriptionPlanCard.dart';

@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../../Constants/AppColors.dart';
-import '../../../../Constants/ConstantStrings.dart';
-import '../../../../Constants/constantImages.dart';
-import '../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../CustomFiles/CustomBottomButton.dart';
-import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../../bloc/Profile/Avtar/avtar_cubit.dart';
-import '../../../../bloc/Profile/Avtar/avtar_state.dart';
-import '../../../Onboarding/Login/LoginScreen.dart';
-import '../../SettingScreen/SettingScreen.dart';
+import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/AppColors.dart';
+import '../../../../../Constants/ConstantStrings.dart';
+import '../../../../../Constants/constantImages.dart';
+import '../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../CustomFiles/CustomBottomButton.dart';
+import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../../bloc/Profile/Avtar/avtar_cubit.dart';
+import '../../../../../bloc/Profile/Avtar/avtar_state.dart';
+import '../../../../Onboarding/Login/LoginScreen.dart';
+import '../../SettingScreen.dart';
 
 class AvtarScreen extends StatefulWidget {
   final bool isComeFromSignupScreen;

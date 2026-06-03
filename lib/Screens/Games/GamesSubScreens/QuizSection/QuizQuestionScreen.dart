@@ -17,7 +17,7 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
-import '../../../Profile/SettingScreen/SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
+import '../../MainGameScreen/InfoWrongGameScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -174,15 +174,14 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       builder: (_) => InfoWrongGameScreen(
                         screenIndex: state.wrongAnswerPopupCount,
                         gameTitle: widget.sectionTitle,
+                        callBackForMoveToNextScreen: () {
+                          context
+                              .read<QuizQuestionCubit>()
+                              .continueAfterWrongPopup(context);
+                        },
                       ),
                     ),
                   );
-
-                  if (context.mounted) {
-                    context.read<QuizQuestionCubit>().continueAfterWrongPopup(
-                      context,
-                    );
-                  }
                 }
               },
 

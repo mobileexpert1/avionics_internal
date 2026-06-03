@@ -16,7 +16,7 @@ import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppleSignInErrorHandler.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
-import '../../../Screens/Profile/ProfileMenuScreen/Avtar/AvtarScreen.dart';
+import '../../../Screens/Profile/SettingScreen/SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'login_repository.dart';
 import 'login_response_model.dart';
 import 'login_state.dart';

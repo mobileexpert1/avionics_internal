@@ -150,7 +150,7 @@ class LevelNodeWidget extends StatelessWidget {
   final bool isUnlocked;
   final bool isCompleted;
   final bool isLeftSide;
-  final bool isCurrent; // ✅ naya parameter
+  final bool isCurrent;
   final VoidCallback onTap;
 
   const LevelNodeWidget({
@@ -159,13 +159,13 @@ class LevelNodeWidget extends StatelessWidget {
     required this.isUnlocked,
     required this.isCompleted,
     required this.isLeftSide,
-    required this.isCurrent, // ✅
+    required this.isCurrent,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    // ✅ 4 states ke liye 4 colors
+    //4 states ke liye 4 colors
     final Color bgColor = isCompleted
         ? Colors
               .green // completed → green
@@ -564,7 +564,7 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
     if (controller.isAnimating) return;
 
     while (currentSegment < targetIndex) {
-      final int prevPage = _currentPage; // ✅ pehle note karo
+      final int prevPage = _currentPage;
 
       setState(() => isPlaneVisible = true);
       await controller.forward(from: 0);

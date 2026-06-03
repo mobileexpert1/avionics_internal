@@ -5,8 +5,8 @@ import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneW
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../Quiz_Section/quiz_model.dart';
 
-class OnewordCubit extends Cubit<OneWordTopicState> {
-  OnewordCubit() : super(OneWordTopicState());
+class OneWordCubit extends Cubit<OneWordTopicState> {
+  OneWordCubit() : super(OneWordTopicState());
 
   Future<void> loadOneWordTopics(BuildContext context) async {
     try {

@@ -19,18 +19,18 @@ import '../../../bloc/Profile/ProfileMain/profile_cubit.dart';
 import '../../../bloc/Profile/ProfileMain/profile_state.dart';
 import '../../../bloc/home/homeBloc/home_cubit.dart';
 import '../../Onboarding/Login/LoginScreen.dart';
-import '../ProfileMenuScreen/Avtar/AvtarScreen.dart';
 import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
-import 'SettingMenuScreen/0_PersonalData/ManageAccountScreen.dart';
-import 'SettingMenuScreen/1_MySubscription/MySubscriptionScreen.dart';
-import 'SettingMenuScreen/2_AddOnPacks/AddOnPacksScreen.dart';
-import 'SettingMenuScreen/3_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
-import 'SettingMenuScreen/4_5_AllDemoScreen/InfoWrongGameScreen/InfoWrongGameScreen.dart';
-import 'SettingMenuScreen/6_TutorialScreen/VideoPlayerScreen.dart';
-import 'SettingMenuScreen/7_Review/FeedbackScreen.dart';
-import 'SettingMenuScreen/8_ContactSupport/ContactSupportScreen.dart';
-import 'SettingMenuScreen/9_12_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
+import 'SettingMenuScreen/0_Avtar/AvtarScreen.dart';
+import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
+import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
+import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
+import 'SettingMenuScreen/4_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
+import '../../Games/MainGameScreen/InfoWrongGameScreen.dart';
+import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
+import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
+import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});

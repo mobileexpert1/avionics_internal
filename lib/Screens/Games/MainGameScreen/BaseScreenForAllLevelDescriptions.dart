@@ -10,7 +10,7 @@ import '../GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
 import '../GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizLockScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
-import 'MainGameDetailDescription.dart';
+import 'ReusableGameDetailScreen.dart';
 
 class BaseScreenForAllLevelDescriptions extends StatefulWidget {
   final String gameId;

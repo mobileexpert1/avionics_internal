@@ -18,12 +18,13 @@ import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/ProfileMain/profile_cubit.dart';
 import '../../bloc/Profile/ProfileMain/profile_state.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
-import '../Home/SavedFlights/SavedFlighScreen.dart';
 import 'ProfileMenuScreen/0_ScientificCalculator/screens/calculator_home_main_screen.dart';
+import 'ProfileMenuScreen/1_UnitConversion/UnitConversionsScreen.dart';
 import 'ProfileMenuScreen/2_FormulaSection/FormulaScreen.dart';
 import 'ProfileMenuScreen/3_Glossary/GlossaryScreen.dart';
 import 'ProfileMenuScreen/4_GameBadges/BadgesScreens.dart';
-import 'ProfileMenuScreen/ConversionSection/ConversionScreen.dart';
+import 'ProfileMenuScreen/5_SavedFlights/SavedFlighScreen.dart';
+import 'ProfileMenuScreen/6_UnitSelection/UnitSelectionScreen.dart';
 import 'ProfileSettingsSectionHeader.dart';
 import 'SettingScreen/SettingScreen.dart';
 
@@ -170,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         AppNavigator.push(
                           context,
-                          const ConversionsScreen(),
+                          const UnitConversionsScreen(),
                           multiBlocProviders: [
                             BlocProvider(create: (_) => ConversionCubit()),
                           ],
@@ -194,6 +195,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.conversionProfile,
+                      ),
+                      title: "Unit Selection",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const UnitSelectionScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,

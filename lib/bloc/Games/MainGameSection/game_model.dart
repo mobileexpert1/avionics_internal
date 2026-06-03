@@ -3,7 +3,6 @@ import 'dart:ui';
 class GamePairItemModel {
   final GameCardModel? left;
   final GameCardModel? right;
-
   const GamePairItemModel({this.left, this.right});
 }
 

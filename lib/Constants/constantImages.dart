@@ -124,6 +124,13 @@ abstract class AssetsPath {
   static const String visibilityOn = "92VisibilityOn";
   static const String emailIcon = "93EmailIcon";
   static const String bookMarkIcon = "94BookmarkIcon";
+  static const String airBusPlanePlaceholder = "95AirBusPlanePlaceholder";
+  static const String airportIcon = "96AirportIcon";
+  static const String appleIcon = "97AppleIcon";
+  static const String googleIcon = "98GoogleIcon";
+  static const String facebookIcon = "99FacebookIcon";
+
+
 
   static const String MapIcon = "MapIcon";
   static const String chatIcon = "chatIcon";
@@ -135,9 +142,6 @@ abstract class AssetsPath {
   static const String successIcon = "successIcon";
   static const String compare = "compare";
   static const String filter = "filter";
-  static const String apple = "Apple";
-  static const String facebook = "Facebook";
-  static const String google = "Google";
   static const String logoMain = "mainLogo";
   static const String splashLogo = "splashLogo";
   static const String trackIcon = "TrackIcon";
@@ -191,7 +195,7 @@ abstract class AssetsPath {
   static const String airbus = "airbus";
   static const String aeroplaneComparison = "aeroplaneComparison";
   static const String boeinglogo = "boeinglogo";
-  static const String airbusplane = "airbusplane";
+
   static const String badgeimg = "badgeimg";
   static const String carFollowImage = "CarFollowIcon";
 

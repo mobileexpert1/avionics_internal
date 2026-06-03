@@ -21,7 +21,7 @@ class TestColourScreen extends StatelessWidget {
       "hex": "#4797DB",
     },
 
-    // 🟡 Secondary
+    // Secondary
     {
       "name": "Secondary Yellow",
       "color": const Color(0xFFF9E84B),
@@ -47,7 +47,7 @@ class TestColourScreen extends StatelessWidget {
       "hex": "#D44545",
     },
 
-    // ⚫ Grays
+    // Grays
     {
       "name": "Black",
       "color": const Color(0xFF000000),
@@ -79,7 +79,7 @@ class TestColourScreen extends StatelessWidget {
       "hex": "#E3E3E3",
     },
 
-    // ⚪ White
+    // White
     {
       "name": "White",
       "color": const Color(0xFFFFFFFF),

@@ -24,12 +24,12 @@ class OneWordTopicScreen extends StatefulWidget {
 }
 
 class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
-  late OnewordCubit _cubit;
+  late OneWordCubit _cubit;
 
   @override
   void initState() {
     super.initState();
-    _cubit = OnewordCubit();
+    _cubit = OneWordCubit();
     _cubit.loadOneWordTopics(context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.oneWordTopicListScreen,
@@ -81,7 +81,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                   SizedBox(height: isWeb ? 20 : 16),
 
                   Expanded(
-                    child: BlocBuilder<OnewordCubit, OneWordTopicState>(
+                    child: BlocBuilder<OneWordCubit, OneWordTopicState>(
                       builder: (context, state) {
                         if (state.isLoading) {
                           return const Scaffold(

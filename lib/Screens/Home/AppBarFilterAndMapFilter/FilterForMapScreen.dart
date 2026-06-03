@@ -11,7 +11,7 @@ import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
-import '../../MapSection/MapHelpers/CustomSliderSection.dart';
+import '../../../Helpers/CustomSliderSection.dart';
 import 'ExpandableSection.dart';
 import 'SegmentedControl.dart';
 

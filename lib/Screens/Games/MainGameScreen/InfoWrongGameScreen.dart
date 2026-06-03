@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../../../Constants/AppColors.dart';
-import '../../../../../../Constants/constantImages.dart';
-import '../../../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../../../../Helpers/CustomHeaderViewExpandable.dart';
+import '../../../Constants/AppColors.dart';
+import '../../../Constants/constantImages.dart';
+import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/CustomHeaderViewExpandable.dart';
 
 class InfoWrongGameScreen extends StatefulWidget {
   final int screenIndex;
   final String gameTitle;
+  final VoidCallback? callBackForMoveToNextScreen;
+
 
   const InfoWrongGameScreen({
     super.key,
+    this.callBackForMoveToNextScreen,
     required this.screenIndex,
     required this.gameTitle,
   });
@@ -22,16 +25,15 @@ class InfoWrongGameScreen extends StatefulWidget {
 }
 
 class _InfoWrongGameState extends State<InfoWrongGameScreen> {
-  int changeTheCurrentImage = 0;
 
   @override
   Widget build(BuildContext context) {
-    final data = getImageAndDescription(changeTheCurrentImage);
+    final data = getImageAndDescription(widget.screenIndex);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: "Game Info Hint Screen",
+        title: widget.gameTitle,
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -39,7 +41,8 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
             fit: BoxFit.cover,
           ),
           onPressed: () {
-            Navigator.pop(context, true);
+            Navigator.pop(context);
+            widget.callBackForMoveToNextScreen?.call();
           },
         ),
       ),
@@ -62,6 +65,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
+                      widget.callBackForMoveToNextScreen?.call();
                     },
                     child: SizedBox(
                       height: 30,
@@ -107,7 +111,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
 
               const SizedBox(height: 15),
 
-              if (changeTheCurrentImage == 1 || changeTheCurrentImage == 2) ...[
+              if (widget.screenIndex == 2 || widget.screenIndex == 3) ...[
                 Text(
                   "Keep going!",
                   textAlign: TextAlign.center,
@@ -132,7 +136,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                 isNeedToShowLeftRightBottomBorder: false,
                 isNeedToShowLeftImage: false,
                 isExpanded: false,
-                title: "Try Next Round",
+                title: "Continue Journey",
                 headerColor: AppColors.primaryDark,
                 arrowBackgroundColor: AppColors.extraDarkYellow,
                 arrowFrontColor: Colors.black,
@@ -153,13 +157,8 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
                   onPressed: () async {},
                 ),
                 onHeaderTap: () async {
-                  setState(() {
-                    if (changeTheCurrentImage < 2) {
-                      changeTheCurrentImage++;
-                    } else {
-                      changeTheCurrentImage = 0;
-                    }
-                  });
+                  Navigator.pop(context);
+                  widget.callBackForMoveToNextScreen?.call();
                 },
               ),
             ],
@@ -172,7 +171,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
 
 Map<String, String> getImageAndDescription(int index) {
   switch (index) {
-    case 0:
+    case 1:
       return {
         "image": AssetsPath.infoWrongFirst,
         "description":
@@ -181,7 +180,7 @@ Map<String, String> getImageAndDescription(int index) {
         "title": "Turbulence happens!",
       };
 
-    case 1:
+    case 2:
       return {
         "image": AssetsPath.infoWrongSecond,
         "description": "You're navigating through some challenging airspace.",

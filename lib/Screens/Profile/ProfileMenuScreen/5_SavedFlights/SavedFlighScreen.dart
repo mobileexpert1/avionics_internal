@@ -6,21 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../../Constants/AppColors.dart';
-import '../../../Constants/constantImages.dart';
-import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
-import '../../../bloc/MapSection/flight_Map_Cubit.dart';
-import '../../../bloc/MapSection/flight_map_detailModel.dart';
-import '../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
-import '../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
-import '../../MapSection/MapHelpers/FlightDetailScreen.dart';
-import '../../MapSection/MapHelpers/FlightDetailScreenForMapSection.dart';
-import '../../WilcoBoat/ChatHistoryScreen.dart';
-import '../HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
+import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/AppColors.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
+import '../../../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../../../bloc/MapSection/flight_map_detailModel.dart';
+import '../../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
+import '../../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
+import '../../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
+import '../../../MapSection/MapHelpers/FlightDetailScreen.dart';
+import '../../../MapSection/MapHelpers/FlightDetailScreenForMapSection.dart';
+import '../../../WilcoBoat/ChatHistoryScreen.dart';
 
 class SavedFlighScreen extends StatefulWidget {
   final bool showTabs;

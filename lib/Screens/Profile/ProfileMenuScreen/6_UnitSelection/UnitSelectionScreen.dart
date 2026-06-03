@@ -20,6 +20,7 @@ class UnitSelectionScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: ConstantStrings.unitsMeasurmentsTitle,
+        centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.backArrowButton),
@@ -34,7 +35,7 @@ class UnitSelectionScreen extends StatelessWidget {
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: BlocBuilder<UnitSelectionCubit, UnitSelectionState>(
                 builder: (context, state) {
                   if (state is UnitSelectionInitial) {

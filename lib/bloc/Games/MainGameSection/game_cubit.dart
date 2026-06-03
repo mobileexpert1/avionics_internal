@@ -1,8 +1,7 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../Constants/AppColors.dart';
 import 'game_model.dart';
 import 'game_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../Constants/AppColors.dart';
 
 class GamesCubit extends Cubit<GamesState> {
   GamesCubit() : super(GamesInitial()) {

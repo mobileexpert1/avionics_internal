@@ -15,14 +15,14 @@ import '../../../../bloc/Profile/ConversionSection/conversion_cubit.dart';
 import '../../../../bloc/Profile/ConversionSection/conversion_model.dart';
 import '../../../../bloc/Profile/ConversionSection/conversion_state.dart';
 
-class ConversionsScreen extends StatefulWidget {
-  const ConversionsScreen({super.key});
+class UnitConversionsScreen extends StatefulWidget {
+  const UnitConversionsScreen({super.key});
 
   @override
-  State<ConversionsScreen> createState() => _ConversionsScreenState();
+  State<UnitConversionsScreen> createState() => _UnitConversionsScreenState();
 }
 
-class _ConversionsScreenState extends State<ConversionsScreen> {
+class _UnitConversionsScreenState extends State<UnitConversionsScreen> {
   late ConversionCubit _cubit;
   Map<int, bool> expandedMap = {};
 

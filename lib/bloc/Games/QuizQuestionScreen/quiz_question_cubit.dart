@@ -422,10 +422,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     int pointsThisQuestion = isCorrect ? 2 : 0;
     int bonusPointsThisQuestion = timeBonus;
 
-    final timeSpentThisQuestion = max(
-      1,
-      _totalDuration - state.timer,
-    ); // Ensure minimum 1s
+    final timeSpentThisQuestion = max(1, _totalDuration - state.timer);
     final updatedResults = List<QuestionResult>.from(state.questionResults);
     final updatedTimePerQuestion = List<int>.from(state.timePerQuestion);
 

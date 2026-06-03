@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Helpers/AppNavigator.dart';
-import '../../../Screens/Profile/ProfileMenuScreen/Avtar/AvtarScreen.dart';
+import '../../../Screens/Profile/SettingScreen/SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'signup_repository.dart';
 import 'signup_state.dart';
 

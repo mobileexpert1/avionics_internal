@@ -14,9 +14,9 @@ import '../../../../../Helpers/CardWithBadgeClipper.dart';
 import '../../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
 import '../../../../Onboarding/Login/LoginScreen.dart';
-import '../1_MySubscription/EmptyPackagesView.dart';
-import '../1_MySubscription/FeatureRow.dart';
-import '../1_MySubscription/StepIndicator.dart';
+import '../2_MySubscription/EmptyPackagesView.dart';
+import '../2_MySubscription/FeatureRow.dart';
+import '../2_MySubscription/StepIndicator.dart';
 
 class AddOnPacksScreen extends StatefulWidget {
   const AddOnPacksScreen({super.key});

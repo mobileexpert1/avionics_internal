@@ -502,7 +502,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     final iconSize = getIconSize(currentZoom);
 
     final customIcon = await _getBitmapDescriptorFromSvgAsset(
-      assetName: 'assets/svg_images/Airport1.svg',
+      assetName: CommonUi.setSvgImage(AssetsPath.airportIcon),
       size: iconSize,
       color: Colors.blue,
     );

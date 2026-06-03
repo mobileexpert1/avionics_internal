@@ -16,8 +16,8 @@ import '../../../Helpers/CardWithBadgeClipper.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
 import '../../Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/FeatureRow.dart';
-import '../../Profile/SettingScreen/SettingMenuScreen/1_MySubscription/StepIndicator.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/FeatureRow.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/StepIndicator.dart';
 import '../Login/LoginScreen.dart';
 
 class SubscriptionPlanDetailScreen extends StatefulWidget {

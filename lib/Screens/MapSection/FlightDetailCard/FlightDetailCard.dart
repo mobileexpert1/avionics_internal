@@ -383,7 +383,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                               child: airlineLogo.isEmpty
                                   ? SvgPicture.asset(
                                       CommonUi.setSvgImage(
-                                        AssetsPath.airbusplane,
+                                        AssetsPath.airBusPlanePlaceholder,
                                       ),
                                       width: 100,
                                       height: 30,

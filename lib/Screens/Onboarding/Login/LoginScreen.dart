@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               textColor: Colors.black,
                               title: ConstantStrings.loginWithGoogle,
                               icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.google),
+                                CommonUi.setSvgImage(AssetsPath.googleIcon),
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 textColor: Colors.white,
                                 title: ConstantStrings.loginWithApple,
                                 icon: SvgPicture.asset(
-                                  CommonUi.setSvgImage(AssetsPath.apple),
+                                  CommonUi.setSvgImage(AssetsPath.appleIcon),
                                   fit: BoxFit.fill,
                                 ),
                                 onPressed: () {
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               textColor: Colors.white,
                               title: ConstantStrings.loginWithFacebook,
                               icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.facebook),
+                                CommonUi.setSvgImage(AssetsPath.facebookIcon),
                                 fit: BoxFit.fill,
                               ),
                               onPressed: () {
