@@ -315,7 +315,7 @@ class LoginCubit extends Cubit<LoginState> {
         AppSnackBar.custom(
           context,
           message: 'Login Successfully',
-          svgAsset: CommonUi.setSvgImage(AssetsPath.loginIcon),
+          svgAsset: CommonUi.setSvgImage(AssetsPath.loginSuccessIcon),
         );
         AppNavigator.pushAndRemoveUntil(
           context,
@@ -329,7 +329,7 @@ class LoginCubit extends Cubit<LoginState> {
       AppSnackBar.custom(
         context,
         message: 'OTP sent successfully! Please verify your email.',
-        svgAsset: CommonUi.setSvgImage(AssetsPath.otpIcon),
+        svgAsset: CommonUi.setSvgImage(AssetsPath.otpIconForAlert),
         backgroundColor: const Color(0xFF3F3D56),
       );
 

@@ -73,8 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!mounted) return;
 
     setState(() {
-      userAvtarTypeUrl = avatarUrl ?? '';
-      userName = name ?? '';
+      userAvtarTypeUrl = avatarUrl;
+      userName = name;
     });
   }
 
@@ -123,13 +123,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         : Colors.white,
                                     placeholderBuilder: (_) => SvgPicture.asset(
                                       CommonUi.setSvgImage(
-                                        AssetsPath.manuFirstImage,
+                                        AssetsPath.manufacturerPlaceholder,
                                       ),
                                     ),
                                   )
                                 : SvgPicture.asset(
                                     CommonUi.setSvgImage(
-                                      AssetsPath.manuFirstImage,
+                                      AssetsPath.manufacturerPlaceholder,
                                     ),
                                   ),
                           ),

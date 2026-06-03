@@ -109,13 +109,14 @@ class _OtpScreenState extends State<OtpScreen> {
                   leftButton: IconButton(
                     icon: SvgPicture.asset(
                       CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                      color: Colors.black,
                       fit: BoxFit.cover,
                     ),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
-                  centerTitle: true,
+                  centerTitle: false,
                 ),
                 body: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -124,7 +125,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       children: [
                         const SizedBox(height: 80),
                         SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.logoMain),
+                          CommonUi.setSvgImage(AssetsPath.mainLogo),
                           fit: BoxFit.fill,
                         ),
                         const SizedBox(height: 20),

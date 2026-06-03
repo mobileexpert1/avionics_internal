@@ -77,7 +77,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                       children: [
                         const SizedBox(height: 20),
                         SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.logoMain),
+                          CommonUi.setSvgImage(AssetsPath.mainLogo),
                           fit: BoxFit.fill,
                         ),
                         const SizedBox(height: 30),

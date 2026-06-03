@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'package:avionics_internal/bloc/home/homeBloc/home_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
@@ -20,16 +19,16 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoading());
     try {
       final data = await repository.getHomeData();
-      if (data.isActiveSubscription == false) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) =>
-                SubscriptionPlanDetailScreen(isComeFromSignup: true),
-          ),
-          (_) => false,
-        );
-        return null;
-      } else {
+      // if (data.isActiveSubscription == false) {
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(
+      //       builder: (_) =>
+      //           SubscriptionPlanDetailScreen(isComeFromSignup: true),
+      //     ),
+      //     (_) => false,
+      //   );
+      //   return null;
+      // } else {
         final top2Manufacturers = data.manufacturers.take(2).toList();
         if (data.currentPlan != null) {
           CreditManager().initialize(data.currentPlan!);
@@ -45,7 +44,7 @@ class HomeCubit extends Cubit<HomeState> {
             selectedIndex: _selectedIndex,
           ),
         );
-      }
+      //}
       return data.userDetails;
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);

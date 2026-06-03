@@ -37,7 +37,6 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
 
   final List<String> mainTabs = ['Bookmark', 'Favorite'];
   int mainTab = 0;
-  bool _isDialogOpen = false;
 
   @override
   void initState() {

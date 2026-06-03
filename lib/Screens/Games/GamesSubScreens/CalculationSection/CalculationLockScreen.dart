@@ -15,6 +15,7 @@ import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Helpers/MainGameExtraClasses/DashedLinePainter.dart';
 import '../../../../bloc/Games/SubGameSection/Quiz_Section/quiz_model.dart';
 import '../QuizSection/QuizLockScreen.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
@@ -191,7 +192,7 @@ class _CourseStepRowState extends State<_CourseStepRow> {
               if (!widget.isLast)
                 CustomPaint(
                   size: Size(0, _cardHeight),
-                  painter: _DashedLinePainter(isDark: lineIsDark),
+                  painter: DashedLinePainter(isDark: lineIsDark),
                 ),
             ],
           ),
@@ -292,13 +293,15 @@ class _CourseCardState extends State<_CourseCard> {
   @override
   Widget build(BuildContext context) {
     final bool isActive = !widget.calculationGameItem.isLocked;
-    final images = returnCalculationImages(widget.calculationGameItem.title);
+    final images = returnCalculationAndBlackBoxImages(
+      widget.calculationGameItem.title,
+      false,
+    );
 
     return CompositedTransformTarget(
       link: _layerLink,
       child: GestureDetector(
-        // ← Pura card tappable
-        onTap: _showPopup, // ← Card tap = popup show
+        onTap: _showPopup,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
@@ -323,7 +326,7 @@ class _CourseCardState extends State<_CourseCard> {
                   height: 60,
                   fit: BoxFit.cover,
                 ),
-                onPressed: _showPopup, // ← Icon tap = bhi popup
+                onPressed: _showPopup,
               ),
 
               const SizedBox(width: 12),
@@ -342,8 +345,9 @@ class _CourseCardState extends State<_CourseCard> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      returnCalculationDescription(
+                      returnCalculationAndBlackBoxDescription(
                         widget.calculationGameItem.title,
+                        false,
                       ),
                       style: AppTextStyles.regular(
                         14,
@@ -363,7 +367,7 @@ class _CourseCardState extends State<_CourseCard> {
                       fit: BoxFit.cover,
                       color: Colors.black,
                     ),
-                    onPressed: _showPopup, // ← Arrow tap = bhi popup
+                    onPressed: _showPopup,
                   ),
                 ),
             ],
@@ -410,47 +414,4 @@ class _StepIndicator extends StatelessWidget {
       ),
     );
   }
-}
-
-class _DashedLinePainter extends CustomPainter {
-  final bool isDark;
-
-  const _DashedLinePainter({this.isDark = false});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final lineColor = isDark
-        ? const Color(0xFF2D2D54)
-        : const Color(0xFFCCCCDD);
-
-    final paint = Paint()
-      ..color = lineColor
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    final dotPaint = Paint()
-      ..color = lineColor
-      ..style = PaintingStyle.fill;
-
-    final cx = size.width / 2;
-
-    canvas.drawCircle(Offset(cx, 4), 3, dotPaint);
-
-    const dashHeight = 6.0;
-    const dashSpace = 4.0;
-    double startY = 12.0;
-
-    while (startY < size.height) {
-      canvas.drawLine(
-        Offset(cx, startY),
-        Offset(cx, startY + dashHeight),
-        paint,
-      );
-      startY += dashHeight + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _DashedLinePainter oldDelegate) =>
-      oldDelegate.isDark != isDark;
 }

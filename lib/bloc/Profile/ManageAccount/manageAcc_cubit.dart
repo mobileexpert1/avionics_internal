@@ -2,7 +2,6 @@ import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
-import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
@@ -29,8 +28,8 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         email: email,
         authType: authType,
         isButtonEnabled: firstName.isNotEmpty && lastName.isNotEmpty,
-        tokenUsagePercentage: tokenUsagePercentage ?? 0.0,
-        creditUsagePercentage: creditUsagePercentage ?? 0.0,
+        tokenUsagePercentage: tokenUsagePercentage,
+        creditUsagePercentage: creditUsagePercentage,
       ),
     );
   }

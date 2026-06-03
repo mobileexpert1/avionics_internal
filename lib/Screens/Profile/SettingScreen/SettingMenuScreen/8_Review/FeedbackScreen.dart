@@ -77,10 +77,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 },
                 child: BlocBuilder<FeedbackCubit, FeedbackState>(
                   builder: (context, state) {
-                    final textLength = controller.text.length;
                     final isEmpty = controller.text.trim().isEmpty;
-                    final isAtLimit = textLength >= maxChars;
-
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -187,7 +184,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
-                              children: (state.categories ?? const []).map((
+                              children: (state.categories).map((
                                 label,
                               ) {
                                 final isSelected = state.selectedCategories

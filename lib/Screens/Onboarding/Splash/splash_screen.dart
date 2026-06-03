@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 const Spacer(),
                 Center(
                   child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.splashLogo),
+                    CommonUi.setSvgImage(AssetsPath.splashMainLogo),
                     width: logoWidth.clamp(100, 300),
                     fit: BoxFit.contain,
                   ),

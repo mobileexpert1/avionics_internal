@@ -50,8 +50,6 @@ class FlightGoogleMapWidget extends StatefulWidget {
 class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
   GoogleMapController? _mapController;
 
-  bool _isAlreadyFetchedTheKey = false;
-
   @override
   void initState() {
     super.initState();
@@ -62,10 +60,8 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
   Future<void> fetchTheApiKey() async {
     bool? apiTokenSever = await SharedPrefsHelper.getApiFetchKeyFromSever();
     if (apiTokenSever == true) {
-      _isAlreadyFetchedTheKey = true;
       widget.isAlreadyFetchedTheKey?.call(true);
     } else {
-      _isAlreadyFetchedTheKey = false;
       widget.isAlreadyFetchedTheKey?.call(false);
     }
   }

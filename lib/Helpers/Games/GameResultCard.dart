@@ -50,15 +50,15 @@ class GameResultCard extends StatelessWidget {
 
                 (score / total) >= 0.8
                     ? Image.asset(
-                  'assets/svg_images/result.gif',
-                  height: 120,
-                  width: 120,
-                )
+                        CommonUi.setGifImage(AssetsPath.gameResultGif),
+                        height: 120,
+                        width: 120,
+                      )
                     : SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.resultIcon),
-                  height: 100,
-                  width: 100,
-                ),
+                        CommonUi.setSvgImage(AssetsPath.gameResultIcon),
+                        height: 100,
+                        width: 100,
+                      ),
 
                 const SizedBox(height: 12),
 
@@ -118,13 +118,13 @@ class GameResultCard extends StatelessWidget {
 
                 correctPoints != 0
                     ? Text(
-                  "$correctPoints points for correct answers",
-                  style: const TextStyle(fontSize: 15),
-                )
+                        "$correctPoints points for correct answers",
+                        style: const TextStyle(fontSize: 15),
+                      )
                     : const SizedBox.shrink(),
 
                 ...bonusPoints.map(
-                      (b) => Padding(
+                  (b) => Padding(
                     padding: const EdgeInsets.only(bottom: 6.0),
                     child: Text(
                       b,
@@ -145,11 +145,9 @@ class GameResultCard extends StatelessWidget {
                         ? MediaQuery.of(context).size.width * 0.45
                         : double.infinity,
                     child: CustomBottomButton(
-                      fontStyle: AppTextStyles.regular(21.46).copyWith(
-                        height: 1.0,
-                        color: Colors.white
-                            ,
-                      ),
+                      fontStyle: AppTextStyles.regular(
+                        21.46,
+                      ).copyWith(height: 1.0, color: Colors.white),
                       title: ConstantStrings.backToGame,
                       backgroundColor: AppColors.customBottomEnabledColour,
                       textColor: Colors.white,

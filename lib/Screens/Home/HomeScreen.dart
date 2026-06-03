@@ -288,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   isLeftImage: IconButton(
                                     icon: SvgPicture.asset(
                                       CommonUi.setSvgImage(
-                                        AssetsPath.flyingareaicon,
+                                        AssetsPath.flyingAreaIcon,
                                       ),
                                       width: 30,
                                       height: 30,

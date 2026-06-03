@@ -145,7 +145,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                         Row(
                           children: [
                             SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.bagdestarIcon),
+                              CommonUi.setSvgImage(AssetsPath.badgeStarIcon),
                               height:
                                   MediaQuery.of(context).size.height *
                                   (ikweb ? 0.03 : 0.025),
@@ -358,7 +358,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                               imagePath:
                                   (badge.icon != null && badge.icon!.isNotEmpty)
                                   ? badge.icon!
-                                  : CommonUi.setPngImage(AssetsPath.badgeimg),
+                                  : CommonUi.setPngImage(AssetsPath.badgeMainIcon),
                               width: 250,
                               height: 200,
                               contentImage: BoxFit.contain,
@@ -370,7 +370,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           Positioned(
                             top: 90,
                             child: SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.badgesLock),
+                              CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
                               width: 40,
                               height: 40,
                               color: const Color(0xFF1C66C5),
@@ -443,7 +443,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.badgeTrophy),
+                            CommonUi.setSvgImage(AssetsPath.badgeTrophyIcon),
                             width: 20,
                             height: 20,
                           ),
@@ -523,7 +523,7 @@ class _BadgeCard extends StatelessWidget {
                           useCache: true,
                           imagePath: badge.icon?.isNotEmpty == true
                               ? badge.icon!
-                              : CommonUi.setPngImage(AssetsPath.badgeimg),
+                              : CommonUi.setPngImage(AssetsPath.badgeMainIcon),
                           width: double.infinity,
                           height: double.infinity,
                           contentImage: BoxFit.contain,
@@ -592,7 +592,7 @@ class _BadgeCard extends StatelessWidget {
               child: Align(
                 alignment: const Alignment(0, -0.22),
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.badgesLock),
+                  CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
                   width: ikweb ? 45 : 35,
                   height: ikweb ? 45 : 35,
                   color: const Color(0xFF1C66C5),

@@ -14,7 +14,6 @@ import '../../../../../Helpers/CardWithBadgeClipper.dart';
 import '../../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
 import '../../../../Onboarding/Login/LoginScreen.dart';
-import '../2_MySubscription/EmptyPackagesView.dart';
 import '../2_MySubscription/FeatureRow.dart';
 import '../2_MySubscription/StepIndicator.dart';
 
@@ -83,11 +82,9 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
         return;
       }
 
-      // Blocked user → redirect to login.
       if (state.isBlocked == true) {
         _navigateToLogin(ctx);
       } else {
-        // Regular profile-flow error → just pop.
         Future.delayed(const Duration(seconds: 1), () {
           if (!ctx.mounted) return;
           Navigator.pop(ctx);
@@ -98,7 +95,6 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
       return;
     }
 
-    // ── successful consumable purchase ────────────────────────────────────
     if (state.consumablePurchased == true && state.loading == false) {
       ctx.read<SubscriptionBuyPlanCubit>().resetConsumablePurchaseState();
 
@@ -139,56 +135,51 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                   ),
                 ),
                 body: SafeArea(
-                  child: packages.isEmpty
-                      ? EmptyPackagesView(isLoading: state.loading)
-                      : Column(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 16,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const SizedBox(height: 15),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 16,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Choose a Pack',
-                                    style: AppTextStyles.bold(26).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.black,
-                                    ),
-                                  ),
-                                  StepIndicator(
-                                    total: packages.length,
-                                    current: _currentPage,
-                                  ),
-                                ],
-                              ),
+                            Text(
+                              'Choose a Pack',
+                              style: AppTextStyles.bold(
+                                26,
+                              ).copyWith(height: 1.0, color: AppColors.black),
                             ),
-                            const SizedBox(height: 10),
-                            Expanded(
-                              child: PageView.builder(
-                                controller: _pageController,
-                                itemCount: packages.length,
-                                onPageChanged: (index) =>
-                                    setState(() => _currentPage = index),
-                                itemBuilder: (context, index) {
-                                  return _ConsumablePackageCard(
-                                    package: packages[index],
-                                    isLoading: state.loading,
-                                    isBlocked: state.isBlocked ?? false,
-                                  );
-                                },
-                              ),
+                            StepIndicator(
+                              total: packages.length,
+                              current: _currentPage,
                             ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: packages.length,
+                          onPageChanged: (index) =>
+                              setState(() => _currentPage = index),
+                          itemBuilder: (context, index) {
+                            return _ConsumablePackageCard(
+                              package: packages[index],
+                              isLoading: state.loading,
+                              isBlocked: state.isBlocked ?? false,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
-              // ── global loading overlay ──────────────────────────────────
               if (state.loading)
                 Container(
                   color: Colors.black.withValues(alpha: 0.3),

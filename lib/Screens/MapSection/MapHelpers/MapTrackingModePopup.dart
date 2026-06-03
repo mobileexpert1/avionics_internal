@@ -121,7 +121,7 @@ class MapTrackingModePopup extends StatelessWidget {
                   children: [
                     SizedBox(width: 5),
                     SvgPicture.asset(
-                      CommonUi.setSvgImage(AssetsPath.mapPopupLivearea),
+                      CommonUi.setSvgImage(AssetsPath.mapPopupLiveArea),
                       height: 25,
                       width: 25,
                       fit: BoxFit.fitWidth,

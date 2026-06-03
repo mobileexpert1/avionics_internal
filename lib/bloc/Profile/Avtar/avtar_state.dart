@@ -5,6 +5,7 @@ import 'avtar_model.dart';
 class AvtarState {
   final CommonApiStatus status;
   final String? selectedUserType;
+  final String? selectedUserTypeUrl;
   final String? errorMessage;
   final List<AvatarModel> avatars;
   final bool loading;
@@ -12,6 +13,7 @@ class AvtarState {
   const AvtarState({
     this.status = CommonApiStatus.initial,
     this.selectedUserType,
+    this.selectedUserTypeUrl,
     this.errorMessage,
     this.avatars = const [],
     this.loading = false,
@@ -20,6 +22,7 @@ class AvtarState {
   AvtarState copyWith({
     CommonApiStatus? status,
     String? selectedUserType,
+    String? selectedUserTypeUrl,
     String? errorMessage,
     List<AvatarModel>? avatars,
     bool? loading,
@@ -27,6 +30,7 @@ class AvtarState {
     return AvtarState(
       status: status ?? this.status,
       selectedUserType: selectedUserType ?? this.selectedUserType,
+      selectedUserTypeUrl: selectedUserTypeUrl ?? this.selectedUserTypeUrl,
       errorMessage: errorMessage,
       avatars: avatars ?? this.avatars,
       loading: loading ?? this.loading,

@@ -67,7 +67,7 @@ Widget getOnButtonWidget(String text, BuildContext context) {
           shaderCallback: (bounds) =>
               Theme.of(context).colorScheme.gradient.createShader(bounds),
           child: SvgPicture.asset(
-            AssetsPath.switchLGridForCal,
+            CommonUi.setSvgImage(AssetsPath.switchLGridForCalculation),
             color: getTextColor(text, context),
           ),
         ),

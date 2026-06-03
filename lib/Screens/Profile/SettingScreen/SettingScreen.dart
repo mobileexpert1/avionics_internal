@@ -27,7 +27,6 @@ import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
 import 'SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'SettingMenuScreen/4_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
-import '../../Games/MainGameScreen/InfoWrongGameScreen.dart';
 import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';
@@ -65,7 +64,7 @@ class _SettingScreenState extends State<SettingScreen> {
     if (!mounted) return;
 
     setState(() {
-      userAvtarTypeUrl = avatarUrl ?? '';
+      userAvtarTypeUrl = avatarUrl;
       switch (name.toLowerCase()) {
         case 'student':
           avatarTypeName = "Student";
@@ -153,11 +152,15 @@ class _SettingScreenState extends State<SettingScreen> {
                               ? null
                               : Colors.white,
                           placeholderBuilder: (_) => SvgPicture.asset(
-                            CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+                            CommonUi.setSvgImage(
+                              AssetsPath.manufacturerPlaceholder,
+                            ),
                           ),
                         )
                       : SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+                          CommonUi.setSvgImage(
+                            AssetsPath.manufacturerPlaceholder,
+                          ),
                         ),
                 ),
               ),
@@ -281,16 +284,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   title: "Trivia Level Demo Screen",
                     //   onTap: () => _navigate(context, AnimatedLevelMapScreen()),
                     // ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.manageAccountProfile,
-                      ),
-                      title: "Game Info Hint Screen",
-                      onTap: () => _navigate(
-                        context,
-                        InfoWrongGameScreen(screenIndex: 0, gameTitle: '1'),
-                      ),
-                    ),
                   ],
                 ),
 
@@ -480,7 +473,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       AppSnackBar.custom(
                         context,
                         message: 'Logged out',
-                        svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
+                        svgAsset: CommonUi.setSvgImage(
+                          AssetsPath.signInIconForAlert,
+                        ),
                       );
 
                       _clearAllDataAndRedirectToSplashScreen(context);

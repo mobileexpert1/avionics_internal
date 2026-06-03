@@ -245,7 +245,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvokedWithResult: (_, __) {
+      onPopInvokedWithResult: (_, _) {
         _hideDialogIfNeeded();
       },
 
@@ -337,7 +337,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                   const SizedBox(height: 10),
 
                                   Text(
-                                    item.createdAt ?? "",
+                                    item.createdAt,
 
                                     style: AppTextStyles.regular(14).copyWith(
                                       height: 1.0,

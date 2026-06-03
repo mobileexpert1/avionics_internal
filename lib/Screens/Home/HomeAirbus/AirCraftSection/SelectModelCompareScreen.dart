@@ -333,34 +333,4 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       ),
     );
   }
-
-  Widget _buildRadioOption(
-    String text,
-    AircraftModel? value,
-    VoidCallback onTap,
-  ) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.radio_button_unchecked, color: Colors.blue),
-      title: Text(
-        value?.aircraftModel ?? text,
-        style: const TextStyle(fontSize: 14),
-      ),
-      onTap: onTap,
-      trailing: value != null
-          ? IconButton(
-              icon: const Icon(Icons.close_rounded, color: Colors.grey),
-              onPressed: () {
-                setState(() {
-                  if (text.contains("1")) {
-                    model1 = null;
-                  } else if (text.contains("2")) {
-                    model2 = null;
-                  }
-                });
-              },
-            )
-          : null,
-    );
-  }
 }

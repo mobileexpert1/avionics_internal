@@ -79,7 +79,7 @@ class AppListTileCard extends StatelessWidget {
             imagePath,
             fit: BoxFit.contain,
             placeholderBuilder: (context) => SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+              CommonUi.setSvgImage(AssetsPath.manufacturerPlaceholder),
               height: 32,
               width: 32,
               fit: BoxFit.contain,
@@ -94,7 +94,7 @@ class AppListTileCard extends StatelessWidget {
         width: size,
         fit: BoxFit.contain,
         errorBuilder: (_, _, _) => SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.manuFirstImage),
+          CommonUi.setSvgImage(AssetsPath.manufacturerPlaceholder),
           height: 32,
           width: 32,
           fit: BoxFit.contain,

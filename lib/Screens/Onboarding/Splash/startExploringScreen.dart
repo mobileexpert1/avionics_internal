@@ -77,7 +77,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                         bottomRight: Radius.circular(10),
                       ),
                       child: Image.asset(
-                        CommonUi.setjpgImage(AssetsPath.explore),
+                        CommonUi.setjpgImage(AssetsPath.startExploreIcon),
                         width: logoWidth,
                         fit: kIsWeb ? BoxFit.fitWidth : BoxFit.cover,
                       ),

@@ -25,8 +25,6 @@ class AtmosphereAssets {
 
 abstract class AssetsPath {
   /// svg Images
-
-  //home Screen
   static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";
   static const String homeLeftMainLogo = "2homeLeftMainLogo";
@@ -83,18 +81,12 @@ abstract class AssetsPath {
   static const String unHighlightStar = "55_1UnHighlightStar";
   static const String backArrowButton = "56BackArrowButton";
   static const String contactSupport = "57ContactSupport";
-  static const String infoWrongFirst = "58InfoWrongGameIcon";
-  static const String infoWrongSecond = "59InfoWrongGameIcon";
-  static const String infoWrongThird = "60InfoWrongGameIcon";
   static const String gameInfoClose = "61GameInfoClose";
-  static const String towerImageForGame = "62TowerImage";
   static const String aeroplaneManufacturer = "63AeroplaneManufacturer";
-
   static const String takeMeasureUnSelected = "65TakeMeasureUnSelected";
   static const String flightMathUnSelected = "66FlightMathUnSelected";
   static const String greenBlueUnSelected = "67GreenBlueUnSelected";
   static const String mindSeparationUnSelected = "68MindSeparationUnSelected";
-
   static const String takeMeasureSelected = "69TakeMeasureSelected";
   static const String flightMathSelected = "70FlightMathSelected";
   static const String greenBlueSelected = "71GreenBlueSelected";
@@ -129,85 +121,59 @@ abstract class AssetsPath {
   static const String appleIcon = "97AppleIcon";
   static const String googleIcon = "98GoogleIcon";
   static const String facebookIcon = "99FacebookIcon";
+  static const String avtarPlaceholder = "100AvtarPlaceholder";
 
+  static const String badgesLockIcon = "101BadgesLock";
+  static const String badgeTrophyIcon = "102BadgeTrophy";
+  static const String badgeStarIcon = "103BadgeStar";
+  static const String chatHistoryIcon = "104ChatHistoryIcon";
+  static const String closeIconSearch = "105CloseIconSearch";
+  static const String closeMapIcon = "106CloseMapIcon";
 
+  static const String splashCompareIcon = "107SplashCompare";
+  static const String splashUndrawAircraft = "108SplashUndrawAircraft";
+  static const String splashMap = "109SplashMap";
+  static const String splashFilter = "110SplashFilter";
+  static const String splashInstantAI = "111SplashInstantAI";
+  static const String splashQuiz = "112SplashQuiz";
+  static const String flyingAreaIcon = "113FlyingAreaIcon";
+  static const String infoYellowIcon = "114InfoYellowIcon";
+  static const String loginSuccessIcon = "115LoginSuccessIcon";
+  static const String manufacturerPlaceholder = "116ManufacturerPlaceholder";
+  static const String mapPopupAircraft = "117MapPopupAircraft";
+  static const String mapPopupLiveArea = "118MapPopupLiveArea";
+  static const String otpIconForAlert = "119otpIconForAlert";
+  static const String gameResultIcon = "120GameResultIcon";
+  static const String chatSendIcon = "121ChatSendIcon";
+  static const String signInIconForAlert = "122SignInIconForAlert";
+  static const String splashMainLogo = "123SplashMainLogo";
+  static const String successIcon = "124SuccessIcon";
 
-  static const String MapIcon = "MapIcon";
-  static const String chatIcon = "chatIcon";
-  static const String ProfileIcon = "ProfileIcon";
+  static const deleteForCalculation = '125CalculationDelete';
+  static const expandForCalculation = '126CalculationExpand';
+  static const historyForCalculation = '127CalculationHistory';
+  static const switchLGridForCalculation = '128CalculationSwitch';
 
-  static const String undraw_aircraft_fbvl = "undraw_aircraft_fbvl1";
-  static const String mapLayers = "MpaLayes";
-  static const String map = "map";
-  static const String successIcon = "successIcon";
-  static const String compare = "compare";
-  static const String filter = "filter";
-  static const String logoMain = "mainLogo";
-  static const String splashLogo = "splashLogo";
-  static const String trackIcon = "TrackIcon";
-  static const String tickIcon = "TickIcon";
-  static const String sliders = "Sliders";
-  static const String WebAppLogo = "WebAppLogo";
-  static const String comparsion = "Comparsion";
-  static const String selectModel = "SelectModel";
-  static const String Chatbot = "Chatbot";
-  static const String upArrow = "upArrow";
-  static const String downArrow = "downArrow";
-  static const String Plane1 = "Plane1";
-  static const String ChatIcon = "Chatbot";
-  static const String SendIcon = "SendIcon";
-  static const String flyingareaicon = "flyingareaicon";
-  static const String instantAI = "instantAI";
-  static const String Quiz = "Quiz";
-  static const String chatHistoryicon = "chatHistoryicon";
-  static const String manuFirstImage = "ManuFirstImage";
-  static const String LockIcon = "LockIcon";
-  static const String badgesLock = "badgesLock";
-  static const String badgeTrophy = "badgeTrophy";
-  static const String resultIcon = "resultIcon";
-  static const String Tik = "TickIcon";
-  static const String Trophy = "Trophy";
-  static const String quizDetail = "quizICon2";
-  static const String onewordDetail = "oneWordICon2";
-  static const String calculationDetail = "calculationIcon2";
-  static const String compare1 = "compare1";
+  //JPG
+  static const String startExploreIcon = "1StartExploreIcon";
 
-  static const String avtarAcc = "Avatar";
-  static const String bagdestarIcon = "bagdestarIcon";
+  //png
+  static const String infoWrongFirst = "1InfoWrongGameIcon";
+  static const String infoWrongSecond = "2InfoWrongGameIcon";
+  static const String infoWrongThird = "3InfoWrongGameIcon";
+  static const String towerImageForGame = "4TowerImage";
+  static const String flightDownBB = "5FlightDownBB";
+  static const String decodeBB = "6DecodeBB";
+  static const String chainOfBB = "7ChainOfBB";
+  static const String bluePrintBB = "8BluePrintBB";
+  static const String comparisonPlaceholder = "9ComparisonPlaceholder";
+  static const String badgeMainIcon = "10BadgeMainIcon";
+  static const String carFollowImage = "11CarFollowIcon";
 
-  static const String avtarSecond = "AvtarSecond";
-
-  static const String loginIcon = "loginIcon";
-  static const String otpIcon = "otpIcon";
-  static const String signinIcon = "signinIcon";
-
-  static const String oneWord = "oneWorldIcon";
-  static const String blackBox = "blackBoxIcon";
-  static const String calculations = "calculationIcon";
-  static const String Blackboxlogo = "gameBlackboxlogo";
-
-  static const String mapPopupAircraft = "MapPopupAircraft";
-  static const String mapPopupLivearea = "MapPopupLivearea";
-  static const String closeIcon = "closeMapIcon";
-  static const String closeIconsearch = "closeIconsearch";
-  static const String infoIcon2 = "infoIcon2";
-
-  static const String airbus = "airbus";
-  static const String aeroplaneComparison = "aeroplaneComparison";
-  static const String boeinglogo = "boeinglogo";
-
-  static const String badgeimg = "badgeimg";
-  static const String carFollowImage = "CarFollowIcon";
-
-  static const String gifTimeoutAlert = "timeout";
-
-  ///jpg
-  static const String explore = "explore";
-
-  static const deleteForCal = 'assets/images/delete.svg';
-  static const expandForCal = 'assets/images/expand.svg';
-  static const historyForCal = 'assets/images/history.svg';
-  static const switchLGridForCal = 'assets/images/switch.svg';
+  //Gif
+  static const String badgeGif = "1BadgeGif";
+  static const String gameResultGif = "2GameResultGif";
+  static const String timeoutAlertGif = "3TimeoutAlertGif";
 }
 
 class CommonUi {

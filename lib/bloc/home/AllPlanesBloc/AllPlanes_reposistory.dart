@@ -1,17 +1,11 @@
-import 'package:avionics_internal/Database/generic_methods.dart';
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_model.dart';
+
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/Custom_Pagination.dart';
 
 class AllPlanesReposistory {
-  AllPlanesReposistory()
-    : _manufacturer = GenericMethods<AircraftListModel>(
-        AircraftListModel.fromMap,
-      );
-  final GenericMethods<AircraftListModel> _manufacturer;
-
   Future<PaginatedList<AircraftListModel>> getListOfAllPlanes({
     String? query,
     int page = 1,
@@ -19,11 +13,11 @@ class AllPlanesReposistory {
   }) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-          "${ApiServiceUrlAirplaneConstant.getListAirbus}"
-          "$selectedAirbusId"
-          "?page=$page"
-          "${query != null && query.isNotEmpty ? '&q=$query' : ''}&max_page_size=10",
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+      "${ApiServiceUrlAirplaneConstant.getListAirbus}"
+      "$selectedAirbusId"
+      "?page=$page"
+      "${query != null && query.isNotEmpty ? '&q=$query' : ''}&max_page_size=10",
     );
 
     try {
@@ -78,9 +72,8 @@ class AllPlanesReposistory {
           "aircraft_id": aircraftId,
           "callsign": callSign,
           "flight_id": flightId,
-          "flight_number":flightNumber
+          "flight_number": flightNumber,
         },
-
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {

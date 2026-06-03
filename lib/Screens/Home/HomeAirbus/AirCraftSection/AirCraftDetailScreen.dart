@@ -247,7 +247,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                   borderRadius: BorderRadius.circular(6),
                   child: Stack(
                     children: [
-                      /// ✅ IMAGE HANDLING FIXED
                       SizedBox(
                         width: imageWidth,
                         height: screenHeight * 0.18,
@@ -259,7 +258,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                                 fit: BoxFit.cover,
                                 placeholderBuilder: (_) => SvgPicture.asset(
                                   CommonUi.setSvgImage(
-                                    AssetsPath.manuFirstImage,
+                                    AssetsPath.manufacturerPlaceholder,
                                   ),
                                   fit: BoxFit.contain,
                                 ),
@@ -272,7 +271,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                                   debugPrint(error.toString());
                                   return SvgPicture.asset(
                                     CommonUi.setSvgImage(
-                                      AssetsPath.manuFirstImage,
+                                      AssetsPath.manufacturerPlaceholder,
                                     ),
                                     fit: BoxFit.contain,
                                   );

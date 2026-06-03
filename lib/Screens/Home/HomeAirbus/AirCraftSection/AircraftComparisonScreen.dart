@@ -415,7 +415,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                       : SvgPicture.asset(
                                                           CommonUi.setSvgImage(
                                                             AssetsPath
-                                                                .manuFirstImage,
+                                                                .manufacturerPlaceholder,
                                                           ),
                                                           width: 40,
                                                           height: 40,
@@ -430,8 +430,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          model.aircraftModel ??
-                                                              "",
+                                                          model.aircraftModel,
                                                           style:
                                                               const TextStyle(
                                                                 fontSize: 16,

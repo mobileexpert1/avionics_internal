@@ -79,7 +79,9 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
             },
           ),
           rightButton: IconButton(
-            icon: SvgPicture.asset(AssetsPath.historyForCal),
+            icon: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.historyForCalculation),
+            ),
 
             onPressed: () {
               openHistory(context);
@@ -137,14 +139,18 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
                         children: [
                           if (!kIsWeb) ...[
                             CustomIcon(
-                              AssetsPath.expandForCal,
+                              CommonUi.setSvgImage(
+                                AssetsPath.expandForCalculation,
+                              ),
                               onPressed: onExpand,
                               isSelected: isLandscape,
                             ),
                           ],
                           const Spacer(),
                           CustomIcon(
-                            AssetsPath.deleteForCal,
+                            CommonUi.setSvgImage(
+                              AssetsPath.deleteForCalculation,
+                            ),
                             onPressed: calc.delete,
                           ),
                         ],

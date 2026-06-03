@@ -60,8 +60,8 @@ class SearchBarWidget extends StatelessWidget {
                       onTap: onBackButtonTap,
                       child: SvgPicture.asset(
                         CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                        color: Colors.black,
                         fit: BoxFit.cover,
-                        width: isComeFromMapSection == true ? 30 : 20,
                       ),
                     ),
 

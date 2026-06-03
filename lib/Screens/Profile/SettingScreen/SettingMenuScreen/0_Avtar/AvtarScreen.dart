@@ -150,7 +150,9 @@ class _AvtarScreenState extends State<AvtarScreen> {
                                 ),
                               )
                             : SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.avtarSecond),
+                                CommonUi.setSvgImage(
+                                  AssetsPath.avtarPlaceholder,
+                                ),
                                 width: 44,
                                 height: 44,
                                 fit: BoxFit.contain,
@@ -162,7 +164,12 @@ class _AvtarScreenState extends State<AvtarScreen> {
 
                             if (widget.isComeFromSignupScreen ||
                                 widget.isComeFromSocialLogin) {
-                              cubit.selectAvatarTypeOnly(userType.key);
+                              cubit.selectAvatarTypeOnly(
+                                userType.key,
+                                userType.key == "atsep"
+                                    ? userType.selectedIcon ?? ""
+                                    : userType.logo,
+                              );
                             } else {
                               if (state.selectedUserType != userType.key) {
                                 cubit.selectAvatar(
@@ -287,8 +294,11 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         final selectedUserType =
                             context.read<AvtarCubit>().state.selectedUserType ??
                             '';
+                        final selectedUserTypeUrl =
+                            context.read<AvtarCubit>().state.selectedUserTypeUrl ??
+                                '';
                         context.read<AvtarCubit>().selectAvatar(
-                          "",
+                          selectedUserTypeUrl,
                           selectedUserType,
                           widget.isComeFromSignupScreen,
                           widget.isComeFromSocialLogin,

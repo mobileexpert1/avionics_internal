@@ -108,7 +108,6 @@ flutter:
     - assets/jpg_images/
     - assets/png_images/
     - assets/mapFiles/
-    - assets/images/
     - assets/gif/
     - assets/google_earth_map/
     - assets/fonts/

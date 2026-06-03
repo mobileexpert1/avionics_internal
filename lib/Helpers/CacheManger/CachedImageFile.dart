@@ -193,7 +193,7 @@ class _CachedAnyImageState extends State<CachedAnyImage> {
       child: widget.isForPlaneList
           ? Center(
               child: SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.Plane1),
+                CommonUi.setSvgImage(AssetsPath.airBusPlanePlaceholder),
                 fit: BoxFit.cover,
               ),
             )

@@ -123,7 +123,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                           data.aircraftDetails?.image == ""
                                       ? Image.asset(
                                           CommonUi.setPngImage(
-                                            AssetsPath.aeroplaneComparison,
+                                            AssetsPath.comparisonPlaceholder,
                                           ),
                                           width: 50,
                                           height: 120,

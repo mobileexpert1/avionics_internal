@@ -6,12 +6,12 @@ import 'package:flutter_svg/svg.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/CustomSliderSection.dart';
 import '../../../bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_Cubit.dart';
 import '../../../bloc/MapSection/FilterMap/filter_Map_State.dart';
 import '../../../bloc/MapSection/MapAircraftList/aircraft_List_Data_Cubit.dart';
 import '../../MapSection/MapHelpers/AircraftSearchScreen.dart';
-import '../../../Helpers/CustomSliderSection.dart';
 import 'ExpandableSection.dart';
 import 'SegmentedControl.dart';
 
@@ -370,7 +370,9 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                                         aircraft.icaoTypeCode,
                                       ),
                                   child: SvgPicture.asset(
-                                    CommonUi.setSvgImage(AssetsPath.closeIcon),
+                                    CommonUi.setSvgImage(
+                                      AssetsPath.closeMapIcon,
+                                    ),
                                     width: 25,
                                     height: 25,
                                   ),
@@ -378,7 +380,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                               ],
                             ),
                           );
-                        }).toList(),
+                        }),
                       ],
                     ),
                   ),

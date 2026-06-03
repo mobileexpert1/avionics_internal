@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 
 import '../../../Constants/ApiClass/api_service.dart';
@@ -40,11 +40,10 @@ class AirCraftRepository {
     }
   }
 
-
   Future<AirCraftDetailResponse> getAirCraftDetailICAOCode(
-      String ICAOCode, {
-        VoidCallback? onUnauthorized,
-      }) async {
+    String ICAOCode, {
+    VoidCallback? onUnauthorized,
+  }) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +

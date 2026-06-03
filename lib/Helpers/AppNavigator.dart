@@ -6,10 +6,7 @@ class NoSwipeMaterialPageRoute<T> extends MaterialPageRoute<T> {
   NoSwipeMaterialPageRoute({
     required WidgetBuilder builder,
     RouteSettings? settings,
-  }) : super(
-    builder: builder,
-    settings: settings,
-  );
+  }) : super(builder: builder, settings: settings);
 
   @override
   bool get popGestureEnabled => false;
@@ -17,14 +14,14 @@ class NoSwipeMaterialPageRoute<T> extends MaterialPageRoute<T> {
 
 class AppNavigator {
   static Future<T?> push<T extends Object?>(
-      BuildContext context,
-      Widget destination, {
-        StateStreamableSource<Object?>? bloc,
-        List<SingleChildWidget>? multiBlocProviders,
+    BuildContext context,
+    Widget destination, {
+    StateStreamableSource<Object?>? bloc,
+    List<SingleChildWidget>? multiBlocProviders,
 
-        /// Disable iOS swipe back gesture
-        bool disableSwipeBack = false,
-      }) {
+    /// Disable iOS swipe back gesture
+    bool disableSwipeBack = false,
+  }) {
     return Navigator.push(
       context,
       _buildRoute(
@@ -37,17 +34,15 @@ class AppNavigator {
   }
 
   /// PUSH REPLACEMENT
-  static Future<T?> pushReplacement<
-  T extends Object?,
-  TO extends Object?>(
-      BuildContext context,
-      Widget destination, {
-        StateStreamableSource<Object?>? bloc,
-        List<SingleChildWidget>? multiBlocProviders,
+  static Future<T?> pushReplacement<T extends Object?, TO extends Object?>(
+    BuildContext context,
+    Widget destination, {
+    StateStreamableSource<Object?>? bloc,
+    List<SingleChildWidget>? multiBlocProviders,
 
-        /// Disable iOS swipe back gesture
-        bool disableSwipeBack = false,
-      }) {
+    /// Disable iOS swipe back gesture
+    bool disableSwipeBack = false,
+  }) {
     return Navigator.pushReplacement(
       context,
       _buildRoute(
@@ -61,14 +56,14 @@ class AppNavigator {
 
   /// PUSH AND REMOVE UNTIL
   static Future<T?> pushAndRemoveUntil<T extends Object?>(
-      BuildContext context,
-      Widget destination, {
-        StateStreamableSource<Object?>? bloc,
-        List<SingleChildWidget>? multiBlocProviders,
+    BuildContext context,
+    Widget destination, {
+    StateStreamableSource<Object?>? bloc,
+    List<SingleChildWidget>? multiBlocProviders,
 
-        /// Disable iOS swipe back gesture
-        bool disableSwipeBack = false,
-      }) {
+    /// Disable iOS swipe back gesture
+    bool disableSwipeBack = false,
+  }) {
     return Navigator.pushAndRemoveUntil(
       context,
       _buildRoute(
@@ -77,53 +72,39 @@ class AppNavigator {
         multiBlocProviders: multiBlocProviders,
         disableSwipeBack: disableSwipeBack,
       ),
-          (route) => false,
+      (route) => false,
     );
   }
 
   /// POP
-  static void pop<T extends Object?>(
-      BuildContext context, [
-        T? result,
-      ]) {
+  static void pop<T extends Object?>(BuildContext context, [T? result]) {
     Navigator.pop(context, result);
   }
 
   /// COMMON ROUTE BUILDER
   static Route<T> _buildRoute<T extends Object?>(
-      Widget destination, {
-        StateStreamableSource<Object?>? bloc,
-        List<SingleChildWidget>? multiBlocProviders,
-        bool disableSwipeBack = false,
-      }) {
-    final page = _buildPage(
-      destination,
-      bloc,
-      multiBlocProviders,
-    );
+    Widget destination, {
+    StateStreamableSource<Object?>? bloc,
+    List<SingleChildWidget>? multiBlocProviders,
+    bool disableSwipeBack = false,
+  }) {
+    final page = _buildPage(destination, bloc, multiBlocProviders);
 
     if (disableSwipeBack) {
-      return NoSwipeMaterialPageRoute<T>(
-        builder: (_) => page,
-      );
+      return NoSwipeMaterialPageRoute<T>(builder: (_) => page);
     }
 
-    return MaterialPageRoute<T>(
-      builder: (_) => page,
-    );
+    return MaterialPageRoute<T>(builder: (_) => page);
   }
 
   /// COMMON PAGE BUILDER
   static Widget _buildPage(
-      Widget destination,
-      StateStreamableSource<Object?>? bloc,
-      List<SingleChildWidget>? multiBlocProviders,
-      ) {
+    Widget destination,
+    StateStreamableSource<Object?>? bloc,
+    List<SingleChildWidget>? multiBlocProviders,
+  ) {
     if (bloc != null) {
-      return BlocProvider.value(
-        value: bloc,
-        child: destination,
-      );
+      return BlocProvider.value(value: bloc, child: destination);
     }
 
     if (multiBlocProviders != null) {
@@ -136,7 +117,6 @@ class AppNavigator {
     return destination;
   }
 }
-
 
 // // 1. Simple Navigation
 // AppNavigator.push(

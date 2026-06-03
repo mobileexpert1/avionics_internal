@@ -172,7 +172,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                             ) => SvgPicture.asset(
                                                               CommonUi.setSvgImage(
                                                                 AssetsPath
-                                                                    .manuFirstImage,
+                                                                    .manufacturerPlaceholder,
                                                               ),
                                                               height: 10,
                                                               width: 10,
@@ -191,7 +191,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                             SvgPicture.asset(
                                                               CommonUi.setSvgImage(
                                                                 AssetsPath
-                                                                    .manuFirstImage,
+                                                                    .manufacturerPlaceholder,
                                                               ),
                                                               height: 10,
                                                               width: 10,
@@ -205,23 +205,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-                                      // --- TITLE + SUBTITLE ---
-                                      // Expanded(
-                                      //   child: Column(
-                                      //     crossAxisAlignment:
-                                      //         CrossAxisAlignment.start,
-                                      //     children: [
-                                      //       Text(
-                                      //         detail.general.companyName,
-                                      //         style: const TextStyle(
-                                      //           fontSize: 20,
-                                      //           fontWeight: FontWeight.bold,
-                                      //         ),
-                                      //       ),
-                                      //       const SizedBox(height: 4),
-                                      //     ],
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                 ),
@@ -698,7 +681,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                           placeholderBuilder: (context) =>
                                               SvgPicture.asset(
                                                 CommonUi.setSvgImage(
-                                                  AssetsPath.manuFirstImage,
+                                                  AssetsPath.manufacturerPlaceholder,
                                                 ),
                                                 height: 10,
                                                 width: 10,
@@ -713,7 +696,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                           errorBuilder: (_, _, _) =>
                                               SvgPicture.asset(
                                                 CommonUi.setSvgImage(
-                                                  AssetsPath.manuFirstImage,
+                                                  AssetsPath.manufacturerPlaceholder,
                                                 ),
                                                 height: 10,
                                                 width: 10,

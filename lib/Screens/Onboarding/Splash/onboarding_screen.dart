@@ -51,7 +51,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title1,
         description: ConstantStrings.description1,
         imageWidget: isWeb
-            ? _buildImage(AssetsPath.undraw_aircraft_fbvl, imageHeight)
+            ? _buildImage(AssetsPath.splashUndrawAircraft, imageHeight)
             : Padding(
                 padding: EdgeInsets.only(
                   top: size.width * 0.15,
@@ -59,7 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   left: size.width * 0.02,
                 ),
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.undraw_aircraft_fbvl),
+                  CommonUi.setSvgImage(AssetsPath.splashUndrawAircraft),
                   fit: BoxFit.fill,
                 ),
               ),
@@ -69,9 +69,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title2,
         description: ConstantStrings.description2,
         imageWidget: isWeb
-            ? _buildImage(AssetsPath.map, imageHeight)
+            ? _buildImage(AssetsPath.splashMap, imageHeight)
             : SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.map),
+                CommonUi.setSvgImage(AssetsPath.splashMap),
                 width: size.width,
                 height: size.height * 0.7,
                 fit: BoxFit.cover,
@@ -82,7 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title3,
         description: ConstantStrings.description3,
         imageWidget: isWeb
-            ? _buildImage(AssetsPath.compare, imageHeight)
+            ? _buildImage(AssetsPath.splashCompareIcon, imageHeight)
             : Padding(
                 padding: EdgeInsets.only(
                   top: size.width * 0.30,
@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   left: size.width * 0.08,
                 ),
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.compare),
+                  CommonUi.setSvgImage(AssetsPath.splashCompareIcon),
                   height: size.height * 0.40,
                   fit: BoxFit.fill,
                 ),
@@ -101,7 +101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title4,
         description: ConstantStrings.description4,
         imageWidget: isWeb
-            ? _buildImage(AssetsPath.filter, imageHeight)
+            ? _buildImage(AssetsPath.splashFilter, imageHeight)
             : Padding(
                 padding: EdgeInsets.only(
                   top: size.width * 0.30,
@@ -109,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   left: size.width * 0.08,
                 ),
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.filter),
+                  CommonUi.setSvgImage(AssetsPath.splashFilter),
                   height: size.height * 0.40,
                   fit: BoxFit.contain,
                 ),
@@ -120,14 +120,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title5,
         description: ConstantStrings.description5,
         imageWidget: isWeb
-            ? _buildImage(AssetsPath.instantAI, imageHeight)
+            ? _buildImage(AssetsPath.splashInstantAI, imageHeight)
             : Padding(
                 padding: EdgeInsets.only(
                   top: size.width * 0.35,
                   bottom: size.width * 0.08,
                 ),
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.instantAI),
+                  CommonUi.setSvgImage(AssetsPath.splashInstantAI),
                   height: size.height * 0.40,
                   fit: BoxFit.contain,
                 ),
@@ -138,7 +138,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: ConstantStrings.title6,
         description: ConstantStrings.description6,
         imageWidget: isWeb
-            ? _buildImage(AssetsPath.Quiz, imageHeight)
+            ? _buildImage(AssetsPath.splashQuiz, imageHeight)
             : Padding(
                 padding: EdgeInsets.only(
                   top: size.width * 0.35,
@@ -146,7 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   left: size.width * 0.04,
                 ),
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.Quiz),
+                  CommonUi.setSvgImage(AssetsPath.splashQuiz),
                   height: size.height * 0.40,
                   fit: BoxFit.contain,
                 ),

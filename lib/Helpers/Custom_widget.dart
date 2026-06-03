@@ -50,7 +50,7 @@ Widget customField({
                 child: Padding(
                   padding: const EdgeInsets.only(left: 6),
                   child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.infoIcon2),
+                    CommonUi.setSvgImage(AssetsPath.infoYellowIcon),
                     width: 16,
                     height: 16,
                   ),

@@ -1,9 +1,8 @@
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:avionics_internal/bloc/Profile/Avtar/avtar_repository.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Screens/Onboarding/Otp/OtpScreen.dart';
@@ -14,30 +13,33 @@ import 'avtar_state.dart';
 class AvtarCubit extends Cubit<AvtarState> {
   AvtarCubit() : super(const AvtarState());
 
-  void selectAvatarTypeOnly(String userType) {
-    emit(state.copyWith(selectedUserType: userType));
+  void selectAvatarTypeOnly(String userType, String userTypeUrl) {
+    emit(
+      state.copyWith(
+        selectedUserType: userType,
+        selectedUserTypeUrl: userTypeUrl,
+      ),
+    );
   }
 
   Future<void> selectAvatar(
-      String userTypeUrl,
-      String userType,
-      bool isComeFromSignup,
-      bool? isComeFromSocialLogin,
-      BuildContext context,
-      Map<String, String> signupData,
-      ) async {
-
+    String userTypeUrl,
+    String userType,
+    bool isComeFromSignup,
+    bool? isComeFromSocialLogin,
+    BuildContext context,
+    Map<String, String> signupData,
+  ) async {
     emit(
       state.copyWith(
         status: CommonApiStatus.initial,
         selectedUserType: userType,
+        selectedUserTypeUrl: userTypeUrl,
       ),
     );
 
     try {
-
       if (isComeFromSignup) {
-
         await SignupRepository().registerUser(
           first_name: signupData['first_name'] ?? '',
           last_name: signupData['last_name'] ?? '',
@@ -52,38 +54,33 @@ class AvtarCubit extends Cubit<AvtarState> {
 
         if (!context.mounted) return;
 
+        await SharedPrefsHelper.setUserProfileName(
+          '${signupData['first_name'] ?? ''} ${signupData['last_name'] ?? ''}'
+              .trim(),
+        );
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Avatar selected successfully! Verify your email.',
-            ),
+            content: Text('Avatar selected successfully! Verify your email.'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(seconds: 2),
           ),
         );
-
       } else {
-
         await AvtarRepository().setAvtarForProfile(
           userType: userType,
           context: context,
         );
-
       }
 
       await SharedPrefsHelper.setAvtarUserType(userType);
       await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
 
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.success,
-        ),
-      );
+      emit(state.copyWith(status: CommonApiStatus.success));
 
       if (!context.mounted) return;
 
       if (isComeFromSignup) {
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -93,36 +90,24 @@ class AvtarCubit extends Cubit<AvtarState> {
             ),
           ),
         );
-
       } else {
-
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Avatar updated successfully'),
-          ),
+          const SnackBar(content: Text('Avatar updated successfully')),
         );
 
         if (isComeFromSocialLogin == true) {
-
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => SubscriptionPlanDetailScreen(
-                isComeFromSignup: true,
-              ),
+              builder: (_) =>
+                  SubscriptionPlanDetailScreen(isComeFromSignup: true),
             ),
           );
-
         }
       }
-
     } catch (e) {
-
       if (context.mounted) {
-        SessionCommonTokenError.handleUnauthorizedError(
-          context,
-          e,
-        );
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
       }
 
       emit(

@@ -410,7 +410,7 @@ class QuizQuestionCard extends StatelessWidget {
                             right: 10,
                             child: ValueListenableBuilder(
                               valueListenable: transformationController,
-                              builder: (_, value, __) {
+                              builder: (_, value, _) {
                                 final scale = transformationController.value
                                     .getMaxScaleOnAxis();
 
@@ -457,7 +457,7 @@ class QuizQuestionCard extends StatelessWidget {
 
                                   ValueListenableBuilder(
                                     valueListenable: transformationController,
-                                    builder: (_, value, __) {
+                                    builder: (_, value, _) {
                                       final matrix =
                                           transformationController.value;
 
@@ -726,7 +726,7 @@ class QuizProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                          CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                          CommonUi.setGifImage(AssetsPath.timeoutAlertGif),
                           width: 30,
                           height: 30,
                           fit: BoxFit.cover,
@@ -873,7 +873,7 @@ class _RadioPopupState extends State<RadioPopup> {
                     ),
                   ],
                 );
-              }).toList(),
+              }),
 
               const Divider(thickness: 1, height: 1),
 

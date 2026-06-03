@@ -17,7 +17,7 @@ class EmptyHistory extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SvgPicture.asset(
-          AssetsPath.historyForCal,
+          CommonUi.setSvgImage(AssetsPath.historyForCalculation),
           width: isLandscape ? 30 : 60,
           color: colorScheme.historyBorder,
         ),

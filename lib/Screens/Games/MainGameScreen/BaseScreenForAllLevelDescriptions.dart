@@ -151,8 +151,4 @@ class _BaseScreenForAllLevelState
         );
     }
   }
-
-  void _navigate(BuildContext context, Widget screen) {
-    AppNavigator.push(context, screen, disableSwipeBack: true);
-  }
 }

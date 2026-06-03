@@ -56,15 +56,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final state = context.read<FlightMapCubit>().state;
-    final selectedFlight = state.selectedFlight;
-    final detail = widget.flightDetail;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
@@ -217,7 +208,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     child: manufacturerLogo.isEmpty
                                         ? SvgPicture.asset(
                                             CommonUi.setSvgImage(
-                                              AssetsPath.manuFirstImage,
+                                              AssetsPath.manufacturerPlaceholder,
                                             ),
                                             width: 30,
                                             height: 25,
@@ -231,14 +222,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                             useCache: false,
                                           ),
                                   ),
-
-                                  // Text(
-                                  //   manufacturer,
-                                  //   style: AppTextStyles.semiBold(14).copyWith(
-                                  //     height: 1.0,
-                                  //     color: AppColors.primaryValueColour,
-                                  //   ),
-                                  // ),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [

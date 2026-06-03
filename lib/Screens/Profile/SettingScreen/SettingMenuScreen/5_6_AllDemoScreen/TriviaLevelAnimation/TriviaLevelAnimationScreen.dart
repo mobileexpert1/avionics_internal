@@ -418,8 +418,6 @@ class _AnimatedLevelMapScreenState extends State<AnimatedLevelMapScreen>
     final points = levels.map((e) => e.position).toList();
     final double contentHeight = _contentHeight;
 
-    bool isLeft = false;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(

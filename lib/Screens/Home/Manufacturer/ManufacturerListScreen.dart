@@ -121,7 +121,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                       child: Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: (state.categories ?? []).map((label) {
+                        children: (state.categories).map((label) {
                           final isSelected = state.selectedCategories.contains(
                             label,
                           );
@@ -245,7 +245,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                                 )
                                               : SvgPicture.asset(
                                                   CommonUi.setSvgImage(
-                                                    AssetsPath.manuFirstImage,
+                                                    AssetsPath.manufacturerPlaceholder,
                                                   ),
                                                   width: 40,
                                                   height: 40,

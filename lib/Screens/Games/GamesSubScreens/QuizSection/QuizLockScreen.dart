@@ -298,7 +298,7 @@ class ArrowPopup extends StatelessWidget {
       color: Colors.transparent,
       child: Container(
         width: 300,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
         decoration: BoxDecoration(
           color: AppColors.separatorColourAppBar,
           borderRadius: BorderRadius.circular(14),
@@ -315,7 +315,7 @@ class ArrowPopup extends StatelessWidget {
                 16,
               ).copyWith(height: 1.0, color: AppColors.grayMedium),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
             CustomHeaderViewExpandable(
               isNeedToShowLeftRightBottomBorder: false,
               isNeedToShowLeftImage: true,

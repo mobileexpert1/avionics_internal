@@ -22,14 +22,14 @@ class BlackBoxQuestionModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['set_id'] = this.questionSetId;
-    data['game'] = this.game;
-    data['level'] = this.level;
-    data['difficulty'] = this.difficulty;
-    if (this.categoryTypes != null) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['set_id'] = questionSetId;
+    data['game'] = game;
+    data['level'] = level;
+    data['difficulty'] = difficulty;
+    if (categoryTypes != null) {
       data['category_types'] =
-          this.categoryTypes!.map((v) => v.toJson()).toList();
+          categoryTypes!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -90,15 +90,15 @@ class Questions {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['question'] = this.question;
-    data['explanation'] = this.explanation;
-    data['title'] = this.title;
-    if (this.options != null) {
-      data['options'] = this.options!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['question'] = question;
+    data['explanation'] = explanation;
+    data['title'] = title;
+    if (options != null) {
+      data['options'] = options!.map((v) => v.toJson()).toList();
     }
-    data['answer'] = this.answer;
-    data['question_id'] = this.questionId;
+    data['answer'] = answer;
+    data['question_id'] = questionId;
     return data;
   }
 }

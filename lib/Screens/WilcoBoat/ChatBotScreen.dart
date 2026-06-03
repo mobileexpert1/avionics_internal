@@ -291,7 +291,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               child: Row(
                 children: [
                   SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.chatHistoryicon),
+                    CommonUi.setSvgImage(AssetsPath.chatHistoryIcon),
                     height: 18,
                     width: 18,
                   ),
@@ -666,7 +666,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                         )
                                       : SvgPicture.asset(
                                           CommonUi.setSvgImage(
-                                            AssetsPath.SendIcon,
+                                            AssetsPath.chatSendIcon,
                                           ),
                                         ))
                                 : Icon(

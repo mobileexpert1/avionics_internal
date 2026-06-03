@@ -1667,6 +1667,17 @@
       ]
     },
     {
+      "name": "leak_tracker",
+      "version": "11.0.2",
+      "dependencies": [
+        "clock",
+        "collection",
+        "meta",
+        "path",
+        "vm_service"
+      ]
+    },
+    {
       "name": "plugin_platform_interface",
       "version": "2.1.8",
       "dependencies": [
@@ -1808,6 +1819,11 @@
       "dependencies": []
     },
     {
+      "name": "vm_service",
+      "version": "15.0.0",
+      "dependencies": []
+    },
+    {
       "name": "flutter_secure_storage_windows",
       "version": "2.1.1",
       "dependencies": [
@@ -1856,22 +1872,6 @@
         "collection",
         "meta"
       ]
-    },
-    {
-      "name": "leak_tracker",
-      "version": "11.0.2",
-      "dependencies": [
-        "clock",
-        "collection",
-        "meta",
-        "path",
-        "vm_service"
-      ]
-    },
-    {
-      "name": "vm_service",
-      "version": "15.0.0",
-      "dependencies": []
     }
   ],
   "configVersion": 1

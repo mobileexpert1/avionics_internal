@@ -150,7 +150,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                   message: (widget.isComeFromSignup == true
                       ? "Purchase Successfully"
                       : "Restore Subscription Successfully"),
-                  svgAsset: CommonUi.setSvgImage(AssetsPath.signinIcon),
+                  svgAsset: CommonUi.setSvgImage(AssetsPath.signInIconForAlert),
                 );
 
                 Navigator.pushAndRemoveUntil(

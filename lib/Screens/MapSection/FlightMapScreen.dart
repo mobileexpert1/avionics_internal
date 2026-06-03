@@ -960,7 +960,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                         builder: (context, snapshot) {
                           return ValueListenableBuilder<Set<Polygon>>(
                             valueListenable: polygonNotifier,
-                            builder: (_, polygons, __) {
+                            builder: (_, polygons, _) {
                               return FlightGoogleMapWidget(
                                 isAlreadyFetchedTheKey: (value) {
                                   if (widget.openMode == null) {
@@ -1344,7 +1344,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                   ? Image.asset(
                                                       CommonUi.setPngImage(
                                                         AssetsPath
-                                                            .aeroplaneComparison,
+                                                            .comparisonPlaceholder,
                                                       ),
                                                       width: isWide ? 120 : 90,
                                                       height: isWide ? 60 : 45,
@@ -1525,7 +1525,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                   ? SvgPicture.asset(
                                                                       CommonUi.setSvgImage(
                                                                         AssetsPath
-                                                                            .manuFirstImage,
+                                                                            .manufacturerPlaceholder,
                                                                       ),
                                                                       width:
                                                                           isWide
@@ -1770,7 +1770,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.Chatbot),
+            CommonUi.setSvgImage(AssetsPath.homeWilco),
             width: 100,
             height: 100,
             fit: BoxFit.cover,

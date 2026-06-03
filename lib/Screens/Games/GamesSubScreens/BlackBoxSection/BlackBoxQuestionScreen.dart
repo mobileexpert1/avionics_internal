@@ -925,7 +925,6 @@ class BlackBoxCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Trailing icon (check/cancel)
                   if (trailingIcon != null) trailingIcon,
                 ],
               ),
@@ -1001,7 +1000,7 @@ class BlackBoxProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                          CommonUi.setGifImage(AssetsPath.gifTimeoutAlert),
+                          CommonUi.setGifImage(AssetsPath.timeoutAlertGif),
                           width: 30,
                           height: 30,
                           fit: BoxFit.cover,

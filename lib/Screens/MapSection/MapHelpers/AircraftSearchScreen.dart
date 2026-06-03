@@ -81,7 +81,7 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
             List<AircraftModel>.from(cubit.selectedAircraft),
           ),
           icon: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.closeIconsearch),
+            CommonUi.setSvgImage(AssetsPath.closeIconSearch),
             height: 22,
             width: 22,
           ),

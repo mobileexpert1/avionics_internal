@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     hide Position;
-import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

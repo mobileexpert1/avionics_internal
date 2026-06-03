@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
+
 import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
-import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ApiErrorModel.dart';
@@ -35,8 +36,21 @@ class ApiService {
   }
 
   static Future<bool> _hasInternetConnection() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    final connectivityResults = await Connectivity().checkConnectivity();
+
+    if (connectivityResults.contains(ConnectivityResult.none)) {
+      return false;
+    }
+
+    try {
+      final result = await InternetAddress.lookup(
+        'google.com',
+      ).timeout(const Duration(seconds: 5));
+
+      return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
   }
 
   // POST
@@ -45,6 +59,7 @@ class ApiService {
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
+    VoidCallback? onNoInternet,
     bool retry = true,
   }) {
     return _handleRequest(
@@ -54,6 +69,7 @@ class ApiService {
       body: body,
       retry: retry,
       onUnauthorized: onUnauthorized,
+      onNoInternet: onNoInternet,
     );
   }
 
@@ -63,6 +79,7 @@ class ApiService {
     required Uri url,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
+    VoidCallback? onNoInternet,
   }) {
     return _handleRequest(
       isForFlightRadar: isForFlightRadar,
@@ -71,6 +88,7 @@ class ApiService {
       headers: headers,
       retry: true,
       onUnauthorized: onUnauthorized,
+      onNoInternet: onNoInternet,
     );
   }
 
@@ -80,6 +98,7 @@ class ApiService {
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
+    VoidCallback? onNoInternet,
   }) {
     return _handleRequest(
       method: 'PUT',
@@ -88,6 +107,7 @@ class ApiService {
       body: body,
       retry: true,
       onUnauthorized: onUnauthorized,
+      onNoInternet: onNoInternet,
     );
   }
 
@@ -97,6 +117,7 @@ class ApiService {
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
+    VoidCallback? onNoInternet,
   }) {
     return _handleRequest(
       method: 'PATCH',
@@ -105,6 +126,7 @@ class ApiService {
       body: body,
       retry: true,
       onUnauthorized: onUnauthorized,
+      onNoInternet: onNoInternet,
     );
   }
 
@@ -114,6 +136,7 @@ class ApiService {
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     VoidCallback? onUnauthorized,
+    VoidCallback? onNoInternet,
   }) {
     return _handleRequest(
       method: 'DELETE',
@@ -122,6 +145,7 @@ class ApiService {
       body: body,
       retry: true,
       onUnauthorized: onUnauthorized,
+      onNoInternet: onNoInternet,
     );
   }
 
@@ -139,8 +163,10 @@ class ApiService {
     Map<String, dynamic>? body,
     required bool retry,
     VoidCallback? onUnauthorized,
+    VoidCallback? onNoInternet,
   }) async {
     if (!await _hasInternetConnection()) {
+      onNoInternet?.call();
       throw SocketException('No internet connection');
     }
 
@@ -275,7 +301,9 @@ class ApiService {
     } on TimeoutException {
       throw TimeoutException('Connection timed out');
     } catch (e) {
-      print('Request Exception: ${e.toString()}');
+      if (kDebugMode) {
+        print('Request Exception: ${e.toString()}');
+      }
       rethrow;
     }
   }
