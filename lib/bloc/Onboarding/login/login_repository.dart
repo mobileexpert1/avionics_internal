@@ -37,7 +37,10 @@ class LoginRepository {
         "password": password,
         "fcm": {"token": fcmToken ?? "", ...deviceDetails},
       };
-      final user = await ApiService.post(url: url, body: body);
+      final user = await ApiService.post(
+        url: url,
+        body: body,
+      );
       final response = LoginResponseModel.fromJson(user);
 
       if (response.userDetails != null) {

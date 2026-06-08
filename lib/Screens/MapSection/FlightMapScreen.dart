@@ -129,7 +129,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             _handleTextTap(context);
           }
         }
-        await _mapCubit.loadFavoritesFlights();
+        await _mapCubit.loadFavoritesFlights(context);
       }
     });
 

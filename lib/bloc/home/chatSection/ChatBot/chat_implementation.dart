@@ -52,10 +52,6 @@ class ChatRepositoryImpl implements ChatRepository {
   String? _pendingUserMessage;
   ChatMessage? _pendingUserMessageObject;
 
-  void startInternetMonitoring() {
-    // Handled in ChatCubit using connectivity_plus
-  }
-
   @override
   Future<void> connect({
     required String accessToken,

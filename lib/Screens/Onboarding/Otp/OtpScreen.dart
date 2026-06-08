@@ -207,6 +207,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                   context.read<OtpCubit>().resendOtp(
                                     widget.email,
                                     widget.isComeFromSignup,
+                                    context,
                                   );
                                 }
                               : null,

@@ -208,6 +208,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                   isNeedToShowFlagOptions = false;
                 }
 
+                if (state.questions.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 return Stack(
                   children: [
                     Padding(

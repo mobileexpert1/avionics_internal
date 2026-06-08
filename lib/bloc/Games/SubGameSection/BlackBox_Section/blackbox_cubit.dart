@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
 import '../Quiz_Section/quiz_model.dart';
 import 'blackBox_repository.dart';
 import 'blackBox_state.dart';
@@ -24,86 +26,97 @@ class BlackboxCubit extends Cubit<BlackBoxState> {
         blackboxModels: null,
       ),
     );
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final blackboxModels = await BlackboxRepository().getBlackboxSummary(
+          gameNo,
+        );
+        if (blackboxModels != null) {
+          emit(
+            state.copyWith(
+              blackboxModels: blackboxModels,
+              isLoading: false,
+              isSuccess: true,
+              status: CommonApiStatus.success,
+              errorMessage: null,
+              apiError: null,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              isSuccess: false,
+              status: CommonApiStatus.failure,
+              errorMessage: 'No data received from the server',
+              apiError: 'No data available',
+            ),
+          );
+        }
+      } catch (e) {
+        if (e.toString().contains('Sorry no more')) {
+          AppSnackBar.custom(
+            context,
+            message:
+                'Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
+          );
 
-    try {
-      final blackboxModels = await BlackboxRepository().getBlackboxSummary(
-        gameNo,
+          Future.delayed(const Duration(seconds: 4), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
+        } else {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+          emit(
+            state.copyWith(
+              isLoading: false,
+              isSuccess: false,
+              status: CommonApiStatus.failure,
+              errorMessage: e.toString(),
+              apiError: 'Failed to fetch data',
+            ),
+          );
+        }
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadBlackboxSummary(context: context, gameNo: gameNo),
       );
-      if (blackboxModels != null) {
-        emit(
-          state.copyWith(
-            blackboxModels: blackboxModels,
-            isLoading: false,
-            isSuccess: true,
-            status: CommonApiStatus.success,
-            errorMessage: null,
-            apiError: null,
-          ),
-        );
-      } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            isSuccess: false,
-            status: CommonApiStatus.failure,
-            errorMessage: 'No data received from the server',
-            apiError: 'No data available',
-          ),
-        );
-      }
-    } catch (e) {
-      if (e.toString().contains('Sorry no more')) {
-        AppSnackBar.custom(
-          context,
-          message:
-              'Please wait while more questions are loading. Try again later.',
-          svgAsset: '',
-        );
-
-        Future.delayed(const Duration(seconds: 4), () {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-        });
-      } else {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-        emit(
-          state.copyWith(
-            isLoading: false,
-            isSuccess: false,
-            status: CommonApiStatus.failure,
-            errorMessage: e.toString(),
-            apiError: 'Failed to fetch data',
-          ),
-        );
-      }
     }
   }
 
   Future<void> loadBlackBoxTopics(BuildContext context) async {
-    try {
-      emit(state.copyWith(isLoading: true));
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        emit(state.copyWith(isLoading: true));
+        final response = await BlackboxRepository().getBlackBoxTopic();
+        if (response == null || response.data.isEmpty) {
+          emit(state.copyWith(isLoading: false, games: []));
+          return;
+        }
+        final List<QuizPerItem> gameList = response.data.map((game) {
+          return QuizPerItem(
+            title: game.name,
+            gameNumber: game.gameNumber,
+            isLocked: !game.isEnable,
+            info: game.info,
+          );
+        }).toList();
 
-      final response = await BlackboxRepository().getBlackBoxTopic();
-
-      if (response == null || response.data.isEmpty) {
-        emit(state.copyWith(isLoading: false, games: []));
-        return;
+        emit(state.copyWith(games: gameList, isLoading: false));
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
       }
-      final List<QuizPerItem> gameList = response.data.map((game) {
-        return QuizPerItem(
-          title: game.name,
-          gameNumber: game.gameNumber,
-          isLocked: !game.isEnable,
-          info: game.info,
-        );
-      }).toList();
-
-      emit(state.copyWith(games: gameList, isLoading: false));
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadBlackBoxTopics(context),
+      );
     }
   }
 }

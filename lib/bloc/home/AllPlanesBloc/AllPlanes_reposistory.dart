@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_model.dart';
 
 import '../../../Constants/ApiClass/api_service.dart';
@@ -21,7 +23,9 @@ class AllPlanesReposistory {
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
       final paginated = PaginatedList.fromJson(
         json: jsonData,
         fromJson: (e) => AircraftListModel.fromJson(e),
@@ -33,8 +37,7 @@ class AllPlanesReposistory {
     }
   }
 
-  Future<BaseDetailResponseModel> setFavOrUnfavPlanFromList({
-    required String aircraftId,
+  Future<BaseDetailResponseModel> setFavOrUnfavPlanFromList({required String aircraftId,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +

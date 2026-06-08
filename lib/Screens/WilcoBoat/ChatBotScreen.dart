@@ -192,6 +192,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           accessToken: widget.accessToken,
           isNewSession: widget.accessToken.isEmpty,
           existingSessionId: widget.sessionId,
+          context: context
         );
 
         _listenToInternet(cubit);

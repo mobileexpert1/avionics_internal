@@ -1,9 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Database/generic_methods.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
 import 'aircraft_List_Data_Repository.dart';
 import 'aircraft_List_Data_State.dart';
@@ -19,37 +21,44 @@ class AircraftListDataCubit extends Cubit<AircraftListDataState> {
     required String icaoCode,
     required BuildContext context,
   }) async {
-    emit(
-      state.copyWith(
-        isLoading: true,
-        isSuccess: false,
-        status: CommonApiStatus.submitting,
-      ),
-    );
-
-    try {
-      final response = await AircraftListDataRepository().searchAircraftByICAO(
-        icaoCode,
-      );
-
+    if (await InternetConnection().hasInternetAccess) {
       emit(
         state.copyWith(
-          aircraftList: response.data,
-          isLoading: false,
-          isSuccess: true,
-          status: CommonApiStatus.success,
-        ),
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-      emit(
-        state.copyWith(
-          isLoading: false,
+          isLoading: true,
           isSuccess: false,
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
+          status: CommonApiStatus.submitting,
         ),
+      );
+
+      try {
+        final response = await AircraftListDataRepository()
+            .searchAircraftByICAO(icaoCode);
+
+        emit(
+          state.copyWith(
+            aircraftList: response.data,
+            isLoading: false,
+            isSuccess: true,
+            status: CommonApiStatus.success,
+          ),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () =>
+            searchAircraftByICAO(icaoCode: icaoCode, context: context),
       );
     }
   }

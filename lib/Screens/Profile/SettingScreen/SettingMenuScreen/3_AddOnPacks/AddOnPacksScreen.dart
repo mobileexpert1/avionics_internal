@@ -34,7 +34,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
   void initState() {
     super.initState();
     _cubit = SubscriptionBuyPlanCubit();
-    _cubit.initRevenueCat(true);
+    _cubit.initRevenueCat(true,context);
 
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,

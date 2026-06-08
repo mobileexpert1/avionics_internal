@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../../../Constants/ConstantStrings.dart';
@@ -18,12 +20,14 @@ class ChatHistoryRepository {
   }) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlChatConstant.chatService}"
-          "?page=$page"
+      "${ApiFunctionUrlChatConstant.chatService}"
+      "?page=$page",
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
 
       return PaginatedList.fromJson(
         json: jsonData,
@@ -35,14 +39,17 @@ class ChatHistoryRepository {
     }
   }
 
-
-  Future<BaseDetailResponseModel> deleteChatSession(String sessionId) async {
+  Future<BaseDetailResponseModel> deleteChatSession(
+    String sessionId,
+  ) async {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlChatConstant.chatService}/$sessionId",
     );
 
     try {
-      final response = await ApiService.delete(url: url);
+      final response = await ApiService.delete(
+        url: url,
+      );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();
@@ -54,13 +61,9 @@ class ChatHistoryRepository {
     required String newTitle,
   }) async {
     final url = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlChatConstant.chatService,
+      ApiBaseUrlConstant.baseUrl + ApiFunctionUrlChatConstant.chatService,
     );
-    final body = {
-      "session_id": sessionId,
-      "title": newTitle,
-    };
+    final body = {"session_id": sessionId, "title": newTitle};
     try {
       final response = await ApiService.patch(
         url: url,
@@ -72,5 +75,4 @@ class ChatHistoryRepository {
       throw e.toString();
     }
   }
-
 }

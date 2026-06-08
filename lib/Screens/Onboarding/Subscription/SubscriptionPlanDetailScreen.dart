@@ -47,13 +47,13 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
     super.initState();
     _cubit = SubscriptionBuyPlanCubit();
     _cubit.isComeFromSignup = widget.isComeFromSignup ?? false;
-    _cubit.initRevenueCat(widget.isComeFromProfile ?? false);
+    _cubit.initRevenueCat(widget.isComeFromProfile ?? false,context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded();
+        context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded(context);
       });
     }
   }

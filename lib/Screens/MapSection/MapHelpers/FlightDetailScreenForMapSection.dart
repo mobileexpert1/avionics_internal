@@ -583,6 +583,7 @@ class _FlightDetailScreenForMapSectionState
                     child: Stack(
                       children: [
                         CachedAnyImage(
+                          useCache: true,
                           isForPlaneList: true,
                           imagePath: image.url,
                           width: double.infinity,

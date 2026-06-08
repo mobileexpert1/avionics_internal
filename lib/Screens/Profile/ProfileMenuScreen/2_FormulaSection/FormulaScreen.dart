@@ -31,7 +31,7 @@ class _FormulasScreenState extends State<FormulasScreen> {
   void initState() {
     super.initState();
     _cubit = FormulaCubit();
-    _cubit.loadFormulas();
+    _cubit.loadFormulas(context);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.formulaScreen);
   }
 

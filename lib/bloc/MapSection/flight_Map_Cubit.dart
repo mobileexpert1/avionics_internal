@@ -1,18 +1,19 @@
 import 'dart:async';
 
 import 'package:avionics_internal/bloc/Home/AircraftComparison/AircraftComparisonModel.dart';
-import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
-    hide Position;
+import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
+import '../../Helpers/NoInternetDialog.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
@@ -26,17 +27,11 @@ import 'flight_map_model.dart';
 import 'flight_map_state.dart';
 
 class FlightMapCubit extends Cubit<FlightMapState> {
-  // ── FIELDS ─────────────────────────────────────────────────────────────────
-
   Timer? _trackingTimer;
   Set<String>? _favCallSigns;
   bool? isFromTrackingClass;
 
-  // ── CONSTRUCTOR ────────────────────────────────────────────────────────────
-
   FlightMapCubit() : super(FlightMapState());
-
-  // ── RESET / STATE SETTERS ──────────────────────────────────────────────────
 
   void resetTracking() {
     isFromTrackingClass = false;
@@ -83,9 +78,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }).toList();
 
     emit(state.copyWith(flights: updatedFlights));
-    print("before state.isFavFlightByS-=-=-=-${state.isFavFlightByS}");
     final newValueForFavUnFavFlights = state.isFavFlightByS ?? false;
-    print("after state.isFavFlightByS-=-=-=-${!newValueForFavUnFavFlights}");
     emit(
       state.copyWith(
         flights: updatedFlights,
@@ -93,8 +86,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
       ),
     );
   }
-
-  // ── LOCATION ───────────────────────────────────────────────────────────────
 
   Future<bool> getCurrentLocation(BuildContext context) async {
     emit(state.copyWith(status: CommonApiStatus.submitting, isLoading: true));
@@ -200,10 +191,19 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   // ── DATA LOADING ───────────────────────────────────────────────────────────
 
-  Future<void> loadFavoritesFlights() async {
-    final favCallSigns = await SavedFlightRepository().getFavoriteCallSigns();
-    debugPrint('Favorite CallSigns: $favCallSigns');
-    favoriteFlights(favCallSigns);
+  Future<void> loadFavoritesFlights(BuildContext context) async {
+    if (await InternetConnection().hasInternetAccess) {
+      final favCallSigns = await SavedFlightRepository().getFavoriteCallSigns();
+      debugPrint('Favorite CallSigns: $favCallSigns');
+      favoriteFlights(favCallSigns);
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await loadFavoritesFlights(context);
+        },
+      );
+    }
   }
 
   void favoriteFlights(Set<String> favCallSigns) {
@@ -237,40 +237,53 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     List<String> callSignListTypes,
     BuildContext context,
   ) async {
-    try {
-      final flightsDetails = await AircraftListDataRepository()
-          .getListOfAllPlanes(
-            aircraftIds: uniqueTypes,
-            callSignListTypes: callSignListTypes,
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final flightsDetails = await AircraftListDataRepository()
+            .getListOfAllPlanes(
+              aircraftIds: uniqueTypes,
+              callSignListTypes: callSignListTypes,
+            );
+
+        if (flightsDetails.data.isNotEmpty) {
+          await loadFavoritesFlights(context);
+          final enrichedFlights = await mergeFlightsWithDetails(
+            state.flights ?? [],
+            flightsDetails.data,
           );
 
-      if (flightsDetails.data.isNotEmpty) {
-        await loadFavoritesFlights();
-        final enrichedFlights = await mergeFlightsWithDetails(
-          state.flights ?? [],
-          flightsDetails.data,
-        );
-
-        if (!isClosed) {
-          emit(
-            state.copyWith(
-              flights: enrichedFlights,
-              status: CommonApiStatus.success,
-              isSuccess: true,
-              isLoading: false,
-            ),
-          );
+          if (!isClosed) {
+            emit(
+              state.copyWith(
+                flights: enrichedFlights,
+                status: CommonApiStatus.success,
+                isSuccess: true,
+                isLoading: false,
+              ),
+            );
+          }
         }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            isSuccess: false,
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        );
       }
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          isSuccess: false,
-          isLoading: false,
-          errorMessage: e.toString(),
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await fetchAircraftDetailsFromFlightsList(
+            uniqueTypes,
+            callSignListTypes,
+            context,
+          );
+        },
       );
     }
   }
@@ -284,66 +297,81 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required int flightLimit,
     required int radiusNm,
   }) async {
-    try {
-      final boundsString =
-          "${bounds.northeast.latitude},${bounds.southwest.latitude},"
-          "${bounds.southwest.longitude},${bounds.northeast.longitude}";
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final boundsString =
+            "${bounds.northeast.latitude},${bounds.southwest.latitude},"
+            "${bounds.southwest.longitude},${bounds.northeast.longitude}";
 
-      print("boundsString-=-=$boundsString");
+        print("boundsString-=-=$boundsString");
 
-      final hasAircraftFilter =
-          state.selectedAircraftIcaos != null &&
-          state.selectedAircraftIcaos!.isNotEmpty;
-      final hasCategoryFilter =
-          state.selectedCategories != null &&
-          state.selectedCategories!.isNotEmpty;
+        final hasAircraftFilter =
+            state.selectedAircraftIcaos != null &&
+            state.selectedAircraftIcaos!.isNotEmpty;
+        final hasCategoryFilter =
+            state.selectedCategories != null &&
+            state.selectedCategories!.isNotEmpty;
 
-      final flights = await FlightRepository().getFlights(
-        flightLimit: flightLimit,
-        context: context,
-        bounds: boundsString,
-        aircraft: hasAircraftFilter
-            ? state.selectedAircraftIcaos!.join(',')
-            : null,
-        categories: hasCategoryFilter
-            ? state.selectedCategories!
-                  .map((cat) => _getCategoryCode(cat))
-                  .join(',')
-            : null,
-      );
+        final flights = await FlightRepository().getFlights(
+          flightLimit: flightLimit,
+          context: context,
+          bounds: boundsString,
+          aircraft: hasAircraftFilter
+              ? state.selectedAircraftIcaos!.join(',')
+              : null,
+          categories: hasCategoryFilter
+              ? state.selectedCategories!
+                    .map((cat) => _getCategoryCode(cat))
+                    .join(',')
+              : null,
+        );
 
-      final airportList = await AircraftStationListRepository()
-          .getListOfAllAircraftStationAccordingToLatLong(
-            longitude: currentCenterLatLong.longitude.toString(),
-            latitude: currentCenterLatLong.latitude.toString(),
+        final airportList = await AircraftStationListRepository()
+            .getListOfAllAircraftStationAccordingToLatLong(
+              longitude: currentCenterLatLong.longitude.toString(),
+              latitude: currentCenterLatLong.latitude.toString(),
+            );
+
+        debugPrint("Flights fetched: ${flights.length}");
+        debugPrint("Airport list count: ${airportList.data.length}");
+
+        onFlightsLoaded(flights, context);
+
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              flights: flights,
+              airports: airportList.data,
+              status: CommonApiStatus.success,
+              isSuccess: true,
+              isLoading: false,
+            ),
           );
-
-      debugPrint("Flights fetched: ${flights.length}");
-      debugPrint("Airport list count: ${airportList.data.length}");
-
-      onFlightsLoaded(flights, context);
-
-      if (!isClosed) {
+        }
+      } catch (e, stack) {
+        debugPrint("Error fetching flights: $e");
+        debugPrint(stack.toString());
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(
           state.copyWith(
-            flights: flights,
-            airports: airportList.data,
-            status: CommonApiStatus.success,
-            isSuccess: true,
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
             isLoading: false,
           ),
         );
       }
-    } catch (e, stack) {
-      debugPrint("Error fetching flights: $e");
-      debugPrint(stack.toString());
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-          isLoading: false,
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await fetchFlightsByBounds(
+            bounds: bounds,
+            context: context,
+            currentCenterLatLong: currentCenterLatLong,
+            flightLimit: flightLimit,
+            radiusNm: radiusNm,
+          );
+        },
       );
     }
   }
@@ -352,44 +380,53 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required String flightId,
     required BuildContext context,
   }) async {
-    try {
-      final now = DateTime.now().toUtc();
-      final from = now.subtract(const Duration(hours: 24));
-      final formattedFrom = formatUtc(from);
-      final formattedTo = formatUtc(now);
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final now = DateTime.now().toUtc();
+        final from = now.subtract(const Duration(hours: 24));
+        final formattedFrom = formatUtc(from);
+        final formattedTo = formatUtc(now);
 
-      final response = await FlightRepository().getFlightDetails(
-        flightId: flightId,
-        fromDateTime: formattedFrom,
-        toDateTime: formattedTo,
-        context: context,
-      );
+        final response = await FlightRepository().getFlightDetails(
+          flightId: flightId,
+          fromDateTime: formattedFrom,
+          toDateTime: formattedTo,
+          context: context,
+        );
 
-      if (response != null) {
-        final flightDetail = response['flightDetail'] as FlightAircraftDetail;
-        // SUMMARY = 1
-        // TRACK_FLIGHT = 2
-        // EMPTY_REQUEST = 3
-        submitFlightCreditApi(1, 2, context);
-        print("flightDetail.isFavorite-=-=-=${flightDetail.isFavorite}");
-        clearSelectedFlightDetail();
-        emit(
-          state.copyWith(
-            selectedFlightDetail: flightDetail,
-            status: CommonApiStatus.success,
-            isLoading: false,
-            isFavFlightByS: flightDetail.isFavorite,
+        if (response != null) {
+          final flightDetail = response['flightDetail'] as FlightAircraftDetail;
+          // SUMMARY = 1
+          // TRACK_FLIGHT = 2
+          // EMPTY_REQUEST = 3
+          submitFlightCreditApi(1, 2, context);
+          print("flightDetail.isFavorite-=-=-=${flightDetail.isFavorite}");
+          clearSelectedFlightDetail();
+          emit(
+            state.copyWith(
+              selectedFlightDetail: flightDetail,
+              status: CommonApiStatus.success,
+              isLoading: false,
+              isFavFlightByS: flightDetail.isFavorite,
+            ),
+          );
+        }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error fetching flight details: ${e.toString()}'),
           ),
         );
+        emit(state.copyWith(isLoading: false));
       }
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error fetching flight details: ${e.toString()}'),
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await fetchFlightDetails(flightId: flightId, context: context);
+        },
       );
-      emit(state.copyWith(isLoading: false));
     }
   }
 
@@ -397,48 +434,56 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required String flightNumber,
     required BuildContext context,
   }) async {
-    //emit(state.copyWith(isLoading: true));
-    try {
-      final response = await FlightRepository().getFlightPositions(
-        flightNumber,
-      );
-
-      // SUMMARY = 1
-      // TRACK_FLIGHT = 2
-      // EMPTY_REQUEST = 3
-      submitFlightCreditApi(
-        response!.flights.isNotEmpty ? 2 : 3,
-        response!.flights.isNotEmpty ? 8 : 1,
-        context,
-      );
-
-      if (response?.flights != null && response!.flights.isNotEmpty) {
-        final updatedFlight = response.flights.first;
-        emit(
-          state.copyWith(
-            selectedFlight: updatedFlight,
-            isLoading: false,
-            status: CommonApiStatus.success,
-          ),
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final response = await FlightRepository().getFlightPositions(
+          flightNumber,
         );
-      } else {
+
+        // SUMMARY = 1
+        // TRACK_FLIGHT = 2
+        // EMPTY_REQUEST = 3
+        submitFlightCreditApi(
+          response!.flights.isNotEmpty ? 2 : 3,
+          response!.flights.isNotEmpty ? 8 : 1,
+          context,
+        );
+
+        if (response?.flights != null && response!.flights.isNotEmpty) {
+          final updatedFlight = response.flights.first;
+          emit(
+            state.copyWith(
+              selectedFlight: updatedFlight,
+              isLoading: false,
+              status: CommonApiStatus.success,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              status: CommonApiStatus.failure,
+              errorMessage: "No flight position data found.",
+            ),
+          );
+        }
+      } catch (e) {
         emit(
           state.copyWith(
             isLoading: false,
             status: CommonApiStatus.failure,
-            errorMessage: "No flight position data found.",
+            errorMessage: e.toString(),
           ),
         );
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
       }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await _fetchAndUpdateFlight(flightNumber, context);
+        },
       );
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
     }
   }
 
@@ -447,47 +492,58 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     int credit,
     BuildContext context,
   ) async {
-    try {
-      final response = await FlightRepository().postFlightCreditApi(
-        type: type,
-        credit: credit,
-      );
-      final flightDetail = response.detail;
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final response = await FlightRepository().postFlightCreditApi(
+          type: type,
+          credit: credit,
+        );
+        final flightDetail = response.detail;
 
-      print("isFromTrackingClass-=-=-=$isFromTrackingClass");
-      final bool success = await CreditManager().tryUseCredit(
-        amount: credit.toDouble(),
-        isComeFromTabbar: false,
-        onError: (String message) async {
-          if (_trackingTimer != null) {
-            _trackingTimer?.cancel();
-            _trackingTimer = null;
+        print("isFromTrackingClass-=-=-=$isFromTrackingClass");
+        final bool success = await CreditManager().tryUseCredit(
+          amount: credit.toDouble(),
+          isComeFromTabbar: false,
+          onError: (String message) async {
+            if (_trackingTimer != null) {
+              _trackingTimer?.cancel();
+              _trackingTimer = null;
+            }
+
+            Future.microtask(() {
+              AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                isFromTrackingClass: isFromTrackingClass,
+                context: context,
+                title: "Subscription Required",
+                message: message,
+                navigateTo: SubscriptionPlanDetailScreen(
+                  isComeFromSignup: true,
+                ),
+                onGoToFirstTab: () {
+                  RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
+                },
+              );
+            });
+          },
+        );
+
+        if (success) {
+          if (kDebugMode) {
+            print(flightDetail);
           }
-
-          Future.microtask(() {
-            AlertHelperForSubsPopup.showSubscriptionEndAlert(
-              isFromTrackingClass: isFromTrackingClass,
-              context: context,
-              title: "Subscription Required",
-              message: message,
-              navigateTo: SubscriptionPlanDetailScreen(isComeFromSignup: true),
-              onGoToFirstTab: () {
-                RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
-              },
-            );
-          });
-        },
-      );
-
-      if (success) {
+        }
+      } catch (e) {
         if (kDebugMode) {
-          print(flightDetail);
+          print(e.toString());
         }
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await submitFlightCreditApi(type, credit, context);
+        },
+      );
     }
   }
 
@@ -557,60 +613,68 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     BuildContext context,
   ) async {
     if (isClosed) return;
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final position = state.position;
+        if (position == null) {
+          Future.delayed(Duration(seconds: 5), () {
+            if (!isClosed) {
+              _fetchAndUpdateFlight(flightNumber, context);
+            }
+          });
+          return;
+        }
 
-    try {
-      final position = state.position;
-      if (position == null) {
-        Future.delayed(Duration(seconds: 5), () {
-          if (!isClosed) {
-            _fetchAndUpdateFlight(flightNumber, context);
-          }
-        });
-        return;
+        final response = await FlightRepository().getFlightPositions(
+          flightNumber,
+        );
+        final flights = response?.flights as List<FlightModel>;
+        // SUMMARY = 1
+        // TRACK_FLIGHT = 2
+        // EMPTY_REQUEST = 3
+        submitFlightCreditApi(
+          flights.isNotEmpty ? 2 : 3,
+          flights.isNotEmpty ? 8 : 1,
+          context,
+        );
+
+        if (flights.isNotEmpty && !isClosed) {
+          final updatedFlight = flights.first;
+          emit(
+            state.copyWith(
+              selectedFlight: updatedFlight,
+              status: CommonApiStatus.success,
+              isLoading: false,
+              flights: state.flights,
+            ),
+          );
+        } else if (flights.isEmpty) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.success,
+              isLoading: false,
+              flights: state.flights,
+              isFlightLanded: true,
+            ),
+          );
+        }
+      } catch (e) {
+        if (isClosed) return;
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: 'Error tracking flight: ${e.toString()}',
+            isLoading: false,
+          ),
+        );
       }
-
-      final response = await FlightRepository().getFlightPositions(
-        flightNumber,
-      );
-      final flights = response?.flights as List<FlightModel>;
-      // SUMMARY = 1
-      // TRACK_FLIGHT = 2
-      // EMPTY_REQUEST = 3
-      submitFlightCreditApi(
-        flights.isNotEmpty ? 2 : 3,
-        flights.isNotEmpty ? 8 : 1,
+    } else {
+      NoInternetDialog.show(
         context,
-      );
-
-      if (flights.isNotEmpty && !isClosed) {
-        final updatedFlight = flights.first;
-        emit(
-          state.copyWith(
-            selectedFlight: updatedFlight,
-            status: CommonApiStatus.success,
-            isLoading: false,
-            flights: state.flights,
-          ),
-        );
-      } else if (flights.isEmpty) {
-        emit(
-          state.copyWith(
-            status: CommonApiStatus.success,
-            isLoading: false,
-            flights: state.flights,
-            isFlightLanded: true,
-          ),
-        );
-      }
-    } catch (e) {
-      if (isClosed) return;
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: 'Error tracking flight: ${e.toString()}',
-          isLoading: false,
-        ),
+        onRetry: () async {
+          await _fetchAndUpdateFlight(flightNumber, context);
+        },
       );
     }
   }

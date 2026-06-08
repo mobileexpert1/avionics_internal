@@ -7,10 +7,7 @@ import '../../../Constants/ConstantStrings.dart';
 import 'airCraftDetail_model.dart';
 
 class AirCraftRepository {
-  Future<AirCraftDetailResponse> getAirCraftData(
-    String airCraftId, {
-    VoidCallback? onUnauthorized,
-  }) async {
+  Future<AirCraftDetailResponse> getAirCraftData(String airCraftId) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
@@ -18,10 +15,7 @@ class AirCraftRepository {
           airCraftId,
     );
     try {
-      final response = await ApiService.get(
-        url: uri,
-        onUnauthorized: onUnauthorized,
-      );
+      final response = await ApiService.get(url: uri);
 
       final Map<String, dynamic> json = response is String
           ? jsonDecode(response) as Map<String, dynamic>
@@ -41,9 +35,8 @@ class AirCraftRepository {
   }
 
   Future<AirCraftDetailResponse> getAirCraftDetailICAOCode(
-    String ICAOCode, {
-    VoidCallback? onUnauthorized,
-  }) async {
+    String ICAOCode,
+  ) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
@@ -51,10 +44,7 @@ class AirCraftRepository {
           ICAOCode,
     );
     try {
-      final response = await ApiService.get(
-        url: uri,
-        onUnauthorized: onUnauthorized,
-      );
+      final response = await ApiService.get(url: uri);
 
       final Map<String, dynamic> json = response is String
           ? jsonDecode(response) as Map<String, dynamic>

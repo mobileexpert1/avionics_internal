@@ -35,7 +35,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
   void initState() {
     super.initState();
     _cubit = context.read<MySubscriptionCubit>();
-    _cubit.loadSubscriptionsHistory();
+    _cubit.loadSubscriptionsHistory(context);
   }
 
   @override
@@ -180,7 +180,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                               disableSwipeBack: true,
                             );
                             if (result == true) {
-                              _cubit.loadSubscriptionsHistory();
+                              _cubit.loadSubscriptionsHistory(context);
                             }
                           },
                           onCancelTap: () {

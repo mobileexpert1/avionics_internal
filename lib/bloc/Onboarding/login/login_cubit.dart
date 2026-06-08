@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
@@ -14,6 +15,7 @@ import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppleSignInErrorHandler.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import '../../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../../Screens/Profile/SettingScreen/SettingMenuScreen/0_Avtar/AvtarScreen.dart';
@@ -65,30 +67,38 @@ class LoginCubit extends Cubit<LoginState> {
     String provider,
     String token,
   ) async {
-    emit(
-      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
-    );
-    try {
-      final result = await LoginRepository().loginUser(
-        email: state.email,
-        password: state.password,
-      );
-      emit(state.copyWith(status: CommonApiStatus.success));
-      if (!context.mounted) return;
-      await _navigateAfterLogin(context, result);
-    } catch (e) {
+    if (await InternetConnection().hasInternetAccess) {
       emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+      );
+      try {
+        final result = await LoginRepository().loginUser(
+          email: state.email,
+          password: state.password,
+        );
+        emit(state.copyWith(status: CommonApiStatus.success));
+        if (!context.mounted) return;
+        await _navigateAfterLogin(context, result);
+      } catch (e) {
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await loginWithSocialPlatform(context, provider, token);
+        },
       );
     }
   }
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      // 1. Choose the right GoogleSignIn instance
       final googleSignIn = kIsWeb
           ? GoogleSignIn(
               clientId:
@@ -97,7 +107,6 @@ class LoginCubit extends Cubit<LoginState> {
             )
           : GoogleSignIn(scopes: const ['email', 'profile']);
 
-      // 2. Make sure any previous sessions are cleared
       await googleSignIn.signOut();
       await _auth.signOut();
 
@@ -107,7 +116,6 @@ class LoginCubit extends Cubit<LoginState> {
 
         emit(state.copyWith(status: CommonApiStatus.submitting));
 
-        // You get the OAuth access token from userCred.credential
         final accessToken =
             (userCred.credential as OAuthCredential).accessToken ?? '';
 
@@ -119,7 +127,6 @@ class LoginCubit extends Cubit<LoginState> {
         emit(state.copyWith(status: CommonApiStatus.success));
         await _navigateAfterLogin(context, result);
       } else {
-        /* ---------- Mobile / desktop sign‑in ---------- */
         final googleUser = await googleSignIn.signIn();
         if (googleUser == null) return;
 
@@ -242,20 +249,29 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> _handleLogin(BuildContext context) async {
-    emit(state.copyWith(status: CommonApiStatus.submitting));
-    try {
-      final result = await LoginRepository().loginUser(
-        email: state.email,
-        password: state.password,
-      );
-      emit(state.copyWith(status: CommonApiStatus.success));
-      await _navigateAfterLogin(context, result);
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: mapStatusCode(e.toString()),
-        ),
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+      try {
+        final result = await LoginRepository().loginUser(
+          email: state.email,
+          password: state.password,
+        );
+        emit(state.copyWith(status: CommonApiStatus.success));
+        await _navigateAfterLogin(context, result);
+      } catch (e) {
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: mapStatusCode(e.toString()),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          _handleLogin(context);
+        },
       );
     }
   }

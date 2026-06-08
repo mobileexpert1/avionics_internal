@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/Database/generic_methods.dart';
+
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../CustomFiles/Custom_Pagination.dart';
@@ -29,7 +32,9 @@ class ManufacturerRepository {
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
       final paginated = PaginatedList.fromJson(
         json: jsonData,
         fromJson: (e) => ManufacturerListModel.fromJson(e),
@@ -57,7 +62,9 @@ class ManufacturerRepository {
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
 
       print(jsonData);
       return ManufacturerDetailResponse.fromJson(jsonData);

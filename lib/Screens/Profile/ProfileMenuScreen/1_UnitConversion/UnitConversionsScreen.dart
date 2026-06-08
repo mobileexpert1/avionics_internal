@@ -30,7 +30,7 @@ class _UnitConversionsScreenState extends State<UnitConversionsScreen> {
   void initState() {
     super.initState();
     _cubit = ConversionCubit();
-    _cubit.loadConversions();
+    _cubit.loadConversions(context);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.conversionScreen);
   }
 

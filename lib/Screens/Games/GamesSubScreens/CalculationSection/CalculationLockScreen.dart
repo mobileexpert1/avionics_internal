@@ -34,7 +34,7 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
   void initState() {
     super.initState();
     _cubit = CalculationCubit();
-    _cubit.loadCalculationLocks();
+    _cubit.loadCalculationLocks(context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.calculationsLockListScreen,
     );

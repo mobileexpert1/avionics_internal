@@ -162,7 +162,6 @@ class FlightRepository {
       } else {
         throw Exception("No flight data found for ID: $flightId");
       }
-      // final aircraftDetails = await getAircraftDetails(flightDetail.type ?? '');
       final aircraftDetails = await getAircraftDetails(
         aircraftId: flightDetail.type ?? '',
         origIcao: flightDetail.departureIcao ?? '',
@@ -239,26 +238,6 @@ class FlightRepository {
     );
   }
 
-  // Future<List<FlightAircraftDetail>> getAircraftDetails(
-  //     String aircraftType,
-  //     ) async {
-  //   final url = Uri.parse(
-  //     "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
-  //   );
-  //   try {
-  //     final response = await ApiService.get(url: url);
-  //     final aircraftResponse = FlightDetailResponse.fromJson(response);
-  //
-  //     if (aircraftResponse.result != null) {
-  //       return [aircraftResponse.result!];
-  //     }
-  //     return aircraftResponse.flights;
-  //   } catch (e) {
-  //     print('Error fetching aircraft details: $e');
-  //     return [];
-  //   }
-  // }
-
   Future<List<FlightAircraftDetail>> getAircraftDetails({
     required String aircraftId,
     required String origIcao,
@@ -286,14 +265,19 @@ class FlightRepository {
     }
   }
 
-  Future<FlightResponse?> getFlightPositions(String flightNumber) async {
+  Future<FlightResponse?> getFlightPositions(
+    String flightNumber,
+  ) async {
     String url =
         "${MapFlightAircraftSectionConstant.baseUrlForFlightPosition}90,"
         "-90,-180,180&&flights=$flightNumber";
     final uri = Uri.parse(url);
     try {
       final jsonData =
-          await ApiService.get(url: uri, isForFlightRadar: true)
+          await ApiService.get(
+                url: uri,
+                isForFlightRadar: true,
+              )
               as Map<String, dynamic>;
       return FlightResponse.fromJson(jsonData);
     } catch (e) {
@@ -301,7 +285,8 @@ class FlightRepository {
     }
   }
 
-  Future<FlightKeyValuesModel> getMapKeyValueFromServer() async {
+  Future<FlightKeyValuesModel> getMapKeyValueFromServer(
+  ) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -309,7 +294,10 @@ class FlightRepository {
     );
     try {
       final jsonData =
-          await ApiService.get(url: uri, isForFlightRadar: true)
+          await ApiService.get(
+                url: uri,
+                isForFlightRadar: true,
+              )
               as Map<String, dynamic>;
       return FlightKeyValuesModel.fromJson(jsonData);
     } catch (e) {
@@ -343,18 +331,14 @@ class FlightRepository {
         "&categories=$categoriesParam",
       );
 
-      final response = await ApiService.get(url: url, isForFlightRadar: true);
+      final response = await ApiService.get(
+        url: url,
+        isForFlightRadar: true,
+      );
       final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;
     } catch (e) {
       throw e.toString();
     }
   }
-}
-
-class Position {
-  final double latitude;
-  final double longitude;
-
-  Position({required this.latitude, required this.longitude});
 }

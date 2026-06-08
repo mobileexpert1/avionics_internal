@@ -41,13 +41,13 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SavedFlightCubit>().loadSavedAndFavoriteFlights();
+    context.read<SavedFlightCubit>().loadSavedAndFavoriteFlights(context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.savedFlightScreen,
     );
   }
 
-  Future<void> _GetFr24Key() async {
+  Future<void> _getFr24Key() async {
     final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
     if (localKey.isNotEmpty) return;
 
@@ -106,7 +106,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                   FirebaseEvents.flightAircraftDetail,
                   FirebaseEvents.savedFlightScreen,
                 );
-                await _GetFr24Key();
+                await _getFr24Key();
                 Navigator.push(
                   context,
                   MaterialPageRoute(

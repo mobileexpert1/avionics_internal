@@ -225,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     isNeedToShowLeftRightBottomBorder: false,
                                     isNeedToShowLeftImage: true,
                                     isExpanded: expandedManufacturerTab,
-                                    title: "Manufacturer Library",
+                                    title: "Manufacturers Library",
                                     headerColor: AppColors.primaryDark,
                                     arrowBackgroundColor:
                                         AppColors.extraDarkYellow,

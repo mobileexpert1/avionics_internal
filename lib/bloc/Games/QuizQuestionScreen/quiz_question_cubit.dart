@@ -8,11 +8,13 @@ import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_st
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
@@ -60,143 +62,151 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   Future<void> loadQuestions(int sectionId, BuildContext context) async {
-    try {
-      emit(state.copyWith(isLoading: true));
-      CalculationGameModel? gameData;
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        emit(state.copyWith(isLoading: true));
+        CalculationGameModel? gameData;
+        if (gameId == "calculation") {
+          gameData = await _repository.getCalculationData(sectionId, 3);
+        } else if (gameId == "one_word") {
+          gameData = await _repository.getOneWordData(sectionId, 3);
+        } else if (gameId == "quiz") {
+          gameData = await _repository.getQuizData(sectionId, 3);
+        } else if (gameId == "trivia") {
+          gameData = await _repository.getTriviaData(sectionId, 3);
+        } else if (gameId == "imageBased") {
+          gameData = await _repository.getImageBasedQuestionData(3);
+        } else if (gameId == "aircraftEncyclopaedia") {
+          gameData = await _repository.getAircraftEncyclopaediaQuestionData(3);
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'Invalid gameId: $gameId',
+            ),
+          );
+          return;
+        }
 
-      if (gameId == "calculation") {
-        gameData = await _repository.getCalculationData(sectionId, 3);
-      } else if (gameId == "one_word") {
-        gameData = await _repository.getOneWordData(sectionId, 3);
-      } else if (gameId == "quiz") {
-        gameData = await _repository.getQuizData(sectionId, 3);
-      } else if (gameId == "trivia") {
-        gameData = await _repository.getTriviaData(sectionId, 3);
-      } else if (gameId == "imageBased") {
-        gameData = await _repository.getImageBasedQuestionData(3);
-      } else if (gameId == "aircraftEncyclopaedia") {
-        gameData = await _repository.getAircraftEncyclopaediaQuestionData(3);
-      } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: 'Invalid gameId: $gameId',
-          ),
-        );
-        return;
-      }
+        if (gameData == null || gameData.categoryTypes.isEmpty) {
+          AppSnackBar.custom(
+            context,
+            message:
+                'No questions available at this time. Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
+          );
+          Future.delayed(const Duration(seconds: 4), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
+          return;
+        }
 
-      if (gameData == null || gameData.categoryTypes.isEmpty) {
-        AppSnackBar.custom(
-          context,
-          message:
-              'No questions available at this time. Please wait while more questions are loading. Try again later.',
-          svgAsset: '',
-        );
-        Future.delayed(const Duration(seconds: 4), () {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-        });
-        return;
-      }
+        // Map initial questions by category name
+        final Map<String, List<QuizQuestion>> categorizedQuestions = {};
+        for (var category in gameData.categoryTypes) {
+          var questions = category.questions
+              .map(
+                (q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId),
+              )
+              .toList();
+          categorizedQuestions[category.name] = questions;
+        }
 
-      // Map initial questions by category name
-      final Map<String, List<QuizQuestion>> categorizedQuestions = {};
-      for (var category in gameData.categoryTypes) {
-        var questions = category.questions
+        // Initial questions capped at maxQuestions
+        final allQuestions = gameData.categoryTypes
+            .expand((category) => category.questions)
             .map((q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId))
+            .take(maxQuestions)
             .toList();
-        categorizedQuestions[category.name] = questions;
-      }
 
-      // Initial questions capped at maxQuestions
-      final allQuestions = gameData.categoryTypes
-          .expand((category) => category.questions)
-          .map((q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId))
-          .take(maxQuestions)
-          .toList();
+        if (allQuestions.isEmpty) {
+          print('No questions mapped from categories');
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'No questions could be mapped',
+            ),
+          );
+          return;
+        }
 
-      if (allQuestions.isEmpty) {
-        print('No questions mapped from categories');
+        // Initialize results
+        final initialResults = List<QuestionResult>.generate(
+          maxQuestions,
+          (index) => QuestionResult(
+            userAnswerIndex: null,
+            correctPoint: 0,
+            bonusPoint: 0,
+            timeTakenSeconds: 0,
+          ),
+        );
+
+        // First emit (UI show)
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'No questions could be mapped',
+            questions: allQuestions,
+            currentIndex: 0,
+            selectedIndex: null,
+            showAnswer: false,
+            timer: _totalDuration,
+            score: 0,
+            correctAnswers: 0,
+            wrongAnswers: 0,
+            pointsEarned: 0,
+            bonusPoints: 0,
+            timeTaken: 0,
+            questionResults: initialResults,
+            timePerQuestion: List<int>.filled(maxQuestions, 0),
+            categorizedQuestions: categorizedQuestions,
+            game: gameData.game,
+            level: gameData.level,
+            difficulty: gameData.difficulty,
+            categoryTypes: gameData.categoryTypes,
+            setId: gameData.setId,
+            imageBasedId: gameData.imageBasedId,
           ),
         );
-        return;
-      }
 
-      // Initialize results
-      final initialResults = List<QuestionResult>.generate(
-        maxQuestions,
-        (index) => QuestionResult(
-          userAnswerIndex: null,
-          correctPoint: 0,
-          bonusPoint: 0,
-          timeTakenSeconds: 0,
-        ),
+        // Start timer
+        startTimer(context);
+
+        // Fetch silently in background if needed
+        if (allQuestions.length < maxQuestions) {
+          _fetchAndBufferBackgroundQuestions(sectionId, context);
+        }
+      } catch (e, stackTrace) {
+        print('Error loading questions: $e, StackTrace: $stackTrace');
+        if (e.toString().contains('Sorry no more')) {
+          AppSnackBar.custom(
+            context,
+            message:
+                'Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
+          );
+
+          Future.delayed(const Duration(seconds: 4), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
+        } else {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'Failed to load questions: ${e.toString()}',
+            ),
+          );
+        }
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadQuestions(sectionId, context),
       );
-
-      // First emit (UI show)
-      emit(
-        state.copyWith(
-          isLoading: false,
-          questions: allQuestions,
-          currentIndex: 0,
-          selectedIndex: null,
-          showAnswer: false,
-          timer: _totalDuration,
-          score: 0,
-          correctAnswers: 0,
-          wrongAnswers: 0,
-          pointsEarned: 0,
-          bonusPoints: 0,
-          timeTaken: 0,
-          questionResults: initialResults,
-          timePerQuestion: List<int>.filled(maxQuestions, 0),
-          categorizedQuestions: categorizedQuestions,
-          game: gameData.game,
-          level: gameData.level,
-          difficulty: gameData.difficulty,
-          categoryTypes: gameData.categoryTypes,
-          setId: gameData.setId,
-          imageBasedId: gameData.imageBasedId,
-        ),
-      );
-
-      // Start timer
-      startTimer(context);
-
-      // Fetch silently in background if needed
-      if (allQuestions.length < maxQuestions) {
-        _fetchAndBufferBackgroundQuestions(sectionId, context);
-      }
-    } catch (e, stackTrace) {
-      print('Error loading questions: $e, StackTrace: $stackTrace');
-      if (e.toString().contains('Sorry no more')) {
-        AppSnackBar.custom(
-          context,
-          message:
-              'Please wait while more questions are loading. Try again later.',
-          svgAsset: '',
-        );
-
-        Future.delayed(const Duration(seconds: 4), () {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-        });
-      } else {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: 'Failed to load questions: ${e.toString()}',
-          ),
-        );
-      }
     }
   }
 
@@ -229,53 +239,61 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     int sectionId,
     BuildContext context,
   ) async {
-    for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
-      if (state.questions.length + _bufferedQuestions.length >= maxQuestions) {
-        break;
+    if (await InternetConnection().hasInternetAccess) {
+      for (int actionNumber = 1; actionNumber <= 2; actionNumber++) {
+        if (state.questions.length + _bufferedQuestions.length >=
+            maxQuestions) {
+          break;
+        }
+        CalculationGameModel? additionalData;
+        if (gameId == "calculation") {
+          additionalData = await _repository.fetchAdditionalQuestions(
+            sectionId,
+            actionNumber,
+          );
+        } else if (gameId == "one_word") {
+          additionalData = await _repository.fetchOneWordQuestions(
+            sectionId,
+            actionNumber,
+          );
+        } else if (gameId == "quiz") {
+          additionalData = await _repository.fetchQuizQuestions(
+            sectionId,
+            actionNumber,
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'Invalid gameId for background fetch: $gameId',
+            ),
+          );
+          return;
+        }
+
+        if (additionalData != null && additionalData.categoryTypes.isNotEmpty) {
+          print(
+            'Append Additional data for action $actionNumber: $additionalData',
+          );
+          await appendQuestionsSilently(additionalData, context);
+        } else {
+          print('No additional questions for action $actionNumber');
+        }
       }
-      CalculationGameModel? additionalData;
-      if (gameId == "calculation") {
-        additionalData = await _repository.fetchAdditionalQuestions(
-          sectionId,
-          actionNumber,
-        );
-      } else if (gameId == "one_word") {
-        additionalData = await _repository.fetchOneWordQuestions(
-          sectionId,
-          actionNumber,
-        );
-      } else if (gameId == "quiz") {
-        additionalData = await _repository.fetchQuizQuestions(
-          sectionId,
-          actionNumber,
-        );
-      } else {
+
+      if (state.questions.length + _bufferedQuestions.length == 0) {
+        print('No questions after background fetch');
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'Invalid gameId for background fetch: $gameId',
+            errorMessage: 'No questions available.',
           ),
         );
-        return;
       }
-
-      if (additionalData != null && additionalData.categoryTypes.isNotEmpty) {
-        print(
-          'Append Additional data for action $actionNumber: $additionalData',
-        );
-        await appendQuestionsSilently(additionalData, context);
-      } else {
-        print('No additional questions for action $actionNumber');
-      }
-    }
-
-    if (state.questions.length + _bufferedQuestions.length == 0) {
-      print('No questions after background fetch');
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: 'No questions available.',
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => _fetchAndBufferBackgroundQuestions(sectionId, context),
       );
     }
   }
@@ -468,7 +486,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   }
 
   Future<void> nextQuestion(BuildContext context) async {
-    // If there are more questions → go to next
     if (state.currentIndex + 1 < state.questions.length) {
       emit(
         state.copyWith(
@@ -497,9 +514,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       if (state.currentIndex == 9 || state.currentIndex == 13) {
         revealBufferedQuestions(context);
       }
-    }
-    // Last question → submit + navigate
-    else if (state.currentIndex == maxQuestions - 1) {
+    } else if (state.currentIndex == maxQuestions - 1) {
       _timer?.cancel();
 
       String formatTime(int seconds) => "${seconds}s";
@@ -508,7 +523,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         return String.fromCharCode(65 + index);
       }
 
-      // Map category names to numeric type IDs if not provided
       final categoryTypeMap = <String, String>{};
       state.categoryTypes.asMap().forEach((index, category) {
         categoryTypeMap[category.name] = category.type.isNotEmpty
@@ -577,56 +591,57 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
       debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
       debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+      if (await InternetConnection().hasInternetAccess) {
+        try {
+          final response = await QuizQuestionRepository().submitResult(
+            payload,
+            gameId,
+          );
 
-      try {
-        final response = await QuizQuestionRepository().submitResult(
-          payload,
-          gameId,
-        );
-
-        if (response.detail.toLowerCase() ==
-            "quiz answer submitted successfully".toLowerCase()) {
-          final data = response.data;
-          Future.delayed(const Duration(milliseconds: 100), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MainResultScreen(
-                  correctedAnswer: data.correctAnswers,
-                  totalQuestion: data.totalQuestions,
-                  score: data.earnedPoints,
-                  bonusPoints: data.additionalPoints,
-                  isEarnedBadge: data.isEarnedBadge,
-                  badgeName: data.badgeName,
+          if (response.detail.toLowerCase() ==
+              "quiz answer submitted successfully".toLowerCase()) {
+            final data = response.data;
+            Future.delayed(const Duration(milliseconds: 100), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MainResultScreen(
+                    correctedAnswer: data.correctAnswers,
+                    totalQuestion: data.totalQuestions,
+                    score: data.earnedPoints,
+                    bonusPoints: data.additionalPoints,
+                    isEarnedBadge: data.isEarnedBadge,
+                    badgeName: data.badgeName,
+                  ),
                 ),
-              ),
-            );
+              );
 
-            AnalyticsService.instance.buttonPressed(
-              FirebaseEvents.calculationsListButton,
-              FirebaseEvents.calculationResultScreen,
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.calculationsListButton,
+                FirebaseEvents.calculationResultScreen,
+              );
+            });
+          } else {
+            SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Result submit failed. Try again.")),
             );
-          });
-        } else {
+            emit(
+              state.copyWith(errorMessage: "Result submit failed. Try again."),
+            );
+          }
+        } catch (e) {
           SessionCommonTokenError.handleUnauthorizedError(context, e);
-
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Result submit failed. Try again.")),
+            SnackBar(content: Text('Failed to submit results: $e')),
           );
-          emit(
-            state.copyWith(errorMessage: "Result submit failed. Try again."),
-          );
+          emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
         }
-      } catch (e) {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
-        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
+      } else {
+        NoInternetDialog.show(context, onRetry: () => nextQuestion(context));
       }
-    }
-    // If loading more
-    else if (state.isLoading) {
+    } else if (state.isLoading) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please wait, more questions are loading...'),

@@ -46,6 +46,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
     context.read<AvtarCubit>().loadAvatars(
       widget.isComeFromSignupScreen,
       widget.isComeFromSocialLogin,
+      context
     );
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.avtarScreen);
   }

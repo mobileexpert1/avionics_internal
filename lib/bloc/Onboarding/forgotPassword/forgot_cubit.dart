@@ -1,10 +1,13 @@
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import 'forgot_repository.dart';
 import 'forgot_state.dart';
 
@@ -33,32 +36,38 @@ class ForgotCubit extends Cubit<ForgotState> {
   }
 
   Future<void> _forgotUserApi(BuildContext context) async {
-    emit(
-      state.copyWith(
-        status: CommonApiStatus.submitting,
-        errorMessage: null,
-      ),
-    );
-
-    try {
-      await ForgotRepository().forgotUserApi(email: state.email);
-      emit(state.copyWith(status: CommonApiStatus.success));
-      if (!context.mounted) return;
-      AppNavigator.push(
-        context,
-        OtpScreen(email: state.email, isComeFromSignup: false),
-        disableSwipeBack: true,
-      );
-    } catch (e) {
-      if (context.mounted) {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-      }
-
+    if (await InternetConnection().hasInternetAccess) {
       emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
+      );
+
+      try {
+        await ForgotRepository().forgotUserApi(email: state.email);
+        emit(state.copyWith(status: CommonApiStatus.success));
+        if (!context.mounted) return;
+        AppNavigator.push(
+          context,
+          OtpScreen(email: state.email, isComeFromSignup: false),
+          disableSwipeBack: true,
+        );
+      } catch (e) {
+        if (context.mounted) {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+        }
+
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          _forgotUserApi(context);
+        },
       );
     }
   }

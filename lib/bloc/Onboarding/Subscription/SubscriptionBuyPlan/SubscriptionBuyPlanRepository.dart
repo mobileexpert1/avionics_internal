@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/Constants/ApiClass/baseDetailResponseModel.dart';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/StringCommonMethods.dart';
 import 'SubscriptionResponseModel.dart';
 
 class SubscriptionBuyPlanRepository {
@@ -48,7 +52,8 @@ class SubscriptionBuyPlanRepository {
     }
   }
 
-  Future<SubscriptionBuyPlanStateModel> getSubscriptionSessionToken() async {
+  Future<SubscriptionBuyPlanStateModel> getSubscriptionSessionToken(
+  ) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -61,14 +66,5 @@ class SubscriptionBuyPlanRepository {
     } catch (e) {
       throw e.toString();
     }
-  }
-}
-
-void printFullText(String text) {
-  const int chunkSize = 800; // safe limit
-
-  for (int i = 0; i < text.length; i += chunkSize) {
-    int end = (i + chunkSize < text.length) ? i + chunkSize : text.length;
-    print(text.substring(i, end));
   }
 }

@@ -1,16 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
 import '../../../../Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxResultScreen.dart';
 import '../../QuizQuestionScreen/quiz_question_repository.dart';
-import 'blackBox_repository.dart';
 import 'blackBox_question_model.dart';
+import 'blackBox_repository.dart';
 import 'blackBox_state.dart';
 
 class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
@@ -41,31 +45,39 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     BuildContext context,
     String isForType,
   ) async {
-    try {
-      final currentQuestion = quizCubit.state.currentQuestion;
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final currentQuestion = quizCubit.state.currentQuestion;
 
-      print(
-        "setId:- ${quizCubit.state.questionSetId}, "
-        "questionId:- ${currentQuestion.questionId}"
-        "question:- ${currentQuestion.question}, "
-        "reason:- $reason",
-      );
+        print(
+          "setId:- ${quizCubit.state.questionSetId}, "
+          "questionId:- ${currentQuestion.questionId}"
+          "question:- ${currentQuestion.question}, "
+          "reason:- $reason",
+        );
 
-      await QuizQuestionRepository().reportQuestionPostMethod(
-        setId: quizCubit.state.questionSetId ?? "",
-        questionId: currentQuestion.questionId ?? "",
-        reason: reason,
-        isForType: isForType,
-      );
+        await QuizQuestionRepository().reportQuestionPostMethod(
+          setId: quizCubit.state.questionSetId ?? "",
+          questionId: currentQuestion.questionId ?? "",
+          reason: reason,
+          isForType: isForType,
+        );
 
-      AppSnackBar.custom(
+        AppSnackBar.custom(
+          context,
+          message: "Question Report Successfully",
+          svgAsset: "",
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        AppSnackBar.custom(context, message: e.toString(), svgAsset: "");
+      }
+    } else {
+      NoInternetDialog.show(
         context,
-        message: "Question Report Successfully",
-        svgAsset: "",
+        onRetry: () =>
+            reportQuestionPostMethod(reason, quizCubit, context, isForType),
       );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      AppSnackBar.custom(context, message: e.toString(), svgAsset: "");
     }
   }
 
@@ -194,123 +206,133 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   }
 
   Future<void> loadQuestions(BuildContext context, String questionNo) async {
-    try {
-      emit(state.copyWith(isLoading: true));
-      final gameData = await _repository.getBlackBoxQuestions(questionNo);
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        emit(state.copyWith(isLoading: true));
+        final gameData = await _repository.getBlackBoxQuestions(questionNo);
 
-      if (gameData == null ||
-          gameData.categoryTypes == null ||
-          gameData.categoryTypes!.isEmpty) {
-        print('No categories found in gameData');
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: 'No questions available from API',
-          ),
-        );
-        return;
-      }
-
-      final Map<String, List<BlackBoxQuestion>> categorizedQuestions = {};
-      for (var category in gameData.categoryTypes!) {
-        final List<BlackBoxQuestion>? mappedQuestions = category.questions
-            ?.map(
-              (q) => _mapQuestion(q, category.type ?? '3', name: category.name),
-            )
-            .toList();
-        final List<BlackBoxQuestion> catQuestions =
-            mappedQuestions ?? <BlackBoxQuestion>[];
-        categorizedQuestions[category.type ?? 'Unknown'] = catQuestions;
-      }
-
-      final allowedTypes = ['1', '2', '3', '4'];
-      final Iterable<BlackBoxQuestion> expandedQuestions = gameData
-          .categoryTypes!
-          .expand(
-            (category) => (category.questions ?? <Questions>[]).map(
-              (q) => _mapQuestion(q, category.type ?? '3'),
+        if (gameData == null ||
+            gameData.categoryTypes == null ||
+            gameData.categoryTypes!.isEmpty) {
+          print('No categories found in gameData');
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'No questions available from API',
             ),
           );
-      final List<BlackBoxQuestion> allQuestions = expandedQuestions.where((q) {
-        final isValid =
-            allowedTypes.contains(q.type) &&
-            (q.type == '1'
-                ? q.sequenceItems != null && q.sequenceItems!.isNotEmpty
-                : true) &&
-            (q.type == '2' || q.type == '3' || q.type == '4'
-                ? q.options.isNotEmpty
-                : true);
-        if (!isValid) {
-          print(
-            'Filtered out question: ${q.question}, type: ${q.type}, valid: $isValid',
-          );
+          return;
         }
-        return isValid;
-      }).toList();
 
-      final int totalQuestions = allQuestions.length;
+        final Map<String, List<BlackBoxQuestion>> categorizedQuestions = {};
+        for (var category in gameData.categoryTypes!) {
+          final List<BlackBoxQuestion>? mappedQuestions = category.questions
+              ?.map(
+                (q) =>
+                    _mapQuestion(q, category.type ?? '3', name: category.name),
+              )
+              .toList();
+          final List<BlackBoxQuestion> catQuestions =
+              mappedQuestions ?? <BlackBoxQuestion>[];
+          categorizedQuestions[category.type ?? 'Unknown'] = catQuestions;
+        }
 
-      if (totalQuestions == 0) {
-        print('No valid questions mapped from categories');
+        final allowedTypes = ['1', '2', '3', '4'];
+        final Iterable<BlackBoxQuestion> expandedQuestions = gameData
+            .categoryTypes!
+            .expand(
+              (category) => (category.questions ?? <Questions>[]).map(
+                (q) => _mapQuestion(q, category.type ?? '3'),
+              ),
+            );
+        final List<BlackBoxQuestion> allQuestions = expandedQuestions.where((
+          q,
+        ) {
+          final isValid =
+              allowedTypes.contains(q.type) &&
+              (q.type == '1'
+                  ? q.sequenceItems != null && q.sequenceItems!.isNotEmpty
+                  : true) &&
+              (q.type == '2' || q.type == '3' || q.type == '4'
+                  ? q.options.isNotEmpty
+                  : true);
+          if (!isValid) {
+            print(
+              'Filtered out question: ${q.question}, type: ${q.type}, valid: $isValid',
+            );
+          }
+          return isValid;
+        }).toList();
+
+        final int totalQuestions = allQuestions.length;
+
+        if (totalQuestions == 0) {
+          print('No valid questions mapped from categories');
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'No valid questions found for allowed types',
+            ),
+          );
+          return;
+        }
+
+        final initialResults = List<BlackBoxQuestionResult>.generate(
+          totalQuestions,
+          (index) => BlackBoxQuestionResult(
+            userAnswerIndex: null,
+            userSequence: null,
+            userAnswer: null,
+            correctPoint: 0,
+            bonusPoint: 0,
+            timeTakenSeconds: 0,
+            selectedIndices: [],
+          ),
+        );
+
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'No valid questions found for allowed types',
+            questions: allQuestions,
+            currentIndex: 0,
+            selectedIndex: null,
+            selectedSequence: null,
+            selectedAnswer: null,
+            showAnswer: false,
+            timer: _totalDuration,
+            score: 0,
+            correctAnswers: 0,
+            wrongAnswers: 0,
+            pointsEarned: 0,
+            bonusPoints: 0,
+            timeTaken: 0,
+            questionResults: initialResults,
+            timePerQuestion: List<int>.filled(totalQuestions, 0),
+            categorizedQuestions: categorizedQuestions,
+            game: gameData.game,
+            level: gameData.level,
+            difficulty: gameData.difficulty,
+            questionSetId: gameData.questionSetId,
+            categoryTypes: gameData.categoryTypes ?? <CategoryTypes>[],
+            selectedIndices: [],
           ),
         );
-        return;
+
+        // Start timer
+        startTimer(context);
+      } catch (e, stackTrace) {
+        print('Error loading questions: $e, StackTrace: $stackTrace');
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Failed to load questions: $e',
+          ),
+        );
       }
-
-      final initialResults = List<BlackBoxQuestionResult>.generate(
-        totalQuestions,
-        (index) => BlackBoxQuestionResult(
-          userAnswerIndex: null,
-          userSequence: null,
-          userAnswer: null,
-          correctPoint: 0,
-          bonusPoint: 0,
-          timeTakenSeconds: 0,
-          selectedIndices: [],
-        ),
-      );
-
-      emit(
-        state.copyWith(
-          isLoading: false,
-          questions: allQuestions,
-          currentIndex: 0,
-          selectedIndex: null,
-          selectedSequence: null,
-          selectedAnswer: null,
-          showAnswer: false,
-          timer: _totalDuration,
-          score: 0,
-          correctAnswers: 0,
-          wrongAnswers: 0,
-          pointsEarned: 0,
-          bonusPoints: 0,
-          timeTaken: 0,
-          questionResults: initialResults,
-          timePerQuestion: List<int>.filled(totalQuestions, 0),
-          categorizedQuestions: categorizedQuestions,
-          game: gameData.game,
-          level: gameData.level,
-          difficulty: gameData.difficulty,
-          questionSetId: gameData.questionSetId,
-          categoryTypes: gameData.categoryTypes ?? <CategoryTypes>[],
-          selectedIndices: [],
-        ),
-      );
-
-      // Start timer
-      startTimer(context);
-    } catch (e, stackTrace) {
-      print('Error loading questions: $e, StackTrace: $stackTrace');
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: 'Failed to load questions: $e',
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadQuestions(context, questionNo),
       );
     }
   }
@@ -417,11 +439,9 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
             (entry) => entry.value == correctSequence[entry.key],
           );
     } else if (state.currentQuestion.type == '4') {
-      // Multiple correct options
       final userSelected = state.selectedIndices ?? [];
       final correctIndices = state.currentQuestion.correctOptionList ?? [];
 
-      // ✅ Check if selected options match the correct indices exactly
       isCorrect =
           userSelected.length == correctIndices.length &&
           userSelected.toSet().containsAll(correctIndices);
@@ -508,7 +528,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     );
   }
 
-  Future<void> nextQuestion(BuildContext context,int gameNumber) async {
+  Future<void> nextQuestion(BuildContext context, int gameNumber) async {
     if (state.currentIndex + 1 < state.questions.length) {
       final nextQuestion = state.questions[state.currentIndex + 1];
 
@@ -699,42 +719,48 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
 
       debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
       debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+      if (await InternetConnection().hasInternetAccess) {
+        try {
+          await _repository.submitBlackBoxAnswers(payload, gameNumber);
 
-      try {
-        await _repository.submitBlackBoxAnswers(payload,gameNumber);
+          if (!context.mounted) return;
 
-        if (!context.mounted) return;
+          final total = state.questions.length;
+          final percent = total == 0 ? 0 : (correctAnswers / total) * 100;
+          final winAchieved = percent >= 80;
 
-        final total = state.questions.length;
-        final percent = total == 0 ? 0 : (correctAnswers / total) * 100;
-        final winAchieved = percent >= 80;
+          AnalyticsService.instance.buttonPressed(
+            FirebaseEvents.blackBoxCalculationsListButton,
+            FirebaseEvents.blackBoxCalculationResultScreen,
+          );
 
-        AnalyticsService.instance.buttonPressed(
-          FirebaseEvents.blackBoxCalculationsListButton,
-          FirebaseEvents.blackBoxCalculationResultScreen,
-        );
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlackBoxResultScreen(
-              correctedAnswer: correctAnswers,
-              correctPoints: correctPoints,
-              totalQuestion: total,
-              score: finalScore,
-              winAchieved: winAchieved,
-              bonusPoints: bonusPoints,
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlackBoxResultScreen(
+                correctedAnswer: correctAnswers,
+                correctPoints: correctPoints,
+                totalQuestion: total,
+                score: finalScore,
+                winAchieved: winAchieved,
+                bonusPoints: bonusPoints,
+              ),
             ),
-          ),
-        );
-      } catch (e) {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to submit results'),
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
-          ),
+          );
+        } catch (e) {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to submit results'),
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }else{
+        NoInternetDialog.show(
+          context,
+          onRetry: () => nextQuestion(context, gameNumber),
         );
       }
     }

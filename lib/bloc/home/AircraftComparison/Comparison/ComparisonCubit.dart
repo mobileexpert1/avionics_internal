@@ -1,9 +1,11 @@
 import 'package:avionics_internal/bloc/Home/AircraftComparison/Comparison/ComparisonRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
 import 'ComparisonState.dart';
 
 class ComparisonCubit extends Cubit<ComparisonState> {
@@ -14,46 +16,64 @@ class ComparisonCubit extends Cubit<ComparisonState> {
     required String aircraft1Id,
     required String aircraft2Id,
   }) async {
-    emit(state.copyWith(
-      isLoading: true,
-      status: CommonApiStatus.submitting,
-      errorMessage: null,
-      apiError: null,
-      isSuccess: false,
-    ));
-
-    try {
-      final comparisonModel = await ComparisonRepository().compareAircrafts(
-        aircraft1Id: aircraft1Id,
-        aircraft2Id: aircraft2Id,
-      );
-
-      emit(state.copyWith(
-        comparisonModel: comparisonModel,
-        isLoading: false,
-        isSuccess: true,
-        status: CommonApiStatus.success,
-      ));
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-      String? errorMessage;
-      String? apiError;
-
-      try {
-        final parsed = ApiErrorModel.fromJson(e as Map<String, dynamic>);
-        apiError = parsed.toString();
-      } catch (_) {
-        errorMessage = e.toString();
-      }
-
-      emit(state.copyWith(
-        isLoading: false,
+    emit(
+      state.copyWith(
+        isLoading: true,
+        status: CommonApiStatus.submitting,
+        errorMessage: null,
+        apiError: null,
         isSuccess: false,
-        status: CommonApiStatus.failure,
-        errorMessage: errorMessage,
-        apiError: apiError,
-      ));
+      ),
+    );
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final comparisonModel = await ComparisonRepository().compareAircrafts(
+          aircraft1Id: aircraft1Id,
+          aircraft2Id: aircraft2Id,
+        );
+
+        emit(
+          state.copyWith(
+            comparisonModel: comparisonModel,
+            isLoading: false,
+            isSuccess: true,
+            status: CommonApiStatus.success,
+          ),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        String? errorMessage;
+        String? apiError;
+
+        try {
+          final parsed = ApiErrorModel.fromJson(e as Map<String, dynamic>);
+          apiError = parsed.toString();
+        } catch (_) {
+          errorMessage = e.toString();
+        }
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            status: CommonApiStatus.failure,
+            errorMessage: errorMessage,
+            apiError: apiError,
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await fetchComparison(
+            context: context,
+            aircraft1Id: aircraft1Id,
+            aircraft2Id: aircraft2Id,
+          );
+        },
+      );
     }
   }
 }
