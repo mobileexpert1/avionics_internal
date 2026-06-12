@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -55,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
     double textFontSize = screenWidth < 600 ? 13 : 16;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF3F3D56),
+      backgroundColor: AppColors.primaryDark,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -65,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 const Spacer(),
                 Center(
                   child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.splashMainLogo),
+                    CommonUi.setSvgImage(AssetsPath.mainLogoWhiteColour),
                     width: logoWidth.clamp(100, 300),
                     fit: BoxFit.contain,
                   ),
@@ -77,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ConstantStrings.poweredBy,
                     style: TextStyle(
                       fontSize: textFontSize,
-                      color: Colors.grey,
+                      color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
                   ),

@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../Constants/AppColors.dart';
 import 'game_model.dart';
 import 'game_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../Constants/AppColors.dart';
 
 class GamesCubit extends Cubit<GamesState> {
   GamesCubit() : super(GamesInitial()) {
@@ -15,13 +17,13 @@ class GamesCubit extends Cubit<GamesState> {
           id: "quiz",
           title: "Aviation\nQuiz",
           color: AppColors.greenColourForPlan,
-          topValue: 250,
+          topValue: kIsWeb ? 240 : 250,
         ),
         right: GameCardModel(
           id: "black_box",
           title: "Black Box",
           color: AppColors.blackBoxColorForGame,
-          topValue: 250,
+          topValue: kIsWeb ? 240 : 250,
         ),
       ),
 
@@ -30,13 +32,13 @@ class GamesCubit extends Cubit<GamesState> {
           id: "aircraftEncyclopaedia",
           title: "Citius. Altius.\nLongius.",
           color: AppColors.citiusAltiusColorForGame,
-          topValue: 370,
+          topValue: kIsWeb ? 380 : 370,
         ),
         right: GameCardModel(
           id: "trivia",
           title: "Jetting\nAround\nThe World",
           color: AppColors.primaryBlue,
-          topValue: 370,
+          topValue: kIsWeb ? 380 : 370,
         ),
       ),
 
@@ -45,13 +47,13 @@ class GamesCubit extends Cubit<GamesState> {
           id: "one_word",
           title: "Basic Topics",
           color: AppColors.primaryDark,
-          topValue: 490,
+          topValue: kIsWeb ? 520 : 490,
         ),
         right: GameCardModel(
           id: "imageBased",
           title: "PlaneSpotter",
           color: AppColors.planeSpotterColorForGame,
-          topValue: 490,
+          topValue: kIsWeb ? 520 : 490,
         ),
       ),
 
@@ -60,7 +62,7 @@ class GamesCubit extends Cubit<GamesState> {
           id: "calculation",
           title: "Calculations",
           color: AppColors.greenColourForPlan,
-          topValue: 610,
+          topValue: kIsWeb ? 650 : 610,
         ),
       ),
     ];

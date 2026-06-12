@@ -158,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         description: "",
         imageWidget: Wrap(),
         videoUrl:
-            "https://avionica.csdevhub.com/s3/manufacturer/aviation_tutorial.mp4",
+            "${ApiBaseUrlConstant.baseUrl}s3/manufacturer/aviation_tutorial.mp4",
       ),
     ];
 

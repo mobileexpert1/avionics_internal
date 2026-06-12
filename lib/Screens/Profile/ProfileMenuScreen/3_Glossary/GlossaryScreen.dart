@@ -220,6 +220,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                                           Colors.transparent,
                                                     ),
                                                 child: ExpansionTile(
+                                                  key: ValueKey(
+                                                    '${state.selectedLetter}-$key',
+                                                  ),
                                                   showTrailingIcon: isExpanded
                                                       ? true
                                                       : false,
@@ -305,6 +308,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     return InkWell(
       onTap: () {
         setState(() {
+          _expandedItems.clear();
           if (context.read<GlossaryCubit>().state.selectedLetter == letter) {
             context.read<GlossaryCubit>().state.selectedLetter = null;
             isSelectedExpanded = false;

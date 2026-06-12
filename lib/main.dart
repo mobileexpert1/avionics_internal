@@ -27,6 +27,10 @@ import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/calculations.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/history.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryCubit.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/StickerCubit.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/StickerUnlockScreen.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
@@ -144,6 +148,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => Calculations()),
         ChangeNotifierProvider(create: (_) => History()),
         BlocProvider(create: (_) => MySubscriptionCubit()),
+        BlocProvider(create: (_) => StickerCubit()),
+        BlocProvider(create: (_) => AircraftCategoryCubit()),
+
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {

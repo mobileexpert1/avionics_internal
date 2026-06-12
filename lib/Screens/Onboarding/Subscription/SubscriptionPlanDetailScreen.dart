@@ -47,13 +47,15 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
     super.initState();
     _cubit = SubscriptionBuyPlanCubit();
     _cubit.isComeFromSignup = widget.isComeFromSignup ?? false;
-    _cubit.initRevenueCat(widget.isComeFromProfile ?? false,context);
+    _cubit.initRevenueCat(widget.isComeFromProfile ?? false, context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded(context);
+        context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded(
+          context,
+        );
       });
     }
   }
@@ -193,53 +195,60 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                   ),
                 ),
                 body: SafeArea(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 16,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              isComeFromSignup
-                                  ? 'Choose Your Plan'
-                                  : 'Manage Your Plan',
-                              style: AppTextStyles.bold(
-                                26,
-                              ).copyWith(height: 1.0, color: AppColors.black),
+                  child: Center(
+                    child: SizedBox(
+                      width: kIsWeb ? 1500 : double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 15),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 16,
                             ),
-                            StepIndicator(
-                              total: subscriptionPackages.length,
-                              current: currentPage,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  isComeFromSignup
+                                      ? 'Choose Your Plan'
+                                      : 'Manage Your Plan',
+                                  style: AppTextStyles.bold(26).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.black,
+                                  ),
+                                ),
+                                StepIndicator(
+                                  total: subscriptionPackages.length,
+                                  current: currentPage,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
 
-                      SizedBox(height: 10),
+                          SizedBox(height: 10),
 
-                      Expanded(
-                        child: PageView.builder(
-                          controller: _controller,
-                          itemCount: subscriptionPackages.length,
-                          onPageChanged: (index) {
-                            setState(() => currentPage = index);
-                          },
-                          itemBuilder: (context, index) {
-                            final package = subscriptionPackages[index];
-                            return _PlanCard(
-                              state: state,
-                              package: package,
-                              isLoading: state.loading,
-                            );
-                          },
-                        ),
+                          Expanded(
+                            child: PageView.builder(
+                              controller: _controller,
+                              itemCount: subscriptionPackages.length,
+                              onPageChanged: (index) {
+                                setState(() => currentPage = index);
+                              },
+                              itemBuilder: (context, index) {
+                                final package = subscriptionPackages[index];
+                                return _PlanCard(
+                                  state: state,
+                                  package: package,
+                                  isLoading: state.loading,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),

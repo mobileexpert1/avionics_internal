@@ -25,6 +25,8 @@ class AtmosphereAssets {
 
 abstract class AssetsPath {
   /// svg Images
+  ///
+  static const String mainLogoWhiteColour = "0_0MainLogo";
   static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";
   static const String homeLeftMainLogo = "2homeLeftMainLogo";

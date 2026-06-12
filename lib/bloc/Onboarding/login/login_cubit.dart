@@ -10,6 +10,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
@@ -293,7 +294,7 @@ class LoginCubit extends Cubit<LoginState> {
         "Radar.svg".toLowerCase(),
       )) {
         userTypeUrl =
-            "https://avionica.csdevhub.com/s3/manufacturer/57ATSEPWhite.svg";
+            "${ApiBaseUrlConstant.baseUrl}s3/manufacturer/57ATSEPWhite.svg";
       }
       await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
 

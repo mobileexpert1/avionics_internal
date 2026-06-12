@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -67,6 +68,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
             final namePlan = current?.plan.name ?? "";
 
+            final activeBuyPlatform = current?.platform ?? "";
+
             var isPremiumPlan = current?.plan.name == "Premium Plan";
 
             String planPriceWithSymbol = "";
@@ -91,147 +94,165 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
             return state.subscriptionData != null
                 ? SingleChildScrollView(
                     padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (isUpcomingPlan?.id != "" &&
-                            isUpcomingPlan?.plan != null) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 2),
+                    child: Center(
+                      child: SizedBox(
+                        width: kIsWeb ? 1500 : double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (isUpcomingPlan?.id != "" &&
+                                isUpcomingPlan?.plan != null) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 10,
                                 ),
-                              ],
-                            ),
-
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: const Icon(
-                                    Icons.add_alert_rounded,
-                                    color: Colors.red,
-                                    size: 20,
-                                  ),
-                                ),
-
-                                const SizedBox(width: 10),
-
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              'Your plan downgrade is scheduled.\n\n',
-                                          style: AppTextStyles.regular(14)
-                                              .copyWith(
-                                                height: 1.0,
-                                                color: AppColors.black,
-                                              ),
-                                        ),
-
-                                        TextSpan(
-                                          text:
-                                              'Premium access ends on ${isUpcomingPlan?.expiryDateLocal}\nBasic plan starts on ${isUpcomingPlan?.expiryDateLocal}',
-                                          style: AppTextStyles.regular(13)
-                                              .copyWith(
-                                                height: 1.5,
-                                                color: AppColors.black,
-                                              ),
-                                        ),
-                                      ],
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 2),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                        ],
 
-                        const SizedBox(height: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: const Icon(
+                                        Icons.add_alert_rounded,
+                                        color: Colors.red,
+                                        size: 20,
+                                      ),
+                                    ),
 
-                        SubscriptionPlanCard(
-                          isPremiumPlan: isPremiumPlan,
-                          isPlanExpired: isPlanExpired,
-                          namePlan: namePlan,
-                          planPriceWithSymbol: planPriceWithSymbol,
-                          expiryDate: expiryDate,
-                          isPlanActive: isPlanActive,
-                          showActions: true,
-                          onModifyTap: () async {
-                            final result = await AppNavigator.push(
-                              context,
-                              SubscriptionPlanDetailScreen(
-                                isComeFromSignup: false,
-                                isComeFromProfile: true,
+                                    const SizedBox(width: 10),
+
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  'Your plan downgrade is scheduled.\n\n',
+                                              style: AppTextStyles.regular(14)
+                                                  .copyWith(
+                                                    height: 1.0,
+                                                    color: AppColors.black,
+                                                  ),
+                                            ),
+
+                                            TextSpan(
+                                              text:
+                                                  'Premium access ends on ${isUpcomingPlan?.expiryDateLocal}\nBasic plan starts on ${isUpcomingPlan?.expiryDateLocal}',
+                                              style: AppTextStyles.regular(13)
+                                                  .copyWith(
+                                                    height: 1.5,
+                                                    color: AppColors.black,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              disableSwipeBack: true,
-                            );
-                            if (result == true) {
-                              _cubit.loadSubscriptionsHistory(context);
-                            }
-                          },
-                          onCancelTap: () {
-                            if (isPlanExpired) {
-                              AppNavigator.push(
-                                context,
-                                FeedbackScreen(),
-                                disableSwipeBack: true,
-                              );
-                            } else {
-                              showDeleteConfirmation(context);
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        Text(
-                          "Billing History",
-                          style: AppTextStyles.bold(
-                            16,
-                          ).copyWith(height: 1.0, color: AppColors.black),
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        ListView.separated(
-                          itemCount: state.subscriptionData!.data.old.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          separatorBuilder: (_, _) =>
                               const SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            final item =
-                                state.subscriptionData!.data.old[index];
-                            return BillingHistoryCard(
-                              item: item,
-                              currentIndex: index,
-                              onTapGesture: () {
-                                AppNavigator.push(
+                            ],
+
+                            const SizedBox(height: 10),
+
+                            SubscriptionPlanCard(
+                              isPremiumPlan: isPremiumPlan,
+                              isPlanExpired: isPlanExpired,
+                              namePlan: namePlan,
+                              planPriceWithSymbol: planPriceWithSymbol,
+                              expiryDate: expiryDate,
+                              isPlanActive: isPlanActive,
+                              showActions: true,
+                              onModifyTap: () async {
+                                if (!canManageSubscription(
                                   context,
-                                  MySubscriptionDetailScreen(
-                                    subscriptionItem: item,
+                                  activeBuyPlatform,
+                                ))
+                                  return;
+                                final result = await AppNavigator.push(
+                                  context,
+                                  SubscriptionPlanDetailScreen(
+                                    isComeFromSignup: false,
+                                    isComeFromProfile: true,
                                   ),
                                   disableSwipeBack: true,
                                 );
+
+                                if (result == true) {
+                                  _cubit.loadSubscriptionsHistory(context);
+                                }
                               },
-                            );
-                          },
+                              onCancelTap: () {
+                                if (!canManageSubscription(
+                                  context,
+                                  activeBuyPlatform,
+                                ))
+                                  return;
+
+                                if (isPlanExpired) {
+                                  AppNavigator.push(
+                                    context,
+                                    FeedbackScreen(),
+                                    disableSwipeBack: true,
+                                  );
+                                } else {
+                                  showDeleteConfirmation(context);
+                                }
+                              },
+                            ),
+
+                            const SizedBox(height: 25),
+
+                            Text(
+                              "Billing History",
+                              style: AppTextStyles.bold(
+                                16,
+                              ).copyWith(height: 1.0, color: AppColors.black),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            ListView.separated(
+                              itemCount:
+                                  state.subscriptionData!.data.old.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: (context, index) {
+                                final item =
+                                    state.subscriptionData!.data.old[index];
+                                return BillingHistoryCard(
+                                  item: item,
+                                  currentIndex: index,
+                                  onTapGesture: () {
+                                    AppNavigator.push(
+                                      context,
+                                      MySubscriptionDetailScreen(
+                                        subscriptionItem: item,
+                                      ),
+                                      disableSwipeBack: true,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   )
                 : EmptyPackagesView(isLoading: state.isLoading);
@@ -239,6 +260,39 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
         ),
       ),
     );
+  }
+
+  bool canManageSubscription(BuildContext context, String activeBuyPlatform) {
+    final bool isMobilePlatform =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.android);
+
+    final bool isWebPurchase = activeBuyPlatform.toLowerCase() == "web";
+
+    if (isWebPurchase && isMobilePlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Your current plan was purchased on the website. Please log in to the website to manage it.",
+          ),
+        ),
+      );
+      return false;
+    }
+
+    if (!isWebPurchase && !isMobilePlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Your current plan was purchased through the mobile app. Please use the app to manage it.",
+          ),
+        ),
+      );
+      return false;
+    }
+
+    return true;
   }
 
   void showDeleteConfirmation(BuildContext bottomSheetContext) {

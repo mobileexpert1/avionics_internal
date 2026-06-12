@@ -1,5 +1,6 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -110,7 +111,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
       bottomNavigationBar: _isLoading
           ? null
           : Container(
-              height: 95,
+              height:95,
               color: Colors.white,
               child: Row(
                 children: [

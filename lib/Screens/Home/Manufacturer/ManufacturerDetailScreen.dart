@@ -39,6 +39,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   bool showMoreProducts = false;
   bool showInterestingFacts = false;
   int expandedIndex = -1;
+
   @override
   void initState() {
     super.initState();
@@ -209,57 +210,57 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   ),
                                 ),
                               ),
-                              Container(
-                                width: double.infinity,
-                                color: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 60),
-                                    CustomHeaderViewExpandable(
-                                      isNeedToShowLeftRightBottomBorder: true,
-                                      isNeedToShowLeftImage: true,
-                                      fontStyle: AppTextStyles.regular(18.67)
-                                          .copyWith(
-                                            height: 1.0,
-                                            color: AppColors.white,
-                                          ),
-                                      isLeftImage: IconButton(
-                                        icon: SvgPicture.asset(
-                                          CommonUi.setSvgImage(
-                                            AssetsPath.aeroplaneManufacturer,
-                                          ),
-                                          width: 30,
-                                          height: 30,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        onPressed: () async {},
-                                      ),
-                                      title: "List of all models",
-                                      headerColor: AppColors.primaryDark,
-                                      arrowBackgroundColor:
-                                          AppColors.extraDarkYellow,
-                                      arrowFrontColor: Colors.black,
-                                      isExpandedViewAvailable: true,
-                                      isExpanded: false,
-                                      onHeaderTap: () {
-                                        AppNavigator.push(
-                                          context,
-                                          AllPlanesListScreen(
-                                            selectedAirbusId: detail.id,
-                                            manufacturerName:
-                                                detail.general.companyName,
-                                          ),
-                                          disableSwipeBack: true,
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
+                            Container(
+                              width: double.infinity,
+                              color: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
                               ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 60),
+                                  CustomHeaderViewExpandable(
+                                    isNeedToShowLeftRightBottomBorder: true,
+                                    isNeedToShowLeftImage: true,
+                                    fontStyle: AppTextStyles.regular(18.67)
+                                        .copyWith(
+                                          height: 1.0,
+                                          color: AppColors.white,
+                                        ),
+                                    isLeftImage: IconButton(
+                                      icon: SvgPicture.asset(
+                                        CommonUi.setSvgImage(
+                                          AssetsPath.aeroplaneManufacturer,
+                                        ),
+                                        width: 30,
+                                        height: 30,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      onPressed: () async {},
+                                    ),
+                                    title: "List of all models",
+                                    headerColor: AppColors.primaryDark,
+                                    arrowBackgroundColor:
+                                        AppColors.extraDarkYellow,
+                                    arrowFrontColor: Colors.black,
+                                    isExpandedViewAvailable: true,
+                                    isExpanded: false,
+                                    onHeaderTap: () {
+                                      AppNavigator.push(
+                                        context,
+                                        AllPlanesListScreen(
+                                          selectedAirbusId: detail.id,
+                                          manufacturerName:
+                                              detail.general.companyName,
+                                        ),
+                                        disableSwipeBack: true,
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                             _buildSectionHeader(
                               title: "GENERAL INFORMATION",
                               isExpanded: showMoreGeneralInfo,
@@ -681,7 +682,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                           placeholderBuilder: (context) =>
                                               SvgPicture.asset(
                                                 CommonUi.setSvgImage(
-                                                  AssetsPath.manufacturerPlaceholder,
+                                                  AssetsPath
+                                                      .manufacturerPlaceholder,
                                                 ),
                                                 height: 10,
                                                 width: 10,
@@ -696,7 +698,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                           errorBuilder: (_, _, _) =>
                                               SvgPicture.asset(
                                                 CommonUi.setSvgImage(
-                                                  AssetsPath.manufacturerPlaceholder,
+                                                  AssetsPath
+                                                      .manufacturerPlaceholder,
                                                 ),
                                                 height: 10,
                                                 width: 10,
@@ -784,14 +787,11 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                       onTap: onTap,
                       child: Row(
                         children: [
-                          // Text(
-                          //   isExpanded ? "Show Less" : "Show More",
-                          //   style: const TextStyle(fontSize: 13),
-                          // ),
                           Icon(
                             isExpanded
                                 ? Icons.keyboard_arrow_down
                                 : Icons.keyboard_arrow_right,
+                            size: 30,
                           ),
                         ],
                       ),

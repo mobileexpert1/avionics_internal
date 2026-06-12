@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Helpers/NoInternetDialog.dart';
 import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
 import 'SubscriptionBuyPlanRepository.dart';
@@ -48,8 +49,43 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       final callback = Uri.encodeComponent(Uri.base.toString());
 
       final url =
-          "https://avionica.csdevhub.com/user-service/subscription/choose/${webSessionToken.session}?callback=$callback";
+          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}subscription/choose/${webSessionToken.session}?callback=$callback";
 
+      print(url);
+
+      final uri = Uri.parse(url);
+      if (kIsWeb) {
+        await launchUrl(uri, webOnlyWindowName: '_self');
+      } else {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await handleWebRedirectionIfNeeded(context);
+        },
+      );
+    }
+  }
+
+  Future<void> handleWebRedirectionIfNeededForAddOnPacks(
+    BuildContext context,
+  ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      if (globalWebRedirectDone) return;
+      globalWebRedirectDone = true;
+
+      final webSessionToken = await SubscriptionBuyPlanRepository()
+          .getSubscriptionSessionToken();
+
+      if (webSessionToken.session == "" || webSessionToken.session == null) {
+        return;
+      }
+      final callback = Uri.encodeComponent(Uri.base.toString());
+
+      final url =
+          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}subscription/consumables/${webSessionToken.session}?callback=$callback&title=Consumables";
       print(url);
 
       final uri = Uri.parse(url);
@@ -404,7 +440,14 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         return;
       }
     } on PlatformException catch (e) {
-      _handlePurchaseError(e);
+      if (e.toString().toLowerCase().contains(
+        "purchased product was missing".toLowerCase(),
+      )) {
+        emit(state.copyWith(loading: false));
+        buySelected();
+      } else {
+        _handlePurchaseError(e);
+      }
     }
   }
 

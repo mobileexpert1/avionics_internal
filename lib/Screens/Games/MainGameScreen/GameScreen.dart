@@ -1,4 +1,5 @@
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -69,7 +70,8 @@ class _GamesScreenState extends State<GamesScreen> {
   Widget build(BuildContext context) {
     final sw = MediaQuery.of(context).size.width;
     final cx = sw / 2;
-    final screenHeight = MediaQuery.sizeOf(context).height + 50;
+    final screenHeight =
+        MediaQuery.sizeOf(context).height + (kIsWeb ? 100 : 50);
 
     return BlocProvider.value(
       value: _gamesCubit,
@@ -108,178 +110,177 @@ class _GamesScreenState extends State<GamesScreen> {
             if (state is GamesLoaded) {
               return Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1500),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 0,
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 25,
-                          left: -100,
-                          right: 0,
-                          child: Center(
-                            child: Container(
-                              width: 55,
-                              height: 55,
-                              decoration: const BoxDecoration(
-                                color: AppColors.citiusAltiusColorForGame,
-                                shape: BoxShape.circle,
+                  constraints: const BoxConstraints(maxWidth: 1600),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final boxWidth = constraints.maxWidth;
+                      final boxCx = boxWidth / 2;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 0,
+                          vertical: 0,
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 25,
+                              left: -100,
+                              right: 0,
+                              child: Center(
+                                child: Container(
+                                  width: 55,
+                                  height: 55,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.citiusAltiusColorForGame,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 300,
-                          left: 0,
-                          right: -70,
 
-                          child: Center(
-                            child: Container(
-                              width: 25,
-                              height: 25,
-                              decoration: const BoxDecoration(
-                                color: AppColors.citiusAltiusColorForGame,
-                                shape: BoxShape.circle,
+                            Positioned(
+                              bottom: 300,
+                              left: 0,
+                              right: -70,
+                              child: Center(
+                                child: Container(
+                                  width: 25,
+                                  height: 25,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.citiusAltiusColorForGame,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 190,
-                          left: -170,
-                          right: 0,
 
-                          child: Center(
-                            child: Container(
-                              width: 25,
-                              height: 25,
-                              decoration: const BoxDecoration(
-                                color: AppColors.citiusAltiusColorForGame,
-                                shape: BoxShape.circle,
+                            Positioned(
+                              bottom: 190,
+                              left: -170,
+                              right: 0,
+                              child: Center(
+                                child: Container(
+                                  width: 25,
+                                  height: 25,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.citiusAltiusColorForGame,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 185,
-                          left: 0,
-                          right: -180,
-
-                          child: Center(
-                            child: Container(
-                              width: 80,
-                              height: 60,
-                              decoration: const BoxDecoration(
-                                color: AppColors.greenColourForPlan,
-                                shape: BoxShape.circle,
+                            Positioned(
+                              bottom: 185,
+                              left: 0,
+                              right: -180,
+                              child: Center(
+                                child: Container(
+                                  width: 80,
+                                  height: 60,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.greenColourForPlan,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
 
-                        SingleChildScrollView(
-                          controller: scrollController,
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            children: [
-                              SizedBox(
+                            SingleChildScrollView(
+                              controller: scrollController,
+                              physics: const BouncingScrollPhysics(),
+                              child: SizedBox(
                                 height: screenHeight,
                                 width: double.infinity,
                                 child: Stack(
                                   children: [
-                                    Stack(
-                                      children: [
-                                        Positioned(
-                                          top: 390,
-                                          left: cx - 5,
-                                          width: 8,
-                                          bottom: 0,
-                                          child: CustomPaint(
-                                            painter: DoubleCenterLinePainter(),
-                                          ),
-                                        ),
-
-                                        Positioned.fill(
-                                          child: CustomPaint(
-                                            painter: AllLinesPainter(
-                                              screenWidth: sw,
-                                            ),
-                                          ),
-                                        ),
-
-                                        ...List.generate(state.games.length, (
-                                          index,
-                                        ) {
-                                          final row = state.games[index];
-                                          return Stack(
-                                            children: [
-                                              if (row.left != null)
-                                                Positioned(
-                                                  top: row.left!.topValue,
-                                                  left: 30,
-                                                  child: GameCard(
-                                                    model: row.left!,
-                                                    onTap: (id) {
-                                                      _navigate(
-                                                        context,
-                                                        BaseScreenForAllLevelDescriptions(
-                                                          gameId: row.left!.id,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-
-                                              if (row.right != null)
-                                                Positioned(
-                                                  top: row.right!.topValue,
-                                                  right: 30,
-                                                  child: GameCard(
-                                                    model: row.right!,
-                                                    onTap: (id) {
-                                                      _navigate(
-                                                        context,
-                                                        BaseScreenForAllLevelDescriptions(
-                                                          gameId: row.right!.id,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                            ],
-                                          );
-                                        }),
-                                      ],
+                                    Positioned(
+                                      top: 390,
+                                      left: boxCx - 5,
+                                      width: 8,
+                                      bottom: 0,
+                                      child: CustomPaint(
+                                        painter: DoubleCenterLinePainter(),
+                                      ),
                                     ),
+
+                                    Positioned.fill(
+                                      child: CustomPaint(
+                                        painter: AllLinesPainter(
+                                          screenWidth: boxWidth,
+                                        ),
+                                      ),
+                                    ),
+
+                                    ...List.generate(state.games.length, (
+                                      index,
+                                    ) {
+                                      final row = state.games[index];
+
+                                      return Stack(
+                                        children: [
+                                          if (row.left != null)
+                                            Positioned(
+                                              top: row.left!.topValue,
+                                              left: kIsWeb ? 200 : 30,
+                                              child: GameCard(
+                                                model: row.left!,
+                                                onTap: (_) {
+                                                  _navigate(
+                                                    context,
+                                                    BaseScreenForAllLevelDescriptions(
+                                                      gameId: row.left!.id,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+
+                                          if (row.right != null)
+                                            Positioned(
+                                              top: row.right!.topValue,
+                                              right: kIsWeb ? 200 : 30,
+                                              child: GameCard(
+                                                model: row.right!,
+                                                onTap: (_) {
+                                                  _navigate(
+                                                    context,
+                                                    BaseScreenForAllLevelDescriptions(
+                                                      gameId: row.right!.id,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    }),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
 
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: IgnorePointer(
-                            child: Container(
-                              color: Colors.white,
-                              child: Image.asset(
-                                CommonUi.setPngImage(
-                                  AssetsPath.towerImageForGame,
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              height: 160,
+                              child: IgnorePointer(
+                                child: Container(
+                                  color: Colors.white,
+                                  child: Image.asset(
+                                    CommonUi.setPngImage(
+                                      AssetsPath.towerImageForGame,
+                                    ),
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.bottomCenter,
+                                  ),
                                 ),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.bottomCenter,
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               );
@@ -310,8 +311,8 @@ class GameCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              width: 120,
-              height: 65,
+              width: MediaQuery.of(context).size.width / (kIsWeb ? 5 : 3),
+              height: kIsWeb ? 100 : 65,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: model.color, width: 1.0),
@@ -333,7 +334,7 @@ class GameCard extends StatelessWidget {
                       model.title,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.medium(
-                        14,
+                        (kIsWeb ? 24 : 14),
                       ).copyWith(height: 1.2, color: AppColors.black),
                     ),
                   ),

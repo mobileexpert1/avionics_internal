@@ -52,7 +52,7 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
             final url =
-                "https://avionica.csdevhub.com/user-service/user/usage-meter"
+                "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}user/usage-meter"
                 "?credit_usage=$creditUsagePercentage&token_usage=$tokenUsagePercentage";
             controller.loadRequest(Uri.parse(url));
           }

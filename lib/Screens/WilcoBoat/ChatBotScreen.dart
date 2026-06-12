@@ -380,8 +380,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                           vertical: 10,
                                         ),
 
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 320,
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context).size.width ,
                                         ),
 
                                         decoration: isUser
