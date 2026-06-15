@@ -728,26 +728,205 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     }
   }
 
+  // void _showInitialTrackingModePopup(BuildContext context) {
+  //   final size = MediaQuery.of(context).size;
+  //   final screenWidth = size.width;
+  //   showModalBottomSheet(
+  //     context: context,
+  //     useRootNavigator: false,
+  //     isDismissible: false,
+  //     enableDrag: false,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (context) {
+  //       return Container(
+  //         width: double.infinity,
+  //         padding: EdgeInsets.symmetric(
+  //           horizontal: screenWidth * 0.04,
+  //           vertical: 10,
+  //         ),
+  //         decoration: BoxDecoration(
+  //           color: AppColors.greyForConversionScreen,
+  //           borderRadius: BorderRadius.circular(5),
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: Center(
+  //                     child: Text(
+  //                       "Choose Your Tracking Mode",
+  //                       style: AppTextStyles.bold(
+  //                         18,
+  //                       ).copyWith(height: 1.0, color: AppColors.black),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 GestureDetector(
+  //                   onTap: () {
+  //                     Navigator.pop(context);
+  //                     widget.onGoToFirstTab();
+  //                   },
+  //                   child: const Icon(
+  //                     Icons.close,
+  //                     color: Colors.black,
+  //                     size: 30,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             SizedBox(height: screenWidth * 0.06),
+  //
+  //             CustomHeaderViewExpandable(
+  //               isNeedToShowLeftRightBottomBorder: false,
+  //               isNeedToShowLeftImage: true,
+  //               isExpanded: false,
+  //               title: "Flying in the Area",
+  //               headerColor: AppColors.primaryBlue,
+  //               arrowBackgroundColor: AppColors.extraDarkYellow,
+  //               arrowFrontColor: Colors.black,
+  //               isExpandedViewAvailable: true,
+  //               fontStyle: AppTextStyles.regular(18).copyWith(
+  //                 height: 1.4,
+  //                 color: AppColors.white,
+  //                 letterSpacing: 0.2,
+  //               ),
+  //               isLeftImage: IconButton(
+  //                 icon: SvgPicture.asset(
+  //                   CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
+  //                   width: 30,
+  //                   height: 30,
+  //                   fit: BoxFit.cover,
+  //                   color: Colors.white,
+  //                 ),
+  //                 onPressed: () async {},
+  //               ),
+  //               onHeaderTap: () async {
+  //                 setState(() {
+  //                   _singleSearchMarker = null;
+  //                   _isMapListViewShown = true;
+  //                   _isForFlyingInTheArea = 1;
+  //                   AnalyticsService.instance.buttonPressed(
+  //                     FirebaseEvents.flyingInTheAreaButton,
+  //                     FirebaseEvents.trackScreen,
+  //                   );
+  //                 });
+  //                 _resetFlightSelection();
+  //                 Navigator.pop(context);
+  //
+  //                 isFirstTimeUserCome = false;
+  //                 _handleFilterTap(context);
+  //               },
+  //             ),
+  //
+  //             SizedBox(height: screenWidth * 0.02),
+  //             Text(
+  //               "Click to view flights currently flying in this area on the map",
+  //               style: AppTextStyles.regular(
+  //                 14,
+  //               ).copyWith(height: 1.4, color: AppColors.textHomeColour),
+  //               textAlign: TextAlign.start,
+  //             ),
+  //
+  //             SizedBox(height: screenWidth * 0.06),
+  //
+  //             CustomHeaderViewExpandable(
+  //               isNeedToShowLeftRightBottomBorder: false,
+  //               isNeedToShowLeftImage: true,
+  //               isExpanded: false,
+  //               title: "Track a Flight",
+  //               headerColor: AppColors.primaryBlue,
+  //               arrowBackgroundColor: AppColors.extraDarkYellow,
+  //               arrowFrontColor: Colors.black,
+  //               isExpandedViewAvailable: true,
+  //               fontStyle: AppTextStyles.regular(18).copyWith(
+  //                 height: 1.4,
+  //                 color: AppColors.white,
+  //                 letterSpacing: 0.2,
+  //               ),
+  //               isLeftImage: IconButton(
+  //                 icon: SvgPicture.asset(
+  //                   CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
+  //                   width: 30,
+  //                   height: 30,
+  //                   fit: BoxFit.cover,
+  //                   color: Colors.white,
+  //                 ),
+  //                 onPressed: () async {},
+  //               ),
+  //               onHeaderTap: () async {
+  //                 setState(() {
+  //                   _activeCard = 0;
+  //                   _singleSearchMarker = null;
+  //                   _isMapListViewShown = false;
+  //                   _isForFlyingInTheArea = 2;
+  //                   AnalyticsService.instance.buttonPressed(
+  //                     FirebaseEvents.trackAFlightButton,
+  //                     FirebaseEvents.trackScreen,
+  //                   );
+  //                 });
+  //                 Navigator.pop(context);
+  //                 _handleTextTap(context);
+  //               },
+  //             ),
+  //             SizedBox(height: screenWidth * 0.02),
+  //             Text(
+  //               "View real-time status, route, and updates for a flight",
+  //               style: AppTextStyles.regular(
+  //                 14,
+  //               ).copyWith(height: 1.4, color: AppColors.textHomeColour),
+  //               textAlign: TextAlign.start,
+  //             ),
+  //             SizedBox(height: screenWidth * 0.1),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
   void _showInitialTrackingModePopup(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
+    final screenHeight = size.height;
+
     showModalBottomSheet(
       context: context,
       useRootNavigator: false,
       isDismissible: false,
       enableDrag: false,
+      isScrollControlled: kIsWeb ? true : false,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          width: double.infinity,
+        Widget popupContent = Container(
+          width: kIsWeb && screenWidth > 700
+              ? 650
+              : double.infinity,
+
+          constraints: kIsWeb
+              ? BoxConstraints(
+            maxHeight: screenHeight * 0.9,
+          )
+              : null,
+
+          margin: kIsWeb
+              ? const EdgeInsets.all(20)
+              : EdgeInsets.zero,
+
           padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.04,
             vertical: 10,
           ),
+
           decoration: BoxDecoration(
             color: AppColors.greyForConversionScreen,
             borderRadius: BorderRadius.circular(5),
           ),
+
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -760,10 +939,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                         "Choose Your Tracking Mode",
                         style: AppTextStyles.bold(
                           18,
-                        ).copyWith(height: 1.0, color: AppColors.black),
+                        ).copyWith(
+                          height: 1.0,
+                          color: AppColors.black,
+                        ),
                       ),
                     ),
                   ),
+
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
@@ -778,8 +961,11 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 ],
               ),
 
-              SizedBox(height: screenWidth * 0.06),
+              SizedBox(
+                height: kIsWeb ? 20 : screenWidth * 0.06,
+              ),
 
+              /// Flying in Area
               CustomHeaderViewExpandable(
                 isNeedToShowLeftRightBottomBorder: false,
                 isNeedToShowLeftImage: true,
@@ -789,14 +975,18 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 arrowBackgroundColor: AppColors.extraDarkYellow,
                 arrowFrontColor: Colors.black,
                 isExpandedViewAvailable: true,
+
                 fontStyle: AppTextStyles.regular(18).copyWith(
                   height: 1.4,
                   color: AppColors.white,
                   letterSpacing: 0.2,
                 ),
+
                 isLeftImage: IconButton(
                   icon: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
+                    CommonUi.setSvgImage(
+                      AssetsPath.mapPopupAircraft,
+                    ),
                     width: 30,
                     height: 30,
                     fit: BoxFit.cover,
@@ -804,35 +994,49 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   ),
                   onPressed: () async {},
                 ),
+
                 onHeaderTap: () async {
                   setState(() {
                     _singleSearchMarker = null;
                     _isMapListViewShown = true;
                     _isForFlyingInTheArea = 1;
+
                     AnalyticsService.instance.buttonPressed(
                       FirebaseEvents.flyingInTheAreaButton,
                       FirebaseEvents.trackScreen,
                     );
                   });
+
                   _resetFlightSelection();
+
                   Navigator.pop(context);
 
                   isFirstTimeUserCome = false;
+
                   _handleFilterTap(context);
                 },
               ),
 
-              SizedBox(height: screenWidth * 0.02),
+              SizedBox(
+                height: kIsWeb ? 8 : screenWidth * 0.02,
+              ),
+
               Text(
                 "Click to view flights currently flying in this area on the map",
                 style: AppTextStyles.regular(
                   14,
-                ).copyWith(height: 1.4, color: AppColors.textHomeColour),
+                ).copyWith(
+                  height: 1.4,
+                  color: AppColors.textHomeColour,
+                ),
                 textAlign: TextAlign.start,
               ),
 
-              SizedBox(height: screenWidth * 0.06),
+              SizedBox(
+                height: kIsWeb ? 20 : screenWidth * 0.06,
+              ),
 
+              /// Track Flight
               CustomHeaderViewExpandable(
                 isNeedToShowLeftRightBottomBorder: false,
                 isNeedToShowLeftImage: true,
@@ -842,14 +1046,18 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 arrowBackgroundColor: AppColors.extraDarkYellow,
                 arrowFrontColor: Colors.black,
                 isExpandedViewAvailable: true,
+
                 fontStyle: AppTextStyles.regular(18).copyWith(
                   height: 1.4,
                   color: AppColors.white,
                   letterSpacing: 0.2,
                 ),
+
                 isLeftImage: IconButton(
                   icon: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
+                    CommonUi.setSvgImage(
+                      AssetsPath.homeLiveTracking,
+                    ),
                     width: 30,
                     height: 30,
                     fit: BoxFit.cover,
@@ -857,33 +1065,61 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   ),
                   onPressed: () async {},
                 ),
+
                 onHeaderTap: () async {
                   setState(() {
                     _activeCard = 0;
                     _singleSearchMarker = null;
                     _isMapListViewShown = false;
                     _isForFlyingInTheArea = 2;
+
                     AnalyticsService.instance.buttonPressed(
                       FirebaseEvents.trackAFlightButton,
                       FirebaseEvents.trackScreen,
                     );
                   });
+
                   Navigator.pop(context);
+
                   _handleTextTap(context);
                 },
               ),
-              SizedBox(height: screenWidth * 0.02),
+
+              SizedBox(
+                height: kIsWeb ? 8 : screenWidth * 0.02,
+              ),
+
               Text(
                 "View real-time status, route, and updates for a flight",
                 style: AppTextStyles.regular(
                   14,
-                ).copyWith(height: 1.4, color: AppColors.textHomeColour),
+                ).copyWith(
+                  height: 1.4,
+                  color: AppColors.textHomeColour,
+                ),
                 textAlign: TextAlign.start,
               ),
-              SizedBox(height: screenWidth * 0.1),
+
+              SizedBox(
+                height: kIsWeb ? 20 : screenWidth * 0.1,
+              ),
             ],
           ),
         );
+
+        /// WEB ONLY FIX
+        if (kIsWeb) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Center(
+                child: popupContent,
+              ),
+            ),
+          );
+        }
+
+        /// MOBILE SAME AS BEFORE
+        return popupContent;
       },
     );
   }
