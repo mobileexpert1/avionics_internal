@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../Constants/AppColors.dart';
@@ -197,7 +198,9 @@ class SubscriptionPlanCard extends StatelessWidget {
               const SizedBox(height: 20),
 
               SizedBox(
-                width: double.infinity,
+                width: kIsWeb
+                    ? MediaQuery.of(context).size.width * 0.5
+                    : double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(

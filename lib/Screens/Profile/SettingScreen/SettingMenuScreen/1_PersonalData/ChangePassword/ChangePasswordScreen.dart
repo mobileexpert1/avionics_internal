@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -153,30 +154,43 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               >(
                                 selector: (state) => state.isButtonEnabled,
                                 builder: (context, isButtonEnabled) {
-                                  return CustomBottomButton(
-                                    fontStyle: AppTextStyles.regular(21.46)
-                                        .copyWith(
-                                          height: 1.0,
-                                          color: isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade600,
-                                        ),
-                                    title: ConstantStrings.saveTitle,
-                                    backgroundColor: isButtonEnabled
-                                        ? AppColors.primaryValueColour
-                                        : AppColors.darkSeparatorColourAppBar,
-                                    textColor: Colors.white,
-                                    icon: const SizedBox(width: 0),
-                                    isEnabled: isButtonEnabled,
-                                    onPressed: () {
-                                      context
-                                          .read<ChangePasswordCubit>()
-                                          .submitIfValid(context);
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.changePasswordButton,
-                                        FirebaseEvents.changePasswordScreen,
-                                      );
-                                    },
+                                  return Center(
+                                    child: SizedBox(
+                                      width: kIsWeb
+                                          ? MediaQuery.of(context).size.width *
+                                                0.5
+                                          : double.infinity,
+                                      height: 50,
+                                      child: CustomBottomButton(
+                                        fontStyle: AppTextStyles.regular(21.46)
+                                            .copyWith(
+                                              height: 1.0,
+                                              color: isButtonEnabled
+                                                  ? Colors.white
+                                                  : Colors.grey.shade600,
+                                            ),
+                                        title: ConstantStrings.saveTitle,
+                                        backgroundColor: isButtonEnabled
+                                            ? AppColors.primaryValueColour
+                                            : AppColors
+                                                  .darkSeparatorColourAppBar,
+                                        textColor: Colors.white,
+                                        icon: const SizedBox(width: 0),
+                                        isEnabled: isButtonEnabled,
+                                        onPressed: () {
+                                          context
+                                              .read<ChangePasswordCubit>()
+                                              .submitIfValid(context);
+                                          AnalyticsService.instance
+                                              .buttonPressed(
+                                                FirebaseEvents
+                                                    .changePasswordButton,
+                                                FirebaseEvents
+                                                    .changePasswordScreen,
+                                              );
+                                        },
+                                      ),
+                                    ),
                                   );
                                 },
                               ),

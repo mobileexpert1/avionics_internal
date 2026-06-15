@@ -1,13 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../Helpers/WebIframeWidget.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
 
@@ -21,7 +22,8 @@ class AboutTermsPrivacyScreen extends StatefulWidget {
 }
 
 class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
-  late final WebViewController controller;
+  WebViewController? controller;
+  String _webUrl = "";
 
   @override
   void initState() {
@@ -30,13 +32,10 @@ class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
       FirebaseEvents.creditTokenScreen,
     );
 
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    if (!kIsWeb) {
+      controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted);
+    }
   }
 
   static String getUrlAccordingToRequest(int forUrlRequest) {
@@ -52,6 +51,19 @@ class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
     }
   }
 
+  String get _appBarTitle {
+    switch (widget.urlForRequest) {
+      case 0:
+        return "Privacy Policy";
+      case 1:
+        return "Terms & Conditions";
+      case 2:
+        return "About Us";
+      default:
+        return "FAQ";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -59,9 +71,13 @@ class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) {
           if (!state.isLoading) {
-            controller.loadRequest(
-              Uri.parse(getUrlAccordingToRequest(widget.urlForRequest)),
-            );
+            final url = getUrlAccordingToRequest(widget.urlForRequest);
+
+            if (kIsWeb) {
+              setState(() => _webUrl = url);
+            } else {
+              controller!.loadRequest(Uri.parse(url));
+            }
           }
         },
         builder: (context, state) {
@@ -73,12 +89,9 @@ class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
           }
 
           return Scaffold(
+            backgroundColor: Colors.white,
             appBar: CustomAppBar(
-              title: (widget.urlForRequest == 0
-                  ? "Privacy Policy"
-                  : (widget.urlForRequest == 1
-                        ? "Terms & Conditions"
-                        : (widget.urlForRequest == 2 ? "About Us" : "FAQ"))),
+              title: _appBarTitle,
               isForComparison: true,
               centerTitle: false,
               leftButton: IconButton(
@@ -89,7 +102,11 @@ class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-            body: WebViewWidget(controller: controller),
+            body: kIsWeb
+                ? _webUrl.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : WebIframeWidget(url: _webUrl)
+                : WebViewWidget(controller: controller!),
           );
         },
       ),

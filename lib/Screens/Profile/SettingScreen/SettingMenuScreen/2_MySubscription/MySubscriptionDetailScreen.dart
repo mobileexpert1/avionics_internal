@@ -80,325 +80,356 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
             final isAddOnPacksModelAvailable =
                 widget.subscriptionItem.addOnPacksModel;
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  SubscriptionPlanCard(
-                    isPremiumPlan: isPremiumPlan,
-                    isPlanExpired: isPlanExpired,
-                    namePlan: namePlan,
-                    planPriceWithSymbol: planPriceWithSymbol,
-                    expiryDate: expiryDate,
-                    isPlanActive: isPlanActive,
-                  ),
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                double maxWidth = constraints.maxWidth > 1500
+                    ? 1500
+                    : constraints.maxWidth;
 
-                  const SizedBox(height: 20),
-
-                  Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: .05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Transaction Details",
-                              style: AppTextStyles.bold(
-                                16,
-                              ).copyWith(height: 1.0, color: AppColors.black),
-                            ),
-
-                            const SizedBox(height: 15),
-                            buildRow(title: "Plan", value: namePlan),
-
-                            buildDivider(),
-
-                            buildRow(title: "Billing period", value: "Monthly"),
-
-                            buildDivider(),
-
-                            buildRow(title: "Invoice date", value: startDate),
-
-                            buildDivider(),
-
-                            buildRow(title: "Invoice ID", value: transactionId),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      if (planPriceWithSymbol != "") ...[
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: .05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(15),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          SubscriptionPlanCard(
+                            isPremiumPlan: isPremiumPlan,
+                            isPlanExpired: isPlanExpired,
+                            namePlan: namePlan,
+                            planPriceWithSymbol: planPriceWithSymbol,
+                            expiryDate: expiryDate,
+                            isPlanActive: isPlanActive,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                          const SizedBox(height: 20),
+
+                          Column(
                             children: [
-                              Text(
-                                "Breakdown",
-                                style: AppTextStyles.bold(
-                                  16,
-                                ).copyWith(height: 1.0, color: AppColors.black),
-                              ),
-
-                              const SizedBox(height: 20),
-
-                              // buildRow(title: "Subtotal", value: "\$13.00"),
-                              //
-                              // buildDivider(),
-                              //
-                              // buildRow(title: "Tax", value: "\$2.01"),
-                              //
-                              // buildDivider(),
-
-                              /// TOTAL
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "Total Charged",
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(18),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: .05,
+                                      ),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Transaction Details",
                                       style: AppTextStyles.bold(16).copyWith(
                                         height: 1.0,
                                         color: AppColors.black,
                                       ),
                                     ),
-                                  ),
 
-                                  Text(
-                                    planPrinceWithSymbol,
-                                    style: AppTextStyles.bold(16).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.black,
+                                    const SizedBox(height: 15),
+                                    buildRow(title: "Plan", value: namePlan),
+
+                                    buildDivider(),
+
+                                    buildRow(
+                                      title: "Billing period",
+                                      value: "Monthly",
                                     ),
-                                  ),
-                                ],
+
+                                    buildDivider(),
+
+                                    buildRow(
+                                      title: "Invoice date",
+                                      value: startDate,
+                                    ),
+
+                                    buildDivider(),
+
+                                    buildRow(
+                                      title: "Invoice ID",
+                                      value: transactionId,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
-
-                      if (isAddOnPacksModelAvailable.isNotEmpty) ...[
-                        const SizedBox(height: 20),
-
-                        Column(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(22),
-
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: .10),
-                                    blurRadius: 25,
-                                    spreadRadius: 2,
-                                    offset: const Offset(0, 10),
-                                  ),
-
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: .05),
-                                    blurRadius: 10,
-                                    spreadRadius: 1,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primaryDark
-                                              .withValues(alpha: .10),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
+                              const SizedBox(height: 15),
+                              if (planPriceWithSymbol != "") ...[
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(18),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: .05,
                                         ),
-                                        child: Icon(
-                                          Icons.add_card_rounded,
-                                          color: AppColors.primaryDark,
-                                          size: 20,
-                                        ),
-                                      ),
-
-                                      const SizedBox(width: 12),
-
-                                      Text(
-                                        "Added Extra Packs",
-                                        style: AppTextStyles.bold(
-                                          18,
-                                        ).copyWith(color: AppColors.black),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Breakdown",
+                                        style: AppTextStyles.bold(16).copyWith(
+                                          height: 1.0,
+                                          color: AppColors.black,
+                                        ),
+                                      ),
 
-                                  const SizedBox(height: 22),
+                                      const SizedBox(height: 20),
 
-                                  ListView.separated(
-                                    padding: EdgeInsets.zero,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-
-                                    itemCount:
-                                        isAddOnPacksModelAvailable.length,
-
-                                    separatorBuilder: (_, _) =>
-                                        const SizedBox(height: 16),
-
-                                    itemBuilder: (context, index) {
-                                      final addedOnModel =
-                                          isAddOnPacksModelAvailable[index];
-
-                                      final addedNamePlan =
-                                          (addedOnModel.credit) != 0
-                                          ? "Purchased Extra Credits"
-                                          : "Purchased Extra Tokens";
-
-                                      final planPrinceWithSymbol =
-                                          "${addedOnModel.currencySymbol} "
-                                          "${addedOnModel.priceInPurchasedCurrency}";
-
-                                      final purchaseDate =
-                                          addedOnModel.purchaseDateLocal;
-
-                                      return Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.all(16),
-
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xffF8F9FC),
-
-                                          borderRadius: BorderRadius.circular(
-                                            18,
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              "Total Charged",
+                                              style: AppTextStyles.bold(16)
+                                                  .copyWith(
+                                                    height: 1.0,
+                                                    color: AppColors.black,
+                                                  ),
+                                            ),
                                           ),
+                                          Text(
+                                            planPrinceWithSymbol,
+                                            style: AppTextStyles.bold(16)
+                                                .copyWith(
+                                                  height: 1.0,
+                                                  color: AppColors.black,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
 
-                                          border: Border.all(
+                              if (isAddOnPacksModelAvailable.isNotEmpty) ...[
+                                const SizedBox(height: 20),
+
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(22),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: .10,
+                                            ),
+                                            blurRadius: 25,
+                                            spreadRadius: 2,
+                                            offset: const Offset(0, 10),
+                                          ),
+                                          BoxShadow(
                                             color: Colors.black.withValues(
                                               alpha: .05,
                                             ),
+                                            blurRadius: 10,
+                                            spreadRadius: 1,
+                                            offset: const Offset(0, 4),
                                           ),
-
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(
-                                                alpha: .03,
-                                              ),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 3),
-                                            ),
-                                          ],
-                                        ),
-
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 7,
-                                                  ),
-
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryDark
-                                                    .withValues(alpha: .08),
-
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primaryDark
+                                                      .withValues(alpha: .10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Icon(
+                                                  Icons.add_card_rounded,
+                                                  color: AppColors.primaryDark,
+                                                  size: 20,
+                                                ),
                                               ),
 
-                                              child: Text(
-                                                addedNamePlan,
-                                                style: AppTextStyles.medium(12)
+                                              const SizedBox(width: 12),
+
+                                              Text(
+                                                "Added Extra Packs",
+                                                style: AppTextStyles.bold(18)
                                                     .copyWith(
-                                                      color:
-                                                          AppColors.primaryDark,
+                                                      color: AppColors.black,
                                                     ),
                                               ),
-                                            ),
-
-                                            const SizedBox(height: 18),
-
-                                            buildRow(
-                                              title: "Price",
-                                              value: planPrinceWithSymbol,
-                                            ),
-
-                                            buildDivider(),
-
-                                            buildRow(
-                                              title: "Invoice date",
-                                              value: purchaseDate,
-                                            ),
-
-                                            if ((addedOnModel.credit) != 0) ...[
-                                              buildDivider(),
-
-                                              buildRow(
-                                                title: "Credits",
-                                                value: "${addedOnModel.credit}",
-                                              ),
                                             ],
+                                          ),
 
-                                            if ((addedOnModel.token) != 0) ...[
-                                              buildDivider(),
+                                          const SizedBox(height: 22),
 
-                                              buildRow(
-                                                title: "Tokens",
-                                                value: "${addedOnModel.token}",
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                                          ListView.separated(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                isAddOnPacksModelAvailable
+                                                    .length,
+                                            separatorBuilder: (_, __) =>
+                                                const SizedBox(height: 16),
+                                            itemBuilder: (context, index) {
+                                              final addedOnModel =
+                                                  isAddOnPacksModelAvailable[index];
 
-                            const SizedBox(height: 15),
-                          ],
-                        ),
-                      ],
-                    ],
+                                              final addedNamePlan =
+                                                  (addedOnModel.credit) != 0
+                                                  ? "Purchased Extra Credits"
+                                                  : "Purchased Extra Tokens";
+
+                                              final planPrinceWithSymbol =
+                                                  "${addedOnModel.currencySymbol} "
+                                                  "${addedOnModel.priceInPurchasedCurrency}";
+
+                                              final purchaseDate = addedOnModel
+                                                  .purchaseDateLocal;
+
+                                              return Container(
+                                                width: double.infinity,
+                                                padding: const EdgeInsets.all(
+                                                  16,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(
+                                                    0xffF8F9FC,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(18),
+                                                  border: Border.all(
+                                                    color: Colors.black
+                                                        .withValues(alpha: .05),
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withValues(
+                                                            alpha: .03,
+                                                          ),
+                                                      blurRadius: 8,
+                                                      offset: const Offset(
+                                                        0,
+                                                        3,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 7,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .primaryDark
+                                                            .withValues(
+                                                              alpha: .08,
+                                                            ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              100,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        addedNamePlan,
+                                                        style:
+                                                            AppTextStyles.medium(
+                                                              12,
+                                                            ).copyWith(
+                                                              color: AppColors
+                                                                  .primaryDark,
+                                                            ),
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 18),
+
+                                                    buildRow(
+                                                      title: "Price",
+                                                      value:
+                                                          planPrinceWithSymbol,
+                                                    ),
+
+                                                    buildDivider(),
+
+                                                    buildRow(
+                                                      title: "Invoice date",
+                                                      value: purchaseDate,
+                                                    ),
+
+                                                    if ((addedOnModel.credit) !=
+                                                        0) ...[
+                                                      buildDivider(),
+                                                      buildRow(
+                                                        title: "Credits",
+                                                        value:
+                                                            "${addedOnModel.credit}",
+                                                      ),
+                                                    ],
+
+                                                    if ((addedOnModel.token) !=
+                                                        0) ...[
+                                                      buildDivider(),
+                                                      buildRow(
+                                                        title: "Tokens",
+                                                        value:
+                                                            "${addedOnModel.token}",
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 15),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         ),

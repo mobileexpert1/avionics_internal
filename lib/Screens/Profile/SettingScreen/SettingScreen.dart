@@ -247,13 +247,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   onTap: () => _navigate(context, AddOnPacksScreen()),
                     // ),
 
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.subscriptionProfile,
-                      ),
-                      title: "Extra Add On Packs",
-                      onTap: () => _navigate(context, AddOnPacksScreen()),
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.subscriptionProfile,
+                    //   ),
+                    //   title: "Extra Add On Packs",
+                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
+                    // ),
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -279,19 +279,19 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () => showDeleteConfirmation(context, false),
                     ),
 
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.glossaryProfile,
-                      ),
-                      title: "Flight Stickers",
-                      onTap: () {
-                        AppNavigator.push(
-                          context,
-                          const AircraftCategoryScreen(),
-                          disableSwipeBack: true,
-                        );
-                      },
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.glossaryProfile,
+                    //   ),
+                    //   title: "Flight Stickers",
+                    //   onTap: () {
+                    //     AppNavigator.push(
+                    //       context,
+                    //       const AircraftCategoryScreen(),
+                    //       disableSwipeBack: true,
+                    //     );
+                    //   },
+                    // ),
 
                     // SettingsListItem(
                     //   leadingSvgAsset: CommonUi.setSvgImage(
