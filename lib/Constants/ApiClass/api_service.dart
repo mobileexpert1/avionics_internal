@@ -42,6 +42,10 @@ class ApiService {
       return false;
     }
 
+    // if (kIsWeb) {
+    //   return true;
+    // }
+
     try {
       final result = await InternetAddress.lookup(
         'google.com',
