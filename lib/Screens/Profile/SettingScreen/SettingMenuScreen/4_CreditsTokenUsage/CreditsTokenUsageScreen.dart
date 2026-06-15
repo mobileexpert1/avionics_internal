@@ -9,7 +9,7 @@ import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../../Helpers/WebIframeWidget.dart';
+import '../../../../../Helpers/WebAndMobileBrowser/web_iframe_widget.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
 
