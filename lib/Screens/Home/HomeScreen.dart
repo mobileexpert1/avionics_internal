@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
@@ -154,10 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : screenWidth * 0.05,
                           ),
                           SizedBox(
-                            width: kIsWeb ? size.width * 0.8 : double.infinity,
+                            width: kIsWeb ? size.width : double.infinity,
                             height: kIsWeb
-                                // ? screenWidth * 0.09
-                                ? screenWidth * 0.22
+                                ? screenWidth * 0.2
                                 : screenWidth * 0.53,
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.avionicaHome),
@@ -167,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           SizedBox(
                             height: kIsWeb
-                                ? screenWidth * 0.02
+                                ? screenWidth * 0.01
                                 : screenWidth * 0.05,
                           ),
 
@@ -175,7 +173,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
                               children: [
-                                // Compare Aircraft
                                 CustomHeaderViewExpandable(
                                   isNeedToShowLeftRightBottomBorder: true,
                                   isNeedToShowLeftImage: true,
@@ -216,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 SizedBox(
                                   height: kIsWeb
-                                      ? screenWidth * 0.02
+                                      ? screenWidth * 0.015
                                       : screenWidth * 0.04,
                                 ),
 
@@ -267,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 SizedBox(
                                   height: kIsWeb
-                                      ? screenWidth * 0.02
+                                      ? screenWidth * 0.015
                                       : screenWidth * 0.045,
                                 ),
 
@@ -329,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           SizedBox(
                             height: kIsWeb
-                                ? screenWidth * 0.02
+                                ? screenWidth * 0.015
                                 : screenWidth *
                                       ((expandedManufacturerTab == true &&
                                               expandFlyingInTheAreaTab == true)
@@ -387,16 +384,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Center(
             child: Container(
               width: kIsWeb ? 260 : null,
-              padding: EdgeInsets.symmetric(
-                vertical: kIsWeb ? 8 : 0,
-              ),
+              padding: EdgeInsets.symmetric(vertical: kIsWeb ? 8 : 0),
               alignment: Alignment.center,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  minimumSize: Size(
-                    kIsWeb ? 240 : 0,
-                    kIsWeb ? 50 : 40,
-                  ),
+                  minimumSize: Size(kIsWeb ? 240 : 0, kIsWeb ? 50 : 40),
                 ),
                 onPressed: () {
                   AnalyticsService.instance.buttonPressed(
@@ -412,12 +404,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Text(
                   'See All',
-                  style: AppTextStyles.bold(
-                    kIsWeb ? screenWidth * 0.012 : 16,
-                  ).copyWith(
-                    height: kIsWeb ? 0.8 : 1.0,
-                    color: AppColors.black,
-                  ),
+                  style: AppTextStyles.bold(16)
+                      .copyWith(
+                        height: kIsWeb ? 0.8 : 1.0,
+                        color: AppColors.black,
+                      ),
                 ),
               ),
             ),

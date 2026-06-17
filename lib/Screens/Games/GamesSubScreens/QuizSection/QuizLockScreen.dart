@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/bloc/Games/SubGameSection/Quiz_Section/quiz_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -96,7 +97,7 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
                   removeTop: true,
                   child: SingleChildScrollView(
                     child: Transform.translate(
-                      offset: Offset(0, -35),
+                      offset: Offset(0, kIsWeb ? 0 : -35),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(state.games.length, (index) {
@@ -142,13 +143,13 @@ class _QuizLockScreenState extends State<QuizLockScreen> {
 double getHeight(int index) {
   switch (index) {
     case 0:
-      return 130;
+      return kIsWeb ? 170 : 130;
     case 1:
-      return 130;
+      return kIsWeb ? 170 : 130;
     case 2:
-      return 135;
+      return kIsWeb ? 175 : 130;
     case 3:
-      return 120;
+      return kIsWeb ? 170 : 120;
     default:
       return 120;
   }
@@ -249,7 +250,12 @@ class _AtmosLayerState extends State<AtmosLayer> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(widget.title),
+                Text(
+                  widget.title,
+                  style: AppTextStyles.regular(
+                    18,
+                  ).copyWith(height: 1.0, color: AppColors.black),
+                ),
                 const SizedBox(height: 10),
                 CompositedTransformTarget(
                   link: _layerLink,

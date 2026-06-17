@@ -164,6 +164,9 @@ abstract class AssetsPath {
   static const String infoWrongSecond = "2InfoWrongGameIcon";
   static const String infoWrongThird = "3InfoWrongGameIcon";
   static const String towerImageForGame = "4TowerImage";
+  static const String towerImageForWebGame = "4_1TowerImage";
+  static const String cloudsLeftForGame = "12LeftSideClouds";
+  static const String cloudsRightForGame = "13RightSideClouds";
   static const String flightDownBB = "5FlightDownBB";
   static const String decodeBB = "6DecodeBB";
   static const String chainOfBB = "7ChainOfBB";

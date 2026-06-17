@@ -965,7 +965,9 @@ class BlackBoxProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double progress = currentQuestion / totalQuestions;
+    double progress = totalQuestions > 0
+        ? currentQuestion / totalQuestions
+        : 0.0;
 
     return Container(
       width: double.infinity,

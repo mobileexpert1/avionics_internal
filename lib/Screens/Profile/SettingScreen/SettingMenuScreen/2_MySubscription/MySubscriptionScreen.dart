@@ -180,8 +180,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 if (!canManageSubscription(
                                   context,
                                   activeBuyPlatform,
-                                ))
+                                )) {
                                   return;
+                                }
+
                                 final result = await AppNavigator.push(
                                   context,
                                   SubscriptionPlanDetailScreen(

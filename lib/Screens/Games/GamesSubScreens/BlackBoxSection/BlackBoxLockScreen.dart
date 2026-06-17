@@ -50,8 +50,7 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final isWeb = kIsWeb;
-    double getPadding() => isWeb ? screenWidth * 0.02 : 10;
+    double getPadding() => kIsWeb ? screenWidth * 0.02 : 10;
     return BlocProvider(
       create: (_) => blackboxCubit,
       child: Scaffold(
@@ -98,10 +97,9 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
                         padding: const EdgeInsets.only(bottom: 15, left: 10),
                         child: Text(
                           "Enhance your aviation investigation skills with interactive black box challenges.",
-                          style: AppTextStyles.semiRegular(16).copyWith(
-                            height: 1.3,
-                            color: AppColors.primaryDark,
-                          ),
+                          style: AppTextStyles.semiRegular(
+                            16,
+                          ).copyWith(height: 1.3, color: AppColors.primaryDark),
                         ),
                       ),
                       Expanded(
@@ -266,7 +264,10 @@ class _BlackBoxCardState extends State<_BlackBoxCard> {
               CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: const Offset(-0, -25),
+                offset: Offset(
+                  kIsWeb ? MediaQuery.of(context).size.width / 4 : -0,
+                  kIsWeb ? -50 : -25,
+                ),
                 child: ArrowPopup(
                   isLocked: widget.blackBoxGameItem.isLocked,
                   infoDetails: widget.blackBoxGameItem.info.first,
@@ -331,10 +332,9 @@ class _BlackBoxCardState extends State<_BlackBoxCard> {
                   children: [
                     Text(
                       widget.blackBoxGameItem.title,
-                      style: AppTextStyles.bold(16).copyWith(
-                        height: 1.2,
-                        color: AppColors.primaryDark,
-                      ),
+                      style: AppTextStyles.bold(
+                        16,
+                      ).copyWith(height: 1.2, color: AppColors.primaryDark),
                     ),
                     const SizedBox(height: 4),
                     Text(

@@ -51,6 +51,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
+
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded(
@@ -172,28 +173,34 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
             children: [
               Scaffold(
                 backgroundColor: Colors.white,
-                appBar: CustomAppBar(
-                  title: isComeFromSignup
-                      ? ConstantStrings.startSubscription
-                      : SubscriptionTexts.currentPlanTitle,
-                  centerTitle: isComeFromSignup ? true : false,
-                  leftButton: IconButton(
-                    icon: Icon(
-                      isComeFromSignup ? Icons.logout : Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      if (isComeFromSignup) {
-                        context
-                            .read<SubscriptionBuyPlanCubit>()
-                            .clearAllDataAndRedirectToSplashScreen(context);
-                      } else {
-                        Navigator.pop(context, true);
-                      }
-                    },
-                  ),
-                ),
+                appBar: kIsWeb
+                    ? null
+                    : CustomAppBar(
+                        title: isComeFromSignup
+                            ? ConstantStrings.startSubscription
+                            : SubscriptionTexts.currentPlanTitle,
+                        centerTitle: isComeFromSignup ? true : false,
+                        leftButton: IconButton(
+                          icon: Icon(
+                            isComeFromSignup
+                                ? Icons.logout
+                                : Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            if (isComeFromSignup) {
+                              context
+                                  .read<SubscriptionBuyPlanCubit>()
+                                  .clearAllDataAndRedirectToSplashScreen(
+                                    context,
+                                  );
+                            } else {
+                              Navigator.pop(context, true);
+                            }
+                          },
+                        ),
+                      ),
                 body: SafeArea(
                   child: Center(
                     child: SizedBox(
@@ -201,31 +208,34 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 15),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 16,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  isComeFromSignup
-                                      ? 'Choose Your Plan'
-                                      : 'Manage Your Plan',
-                                  style: AppTextStyles.bold(26).copyWith(
-                                    height: 1.0,
-                                    color: AppColors.black,
+                          if (!kIsWeb) ...[
+                            SizedBox(height: 15),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 16,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    isComeFromSignup
+                                        ? 'Choose Your Plan'
+                                        : 'Manage Your Plan',
+                                    style: AppTextStyles.bold(26).copyWith(
+                                      height: 1.0,
+                                      color: AppColors.black,
+                                    ),
                                   ),
-                                ),
-                                StepIndicator(
-                                  total: subscriptionPackages.length,
-                                  current: currentPage,
-                                ),
-                              ],
+                                  StepIndicator(
+                                    total: subscriptionPackages.length,
+                                    current: currentPage,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
 
                           SizedBox(height: 10),
 

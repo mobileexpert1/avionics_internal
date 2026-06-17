@@ -36,7 +36,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     QuizQuestionRepository? repository,
   }) : _repository = repository ?? QuizQuestionRepository(),
        super(QuizQuestionState.initial()) {
-    maxQuestions = gameId == "trivia" ? 5 : 20;
+    maxQuestions = switch (gameId) {
+      "trivia" => 5,
+      "aircraftEncyclopaedia" => 10,
+      _ => 20,
+    };
 
     const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40};
     _quizTypesId = sectionId;
@@ -114,7 +118,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           categorizedQuestions[category.name] = questions;
         }
 
-        // Initial questions capped at maxQuestions
         final allQuestions = gameData.categoryTypes
             .expand((category) => category.questions)
             .map((q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId))

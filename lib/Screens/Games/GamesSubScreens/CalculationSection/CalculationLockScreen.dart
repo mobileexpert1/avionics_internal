@@ -260,7 +260,11 @@ class _CourseCardState extends State<_CourseCard> {
               CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(-13, 0),
+                offset: Offset(
+                  kIsWeb ? MediaQuery.of(context).size.width / 4 : -13,
+                  kIsWeb ? -50 : 0,
+                ),
+
                 child: ArrowPopup(
                   isLocked: widget.calculationGameItem.isLocked,
                   infoDetails: widget.calculationGameItem.info.first,

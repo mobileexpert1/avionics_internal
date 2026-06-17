@@ -757,7 +757,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
             ),
           );
         }
-      }else{
+      } else {
         NoInternetDialog.show(
           context,
           onRetry: () => nextQuestion(context, gameNumber),

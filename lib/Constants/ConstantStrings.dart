@@ -2,7 +2,7 @@ class ConstantStrings {
   // ─────────────────────────────
   // App Name
   // ─────────────────────────────
-  static const String poweredBy = "Powered by AskWILCO";
+  static const String poweredBy = "Powered by WILCO";
 
   // ─────────────────────────────
   // Onboarding Titles

@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Helpers/CacheManger/CachedImageFile.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -290,16 +291,21 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
-      builder: (dialogContext) => CustomDialog(
-        title: isComeFromBookMark
-            ? 'Remove from Bookmark'
-            : 'Remove from Favourite',
-        description: 'Are you sure you want to remove this item?',
-        positiveButtonText: 'Yes',
-        positiveColor: AppColors.blackBoxColorForGame,
-        onPositiveTap: () {
-          Navigator.pop(dialogContext, true);
-        },
+      builder: (dialogContext) => Center(
+        child: SizedBox(
+          width: MediaQuery.of(dialogContext).size.width * (kIsWeb ? 0.3 : 1),
+          child: CustomDialog(
+            title: isComeFromBookMark
+                ? 'Remove from Bookmark'
+                : 'Remove from Favourite',
+            description: 'Are you sure you want to remove this item?',
+            positiveButtonText: 'Yes',
+            positiveColor: AppColors.blackBoxColorForGame,
+            onPositiveTap: () {
+              Navigator.pop(dialogContext, true);
+            },
+          ),
+        ),
       ),
     );
 

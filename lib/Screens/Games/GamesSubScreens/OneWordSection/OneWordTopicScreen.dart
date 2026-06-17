@@ -191,8 +191,8 @@ class _TopicCardState extends State<_TopicCard> {
                 link: _layerLink,
                 showWhenUnlinked: false,
                 offset: Offset(
-                  20,
-                  widget.index == 4 || widget.index == 5 ? -100 : 0,
+                  kIsWeb ? MediaQuery.of(context).size.width / 4 : 20,
+                  kIsWeb ? -40 : widget.index == 4 || widget.index == 5 ? -100 : 0,
                 ),
                 child: ArrowPopup(
                   isLocked: false,

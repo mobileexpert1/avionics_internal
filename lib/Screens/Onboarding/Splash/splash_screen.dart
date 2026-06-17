@@ -31,21 +31,21 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
     final isFirst = await SharedPrefsHelper.isFirstLaunch();
     if (!mounted) return;
-    if (!isFirst) {
-      await SharedPrefsHelper.setFirstLaunchDone();
-      if (!mounted) return;
-      AppNavigator.pushReplacement(
-        context,
-        OnboardingScreen(),
-        disableSwipeBack: true,
-      );
-    } else {
+    // if (!isFirst) {
+    //   await SharedPrefsHelper.setFirstLaunchDone();
+    //   if (!mounted) return;
+    //   AppNavigator.pushReplacement(
+    //     context,
+    //     OnboardingScreen(),
+    //     disableSwipeBack: true,
+    //   );
+    //} else {
       AppNavigator.pushReplacement(
         context,
         RootDecider(),
         disableSwipeBack: true,
       );
-    }
+    //}
   }
 
   @override
