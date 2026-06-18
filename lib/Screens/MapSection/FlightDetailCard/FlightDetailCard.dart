@@ -219,7 +219,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                             width: 75,
                                             height: 25,
                                             contentImage: BoxFit.contain,
-                                            useCache: false,
                                           ),
                                   ),
                                   Row(
@@ -378,7 +377,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                       width: 100,
                                       height: 30,
                                       contentImage: BoxFit.contain,
-                                      useCache: true,
                                     ),
                             ),
                           ],

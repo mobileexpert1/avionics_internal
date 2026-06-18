@@ -9,6 +9,7 @@
       "dependencies": [
         "animated_text_kit",
         "cached_network_image",
+        "carousel_slider",
         "cloud_firestore",
         "connectivity_plus",
         "cupertino_icons",
@@ -1881,6 +1882,13 @@
       "dependencies": [
         "collection",
         "meta"
+      ]
+    },
+    {
+      "name": "carousel_slider",
+      "version": "5.1.2",
+      "dependencies": [
+        "flutter"
       ]
     }
   ],

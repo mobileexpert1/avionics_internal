@@ -11,6 +11,7 @@ import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
 import '../../../Helpers/StringCommonMethods.dart';
@@ -825,21 +826,20 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
 
   Widget _buildImageCoverScroller(double screenHeight, CoverPhoto coverImages) {
     final image = ClipRRect(
-      child: Image.network(
-        coverImages.url,
+      child: CachedAnyImage(
+        imagePath: coverImages.url,
         width: MediaQuery.of(context).size.width,
         height: screenHeight * 0.30,
-        fit: BoxFit.cover,
+        contentImage: BoxFit.cover,
       ),
     );
 
     return SizedBox(
-      height: screenHeight * 0.26,
+      height: screenHeight * 0.30,
       width: double.infinity,
       child: Stack(
         children: [
           image,
-          // Show author only if wiki exists AND author is not null/empty
           if ((coverImages.wiki?.isNotEmpty ?? false) &&
               (coverImages.author?.isNotEmpty ?? false))
             Positioned(

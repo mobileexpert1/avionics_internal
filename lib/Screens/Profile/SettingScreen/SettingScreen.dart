@@ -239,21 +239,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
 
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.subscriptionProfile,
-                    //   ),
-                    //   title: "Extra Add On Packs",
-                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
-                    // ),
-
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.subscriptionProfile,
-                    //   ),
-                    //   title: "Extra Add On Packs",
-                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subscriptionProfile,
+                      ),
+                      title: "Extra Add On Packs",
+                      onTap: () => _navigate(context, AddOnPacksScreen()),
+                    ),
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

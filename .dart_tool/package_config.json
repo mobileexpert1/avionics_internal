@@ -56,6 +56,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "carousel_slider",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/carousel_slider-5.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "characters",
       "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/characters-1.4.0",
       "packageUri": "lib/",

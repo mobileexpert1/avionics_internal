@@ -14,6 +14,7 @@ class CachedAnyImage extends StatefulWidget {
   final BoxFit contentImage;
   final bool useCache;
   final bool isForPlaneList;
+  final bool isForManufacturer;
 
   const CachedAnyImage({
     super.key,
@@ -23,6 +24,7 @@ class CachedAnyImage extends StatefulWidget {
     required this.contentImage,
     this.useCache = true,
     this.isForPlaneList = false,
+    this.isForManufacturer = false,
   });
 
   @override
@@ -195,6 +197,17 @@ class _CachedAnyImageState extends State<CachedAnyImage> {
               child: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.airBusPlanePlaceholder),
                 fit: BoxFit.cover,
+                width: widget.width,
+                height: widget.height,
+              ),
+            )
+          : widget.isForManufacturer
+          ? Center(
+              child: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.manufacturerPlaceholder),
+                fit: BoxFit.cover,
+                width: widget.width,
+                height: widget.height,
               ),
             )
           : const Center(child: Icon(Icons.error, color: Colors.red)),

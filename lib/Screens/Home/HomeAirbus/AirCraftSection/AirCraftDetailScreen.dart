@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_model.dart';
 import '../../../../bloc/Home/AirCraftDetail/airCraftDetail_state.dart';
@@ -46,6 +48,11 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.allPlanesListScreen,
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -192,6 +199,58 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     double screenHeight,
     List<AircraftImage> coverImages,
   ) {
+    if (coverImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    if (kIsWeb) {
+      final isSingleImage = coverImages.length == 1;
+
+      return SizedBox(
+        height: screenHeight * 0.22,
+        child: CarouselSlider.builder(
+          itemCount: coverImages.length,
+          options: CarouselOptions(
+            height: screenHeight * 0.22,
+            viewportFraction: isSingleImage ? 1.0 : 0.25,
+            enlargeCenterPage: !isSingleImage,
+            enlargeFactor: 0.25,
+            autoPlay: !isSingleImage,
+            autoPlayInterval: const Duration(seconds: 2),
+            autoPlayAnimationDuration: const Duration(milliseconds: 1200),
+            autoPlayCurve: Curves.linear,
+            enableInfiniteScroll: !isSingleImage,
+            pauseAutoPlayOnTouch: false,
+            pauseAutoPlayOnManualNavigate: false,
+          ),
+          itemBuilder: (context, index, realIndex) {
+            final image = coverImages[index];
+
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: image.cc.isNotEmpty
+                  ? () => _openImageSource(context, image)
+                  : null,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSingleImage ? 0 : 6,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      _buildAircraftImage(image, screenHeight * 0.22),
+                      _buildCopyright(image),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
     return SizedBox(
       height: screenHeight * 0.18,
       child: ScrollConfiguration(
@@ -204,44 +263,21 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
           itemCount: coverImages.length,
           itemBuilder: (context, index) {
             final image = coverImages[index];
+
             final isSingleImage = coverImages.length == 1;
 
             final imageWidth = isSingleImage
                 ? MediaQuery.of(context).size.width
                 : 300.0;
 
-            final imagePadding = isSingleImage
-                ? EdgeInsets.zero
-                : const EdgeInsets.only(right: 10);
-
-            final hasCopyright = image.cc.isNotEmpty;
-
-            final imageUrl =
-                '${image.url}?v=${DateTime.now().millisecondsSinceEpoch}';
-
-            final isSvg = image.url.toLowerCase().endsWith('.svg');
-            final isAsset = image.url.contains('assets');
-
             return Padding(
-              padding: imagePadding,
+              padding: isSingleImage
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.only(right: 10),
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: hasCopyright
-                    ? () async {
-                        final uri = Uri.tryParse(image.source);
-                        if (uri != null && await canLaunchUrl(uri)) {
-                          await launchUrl(
-                            uri,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Could not open URL.'),
-                            ),
-                          );
-                        }
-                      }
+                onTap: image.cc.isNotEmpty
+                    ? () => _openImageSource(context, image)
                     : null,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(6),
@@ -250,57 +286,9 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       SizedBox(
                         width: imageWidth,
                         height: screenHeight * 0.18,
-                        child: isAsset
-                            ? Image.asset(image.url, fit: BoxFit.cover)
-                            : isSvg
-                            ? SvgPicture.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                placeholderBuilder: (_) => SvgPicture.asset(
-                                  CommonUi.setSvgImage(
-                                    AssetsPath.manufacturerPlaceholder,
-                                  ),
-                                  fit: BoxFit.contain,
-                                ),
-                              )
-                            : Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  debugPrint('Image load error: ${image.url}');
-                                  debugPrint(error.toString());
-                                  return SvgPicture.asset(
-                                    CommonUi.setSvgImage(
-                                      AssetsPath.manufacturerPlaceholder,
-                                    ),
-                                    fit: BoxFit.contain,
-                                  );
-                                },
-                              ),
+                        child: _buildAircraftImage(image, screenHeight * 0.18),
                       ),
-                      if (hasCopyright)
-                        Positioned(
-                          left: 8,
-                          bottom: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '© ${image.cc}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _buildCopyright(image),
                     ],
                   ),
                 ),
@@ -310,6 +298,59 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildAircraftImage(AircraftImage image, double height) {
+    return CachedAnyImage(
+      imagePath: image.url,
+      contentImage: BoxFit.cover,
+      width: double.infinity,
+      height: height,
+      isForManufacturer: true,
+    );
+  }
+
+  Widget _buildCopyright(AircraftImage image) {
+    if (image.cc.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned(
+      left: 8,
+      bottom: 8,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          '© ${image.cc}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 8,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openImageSource(
+    BuildContext context,
+    AircraftImage image,
+  ) async {
+    final uri = Uri.tryParse(image.source);
+
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Could not open URL.')));
+      }
+    }
   }
 
   Widget _buildTopHeadingDetails(double screenHeight) {
@@ -330,7 +371,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
         child: Column(
           children: [
             _buildImageCoverScroller(screenHeight, aircraftData?.images ?? []),
-            //Text(aircraftData?.identification.avionicsSystem ?? ""),
           ],
         ),
       ),
