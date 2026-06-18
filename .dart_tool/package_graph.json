@@ -21,6 +21,7 @@
         "firebase_crashlytics",
         "firebase_messaging",
         "flutter",
+        "flutter_3d_controller",
         "flutter_animate",
         "flutter_bloc",
         "flutter_cache_manager",
@@ -30,6 +31,7 @@
         "flutter_local_notifications",
         "flutter_slidable",
         "flutter_svg",
+        "flutter_uxcam",
         "geocoding",
         "geolocator",
         "google_maps_flutter",
@@ -90,18 +92,49 @@
       "name": "flutter_test",
       "version": "0.0.0",
       "dependencies": [
+        "async",
+        "boolean_selector",
+        "characters",
         "clock",
         "collection",
         "fake_async",
         "flutter",
+        "leak_tracker",
         "leak_tracker_flutter_testing",
+        "leak_tracker_testing",
         "matcher",
+        "material_color_utilities",
         "meta",
         "path",
+        "source_span",
         "stack_trace",
         "stream_channel",
+        "string_scanner",
+        "term_glyph",
         "test_api",
+        "vector_math",
+        "vm_service"
+      ]
+    },
+    {
+      "name": "flutter_3d_controller",
+      "version": "2.3.0",
+      "dependencies": [
+        "flutter",
+        "flutter_inappwebview",
+        "http",
+        "path",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_uxcam",
+      "version": "2.8.3",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "stack_trace",
+        "visibility_detector"
       ]
     },
     {
@@ -594,7 +627,7 @@
     },
     {
       "name": "meta",
-      "version": "1.17.0",
+      "version": "1.16.0",
       "dependencies": []
     },
     {
@@ -622,7 +655,7 @@
     },
     {
       "name": "test_api",
-      "version": "0.7.7",
+      "version": "0.7.4",
       "dependencies": [
         "async",
         "boolean_selector",
@@ -652,6 +685,23 @@
       "dependencies": []
     },
     {
+      "name": "vm_service",
+      "version": "15.0.0",
+      "dependencies": []
+    },
+    {
+      "name": "term_glyph",
+      "version": "1.2.2",
+      "dependencies": []
+    },
+    {
+      "name": "string_scanner",
+      "version": "1.4.1",
+      "dependencies": [
+        "source_span"
+      ]
+    },
+    {
       "name": "stream_channel",
       "version": "2.1.4",
       "dependencies": [
@@ -659,8 +709,57 @@
       ]
     },
     {
+      "name": "source_span",
+      "version": "1.10.1",
+      "dependencies": [
+        "collection",
+        "path",
+        "term_glyph"
+      ]
+    },
+    {
+      "name": "material_color_utilities",
+      "version": "0.11.1",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
+      "name": "leak_tracker_testing",
+      "version": "3.0.1",
+      "dependencies": [
+        "leak_tracker",
+        "matcher",
+        "meta"
+      ]
+    },
+    {
+      "name": "leak_tracker",
+      "version": "10.0.9",
+      "dependencies": [
+        "clock",
+        "collection",
+        "meta",
+        "path",
+        "vm_service"
+      ]
+    },
+    {
+      "name": "characters",
+      "version": "1.4.0",
+      "dependencies": []
+    },
+    {
+      "name": "boolean_selector",
+      "version": "2.1.2",
+      "dependencies": [
+        "source_span",
+        "string_scanner"
+      ]
+    },
+    {
       "name": "leak_tracker_flutter_testing",
-      "version": "3.0.10",
+      "version": "3.0.9",
       "dependencies": [
         "flutter",
         "leak_tracker",
@@ -671,7 +770,7 @@
     },
     {
       "name": "vector_math",
-      "version": "2.2.0",
+      "version": "2.1.4",
       "dependencies": []
     },
     {
@@ -692,6 +791,38 @@
       "dependencies": [
         "clock",
         "collection"
+      ]
+    },
+    {
+      "name": "flutter_inappwebview",
+      "version": "6.1.5",
+      "dependencies": [
+        "flutter",
+        "flutter_inappwebview_android",
+        "flutter_inappwebview_ios",
+        "flutter_inappwebview_macos",
+        "flutter_inappwebview_platform_interface",
+        "flutter_inappwebview_web",
+        "flutter_inappwebview_windows"
+      ]
+    },
+    {
+      "name": "visibility_detector",
+      "version": "0.4.0+2",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "characters",
+        "collection",
+        "flutter",
+        "material_color_utilities",
+        "meta",
+        "vector_math"
       ]
     },
     {
@@ -787,13 +918,6 @@
       ]
     },
     {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "file",
       "version": "7.0.1",
       "dependencies": [
@@ -868,11 +992,6 @@
       ]
     },
     {
-      "name": "characters",
-      "version": "1.4.0",
-      "dependencies": []
-    },
-    {
       "name": "universal_io",
       "version": "2.3.1",
       "dependencies": [
@@ -886,15 +1005,6 @@
       "version": "1.4.0",
       "dependencies": [
         "collection"
-      ]
-    },
-    {
-      "name": "source_span",
-      "version": "1.10.1",
-      "dependencies": [
-        "collection",
-        "path",
-        "term_glyph"
       ]
     },
     {
@@ -1641,50 +1751,54 @@
       "dependencies": []
     },
     {
-      "name": "material_color_utilities",
-      "version": "0.11.1",
+      "name": "flutter_inappwebview_windows",
+      "version": "0.6.0",
       "dependencies": [
-        "collection"
+        "flutter",
+        "flutter_inappwebview_platform_interface"
       ]
     },
     {
-      "name": "string_scanner",
-      "version": "1.4.1",
+      "name": "flutter_inappwebview_web",
+      "version": "1.1.2",
       "dependencies": [
-        "source_span"
+        "flutter",
+        "flutter_inappwebview_platform_interface",
+        "flutter_web_plugins",
+        "web"
       ]
     },
     {
-      "name": "term_glyph",
-      "version": "1.2.2",
-      "dependencies": []
-    },
-    {
-      "name": "boolean_selector",
-      "version": "2.1.2",
+      "name": "flutter_inappwebview_macos",
+      "version": "1.1.2",
       "dependencies": [
-        "source_span",
-        "string_scanner"
+        "flutter",
+        "flutter_inappwebview_platform_interface"
       ]
     },
     {
-      "name": "leak_tracker_testing",
-      "version": "3.0.2",
+      "name": "flutter_inappwebview_ios",
+      "version": "1.1.2",
       "dependencies": [
-        "leak_tracker",
-        "matcher",
-        "meta"
+        "flutter",
+        "flutter_inappwebview_platform_interface"
       ]
     },
     {
-      "name": "leak_tracker",
-      "version": "11.0.2",
+      "name": "flutter_inappwebview_android",
+      "version": "1.1.3",
       "dependencies": [
-        "clock",
-        "collection",
-        "meta",
-        "path",
-        "vm_service"
+        "flutter",
+        "flutter_inappwebview_platform_interface"
+      ]
+    },
+    {
+      "name": "flutter_inappwebview_platform_interface",
+      "version": "1.3.0+1",
+      "dependencies": [
+        "flutter",
+        "flutter_inappwebview_internal_annotations",
+        "plugin_platform_interface"
       ]
     },
     {
@@ -1829,8 +1943,8 @@
       "dependencies": []
     },
     {
-      "name": "vm_service",
-      "version": "15.0.0",
+      "name": "flutter_inappwebview_internal_annotations",
+      "version": "1.3.0",
       "dependencies": []
     },
     {

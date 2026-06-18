@@ -23,6 +23,7 @@ import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
 import 'SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
+import 'SettingMenuScreen/14_3D_Model/ModelTestScreen.dart';
 import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
 import 'SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
@@ -239,13 +240,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
 
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.subscriptionProfile,
-                    //   ),
-                    //   title: "Extra Add On Packs",
-                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.customerSupportProfile,
+                      ),
+                      title: "3D Animation",
+                      onTap: () => _navigate(context, ModelTestScreen()),
+                    ),
 
                     // SettingsListItem(
                     //   leadingSvgAsset: CommonUi.setSvgImage(

@@ -79,6 +79,9 @@ dependencies:
   firebase_analytics: ^11.0.0
   flutter_dotenv:
   internet_connection_checker_plus: ^2.5.1
+  flutter_uxcam:
+  flutter_3d_controller: ^2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -113,6 +116,7 @@ flutter:
     - assets/google_earth_map/
     - assets/fonts/
     - .env
+    - assets/3d_models/Airplane1.glb
 
   fonts:
     - family: Outfit
