@@ -22,6 +22,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   final BlackboxRepository _repository;
   final String gameId;
   final String questionNo;
+  final bool isForBlackBox;
   int _totalDuration = 60;
   DateTime? _startTime;
   bool? selectedAnswer;
@@ -31,12 +32,15 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     BuildContext context, {
     required this.gameId,
     required this.questionNo,
+    required this.isForBlackBox,
     BlackboxRepository? repository,
   }) : _repository = repository ?? BlackboxRepository(),
        super(BlackBoxState()) {
     const gameDurations = {"blackbox": 60};
     _totalDuration = gameDurations[gameId] ?? 60;
-    loadQuestions(context, questionNo);
+    isForBlackBox == true
+        ? loadQuestionsForBlackBox(context, questionNo)
+        : loadQuestionsForAircraftEncyclopaedia(context);
   }
 
   Future<void> reportQuestionPostMethod(
@@ -95,6 +99,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     List<int>? correctOptionList;
 
     if (type == '1') {
+      //Event Sequence
       if (q.answer != null && q.options != null && q.options!.isNotEmpty) {
         final answerLabels = q.answer!.split(',').map((e) => e.trim()).toList();
         sequenceItems = [];
@@ -205,7 +210,10 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     );
   }
 
-  Future<void> loadQuestions(BuildContext context, String questionNo) async {
+  Future<void> loadQuestionsForBlackBox(
+    BuildContext context,
+    String questionNo,
+  ) async {
     if (await InternetConnection().hasInternetAccess) {
       try {
         emit(state.copyWith(isLoading: true));
@@ -318,7 +326,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
           ),
         );
 
-        // Start timer
         startTimer(context);
       } catch (e, stackTrace) {
         print('Error loading questions: $e, StackTrace: $stackTrace');
@@ -332,7 +339,156 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     } else {
       NoInternetDialog.show(
         context,
-        onRetry: () => loadQuestions(context, questionNo),
+        onRetry: () => loadQuestionsForBlackBox(context, questionNo),
+      );
+    }
+  }
+
+  Future<void> loadQuestionsForAircraftEncyclopaedia(
+    BuildContext context,
+  ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        emit(state.copyWith(isLoading: true));
+        final gameData = await _repository.getAircraftEncyclopaediaQuestions();
+
+        if (gameData == null ||
+            gameData.categoryTypes == null ||
+            gameData.categoryTypes!.isEmpty) {
+          print('No categories found in gameData');
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'No questions available from API',
+            ),
+          );
+          return;
+        }
+
+        final Map<String, List<BlackBoxQuestion>> categorizedQuestions = {};
+        for (var category in gameData.categoryTypes!) {
+          final List<BlackBoxQuestion>? mappedQuestions = category.questions
+              ?.map(
+                (q) =>
+                    _mapQuestion(q, category.type ?? '3', name: category.name),
+              )
+              .toList();
+          final List<BlackBoxQuestion> catQuestions =
+              mappedQuestions ?? <BlackBoxQuestion>[];
+          categorizedQuestions[category.type ?? 'Unknown'] = catQuestions;
+        }
+
+        final allowedTypes = ['1', '2', '3', '4'];
+        final Iterable<BlackBoxQuestion> expandedQuestions = gameData
+            .categoryTypes!
+            .expand(
+              (category) => (category.questions ?? <Questions>[]).map(
+                (q) => _mapQuestion(q, category.type ?? '3'),
+              ),
+            );
+        final List<BlackBoxQuestion> allQuestions = expandedQuestions.where((
+          q,
+        ) {
+          final isValid =
+              allowedTypes.contains(q.type) &&
+              (q.type == '1'
+                  ? q.sequenceItems != null && q.sequenceItems!.isNotEmpty
+                  : true) &&
+              (q.type == '2' || q.type == '3' || q.type == '4'
+                  ? q.options.isNotEmpty
+                  : true);
+          if (!isValid) {
+            print(
+              'Filtered out question: ${q.question}, type: ${q.type}, valid: $isValid',
+            );
+          }
+          return isValid;
+        }).toList();
+
+        final int totalQuestions = allQuestions.length;
+
+        if (totalQuestions == 0) {
+          print('No valid questions mapped from categories');
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'No valid questions found for allowed types',
+            ),
+          );
+          return;
+        }
+
+        final initialResults = List<BlackBoxQuestionResult>.generate(
+          totalQuestions,
+          (index) => BlackBoxQuestionResult(
+            userAnswerIndex: null,
+            userSequence: null,
+            userAnswer: null,
+            correctPoint: 0,
+            bonusPoint: 0,
+            timeTakenSeconds: 0,
+            selectedIndices: [],
+          ),
+        );
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            questions: allQuestions,
+            currentIndex: 0,
+            selectedIndex: null,
+            selectedSequence: null,
+            selectedAnswer: null,
+            showAnswer: false,
+            timer: _totalDuration,
+            score: 0,
+            correctAnswers: 0,
+            wrongAnswers: 0,
+            pointsEarned: 0,
+            bonusPoints: 0,
+            timeTaken: 0,
+            questionResults: initialResults,
+            timePerQuestion: List<int>.filled(totalQuestions, 0),
+            categorizedQuestions: categorizedQuestions,
+            game: gameData.game,
+            level: gameData.level,
+            difficulty: gameData.difficulty,
+            questionSetId: gameData.questionSetId,
+            categoryTypes: gameData.categoryTypes ?? <CategoryTypes>[],
+            selectedIndices: [],
+          ),
+        );
+
+        startTimer(context);
+      } catch (e, stackTrace) {
+        print('Error loading questions: $e, StackTrace: $stackTrace');
+        if (e.toString().contains(
+          "400 Sorry question not available try again later",
+        )) {
+          AppSnackBar.custom(
+            context,
+            message:
+                'No questions available at this time. Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
+          );
+          Future.delayed(const Duration(seconds: 4), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
+          return;
+        }
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Failed to load questions: $e',
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadQuestionsForAircraftEncyclopaedia(context),
       );
     }
   }
@@ -721,7 +877,7 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       debugPrint(JsonEncoder.withIndent('  ').convert(payload));
       if (await InternetConnection().hasInternetAccess) {
         try {
-          await _repository.submitBlackBoxAnswers(payload, gameNumber);
+          await _repository.submitBlackBoxAnswers(payload, gameNumber, gameId);
 
           if (!context.mounted) return;
 

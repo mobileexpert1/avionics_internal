@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../../Helpers/NoInternetDialog.dart';
-import '../../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
+import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'chat_implementation.dart';
 import 'chat_model.dart';
 
@@ -114,6 +115,23 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     emit(removeDuplicates(finalList));
   }
 
+  Future<void> openAddOnPacksBottomSheet(BuildContext context) async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.55,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: const AddOnPacksScreen(packType: AddOnPackType.tokensOnly),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> sendMessage(
     String text,
     BuildContext context,
@@ -127,9 +145,14 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             isFromTrackingClass: false,
             context: context,
             title: "Token limit exhausted",
+            isFromWilcoAndTrackingScreen: true,
+            buttonText: "Buy Token",
             message:
-                "Your token limit has been exhausted. Please purchase a subscription.",
-            navigateTo: SubscriptionPlanDetailScreen(isComeFromSignup: false),
+                "Your token limit has been exhausted. Please purchase a extra tokens.",
+            navigateTo: MySubscriptionScreen(isComeForAddOnPacks: true),
+            onGoToActionBlock: () {
+              openAddOnPacksBottomSheet(context);
+            },
           );
         });
         return;

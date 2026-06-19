@@ -24,11 +24,13 @@ class BlackBoxScreen extends StatefulWidget {
     required this.gameId,
     required this.summarySetId,
     required this.summaryGameNumber,
+    required this.isForBlackBox,
   });
 
   final String gameId;
   final String summarySetId;
   final int summaryGameNumber;
+  final bool isForBlackBox;
 
   @override
   _BlackBoxScreenState createState() => _BlackBoxScreenState();
@@ -92,6 +94,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
         context,
         gameId: widget.gameId,
         questionNo: widget.summarySetId,
+        isForBlackBox: widget.isForBlackBox,
       ),
       child: BlocBuilder<BlackBoxQuestionCubit, BlackBoxState>(
         builder: (context, state) {

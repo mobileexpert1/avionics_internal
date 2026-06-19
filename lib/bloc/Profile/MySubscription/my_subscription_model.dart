@@ -233,7 +233,6 @@ class AddOnModel {
       purchaseDate: json['purchase_date'] ?? '',
       purchaseDateLocal: convertUtcToLocal24Hour(purchaseDateLocal),
 
-
       taxPercentage: (json['tax_percentage'] as num?)?.toDouble() ?? 0.0,
 
       taxAmount: (json['tax_amount'] as num?)?.toDouble() ?? 0.0,
@@ -333,4 +332,38 @@ class MySubscriptionPlanModel {
 
     return title;
   }
+}
+
+enum BillingHistoryEntryType { subscription, addOn }
+
+class BillingHistoryEntry {
+  final BillingHistoryEntryType entryType;
+  final MySubscriptionItem? subscriptionItem;
+  final AddOnModel? addOnItem;
+
+  BillingHistoryEntry.subscription(this.subscriptionItem)
+    : entryType = BillingHistoryEntryType.subscription,
+      addOnItem = null;
+
+  BillingHistoryEntry.addOn(this.addOnItem)
+    : entryType = BillingHistoryEntryType.addOn,
+      subscriptionItem = null;
+
+  bool get isAddOn => entryType == BillingHistoryEntryType.addOn;
+
+  bool get isSubscription => entryType == BillingHistoryEntryType.subscription;
+}
+
+List<BillingHistoryEntry> buildFlatBillingHistory(
+  List<MySubscriptionItem> items,
+) {
+  final List<BillingHistoryEntry> result = [];
+
+  for (final item in items) {
+    result.add(BillingHistoryEntry.subscription(item));
+    for (final addOn in item.addOnPacksModel) {
+      result.add(BillingHistoryEntry.addOn(addOn));
+    }
+  }
+  return result;
 }

@@ -7,6 +7,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Helpers/NoInternetDialog.dart';
 import 'my_subscription_model.dart';
 import 'my_subscription_state.dart';
@@ -34,6 +35,7 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
           ),
         );
       } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(
           state.copyWith(
             subscriptionData: null,

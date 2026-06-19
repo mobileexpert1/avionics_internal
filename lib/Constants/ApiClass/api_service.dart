@@ -219,12 +219,12 @@ class ApiService {
         case 404:
           if (jsonResponse != null) {
             final message = jsonResponse['detail']?.toString() ?? '';
-            if (message.contains('not more approved questions')) {
+            if (message.contains('not more approved questions') || message.contains('Sorry')) {
               return {"empty": true, "message": message};
             }
             throw '400 $message';
           }
-          throw '400 Bad request';
+          // throw '400 Bad request';
 
         case 401:
           if (retry) {

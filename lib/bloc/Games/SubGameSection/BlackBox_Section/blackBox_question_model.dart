@@ -5,33 +5,36 @@ class BlackBoxQuestionModel {
   String? difficulty;
   List<CategoryTypes>? categoryTypes;
 
-  BlackBoxQuestionModel(
-      {this.game, this.level, this.difficulty, this.categoryTypes});
+  BlackBoxQuestionModel({
+    this.questionSetId,
+    this.game,
+    this.level,
+    this.difficulty,
+    this.categoryTypes,
+  });
 
   BlackBoxQuestionModel.fromJson(Map<String, dynamic> json) {
-    questionSetId = json['set_id'];
-    game = json['game'];
-    level = json['level'];
-    difficulty = json['difficulty'];
+    questionSetId = json['set_id']?.toString();
+    game = json['game']?.toString();
+    level = json['level']?.toString();
+    difficulty = json['difficulty']?.toString();
+
     if (json['category_types'] != null) {
-      categoryTypes = <CategoryTypes>[];
-      json['category_types'].forEach((v) {
-        categoryTypes!.add(new CategoryTypes.fromJson(v));
-      });
+      categoryTypes = (json['category_types'] as List)
+          .map((e) => CategoryTypes.fromJson(e))
+          .toList();
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['set_id'] = questionSetId;
-    data['game'] = game;
-    data['level'] = level;
-    data['difficulty'] = difficulty;
-    if (categoryTypes != null) {
-      data['category_types'] =
-          categoryTypes!.map((v) => v.toJson()).toList();
-    }
-    return data;
+    return {
+      'set_id': questionSetId,
+      'game': game,
+      'level': level,
+      'difficulty': difficulty,
+      'category_types':
+      categoryTypes?.map((e) => e.toJson()).toList(),
+    };
   }
 }
 

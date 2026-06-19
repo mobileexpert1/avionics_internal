@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/material.dart';
 
 class AlertHelperForSubsPopup {
   static void showSubscriptionEndAlert({
@@ -12,6 +12,8 @@ class AlertHelperForSubsPopup {
     Color buttonTextColor = AppColors.customBottomEnabledColour,
     Color? buttonBackgroundColor,
     VoidCallback? onGoToFirstTab,
+    bool? isFromWilcoAndTrackingScreen,
+    VoidCallback? onGoToActionBlock,
   }) {
     showDialog(
       context: context,
@@ -48,27 +50,76 @@ class AlertHelperForSubsPopup {
           ),
           content: Text(message),
           actions: [
-            TextButton(
-              style: buttonBackgroundColor != null
-                  ? TextButton.styleFrom(backgroundColor: buttonBackgroundColor)
-                  : null,
-              onPressed: () {
-                Navigator.of(ctx).pop();
+            if (isFromWilcoAndTrackingScreen == true) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    style: buttonBackgroundColor != null
+                        ? TextButton.styleFrom(
+                            backgroundColor: buttonBackgroundColor,
+                          )
+                        : null,
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      onGoToActionBlock?.call();
+                    },
+                    child: Text(
+                      buttonText,
+                      style: TextStyle(
+                        color: buttonBackgroundColor != null
+                            ? Colors.white
+                            : buttonTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
 
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => navigateTo));
-              },
-              child: Text(
-                buttonText,
-                style: TextStyle(
-                  color: buttonBackgroundColor != null
-                      ? Colors.white
-                      : buttonTextColor,
-                  fontWeight: FontWeight.bold,
+                  TextButton(
+                    style: buttonBackgroundColor != null
+                        ? TextButton.styleFrom(
+                            backgroundColor: buttonBackgroundColor,
+                          )
+                        : null,
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: buttonBackgroundColor != null
+                            ? Colors.white
+                            : buttonTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ] else
+              TextButton(
+                style: buttonBackgroundColor != null
+                    ? TextButton.styleFrom(
+                        backgroundColor: buttonBackgroundColor,
+                      )
+                    : null,
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (_) => navigateTo));
+                },
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    color: buttonBackgroundColor != null
+                        ? Colors.white
+                        : buttonTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
           ],
         );
       },

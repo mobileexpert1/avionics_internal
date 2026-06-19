@@ -17,13 +17,17 @@ import '../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
 import '../../../../../bloc/Profile/MySubscription/my_subscription_state.dart';
 import '../../../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../InfoBottomSheet.dart';
+import '../3_AddOnPacks/AddOnPacksScreen.dart';
+import '../4_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
 import '../8_Review/FeedbackScreen.dart';
 import 'EmptyPackagesView.dart';
 import 'MySubscriptionDetailScreen.dart';
 import 'SubscriptionPlanCard.dart';
 
 class MySubscriptionScreen extends StatefulWidget {
-  const MySubscriptionScreen({super.key});
+  final bool? isComeForAddOnPacks;
+
+  const MySubscriptionScreen({super.key, this.isComeForAddOnPacks});
 
   @override
   State<MySubscriptionScreen> createState() => _MySubscriptionScreenState();
@@ -37,6 +41,36 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
     super.initState();
     _cubit = context.read<MySubscriptionCubit>();
     _cubit.loadSubscriptionsHistory(context);
+
+    if (widget.isComeForAddOnPacks == true) {
+      Future.delayed(const Duration(seconds: 1), () {
+        if (!context.mounted) return;
+        openAddOnPacksBottomSheet();
+      });
+    }
+  }
+
+  Future<void> openAddOnPacksBottomSheet() async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.55,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+            child: const AddOnPacksScreen(packType: AddOnPackType.both),
+          ),
+        );
+      },
+    );
+
+    if (result == true && mounted) {
+      _cubit.loadSubscriptionsHistory(context);
+    }
   }
 
   @override
@@ -63,6 +97,22 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
             if (state.subscriptionData != null) {}
 
             final current = state.subscriptionData?.data.current;
+
+            // final getCreditModelCount = current?.addOnPacksModel.fold(
+            //   0,
+            //   (sum, a) => sum + a.credit,
+            // );
+            // final getTokenModelCount = current?.addOnPacksModel.fold(
+            //   0,
+            //   (sum, a) => sum + a.token,
+            // );
+
+            final getCreditModelCount = current?.addOnPacksModel
+                .where((item) => item.credit > 0)
+                .length;
+            final getTokenModelCount = current?.addOnPacksModel
+                .where((item) => item.token > 0)
+                .length;
 
             final isUpcomingPlan = state.subscriptionData?.data.upcoming;
 
@@ -112,7 +162,9 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                   borderRadius: BorderRadius.circular(15),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.3,
+                                      ),
                                       blurRadius: 5,
                                       offset: const Offset(0, 2),
                                     ),
@@ -166,11 +218,11 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                               const SizedBox(height: 10),
                             ],
 
-                            const SizedBox(height: 10),
-
                             SubscriptionPlanCard(
                               isPremiumPlan: isPremiumPlan,
                               isPlanExpired: isPlanExpired,
+                              isCreditCount: getCreditModelCount ?? 0,
+                              isTokenCount: getTokenModelCount ?? 0,
                               namePlan: namePlan,
                               planPriceWithSymbol: planPriceWithSymbol,
                               expiryDate: expiryDate,
@@ -197,12 +249,23 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                   _cubit.loadSubscriptionsHistory(context);
                                 }
                               },
+                              onAddOnTap: () async {
+                                openAddOnPacksBottomSheet();
+                              },
+                              onViewCreditsTokensTap: () {
+                                AppNavigator.push(
+                                  context,
+                                  CreditsTokenUsageScreen(),
+                                  disableSwipeBack: true,
+                                );
+                              },
                               onCancelTap: () {
                                 if (!canManageSubscription(
                                   context,
                                   activeBuyPlatform,
-                                ))
+                                )) {
                                   return;
+                                }
 
                                 if (isPlanExpired) {
                                   AppNavigator.push(
@@ -228,23 +291,30 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                             const SizedBox(height: 10),
 
                             ListView.separated(
-                              itemCount:
-                                  state.subscriptionData!.data.old.length,
+                              itemCount: buildFlatBillingHistory(
+                                state.subscriptionData!.data.old,
+                              ).length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               separatorBuilder: (_, _) =>
                                   const SizedBox(height: 10),
                               itemBuilder: (context, index) {
-                                final item =
-                                    state.subscriptionData!.data.old[index];
+                                final item = buildFlatBillingHistory(
+                                  state.subscriptionData!.data.old,
+                                )[index];
                                 return BillingHistoryCard(
                                   item: item,
                                   currentIndex: index,
+                                  isForAddOn: item.addOnItem != null,
                                   onTapGesture: () {
                                     AppNavigator.push(
                                       context,
                                       MySubscriptionDetailScreen(
-                                        subscriptionItem: item,
+                                        subscriptionItem: item.subscriptionItem,
+                                        isComeFromExtraPacks:
+                                            item.addOnItem != null,
+                                        isAddOnPacksModelAvailable:
+                                            item.addOnItem,
                                       ),
                                       disableSwipeBack: true,
                                     );
@@ -335,26 +405,20 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
 class BillingHistoryCard extends StatelessWidget {
   final VoidCallback onTapGesture;
-  final MySubscriptionItem item;
+  final BillingHistoryEntry item;
   final int currentIndex;
+  final bool isForAddOn;
 
   const BillingHistoryCard({
     super.key,
     required this.item,
     required this.onTapGesture,
     required this.currentIndex,
+    required this.isForAddOn,
   });
 
   @override
   Widget build(BuildContext context) {
-    String planPriceWithSymbol = "";
-
-    if (item.priceInPurchasedCurrency != null &&
-        item.priceInPurchasedCurrency.toString().isNotEmpty) {
-      planPriceWithSymbol =
-          "${item.currencySymbol} ${item.priceInPurchasedCurrency}";
-    }
-
     return GestureDetector(
       onTap: onTapGesture,
       child: Container(
@@ -364,7 +428,7 @@ class BillingHistoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -373,89 +437,146 @@ class BillingHistoryCard extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          currentIndex == 0
-                              ? "Current Plan: ${item.plan.name}"
-                              : item.plan.name,
-                          style: AppTextStyles.bold(
-                            16,
-                          ).copyWith(height: 1.0, color: AppColors.black),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            planPriceWithSymbol,
-                            style: AppTextStyles.semiBold(
-                              14,
-                            ).copyWith(height: 1.0, color: AppColors.black),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.chevron_right),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_today_outlined,
-                        size: 15,
-                        color: Colors.grey,
-                      ),
-
-                      const SizedBox(width: 6),
-
-                      Expanded(
-                        child: Text(
-                          "${item.startDateLocal} - ${item.expiryDateLocal}",
-                          style: AppTextStyles.regular(12).copyWith(
-                            height: 1.0,
-                            color: AppColors.greyForTextSubscription,
-                          ),
-
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-
-                      if (item.addOnPacksModel.isNotEmpty) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryDark.withValues(alpha: .08),
-
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-
-                          child: Text(
-                            "+${item.addOnPacksModel.length} Packs",
-
-                            style: AppTextStyles.medium(
-                              11,
-                            ).copyWith(color: AppColors.primaryDark, height: 1),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
+              child: isForAddOn
+                  ? _buildAddOnContent()
+                  : _buildSubscriptionContent(),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSubscriptionContent() {
+    final sub = item.subscriptionItem!;
+
+    String planPriceWithSymbol = "";
+    if (sub.priceInPurchasedCurrency != null &&
+        sub.priceInPurchasedCurrency.toString().isNotEmpty) {
+      planPriceWithSymbol =
+          "${sub.currencySymbol} ${sub.priceInPurchasedCurrency}";
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                currentIndex == 0
+                    ? "Current Plan: ${sub.plan.name}"
+                    : sub.plan.name,
+                style: AppTextStyles.bold(
+                  16,
+                ).copyWith(height: 1.0, color: AppColors.black),
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  planPriceWithSymbol,
+                  style: AppTextStyles.semiBold(
+                    14,
+                  ).copyWith(height: 1.0, color: AppColors.black),
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Icon(
+              Icons.calendar_today_outlined,
+              size: 15,
+              color: Colors.grey,
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                "${sub.startDateLocal} - ${sub.expiryDateLocal}",
+                style: AppTextStyles.regular(12).copyWith(
+                  height: 1.0,
+                  color: AppColors.greyForTextSubscription,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddOnContent() {
+    final addOn = item.addOnItem!;
+
+    String addOnPriceWithSymbol = "";
+    if (addOn.priceInPurchasedCurrency.isNotEmpty) {
+      addOnPriceWithSymbol =
+          "${addOn.currencySymbol} ${addOn.priceInPurchasedCurrency}";
+    }
+
+    final String addOnLabel = addOn.credit > 0
+        ? "${addOn.credit} Credits"
+        : addOn.token > 0
+        ? "${addOn.token} Tokens"
+        : "Add-On Pack";
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                addOnLabel,
+                style: AppTextStyles.bold(
+                  16,
+                ).copyWith(height: 1.0, color: AppColors.black),
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  addOnPriceWithSymbol,
+                  style: AppTextStyles.semiBold(
+                    14,
+                  ).copyWith(height: 1.0, color: AppColors.black),
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Icon(
+              Icons.calendar_today_outlined,
+              size: 15,
+              color: Colors.grey,
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                "Purchased: ${addOn.purchaseDateLocal}",
+                style: AppTextStyles.regular(12).copyWith(
+                  height: 1.0,
+                  color: AppColors.greyForTextSubscription,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
