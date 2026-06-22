@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Constants/constantImages.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../FlightLog/AircraftCategoryModel.dart';
 
 class StickerUnlockedDialog extends StatelessWidget {
@@ -21,7 +23,7 @@ class StickerUnlockedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -29,7 +31,6 @@ class StickerUnlockedDialog extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-
           children: [
             Stack(
               children: [
@@ -42,29 +43,23 @@ class StickerUnlockedDialog extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.only(top: 24, bottom: 18),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18),
                     ),
-                    // image: DecorationImage(
-                    //   image: AssetImage("assets/images/confetti_bg.png"),
-                    //   fit: BoxFit.cover,
-                    // ),
                   ),
-                  child: const Text(
+                  child: Text(
                     "New Sticker\nUnlocked",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xff25235D),
-                    ),
+                    style: AppTextStyles.bold(
+                      19,
+                    ).copyWith(height: 1.4, color: AppColors.primaryDark),
                   ),
                 ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
                   ClipRRect(
@@ -72,17 +67,16 @@ class StickerUnlockedDialog extends StatelessWidget {
                     child: Image.asset(
                       imagePath,
                       width: double.infinity,
-                      height: 180,
+                      height: 150,
                       fit: BoxFit.cover,
                     ),
                   ),
 
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 15),
 
-                  /// Category Letter
                   Container(
-                    width: 54,
-                    height: 54,
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
                       color: category.color,
                       shape: BoxShape.circle,
@@ -90,11 +84,9 @@ class StickerUnlockedDialog extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       category.letter,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.medium(
+                        20,
+                      ).copyWith(color: AppColors.primaryDark),
                     ),
                   ),
 
@@ -103,26 +95,22 @@ class StickerUnlockedDialog extends StatelessWidget {
                   Text(
                     stickerName,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xff25235D),
-                    ),
+                    style: AppTextStyles.bold(
+                      20,
+                    ).copyWith(color: AppColors.primaryDark),
                   ),
 
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 5),
 
                   Text(
                     category.title.replaceAll("\n", " "),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Color(0xff8E8E93),
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyles.regular(
+                      14,
+                    ).copyWith(color: AppColors.grayMedium),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   SizedBox(
                     width: double.infinity,
@@ -131,22 +119,19 @@ class StickerUnlockedDialog extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                         onTap?.call();
-
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff25235D),
+                        backgroundColor: AppColors.primaryDark,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Continue",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                        style: AppTextStyles.regular(
+                          18,
+                        ).copyWith(color: AppColors.white, height: 1.4),
                       ),
                     ),
                   ),

@@ -115,20 +115,23 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     emit(removeDuplicates(finalList));
   }
 
-  Future<void> openAddOnPacksBottomSheet(BuildContext context) async {
+  Future<void> openAddOnPacksBottomSheet(
+    BuildContext context,
+    AddOnPackType packType,
+  ) async {
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
         return FractionallySizedBox(
-          heightFactor: 0.55,
+          heightFactor: 0.80,
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: const AddOnPacksScreen(packType: AddOnPackType.tokensOnly),
+            child: AddOnPacksScreen(packType: packType),
           ),
         );
-      },
+       },
     );
   }
 
@@ -149,9 +152,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             buttonText: "Buy Token",
             message:
                 "Your token limit has been exhausted. Please purchase a extra tokens.",
-            navigateTo: MySubscriptionScreen(isComeForAddOnPacks: true),
             onGoToActionBlock: () {
-              openAddOnPacksBottomSheet(context);
+              openAddOnPacksBottomSheet(context, AddOnPackType.tokensOnly);
             },
           );
         });

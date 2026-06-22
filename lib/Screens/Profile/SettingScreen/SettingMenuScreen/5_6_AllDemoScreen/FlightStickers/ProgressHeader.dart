@@ -2,6 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../../../Constants/AppColors.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class ProgressHeader extends StatelessWidget {
   final int unlocked;
   final int total;
@@ -23,22 +26,31 @@ class ProgressHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   "Sticker Unlock Progress",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                  ),
+                  style: AppTextStyles.bold(
+                    16,
+                  ).copyWith(color: AppColors.black),
                 ),
               ),
-              Text(
-                "$unlocked/$total",
-                style: const TextStyle(
-                  color: Color(0xff3B82F6),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "$unlocked",
+                      style: AppTextStyles.bold(
+                        20,
+                      ).copyWith(color: AppColors.primaryBlue),
+                    ),
+
+                    TextSpan(
+                      text: "/$total",
+                      style: AppTextStyles.bold(
+                        20,
+                      ).copyWith(color: AppColors.primaryDark),
+                    ),
+                  ],
                 ),
               ),
             ],

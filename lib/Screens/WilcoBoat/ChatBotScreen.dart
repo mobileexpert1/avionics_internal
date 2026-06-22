@@ -20,7 +20,7 @@ import '../../Helpers/FormattedText/FormattedText.dart';
 import '../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import '../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
 import '../Onboarding/Login/LoginScreen.dart';
-import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {
@@ -192,7 +192,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           accessToken: widget.accessToken,
           isNewSession: widget.accessToken.isEmpty,
           existingSessionId: widget.sessionId,
-          context: context
+          context: context,
         );
 
         _listenToInternet(cubit);
@@ -205,11 +205,16 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
                 title: "Token limit exhausted",
+                isFromWilcoAndTrackingScreen: true,
+                buttonText: "Buy Token",
                 message:
                     "Your token limit has been exhausted. Please purchase a subscription.",
-                navigateTo: SubscriptionPlanDetailScreen(
-                  isComeFromSignup: false,
-                ),
+                onGoToActionBlock: () {
+                  cubit.openAddOnPacksBottomSheet(
+                    context,
+                    AddOnPackType.tokensOnly,
+                  );
+                },
               );
 
               break;
@@ -218,13 +223,17 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
                 title: "Credit limit exhausted",
+                isFromWilcoAndTrackingScreen: true,
+                buttonText: "Buy Credits",
                 message:
                     "Your credit limit has been exhausted. Please purchase a subscription.",
-                navigateTo: SubscriptionPlanDetailScreen(
-                  isComeFromSignup: true,
-                ),
+                onGoToActionBlock: () {
+                  cubit.openAddOnPacksBottomSheet(
+                    context,
+                    AddOnPackType.creditsOnly,
+                  );
+                },
               );
-
               break;
 
             case ChatResponseStatus.accessTokenExpired:
@@ -381,7 +390,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                         ),
 
                                         constraints: BoxConstraints(
-                                          maxWidth: MediaQuery.of(context).size.width ,
+                                          maxWidth: MediaQuery.of(
+                                            context,
+                                          ).size.width,
                                         ),
 
                                         decoration: isUser

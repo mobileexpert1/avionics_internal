@@ -1,6 +1,7 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../Constants/constantImages.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import 'AircraftCategoryModel.dart';
 
 class AircraftCategoryCard extends StatelessWidget {
@@ -41,11 +42,9 @@ class AircraftCategoryCard extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 category.letter,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                ),
+                style: AppTextStyles.medium(
+                  19,
+                ).copyWith(height: 1.4, color: Colors.white),
               ),
             ),
 
@@ -54,12 +53,9 @@ class AircraftCategoryCard extends StatelessWidget {
             Expanded(
               child: Text(
                 category.title,
-                style: const TextStyle(
-                  color: Color(0xff25235D),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  height: 1.15,
-                ),
+                style: AppTextStyles.bold(
+                  15,
+                ).copyWith(height: 1.4, color: AppColors.primaryDark),
               ),
             ),
 
@@ -68,15 +64,26 @@ class AircraftCategoryCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  "${category.unlockedCount}/${category.totalCount}",
-                  style: const TextStyle(
-                    color: Color(0xff4C9BE8),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "${category.unlockedCount}",
+
+                        style: AppTextStyles.medium(
+                          15,
+                        ).copyWith(color: AppColors.primaryBlue),
+                      ),
+
+                      TextSpan(
+                        text: "/${category.totalCount}",
+                        style: AppTextStyles.medium(
+                          15,
+                        ).copyWith(color: AppColors.primaryDark),
+                      ),
+                    ],
                   ),
                 ),
-
                 const Spacer(),
 
                 Stack(
@@ -93,10 +100,10 @@ class AircraftCategoryCard extends StatelessWidget {
                     ),
 
                     Positioned(
-                      right: 10,
-                      top: -20,
+                      right: 8,
+                      top: -8,
                       child: Image.asset(
-                        CommonUi.setPngImage(AssetsPath.carFollowImage),
+                        category.image,
                         width: 90,
                         height: 60,
                         fit: BoxFit.contain,

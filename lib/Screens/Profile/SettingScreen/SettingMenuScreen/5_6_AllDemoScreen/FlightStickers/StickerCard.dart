@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../Constants/AppColors.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import 'StickerModel.dart';
 
 class StickerCard extends StatelessWidget {
@@ -45,20 +47,16 @@ class StickerCard extends StatelessWidget {
                   children: [
                     Text(
                       sticker.brand,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff23235B),
-                      ),
+                      style: AppTextStyles.bold(
+                        16,
+                      ).copyWith(height: 1.0, color: AppColors.primaryDark),
                     ),
-                    const SizedBox(height: 1),
+                    const SizedBox(height: 6),
                     Text(
                       sticker.model,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xff23235B),
-                      ),
+                      style: AppTextStyles.bold(
+                        20,
+                      ).copyWith(height: 1.0, color: AppColors.primaryDark),
                     ),
                   ],
                 ),
@@ -72,7 +70,7 @@ class StickerCard extends StatelessWidget {
 
   Widget _buildImage() {
     if (sticker.isUnlocked) {
-      return Image.network(
+      return Image.asset(
         sticker.imageUrl ?? '',
         fit: BoxFit.cover,
         width: double.infinity,
@@ -80,13 +78,9 @@ class StickerCard extends StatelessWidget {
     }
 
     return Container(
-      color: const Color(0xffE5E5E5),
+      color: const Color(0xffD6D6D6),
       child: Center(
-        child: Icon(
-          Icons.airplanemode_active,
-          size: 60,
-          color: Colors.white.withOpacity(.8),
-        ),
+        child: Image.asset("assets/dummyPictures/7777.png", fit: BoxFit.cover),
       ),
     );
   }

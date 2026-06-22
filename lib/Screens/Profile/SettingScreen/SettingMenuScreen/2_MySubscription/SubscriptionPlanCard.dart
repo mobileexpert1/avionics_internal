@@ -385,7 +385,9 @@ class SubscriptionPlanCard extends StatelessWidget {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
-                    backgroundColor: AppColors.primaryBlue,
+                    backgroundColor: (isPremiumPlan
+                        ? AppColors.white
+                        : AppColors.primaryBlue),
 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

@@ -12,8 +12,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../../Helpers/NoInternetDialog.dart';
 import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
+import '../../../home/homeBloc/home_cubit.dart';
 import 'SubscriptionBuyPlanRepository.dart';
 import 'SubscriptionBuyPlanState.dart';
 
@@ -381,7 +383,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     emit(state.copyWith(consumablePurchased: false));
   }
 
-  Future<void> buyConsumable() async {
+  Future<void> buyConsumable(BuildContext context) async {
     final package = state.selectedConsumablePackage;
 
     if (package == null) {
@@ -400,7 +402,30 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         "${package.storeProduct.identifier}",
       );
 
-      emit(state.copyWith(loading: false, consumablePurchased: true));
+      Future.delayed(const Duration(seconds: 2), () async {
+        print(
+          "Before tokenAlreadyAdded-=-=-${CreditManager().tokenAlreadyAdded}",
+        );
+        print(
+          "Before CreditAlreadyAdded-=-=-${CreditManager().creditAlreadyAdded}",
+        );
+
+        final response = await HomeCubit().fetchHomeData(context);
+
+        print(
+          "After tokenAlreadyAdded-=-=-${CreditManager().tokenAlreadyAdded}",
+        );
+        print(
+          "After CreditAlreadyAdded-=-=-${CreditManager().creditAlreadyAdded}",
+        );
+
+        if (CreditManager().tokenAlreadyAdded <=
+                response!.currentPlan!.alreadyTotalAddOnToken ||
+            CreditManager().creditAlreadyAdded <=
+                response.currentPlan!.alreadyTotalAddOnCredit) {
+          emit(state.copyWith(loading: false, consumablePurchased: true));
+        }
+      });
     } on PlatformException catch (e) {
       if (!isClosed) {
         emit(state.copyWith(loading: false, consumablePurchased: false));

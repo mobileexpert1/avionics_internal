@@ -59,7 +59,7 @@ class StickerCubit extends Cubit<StickerState> {
         brand: 'Airbus',
         model: model,
         isUnlocked: unlocked,
-        imageUrl: 'https://picsum.photos/300/200?random=$index',
+        imageUrl: 'assets/dummyPictures/0000.png',
       );
     });
   }

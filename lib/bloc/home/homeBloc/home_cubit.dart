@@ -18,7 +18,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   int get selectedIndex => _selectedIndex;
 
-  Future<UserDetails?> fetchHomeData(BuildContext context) async {
+  Future<HomeResponse?> fetchHomeData(BuildContext context) async {
     if (await InternetConnection().hasInternetAccess) {
       emit(HomeLoading());
       try {
@@ -49,7 +49,7 @@ class HomeCubit extends Cubit<HomeState> {
             ),
           );
         }
-        return data.userDetails;
+        return data;
       } catch (e) {
         SessionCommonTokenError.handleUnauthorizedError(context, e);
         final errorMessage = e.toString().toLowerCase();

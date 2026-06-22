@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Constants/ApiClass/api_service.dart';
@@ -6,7 +6,7 @@ import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
-import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'flight_key_values_model.dart';
 import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
@@ -59,16 +59,18 @@ class FlightRepository {
         flightLimit = 1;
       } else {
         if (CreditManager().remainingCredit <= 8) {
-          Future.microtask(() {
-            AlertHelperForSubsPopup.showSubscriptionEndAlert(
-              context: context,
-              title: "Subscription Required",
-              message: "Credits finished. Please buy subscription.",
-              navigateTo: const SubscriptionPlanDetailScreen(
-                isComeFromSignup: true,
-              ),
-            );
-          });
+          AlertHelperForSubsPopup.showSubscriptionEndAlert(
+            isFromTrackingClass: false,
+            context: context,
+            title: "Credits limit exhausted",
+            isFromWilcoAndTrackingScreen: true,
+            buttonText: "Buy Credits",
+            message:
+                "Your credits limit has been exhausted. Please purchase a extra credits.",
+            onGoToActionBlock: () {
+              openAddOnPacksBottomSheet(context, AddOnPackType.creditsOnly);
+            },
+          );
           return [];
         }
       }
@@ -122,6 +124,26 @@ class FlightRepository {
     }
   }
 
+  Future<void> openAddOnPacksBottomSheet(
+    BuildContext context,
+    AddOnPackType packType,
+  ) async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.80,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: AddOnPacksScreen(packType: packType),
+          ),
+        );
+      },
+    );
+  }
+
   Future<Map<String, dynamic>?> getFlightDetails({
     required String flightId,
     required String fromDateTime,
@@ -132,12 +154,16 @@ class FlightRepository {
     if (CreditManager().remainingCredit <= 2) {
       Future.microtask(() {
         AlertHelperForSubsPopup.showSubscriptionEndAlert(
+          isFromTrackingClass: false,
           context: context,
-          title: "Subscription Required",
-          message: "Credits finished. Please buy subscription.",
-          navigateTo: const SubscriptionPlanDetailScreen(
-            isComeFromSignup: true,
-          ),
+          title: "Credits limit exhausted",
+          isFromWilcoAndTrackingScreen: true,
+          buttonText: "Buy Credits",
+          message:
+              "Your credits limit has been exhausted. Please purchase a extra credits.",
+          onGoToActionBlock: () {
+            openAddOnPacksBottomSheet(context, AddOnPackType.creditsOnly);
+          },
         );
       });
       return null;
@@ -265,19 +291,14 @@ class FlightRepository {
     }
   }
 
-  Future<FlightResponse?> getFlightPositions(
-    String flightNumber,
-  ) async {
+  Future<FlightResponse?> getFlightPositions(String flightNumber) async {
     String url =
         "${MapFlightAircraftSectionConstant.baseUrlForFlightPosition}90,"
         "-90,-180,180&&flights=$flightNumber";
     final uri = Uri.parse(url);
     try {
       final jsonData =
-          await ApiService.get(
-                url: uri,
-                isForFlightRadar: true,
-              )
+          await ApiService.get(url: uri, isForFlightRadar: true)
               as Map<String, dynamic>;
       return FlightResponse.fromJson(jsonData);
     } catch (e) {
@@ -285,8 +306,7 @@ class FlightRepository {
     }
   }
 
-  Future<FlightKeyValuesModel> getMapKeyValueFromServer(
-  ) async {
+  Future<FlightKeyValuesModel> getMapKeyValueFromServer() async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
@@ -294,10 +314,7 @@ class FlightRepository {
     );
     try {
       final jsonData =
-          await ApiService.get(
-                url: uri,
-                isForFlightRadar: true,
-              )
+          await ApiService.get(url: uri, isForFlightRadar: true)
               as Map<String, dynamic>;
       return FlightKeyValuesModel.fromJson(jsonData);
     } catch (e) {
@@ -331,10 +348,7 @@ class FlightRepository {
         "&categories=$categoriesParam",
       );
 
-      final response = await ApiService.get(
-        url: url,
-        isForFlightRadar: true,
-      );
+      final response = await ApiService.get(url: url, isForFlightRadar: true);
       final flightResponse = FlightResponse.fromJson(response);
       return flightResponse.flights;
     } catch (e) {

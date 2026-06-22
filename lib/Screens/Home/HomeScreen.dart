@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
@@ -16,12 +17,13 @@ import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_repository.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../MapSection/FlightMapScreen.dart';
-import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
 import '../WilcoBoat/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
@@ -404,11 +406,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Text(
                   'See All',
-                  style: AppTextStyles.bold(16)
-                      .copyWith(
-                        height: kIsWeb ? 0.8 : 1.0,
-                        color: AppColors.black,
-                      ),
+                  style: AppTextStyles.bold(16).copyWith(
+                    height: kIsWeb ? 0.8 : 1.0,
+                    color: AppColors.black,
+                  ),
                 ),
               ),
             ),
@@ -494,13 +495,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (mounted) {
                     Future.microtask(() {
                       AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                        isFromTrackingClass: false,
                         context: context,
-                        title: "Subscription Required",
-                        message: message,
-                        navigateTo: const SubscriptionPlanDetailScreen(
-                          isComeFromSignup: true,
-                        ),
+                        title: "Credits limit exhausted",
+                        isFromWilcoAndTrackingScreen: true,
+                        buttonText: "Buy Credits",
+                        message:
+                            "Your credits limit has been exhausted. Please purchase a extra credits.",
+                        onGoToActionBlock: () {
+                          FlightRepository().openAddOnPacksBottomSheet(
+                            context,
+                            AddOnPackType.creditsOnly,
+                          );
+                        },
                       );
+                      // AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                      //   context: context,
+                      //   title: "Subscription Required",
+                      //   message: message,
+                      //   navigateTo: const SubscriptionPlanDetailScreen(
+                      //     isComeFromSignup: true,
+                      //   ),
+                      // );
                     });
                   }
                 },
@@ -579,13 +595,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (mounted) {
                     Future.microtask(() {
                       AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                        isFromTrackingClass: false,
                         context: context,
-                        title: "Subscription Required",
-                        message: message,
-                        navigateTo: const SubscriptionPlanDetailScreen(
-                          isComeFromSignup: true,
-                        ),
+                        title: "Credits limit exhausted",
+                        isFromWilcoAndTrackingScreen: true,
+                        buttonText: "Buy Credits",
+                        message:
+                            "Your credits limit has been exhausted. Please purchase a extra credits.",
+                        onGoToActionBlock: () {
+                          FlightRepository().openAddOnPacksBottomSheet(
+                            context,
+                            AddOnPackType.creditsOnly,
+                          );
+                        },
                       );
+                      // AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                      //   context: context,
+                      //   title: "Subscription Required",
+                      //   message: message,
+                      //   navigateTo: const SubscriptionPlanDetailScreen(
+                      //     isComeFromSignup: true,
+                      //   ),
+                      // );
                     });
                   }
                 },

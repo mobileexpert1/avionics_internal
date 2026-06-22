@@ -17,6 +17,7 @@ import '../../Helpers/NoInternetDialog.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
 import 'AircraftStationList/aircraft_Station_List_Repository.dart';
@@ -512,17 +513,30 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
             Future.microtask(() {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
-                isFromTrackingClass: isFromTrackingClass,
+                isFromTrackingClass: false,
                 context: context,
-                title: "Subscription Required",
-                message: message,
-                navigateTo: SubscriptionPlanDetailScreen(
-                  isComeFromSignup: true,
-                ),
-                onGoToFirstTab: () {
-                  RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
+                title: "Credits limit exhausted",
+                isFromWilcoAndTrackingScreen: true,
+                buttonText: "Buy Credits",
+                message:
+                "Your credits limit has been exhausted. Please purchase a extra credits.",
+                onGoToActionBlock: () {
+                  FlightRepository().openAddOnPacksBottomSheet(context, AddOnPackType.creditsOnly);
                 },
               );
+
+              // AlertHelperForSubsPopup.showSubscriptionEndAlert(
+              //   isFromTrackingClass: isFromTrackingClass,
+              //   context: context,
+              //   title: "Subscription Required",
+              //   message: message,
+              //   navigateTo: SubscriptionPlanDetailScreen(
+              //     isComeFromSignup: true,
+              //   ),
+              //   onGoToFirstTab: () {
+              //     RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
+              //   },
+              // );
             });
           },
         );

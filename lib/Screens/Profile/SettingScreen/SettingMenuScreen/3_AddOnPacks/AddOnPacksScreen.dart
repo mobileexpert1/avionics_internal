@@ -461,7 +461,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
 
                               context
                                   .read<SubscriptionBuyPlanCubit>()
-                                  .buyConsumable();
+                                  .buyConsumable(context);
 
                               AnalyticsService.instance.buttonPressed(
                                 FirebaseEvents.subscriptionScreen,

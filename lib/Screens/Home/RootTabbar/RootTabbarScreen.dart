@@ -1,6 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Screens/Games/MainGameScreen/GameScreen.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,9 +10,10 @@ import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../../bloc/MapSection/flight_map_repository.dart';
 import '../../MapSection/FlightMapScreen.dart';
-import '../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Profile/ProfileScreen.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../../WilcoBoat/ChatBotScreen.dart';
 import '../HomeScreen.dart';
 
@@ -76,13 +76,29 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
           if (mounted) {
             Future.microtask(() {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                isFromTrackingClass: false,
                 context: context,
-                title: "Subscription Required",
-                message: message,
-                navigateTo: const SubscriptionPlanDetailScreen(
-                  isComeFromSignup: true,
-                ),
+                title: "Credits limit exhausted",
+                isFromWilcoAndTrackingScreen: true,
+                buttonText: "Buy Credits",
+                message:
+                    "Your credits limit has been exhausted. Please purchase a extra credits.",
+                onGoToActionBlock: () {
+                  FlightRepository().openAddOnPacksBottomSheet(
+                    context,
+                    AddOnPackType.creditsOnly,
+                  );
+                },
               );
+
+              // AlertHelperForSubsPopup.showSubscriptionEndAlert(
+              //   context: context,
+              //   title: "Subscription Required",
+              //   message: message,
+              //   navigateTo: const SubscriptionPlanDetailScreen(
+              //     isComeFromSignup: true,
+              //   ),
+              // );
             });
           }
         },
@@ -111,7 +127,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
       bottomNavigationBar: _isLoading
           ? null
           : Container(
-              height:95,
+              height: 95,
               color: Colors.white,
               child: Row(
                 children: [

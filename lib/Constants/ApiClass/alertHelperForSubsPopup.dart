@@ -6,7 +6,7 @@ class AlertHelperForSubsPopup {
     required BuildContext context,
     required String title,
     required String message,
-    required Widget navigateTo,
+    Widget? navigateTo,
     bool? isFromTrackingClass,
     String buttonText = "Go to Subscription",
     Color buttonTextColor = AppColors.customBottomEnabledColour,
@@ -105,10 +105,11 @@ class AlertHelperForSubsPopup {
                     : null,
                 onPressed: () {
                   Navigator.of(ctx).pop();
-
-                  Navigator.of(
-                    context,
-                  ).push(MaterialPageRoute(builder: (_) => navigateTo));
+                  if (navigateTo != null) {
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => navigateTo));
+                  }
                 },
                 child: Text(
                   buttonText,

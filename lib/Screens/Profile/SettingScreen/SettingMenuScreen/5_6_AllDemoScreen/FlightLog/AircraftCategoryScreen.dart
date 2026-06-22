@@ -85,9 +85,8 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
                               builder: (_) => StickerUnlockedDialog(
                                 category: state.categories[index],
                                 stickerName: "Airbus A318",
-                                imagePath: CommonUi.setPngImage(
-                                  AssetsPath.carFollowImage,
-                                ),
+                                imagePath:
+                                    "assets/dummyPictures/MainLogoAirplane.png",
                                 onTap: () {
                                   AppNavigator.push(
                                     context,
