@@ -11,7 +11,7 @@ class AirCraftRepository {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiFunctionUrlAirplaneConstant.airCraftDetail +
+          ApiFunctionUrlAirplaneConstant.aircraftDetail +
           airCraftId,
     );
     try {
@@ -40,7 +40,7 @@ class AirCraftRepository {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiFunctionUrlAirplaneConstant.airCraftDetailICAOCode +
+          ApiFunctionUrlAirplaneConstant.aircraftDetailIcaoCode +
           ICAOCode,
     );
     try {

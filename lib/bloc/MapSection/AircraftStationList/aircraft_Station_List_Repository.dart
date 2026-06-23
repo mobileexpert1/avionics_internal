@@ -14,7 +14,7 @@ class AircraftStationListRepository {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-      "${ApiFunctionUrlMapSectionConstant.airCraftListNew}",
+      "${ApiFunctionUrlMapSectionConstant.aircraftListNew}",
     ).replace(queryParameters: {'longitude': longitude, 'latitude': latitude});
 
     try {

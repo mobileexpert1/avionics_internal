@@ -11,7 +11,7 @@ void main() {
       final url = Uri.parse(
         ApiBaseUrlConstant.baseUrl +
             ApiFunctionUrlConstant.userService +
-            ApiServiceUrlConstant.resetPassword,
+            ApiServiceUrlConstant.resetPasswordEndpoint,
       );
 
       final response = await http.post(

@@ -104,7 +104,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 appBar: CustomAppBar(
                   isClearBackgroundColour: true,
                   title: widget.isComeFromSignup == true
-                      ? ConstantStrings.appBarTitleOTPScreen
+                      ? ConstantStrings.appBarTitleOtpScreen
                       : ConstantStrings.appBarTitleForgotPwd,
                   leftButton: IconButton(
                     icon: SvgPicture.asset(
@@ -132,7 +132,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            ConstantStrings.Otptitle,
+                            ConstantStrings.otpTitle,
                             style: TextStyle(color: Colors.grey.shade600),
                           ),
                         ),

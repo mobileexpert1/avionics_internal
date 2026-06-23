@@ -12,7 +12,7 @@ class AvtarRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.setAvtar,
+          ApiServiceUrlConstant.setAvatar,
     );
 
     try {
@@ -33,7 +33,7 @@ class AvtarRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.setAvtarWhileSignup,
+          ApiServiceUrlConstant.setAvatarWhileSignup,
     );
 
     try {

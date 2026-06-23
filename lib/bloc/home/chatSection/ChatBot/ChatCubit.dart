@@ -122,6 +122,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
       backgroundColor: Colors.transparent,
       builder: (_) {
         return FractionallySizedBox(

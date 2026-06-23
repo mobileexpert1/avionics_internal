@@ -16,7 +16,7 @@ void main() {
       final url = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"
             "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-            "${ApiFunctionUrlAirplaneConstant.airCraftDetail}$aircraftId",
+            "${ApiFunctionUrlAirplaneConstant.aircraftDetail}$aircraftId",
       );
 
       final response = await http.get(
@@ -45,7 +45,7 @@ void main() {
       final url = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"
             "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-            "${ApiFunctionUrlAirplaneConstant.airCraftDetailICAOCode}$icaoCode",
+            "${ApiFunctionUrlAirplaneConstant.aircraftDetailIcaoCode}$icaoCode",
       );
 
       final response = await http.get(

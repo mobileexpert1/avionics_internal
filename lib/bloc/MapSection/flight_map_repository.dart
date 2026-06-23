@@ -19,7 +19,7 @@ class FlightRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiFunctionUrlAirplaneConstant.airCraftFlightCredit,
+          ApiFunctionUrlAirplaneConstant.aircraftFlightCredit,
     );
     try {
       final response = await ApiService.post(
@@ -131,6 +131,7 @@ class FlightRepository {
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
       backgroundColor: Colors.transparent,
       builder: (_) {
         return FractionallySizedBox(

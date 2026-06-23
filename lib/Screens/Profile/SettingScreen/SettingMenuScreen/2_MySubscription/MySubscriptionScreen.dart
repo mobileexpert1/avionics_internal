@@ -54,10 +54,11 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
       backgroundColor: Colors.transparent,
       builder: (_) {
         return FractionallySizedBox(
-          heightFactor: 0.55,
+          heightFactor: 0.70,
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20),

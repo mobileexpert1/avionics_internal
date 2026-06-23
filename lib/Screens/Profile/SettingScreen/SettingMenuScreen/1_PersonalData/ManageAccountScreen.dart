@@ -114,7 +114,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           setState(() {
                             isTextFiledEnabled = true;
                             isRightButtonShow = false;
-                            buttonBottomTitle = ConstantStrings.saveTitle;
+                            buttonBottomTitle = ConstantStrings.save;
                           });
                         },
                       ),
@@ -157,7 +157,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           ),
                           const SizedBox(height: 15),
                           CustomTextField(
-                            label: ConstantStrings.emailLabel,
+                            label: ConstantStrings.email,
                             controller: emailController,
                             errorText: state.emailError,
                             enabled: false,
@@ -183,7 +183,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                 icon: const SizedBox(width: 0),
                                 isEnabled:
                                     (buttonBottomTitle ==
-                                        ConstantStrings.saveTitle)
+                                        ConstantStrings.save)
                                     ? state.isButtonEnabled
                                     : !isSocialLogin && state.isButtonEnabled,
                                 onPressed: () async {
@@ -195,7 +195,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                       disableSwipeBack: true,
                                     );
                                   } else if (buttonBottomTitle ==
-                                      ConstantStrings.saveTitle) {
+                                      ConstantStrings.save) {
                                     final cubit = context
                                         .read<ManageaccCubit>();
                                     if (cubit.validateFields()) {

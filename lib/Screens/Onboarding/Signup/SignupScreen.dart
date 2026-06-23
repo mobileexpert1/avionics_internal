@@ -71,7 +71,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                   isClearBackgroundColour: true,
-                  title: ConstantStrings.CreateAccount,
+                  title: ConstantStrings.createAccount,
                   leftButton: IconButton(
                     icon: SvgPicture.asset(
                       CommonUi.setSvgImage(AssetsPath.backArrowButton),
@@ -144,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               selector: (state) => state.emailError,
                               builder: (_, error) {
                                 return CustomTextField(
-                                  label: ConstantStrings.emailLabel,
+                                  label: ConstantStrings.email,
                                   controller: emailController,
                                   errorText: error,
                                   onChanged: (val) => context
@@ -160,7 +160,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               selector: (state) => state.passwordError,
                               builder: (_, error) {
                                 return CustomTextField(
-                                  label: ConstantStrings.passwordLabel,
+                                  label: ConstantStrings.password,
                                   controller: passwordController,
                                   errorText: error,
                                   obscureText: true,

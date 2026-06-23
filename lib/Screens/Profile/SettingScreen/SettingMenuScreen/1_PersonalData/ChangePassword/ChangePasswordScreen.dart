@@ -169,7 +169,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                                   ? Colors.white
                                                   : Colors.grey.shade600,
                                             ),
-                                        title: ConstantStrings.saveTitle,
+                                        title: ConstantStrings.save,
                                         backgroundColor: isButtonEnabled
                                             ? AppColors.primaryValueColour
                                             : AppColors

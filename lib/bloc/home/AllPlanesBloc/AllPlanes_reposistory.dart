@@ -42,7 +42,7 @@ class AllPlanesReposistory {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiServiceUrlAirplaneConstant.savUnSAvePlane,
+          ApiServiceUrlAirplaneConstant.saveUnSavePlane,
     );
 
     try {

@@ -60,7 +60,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: ConstantStrings.avtarTRole,
+        title: ConstantStrings.avatarRole,
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(

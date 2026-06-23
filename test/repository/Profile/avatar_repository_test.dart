@@ -41,7 +41,7 @@ void main() {
       final url = Uri.parse(
         ApiBaseUrlConstant.baseUrl +
             ApiFunctionUrlConstant.userService +
-            ApiServiceUrlConstant.setAvtar,
+            ApiServiceUrlConstant.setAvatar,
       );
 
       final response = await http.post(
@@ -71,7 +71,7 @@ void main() {
       final url = Uri.parse(
         ApiBaseUrlConstant.baseUrl +
             ApiFunctionUrlConstant.userService +
-            ApiServiceUrlConstant.setAvtarWhileSignup,
+            ApiServiceUrlConstant.setAvatarWhileSignup,
       );
 
       final response = await http.post(

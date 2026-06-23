@@ -19,7 +19,7 @@ class UnitSelectionScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: ConstantStrings.unitsMeasurmentsTitle,
+        title: ConstantStrings.unitsMeasurementsTitle,
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(

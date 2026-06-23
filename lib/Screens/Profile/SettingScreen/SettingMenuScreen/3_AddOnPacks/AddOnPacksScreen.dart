@@ -2,7 +2,6 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../CustomFiles/CustomBottomButton.dart';
@@ -267,8 +266,8 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                                         child: Text(
                                                           mainTabs[index],
                                                           style:
-                                                              AppTextStyles.medium(
-                                                                13,
+                                                              AppTextStyles.regular(
+                                                                16,
                                                               ).copyWith(
                                                                 color:
                                                                     selectedTab ==
@@ -358,7 +357,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 10,
-                                      color: Colors.black.withOpacity(0.15),
+                                      color: Colors.black.withValues(alpha: 0.15),
                                       offset: const Offset(0, 3),
                                     ),
                                   ],
@@ -423,7 +422,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                           const SizedBox(height: 4),
 
                                           Text(
-                                            "Small Pack",
+                                            package.storeProduct.description,
                                             style: AppTextStyles.regular(
                                               14,
                                             ).copyWith(color: Colors.grey),

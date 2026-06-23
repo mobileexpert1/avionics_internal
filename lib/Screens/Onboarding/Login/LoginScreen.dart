@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               buildWhen: (p, c) => p.emailError != c.emailError,
                               builder: (context, state) {
                                 return CustomTextField(
-                                  label: ConstantStrings.emailLabel,
+                                  label: ConstantStrings.email,
                                   controller: emailController,
                                   errorText: state.emailError,
                                   onChanged: (val) => context
@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   p.passwordError != c.passwordError,
                               builder: (context, state) {
                                 return CustomTextField(
-                                  label: ConstantStrings.passwordLabel,
+                                  label: ConstantStrings.password,
                                   controller: passwordController,
                                   obscureText: true,
                                   errorText: state.passwordError,

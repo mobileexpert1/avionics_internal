@@ -17,7 +17,7 @@ class SubscriptionBuyPlanRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.verfiyPostSubscrition,
+          ApiServiceUrlConstant.verifyPostSubscription,
     );
     try {
       final response = await ApiService.post(
@@ -42,7 +42,7 @@ class SubscriptionBuyPlanRepository {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.getSubscritionList,
+          ApiServiceUrlConstant.getSubscriptionList,
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
@@ -57,7 +57,7 @@ class SubscriptionBuyPlanRepository {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.getSubscritionList +
+          ApiServiceUrlConstant.getSubscriptionList +
           ApiServiceUrlConstant.checkoutSession,
     );
     try {

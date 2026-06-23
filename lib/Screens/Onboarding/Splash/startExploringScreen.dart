@@ -135,7 +135,7 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                 );
                               },
                               child: const Text(
-                                ConstantStrings.CreateAccount,
+                                ConstantStrings.createAccount,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,

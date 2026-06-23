@@ -319,7 +319,7 @@ class ChatRepositoryImpl implements ChatRepository {
     int page = 1;
     while (true) {
       final uri = Uri.parse(
-        "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlChatConstant.chatService}/$sessionId",
+        "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlConstant.chatHistorySession}/$sessionId",
       );
 
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
