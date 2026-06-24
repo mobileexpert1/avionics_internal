@@ -223,12 +223,17 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
             gameData.categoryTypes == null ||
             gameData.categoryTypes!.isEmpty) {
           print('No categories found in gameData');
-          emit(
-            state.copyWith(
-              isLoading: false,
-              errorMessage: 'No questions available from API',
-            ),
+          AppSnackBar.custom(
+            context,
+            message:
+                'No questions available at this time. Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
           );
+          Future.delayed(const Duration(seconds: 3), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
           return;
         }
 
@@ -329,6 +334,22 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         startTimer(context);
       } catch (e, stackTrace) {
         print('Error loading questions: $e, StackTrace: $stackTrace');
+        if (e.toString().contains(
+          "400 Sorry question not available try again later",
+        )) {
+          AppSnackBar.custom(
+            context,
+            message:
+                'No questions available at this time. Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
+          );
+          Future.delayed(const Duration(seconds: 4), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
+          return;
+        }
         emit(
           state.copyWith(
             isLoading: false,
@@ -356,12 +377,17 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
             gameData.categoryTypes == null ||
             gameData.categoryTypes!.isEmpty) {
           print('No categories found in gameData');
-          emit(
-            state.copyWith(
-              isLoading: false,
-              errorMessage: 'No questions available from API',
-            ),
+          AppSnackBar.custom(
+            context,
+            message:
+                'No questions available at this time. Please wait while more questions are loading. Try again later.',
+            svgAsset: '',
           );
+          Future.delayed(const Duration(seconds: 4), () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
           return;
         }
 

@@ -97,7 +97,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
       zoomToMousePosition: false,
       isBackgroundFollowingSphereRotation: true,
       background: Image.asset('assets/google_earth_map/2k_stars.jpg').image,
-      surface: Image.asset('assets/google_earth_map/2k_earth-day.jpg').image,
+      surface: Image.asset('assets/google_earth_map/1_2k_earth-day.jpg').image,
       nightSurface: Image.asset(
         'assets/google_earth_map/2k_earth-night.jpg',
       ).image,

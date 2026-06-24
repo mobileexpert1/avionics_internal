@@ -189,7 +189,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                     alignment: Alignment.center,
                                     children: [
                                       Text(
-                                        'Buy Add-ons',
+                                        'Add-ons',
                                         style: AppTextStyles.bold(
                                           22,
                                         ).copyWith(color: Colors.white),
@@ -326,6 +326,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                 : selectedTab == 0
                                 ? "Choose a Credit Pack"
                                 : "Choose a Token Pack",
+                            style: AppTextStyles.semiBold(18),
                           ),
                         ),
                       ),
@@ -401,9 +402,12 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                //returnPackageName(
-                                                package.storeProduct.title,
-                                                //),
+                                                package.storeProduct.title
+                                                    .replaceAll(
+                                                      "(avioflai)",
+                                                      "",
+                                                    )
+                                                    .trim(),
                                                 style: AppTextStyles.semiBold(
                                                   16,
                                                 ),
@@ -486,115 +490,3 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
     );
   }
 }
-
-// String returnPackageName(String inputName) {
-//   final name = inputName.toLowerCase();
-//   if (name.contains("credit")) {
-//     return "10,000 Credits";
-//   } else {
-//     return "100,000 Tokens";
-//   }
-// }
-
-// class _ConsumablePackageCard extends StatelessWidget {
-//   final Package package;
-//   final bool isLoading;
-//   final bool isBlocked;
-//
-//   const _ConsumablePackageCard({
-//     required this.package,
-//     required this.isLoading,
-//     required this.isBlocked,
-//   });
-//
-//   String get _packDescription {
-//     final title = package.storeProduct.title.toLowerCase();
-//     if (title.contains('token')) return 'Extra Token 500';
-//     return 'Extra Credits 500';
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 15),
-//       child: Column(
-//         children: [
-//           // ── Card ─────────────────────────────────────────────────────────
-//           Expanded(
-//             child: ClipPath(
-//               clipper: CardWithBadgeClipper(),
-//               child: Container(
-//                 color: AppColors.accentPurple,
-//                 padding: const EdgeInsets.fromLTRB(22, 25, 22, 22),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       package.storeProduct.title,
-//                       style: AppTextStyles.semiBold(
-//                         18,
-//                       ).copyWith(height: 1.0, color: Colors.white),
-//                     ),
-//                     const SizedBox(height: 15),
-//
-//                     // Price
-//                     Text(
-//                       package.storeProduct.priceString,
-//                       style: AppTextStyles.semiBold(
-//                         26,
-//                       ).copyWith(height: 1.0, color: Colors.white),
-//                     ),
-//                     const SizedBox(height: 13),
-//
-//                     // Pack description
-//                     Text(
-//                       _packDescription,
-//                       style: AppTextStyles.regular(
-//                         14,
-//                       ).copyWith(height: 1.0, color: Colors.white),
-//                     ),
-//                     const SizedBox(height: 20),
-//
-//                     FeatureRow(text: 'One-time purchase, no subscription'),
-//                     FeatureRow(text: 'Credits added instantly to your account'),
-//                     FeatureRow(text: 'Never expire'),
-//                     FeatureRow(text: 'Secure payment'),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//
-//           const SizedBox(height: 20),
-//
-//           // ── Buy button ────────────────────────────────────────────────────
-//           if (!isBlocked)
-//             CustomBottomButton(
-//               fontStyle: AppTextStyles.semiBold(
-//                 18,
-//               ).copyWith(height: 1.0, color: Colors.white),
-//               backgroundColor: AppColors.primaryDark,
-//               textColor: Colors.white,
-//               title: 'Buy ${package.storeProduct.title}',
-//               icon: const SizedBox(),
-//               isEnabled: !isLoading,
-//               onPressed: () {
-//                 context
-//                     .read<SubscriptionBuyPlanCubit>()
-//                     .selectConsumablePackage(package);
-//
-//                 context.read<SubscriptionBuyPlanCubit>().buyConsumable();
-//
-//                 AnalyticsService.instance.buttonPressed(
-//                   FirebaseEvents.subscriptionScreen,
-//                   FirebaseEvents.goPremiumSubscriptionButton,
-//                 );
-//               },
-//             ),
-//
-//           const SizedBox(height: 20),
-//         ],
-//       ),
-//     );
-//   }
-// }

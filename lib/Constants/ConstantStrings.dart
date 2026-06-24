@@ -172,12 +172,18 @@ class SubscriptionTexts {
 class ApiBaseUrlConstant {
   const ApiBaseUrlConstant._();
 
-  static const String _prodUrl = "https://avionica.csdevhub.com/";
-  static const String _stagingUrl = "http://16.59.198.147/";
+  static const String _prodUrl =
+      "https://uat.avioflai.com/"; // Client Url for testing
+  static const String _devUrl =
+      "https://avionica.csdevhub.com/"; // Cs Url for development.
+
+  static const String prodChatUrl =
+      "uat.avioflai.com"; // Client Url for testing
+  static const String devChatUrl =
+      "avionica.csdevhub.com"; // Cs Url for development.
 
   static const String baseUrl = _prodUrl;
-
-  static const String stagingUrlForDebugOnly = _stagingUrl;
+  static const String baseChatUrl = prodChatUrl;
 }
 
 class ApiFunctionUrlConstant {
@@ -204,7 +210,7 @@ class ApiServiceUrlConstant {
 
   static const String authFetchMapKey = 'auth/secret/avioflai/fr24';
   static const String authFetchGoogleKey =
-      'auth/secret/avioflai-google-maps-key';
+      'auth/secret/avioflai-google-maps';
   static const String authRefreshToken = 'auth/refresh';
 
   static const String checkEmail = 'auth/check-email';
