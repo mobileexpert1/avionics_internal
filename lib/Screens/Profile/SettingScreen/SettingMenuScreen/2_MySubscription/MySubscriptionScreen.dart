@@ -60,9 +60,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
         return FractionallySizedBox(
           heightFactor: 0.70,
           child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: const AddOnPacksScreen(packType: AddOnPackType.both),
           ),
         );
@@ -99,21 +97,12 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
             final current = state.subscriptionData?.data.current;
 
-            // final getCreditModelCount = current?.addOnPacksModel.fold(
-            //   0,
-            //   (sum, a) => sum + a.credit,
-            // );
-            // final getTokenModelCount = current?.addOnPacksModel.fold(
-            //   0,
-            //   (sum, a) => sum + a.token,
-            // );
-
-            final getCreditModelCount = current?.addOnPacksModel
-                .where((item) => item.credit > 0)
-                .length;
-            final getTokenModelCount = current?.addOnPacksModel
-                .where((item) => item.token > 0)
-                .length;
+            // final getCreditModelCount = current?.addOnPacksModel
+            //     .where((item) => item.credit > 0)
+            //     .length;
+            // final getTokenModelCount = current?.addOnPacksModel
+            //     .where((item) => item.token > 0)
+            //     .length;
 
             final isUpcomingPlan = state.subscriptionData?.data.upcoming;
 
@@ -221,9 +210,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
                             SubscriptionPlanCard(
                               isPremiumPlan: isPremiumPlan,
+                              currentPlan: current,
                               isPlanExpired: isPlanExpired,
-                              isCreditCount: getCreditModelCount ?? 0,
-                              isTokenCount: getTokenModelCount ?? 0,
                               namePlan: namePlan,
                               planPriceWithSymbol: planPriceWithSymbol,
                               expiryDate: expiryDate,
@@ -251,6 +239,12 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 }
                               },
                               onAddOnTap: () async {
+                                if (!canManageSubscription(
+                                  context,
+                                  activeBuyPlatform,
+                                )) {
+                                  return;
+                                }
                                 openAddOnPacksBottomSheet();
                               },
                               onViewCreditsTokensTap: () {
@@ -522,12 +516,6 @@ class BillingHistoryCard extends StatelessWidget {
           "${addOn.currencySymbol} ${addOn.priceInPurchasedCurrency}";
     }
 
-    final String addOnLabel = addOn.credit > 0
-        ? "${addOn.credit} Credits"
-        : addOn.token > 0
-        ? "${addOn.token} Tokens"
-        : "Add-On Pack";
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -536,7 +524,7 @@ class BillingHistoryCard extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                addOnLabel,
+                addOn.planName,
                 style: AppTextStyles.bold(
                   16,
                 ).copyWith(height: 1.0, color: AppColors.black),

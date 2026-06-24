@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../CustomFiles/CustomBottomButton.dart';
@@ -283,10 +284,6 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              // Container(
-                                              //   height: 5,
-                                              //   color: AppColors.extraDarkYellow,
-                                              // ),
                                             ],
                                           );
                                         },
@@ -357,7 +354,9 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 10,
-                                      color: Colors.black.withValues(alpha: 0.15),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.15,
+                                      ),
                                       offset: const Offset(0, 3),
                                     ),
                                   ],
@@ -448,6 +447,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                             backgroundColor: AppColors.primaryDark,
                             textColor: Colors.white,
                             title: 'Continue',
+                            isEnabled: selectedIndex != -1,
                             icon: const SizedBox(),
                             onPressed: () {
                               if (packages.isEmpty) return;

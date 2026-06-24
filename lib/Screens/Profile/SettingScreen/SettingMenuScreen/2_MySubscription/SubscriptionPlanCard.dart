@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
 
 class SubscriptionPlanCard extends StatelessWidget {
   final bool isPremiumPlan;
@@ -15,8 +16,7 @@ class SubscriptionPlanCard extends StatelessWidget {
   final String expiryDate;
   final String isPlanActive;
   final bool showActions;
-  final int isCreditCount;
-  final int isTokenCount;
+  final MySubscriptionItem? currentPlan;
 
   final VoidCallback? onModifyTap;
   final VoidCallback? onAddOnTap;
@@ -28,13 +28,13 @@ class SubscriptionPlanCard extends StatelessWidget {
     required this.isPremiumPlan,
     required this.isPlanExpired,
 
-    required this.isCreditCount,
-    required this.isTokenCount,
-
     required this.namePlan,
     required this.planPriceWithSymbol,
     required this.expiryDate,
     required this.isPlanActive,
+
+    this.currentPlan,
+
     this.showActions = false,
     this.onModifyTap,
     this.onAddOnTap,
@@ -45,6 +45,24 @@ class SubscriptionPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool hasPrice = planPriceWithSymbol.trim().isNotEmpty;
+
+    final addOns = currentPlan?.addOnPacksModel ?? [];
+
+    final creditCounts = getCreditPackageCount(addOns);
+    final tokenCounts = getTokenPackageCount(addOns);
+
+    final addOnItems = <String>[
+      if (creditCounts.small > 0) 'Credit Small Pack × ${creditCounts.small}',
+      if (creditCounts.medium > 0)
+        'Credit Medium Pack × ${creditCounts.medium}',
+      if (creditCounts.large > 0) 'Credit Large Pack × ${creditCounts.large}',
+
+      if (tokenCounts.small > 0) 'Token Small Pack × ${tokenCounts.small}',
+      if (tokenCounts.medium > 0) 'Token Medium Pack × ${tokenCounts.medium}',
+      if (tokenCounts.large > 0) 'Token Large Pack × ${tokenCounts.large}',
+    ];
+
+    final hasAddOns = addOnItems.isNotEmpty;
 
     return Container(
       width: double.infinity,
@@ -261,7 +279,8 @@ class SubscriptionPlanCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 10),
-            if (isCreditCount != 0 || isCreditCount != 0) ...[
+
+            if (hasAddOns) ...[
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(showActions ? 10 : 15),
@@ -270,6 +289,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       height: 35,
@@ -279,44 +299,40 @@ class SubscriptionPlanCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(
-                        size: 20,
                         Icons.add,
+                        size: 20,
                         color: AppColors.black,
                       ),
                     ),
 
                     const SizedBox(width: 12),
 
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Add-ons",
-                          style: AppTextStyles.semiBold(
-                            16,
-                          ).copyWith(height: 1.0, color: AppColors.black),
-                        ),
-
-                        const SizedBox(height: 8),
-                        if (isCreditCount != 0)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            "Credit Pack × $isCreditCount",
-                            style: AppTextStyles.medium(12).copyWith(
-                              height: 1.0,
-                              color: AppColors.grayMedium,
-                            ),
+                            "Add-ons",
+                            style: AppTextStyles.semiBold(
+                              16,
+                            ).copyWith(height: 1.0, color: AppColors.black),
                           ),
 
-                        const SizedBox(height: 8),
-                        if (isTokenCount != 0)
-                          Text(
-                            "Token Pack × $isTokenCount",
-                            style: AppTextStyles.medium(12).copyWith(
-                              height: 1.0,
-                              color: AppColors.grayMedium,
+                          const SizedBox(height: 8),
+                          ...addOnItems.map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                item,
+                                style: AppTextStyles.medium(12).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.grayMedium,
+                                ),
+                              ),
                             ),
                           ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

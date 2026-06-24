@@ -92,6 +92,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
+  bool _disableMapGesture = false;
+
   @override
   void initState() {
     super.initState();
@@ -113,6 +115,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             _resetFlightSelection();
             _isUserGesture = false;
             isFirstTimeUserCome = false;
+
+            _disableMapGesture = kIsWeb ? true :false;
             _handleFilterTap(context);
 
             AnalyticsService.instance.buttonPressed(
@@ -217,18 +221,26 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   void _sheetListenerForChangeTheTap() {
     final currentSize = _sheetController.size;
+
+    _disableMapGesture = kIsWeb ? true :false;
+
     if (currentSize > 0.15) {
-      _hasTriggeredMapView = false;
+      _hasTriggeredMapView = true;
       return;
     }
+
     if (_hasTriggeredMapView) return;
+
     _hasTriggeredMapView = true;
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
+
       if (_sheetController.size < 0.15) {
         setState(() {
           isMapViewSelected = true;
           _activeCard = 0;
+          _disableMapGesture = false;
         });
       }
     });
@@ -374,6 +386,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     setState(() {
       isMapViewSelected = newIsMapViewSelected;
       if (!isMapViewSelected) _activeCard = 0;
+      _disableMapGesture = false;
     });
   }
 
@@ -839,6 +852,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
                   isFirstTimeUserCome = false;
 
+                  _disableMapGesture = kIsWeb ? true :false;
+
                   _handleFilterTap(context);
                 },
               ),
@@ -1049,7 +1064,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
                                 onCameraIdle: () {
                                   debugPrint(
-                                    "🔴 onCameraIdle — isProgrammatic: $_isProgrammaticMove, isUserGesture: $_isUserGesture",
+                                    "onCameraIdle — isProgrammatic: $_isProgrammaticMove, isUserGesture: $_isUserGesture",
                                   );
 
                                   if (_isProgrammaticMove) {
@@ -1068,6 +1083,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                     );
                                   }
                                 },
+
+                                scrollGesturesEnabled: !_disableMapGesture,
+                                zoomGesturesEnabled: !_disableMapGesture,
 
                                 onCameraMoveStarted: () {
                                   _isProgrammaticMove = false;
@@ -1135,7 +1153,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         enableCloseScreen: false,
         isComeFromMapSection: true,
         controller: _searchController,
-        onFilterTap: () => _handleFilterTap(context),
+        onFilterTap: () {
+          _disableMapGesture = kIsWeb ? true :false;
+          _handleFilterTap(context);
+        },
         searchTitle: _isForFlyingInTheArea == 2
             ? 'Track a flight...'
             : 'Search Flight no.,CallSign,...',
@@ -1209,6 +1230,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     );
 
     /* ---------------- MAP TYPE + POLYGON ---------------- */
+
+    _disableMapGesture = false;
 
     final bool shouldShowPolygon =
         filterResult.mapType == CustomMapType.polygon;
@@ -1340,6 +1363,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                               onTap: () {
                                 _buildSingleFlightMarker(data).then((marker) {
                                   setState(() {
+                                    _disableMapGesture = false;
                                     isMapViewSelected = true;
                                     _isMapListViewShown = false;
                                     _singleSearchMarker = marker;

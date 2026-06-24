@@ -147,10 +147,11 @@ class MySubscriptionItem {
       currencySymbol: getCurrencySymbol(currencyCode),
 
       addOnPacksModel:
-          (json['add_on'] as List<dynamic>?)
-              ?.map((e) => AddOnModel.fromJson(e))
-              .toList() ??
-          [],
+          ((json['add_on'] as List<dynamic>?)
+                    ?.map((e) => AddOnModel.fromJson(e))
+                    .toList() ??
+                [])
+            ..sort((a, b) => b.purchaseDateTime.compareTo(a.purchaseDateTime)),
     );
   }
 
@@ -199,6 +200,7 @@ class AddOnModel {
   final int credit;
   final int token;
   final String currencySymbol;
+  final String planName;
 
   AddOnModel({
     required this.id,
@@ -214,7 +216,11 @@ class AddOnModel {
     required this.credit,
     required this.token,
     required this.currencySymbol,
+    required this.planName,
   });
+
+  DateTime get purchaseDateTime =>
+      DateFormat('dd MMM yyyy, HH:mm').parse(purchaseDate);
 
   factory AddOnModel.fromJson(Map<String, dynamic> json) {
     final currencyCode = json['currency'] ?? '';
@@ -243,6 +249,7 @@ class AddOnModel {
 
       token: json['token'] ?? 0,
       currencySymbol: getCurrencySymbol(currencyCode),
+      planName: json['plan_name'] ?? '',
     );
   }
 
@@ -259,8 +266,52 @@ class AddOnModel {
       'type': type,
       'credit': credit,
       'token': token,
+      'plan_name': planName,
     };
   }
+}
+
+class PackageCount {
+  int small;
+  int medium;
+  int large;
+
+  PackageCount({this.small = 0, this.medium = 0, this.large = 0});
+
+  @override
+  String toString() {
+    return 'Small: $small, Medium: $medium, Large: $large';
+  }
+}
+
+PackageCount getCreditPackageCount(List<AddOnModel> addOns) {
+  final count = PackageCount();
+  for (final item in addOns) {
+    final planName = item.planName.toLowerCase();
+    if (planName.contains('credit small')) {
+      count.small++;
+    } else if (planName.contains('credit medium')) {
+      count.medium++;
+    } else if (planName.contains('credit large')) {
+      count.large++;
+    }
+  }
+  return count;
+}
+
+PackageCount getTokenPackageCount(List<AddOnModel> addOns) {
+  final count = PackageCount();
+  for (final item in addOns) {
+    final planName = item.planName.toLowerCase();
+    if (planName.contains('token small')) {
+      count.small++;
+    } else if (planName.contains('token medium')) {
+      count.medium++;
+    } else if (planName.contains('token large')) {
+      count.large++;
+    }
+  }
+  return count;
 }
 
 String convertUtcToLocal24Hour(String utcDate) {

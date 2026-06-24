@@ -430,21 +430,26 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                 .toList() ??
                             [];
 
-                        final bool isFirstPage = _currentPage == 0;
-                        final bool isLastPage =
+                        final isFirstPage = _currentPage == 0;
+                        final isLastPage =
                             clues.isNotEmpty &&
                             _currentPage == clues.length - 1;
+
+                        final hasData =
+                            state.blackboxModels?.isNotEmpty ?? false;
+
+                        if (!hasData) {
+                          return const SizedBox.shrink();
+                        }
 
                         if (!isFirstPage && !isLastPage) {
                           return const SizedBox.shrink();
                         }
 
-                        // Last page → CustomHeaderViewExpandable
+                        // Last page
                         if (isLastPage) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30.0,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
                             child: CustomHeaderViewExpandable(
                               textAlign: TextAlign.center,
                               isNeedToShowLeftRightBottomBorder: false,
@@ -480,6 +485,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                     setState(() => _currentPage = 0);
                                   }
                                 });
+
                                 AnalyticsService.instance.buttonPressed(
                                   FirebaseEvents.blackBoxOverViewClueScreen,
                                   FirebaseEvents.blackBoxOverViewClueButton,
@@ -488,7 +494,8 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                             ),
                           );
                         }
-                        // Index 0 (Overview) → "Start Investigation" button
+
+                        // First page
                         return Center(
                           child: SizedBox(
                             width: kIsWeb
@@ -501,7 +508,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                               title: ConstantStrings.beginAnalysisText,
                               backgroundColor: AppColors.primaryDark,
                               textColor: Colors.white,
-                              icon: const SizedBox(width: 0),
+                              icon: const SizedBox.shrink(),
                               onPressed: () => _changePage(1),
                             ),
                           ),

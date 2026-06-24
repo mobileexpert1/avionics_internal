@@ -120,8 +120,6 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
       SubscriptionPlanCard(
         isPremiumPlan: isPremiumPlan,
         isPlanExpired: isPlanExpired,
-        isCreditCount: 0,
-        isTokenCount: 0,
         namePlan: namePlan,
         planPriceWithSymbol: planPriceWithSymbol,
         expiryDate: expiryDate,
