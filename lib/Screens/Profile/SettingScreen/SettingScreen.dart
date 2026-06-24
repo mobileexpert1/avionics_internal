@@ -23,10 +23,10 @@ import '../ProfileSettingsSectionHeader.dart';
 import 'InfoBottomSheet.dart';
 import 'SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
+import 'SettingMenuScreen/14_3D_Model/ModelTestScreen.dart';
 import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
-import 'SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
-import 'SettingMenuScreen/5_6_AllDemoScreen/GoogleEarthMap/GoogleEarthMap.dart';
+import 'SettingMenuScreen/4_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
 import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';
@@ -237,6 +237,31 @@ class _SettingScreenState extends State<SettingScreen> {
                       title: "My Subscription",
                       onTap: () => _navigate(context, MySubscriptionScreen()),
                     ),
+
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.customerSupportProfile,
+                      ),
+                      title: "3D Animation",
+                      onTap: () => _navigate(context, ModelTestScreen()),
+                    ),
+
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.subscriptionProfile,
+                    //   ),
+                    //   title: "Extra Add On Packs",
+                    //   onTap: () => _navigate(context, AddOnPacksScreen()),
+                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.subscriptionProfile,
+                      ),
+                      title: "Credits/Token Usage",
+                      onTap: () =>
+                          _navigate(context, CreditsTokenUsageScreen()),
+                    ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.logoutProfile,

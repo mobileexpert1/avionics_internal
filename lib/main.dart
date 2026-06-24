@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -60,6 +61,15 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
+
+  await FlutterUxcam.optIntoSchematicRecordings();
+
+  FlutterUxcam.startWithKey(
+    "atxeju4thavoohu-us",
+  );
+
+
+  print("UXCam Initialized----");
 
   FirebaseMessagingService().initialize(navigatorKey: navigatorKey);
   FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
