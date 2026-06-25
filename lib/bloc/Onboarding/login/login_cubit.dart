@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:flutter_uxcam/flutter_uxcam.dart';
+// import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -261,7 +261,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(state.copyWith(status: CommonApiStatus.success));
         await _navigateAfterLogin(context, result);
       } catch (e) {
-        FlutterUxcam.logEvent('Login Failed');
+        // FlutterUxcam.logEvent('Login Failed');
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,
@@ -286,13 +286,13 @@ class LoginCubit extends Cubit<LoginState> {
     if (!context.mounted) return;
 
     if (result.userDetails != null) {
-
-      /// for Ux cam
-      FlutterUxcam.setUserIdentity(
-        result.userDetails?.email ?? '',
-      );
-
-      FlutterUxcam.logEvent('Login Success');
+      //
+      // /// for Ux cam
+      // FlutterUxcam.setUserIdentity(
+      //   result.userDetails?.email ?? '',
+      // );
+      //
+      // FlutterUxcam.logEvent('Login Success');
 
 
       await SharedPrefsHelper.setAvtarUserType(

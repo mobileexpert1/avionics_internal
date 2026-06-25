@@ -300,6 +300,8 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 18),
+                  buildRow(title: "Plan Name", value: addOn.planName),
+                  buildDivider(),
                   buildRow(title: "Price", value: addOnPriceWithSymbol),
                   buildDivider(),
                   buildRow(

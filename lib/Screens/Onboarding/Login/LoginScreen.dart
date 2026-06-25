@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_uxcam/flutter_uxcam.dart';
+// import 'package:flutter_uxcam/flutter_uxcam.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.loginScreen);
-    FlutterUxcam.tagScreenName("Login Screen");
+    // FlutterUxcam.tagScreenName("Login Screen");
   }
 
   @override
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isEnabled: enabled,
                                   onPressed: () {
                                     if (!mounted) return;
-                                    FlutterUxcam.logEvent("Login Button Clicked");
+                                    // FlutterUxcam.logEvent("Login Button Clicked");
                                     context.read<LoginCubit>().validateAndLogin(
                                       context,
                                     );

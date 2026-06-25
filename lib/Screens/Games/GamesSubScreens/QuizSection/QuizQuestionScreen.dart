@@ -649,7 +649,7 @@ class QuizQuestionCard extends StatelessWidget {
                   Center(
                     child: SizedBox(
                       width: kIsWeb
-                          ? MediaQuery.of(context).size.width * 0.5
+                          ? MediaQuery.of(context).size.width * 0.45
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(

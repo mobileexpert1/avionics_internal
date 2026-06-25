@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -8,7 +9,6 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Helpers/CreditManager/CreditManager.dart';
 import '../../../../Helpers/NoInternetDialog.dart';
-import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
 import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'chat_implementation.dart';
 import 'chat_model.dart';
@@ -89,19 +89,69 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     }
   }
 
+  // Future<void> _loadCompleteHistory(String sessionId) async {
+  //   List<Map<String, String>> greeting = [
+  //     {'type': 'bot', 'text': 'Hey there!'},
+  //     {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+  //   ];
+  //   emit(greeting);
+  //   final serverMessages = await _repo.fetchFullServerHistory(sessionId);
+  //
+  //   final converted = serverMessages.map(
+  //     (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+  //   );
+  //   await _repo.insertOrIgnoreLocalMessages(converted.toList());
+  //   final merged = await _repo.getMessagesForSession(sessionId);
+  //
+  //   final uiList = merged.map((msg) {
+  //     return {
+  //       'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+  //       'text': msg.text,
+  //     };
+  //   }).toList();
+  //   final cleanList = removeDuplicates(uiList);
+  //   final finalList = [...greeting, ...cleanList];
+  //
+  //   emit(removeDuplicates(finalList));
+  // }
+
   Future<void> _loadCompleteHistory(String sessionId) async {
     List<Map<String, String>> greeting = [
       {'type': 'bot', 'text': 'Hey there!'},
       {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
     ];
+
     emit(greeting);
+
+    print("Session => $sessionId");
+
     final serverMessages = await _repo.fetchFullServerHistory(sessionId);
+
+    print("Server Count => ${serverMessages.length}");
 
     final converted = serverMessages.map(
       (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
     );
+
     await _repo.insertOrIgnoreLocalMessages(converted.toList());
+
     final merged = await _repo.getMessagesForSession(sessionId);
+
+    print("Merged Count => ${merged.length}");
+    if (kIsWeb && merged.isEmpty && converted.isNotEmpty) {
+      final uiList = converted.map((msg) {
+        return {
+          'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+          'text': msg.text,
+        };
+      }).toList();
+
+      final cleanList = removeDuplicates(uiList);
+      final finalList = [...greeting, ...cleanList];
+
+      emit(removeDuplicates(finalList));
+      return;
+    }
 
     final uiList = merged.map((msg) {
       return {
@@ -109,6 +159,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         'text': msg.text,
       };
     }).toList();
+
     final cleanList = removeDuplicates(uiList);
     final finalList = [...greeting, ...cleanList];
 
@@ -132,7 +183,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             child: AddOnPacksScreen(packType: packType),
           ),
         );
-       },
+      },
     );
   }
 

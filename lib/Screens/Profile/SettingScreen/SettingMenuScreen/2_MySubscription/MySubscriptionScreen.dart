@@ -473,7 +473,7 @@ class BillingHistoryCard extends StatelessWidget {
                 Text(
                   planPriceWithSymbol,
                   style: AppTextStyles.semiBold(
-                    14,
+                    kIsWeb ? 16 :14,
                   ).copyWith(height: 1.0, color: AppColors.black),
                 ),
                 const SizedBox(width: 4),
@@ -535,7 +535,7 @@ class BillingHistoryCard extends StatelessWidget {
                 Text(
                   addOnPriceWithSymbol,
                   style: AppTextStyles.semiBold(
-                    14,
+                    kIsWeb ? 16 :14,
                   ).copyWith(height: 1.0, color: AppColors.black),
                 ),
                 const SizedBox(width: 4),

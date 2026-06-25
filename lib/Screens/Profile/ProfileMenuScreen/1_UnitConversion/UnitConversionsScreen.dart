@@ -99,15 +99,9 @@ class _UnitConversionsScreenState extends State<UnitConversionsScreen> {
                           16,
                         ).copyWith(height: 1.4, color: AppColors.white),
                         title: category.title,
-                        headerColor: expandedMap[index] ?? false
-                            ? AppColors.primaryDark
-                            : AppColors.grayMedium,
-                        arrowBackgroundColor: expandedMap[index] ?? false
-                            ? AppColors.extraDarkYellow
-                            : AppColors.lightGreyWithAlphaDecreased,
-                        arrowFrontColor: expandedMap[index] ?? false
-                            ? AppColors.black
-                            : AppColors.white,
+                        headerColor: AppColors.primaryDark,
+                        arrowBackgroundColor: AppColors.extraDarkYellow,
+                        arrowFrontColor: AppColors.black,
                         isExpandedViewAvailable: true,
                         onHeaderTap: () {
                           setState(() {
