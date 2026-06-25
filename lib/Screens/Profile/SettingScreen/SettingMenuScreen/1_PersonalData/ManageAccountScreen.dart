@@ -38,6 +38,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   double tokenUsagePercentage = 0.0;
   double creditUsagePercentage = 0.0;
 
+  bool _userDataLoaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -60,10 +62,14 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       create: (_) => ManageaccCubit()..fetchUserDetails(context),
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) {
-          if (!state.isLoading) {
-            firstNameController.text = state.firstName;
-            lastNameController.text = state.lastName;
-            emailController.text = state.email;
+          if (!state.isLoading && state.status == CommonApiStatus.success) {
+            if (!_userDataLoaded ) {
+              _userDataLoaded = true;
+
+              firstNameController.text = state.firstName;
+              lastNameController.text = state.lastName;
+              emailController.text = state.email;
+            }
 
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
@@ -182,8 +188,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                 textColor: Colors.white,
                                 icon: const SizedBox(width: 0),
                                 isEnabled:
-                                    (buttonBottomTitle ==
-                                        ConstantStrings.save)
+                                    (buttonBottomTitle == ConstantStrings.save)
                                     ? state.isButtonEnabled
                                     : !isSocialLogin && state.isButtonEnabled,
                                 onPressed: () async {

@@ -186,7 +186,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               spacing: 8,
                               runSpacing: 8,
                               children: (state.categories).map((label) {
-                                final isSelected = state.selectedCategories
+                                final isSelected = state.selectedFeedbackCategories
                                     .contains(label);
 
                                 return GestureDetector(

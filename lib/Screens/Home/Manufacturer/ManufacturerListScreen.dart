@@ -123,7 +123,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                         spacing: 8,
                         runSpacing: 8,
                         children: (state.categories).map((label) {
-                          final isSelected = state.selectedCategories.contains(
+                          final isSelected = state.selectedManufacturerCategories.contains(
                             label,
                           );
 

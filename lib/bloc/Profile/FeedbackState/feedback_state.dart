@@ -4,7 +4,7 @@ class FeedbackState {
   final bool isSubmitting;
   final bool submissionSuccess;
 
-  final List<String> selectedCategories;
+  final List<String> selectedFeedbackCategories;
   final bool showCategories;
   final List<String> categories;
 
@@ -13,7 +13,7 @@ class FeedbackState {
     this.comment = '',
     this.isSubmitting = false,
     this.submissionSuccess = false,
-    this.selectedCategories = const [],
+    this.selectedFeedbackCategories = const [],
     this.showCategories = true,
     this.categories = const [
       "App Performance",
@@ -29,7 +29,7 @@ class FeedbackState {
     String? comment,
     bool? isSubmitting,
     bool? submissionSuccess,
-    List<String>? selectedCategories,
+    List<String>? selectedFeedbackCategories,
     bool? showCategories,
     List<String>? categories,
   }) {
@@ -39,7 +39,7 @@ class FeedbackState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       submissionSuccess: submissionSuccess ?? this.submissionSuccess,
 
-      selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedFeedbackCategories: selectedFeedbackCategories ?? this.selectedFeedbackCategories,
       showCategories: showCategories ?? this.showCategories,
       categories: categories ?? this.categories,
     );

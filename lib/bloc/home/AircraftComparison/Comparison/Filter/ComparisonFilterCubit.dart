@@ -250,7 +250,7 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
   }
 
   void selectAll() {
-    final allSelectedCategories = state.filterCategories.map((category) {
+    final allSelectedFiltersCategories = state.filterCategories.map((category) {
       final allSelectedOptions = category.options
           .map(
             (option) => ComparisonFilterModel(
@@ -269,7 +269,7 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
 
     emit(
       ComparisonFilterState(
-        filterCategories: allSelectedCategories,
+        filterCategories: allSelectedFiltersCategories,
         isApplied: state.isApplied,
       ),
     );

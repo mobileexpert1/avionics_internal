@@ -15,8 +15,6 @@ import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/NoInternetDialog.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
-import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
@@ -63,7 +61,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   void setFilters(List<String> categories, List<String> aircraftIcaos) {
     emit(
       state.copyWith(
-        selectedCategories: categories,
+        selectedFlightCategories: categories,
         selectedAircraftIcaos: aircraftIcaos,
       ),
     );
@@ -310,8 +308,8 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             state.selectedAircraftIcaos != null &&
             state.selectedAircraftIcaos!.isNotEmpty;
         final hasCategoryFilter =
-            state.selectedCategories != null &&
-            state.selectedCategories!.isNotEmpty;
+            state.selectedFlightCategories != null &&
+            state.selectedFlightCategories!.isNotEmpty;
 
         final flights = await FlightRepository().getFlights(
           flightLimit: flightLimit,
@@ -321,7 +319,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
               ? state.selectedAircraftIcaos!.join(',')
               : null,
           categories: hasCategoryFilter
-              ? state.selectedCategories!
+              ? state.selectedFlightCategories!
                     .map((cat) => _getCategoryCode(cat))
                     .join(',')
               : null,
@@ -519,9 +517,12 @@ class FlightMapCubit extends Cubit<FlightMapState> {
                 isFromWilcoAndTrackingScreen: true,
                 buttonText: "Buy Credits",
                 message:
-                "Your credits limit has been exhausted. Please purchase a extra credits.",
+                    "Your credits limit has been exhausted. Please purchase a extra credits.",
                 onGoToActionBlock: () {
-                  FlightRepository().openAddOnPacksBottomSheet(context, AddOnPackType.creditsOnly);
+                  FlightRepository().openAddOnPacksBottomSheet(
+                    context,
+                    AddOnPackType.creditsOnly,
+                  );
                 },
               );
 
@@ -719,14 +720,18 @@ class FlightMapCubit extends Cubit<FlightMapState> {
 
   String _getCategoryCode(String label) {
     switch (label) {
-      case "CARGO":
-        return "C";
-      case "BUSINESS_JETS":
-        return "B";
-      case "PASSENGER":
+      case "Passenger":
         return "P";
-      case "GLIDERS":
-        return "G";
+      case "Cargo":
+        return "C";
+      case "Business jets":
+        return "J";
+      case "General aviation":
+        return "T";
+      case "Helicopters":
+        return "H";
+      case "Military and government":
+        return "M";
       default:
         return "";
     }

@@ -100,7 +100,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                         Navigator.of(context).pop(
                           FilterResult(
                             state.mapType,
-                            state.selectedCategories,
+                            state.selectedFilterCategories,
                             aircraftCubit.selectedAircraft
                                 .map((a) => a.icaoTypeCode)
                                 .where((c) => c.isNotEmpty)
@@ -196,12 +196,14 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                       runSpacing: 10,
                       children:
                           [
-                            "CARGO",
-                            "BUSINESS_JETS",
-                            "PASSENGER",
-                            "GLIDERS",
+                            "Passenger",
+                            "Cargo",
+                            "Business jets",
+                            "General aviation",
+                            "Helicopters",
+                            "Military and government",
                           ].map((label) {
-                            final isSelected = state.selectedCategories
+                            final isSelected = state.selectedFilterCategories
                                 .contains(label);
                             return GestureDetector(
                               onTap: () => cubit.toggleCategory(label),

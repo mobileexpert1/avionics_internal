@@ -327,7 +327,7 @@ class FlightRepository {
     required String bounds,
     int limit = 20,
     List<String>? selectedIcaoTypes,
-    List<String>? selectedCategories,
+    List<String>? selectedFlightCategories,
   }) async {
     try {
       final aircraftParam =
@@ -336,8 +336,8 @@ class FlightRepository {
           : 'A318,A320,A20N,A21N';
 
       final categoriesParam =
-          (selectedCategories != null && selectedCategories.isNotEmpty)
-          ? selectedCategories.join(',')
+          (selectedFlightCategories != null && selectedFlightCategories.isNotEmpty)
+          ? selectedFlightCategories.join(',')
           : 'C,P';
 
       final url = Uri.parse(

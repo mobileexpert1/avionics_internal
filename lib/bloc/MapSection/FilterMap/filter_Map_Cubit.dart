@@ -21,7 +21,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
     emit(
       state.copyWith(
         mapType: type,
-        selectedCategories: List.from(categories),
+        selectedFilterCategories: List.from(categories),
         searchRadius: searchRadius,
         numberOfFlights: numberOfFlights,
       ),
@@ -45,13 +45,13 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
   }
 
   void toggleCategory(String category) {
-    final updated = List<String>.from(state.selectedCategories);
+    final updated = List<String>.from(state.selectedFilterCategories);
     if (updated.contains(category)) {
       updated.remove(category);
     } else {
       updated.add(category);
     }
-    emit(state.copyWith(selectedCategories: updated));
+    emit(state.copyWith(selectedFilterCategories: updated));
   }
 
   void changeMapTypeByName(String val) {
@@ -91,7 +91,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
   void resetFilter() {
     emit(
       state.copyWith(
-        selectedCategories: [],
+        selectedFilterCategories: [],
         showCategories: true,
         showMap: true,
         showAircraftLabels: true,

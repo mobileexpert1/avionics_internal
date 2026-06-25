@@ -19,7 +19,7 @@ extension CustomMapTypeExtension on CustomMapType {
 }
 
 class FilterMapState extends Equatable {
-  final List<String> selectedCategories;
+  final List<String> selectedFilterCategories;
   final bool showNumberOfFlights;
   final bool showSearchInRadius;
 
@@ -34,7 +34,7 @@ class FilterMapState extends Equatable {
   const FilterMapState({
     required this.showNumberOfFlights,
     required this.showSearchInRadius,
-    required this.selectedCategories,
+    required this.selectedFilterCategories,
     required this.showCategories,
     required this.showMap,
     required this.showAircraftLabels,
@@ -50,7 +50,7 @@ class FilterMapState extends Equatable {
       showSearchInRadius: true,
       numberOfFlights: 10,
       searchRadius: 150,
-      selectedCategories: const [],
+      selectedFilterCategories: const [],
       showCategories: true,
       showMap: true,
       showAircraftLabels: true,
@@ -65,7 +65,7 @@ class FilterMapState extends Equatable {
     int? numberOfFlights,
     int? searchRadius,
 
-    List<String>? selectedCategories,
+    List<String>? selectedFilterCategories,
     bool? showCategories,
     bool? showMap,
     bool? showAircraftLabels,
@@ -78,7 +78,7 @@ class FilterMapState extends Equatable {
 
       numberOfFlights: numberOfFlights ?? this.numberOfFlights,
       searchRadius: searchRadius ?? this.searchRadius,
-      selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedFilterCategories: selectedFilterCategories ?? this.selectedFilterCategories,
       showCategories: showCategories ?? this.showCategories,
       showMap: showMap ?? this.showMap,
       showAircraftLabels: showAircraftLabels ?? this.showAircraftLabels,
@@ -93,7 +93,7 @@ class FilterMapState extends Equatable {
     showSearchInRadius,
     numberOfFlights,
     searchRadius,
-    selectedCategories,
+    selectedFilterCategories,
     showCategories,
     showMap,
     showAircraftLabels,

@@ -102,6 +102,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     _loadGeoJson(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+     //
+
       final hasPermission = await _mapCubit.getCurrentLocation(context);
 
       if (hasPermission) {
@@ -139,6 +142,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     _sheetController.addListener(_sheetListenerForChangeTheTap);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
+
+    _mapCubit.setFilters(["Passenger"], []);
   }
 
   @override
@@ -1175,7 +1180,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   Future<void> _handleFilterTap(BuildContext context) async {
     final currentMapType = _mapCubit.state.mapType;
-    final currentCategories = _mapCubit.state.selectedCategories ?? [];
+    final currentCategories = _mapCubit.state.selectedFlightCategories ?? [];
     final currentNumberOfFlight = (_mapCubit.state.numberOfFlights ?? 0) > 0
         ? _mapCubit.state.numberOfFlights!
         : 1;

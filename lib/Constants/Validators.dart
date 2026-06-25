@@ -33,9 +33,12 @@ class Validators {
   }
 
   String? validateName(String value) {
-    if (value.isEmpty) return 'This field is required';
-    if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value))
-      return 'Only letters and numbers allowed';
+    if (value.trim().isEmpty) {
+      return 'This field is required';
+    }
+    if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(value)) {
+      return 'Name can only contain letters and spaces';
+    }
     return null;
   }
 }

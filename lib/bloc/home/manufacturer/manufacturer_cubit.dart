@@ -38,11 +38,13 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
         emit(state.copyWith(isLoading: true, currentPage: 1, totalPages: 1));
       }
 
-      final isHelicopter = state.selectedCategories.contains(
+      final isHelicopter = state.selectedManufacturerCategories.contains(
         "HELICOPTERS (ROTOR CRAFTS)",
       );
 
-      final isAirplane = state.selectedCategories.contains("AIRPLANES");
+      final isAirplane = state.selectedManufacturerCategories.contains(
+        "AIRPLANES",
+      );
 
       try {
         final paginated = await repository.getListOfManufacturers(
@@ -145,7 +147,7 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
   }
 
   Future<void> toggleCategory(String category, BuildContext context) async {
-    final updated = List<String>.from(state.selectedCategories);
+    final updated = List<String>.from(state.selectedManufacturerCategories);
 
     if (updated.contains(category)) {
       updated.remove(category);
@@ -153,7 +155,7 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       updated.add(category);
     }
 
-    emit(state.copyWith(selectedCategories: updated));
+    emit(state.copyWith(selectedManufacturerCategories: updated));
     await loadListOfManufacturers(context: context, page: 1);
   }
 

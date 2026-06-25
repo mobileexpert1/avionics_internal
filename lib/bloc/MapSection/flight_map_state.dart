@@ -34,7 +34,7 @@ class FlightMapState {
   final int activeCard;
   final List<AircraftStationModel>? airports;
   final AircraftStationModel? selectedAirport;
-  final List<String>? selectedCategories;
+  final List<String>? selectedFlightCategories;
   final List<String>? selectedAircraftIcaos;
   final SavedFlightResponse? savedFlights;
 
@@ -64,7 +64,7 @@ class FlightMapState {
     this.selectedAirport,
     this.activeCard = 0,
 
-    this.selectedCategories,
+    this.selectedFlightCategories,
     this.selectedAircraftIcaos,
 
     this.savedFlights,
@@ -96,7 +96,7 @@ class FlightMapState {
     AircraftStationModel? selectedAirport,
     int? activeCard,
 
-    List<String>? selectedCategories,
+    List<String>? selectedFlightCategories,
     List<String>? selectedAircraftIcaos,
     SavedFlightResponse? savedFlights,
 
@@ -127,7 +127,7 @@ class FlightMapState {
       selectedAirport: selectedAirport ?? this.selectedAirport,
       activeCard: activeCard ?? this.activeCard,
 
-      selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedFlightCategories: selectedFlightCategories ?? this.selectedFlightCategories,
       selectedAircraftIcaos:
           selectedAircraftIcaos ?? this.selectedAircraftIcaos,
       savedFlights: savedFlights ?? this.savedFlights,

@@ -182,8 +182,8 @@ class ApiBaseUrlConstant {
   static const String devChatUrl =
       "avionica.csdevhub.com"; // Cs Url for development.
 
-  static const String baseUrl = _prodUrl;
-  static const String baseChatUrl = prodChatUrl;
+  static const String baseUrl = _devUrl;
+  static const String baseChatUrl = devChatUrl;
 }
 
 class ApiFunctionUrlConstant {
