@@ -254,11 +254,55 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                   disableSwipeBack: true,
                                 );
                               },
+                              // onCancelTap: () {
+                              //   if (!canManageSubscription(
+                              //     context,
+                              //     activeBuyPlatform,
+                              //   )) {
+                              //     return;
+                              //   }
+                              //
+                              //   if (isPlanExpired) {
+                              //     AppNavigator.push(
+                              //       context,
+                              //       FeedbackScreen(),
+                              //       disableSwipeBack: true,
+                              //     );
+                              //   } else {
+                              //     showDeleteConfirmation(context);
+                              //   }
+                              // },
+
                               onCancelTap: () {
-                                if (!canManageSubscription(
-                                  context,
-                                  activeBuyPlatform,
-                                )) {
+                                final bool isMobilePlatform =
+                                    !kIsWeb &&
+                                        (defaultTargetPlatform == TargetPlatform.iOS ||
+                                            defaultTargetPlatform == TargetPlatform.android);
+
+                                final bool isWebPurchase =
+                                    activeBuyPlatform.toLowerCase() == "web";
+
+                                // Web subscription + Mobile app
+                                if (isWebPurchase && isMobilePlatform) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "This subscription was purchased on the website. Please log in to the website to cancel your subscription.",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                // App Store / Play Store subscription + Web
+                                if (!isWebPurchase && !isMobilePlatform) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "This subscription was purchased through the mobile app. Please use the App Store or Google Play Store to cancel your subscription.",
+                                      ),
+                                    ),
+                                  );
                                   return;
                                 }
 
