@@ -182,8 +182,8 @@ class ApiBaseUrlConstant {
   static const String devChatUrl =
       "avionica.csdevhub.com"; // Cs Url for development.
 
-  static const String baseUrl = _devUrl;
-  static const String baseChatUrl = devChatUrl;
+  static const String baseUrl = _prodUrl;
+  static const String baseChatUrl = prodChatUrl;
 }
 
 class ApiFunctionUrlConstant {
@@ -209,8 +209,7 @@ class ApiServiceUrlConstant {
   const ApiServiceUrlConstant._();
 
   static const String authFetchMapKey = 'auth/secret/avioflai/fr24';
-  static const String authFetchGoogleKey =
-      'auth/secret/avioflai-google-maps';
+  static const String authFetchGoogleKey = 'auth/secret/avioflai-google-maps';
   static const String authRefreshToken = 'auth/refresh';
 
   static const String checkEmail = 'auth/check-email';
