@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -46,7 +47,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
     context.read<AvtarCubit>().loadAvatars(
       widget.isComeFromSignupScreen,
       widget.isComeFromSocialLogin,
-      context
+      context,
     );
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.avtarScreen);
   }
@@ -279,34 +280,53 @@ class _AvtarScreenState extends State<AvtarScreen> {
                       state.selectedUserType != null &&
                       state.selectedUserType!.isNotEmpty,
                   builder: (context, isButtonEnabled) {
-                    return CustomBottomButton(
-                      fontStyle: AppTextStyles.regular(21.46).copyWith(
-                        height: 1.0,
-                        color: isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade600,
-                      ),
-                      title: ConstantStrings.submitTitle,
-                      backgroundColor: AppColors.customBottomEnabledColour,
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      isEnabled: isButtonEnabled,
-                      onPressed: () {
-                        final selectedUserType =
-                            context.read<AvtarCubit>().state.selectedUserType ??
-                            '';
-                        final selectedUserTypeUrl =
-                            context.read<AvtarCubit>().state.selectedUserTypeUrl ??
-                                '';
-                        context.read<AvtarCubit>().selectAvatar(
-                          selectedUserTypeUrl,
-                          selectedUserType,
-                          widget.isComeFromSignupScreen,
-                          widget.isComeFromSocialLogin,
-                          context,
-                          widget.signupData,
-                        );
-                      },
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: kIsWeb
+                              ? MediaQuery.of(context).size.width * 0.45
+                              : MediaQuery.of(context).size.width - 150,
+                          child: CustomBottomButton(
+                            fontStyle: AppTextStyles.regular(21.46).copyWith(
+                              height: 1.0,
+                              color: isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
+                            ),
+                            title: ConstantStrings.submitTitle,
+                            backgroundColor:
+                                AppColors.customBottomEnabledColour,
+                            textColor: Colors.white,
+                            icon: const SizedBox(width: 0),
+                            isEnabled: isButtonEnabled,
+                            onPressed: () {
+                              final selectedUserType =
+                                  context
+                                      .read<AvtarCubit>()
+                                      .state
+                                      .selectedUserType ??
+                                  '';
+
+                              final selectedUserTypeUrl =
+                                  context
+                                      .read<AvtarCubit>()
+                                      .state
+                                      .selectedUserTypeUrl ??
+                                  '';
+
+                              context.read<AvtarCubit>().selectAvatar(
+                                selectedUserTypeUrl,
+                                selectedUserType,
+                                widget.isComeFromSignupScreen,
+                                widget.isComeFromSocialLogin,
+                                context,
+                                widget.signupData,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),

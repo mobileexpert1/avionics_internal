@@ -1610,6 +1610,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                           .contain,
                                                                     )
                                                                   : CachedAnyImage(
+                                                                    isForManufacturer:true,
                                                                       imagePath:
                                                                           manufacturerLogo,
                                                                       width:
@@ -1623,6 +1624,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                       contentImage:
                                                                           BoxFit
                                                                               .contain,
+
                                                                     ),
                                                             ),
 

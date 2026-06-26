@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -130,7 +131,9 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                         const SizedBox(height: 20),
                         Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: kIsWeb
+                              ? Alignment.center
+                              : Alignment.centerLeft,
                           child: Text(
                             ConstantStrings.otpTitle,
                             style: TextStyle(color: Colors.grey.shade600),
@@ -165,39 +168,46 @@ class _OtpScreenState extends State<OtpScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: kIsWeb ? 50 : 24),
                         BlocSelector<OtpCubit, OtpState, bool>(
                           selector: (state) => state.isButtonEnabled,
                           builder: (context, isButtonEnabled) {
-                            return ElevatedButton(
-                              onPressed: isButtonEnabled
-                                  ? () {
-                                      context.read<OtpCubit>().submitOtpApi(
-                                        context,
-                                        widget.email,
-                                        widget.isComeFromSignup,
-                                      );
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isButtonEnabled
-                                    ? const Color.fromRGBO(63, 61, 81, 1.0)
-                                    : Colors.grey.shade300,
-                                foregroundColor: isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
-                                minimumSize: const Size.fromHeight(52),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                            return SizedBox(
+                              width: kIsWeb
+                                  ? MediaQuery.of(context).size.width * 0.2
+                                  : double.infinity,
+                              child: ElevatedButton(
+                                onPressed: isButtonEnabled
+                                    ? () {
+                                        context.read<OtpCubit>().submitOtpApi(
+                                          context,
+                                          widget.email,
+                                          widget.isComeFromSignup,
+                                        );
+                                      }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isButtonEnabled
+                                      ? const Color.fromRGBO(63, 61, 81, 1.0)
+                                      : Colors.grey.shade300,
+                                  foregroundColor: isButtonEnabled
+                                      ? Colors.white
+                                      : Colors.grey.shade600,
+                                  minimumSize: const Size.fromHeight(52),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                              ),
-                              child: const Text(
-                                ConstantStrings.continueText,
-                                style: TextStyle(fontSize: 20),
+                                child: const Text(
+                                  ConstantStrings.continueText,
+                                  style: TextStyle(fontSize: 20),
+                                ),
                               ),
                             );
                           },
                         ),
+                        const SizedBox(height: kIsWeb ? 24 : 10),
+
                         TextButton(
                           onPressed: _isResendEnabled
                               ? () {
