@@ -130,7 +130,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     print("Server Count => ${serverMessages.length}");
 
     final converted = serverMessages.map(
-      (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+          (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
     );
 
     await _repo.insertOrIgnoreLocalMessages(converted.toList());
