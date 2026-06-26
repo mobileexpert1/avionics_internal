@@ -83,7 +83,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      namePlan,
+                      namePlan.replaceAll("(avioflai)", ""),
                       style: AppTextStyles.semiBold(26).copyWith(
                         height: 1.0,
                         color: isPremiumPlan

@@ -327,7 +327,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          height: 40,
+          height: 50,
           color: AppColors.primaryDark,
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: LayoutBuilder(
