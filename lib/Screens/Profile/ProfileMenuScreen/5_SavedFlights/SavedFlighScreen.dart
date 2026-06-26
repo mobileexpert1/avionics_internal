@@ -369,12 +369,14 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             child: Center(
                               child: Text(
                                 mainTabs[index],
-                                style: AppTextStyles.regular(15).copyWith(
-                                  height: 1.0,
-                                  color: isSelected
-                                      ? Colors.black
-                                      : Colors.white,
-                                ),
+                                style: AppTextStyles.regular(kIsWeb ? 20 : 15)
+                                    .copyWith(
+                                      height: 1.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
                               ),
                             ),
                           ),
@@ -408,15 +410,50 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (widget.showTabs) _buildBrowserTabBar(),
 
-              Expanded(
+      // body: Center(
+      //   child: ConstrainedBox(
+      //     constraints: const BoxConstraints(maxWidth: 1500),
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         if (widget.showTabs) _buildBrowserTabBar(),
+      //
+      //         Expanded(
+      //           child: BlocConsumer<SavedFlightCubit, SavedFlightState>(
+      //             listener: (context, state) {
+      //               if (state.status == CommonApiStatus.failure) {
+      //                 ScaffoldMessenger.of(context).showSnackBar(
+      //                   SnackBar(
+      //                     content: Text(
+      //                       state.errorMessage ?? "Something went wrong",
+      //                     ),
+      //                   ),
+      //                 );
+      //               }
+      //             },
+      //             builder: (context, state) {
+      //               if (state.isLoading) {
+      //                 return const Center(child: CircularProgressIndicator());
+      //               }
+      //               return _buildTabContent(state);
+      //             },
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      body: Column(
+        children: [
+          if (widget.showTabs) _buildBrowserTabBar(),
+
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 1500 : double.infinity,
+                ),
                 child: BlocConsumer<SavedFlightCubit, SavedFlightState>(
                   listener: (context, state) {
                     if (state.status == CommonApiStatus.failure) {
@@ -433,13 +470,14 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                     if (state.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
                     return _buildTabContent(state);
                   },
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
