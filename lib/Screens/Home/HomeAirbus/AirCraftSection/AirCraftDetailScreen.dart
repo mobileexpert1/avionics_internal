@@ -215,13 +215,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
             viewportFraction: isSingleImage ? 1.0 : 0.25,
             enlargeCenterPage: !isSingleImage,
             enlargeFactor: 0.25,
-            autoPlay: !isSingleImage,
-            autoPlayInterval: const Duration(seconds: 2),
-            autoPlayAnimationDuration: const Duration(milliseconds: 1200),
-            autoPlayCurve: Curves.linear,
             enableInfiniteScroll: !isSingleImage,
-            pauseAutoPlayOnTouch: false,
-            pauseAutoPlayOnManualNavigate: false,
           ),
           itemBuilder: (context, index, realIndex) {
             final image = coverImages[index];

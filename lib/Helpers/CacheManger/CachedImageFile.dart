@@ -196,7 +196,7 @@ class _CachedAnyImageState extends State<CachedAnyImage> {
           ? Center(
               child: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.airBusPlanePlaceholder),
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 width: widget.width,
                 height: widget.height,
               ),
