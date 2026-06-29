@@ -207,6 +207,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               final item = sortedManufacturers[index];
 
                               return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
                                 onTap: () {
                                   AnalyticsService.instance.buttonPressed(
                                     FirebaseEvents.allAirbusModelsButton,
