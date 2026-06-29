@@ -3,9 +3,11 @@ import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_reposistory.
 import 'package:avionics_internal/bloc/Home/AllPlanesBloc/AllPlanes_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 
 class AllPlanesCubit extends Cubit<AllPlanesState> {
   AllPlanesCubit() : super(const AllPlanesState(listoFAircraftModels: []));
@@ -17,58 +19,82 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     int page = 1,
     bool isLoadMore = false,
   }) async {
-    if (query == "" || query == null) {
-      if (isLoadMore) {
-        emit(state.copyWith(isFetchingMore: true));
-      } else {
-        emit(state.copyWith(isLoading: true, currentPage: 1));
+    if (await InternetConnection().hasInternetAccess) {
+      if (query == "" || query == null) {
+        if (isLoadMore) {
+          emit(state.copyWith(isFetchingMore: true));
+        } else {
+          emit(state.copyWith(isLoading: true, currentPage: 1));
+        }
       }
-    }
 
-    try {
-      final paginated = await AllPlanesReposistory().getListOfAllPlanes(
-        query: query,
-        page: page,
-        selectedAirbusId: selectedAirbusId,
+      try {
+        final paginated = await AllPlanesReposistory().getListOfAllPlanes(
+          query: query,
+          page: page,
+          selectedAirbusId: selectedAirbusId,
+        );
+
+        final updatedList = isLoadMore
+            ? [...state.listoFAircraftModels, ...paginated.results]
+            : paginated.results;
+
+        updatedList.sort(
+          (a, b) => a.model.toLowerCase().compareTo(b.model.toLowerCase()),
+        );
+
+        emit(
+          state.copyWith(
+            listoFAircraftModels: updatedList,
+            currentPage: paginated.currentPage,
+            hasNextPage: paginated.hasNext,
+            isLoading: false,
+            isFetchingMore: false,
+          ),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(state.copyWith(isLoading: false, isFetchingMore: false));
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await loadListOAllAirbusModels(
+            query: query,
+            selectedAirbusId: selectedAirbusId,
+            context: context,
+            page: page,
+            isLoadMore: isLoadMore,
+          );
+        },
       );
-
-      final updatedList = isLoadMore
-          ? [...state.listoFAircraftModels, ...paginated.results]
-          : paginated.results;
-
-      updatedList.sort(
-        (a, b) => a.model.toLowerCase().compareTo(b.model.toLowerCase()),
-      );
-
-      emit(
-        state.copyWith(
-          listoFAircraftModels: updatedList,
-          currentPage: paginated.currentPage,
-          hasNextPage: paginated.hasNext,
-          isLoading: false,
-          isFetchingMore: false,
-        ),
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(isLoading: false, isFetchingMore: false));
     }
   }
 
   Future<void> planFavOrUnfav(String aircraftId, BuildContext context) async {
-    emit(state.copyWith(status: CommonApiStatus.submitting));
-    try {
-      await AllPlanesReposistory().setFavOrUnfavPlanFromList(
-        aircraftId: aircraftId,
-      );
-      emit(state.copyWith(status: CommonApiStatus.success));
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+      try {
+        await AllPlanesReposistory().setFavOrUnfavPlanFromList(
+          aircraftId: aircraftId,
+        );
+        emit(state.copyWith(status: CommonApiStatus.success));
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await planFavOrUnfav(aircraftId, context);
+        },
       );
     }
   }
@@ -80,26 +106,41 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     String flightNumber,
     BuildContext context,
   ) async {
-    updateFlightFavoriteByCallSign(callSign);
-    emit(state.copyWith(status: CommonApiStatus.submitting));
-
-    try {
-      await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
-        aircraftId: aircraftId,
-        callSign: callSign,
-        flightId: flightId,
-        flightNumber: flightNumber,
-      );
-       updateFlightFavoriteByCallSign(callSign);
-      emit(state.copyWith(status: CommonApiStatus.success));
-    } catch (e) {
+    if (await InternetConnection().hasInternetAccess) {
       updateFlightFavoriteByCallSign(callSign);
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+
+      try {
+        await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
+          aircraftId: aircraftId,
+          callSign: callSign,
+          flightId: flightId,
+          flightNumber: flightNumber,
+        );
+        updateFlightFavoriteByCallSign(callSign);
+        emit(state.copyWith(status: CommonApiStatus.success));
+      } catch (e) {
+        updateFlightFavoriteByCallSign(callSign);
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await planFavOrUnfav1(
+            aircraftId,
+            callSign,
+            flightId,
+            flightNumber,
+            context,
+          );
+        },
       );
     }
   }

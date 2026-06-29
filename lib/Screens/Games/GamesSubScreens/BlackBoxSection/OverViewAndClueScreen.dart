@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -272,7 +273,9 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                                               TextAlign.center,
                                                           style:
                                                               AppTextStyles.bold(
-                                                                20,
+                                                                kIsWeb
+                                                                    ? 24
+                                                                    : 20,
                                                               ).copyWith(
                                                                 height: 1,
                                                                 color: AppColors
@@ -290,14 +293,18 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                                             TextAlign.center,
                                                         style: _currentPage == 0
                                                             ? AppTextStyles.bold(
-                                                                18,
+                                                                kIsWeb
+                                                                    ? 24
+                                                                    : 18,
                                                               ).copyWith(
                                                                 height: 1,
                                                                 color: AppColors
                                                                     .primaryValueColour,
                                                               )
                                                             : AppTextStyles.regular(
-                                                                16,
+                                                                kIsWeb
+                                                                    ? 18
+                                                                    : 16,
                                                               ).copyWith(
                                                                 height: 1.4,
                                                                 color: AppColors
@@ -314,7 +321,9 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                                                 'No Description',
                                                             style:
                                                                 AppTextStyles.regular(
-                                                                  14,
+                                                                  kIsWeb
+                                                                      ? 18
+                                                                      : 14,
                                                                 ).copyWith(
                                                                   height: 1.9,
                                                                   color: AppColors
@@ -429,68 +438,86 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                 .toList() ??
                             [];
 
-                        final bool isFirstPage = _currentPage == 0;
-                        final bool isLastPage =
+                        final isFirstPage = _currentPage == 0;
+                        final isLastPage =
                             clues.isNotEmpty &&
                             _currentPage == clues.length - 1;
+
+                        final hasData =
+                            state.blackboxModels?.isNotEmpty ?? false;
+
+                        if (!hasData) {
+                          return const SizedBox.shrink();
+                        }
 
                         if (!isFirstPage && !isLastPage) {
                           return const SizedBox.shrink();
                         }
 
-                        // Last page → CustomHeaderViewExpandable
+                        // Last page
                         if (isLastPage) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30.0,
-                            ),
-                            child: CustomHeaderViewExpandable(
-                              textAlign: TextAlign.center,
-                              isNeedToShowLeftRightBottomBorder: false,
-                              isNeedToShowLeftImage: false,
-                              isExpanded: false,
-                              title: ConstantStrings.startInvestigationText,
-                              headerColor: AppColors.primaryDark,
-                              arrowBackgroundColor: AppColors.extraDarkYellow,
-                              arrowFrontColor: Colors.black,
-                              isExpandedViewAvailable: true,
-                              fontStyle: AppTextStyles.regular(18).copyWith(
-                                height: 1.4,
-                                color: AppColors.white,
-                                letterSpacing: 0.2,
-                              ),
-                              onHeaderTap: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BlackBoxScreen(
-                                      gameId: 'black_box',
-                                      summarySetId: state
-                                          .blackboxModels!
-                                          .single
-                                          .summarySetId!,
-                                      summaryGameNumber: widget.gameNo,
-                                    ),
+                          return Center(
+                            child: SizedBox(
+                              width: kIsWeb
+                                  ? MediaQuery.of(context).size.width * 0.45
+                                  : double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: kIsWeb ? 0 : 30,
+                                ),
+                                child: CustomHeaderViewExpandable(
+                                  textAlign: TextAlign.center,
+                                  isNeedToShowLeftRightBottomBorder: false,
+                                  isNeedToShowLeftImage: false,
+                                  isExpanded: false,
+                                  title: ConstantStrings.startInvestigationText,
+                                  headerColor: AppColors.primaryDark,
+                                  arrowBackgroundColor:
+                                      AppColors.extraDarkYellow,
+                                  arrowFrontColor: Colors.black,
+                                  isExpandedViewAvailable: true,
+                                  fontStyle: AppTextStyles.regular(18).copyWith(
+                                    height: 1.4,
+                                    color: AppColors.white,
+                                    letterSpacing: 0.2,
                                   ),
-                                ).then((reset) {
-                                  if (reset == true) {
-                                    _pageController.jumpToPage(0);
-                                    setState(() => _currentPage = 0);
-                                  }
-                                });
-                                AnalyticsService.instance.buttonPressed(
-                                  FirebaseEvents.blackBoxOverViewClueScreen,
-                                  FirebaseEvents.blackBoxOverViewClueButton,
-                                );
-                              },
+                                  onHeaderTap: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BlackBoxScreen(
+                                          gameId: 'black_box',
+                                          summarySetId: state
+                                              .blackboxModels!
+                                              .single
+                                              .summarySetId!,
+                                          summaryGameNumber: widget.gameNo,
+                                          isForBlackBox: true,
+                                        ),
+                                      ),
+                                    ).then((reset) {
+                                      if (reset == true) {
+                                        _pageController.jumpToPage(0);
+                                        setState(() => _currentPage = 0);
+                                      }
+                                    });
+
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.blackBoxOverViewClueScreen,
+                                      FirebaseEvents.blackBoxOverViewClueButton,
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
                           );
                         }
-                        // Index 0 (Overview) → "Start Investigation" button
+
+                        // First page
                         return Center(
                           child: SizedBox(
                             width: kIsWeb
-                                ? MediaQuery.of(context).size.width * 0.5
+                                ? MediaQuery.of(context).size.width * 0.45
                                 : double.infinity,
                             child: CustomBottomButton(
                               fontStyle: AppTextStyles.regular(
@@ -499,7 +526,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                               title: ConstantStrings.beginAnalysisText,
                               backgroundColor: AppColors.primaryDark,
                               textColor: Colors.white,
-                              icon: const SizedBox(width: 0),
+                              icon: const SizedBox.shrink(),
                               onPressed: () => _changePage(1),
                             ),
                           ),

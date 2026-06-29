@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -196,19 +197,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
 
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.conversionProfile,
-                      ),
-                      title: "Unit Selection",
-                      onTap: () {
-                        AppNavigator.push(
-                          context,
-                          const UnitSelectionScreen(),
-                          disableSwipeBack: true,
-                        );
-                      },
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.conversionProfile,
+                    //   ),
+                    //   title: "Unit Selection",
+                    //   onTap: () {
+                    //     AppNavigator.push(
+                    //       context,
+                    //       const UnitSelectionScreen(),
+                    //       disableSwipeBack: true,
+                    //     );
+                    //   },
+                    // ),
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,6 +9,7 @@ import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../Helpers/WebAndMobileBrowser/web_iframe_widget.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
 
@@ -19,12 +21,11 @@ class CreditsTokenUsageScreen extends StatefulWidget {
 }
 
 class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
-  late final WebViewController controller;
-
-  String urlForWebView = "";
+  WebViewController? controller;
 
   double tokenUsagePercentage = 0.0;
   double creditUsagePercentage = 0.0;
+  String _webUrl = "";
 
   @override
   void initState() {
@@ -33,13 +34,15 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
       FirebaseEvents.creditTokenScreen,
     );
 
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted);
+    if (!kIsWeb) {
+      controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted);
+    }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  String _buildUrl() {
+    return "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}user/usage-meter"
+        "?credit_usage=$creditUsagePercentage&token_usage=$tokenUsagePercentage";
   }
 
   @override
@@ -47,14 +50,17 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
     return BlocProvider(
       create: (_) => ManageaccCubit()..fetchUserDetails(context),
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (!state.isLoading) {
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
-            final url =
-                "https://avionica.csdevhub.com/user-service/user/usage-meter"
-                "?credit_usage=$creditUsagePercentage&token_usage=$tokenUsagePercentage";
-            controller.loadRequest(Uri.parse(url));
+            final url = _buildUrl();
+
+            if (kIsWeb) {
+              setState(() => _webUrl = url);
+            } else {
+              controller!.loadRequest(Uri.parse(url));
+            }
           }
         },
         builder: (context, state) {
@@ -66,6 +72,7 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
           }
 
           return Scaffold(
+            backgroundColor: Colors.white,
             appBar: CustomAppBar(
               title: ConstantStrings.creditTokenTitle,
               isForComparison: true,
@@ -78,7 +85,11 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-            body: WebViewWidget(controller: controller),
+            body: kIsWeb
+                ? _webUrl.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : WebIframeWidget(url: _webUrl)
+                : WebViewWidget(controller: controller!),
           );
         },
       ),

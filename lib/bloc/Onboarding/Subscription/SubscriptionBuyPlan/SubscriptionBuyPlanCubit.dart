@@ -5,12 +5,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
+import '../../../../Constants/ConstantStrings.dart';
+import '../../../../Helpers/CreditManager/CreditManager.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
 import '../../../../Screens/Onboarding/Login/LoginScreen.dart';
+import '../../../home/homeBloc/home_cubit.dart';
 import 'SubscriptionBuyPlanRepository.dart';
 import 'SubscriptionBuyPlanState.dart';
 
@@ -32,95 +37,151 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     return email.trim().toLowerCase();
   }
 
-  Future<void> handleWebRedirectionIfNeeded() async {
-    if (globalWebRedirectDone) return;
-    globalWebRedirectDone = true;
+  Future<void> handleWebRedirectionIfNeeded(BuildContext context) async {
+    if (await InternetConnection().hasInternetAccess) {
+      if (globalWebRedirectDone) return;
+      globalWebRedirectDone = true;
 
-    final webSessionToken = await SubscriptionBuyPlanRepository()
-        .getSubscriptionSessionToken();
+      final webSessionToken = await SubscriptionBuyPlanRepository()
+          .getSubscriptionSessionToken();
 
-    if (webSessionToken.session == "" || webSessionToken.session == null) {
-      return;
-    }
-    final callback = Uri.encodeComponent(Uri.base.toString());
+      if (webSessionToken.session == "" || webSessionToken.session == null) {
+        return;
+      }
+      final callback = Uri.encodeComponent(Uri.base.toString());
 
-    final url =
-        "https://avionica.csdevhub.com/user-service/subscription/choose/${webSessionToken.session}?callback=$callback";
+      final url =
+          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}subscription/choose/${webSessionToken.session}?callback=$callback";
 
-    print(url);
+      print(url);
 
-    final uri = Uri.parse(url);
-    if (kIsWeb) {
-      await launchUrl(uri, webOnlyWindowName: '_self');
+      final uri = Uri.parse(url);
+      if (kIsWeb) {
+        await launchUrl(uri, webOnlyWindowName: '_self');
+      } else {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     } else {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await handleWebRedirectionIfNeeded(context);
+        },
+      );
     }
   }
 
-  Future<void> initRevenueCat(bool isComeFromProfile) async {
-    if (kIsWeb) return;
-    emit(state.copyWith(loading: true, isComeFromProfile: isComeFromProfile));
-    try {
-      final email = await SharedPrefsHelper.getEmail();
+  Future<void> handleWebRedirectionIfNeededForAddOnPacks(
+    BuildContext context,
+  ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      if (globalWebRedirectDone) return;
+      globalWebRedirectDone = true;
 
-      if (email == null || email.isEmpty) {
-        debugPrint("Email Null");
-        emit(state.copyWith(loading: false, error: "User not logged in"));
+      final webSessionToken = await SubscriptionBuyPlanRepository()
+          .getSubscriptionSessionToken();
+
+      if (webSessionToken.session == "" || webSessionToken.session == null) {
         return;
       }
+      final callback = Uri.encodeComponent(Uri.base.toString());
 
-      final rcUserId = _getRCUserId(email);
+      final url =
+          "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}subscription/consumables/${webSessionToken.session}?callback=$callback&title=Consumables";
+      print(url);
 
-      await Purchases.setLogLevel(LogLevel.debug);
-      final configuration =
-          PurchasesConfiguration(
-              Platform.isIOS ? _rcAppleApiKey : _rcAndroidApiKey,
-            )
-            ..appUserID = rcUserId
-            ..diagnosticsEnabled = true;
-      if (await Purchases.isConfigured == false) {
-        await Purchases.configure(configuration);
+      final uri = Uri.parse(url);
+      if (kIsWeb) {
+        await launchUrl(uri, webOnlyWindowName: '_self');
+      } else {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await handleWebRedirectionIfNeeded(context);
+        },
+      );
+    }
+  }
 
-      await loginUser(rcUserId);
-
-      if (!_isConfigured) {
-        Purchases.addCustomerInfoUpdateListener(_handleCustomerInfo);
-        _isConfigured = true;
-      }
-
-      final info = await Purchases.getCustomerInfo();
-      if (info.entitlements.active.isNotEmpty) {
-        _handleCustomerInfo(info);
-      }
-
+  Future<void> initRevenueCat(
+    bool isComeFromProfile,
+    BuildContext context,
+  ) async {
+    if (kIsWeb) return;
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(loading: true, isComeFromProfile: isComeFromProfile));
       try {
-        await Purchases.restorePurchases();
-      } catch (e) {
-        if (e is PlatformException &&
-            e.details != null &&
-            e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
-          emit(
-            state.copyWith(
-              isBlocked: isComeFromProfile == true ? false : true,
-              loading: false,
-              error: isComeFromProfile == true
-                  ? "This account is already linked to another ${Platform.isIOS ? "Apple" : "Google"} account. Please log in with the original account to access this feature."
-                  : "This account is already linked with another ${Platform.isIOS ? "Apple" : "Google"}. Please log in with the original account to access this feature.",
-            ),
-          );
+        final email = await SharedPrefsHelper.getEmail();
+
+        if (email == null || email.isEmpty) {
+          debugPrint("Email Null");
+          emit(state.copyWith(loading: false, error: "User not logged in"));
           return;
         }
-      }
 
-      await loadOfferings();
-    } catch (e) {
-      if (!isClosed) {
-        debugPrint("RC login: ${e.toString()}");
-        emit(
-          state.copyWith(loading: false, error: "RevenueCat init failed: $e"),
-        );
+        final rcUserId = _getRCUserId(email);
+
+        await Purchases.setLogLevel(LogLevel.debug);
+        final configuration =
+            PurchasesConfiguration(
+                Platform.isIOS ? _rcAppleApiKey : _rcAndroidApiKey,
+              )
+              ..appUserID = rcUserId
+              ..diagnosticsEnabled = true;
+        if (await Purchases.isConfigured == false) {
+          await Purchases.configure(configuration);
+        }
+
+        await loginUser(rcUserId);
+
+        if (!_isConfigured) {
+          Purchases.addCustomerInfoUpdateListener(_handleCustomerInfo);
+          _isConfigured = true;
+        }
+
+        final info = await Purchases.getCustomerInfo();
+        if (info.entitlements.active.isNotEmpty) {
+          _handleCustomerInfo(info);
+        }
+
+        try {
+          await Purchases.restorePurchases();
+        } catch (e) {
+          if (e is PlatformException &&
+              e.details != null &&
+              e.details['readable_error_code'] == "RECEIPT_ALREADY_IN_USE") {
+            emit(
+              state.copyWith(
+                isBlocked: isComeFromProfile == true ? false : true,
+                loading: false,
+                error: isComeFromProfile == true
+                    ? "This account is already linked to another ${Platform.isIOS ? "Apple" : "Google"} account. Please log in with the original account to access this feature."
+                    : "This account is already linked with another ${Platform.isIOS ? "Apple" : "Google"}. Please log in with the original account to access this feature.",
+              ),
+            );
+            return;
+          }
+        }
+
+        await loadOfferings();
+      } catch (e) {
+        if (!isClosed) {
+          debugPrint("RC login: ${e.toString()}");
+          emit(
+            state.copyWith(loading: false, error: "RevenueCat init failed: $e"),
+          );
+        }
       }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          await initRevenueCat(isComeFromProfile, context);
+        },
+      );
     }
   }
 
@@ -145,7 +206,6 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     }
   }
 
-  // ================= LOGIN =================
   Future<void> loginUser(String email) async {
     try {
       final rcUserId = _getRCUserId(email);
@@ -323,7 +383,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     emit(state.copyWith(consumablePurchased: false));
   }
 
-  Future<void> buyConsumable() async {
+  Future<void> buyConsumable(BuildContext context) async {
     final package = state.selectedConsumablePackage;
 
     if (package == null) {
@@ -342,7 +402,30 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         "${package.storeProduct.identifier}",
       );
 
-      emit(state.copyWith(loading: false, consumablePurchased: true));
+      Future.delayed(const Duration(seconds: 2), () async {
+        print(
+          "Before tokenAlreadyAdded-=-=-${CreditManager().tokenAlreadyAdded}",
+        );
+        print(
+          "Before CreditAlreadyAdded-=-=-${CreditManager().creditAlreadyAdded}",
+        );
+
+        final response = await HomeCubit().fetchHomeData(context);
+
+        print(
+          "After tokenAlreadyAdded-=-=-${CreditManager().tokenAlreadyAdded}",
+        );
+        print(
+          "After CreditAlreadyAdded-=-=-${CreditManager().creditAlreadyAdded}",
+        );
+
+        if (CreditManager().tokenAlreadyAdded <=
+                response!.currentPlan!.alreadyTotalAddOnToken ||
+            CreditManager().creditAlreadyAdded <=
+                response.currentPlan!.alreadyTotalAddOnCredit) {
+          emit(state.copyWith(loading: false, consumablePurchased: true));
+        }
+      });
     } on PlatformException catch (e) {
       if (!isClosed) {
         emit(state.copyWith(loading: false, consumablePurchased: false));
@@ -382,7 +465,14 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         return;
       }
     } on PlatformException catch (e) {
-      _handlePurchaseError(e);
+      if (e.toString().toLowerCase().contains(
+        "purchased product was missing".toLowerCase(),
+      )) {
+        emit(state.copyWith(loading: false));
+        buySelected();
+      } else {
+        _handlePurchaseError(e);
+      }
     }
   }
 

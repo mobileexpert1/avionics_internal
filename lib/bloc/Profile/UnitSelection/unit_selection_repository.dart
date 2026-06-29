@@ -15,7 +15,7 @@ class UnitSelectionRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.getUnitselection,
+          ApiServiceUrlConstant.getUnitSelection,
     );
 
     try {
@@ -57,7 +57,7 @@ class UnitSelectionRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.updateUnitselection,
+          ApiServiceUrlConstant.updateUnitSelection,
     );
 
     try {

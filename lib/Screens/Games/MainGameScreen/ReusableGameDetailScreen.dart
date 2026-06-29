@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -39,88 +40,110 @@ class ReusableGameDetailScreen extends StatelessWidget {
       ),
 
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final double maxWidth = constraints.maxWidth > 1500
+                ? 1500
+                : constraints.maxWidth;
+
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "Game info",
-                          style: AppTextStyles.bold(
-                            18,
-                          ).copyWith(color: AppColors.black),
-                        ),
-                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                child: Text(
+                                  "Game info",
+                                  style: AppTextStyles.bold(
+                                    18,
+                                  ).copyWith(color: AppColors.black),
+                                ),
+                              ),
 
-                      const SizedBox(height: 15),
+                              const SizedBox(height: 15),
 
-                      ...gameInfo.infoItems.map(
-                        (e) => ReusableInfoCard(
-                          model: ReusableGameInfoItemModel(
-                            iconName: e.asset,
-                            title: e.title,
-                            value: e.value,
-                            subtitle: e.subtitle,
+                              ...gameInfo.infoItems.map(
+                                (e) => ReusableInfoCard(
+                                  model: ReusableGameInfoItemModel(
+                                    iconName: e.asset,
+                                    title: e.title,
+                                    value: e.value,
+                                    subtitle: e.subtitle,
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              if (gameInfo.helpTitle != null)
+                                HelpInfoCard(
+                                  model: ReusableHelpCardModel(
+                                    iconName: AssetsPath.carHelpLevelIcon,
+                                    normalText: gameInfo.helpTitle!,
+                                    highlightedText:
+                                        gameInfo.helpHighlightedTitle ?? '',
+                                    description: gameInfo.helpDescription ?? '',
+                                  ),
+                                ),
+
+                              const SizedBox(height: 5),
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  "Win Rule",
+                                  style: AppTextStyles.bold(
+                                    18,
+                                  ).copyWith(color: AppColors.black),
+                                ),
+                              ),
+
+                              const SizedBox(height: 15),
+
+                              WinRuleProgressCard(
+                                model: ReusableWinRuleProgressModel(
+                                  progress: gameInfo.progress,
+                                  title: gameInfo.winTitle,
+                                  highlightedText: gameInfo.winHighlightedText,
+                                  normalText: gameInfo.winNormalText,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
 
-                      const SizedBox(height: 5),
-
-                      if (gameInfo.helpTitle != null)
-                        HelpInfoCard(
-                          model: ReusableHelpCardModel(
-                            iconName: AssetsPath.carHelpLevelIcon,
-
-                            normalText: gameInfo.helpTitle!,
-
-                            highlightedText:
-                                gameInfo.helpHighlightedTitle ?? '',
-
-                            description: gameInfo.helpDescription ?? '',
-                          ),
-                        ),
-
-                      const SizedBox(height: 5),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          "Win Rule",
-                          style: AppTextStyles.bold(
-                            18,
-                          ).copyWith(color: AppColors.black),
-                        ),
-                      ),
-
                       const SizedBox(height: 15),
-
-                      WinRuleProgressCard(
-                        model: ReusableWinRuleProgressModel(
-                          progress: gameInfo.progress,
-
-                          title: gameInfo.winTitle,
-
-                          highlightedText: gameInfo.winHighlightedText,
-
-                          normalText: gameInfo.winNormalText,
+                      Center(
+                        child: SizedBox(
+                          width: kIsWeb
+                              ? MediaQuery.of(context).size.width * 0.45
+                              : double.infinity,
+                          height: 50,
+                          child: ReusableBottomButton(
+                            text: buttonText,
+                            onTap: onButtonTap,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 15),
-              ReusableBottomButton(text: buttonText, onTap: onButtonTap),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -93,26 +94,31 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         onPopInvokedWithResult: (_, _) {
           _isDialogOpen = false;
         },
-        child: CustomDialog(
-          title: 'Rename Chat',
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: _primaryColor),
+        child: Center(
+          child: SizedBox(
+            width: MediaQuery.of(dialogContext).size.width * (kIsWeb ? 0.3 : 1),
+            child: CustomDialog(
+              title: 'Rename Chat',
+              content: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: _primaryColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: _primaryColor, width: 1),
+                  ),
+                ),
               ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: _primaryColor, width: 1),
-              ),
+              positiveButtonText: 'Save',
+              onPositiveTap: () {
+                _isDialogOpen = false;
+                Navigator.pop(dialogContext, controller.text.trim());
+              },
             ),
           ),
-          positiveButtonText: 'Save',
-          onPositiveTap: () {
-            _isDialogOpen = false;
-            Navigator.pop(dialogContext, controller.text.trim());
-          },
         ),
       ),
     );
@@ -149,20 +155,23 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       useRootNavigator: false,
       builder: (dialogContext) => PopScope(
         canPop: true,
-
         onPopInvokedWithResult: (_, _) {
           _isDialogOpen = false;
         },
-
-        child: CustomDialog(
-          title: 'Delete chat',
-          description: 'Are you sure you want to delete this chat?',
-          positiveButtonText: 'Delete',
-          positiveColor: _deleteColor,
-          onPositiveTap: () {
-            _isDialogOpen = false;
-            Navigator.pop(dialogContext, true);
-          },
+        child: Center(
+          child: SizedBox(
+            width: MediaQuery.of(dialogContext).size.width * (kIsWeb ? 0.3 : 1),
+            child: CustomDialog(
+              title: 'Delete chat',
+              description: 'Are you sure you want to delete this chat?',
+              positiveButtonText: 'Delete',
+              positiveColor: _deleteColor,
+              onPositiveTap: () {
+                _isDialogOpen = false;
+                Navigator.pop(dialogContext, true);
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -414,7 +423,6 @@ class CustomDialog extends StatelessWidget {
 
       child: Padding(
         padding: const EdgeInsets.all(18),
-
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -112,7 +112,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
                               selector: (state) => state.emailError,
                               builder: (context, emailError) {
                                 return CustomTextField(
-                                  label: ConstantStrings.emailLabel,
+                                  label: ConstantStrings.email,
                                   controller: emailController,
                                   errorText: emailError,
                                   onChanged: (val) => context

@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/bloc/Games/SubGameSection/OneWord_Section/oneWord_model.dart';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 
@@ -6,11 +9,13 @@ class OneWordTopicRepository {
   Future<OneWordTopicModel?> getOneWordTopic() async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlGamesConstant.oneWord}",
+      "${ApiFunctionUrlGamesConstant.oneWord}",
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
 
       if (jsonData.containsKey('data')) {
         return OneWordTopicModel.fromJson(jsonData);
@@ -24,11 +29,13 @@ class OneWordTopicRepository {
   Future<OneWordTopicModel?> getQuizTopic() async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlGamesConstant.quiz}",
+      "${ApiFunctionUrlGamesConstant.quiz}",
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
 
       if (jsonData.containsKey('data')) {
         return OneWordTopicModel.fromJson(jsonData);
@@ -39,15 +46,17 @@ class OneWordTopicRepository {
     }
   }
 
-
-  Future<OneWordTopicModel?> getCalculationTopic() async {
+  Future<OneWordTopicModel?> getCalculationTopic(
+  ) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlGamesConstant.calculation}",
+      "${ApiFunctionUrlGamesConstant.calculation}",
     );
 
     try {
-      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      final jsonData =
+          await ApiService.get(url: uri)
+              as Map<String, dynamic>;
 
       if (jsonData.containsKey('data')) {
         return OneWordTopicModel.fromJson(jsonData);

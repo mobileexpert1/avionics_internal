@@ -147,10 +147,11 @@ class MySubscriptionItem {
       currencySymbol: getCurrencySymbol(currencyCode),
 
       addOnPacksModel:
-          (json['add_on'] as List<dynamic>?)
-              ?.map((e) => AddOnModel.fromJson(e))
-              .toList() ??
-          [],
+          ((json['add_on'] as List<dynamic>?)
+                    ?.map((e) => AddOnModel.fromJson(e))
+                    .toList() ??
+                [])
+            ..sort((a, b) => b.purchaseDateTime.compareTo(a.purchaseDateTime)),
     );
   }
 
@@ -199,6 +200,7 @@ class AddOnModel {
   final int credit;
   final int token;
   final String currencySymbol;
+  final String planName;
 
   AddOnModel({
     required this.id,
@@ -214,7 +216,11 @@ class AddOnModel {
     required this.credit,
     required this.token,
     required this.currencySymbol,
+    required this.planName,
   });
+
+  DateTime get purchaseDateTime =>
+      DateFormat('dd MMM yyyy, HH:mm').parse(purchaseDate);
 
   factory AddOnModel.fromJson(Map<String, dynamic> json) {
     final currencyCode = json['currency'] ?? '';
@@ -233,7 +239,6 @@ class AddOnModel {
       purchaseDate: json['purchase_date'] ?? '',
       purchaseDateLocal: convertUtcToLocal24Hour(purchaseDateLocal),
 
-
       taxPercentage: (json['tax_percentage'] as num?)?.toDouble() ?? 0.0,
 
       taxAmount: (json['tax_amount'] as num?)?.toDouble() ?? 0.0,
@@ -244,6 +249,7 @@ class AddOnModel {
 
       token: json['token'] ?? 0,
       currencySymbol: getCurrencySymbol(currencyCode),
+      planName: json['plan_name'] ?? '',
     );
   }
 
@@ -260,8 +266,52 @@ class AddOnModel {
       'type': type,
       'credit': credit,
       'token': token,
+      'plan_name': planName,
     };
   }
+}
+
+class PackageCount {
+  int small;
+  int medium;
+  int large;
+
+  PackageCount({this.small = 0, this.medium = 0, this.large = 0});
+
+  @override
+  String toString() {
+    return 'Small: $small, Medium: $medium, Large: $large';
+  }
+}
+
+PackageCount getCreditPackageCount(List<AddOnModel> addOns) {
+  final count = PackageCount();
+  for (final item in addOns) {
+    final planName = item.planName.toLowerCase();
+    if (planName.contains('credit small')) {
+      count.small++;
+    } else if (planName.contains('credit medium')) {
+      count.medium++;
+    } else if (planName.contains('credit large')) {
+      count.large++;
+    }
+  }
+  return count;
+}
+
+PackageCount getTokenPackageCount(List<AddOnModel> addOns) {
+  final count = PackageCount();
+  for (final item in addOns) {
+    final planName = item.planName.toLowerCase();
+    if (planName.contains('token small')) {
+      count.small++;
+    } else if (planName.contains('token medium')) {
+      count.medium++;
+    } else if (planName.contains('token large')) {
+      count.large++;
+    }
+  }
+  return count;
 }
 
 String convertUtcToLocal24Hour(String utcDate) {
@@ -333,4 +383,38 @@ class MySubscriptionPlanModel {
 
     return title;
   }
+}
+
+enum BillingHistoryEntryType { subscription, addOn }
+
+class BillingHistoryEntry {
+  final BillingHistoryEntryType entryType;
+  final MySubscriptionItem? subscriptionItem;
+  final AddOnModel? addOnItem;
+
+  BillingHistoryEntry.subscription(this.subscriptionItem)
+    : entryType = BillingHistoryEntryType.subscription,
+      addOnItem = null;
+
+  BillingHistoryEntry.addOn(this.addOnItem)
+    : entryType = BillingHistoryEntryType.addOn,
+      subscriptionItem = null;
+
+  bool get isAddOn => entryType == BillingHistoryEntryType.addOn;
+
+  bool get isSubscription => entryType == BillingHistoryEntryType.subscription;
+}
+
+List<BillingHistoryEntry> buildFlatBillingHistory(
+  List<MySubscriptionItem> items,
+) {
+  final List<BillingHistoryEntry> result = [];
+
+  for (final item in items) {
+    result.add(BillingHistoryEntry.subscription(item));
+    for (final addOn in item.addOnPacksModel) {
+      result.add(BillingHistoryEntry.addOn(addOn));
+    }
+  }
+  return result;
 }

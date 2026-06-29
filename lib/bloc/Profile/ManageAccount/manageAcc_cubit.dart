@@ -1,10 +1,13 @@
 import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import 'manageAcc_repository.dart';
 import 'manageAcc_state.dart';
 
@@ -70,55 +73,63 @@ class ManageaccCubit extends Cubit<ManageAccState> {
   }
 
   Future<void> fetchUserDetails(BuildContext context) async {
-    emit(
-      state.copyWith(
-        isLoading: true,
-        status: CommonApiStatus.submitting,
-        errorMessage: null,
-      ),
-    );
-    try {
-      final user = await repository.getUserDetail();
-
-      initializeUserData(
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        authType: user.authType,
-        tokenUsagePercentage: user.tokenUsagePercentage ?? 0.0,
-        creditUsagePercentage: user.creditUsagePercentage ?? 0.0,
-      );
-
-      emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
+    if (await InternetConnection().hasInternetAccess) {
       emit(
         state.copyWith(
-          status: CommonApiStatus.failure,
-          isLoading: false,
-          errorMessage: e.toString(),
+          isLoading: true,
+          status: CommonApiStatus.submitting,
+          errorMessage: null,
         ),
       );
+      try {
+        final user = await repository.getUserDetail();
+
+        initializeUserData(
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          authType: user.authType,
+          tokenUsagePercentage: user.tokenUsagePercentage ?? 0.0,
+          creditUsagePercentage: user.creditUsagePercentage ?? 0.0,
+        );
+
+        emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            isLoading: false,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(context, onRetry: () => fetchUserDetails(context));
     }
   }
 
   Future<void> updateUserDetails(BuildContext context) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
-    try {
-      await repository.updateProfileInformation(
-        firstName: state.firstName,
-        lastName: state.lastName,
-      );
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(isLoading: true, errorMessage: null));
+      try {
+        await repository.updateProfileInformation(
+          firstName: state.firstName,
+          lastName: state.lastName,
+        );
 
-      emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
-      AppSnackBar.custom(
-        context,
-        message: "Your profile has been successfully updated",
-        svgAsset: CommonUi.setSvgImage(AssetsPath.successIcon),
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+        emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
+        AppSnackBar.custom(
+          context,
+          message: "Your profile has been successfully updated",
+          svgAsset: CommonUi.setSvgImage(AssetsPath.successIcon),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      }
+    } else {
+      NoInternetDialog.show(context, onRetry: () => updateUserDetails(context));
     }
   }
 }

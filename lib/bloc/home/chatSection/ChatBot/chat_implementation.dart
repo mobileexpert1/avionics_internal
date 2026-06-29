@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
 import 'package:uuid/uuid.dart';
+import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/web_socket_channel.dart';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/ConstantStrings.dart';
@@ -52,10 +54,6 @@ class ChatRepositoryImpl implements ChatRepository {
   String? _pendingUserMessage;
   ChatMessage? _pendingUserMessageObject;
 
-  void startInternetMonitoring() {
-    // Handled in ChatCubit using connectivity_plus
-  }
-
   @override
   Future<void> connect({
     required String accessToken,
@@ -91,8 +89,8 @@ class ChatRepositoryImpl implements ChatRepository {
 
     final isNewSession = _sessionId == null || _sessionId!.isEmpty;
     final endpoint = isNewSession
-        ? 'wss://avionica.csdevhub.com/ai-engine/wilco/new-session?token=$_accessToken'
-        : 'wss://avionica.csdevhub.com/ai-engine/wilco/session/$_sessionId?token=$_accessToken';
+        ? 'wss://${ApiBaseUrlConstant.baseChatUrl}/ai-engine/wilco/new-session?token=$_accessToken'
+        : 'wss://${ApiBaseUrlConstant.baseChatUrl}/ai-engine/wilco/session/$_sessionId?token=$_accessToken';
 
     print('[WebSocket] Connecting to: $endpoint');
 
@@ -323,7 +321,7 @@ class ChatRepositoryImpl implements ChatRepository {
     int page = 1;
     while (true) {
       final uri = Uri.parse(
-        "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlChatConstant.chatService}/$sessionId",
+        "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlConstant.chatHistorySession}/$sessionId",
       );
 
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;

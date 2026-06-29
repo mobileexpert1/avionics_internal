@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Constants/ApiClass/api_service.dart';
@@ -6,7 +6,7 @@ import '../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/ConstantStrings.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
-import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'flight_key_values_model.dart';
 import 'flight_map_detailModel.dart';
 import 'flight_map_model.dart';
@@ -19,7 +19,7 @@ class FlightRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlAirplaneConstant.airplaneService +
-          ApiFunctionUrlAirplaneConstant.airCraftFlightCredit,
+          ApiFunctionUrlAirplaneConstant.aircraftFlightCredit,
     );
     try {
       final response = await ApiService.post(
@@ -59,16 +59,18 @@ class FlightRepository {
         flightLimit = 1;
       } else {
         if (CreditManager().remainingCredit <= 8) {
-          Future.microtask(() {
-            AlertHelperForSubsPopup.showSubscriptionEndAlert(
-              context: context,
-              title: "Subscription Required",
-              message: "Credits finished. Please buy subscription.",
-              navigateTo: const SubscriptionPlanDetailScreen(
-                isComeFromSignup: true,
-              ),
-            );
-          });
+          AlertHelperForSubsPopup.showSubscriptionEndAlert(
+            isFromTrackingClass: false,
+            context: context,
+            title: "Credits limit exhausted",
+            isFromWilcoAndTrackingScreen: true,
+            buttonText: "Buy Credits",
+            message:
+                "Your credits limit has been exhausted. Please purchase a extra credits.",
+            onGoToActionBlock: () {
+              openAddOnPacksBottomSheet(context, AddOnPackType.creditsOnly);
+            },
+          );
           return [];
         }
       }
@@ -122,6 +124,27 @@ class FlightRepository {
     }
   }
 
+  Future<void> openAddOnPacksBottomSheet(
+    BuildContext context,
+    AddOnPackType packType,
+  ) async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.80,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: AddOnPacksScreen(packType: packType),
+          ),
+        );
+      },
+    );
+  }
+
   Future<Map<String, dynamic>?> getFlightDetails({
     required String flightId,
     required String fromDateTime,
@@ -132,12 +155,16 @@ class FlightRepository {
     if (CreditManager().remainingCredit <= 2) {
       Future.microtask(() {
         AlertHelperForSubsPopup.showSubscriptionEndAlert(
+          isFromTrackingClass: false,
           context: context,
-          title: "Subscription Required",
-          message: "Credits finished. Please buy subscription.",
-          navigateTo: const SubscriptionPlanDetailScreen(
-            isComeFromSignup: true,
-          ),
+          title: "Credits limit exhausted",
+          isFromWilcoAndTrackingScreen: true,
+          buttonText: "Buy Credits",
+          message:
+              "Your credits limit has been exhausted. Please purchase a extra credits.",
+          onGoToActionBlock: () {
+            openAddOnPacksBottomSheet(context, AddOnPackType.creditsOnly);
+          },
         );
       });
       return null;
@@ -162,7 +189,6 @@ class FlightRepository {
       } else {
         throw Exception("No flight data found for ID: $flightId");
       }
-      // final aircraftDetails = await getAircraftDetails(flightDetail.type ?? '');
       final aircraftDetails = await getAircraftDetails(
         aircraftId: flightDetail.type ?? '',
         origIcao: flightDetail.departureIcao ?? '',
@@ -239,26 +265,6 @@ class FlightRepository {
     );
   }
 
-  // Future<List<FlightAircraftDetail>> getAircraftDetails(
-  //     String aircraftType,
-  //     ) async {
-  //   final url = Uri.parse(
-  //     "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlAirplaneConstant.airplaneService}${ApiServiceUrlAirplaneConstant.getListAirbus}details/$aircraftType",
-  //   );
-  //   try {
-  //     final response = await ApiService.get(url: url);
-  //     final aircraftResponse = FlightDetailResponse.fromJson(response);
-  //
-  //     if (aircraftResponse.result != null) {
-  //       return [aircraftResponse.result!];
-  //     }
-  //     return aircraftResponse.flights;
-  //   } catch (e) {
-  //     print('Error fetching aircraft details: $e');
-  //     return [];
-  //   }
-  // }
-
   Future<List<FlightAircraftDetail>> getAircraftDetails({
     required String aircraftId,
     required String origIcao,
@@ -321,7 +327,7 @@ class FlightRepository {
     required String bounds,
     int limit = 20,
     List<String>? selectedIcaoTypes,
-    List<String>? selectedCategories,
+    List<String>? selectedFlightCategories,
   }) async {
     try {
       final aircraftParam =
@@ -330,8 +336,8 @@ class FlightRepository {
           : 'A318,A320,A20N,A21N';
 
       final categoriesParam =
-          (selectedCategories != null && selectedCategories.isNotEmpty)
-          ? selectedCategories.join(',')
+          (selectedFlightCategories != null && selectedFlightCategories.isNotEmpty)
+          ? selectedFlightCategories.join(',')
           : 'C,P';
 
       final url = Uri.parse(
@@ -350,11 +356,4 @@ class FlightRepository {
       throw e.toString();
     }
   }
-}
-
-class Position {
-  final double latitude;
-  final double longitude;
-
-  Position({required this.latitude, required this.longitude});
 }

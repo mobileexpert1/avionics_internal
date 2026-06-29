@@ -14,3 +14,11 @@ Map<String, String> splitAircraftName(String text) {
     "code": "",
   };
 }
+
+void printFullText(String text) {
+  const int chunkSize = 800;
+  for (int i = 0; i < text.length; i += chunkSize) {
+    int end = (i + chunkSize < text.length) ? i + chunkSize : text.length;
+    print(text.substring(i, end));
+  }
+}

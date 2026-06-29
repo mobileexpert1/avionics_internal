@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,7 +21,7 @@ import '../../Helpers/FormattedText/FormattedText.dart';
 import '../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import '../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
 import '../Onboarding/Login/LoginScreen.dart';
-import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'ChatHistoryScreen.dart';
 
 class AskWilcoScreen extends StatefulWidget {
@@ -60,6 +61,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   final _selectableFocusNode = FocusNode();
 
   StreamSubscription<bool>? _internetSub;
+
+  final FocusNode _messageFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -192,6 +195,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           accessToken: widget.accessToken,
           isNewSession: widget.accessToken.isEmpty,
           existingSessionId: widget.sessionId,
+          context: context,
         );
 
         _listenToInternet(cubit);
@@ -204,11 +208,16 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
                 title: "Token limit exhausted",
+                isFromWilcoAndTrackingScreen: true,
+                buttonText: "Buy Token",
                 message:
                     "Your token limit has been exhausted. Please purchase a subscription.",
-                navigateTo: SubscriptionPlanDetailScreen(
-                  isComeFromSignup: false,
-                ),
+                onGoToActionBlock: () {
+                  cubit.openAddOnPacksBottomSheet(
+                    context,
+                    AddOnPackType.tokensOnly,
+                  );
+                },
               );
 
               break;
@@ -217,13 +226,17 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
                 title: "Credit limit exhausted",
+                isFromWilcoAndTrackingScreen: true,
+                buttonText: "Buy Credits",
                 message:
                     "Your credit limit has been exhausted. Please purchase a subscription.",
-                navigateTo: SubscriptionPlanDetailScreen(
-                  isComeFromSignup: true,
-                ),
+                onGoToActionBlock: () {
+                  cubit.openAddOnPacksBottomSheet(
+                    context,
+                    AddOnPackType.creditsOnly,
+                  );
+                },
               );
-
               break;
 
             case ChatResponseStatus.accessTokenExpired:
@@ -379,8 +392,10 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                           vertical: 10,
                                         ),
 
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 320,
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(
+                                            context,
+                                          ).size.width,
                                         ),
 
                                         decoration: isUser
@@ -541,52 +556,112 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     }
                   },
 
-                  child: TextField(
-                    controller: _controller,
-                    minLines: 1,
-                    maxLines: 5,
-                    style: AppTextStyles.regular(
-                      16,
-                    ).copyWith(height: 1.0, color: AppColors.black),
+                  // child: TextField(
+                  //   controller: _controller,
+                  //   minLines: 1,
+                  //   maxLines: 5,
+                  //   style: AppTextStyles.regular(
+                  //     16,
+                  //   ).copyWith(height: 1.0, color: AppColors.black),
+                  //
+                  //   textInputAction: TextInputAction.done,
+                  //
+                  //   onSubmitted: (val) {
+                  //     if (!kIsWeb) return;
+                  //
+                  //     final text = val.trim();
+                  //
+                  //     if (text.isEmpty) return;
+                  //
+                  //     final cubit = context.read<ChatCubit>();
+                  //
+                  //     final isAnalyzing = cubit.state.any(
+                  //       (msg) => msg['type'] == 'analyzing',
+                  //     );
+                  //
+                  //     if (!isAnalyzing) {
+                  //       cubit.sendMessage(
+                  //         text,
+                  //         context,
+                  //         isReceivedTokenFullWarning,
+                  //       );
+                  //
+                  //       _controller.clear();
+                  //
+                  //       _stopListening(context);
+                  //
+                  //       _scrollToBottom();
+                  //     }
+                  //   },
+                  //   decoration: InputDecoration(
+                  //     border: InputBorder.none,
+                  //     hintText: 'Type your message here...',
+                  //     hintStyle: AppTextStyles.regular(16).copyWith(
+                  //       height: 1.0,
+                  //       color: AppColors.greyFlightDetailText,
+                  //     ),
+                  //   ),
+                  // ),
 
-                    textInputAction: TextInputAction.done,
+                  child: Builder(
+                    builder: (chatContext) {
+                      return Focus(
+                        focusNode: _messageFocusNode,
+                        onKeyEvent: (node, event) {
+                          if (kIsWeb &&
+                              event is KeyDownEvent &&
+                              event.logicalKey == LogicalKeyboardKey.enter) {
+                            final text = _controller.text.trim();
+                            if (text.isEmpty) {
+                              return KeyEventResult.handled;
+                            }
+                            final cubit = chatContext.read<ChatCubit>();
 
-                    onSubmitted: (val) {
-                      if (!kIsWeb) return;
+                            final isAnalyzing = cubit.state.any(
+                                  (msg) => msg['type'] == 'analyzing',
+                            );
 
-                      final text = val.trim();
+                            if (!isAnalyzing) {
+                              cubit.sendMessage(
+                                text,
+                                chatContext,
+                                isReceivedTokenFullWarning,
+                              );
 
-                      if (text.isEmpty) return;
+                              _controller.clear();
 
-                      final cubit = context.read<ChatCubit>();
+                              _stopListening(chatContext);
 
-                      final isAnalyzing = cubit.state.any(
-                        (msg) => msg['type'] == 'analyzing',
+                              _scrollToBottom();
+                            }
+
+                            return KeyEventResult.handled;
+                          }
+
+                          return KeyEventResult.ignored;
+                        },
+
+                        child: TextField(
+                          controller: _controller,
+                          minLines: 1,
+                          maxLines: 5,
+                          style: AppTextStyles.regular(
+                            16,
+                          ).copyWith(height: 1.0, color: AppColors.black),
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Type your message here...',
+                            hintStyle: AppTextStyles.regular(16).copyWith(
+                              height: 1.0,
+                              color: AppColors.greyFlightDetailText,
+                            ),
+                          ),
+                        ),
                       );
-
-                      if (!isAnalyzing) {
-                        cubit.sendMessage(
-                          text,
-                          context,
-                          isReceivedTokenFullWarning,
-                        );
-
-                        _controller.clear();
-
-                        _stopListening(context);
-
-                        _scrollToBottom();
-                      }
                     },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Type your message here...',
-                      hintStyle: AppTextStyles.regular(16).copyWith(
-                        height: 1.0,
-                        color: AppColors.greyFlightDetailText,
-                      ),
-                    ),
                   ),
+
                 ),
               ),
 

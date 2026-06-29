@@ -216,10 +216,10 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                           )
                                         : CachedAnyImage(
                                             imagePath: manufacturerLogo,
+                                            isForPlaneList: true,
                                             width: 75,
-                                            height: 25,
-                                            contentImage: BoxFit.contain,
-                                            useCache: false,
+                                            height: 30,
+                                            contentImage: BoxFit.cover,
                                           ),
                                   ),
                                   Row(
@@ -378,7 +378,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                       width: 100,
                                       height: 30,
                                       contentImage: BoxFit.contain,
-                                      useCache: true,
                                     ),
                             ),
                           ],

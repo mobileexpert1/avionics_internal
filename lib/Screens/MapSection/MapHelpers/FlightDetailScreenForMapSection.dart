@@ -56,8 +56,8 @@ class _FlightDetailScreenForMapSectionState
 
   // ── Separate controllers for image carousel and tab swipe ──
   int _currentImageIndex = 0;
-  late PageController _imagePageController = PageController();
-  late PageController _tabPageController = PageController();
+  late final PageController _imagePageController = PageController();
+  late final PageController _tabPageController = PageController();
 
   bool _isLoadingFullDetails = false;
   FlightAircraftDetail? _currentFlightDetail;
@@ -580,56 +580,71 @@ class _FlightDetailScreenForMapSectionState
 
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: Stack(
-                      children: [
-                        CachedAnyImage(
-                          isForPlaneList: true,
-                          imagePath: image.url,
-                          width: double.infinity,
-                          height: screenHeight * 0.20,
-                          contentImage: kIsWeb ? BoxFit.contain : BoxFit.cover,
-                        ),
-                        if (hasCopyright)
-                          Positioned(
-                            left: 8,
-                            bottom: 8,
-                            child: GestureDetector(
-                              onTap: () async {
-                                final uri = Uri.tryParse(image.source);
-                                if (uri != null && await canLaunchUrl(uri)) {
-                                  await launchUrl(
-                                    uri,
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Could not open URL.'),
+                    child: Center(
+                      child: SizedBox(
+                        width: kIsWeb
+                            ? MediaQuery.of(context).size.width * 0.2
+                            : double.infinity,
+                        height: screenHeight * 0.20,
+                        child: Stack(
+                          alignment: Alignment.bottomLeft,
+                          children: [
+                            CachedAnyImage(
+                              useCache: true,
+                              isForPlaneList: true,
+                              imagePath: image.url,
+                              width: double.infinity,
+                              height: screenHeight * 0.20,
+                              contentImage: kIsWeb
+                                  ? BoxFit.cover
+                                  : BoxFit.cover,
+
+                            ),
+
+                            if (hasCopyright)
+                              Positioned(
+                                left: 8,
+                                bottom: 8,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final uri = Uri.tryParse(image.source);
+
+                                    if (uri != null && await canLaunchUrl(uri)) {
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Could not open URL.'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
                                     ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  '© ${image.cc}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w500,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.6),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      '© ${image.cc}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                      ],
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -1254,7 +1269,9 @@ class _FlightDetailScreenForMapSectionState
                   ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
                 ),
               ),
-              const SizedBox(width: 15),
+              SizedBox(
+                width: kIsWeb ? MediaQuery.of(context).size.width * 0.5 : 15,
+              ),
               Expanded(
                 child: second != null
                     ? customFieldWithNewModifications(
@@ -1291,6 +1308,8 @@ class _FlightDetailScreenForMapSectionState
     String title,
     String content,
   ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -1299,61 +1318,64 @@ class _FlightDetailScreenForMapSectionState
         return Dialog(
           backgroundColor: Colors.transparent,
           insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF1F1F4B),
-              borderRadius: BorderRadius.circular(28),
-            ),
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 40),
-                      child: Text(
-                        title,
-                        style: AppTextStyles.regular(15).copyWith(
-                          height: 1.0,
-                          color: AppColors.greyFlightDetailText,
+          child: SizedBox(
+            width: kIsWeb ? screenWidth * 0.2 : null,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF1F1F4B),
+                borderRadius: BorderRadius.circular(28),
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 40),
+                        child: Text(
+                          title,
+                          style: AppTextStyles.regular(15).copyWith(
+                            height: 1.0,
+                            color: AppColors.greyFlightDetailText,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(height: 1, color: Colors.white24),
+                      const SizedBox(height: 20),
+                      Text(
+                        content,
+                        style: AppTextStyles.regular(
+                          15,
+                        ).copyWith(height: 1.0, color: AppColors.white),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white54),
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          size: 18,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Container(height: 1, color: Colors.white24),
-                    const SizedBox(height: 20),
-                    Text(
-                      content,
-                      style: AppTextStyles.regular(
-                        15,
-                      ).copyWith(height: 1.0, color: AppColors.white),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white54),
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        size: 18,
-                        color: Colors.white,
-                      ),
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

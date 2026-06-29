@@ -4,11 +4,12 @@ import 'ComparisonFilterModel.dart';
 import 'ComparsionFilterState.dart';
 
 class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
-  ComparisonFilterCubit1() : super(const ComparisonFilterState(filterCategories: []));
+  ComparisonFilterCubit1()
+    : super(const ComparisonFilterState(filterCategories: []));
 
   void loadFiltersFromComparison1(
     bool isAlreadyProcessing,
-      ComparisonFilterState? model,
+    ComparisonFilterState? model,
   ) {
     if (isAlreadyProcessing == true) {
       if (model != null) {
@@ -47,7 +48,6 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
           isSelected: true,
         ),
       ];
-
       final technicalOptions = [
         ComparisonFilterModel(
           id: 'wingspan_m',
@@ -72,7 +72,6 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
         ComparisonFilterModel(id: 'mtow', name: 'MTOW (kg)', isSelected: true),
         ComparisonFilterModel(id: 'mlw', name: 'MLW (kg)', isSelected: true),
       ];
-
       final operationalOptions = [
         ComparisonFilterModel(
           id: 'takeoff_speed_kts',
@@ -155,7 +154,6 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
           isSelected: true,
         ),
       ];
-
       emit(
         ComparisonFilterState(
           filterCategories: [
@@ -252,7 +250,7 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
   }
 
   void selectAll() {
-    final allSelectedCategories = state.filterCategories.map((category) {
+    final allSelectedFiltersCategories = state.filterCategories.map((category) {
       final allSelectedOptions = category.options
           .map(
             (option) => ComparisonFilterModel(
@@ -271,7 +269,7 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
 
     emit(
       ComparisonFilterState(
-        filterCategories: allSelectedCategories,
+        filterCategories: allSelectedFiltersCategories,
         isApplied: state.isApplied,
       ),
     );
@@ -300,7 +298,12 @@ class ComparisonFilterCubit1 extends Cubit<ComparisonFilterState> {
       return category.copyWith(options: resetOptions);
     }).toList();
 
-    emit(ComparisonFilterState(filterCategories: resetCategories, isApplied: false));
+    emit(
+      ComparisonFilterState(
+        filterCategories: resetCategories,
+        isApplied: false,
+      ),
+    );
   }
 
   void toggleFilterOption(String categoryId, String optionId) {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
+import '../GamesSubScreens/BlackBoxSection/BlackBoxQuestionScreen.dart';
 import '../GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
 import '../GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizLockScreen.dart';
@@ -136,10 +137,11 @@ class _BaseScreenForAllLevelState
       case 'aircraftEncyclopaedia':
         AppNavigator.push(
           context,
-          QuizQuestionScreen(
-            sectionId: 0,
-            sectionTitle: "Citius. Altius. Longius.",
-            gameId: "aircraftEncyclopaedia",
+          BlackBoxScreen(
+            gameId: 'aircraftEncyclopaedia',
+            summarySetId: "",
+            summaryGameNumber: 0,
+            isForBlackBox: false,
           ),
           disableSwipeBack: true,
         );

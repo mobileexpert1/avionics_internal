@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
 import 'chat_history_model.dart';
 import 'chat_history_repository.dart';
 import 'chat_history_state.dart';
@@ -15,77 +17,99 @@ class ChatHistoryCubit extends Cubit<ChatHistoryState> {
     int? page,
     bool isLoadMore = false,
   }) async {
-    final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
+    if (await InternetConnection().hasInternetAccess) {
+      final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
 
-    if (isLoadMore) {
-      emit(state.copyWith(isFetchingMore: true));
+      if (isLoadMore) {
+        emit(state.copyWith(isFetchingMore: true));
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: true,
+            currentPage: 1,
+            chatList: [],
+            errorMessage: null,
+          ),
+        );
+      }
+
+      try {
+        final paginated = await ChatHistoryRepository().getChatHistory(
+          page: nextPage,
+        );
+
+        final updatedList = isLoadMore
+            ? [...state.chatList, ...paginated.results]
+            : paginated.results;
+
+        emit(
+          state.copyWith(
+            chatList: updatedList,
+            currentPage: paginated.currentPage,
+            hasNextPage: paginated.hasNext,
+            isLoading: false,
+            isFetchingMore: false,
+            status: CommonApiStatus.success,
+          ),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isFetchingMore: false,
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
     } else {
-      emit(
-        state.copyWith(
-          isLoading: true,
-          currentPage: 1,
-          chatList: [],
-          errorMessage: null,
-        ),
-      );
-    }
-
-    try {
-      final paginated = await ChatHistoryRepository().getChatHistory(
-        page: nextPage,
-      );
-
-      final updatedList = isLoadMore
-          ? [...state.chatList, ...paginated.results]
-          : paginated.results;
-
-      emit(
-        state.copyWith(
-          chatList: updatedList,
-          currentPage: paginated.currentPage,
-          hasNextPage: paginated.hasNext,
-          isLoading: false,
-          isFetchingMore: false,
-          status: CommonApiStatus.success,
-        ),
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-      emit(
-        state.copyWith(
-          isLoading: false,
-          isFetchingMore: false,
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadChatHistory(
+          context: context,
+          page: page,
+          isLoadMore: isLoadMore,
         ),
       );
     }
   }
 
   Future<void> deleteSession(BuildContext context, String sessionId) async {
-    emit(
-      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
-    );
-
-    try {
-      await ChatHistoryRepository().deleteChatSession(sessionId);
-      await ChatHistoryRepository().deleteLocalSession(sessionId);
-
-      final updatedList = List<ChatHistoryModel>.from(state.chatList)
-        ..removeWhere((item) => item.id == sessionId);
-
+    if (await InternetConnection().hasInternetAccess) {
       emit(
-        state.copyWith(chatList: updatedList, status: CommonApiStatus.success),
+        state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
       );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
 
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+      try {
+        await ChatHistoryRepository().deleteChatSession(sessionId);
+
+        await ChatHistoryRepository().deleteLocalSession(sessionId);
+
+        final updatedList = List<ChatHistoryModel>.from(state.chatList)
+          ..removeWhere((item) => item.id == sessionId);
+
+        emit(
+          state.copyWith(
+            chatList: updatedList,
+            status: CommonApiStatus.success,
+          ),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => deleteSession(context, sessionId),
       );
     }
   }
@@ -95,33 +119,47 @@ class ChatHistoryCubit extends Cubit<ChatHistoryState> {
     required String sessionId,
     required String newTitle,
   }) async {
-    emit(
-      state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
-    );
-
-    try {
-      await ChatHistoryRepository().updateChatTitle(
-        sessionId: sessionId,
-        newTitle: newTitle,
+    if (await InternetConnection().hasInternetAccess) {
+      emit(
+        state.copyWith(status: CommonApiStatus.submitting, errorMessage: null),
       );
 
-      final updatedList = state.chatList.map((item) {
-        if (item.id == sessionId) {
-          return item.copyWith(title: newTitle);
-        }
-        return item;
-      }).toList();
+      try {
+        await ChatHistoryRepository().updateChatTitle(
+          sessionId: sessionId,
+          newTitle: newTitle,
+        );
 
-      emit(
-        state.copyWith(chatList: updatedList, status: CommonApiStatus.success),
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
+        final updatedList = state.chatList.map((item) {
+          if (item.id == sessionId) {
+            return item.copyWith(title: newTitle);
+          }
+          return item;
+        }).toList();
 
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
+        emit(
+          state.copyWith(
+            chatList: updatedList,
+            status: CommonApiStatus.success,
+          ),
+        );
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => updateSessionTitle(
+          context,
+          sessionId: sessionId,
+          newTitle: newTitle,
         ),
       );
     }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -28,6 +29,21 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final contentWidth = kIsWeb
+        ? (screenWidth > 1200 ? 700.0 : screenWidth * 0.7)
+        : screenWidth * 0.9;
+
+    final imageWidth = kIsWeb
+        ? 350.0
+        : screenWidth * 0.7;
+
+    final imageHeight = kIsWeb
+        ? 280.0
+        : screenWidth * 0.6;
+
     final data = getImageAndDescription(widget.screenIndex);
 
     return Scaffold(
@@ -48,13 +64,14 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
       ),
       body: Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
+            width: contentWidth,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: AppColors.black, width: 1),
           ),
+          child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -91,8 +108,8 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
               const SizedBox(height: 15),
 
               SizedBox(
-                height: MediaQuery.of(context).size.width * 0.6,
-                width: MediaQuery.of(context).size.width * 0.7,
+                height: imageHeight,
+                width: imageWidth,
                 child: Image.asset(
                   CommonUi.setPngImage(data["image"] ?? ""),
                   fit: BoxFit.contain,
@@ -164,6 +181,7 @@ class _InfoWrongGameState extends State<InfoWrongGameScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

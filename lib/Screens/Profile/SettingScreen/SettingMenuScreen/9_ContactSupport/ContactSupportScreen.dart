@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -250,55 +251,57 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                             const SizedBox(height: 28),
 
                             /// SUBMIT BUTTON
-                            SizedBox(
-                              width: double.infinity,
-                              height: 56,
+                            Center(
+                              child: SizedBox(
+                                width: kIsWeb
+                                    ? MediaQuery.of(context).size.width * 0.45
+                                    : double.infinity,
+                                child: CustomBottomButton(
+                                  fontStyle: AppTextStyles.regular(
+                                    18,
+                                  ).copyWith(color: Colors.white, height: 1),
 
-                              child: CustomBottomButton(
-                                fontStyle: AppTextStyles.regular(
-                                  18,
-                                ).copyWith(color: Colors.white, height: 1),
+                                  title: state.isSubmitting ? "" : "Submit",
 
-                                title: state.isSubmitting ? "" : "Submit",
+                                  backgroundColor: const Color(0xFF1B1453),
 
-                                backgroundColor: const Color(0xFF1B1453),
+                                  textColor: Colors.white,
 
-                                textColor: Colors.white,
+                                  icon: state.isSubmitting
+                                      ? const SizedBox(
+                                          height: 22,
+                                          width: 22,
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const SizedBox.shrink(),
 
-                                icon: state.isSubmitting
-                                    ? const SizedBox(
-                                        height: 22,
-                                        width: 22,
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : const SizedBox.shrink(),
-
-                                isEnabled:
-                                    !state.isSubmitting &&
-                                    state.email.isNotEmpty &&
-                                    cubit.isValidEmail(state.email) &&
-                                    state.message.isNotEmpty,
-
-                                onPressed: () {
-                                  FocusScope.of(context).unfocus();
-
-                                  if (state.email.isNotEmpty &&
+                                  isEnabled:
+                                      !state.isSubmitting &&
+                                      state.email.isNotEmpty &&
                                       cubit.isValidEmail(state.email) &&
-                                      state.message.isNotEmpty) {
-                                    cubit.submitSupport(context);
+                                      state.message.isNotEmpty,
 
-                                    AnalyticsService.instance.buttonPressed(
-                                      FirebaseEvents.contactSupportButton,
-                                      FirebaseEvents.contactSupportScreen,
-                                    );
-                                  }
-                                },
+                                  onPressed: () {
+                                    FocusScope.of(context).unfocus();
+
+                                    if (state.email.isNotEmpty &&
+                                        cubit.isValidEmail(state.email) &&
+                                        state.message.isNotEmpty) {
+                                      cubit.submitSupport(context);
+
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.contactSupportButton,
+                                        FirebaseEvents.contactSupportScreen,
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           ],

@@ -321,7 +321,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                             ),
                                                         ],
                                                       ),
-                                                      const SizedBox(height: 6),
+                                                      const SizedBox(height: 10),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -333,7 +333,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                                   2,
                                                                 ),
                                                             child: SizedBox(
-                                                              width: 40,
+                                                              width: 90,
                                                               height: 40,
                                                               child: CachedAnyImage(
                                                                 imagePath:
@@ -351,27 +351,27 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                               ),
                                                             ),
                                                           ),
-                                                          const SizedBox(
-                                                            width: 8,
-                                                          ),
-                                                          if (model
-                                                                  .manufacturer
-                                                                  ?.companyName !=
-                                                              null)
-                                                            Text(
-                                                              model
-                                                                      .manufacturer
-                                                                      ?.companyName ??
-                                                                  "",
-                                                              style:
-                                                                  const TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                  ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
+                                                          // const SizedBox(
+                                                          //   width: 8,
+                                                          // ),
+                                                          // if (model
+                                                          //         .manufacturer
+                                                          //         ?.companyName !=
+                                                          //     null)
+                                                          //   Text(
+                                                          //     model
+                                                          //             .manufacturer
+                                                          //             ?.companyName ??
+                                                          //         "",
+                                                          //     style:
+                                                          //         const TextStyle(
+                                                          //           fontSize:
+                                                          //               13,
+                                                          //         ),
+                                                          //     overflow:
+                                                          //         TextOverflow
+                                                          //             .ellipsis,
+                                                          //   ),
                                                         ],
                                                       ),
                                                     ],
@@ -404,6 +404,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                   model.image != null &&
                                                           model.image.isNotEmpty
                                                       ? CachedAnyImage(
+                                                          useCache: true,
                                                           imagePath:
                                                               model.image,
                                                           width: 70,

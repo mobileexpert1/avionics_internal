@@ -88,115 +88,124 @@ class _CalculatorHomeMainScreenState extends State<CalculatorHomeMainScreen> {
             },
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (isLandscape)
-              Expanded(
-                flex: 7,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          const Expanded(flex: 5, child: InputFeild()),
-                          Expanded(
-                            flex: isLandscape ? 4 : 2,
-                            child: const AnswerText(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else ...[
-              const Expanded(flex: 4, child: InputFeild()),
-              const Expanded(flex: 2, child: AnswerText()),
-            ],
-            if (!isLandscape) const SizedBox(height: 5),
-            Expanded(
-              flex: kIsWeb ? (isLandscape ? 14 : 11) : 14,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.primaryDark,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 5,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 33,
-                      margin: EdgeInsets.symmetric(
-                        horizontal: 3,
-                        vertical: isLandscape ? 0 : 5,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (!kIsWeb) ...[
-                            CustomIcon(
-                              CommonUi.setSvgImage(
-                                AssetsPath.expandForCalculation,
-                              ),
-                              onPressed: onExpand,
-                              isSelected: isLandscape,
-                            ),
-                          ],
-                          const Spacer(),
-                          CustomIcon(
-                            CommonUi.setSvgImage(
-                              AssetsPath.deleteForCalculation,
-                            ),
-                            onPressed: calc.delete,
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (!isLandscape) const SizedBox(height: 5),
-                    Expanded(
-                      child: Responsive(
-                        portrait: const Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: CustomAnimatedSwitcher(
-                                grid: ButtonsGrid(grid: AppConstant.grid),
-                              ),
-                            ),
-                            Expanded(
-                              child: ButtonsGrid(grid: AppConstant.opGrid),
-                            ),
-                          ],
-                        ),
-                        landscape: Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: CustomAnimatedSwitcher(
-                                grid: ButtonsGrid(grid: lGrid),
-                              ),
-                            ),
-                            const Expanded(
-                              flex: 3,
-                              child: ButtonsGrid(grid: AppConstant.grid),
-                            ),
-                            const Expanded(
-                              child: ButtonsGrid(grid: AppConstant.opGrid),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: isLandscape ? 2 : 5),
-                  ],
-                ),
-              ),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: kIsWeb ? 1200 : double.infinity,
             ),
-          ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (isLandscape)
+                  Expanded(
+                    flex: 7,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              const Expanded(flex: 5, child: InputFeild()),
+                              Expanded(
+                                flex: isLandscape ? 4 : 2,
+                                child: const AnswerText(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else ...[
+                  const Expanded(flex: 4, child: InputFeild()),
+                  const Expanded(flex: 2, child: AnswerText()),
+                ],
+                if (!isLandscape) const SizedBox(height: 5),
+                Expanded(
+                  flex: kIsWeb ? (isLandscape ? 14 : 11) : 14,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryDark,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 5,
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 33,
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 3,
+                            vertical: isLandscape ? 0 : 5,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (!kIsWeb) ...[
+                                CustomIcon(
+                                  CommonUi.setSvgImage(
+                                    AssetsPath.expandForCalculation,
+                                  ),
+                                  onPressed: onExpand,
+                                  isSelected: isLandscape,
+                                ),
+                              ],
+                              const Spacer(),
+                              CustomIcon(
+                                CommonUi.setSvgImage(
+                                  AssetsPath.deleteForCalculation,
+                                ),
+                                onPressed: calc.delete,
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (!isLandscape) const SizedBox(height: 5),
+                        Expanded(
+                          child: Responsive(
+                            portrait: const Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: CustomAnimatedSwitcher(
+                                    grid: ButtonsGrid(grid: AppConstant.grid),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ButtonsGrid(grid: AppConstant.opGrid),
+                                ),
+                              ],
+                            ),
+                            landscape: Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: CustomAnimatedSwitcher(
+                                    grid: ButtonsGrid(grid: lGrid),
+                                  ),
+                                ),
+                                const Expanded(
+                                  flex: 3,
+                                  child: ButtonsGrid(grid: AppConstant.grid),
+                                ),
+                                const Expanded(
+                                  child: ButtonsGrid(grid: AppConstant.opGrid),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: isLandscape ? 2 : 5),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

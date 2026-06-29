@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 import 'video_player_state.dart';
@@ -7,7 +8,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
 
   Future<void> initialize() async {
     final String urlVideo =
-        "https://avionica.csdevhub.com/s3/manufacturer/aviation_tutorial.mp4";
+        "${ApiBaseUrlConstant.baseUrl}s3/manufacturer/aviation_tutorial.mp4";
 
     try {
       final uri = Uri.tryParse(urlVideo);

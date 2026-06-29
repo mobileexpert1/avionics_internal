@@ -208,6 +208,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                   isNeedToShowFlagOptions = false;
                 }
 
+                if (state.questions.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 return Stack(
                   children: [
                     Padding(
@@ -645,7 +649,7 @@ class QuizQuestionCard extends StatelessWidget {
                   Center(
                     child: SizedBox(
                       width: kIsWeb
-                          ? MediaQuery.of(context).size.width * 0.5
+                          ? MediaQuery.of(context).size.width * 0.45
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(

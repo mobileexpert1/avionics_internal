@@ -17,12 +17,13 @@ import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
+import '../../bloc/MapSection/flight_map_repository.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
 import '../../bloc/home/homeBloc/home_state.dart';
 import '../../bloc/home/manufacturer/manufacturer_cubit.dart';
 import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../MapSection/FlightMapScreen.dart';
-import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
 import '../WilcoBoat/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
@@ -154,10 +155,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : screenWidth * 0.05,
                           ),
                           SizedBox(
-                            width: kIsWeb ? size.width * 0.8 : double.infinity,
+                            width: kIsWeb ? size.width : double.infinity,
                             height: kIsWeb
-                                // ? screenWidth * 0.09
-                                ? screenWidth * 0.22
+                                ? screenWidth * 0.2
                                 : screenWidth * 0.53,
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.avionicaHome),
@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           SizedBox(
                             height: kIsWeb
-                                ? screenWidth * 0.02
+                                ? screenWidth * 0.01
                                 : screenWidth * 0.05,
                           ),
 
@@ -175,7 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
                               children: [
-                                // Compare Aircraft
                                 CustomHeaderViewExpandable(
                                   isNeedToShowLeftRightBottomBorder: true,
                                   isNeedToShowLeftImage: true,
@@ -216,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 SizedBox(
                                   height: kIsWeb
-                                      ? screenWidth * 0.02
+                                      ? screenWidth * 0.015
                                       : screenWidth * 0.04,
                                 ),
 
@@ -225,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     isNeedToShowLeftRightBottomBorder: false,
                                     isNeedToShowLeftImage: true,
                                     isExpanded: expandedManufacturerTab,
-                                    title: "Manufacturer Library",
+                                    title: "Manufacturers Library",
                                     headerColor: AppColors.primaryDark,
                                     arrowBackgroundColor:
                                         AppColors.extraDarkYellow,
@@ -267,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 SizedBox(
                                   height: kIsWeb
-                                      ? screenWidth * 0.02
+                                      ? screenWidth * 0.015
                                       : screenWidth * 0.045,
                                 ),
 
@@ -329,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           SizedBox(
                             height: kIsWeb
-                                ? screenWidth * 0.02
+                                ? screenWidth * 0.015
                                 : screenWidth *
                                       ((expandedManufacturerTab == true &&
                                               expandFlyingInTheAreaTab == true)
@@ -387,16 +386,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Center(
             child: Container(
               width: kIsWeb ? 260 : null,
-              padding: EdgeInsets.symmetric(
-                vertical: kIsWeb ? 8 : 0,
-              ),
+              padding: EdgeInsets.symmetric(vertical: kIsWeb ? 8 : 0),
               alignment: Alignment.center,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  minimumSize: Size(
-                    kIsWeb ? 240 : 0,
-                    kIsWeb ? 50 : 40,
-                  ),
+                  minimumSize: Size(kIsWeb ? 240 : 0, kIsWeb ? 50 : 40),
                 ),
                 onPressed: () {
                   AnalyticsService.instance.buttonPressed(
@@ -412,9 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Text(
                   'See All',
-                  style: AppTextStyles.bold(
-                    kIsWeb ? screenWidth * 0.012 : 16,
-                  ).copyWith(
+                  style: AppTextStyles.bold(16).copyWith(
                     height: kIsWeb ? 0.8 : 1.0,
                     color: AppColors.black,
                   ),
@@ -503,13 +495,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (mounted) {
                     Future.microtask(() {
                       AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                        isFromTrackingClass: false,
                         context: context,
-                        title: "Subscription Required",
-                        message: message,
-                        navigateTo: const SubscriptionPlanDetailScreen(
-                          isComeFromSignup: true,
-                        ),
+                        title: "Credits limit exhausted",
+                        isFromWilcoAndTrackingScreen: true,
+                        buttonText: "Buy Credits",
+                        message:
+                            "Your credits limit has been exhausted. Please purchase a extra credits.",
+                        onGoToActionBlock: () {
+                          FlightRepository().openAddOnPacksBottomSheet(
+                            context,
+                            AddOnPackType.creditsOnly,
+                          );
+                        },
                       );
+                      // AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                      //   context: context,
+                      //   title: "Subscription Required",
+                      //   message: message,
+                      //   navigateTo: const SubscriptionPlanDetailScreen(
+                      //     isComeFromSignup: true,
+                      //   ),
+                      // );
                     });
                   }
                 },
@@ -588,13 +595,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (mounted) {
                     Future.microtask(() {
                       AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                        isFromTrackingClass: false,
                         context: context,
-                        title: "Subscription Required",
-                        message: message,
-                        navigateTo: const SubscriptionPlanDetailScreen(
-                          isComeFromSignup: true,
-                        ),
+                        title: "Credits limit exhausted",
+                        isFromWilcoAndTrackingScreen: true,
+                        buttonText: "Buy Credits",
+                        message:
+                            "Your credits limit has been exhausted. Please purchase a extra credits.",
+                        onGoToActionBlock: () {
+                          FlightRepository().openAddOnPacksBottomSheet(
+                            context,
+                            AddOnPackType.creditsOnly,
+                          );
+                        },
                       );
+                      // AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                      //   context: context,
+                      //   title: "Subscription Required",
+                      //   message: message,
+                      //   navigateTo: const SubscriptionPlanDetailScreen(
+                      //     isComeFromSignup: true,
+                      //   ),
+                      // );
                     });
                   }
                 },

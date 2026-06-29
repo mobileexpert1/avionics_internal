@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/Helpers/CacheManger/CachedImageFile.dart';
 import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -41,13 +42,13 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SavedFlightCubit>().loadSavedAndFavoriteFlights();
+    context.read<SavedFlightCubit>().loadSavedAndFavoriteFlights(context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.savedFlightScreen,
     );
   }
 
-  Future<void> _GetFr24Key() async {
+  Future<void> _getFr24Key() async {
     final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
     if (localKey.isNotEmpty) return;
 
@@ -106,7 +107,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                   FirebaseEvents.flightAircraftDetail,
                   FirebaseEvents.savedFlightScreen,
                 );
-                await _GetFr24Key();
+                await _getFr24Key();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -290,16 +291,21 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
-      builder: (dialogContext) => CustomDialog(
-        title: isComeFromBookMark
-            ? 'Remove from Bookmark'
-            : 'Remove from Favourite',
-        description: 'Are you sure you want to remove this item?',
-        positiveButtonText: 'Yes',
-        positiveColor: AppColors.blackBoxColorForGame,
-        onPositiveTap: () {
-          Navigator.pop(dialogContext, true);
-        },
+      builder: (dialogContext) => Center(
+        child: SizedBox(
+          width: MediaQuery.of(dialogContext).size.width * (kIsWeb ? 0.3 : 1),
+          child: CustomDialog(
+            title: isComeFromBookMark
+                ? 'Remove from Bookmark'
+                : 'Remove from Favourite',
+            description: 'Are you sure you want to remove this item?',
+            positiveButtonText: 'Yes',
+            positiveColor: AppColors.blackBoxColorForGame,
+            onPositiveTap: () {
+              Navigator.pop(dialogContext, true);
+            },
+          ),
+        ),
       ),
     );
 
@@ -321,7 +327,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          height: 40,
+          height: 50,
           color: AppColors.primaryDark,
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: LayoutBuilder(
@@ -363,12 +369,14 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             child: Center(
                               child: Text(
                                 mainTabs[index],
-                                style: AppTextStyles.regular(15).copyWith(
-                                  height: 1.0,
-                                  color: isSelected
-                                      ? Colors.black
-                                      : Colors.white,
-                                ),
+                                style: AppTextStyles.regular(kIsWeb ? 20 : 15)
+                                    .copyWith(
+                                      height: 1.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
                               ),
                             ),
                           ),
@@ -402,15 +410,50 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (widget.showTabs) _buildBrowserTabBar(),
 
-              Expanded(
+      // body: Center(
+      //   child: ConstrainedBox(
+      //     constraints: const BoxConstraints(maxWidth: 1500),
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         if (widget.showTabs) _buildBrowserTabBar(),
+      //
+      //         Expanded(
+      //           child: BlocConsumer<SavedFlightCubit, SavedFlightState>(
+      //             listener: (context, state) {
+      //               if (state.status == CommonApiStatus.failure) {
+      //                 ScaffoldMessenger.of(context).showSnackBar(
+      //                   SnackBar(
+      //                     content: Text(
+      //                       state.errorMessage ?? "Something went wrong",
+      //                     ),
+      //                   ),
+      //                 );
+      //               }
+      //             },
+      //             builder: (context, state) {
+      //               if (state.isLoading) {
+      //                 return const Center(child: CircularProgressIndicator());
+      //               }
+      //               return _buildTabContent(state);
+      //             },
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      body: Column(
+        children: [
+          if (widget.showTabs) _buildBrowserTabBar(),
+
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 1500 : double.infinity,
+                ),
                 child: BlocConsumer<SavedFlightCubit, SavedFlightState>(
                   listener: (context, state) {
                     if (state.status == CommonApiStatus.failure) {
@@ -427,13 +470,14 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                     if (state.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
                     return _buildTabContent(state);
                   },
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

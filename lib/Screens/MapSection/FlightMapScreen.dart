@@ -92,6 +92,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   late final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
+  bool _disableMapGesture = false;
+
   @override
   void initState() {
     super.initState();
@@ -100,6 +102,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     _loadGeoJson(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+     //
+
       final hasPermission = await _mapCubit.getCurrentLocation(context);
 
       if (hasPermission) {
@@ -113,6 +118,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             _resetFlightSelection();
             _isUserGesture = false;
             isFirstTimeUserCome = false;
+
+            _disableMapGesture = kIsWeb ? true :false;
             _handleFilterTap(context);
 
             AnalyticsService.instance.buttonPressed(
@@ -129,12 +136,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             _handleTextTap(context);
           }
         }
-        await _mapCubit.loadFavoritesFlights();
+        await _mapCubit.loadFavoritesFlights(context);
       }
     });
 
     _sheetController.addListener(_sheetListenerForChangeTheTap);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
+
+    _mapCubit.setFilters(["Passenger"], []);
   }
 
   @override
@@ -217,18 +226,26 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   void _sheetListenerForChangeTheTap() {
     final currentSize = _sheetController.size;
+
+    _disableMapGesture = kIsWeb ? true :false;
+
     if (currentSize > 0.15) {
-      _hasTriggeredMapView = false;
+      _hasTriggeredMapView = true;
       return;
     }
+
     if (_hasTriggeredMapView) return;
+
     _hasTriggeredMapView = true;
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
+
       if (_sheetController.size < 0.15) {
         setState(() {
           isMapViewSelected = true;
           _activeCard = 0;
+          _disableMapGesture = false;
         });
       }
     });
@@ -374,6 +391,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     setState(() {
       isMapViewSelected = newIsMapViewSelected;
       if (!isMapViewSelected) _activeCard = 0;
+      _disableMapGesture = false;
     });
   }
 
@@ -731,23 +749,35 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   void _showInitialTrackingModePopup(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
+    final screenHeight = size.height;
+
     showModalBottomSheet(
       context: context,
       useRootNavigator: false,
       isDismissible: false,
       enableDrag: false,
+      isScrollControlled: kIsWeb ? true : false,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          width: double.infinity,
+        Widget popupContent = Container(
+          width: kIsWeb && screenWidth > 700 ? 650 : double.infinity,
+
+          constraints: kIsWeb
+              ? BoxConstraints(maxHeight: screenHeight * 0.9)
+              : null,
+
+          margin: kIsWeb ? const EdgeInsets.all(20) : EdgeInsets.zero,
+
           padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.04,
             vertical: 10,
           ),
+
           decoration: BoxDecoration(
             color: AppColors.greyForConversionScreen,
             borderRadius: BorderRadius.circular(5),
           ),
+
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -764,6 +794,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                       ),
                     ),
                   ),
+
                   GestureDetector(
                     onTap: () {
                       Navigator.pop(context);
@@ -778,8 +809,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 ],
               ),
 
-              SizedBox(height: screenWidth * 0.06),
+              SizedBox(height: kIsWeb ? 20 : screenWidth * 0.06),
 
+              /// Flying in Area
               CustomHeaderViewExpandable(
                 isNeedToShowLeftRightBottomBorder: false,
                 isNeedToShowLeftImage: true,
@@ -789,11 +821,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 arrowBackgroundColor: AppColors.extraDarkYellow,
                 arrowFrontColor: Colors.black,
                 isExpandedViewAvailable: true,
+
                 fontStyle: AppTextStyles.regular(18).copyWith(
                   height: 1.4,
                   color: AppColors.white,
                   letterSpacing: 0.2,
                 ),
+
                 isLeftImage: IconButton(
                   icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.mapPopupAircraft),
@@ -804,25 +838,33 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   ),
                   onPressed: () async {},
                 ),
+
                 onHeaderTap: () async {
                   setState(() {
                     _singleSearchMarker = null;
                     _isMapListViewShown = true;
                     _isForFlyingInTheArea = 1;
+
                     AnalyticsService.instance.buttonPressed(
                       FirebaseEvents.flyingInTheAreaButton,
                       FirebaseEvents.trackScreen,
                     );
                   });
+
                   _resetFlightSelection();
+
                   Navigator.pop(context);
 
                   isFirstTimeUserCome = false;
+
+                  _disableMapGesture = kIsWeb ? true :false;
+
                   _handleFilterTap(context);
                 },
               ),
 
-              SizedBox(height: screenWidth * 0.02),
+              SizedBox(height: kIsWeb ? 8 : screenWidth * 0.02),
+
               Text(
                 "Click to view flights currently flying in this area on the map",
                 style: AppTextStyles.regular(
@@ -831,8 +873,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 textAlign: TextAlign.start,
               ),
 
-              SizedBox(height: screenWidth * 0.06),
+              SizedBox(height: kIsWeb ? 20 : screenWidth * 0.06),
 
+              /// Track Flight
               CustomHeaderViewExpandable(
                 isNeedToShowLeftRightBottomBorder: false,
                 isNeedToShowLeftImage: true,
@@ -842,11 +885,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 arrowBackgroundColor: AppColors.extraDarkYellow,
                 arrowFrontColor: Colors.black,
                 isExpandedViewAvailable: true,
+
                 fontStyle: AppTextStyles.regular(18).copyWith(
                   height: 1.4,
                   color: AppColors.white,
                   letterSpacing: 0.2,
                 ),
+
                 isLeftImage: IconButton(
                   icon: SvgPicture.asset(
                     CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
@@ -857,22 +902,28 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                   ),
                   onPressed: () async {},
                 ),
+
                 onHeaderTap: () async {
                   setState(() {
                     _activeCard = 0;
                     _singleSearchMarker = null;
                     _isMapListViewShown = false;
                     _isForFlyingInTheArea = 2;
+
                     AnalyticsService.instance.buttonPressed(
                       FirebaseEvents.trackAFlightButton,
                       FirebaseEvents.trackScreen,
                     );
                   });
+
                   Navigator.pop(context);
+
                   _handleTextTap(context);
                 },
               ),
-              SizedBox(height: screenWidth * 0.02),
+
+              SizedBox(height: kIsWeb ? 8 : screenWidth * 0.02),
+
               Text(
                 "View real-time status, route, and updates for a flight",
                 style: AppTextStyles.regular(
@@ -880,10 +931,21 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 ).copyWith(height: 1.4, color: AppColors.textHomeColour),
                 textAlign: TextAlign.start,
               ),
-              SizedBox(height: screenWidth * 0.1),
+
+              SizedBox(height: kIsWeb ? 20 : screenWidth * 0.1),
             ],
           ),
         );
+
+        /// WEB ONLY FIX
+        if (kIsWeb) {
+          return SafeArea(
+            child: SingleChildScrollView(child: Center(child: popupContent)),
+          );
+        }
+
+        /// MOBILE SAME AS BEFORE
+        return popupContent;
       },
     );
   }
@@ -1007,7 +1069,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
                                 onCameraIdle: () {
                                   debugPrint(
-                                    "🔴 onCameraIdle — isProgrammatic: $_isProgrammaticMove, isUserGesture: $_isUserGesture",
+                                    "onCameraIdle — isProgrammatic: $_isProgrammaticMove, isUserGesture: $_isUserGesture",
                                   );
 
                                   if (_isProgrammaticMove) {
@@ -1026,6 +1088,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                     );
                                   }
                                 },
+
+                                scrollGesturesEnabled: !_disableMapGesture,
+                                zoomGesturesEnabled: !_disableMapGesture,
 
                                 onCameraMoveStarted: () {
                                   _isProgrammaticMove = false;
@@ -1093,7 +1158,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         enableCloseScreen: false,
         isComeFromMapSection: true,
         controller: _searchController,
-        onFilterTap: () => _handleFilterTap(context),
+        onFilterTap: () {
+          _disableMapGesture = kIsWeb ? true :false;
+          _handleFilterTap(context);
+        },
         searchTitle: _isForFlyingInTheArea == 2
             ? 'Track a flight...'
             : 'Search Flight no.,CallSign,...',
@@ -1112,7 +1180,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   Future<void> _handleFilterTap(BuildContext context) async {
     final currentMapType = _mapCubit.state.mapType;
-    final currentCategories = _mapCubit.state.selectedCategories ?? [];
+    final currentCategories = _mapCubit.state.selectedFlightCategories ?? [];
     final currentNumberOfFlight = (_mapCubit.state.numberOfFlights ?? 0) > 0
         ? _mapCubit.state.numberOfFlights!
         : 1;
@@ -1167,6 +1235,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     );
 
     /* ---------------- MAP TYPE + POLYGON ---------------- */
+
+    _disableMapGesture = false;
 
     final bool shouldShowPolygon =
         filterResult.mapType == CustomMapType.polygon;
@@ -1298,6 +1368,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                               onTap: () {
                                 _buildSingleFlightMarker(data).then((marker) {
                                   setState(() {
+                                    _disableMapGesture = false;
                                     isMapViewSelected = true;
                                     _isMapListViewShown = false;
                                     _singleSearchMarker = marker;
@@ -1539,6 +1610,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                           .contain,
                                                                     )
                                                                   : CachedAnyImage(
+                                                                    isForManufacturer:true,
                                                                       imagePath:
                                                                           manufacturerLogo,
                                                                       width:
@@ -1552,8 +1624,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                       contentImage:
                                                                           BoxFit
                                                                               .contain,
-                                                                      useCache:
-                                                                          true,
+
                                                                     ),
                                                             ),
 
@@ -1716,7 +1787,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 3.2,
+          right: kIsWeb ? 540.0 : MediaQuery.of(context).size.width / 3.2,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             width: 400,

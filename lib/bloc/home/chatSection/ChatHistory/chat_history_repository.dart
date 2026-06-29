@@ -13,13 +13,11 @@ class ChatHistoryRepository {
     await _chatDb.deleteBySessionId('chat_messages', sessionId);
   }
 
-  Future<PaginatedList<ChatHistoryModel>> getChatHistory({
-    int page = 1,
-  }) async {
+  Future<PaginatedList<ChatHistoryModel>> getChatHistory({int page = 1}) async {
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-          "${ApiFunctionUrlChatConstant.chatService}"
-          "?page=$page"
+      "${ApiServiceUrlConstant.chatHistorySession}"
+      "?page=$page",
     );
 
     try {
@@ -35,10 +33,9 @@ class ChatHistoryRepository {
     }
   }
 
-
   Future<BaseDetailResponseModel> deleteChatSession(String sessionId) async {
     final url = Uri.parse(
-      "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlChatConstant.chatService}/$sessionId",
+      "${ApiBaseUrlConstant.baseUrl}${ApiServiceUrlConstant.chatHistorySession}/$sessionId",
     );
 
     try {
@@ -54,23 +51,15 @@ class ChatHistoryRepository {
     required String newTitle,
   }) async {
     final url = Uri.parse(
-      ApiBaseUrlConstant.baseUrl +
-          ApiFunctionUrlChatConstant.chatService,
+      ApiBaseUrlConstant.baseUrl + ApiServiceUrlConstant.chatHistorySession,
     );
-    final body = {
-      "session_id": sessionId,
-      "title": newTitle,
-    };
+    final body = {"session_id": sessionId, "title": newTitle};
     try {
-      final response = await ApiService.patch(
-        url: url,
-        body: body,
-      );
+      final response = await ApiService.patch(url: url, body: body);
 
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();
     }
   }
-
 }

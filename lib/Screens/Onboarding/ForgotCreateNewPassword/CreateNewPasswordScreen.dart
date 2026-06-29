@@ -33,7 +33,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
     Future.delayed(Duration.zero, () {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(ConstantStrings.OtpVerified),
+          content: Text(ConstantStrings.otpVerified),
           duration: Duration(seconds: 4),
         ),
       );
@@ -141,7 +141,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                                     ? Colors.white
                                     : Colors.grey.shade600,
                               ),
-                              title: ConstantStrings.resetPassword,
+                              title: ConstantStrings.resetPasswordLabel,
                               backgroundColor: isButtonEnabled
                                   ? AppColors.primaryValueColour
                                   : AppColors.darkSeparatorColourAppBar,

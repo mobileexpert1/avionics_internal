@@ -1,10 +1,15 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Helpers/CreditManager/CreditManager.dart';
-import '../../../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
+import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'chat_implementation.dart';
 import 'chat_model.dart';
 
@@ -15,11 +20,12 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     required String accessToken,
     required String existingSessionId,
     required bool isNewSession,
+    required BuildContext context,
   }) : _repo = ChatRepositoryImpl(),
        super([
          {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
        ]) {
-    _init(accessToken, existingSessionId, isNewSession);
+    _init(accessToken, existingSessionId, isNewSession, context);
     _startInternetListener();
   }
 
@@ -36,53 +42,116 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   Stream<bool> get internetStream => _internetStatusController.stream;
 
-  Future<void> _init(String token, String sessionId, bool isNewSession) async {
-    _repo.setResponseCallback((event) {
-      switch (event.status) {
-        case ChatResponseStatus.tokenLimitExpired:
-          final next = List<Map<String, String>>.from(state)
-            ..removeWhere((m) => m['type'] == 'analyzing');
-          emit(next);
-          onResponse?.call(ChatResponseStatus.tokenLimitExpired);
-          break;
-        case ChatResponseStatus.creditLimitExpired:
-          final next = List<Map<String, String>>.from(state)
-            ..removeWhere((m) => m['type'] == 'analyzing');
-          emit(next);
-          onResponse?.call(ChatResponseStatus.creditLimitExpired);
-          break;
+  Future<void> _init(
+    String token,
+    String sessionId,
+    bool isNewSession,
+    BuildContext context,
+  ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      _repo.setResponseCallback((event) {
+        switch (event.status) {
+          case ChatResponseStatus.tokenLimitExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.tokenLimitExpired);
+            break;
+          case ChatResponseStatus.creditLimitExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.creditLimitExpired);
+            break;
 
-        case ChatResponseStatus.accessTokenExpired:
-          final next = List<Map<String, String>>.from(state)
-            ..removeWhere((m) => m['type'] == 'analyzing');
-          emit(next);
-          onResponse?.call(ChatResponseStatus.accessTokenExpired);
-          break;
-        default:
-          break;
+          case ChatResponseStatus.accessTokenExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.accessTokenExpired);
+            break;
+          default:
+            break;
+        }
+      });
+
+      if (!isNewSession && sessionId.isNotEmpty) {
+        await _loadCompleteHistory(sessionId);
       }
-    });
-
-    if (!isNewSession && sessionId.isNotEmpty) {
-      await _loadCompleteHistory(sessionId);
+      await _repo.connect(accessToken: token, existingSessionId: sessionId);
+      _sub = _repo.messages.listen(_onSocketMessage);
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => _init(token, sessionId, isNewSession, context),
+      );
+      return;
     }
-    await _repo.connect(accessToken: token, existingSessionId: sessionId);
-    _sub = _repo.messages.listen(_onSocketMessage);
   }
+
+  // Future<void> _loadCompleteHistory(String sessionId) async {
+  //   List<Map<String, String>> greeting = [
+  //     {'type': 'bot', 'text': 'Hey there!'},
+  //     {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+  //   ];
+  //   emit(greeting);
+  //   final serverMessages = await _repo.fetchFullServerHistory(sessionId);
+  //
+  //   final converted = serverMessages.map(
+  //     (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+  //   );
+  //   await _repo.insertOrIgnoreLocalMessages(converted.toList());
+  //   final merged = await _repo.getMessagesForSession(sessionId);
+  //
+  //   final uiList = merged.map((msg) {
+  //     return {
+  //       'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+  //       'text': msg.text,
+  //     };
+  //   }).toList();
+  //   final cleanList = removeDuplicates(uiList);
+  //   final finalList = [...greeting, ...cleanList];
+  //
+  //   emit(removeDuplicates(finalList));
+  // }
 
   Future<void> _loadCompleteHistory(String sessionId) async {
     List<Map<String, String>> greeting = [
       {'type': 'bot', 'text': 'Hey there!'},
       {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
     ];
+
     emit(greeting);
+
+    print("Session => $sessionId");
+
     final serverMessages = await _repo.fetchFullServerHistory(sessionId);
 
+    print("Server Count => ${serverMessages.length}");
+
     final converted = serverMessages.map(
-      (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+          (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
     );
+
     await _repo.insertOrIgnoreLocalMessages(converted.toList());
+
     final merged = await _repo.getMessagesForSession(sessionId);
+
+    print("Merged Count => ${merged.length}");
+    if (kIsWeb && merged.isEmpty && converted.isNotEmpty) {
+      final uiList = converted.map((msg) {
+        return {
+          'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+          'text': msg.text,
+        };
+      }).toList();
+
+      final cleanList = removeDuplicates(uiList);
+      final finalList = [...greeting, ...cleanList];
+
+      emit(removeDuplicates(finalList));
+      return;
+    }
 
     final uiList = merged.map((msg) {
       return {
@@ -90,53 +159,87 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         'text': msg.text,
       };
     }).toList();
+
     final cleanList = removeDuplicates(uiList);
     final finalList = [...greeting, ...cleanList];
 
     emit(removeDuplicates(finalList));
   }
 
-  void sendMessage(
+  Future<void> openAddOnPacksBottomSheet(
+    BuildContext context,
+    AddOnPackType packType,
+  ) async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.80,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: AddOnPacksScreen(packType: packType),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> sendMessage(
     String text,
     BuildContext context,
     bool isReceivedTokenFullWarning,
-  ) {
-    if (CreditManager().remainingToken <= 0 ||
-        isReceivedTokenFullWarning == true) {
-      Future.microtask(() {
-        AlertHelperForSubsPopup.showSubscriptionEndAlert(
-          isFromTrackingClass: false,
-          context: context,
-          title: "Token limit exhausted",
-          message:
-              "Your token limit has been exhausted. Please purchase a subscription.",
-          navigateTo: SubscriptionPlanDetailScreen(isComeFromSignup: false),
-        );
-      });
-      return;
-    }
+  ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      if (CreditManager().remainingToken <= 0 ||
+          isReceivedTokenFullWarning == true) {
+        Future.microtask(() {
+          AlertHelperForSubsPopup.showSubscriptionEndAlert(
+            isFromTrackingClass: false,
+            context: context,
+            title: "Token limit exhausted",
+            isFromWilcoAndTrackingScreen: true,
+            buttonText: "Buy Token",
+            message:
+                "Your token limit has been exhausted. Please purchase a extra tokens.",
+            onGoToActionBlock: () {
+              openAddOnPacksBottomSheet(context, AddOnPackType.tokensOnly);
+            },
+          );
+        });
+        return;
+      }
 
-    _isStopped = false;
-    final next = List<Map<String, String>>.from(state)
-      ..removeWhere((m) => m['type'] == 'analyzing');
+      _isStopped = false;
+      final next = List<Map<String, String>>.from(state)
+        ..removeWhere((m) => m['type'] == 'analyzing');
 
-    next.add({'type': 'user', 'text': text});
+      next.add({'type': 'user', 'text': text});
 
-    if (!_isConnected) {
-      next.add({'type': 'bot', 'text': 'Message not sent. No internet'});
+      if (!_isConnected) {
+        next.add({'type': 'bot', 'text': 'Message not sent. No internet'});
+        emit(next);
+        return;
+      }
+
+      next.add({'type': 'analyzing', 'text': ''});
       emit(next);
+
+      _responseTimer?.cancel();
+      _responseTimer = Timer(const Duration(seconds: 15), () {
+        _handleNoResponse();
+      });
+
+      _repo.send(text);
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => sendMessage(text, context, isReceivedTokenFullWarning),
+      );
       return;
     }
-
-    next.add({'type': 'analyzing', 'text': ''});
-    emit(next);
-
-    _responseTimer?.cancel();
-    _responseTimer = Timer(const Duration(seconds: 15), () {
-      _handleNoResponse();
-    });
-
-    _repo.send(text);
   }
 
   void _handleNoResponse() {

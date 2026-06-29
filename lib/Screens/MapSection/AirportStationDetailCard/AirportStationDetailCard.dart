@@ -226,7 +226,7 @@ Widget buildActionText(String title, VoidCallback onTap) {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xFF2E2E5E), // same dark bluish tone
+            color: Color(0xFF2E2E5E),
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

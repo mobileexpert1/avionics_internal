@@ -7,7 +7,7 @@ class MySubscriptionRepository {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlConstant.userService}"
-      "${ApiServiceUrlConstant.getSubscritionList}"
+      "${ApiServiceUrlConstant.getSubscriptionList}"
       "${ApiServiceUrlConstant.historySubscription}",
     );
 

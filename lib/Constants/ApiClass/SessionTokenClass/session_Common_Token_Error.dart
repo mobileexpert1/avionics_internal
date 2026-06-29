@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:avionics_internal/Screens/Onboarding/Login/LoginScreen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../shared_prefs_helper.dart';
 
@@ -15,10 +18,8 @@ class SessionCommonTokenError {
       Future.delayed(const Duration(seconds: 1), () async {
         await SharedPrefsHelper.clearAll([], false);
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => LoginScreen(),
-          ),
-              (route) => false,
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+          (route) => false,
         );
       });
     }

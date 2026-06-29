@@ -100,7 +100,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         title: "All ${widget.manufacturerName} Models",
-        //'Search ${widget.manufacturerName} Models',
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -233,186 +232,102 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                   ),
                                 ),
 
-                                Slidable(
-                                  key: ValueKey(model.id),
-                                  endActionPane: ActionPane(
-                                    motion: const BehindMotion(),
-                                    extentRatio: 0.2,
-                                    children: [
-                                      CustomSlidableAction(
-                                        onPressed: (_) {
-                                          context
-                                              .read<AllPlanesCubit>()
-                                              .toggleFavorite(
-                                                model.id,
-                                                context,
-                                                model.isSaved,
+                                kIsWeb
+                                    ? InkWell(
+                                        onTap: () {
+                                          AnalyticsService.instance
+                                              .buttonPressed(
+                                                FirebaseEvents
+                                                    .manufacturerListItemButton,
+                                                FirebaseEvents
+                                                    .allPlanesListScreen,
                                               );
 
-                                          AppSnackBar.custom(
+                                          AppNavigator.push(
                                             context,
-                                            message: model.isSaved
-                                                ? "Bookmark Unsaved"
-                                                : "Bookmark Saved",
-                                            svgAsset: "",
+                                            AirCraftDetailScreen(
+                                              aircraftId: model.id,
+                                            ),
+                                            multiBlocProviders: [
+                                              BlocProvider(
+                                                create: (_) =>
+                                                    AirCraftDetailCubit(),
+                                              ),
+                                            ],
+                                            disableSwipeBack: true,
                                           );
                                         },
-                                        backgroundColor: Colors.transparent,
-                                        child: const SizedBox.shrink(),
-                                      ),
-                                    ],
-                                  ),
-
-                                  child: InkWell(
-                                    onTap: () {
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents
-                                            .manufacturerListItemButton,
-                                        FirebaseEvents.allPlanesListScreen,
-                                      );
-                                      AppNavigator.push(
-                                        context,
-                                        AirCraftDetailScreen(
-                                          aircraftId: model.id,
+                                        child: _buildPlaneItem(
+                                          context,
+                                          model,
+                                          imageWidth,
+                                          imageHeight,
+                                          true,
                                         ),
-                                        multiBlocProviders: [
-                                          BlocProvider(
-                                            create: (_) =>
-                                                AirCraftDetailCubit(),
-                                          ),
-                                        ],
-                                        disableSwipeBack: true,
-                                      );
-                                    },
+                                      )
+                                    : Slidable(
+                                        key: ValueKey(model.id),
+                                        endActionPane: ActionPane(
+                                          motion: const BehindMotion(),
+                                          extentRatio: 0.2,
+                                          children: [
+                                            CustomSlidableAction(
+                                              onPressed: (_) {
+                                                context
+                                                    .read<AllPlanesCubit>()
+                                                    .toggleFavorite(
+                                                      model.id,
+                                                      context,
+                                                      model.isSaved,
+                                                    );
 
-                                    child: Container(
-                                      height: 60,
-                                      color: Colors.white,
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                            right: 33,
-                                            top: 32,
-                                            child: Container(
-                                              width: 16,
-                                              height: 16,
-                                              decoration: BoxDecoration(
-                                                color: Colors.amber,
-                                                border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 0.5,
-                                                ),
-                                              ),
+                                                AppSnackBar.custom(
+                                                  context,
+                                                  message: model.isSaved
+                                                      ? "Bookmark Unsaved"
+                                                      : "Bookmark Saved",
+                                                  svgAsset: "",
+                                                );
+                                              },
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              child: const SizedBox.shrink(),
                                             ),
-                                          ),
+                                          ],
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            AnalyticsService.instance
+                                                .buttonPressed(
+                                                  FirebaseEvents
+                                                      .manufacturerListItemButton,
+                                                  FirebaseEvents
+                                                      .allPlanesListScreen,
+                                                );
 
-                                          Positioned(
-                                            left: 100,
-                                            right: 40,
-                                            top: 40,
-                                            child: Container(
-                                              height: 1,
-                                              color: Colors.grey.shade400,
-                                            ),
-                                          ),
-
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              const SizedBox(width: 10),
-
-                                              Container(
-                                                width: 80,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade200,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: CachedAnyImage(
-                                                  imagePath: model.image,
-                                                  contentImage: BoxFit.cover,
-                                                  isForPlaneList: true,
-                                                  width: imageWidth,
-                                                  height: imageHeight,
-                                                ),
+                                            AppNavigator.push(
+                                              context,
+                                              AirCraftDetailScreen(
+                                                aircraftId: model.id,
                                               ),
-
-                                              const SizedBox(width: 12),
-
-                                              Expanded(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        bottom: 8,
-                                                      ),
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          model.model,
-                                                          style:
-                                                              AppTextStyles.bold(
-                                                                18,
-                                                              ).copyWith(
-                                                                height: 1.0,
-                                                                color: AppColors
-                                                                    .planListTitleColour,
-                                                              ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-
-                                                      if (model
-                                                          .ICAOCode
-                                                          .isNotEmpty)
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets.only(
-                                                                left: 8,
-                                                              ),
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 5,
-                                                              ),
-                                                          decoration: BoxDecoration(
-                                                            color: Colors
-                                                                .grey
-                                                                .shade200,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  20,
-                                                                ),
-                                                          ),
-
-                                                          child: Text(
-                                                            model.ICAOCode,
-                                                            style:
-                                                                AppTextStyles.medium(
-                                                                  18,
-                                                                ).copyWith(
-                                                                  height: 1.0,
-                                                                  color: AppColors
-                                                                      .planListTitleColour,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                    ],
-                                                  ),
+                                              multiBlocProviders: [
+                                                BlocProvider(
+                                                  create: (_) =>
+                                                      AirCraftDetailCubit(),
                                                 ),
-                                              ),
-
-                                              const SizedBox(width: 60),
-                                            ],
+                                              ],
+                                              disableSwipeBack: true,
+                                            );
+                                          },
+                                          child: _buildPlaneItem(
+                                            context,
+                                            model,
+                                            imageWidth,
+                                            imageHeight,
+                                            false,
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           );
@@ -425,6 +340,137 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlaneItem(
+    BuildContext context,
+    dynamic model,
+    double imageWidth,
+    double imageHeight,
+    bool isWeb,
+  ) {
+    return Container(
+      height: 60,
+      color: Colors.white,
+      child: Stack(
+        children: [
+          Positioned(
+            right: 33,
+            top: 32,
+            child: Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                border: Border.all(color: Colors.black, width: 0.5),
+              ),
+            ),
+          ),
+
+          Positioned(
+            left: 100,
+            right: 40,
+            top: 40,
+            child: Container(height: 1, color: Colors.grey.shade400),
+          ),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(width: 10),
+
+              Container(
+                width: 80,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: CachedAnyImage(
+                  imagePath: model.image,
+                  contentImage: BoxFit.cover,
+                  isForPlaneList: true,
+                  width: imageWidth,
+                  height: imageHeight,
+                ),
+              ),
+
+              const SizedBox(width: kIsWeb ? 100 : 10),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          model.model,
+                          style: AppTextStyles.bold(18).copyWith(
+                            height: 1.0,
+                            color: AppColors.planListTitleColour,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      if (model.ICAOCode.isNotEmpty)
+
+                      Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            model.ICAOCode,
+                            style: AppTextStyles.medium(18).copyWith(
+                              height: 1.0,
+                              color: AppColors.planListTitleColour,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(width: 40),
+
+                    ],
+                  ),
+                ),
+              ),
+
+              if (isWeb)
+                IconButton(
+                  icon: Icon(
+                    Icons.bookmark,
+                    color: model.isSaved
+                        ? Colors.black
+                        : Colors.grey.withValues(alpha: 0.5),
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    context.read<AllPlanesCubit>().toggleFavorite(
+                      model.id,
+                      context,
+                      model.isSaved,
+                    );
+
+                    AppSnackBar.custom(
+                      context,
+                      message: model.isSaved
+                          ? "Bookmark Unsaved"
+                          : "Bookmark Saved",
+                      svgAsset: "",
+                    );
+                  },
+                ),
+              SizedBox(width: isWeb ? 80 : 15),
+            ],
+          ),
+        ],
       ),
     );
   }

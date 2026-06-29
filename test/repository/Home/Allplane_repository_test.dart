@@ -61,7 +61,7 @@ void main() {
       final url = Uri.parse(
         "${ApiBaseUrlConstant.baseUrl}"
             "${ApiFunctionUrlAirplaneConstant.airplaneService}"
-            "${ApiServiceUrlAirplaneConstant.savUnSAvePlane}",
+            "${ApiServiceUrlAirplaneConstant.saveUnSavePlane}",
       );
 
       final response = await http.post(

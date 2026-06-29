@@ -34,7 +34,7 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
   void initState() {
     super.initState();
     _cubit = CalculationCubit();
-    _cubit.loadCalculationLocks();
+    _cubit.loadCalculationLocks(context);
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.calculationsLockListScreen,
     );
@@ -260,7 +260,11 @@ class _CourseCardState extends State<_CourseCard> {
               CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(-13, 0),
+                offset: Offset(
+                  kIsWeb ? MediaQuery.of(context).size.width / 4 : -13,
+                  kIsWeb ? -50 : 0,
+                ),
+
                 child: ArrowPopup(
                   isLocked: widget.calculationGameItem.isLocked,
                   infoDetails: widget.calculationGameItem.info.first,

@@ -12,7 +12,7 @@ class CreateNewPasswordRepository {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
-          ApiServiceUrlConstant.resetPassword,
+          ApiServiceUrlConstant.resetPasswordEndpoint,
     );
 
     try {

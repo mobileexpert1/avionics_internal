@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import 'package:avionics_internal/bloc/Profile/ManageAccount/manageAcc_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,6 +38,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
   double tokenUsagePercentage = 0.0;
   double creditUsagePercentage = 0.0;
 
+  bool _userDataLoaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,10 +62,14 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       create: (_) => ManageaccCubit()..fetchUserDetails(context),
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) {
-          if (!state.isLoading) {
-            firstNameController.text = state.firstName;
-            lastNameController.text = state.lastName;
-            emailController.text = state.email;
+          if (!state.isLoading && state.status == CommonApiStatus.success) {
+            if (!_userDataLoaded ) {
+              _userDataLoaded = true;
+
+              firstNameController.text = state.firstName;
+              lastNameController.text = state.lastName;
+              emailController.text = state.email;
+            }
 
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
@@ -113,7 +120,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           setState(() {
                             isTextFiledEnabled = true;
                             isRightButtonShow = false;
-                            buttonBottomTitle = ConstantStrings.saveTitle;
+                            buttonBottomTitle = ConstantStrings.save;
                           });
                         },
                       ),
@@ -156,53 +163,63 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                           ),
                           const SizedBox(height: 15),
                           CustomTextField(
-                            label: ConstantStrings.emailLabel,
+                            label: ConstantStrings.email,
                             controller: emailController,
                             errorText: state.emailError,
                             enabled: false,
                           ),
 
                           const SizedBox(height: 30),
-                          CustomBottomButton(
-                            fontStyle: AppTextStyles.regular(
-                              18,
-                            ).copyWith(height: 1.0, color: Colors.white),
-                            title: buttonBottomTitle,
-                            backgroundColor: state.isButtonEnabled
-                                ? AppColors.primaryValueColour
-                                : AppColors.darkSeparatorColourAppBar,
-                            textColor: Colors.white,
-                            icon: const SizedBox(width: 0),
-                            isEnabled:
-                                (buttonBottomTitle == ConstantStrings.saveTitle)
-                                ? state.isButtonEnabled
-                                : !isSocialLogin && state.isButtonEnabled,
-                            onPressed: () async {
-                              if (buttonBottomTitle ==
-                                  ConstantStrings.changePassword) {
-                                AppNavigator.push(
-                                  context,
-                                  ChangePasswordScreen(),
-                                  disableSwipeBack: true,
-                                );
-                              } else if (buttonBottomTitle ==
-                                  ConstantStrings.saveTitle) {
-                                final cubit = context.read<ManageaccCubit>();
-                                if (cubit.validateFields()) {
-                                  await cubit.updateUserDetails(context);
-                                  setState(() {
-                                    isTextFiledEnabled = false;
-                                    isRightButtonShow = true;
-                                    buttonBottomTitle =
-                                        ConstantStrings.changePassword;
-                                  });
-                                  AnalyticsService.instance.buttonPressed(
-                                    FirebaseEvents.saveProfileInfoButton,
-                                    FirebaseEvents.manageAccountScreen,
-                                  );
-                                }
-                              }
-                            },
+
+                          Center(
+                            child: SizedBox(
+                              width: kIsWeb
+                                  ? MediaQuery.of(context).size.width * 0.45
+                                  : double.infinity,
+                              height: 50,
+                              child: CustomBottomButton(
+                                fontStyle: AppTextStyles.regular(
+                                  18,
+                                ).copyWith(height: 1.0, color: Colors.white),
+                                title: buttonBottomTitle,
+                                backgroundColor: state.isButtonEnabled
+                                    ? AppColors.primaryValueColour
+                                    : AppColors.darkSeparatorColourAppBar,
+                                textColor: Colors.white,
+                                icon: const SizedBox(width: 0),
+                                isEnabled:
+                                    (buttonBottomTitle == ConstantStrings.save)
+                                    ? state.isButtonEnabled
+                                    : !isSocialLogin && state.isButtonEnabled,
+                                onPressed: () async {
+                                  if (buttonBottomTitle ==
+                                      ConstantStrings.changePassword) {
+                                    AppNavigator.push(
+                                      context,
+                                      ChangePasswordScreen(),
+                                      disableSwipeBack: true,
+                                    );
+                                  } else if (buttonBottomTitle ==
+                                      ConstantStrings.save) {
+                                    final cubit = context
+                                        .read<ManageaccCubit>();
+                                    if (cubit.validateFields()) {
+                                      await cubit.updateUserDetails(context);
+                                      setState(() {
+                                        isTextFiledEnabled = false;
+                                        isRightButtonShow = true;
+                                        buttonBottomTitle =
+                                            ConstantStrings.changePassword;
+                                      });
+                                      AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.saveProfileInfoButton,
+                                        FirebaseEvents.manageAccountScreen,
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),

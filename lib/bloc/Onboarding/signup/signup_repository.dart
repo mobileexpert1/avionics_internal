@@ -1,10 +1,11 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ApiClass/baseDetailResponseModel.dart';
 
 class SignupRepository {
-
   Future<BaseDetailResponseModel> checkIsEmailAlreadyResgisteredOrNot({
     required String email,
   }) async {
@@ -17,9 +18,7 @@ class SignupRepository {
     try {
       final response = await ApiService.post(
         url: url,
-        body: {
-          "email": email,
-        },
+        body: {"email": email},
       );
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
@@ -28,15 +27,15 @@ class SignupRepository {
   }
 
   Future<BaseDetailResponseModel> registerUser({
-    required String first_name,
-    required String last_name,
+    required String firstName,
+    required String lastName,
     required String email,
     required String password,
-    required String phone_number,
-    required String professional_role,
-    required String experience_level,
-    required String user_type,
-    required String auth_type,
+    required String phoneNumber,
+    required String professionalRole,
+    required String experienceLevel,
+    required String userType,
+    required String authType,
   }) async {
     final url = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
@@ -48,15 +47,14 @@ class SignupRepository {
       final response = await ApiService.post(
         url: url,
         body: {
-          "first_name": first_name,
-          "last_name": last_name,
+          "first_name": firstName,
+          "last_name": lastName,
           "email": email,
           "password": password,
-          "user_type": user_type,
-          "auth_type": "email"
+          "user_type": userType,
+          "auth_type": "email",
         },
       );
-
       return BaseDetailResponseModel.fromJson(response);
     } catch (e) {
       throw e.toString();

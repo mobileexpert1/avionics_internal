@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -27,11 +28,12 @@ import 'Helpers/push_notifications/firebase_message_handler.dart';
 import 'Helpers/push_notifications/firebase_messaging_service.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/calculations.dart';
 import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/history.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryCubit.dart';
+import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/StickerCubit.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
-// import 'bloc/Home/AircraftComparison/Comparison/Filtter/filtter_cubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import 'bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
@@ -59,6 +61,14 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
+
+  // await FlutterUxcam.optIntoSchematicRecordings();
+  //
+  // FlutterUxcam.startWithKey(
+  //   "atxeju4thavoohu-us",
+  // );
+
+  // print("UXCam Initialized----");
 
   FirebaseMessagingService().initialize(navigatorKey: navigatorKey);
   FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
@@ -144,6 +154,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => Calculations()),
         ChangeNotifierProvider(create: (_) => History()),
         BlocProvider(create: (_) => MySubscriptionCubit()),
+        BlocProvider(create: (_) => StickerCubit()),
+        BlocProvider(create: (_) => AircraftCategoryCubit()),
+
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {

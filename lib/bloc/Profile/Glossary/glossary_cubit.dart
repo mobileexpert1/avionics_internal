@@ -2,8 +2,10 @@ import 'package:avionics_internal/Constants/ApiClass/ApiErrorModel.dart';
 import 'package:avionics_internal/bloc/Profile/Glossary/glossary_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import 'glossary_model.dart';
 import 'glossary_state.dart';
 
@@ -19,37 +21,51 @@ class GlossaryCubit extends Cubit<GlossaryState> {
     bool? isComeFromSearch = false,
     required BuildContext context,
   }) async {
-    emit(state.copyWith(isLoading: true));
-    try {
-      final glossaryData = await repository.getGlossaryData(query: query);
-      if (!isClosed) {
-        emit(
-          GlossaryState(
-            glossaryData: glossaryData,
-            originalData: glossaryData,
-            isLoading: false,
-          ),
-        );
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(isLoading: true));
+      try {
+        final glossaryData = await repository.getGlossaryData(query: query);
+        if (!isClosed) {
+          emit(
+            GlossaryState(
+              glossaryData: glossaryData,
+              originalData: glossaryData,
+              isLoading: false,
+            ),
+          );
 
-        if (isComeFromSearch == false) {
-          state.selectedLetter = "A";
-          filterByLetter(letter: state.selectedLetter ?? "", context: context);
-        } else {}
+          if (isComeFromSearch == false) {
+            state.selectedLetter = "A";
+            filterByLetter(
+              letter: state.selectedLetter ?? "",
+              context: context,
+            );
+          } else {}
+        }
+      } catch (e) {
+        if (!isClosed) {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+          emit(
+            GlossaryState(
+              glossaryData: {},
+              originalData: {},
+              isLetterQueryEmpty: false,
+              isLoading: false,
+              errorMessage: e.toString(),
+              status: CommonApiStatus.failure,
+            ),
+          );
+        }
       }
-    } catch (e) {
-      if (!isClosed) {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-        emit(
-          GlossaryState(
-            glossaryData: {},
-            originalData: {},
-            isLetterQueryEmpty: false,
-            isLoading: false,
-            errorMessage: e.toString(),
-            status: CommonApiStatus.failure,
-          ),
-        );
-      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadGlossary(
+          query: query,
+          isComeFromSearch: isComeFromSearch,
+          context: context,
+        ),
+      );
     }
   }
 
@@ -57,53 +73,60 @@ class GlossaryCubit extends Cubit<GlossaryState> {
     required String query,
     required BuildContext context,
   }) async {
-    emit(state.copyWith(isLoading: true));
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(isLoading: true));
 
-    try {
-      if (query.isEmpty) {
+      try {
+        if (query.isEmpty) {
+          emit(
+            state.copyWith(
+              glossaryData: state.originalData,
+              isLoading: false,
+              isLetterQueryEmpty: false,
+              status: CommonApiStatus.success,
+            ),
+          );
+          return;
+        }
+
+        final Map<String, List<GlossaryItem>> result = {};
+
+        state.originalData?.forEach((key, items) {
+          final filteredItems = items.where((item) {
+            return item.title.toLowerCase().contains(query.toLowerCase()) ||
+                item.description.toLowerCase().contains(query.toLowerCase());
+          }).toList();
+
+          if (filteredItems.isNotEmpty) {
+            result[key] = filteredItems;
+          }
+        });
+
         emit(
           state.copyWith(
-            glossaryData: state.originalData,
+            glossaryData: result,
             isLoading: false,
             isLetterQueryEmpty: false,
             status: CommonApiStatus.success,
           ),
         );
-        return;
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            glossaryData: {},
+            isLoading: false,
+            errorMessage: e.toString(),
+            isLetterQueryEmpty: false,
+            status: CommonApiStatus.failure,
+          ),
+        );
       }
-
-      final Map<String, List<GlossaryItem>> result = {};
-
-      state.originalData?.forEach((key, items) {
-        final filteredItems = items.where((item) {
-          return item.title.toLowerCase().contains(query.toLowerCase()) ||
-              item.description.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-
-        if (filteredItems.isNotEmpty) {
-          result[key] = filteredItems;
-        }
-      });
-
-      emit(
-        state.copyWith(
-          glossaryData: result,
-          isLoading: false,
-          isLetterQueryEmpty: false,
-          status: CommonApiStatus.success,
-        ),
-      );
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-      emit(
-        state.copyWith(
-          glossaryData: {},
-          isLoading: false,
-          errorMessage: e.toString(),
-          isLetterQueryEmpty: false,
-          status: CommonApiStatus.failure,
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => searchGlossary(query: query, context: context),
       );
     }
   }

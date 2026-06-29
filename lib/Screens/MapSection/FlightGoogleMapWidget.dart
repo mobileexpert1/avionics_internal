@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 
 class FlightGoogleMapWidget extends StatefulWidget {
@@ -24,6 +24,9 @@ class FlightGoogleMapWidget extends StatefulWidget {
   final bool isTracking;
   final LatLng? trackingLatLng;
 
+  final bool scrollGesturesEnabled;
+  final bool zoomGesturesEnabled;
+
   const FlightGoogleMapWidget({
     super.key,
     required this.initialCameraPosition,
@@ -41,6 +44,9 @@ class FlightGoogleMapWidget extends StatefulWidget {
     this.myLocationEnabled = true,
     this.isTracking = false,
     this.trackingLatLng,
+
+    this.scrollGesturesEnabled = true,
+    this.zoomGesturesEnabled = true,
   });
 
   @override
@@ -96,6 +102,11 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
       initialCameraPosition: widget.initialCameraPosition,
       onCameraIdle: widget.onCameraIdle,
       onCameraMoveStarted: widget.onCameraMoveStarted,
+
+      scrollGesturesEnabled: widget.scrollGesturesEnabled,
+      zoomGesturesEnabled: widget.zoomGesturesEnabled,
+
+
       onMapCreated: (controller) async {
         _mapController = controller;
 

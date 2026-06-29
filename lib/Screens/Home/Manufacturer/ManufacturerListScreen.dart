@@ -46,7 +46,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
       final cubit = context.read<ManufacturerCubit>();
-      if (cubit.state.hasNextPage && !cubit.state.isFetchingMore) {
+      if (cubit.state.hasNextPage && !cubit.state.isFetchingMore && !cubit.isFetching) {
         cubit.loadListOfManufacturers(
           context: context,
           page: cubit.state.currentPage + 1,
@@ -55,6 +55,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                         spacing: 8,
                         runSpacing: 8,
                         children: (state.categories).map((label) {
-                          final isSelected = state.selectedCategories.contains(
+                          final isSelected = state.selectedManufacturerCategories.contains(
                             label,
                           );
 
@@ -206,6 +207,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                               final item = sortedManufacturers[index];
 
                               return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
                                 onTap: () {
                                   AnalyticsService.instance.buttonPressed(
                                     FirebaseEvents.allAirbusModelsButton,
@@ -238,6 +240,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                           item.icon != null
                                               ? CachedAnyImage(
                                             useCache: true,
+                                                   isForPlaneList: true,
                                                    imagePath: item.icon ?? "",
                                                   width: 40,
                                                   height: 40,

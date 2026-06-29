@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Constants/AppColors.dart';
@@ -17,8 +18,8 @@ class AllLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final cx = screenWidth / 2 - 2;
-    final leftEnd = 80.0;
-    final rightEnd = screenWidth - 80.0;
+    final leftEnd = kIsWeb ? 150.0 : 80.0;
+    final rightEnd = screenWidth - (kIsWeb ? 150.0 : 80);
 
     final leftPath = Path();
     leftPath.moveTo(cx - 2, 390);
@@ -50,7 +51,7 @@ class AllLinesPainter extends CustomPainter {
     _drawHorizontalCurvedLine(
       canvas: canvas,
       cx: cx,
-      y: 380,
+      y: kIsWeb ? 395 : 380,
       leftColor: AppColors.citiusAltiusColorForGame,
       rightColor: AppColors.primaryBlue,
       showRight: true,
@@ -60,7 +61,7 @@ class AllLinesPainter extends CustomPainter {
     _drawHorizontalCurvedLine(
       canvas: canvas,
       cx: cx,
-      y: 500,
+      y: kIsWeb ? 535 : 500,
       leftColor: AppColors.primaryDark,
       rightColor: AppColors.planeSpotterColorForGame,
       showRight: true,
@@ -70,7 +71,7 @@ class AllLinesPainter extends CustomPainter {
     _drawHorizontalCurvedLine(
       canvas: canvas,
       cx: cx,
-      y: 620,
+      y: kIsWeb ? 670 : 620,
       leftColor: AppColors.greenColourForPlan,
       rightColor: Colors.transparent,
       showRight: true,
@@ -87,8 +88,8 @@ class AllLinesPainter extends CustomPainter {
     required bool showRight,
     required double screenWidth,
   }) {
-    const leftEnd = 80.0;
-    final rightEnd = screenWidth - 80.0;
+    const leftEnd = kIsWeb ? 150.0 : 80.0;
+    final rightEnd = screenWidth - (kIsWeb ? 150.0 : 80.0);
 
     final leftPath = Path();
     leftPath.moveTo(cx - 1, y);

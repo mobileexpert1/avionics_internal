@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -184,10 +185,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
-                              children: (state.categories).map((
-                                label,
-                              ) {
-                                final isSelected = state.selectedCategories
+                              children: (state.categories).map((label) {
+                                final isSelected = state.selectedFeedbackCategories
                                     .contains(label);
 
                                 return GestureDetector(
@@ -300,48 +299,53 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             const SizedBox(height: 20),
 
                             /// SUBMIT BUTTON
-                            SizedBox(
-                              width: double.infinity,
-                              child: CustomBottomButton(
-                                fontStyle: AppTextStyles.regular(21.46)
-                                    .copyWith(
-                                      color: !state.isSubmitting
-                                          ? Colors.white
-                                          : Colors.grey.shade600,
-                                    ),
-                                title: state.isSubmitting
-                                    ? ""
-                                    : "Submit Feedback",
-                                backgroundColor: AppColors.primaryValueColour,
-                                textColor: Colors.white,
-                                icon: state.isSubmitting
-                                    ? const SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : const SizedBox(),
-                                isEnabled: !state.isSubmitting && !isEmpty,
-                                onPressed: () {
-                                  if (isEmpty) return;
+                            Center(
+                              child: SizedBox(
+                                width: kIsWeb
+                                    ? MediaQuery.of(context).size.width * 0.45
+                                    : double.infinity,
+                                child: CustomBottomButton(
+                                  fontStyle: AppTextStyles.regular(21.46)
+                                      .copyWith(
+                                        color: !state.isSubmitting
+                                            ? Colors.white
+                                            : Colors.grey.shade600,
+                                      ),
+                                  title: state.isSubmitting
+                                      ? ""
+                                      : "Submit Feedback",
+                                  backgroundColor: AppColors.primaryValueColour,
+                                  textColor: Colors.white,
+                                  icon: state.isSubmitting
+                                      ? const SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                  isEnabled: !state.isSubmitting && !isEmpty,
+                                  onPressed: () {
+                                    if (isEmpty) return;
 
-                                  FocusManager.instance.primaryFocus?.unfocus();
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
 
-                                  context.read<FeedbackCubit>().submitFeedback(
-                                    context,
-                                  );
+                                    context
+                                        .read<FeedbackCubit>()
+                                        .submitFeedback(context);
 
-                                  AnalyticsService.instance.buttonPressed(
-                                    FirebaseEvents.submitReviewsButton,
-                                    FirebaseEvents.feedbackScreen,
-                                  );
-                                },
+                                    AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.submitReviewsButton,
+                                      FirebaseEvents.feedbackScreen,
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                             const SizedBox(height: 30),

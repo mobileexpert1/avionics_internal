@@ -13,7 +13,7 @@ void main() {
       final url = Uri.parse(
         ApiBaseUrlConstant.baseUrl +
             ApiFunctionUrlConstant.userService +
-            ApiServiceUrlConstant.forgotEmaiiSend,
+            ApiServiceUrlConstant.forgotEmailSend,
       );
       final response = await http.post(
         url,

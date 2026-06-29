@@ -31,7 +31,7 @@ class _FormulasScreenState extends State<FormulasScreen> {
   void initState() {
     super.initState();
     _cubit = FormulaCubit();
-    _cubit.loadFormulas();
+    _cubit.loadFormulas(context);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.formulaScreen);
   }
 
@@ -100,15 +100,9 @@ class _FormulasScreenState extends State<FormulasScreen> {
                         fontStyle: AppTextStyles.regular(
                           16,
                         ).copyWith(height: 1.4, color: AppColors.white),
-                        headerColor: expandedMap[index] ?? false
-                            ? AppColors.primaryDark
-                            : AppColors.grayMedium,
-                        arrowBackgroundColor: expandedMap[index] ?? false
-                            ? AppColors.extraDarkYellow
-                            : AppColors.lightGreyWithAlphaDecreased,
-                        arrowFrontColor: expandedMap[index] ?? false
-                            ? AppColors.black
-                            : AppColors.white,
+                        headerColor: AppColors.primaryDark,
+                        arrowBackgroundColor: AppColors.extraDarkYellow,
+                        arrowFrontColor: AppColors.black,
                         isExpandedViewAvailable: true,
                         onHeaderTap: () {
                           setState(() {

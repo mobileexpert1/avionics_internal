@@ -24,11 +24,13 @@ class BlackBoxScreen extends StatefulWidget {
     required this.gameId,
     required this.summarySetId,
     required this.summaryGameNumber,
+    required this.isForBlackBox,
   });
 
   final String gameId;
   final String summarySetId;
   final int summaryGameNumber;
+  final bool isForBlackBox;
 
   @override
   _BlackBoxScreenState createState() => _BlackBoxScreenState();
@@ -92,6 +94,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
         context,
         gameId: widget.gameId,
         questionNo: widget.summarySetId,
+        isForBlackBox: widget.isForBlackBox,
       ),
       child: BlocBuilder<BlackBoxQuestionCubit, BlackBoxState>(
         builder: (context, state) {
@@ -474,7 +477,7 @@ class BlackBoxCard extends StatelessWidget {
                   Center(
                     child: SizedBox(
                       width: kIsWeb
-                          ? MediaQuery.of(context).size.width * 0.5
+                          ? MediaQuery.of(context).size.width * 0.45
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(
@@ -965,7 +968,9 @@ class BlackBoxProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double progress = currentQuestion / totalQuestions;
+    double progress = totalQuestions > 0
+        ? currentQuestion / totalQuestions
+        : 0.0;
 
     return Container(
       width: double.infinity,

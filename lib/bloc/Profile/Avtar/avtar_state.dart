@@ -9,6 +9,7 @@ class AvtarState {
   final String? errorMessage;
   final List<AvatarModel> avatars;
   final bool loading;
+  final int isComeFromSignup;
 
   const AvtarState({
     this.status = CommonApiStatus.initial,
@@ -17,6 +18,7 @@ class AvtarState {
     this.errorMessage,
     this.avatars = const [],
     this.loading = false,
+    this.isComeFromSignup = -1,
   });
 
   AvtarState copyWith({
@@ -26,6 +28,7 @@ class AvtarState {
     String? errorMessage,
     List<AvatarModel>? avatars,
     bool? loading,
+    int? isComeFromSignup,
   }) {
     return AvtarState(
       status: status ?? this.status,
@@ -34,6 +37,7 @@ class AvtarState {
       errorMessage: errorMessage,
       avatars: avatars ?? this.avatars,
       loading: loading ?? this.loading,
+      isComeFromSignup: isComeFromSignup ?? this.isComeFromSignup,
     );
   }
 }

@@ -183,6 +183,8 @@ class CurrentPlan {
   final double tokenUsage;
   final double creditUsage;
   final double creditLimit;
+  final double alreadyTotalAddOnToken;
+  final double alreadyTotalAddOnCredit;
 
   CurrentPlan({
     required this.id,
@@ -196,6 +198,9 @@ class CurrentPlan {
     required this.tokenUsage,
     required this.creditUsage,
     required this.creditLimit,
+
+    required this.alreadyTotalAddOnToken,
+    required this.alreadyTotalAddOnCredit,
   });
 
   factory CurrentPlan.fromJson(Map<String, dynamic> json) {
@@ -211,6 +216,9 @@ class CurrentPlan {
       tokenUsage: (json['token_usage'] ?? 0).toDouble(),
       creditUsage: (json['credit_usage'] ?? 0).toDouble(),
       creditLimit: json['credit_usage'] ?? '',
+
+      alreadyTotalAddOnToken: (json['total_add_on_token'] ?? 0).toDouble(),
+      alreadyTotalAddOnCredit: (json['total_add_on_credit'] ?? 0).toDouble(),
     );
   }
 }

@@ -34,17 +34,25 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   late bool _isObscure;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _isObscure = widget.obscureText;
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _focusNode,
       onKey: (event) {
         if (widget.onEnterPressed == null) return;
         if (event is RawKeyDownEvent &&

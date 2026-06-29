@@ -9,20 +9,31 @@ class CreditManager {
 
   double totalCredit = 0;
   double creditUsage = 0;
+  double creditAlreadyAdded = 0;
 
   double totalToken = 0;
   double tokenUsage = 0;
+  double tokenAlreadyAdded = 0;
 
   DateTime? expiryDate;
 
   void initialize(CurrentPlan plan) {
     totalCredit = plan.totalCredit + 100;
     creditUsage = plan.creditUsage;
+    creditAlreadyAdded = plan.alreadyTotalAddOnCredit;
 
     totalToken = plan.totalToken + 100;
     tokenUsage = plan.tokenUsage;
+
+    tokenAlreadyAdded = plan.alreadyTotalAddOnToken;
+
     print(
-      "totalCredit-=-=-= $totalCredit,creditUsage-=-=-=- $creditUsage totalToken-=-=-= $totalToken,tokenUsage-=-=-=- $tokenUsage",
+      "\ntotalCredit-=-=-= $totalCredit,"
+      "\ncreditUsage-=-=-=- $creditUsage"
+      "\ntotalToken-=-=-= $totalToken"
+      "\ntokenUsage-=-=-=- $tokenUsage"
+      "\ntokenAlreadyAdded-=-=-=-$tokenAlreadyAdded"
+      "\ncreditAlreadyAdded-=-=-=-$creditAlreadyAdded",
     );
   }
 

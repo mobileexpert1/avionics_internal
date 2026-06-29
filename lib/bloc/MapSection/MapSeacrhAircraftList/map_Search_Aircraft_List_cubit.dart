@@ -5,9 +5,11 @@ import 'package:avionics_internal/bloc/MapSection/flight_map_repository.dart'
     as repo;
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Helpers/NoInternetDialog.dart';
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../MapAircraftList/aircraft_List_Data_Repository.dart';
 import '../flight_map_model.dart';
@@ -19,68 +21,96 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
     required String querySearch,
     required BuildContext context,
   }) async {
-    emit(
-      state.copyWith(
-        isLoading: true,
-        isSuccess: false,
-        status: CommonApiStatus.submitting,
-      ),
-    );
-
-    try {
-      final response = await MapSearchAircraftListRepository()
-          .getListOfAllLiveFlights(querySearch: querySearch);
-
+    if (await InternetConnection().hasInternetAccess) {
       emit(
         state.copyWith(
-          flights: response.results,
-          isLoading: false,
-          isSuccess: true,
-          status: CommonApiStatus.success,
+          isLoading: true,
+          isSuccess: false,
+          status: CommonApiStatus.submitting,
         ),
       );
 
-      if (response.results.isNotEmpty) {
-        final typeList = response.results.map((f) => f.detail.acType).toList();
-        final callSignTypeList = response.results
-            .map((f) => f.detail.callsign)
-            .toList();
-        fetchAircraftDetailsFromFlightsList(typeList, callSignTypeList);
+      try {
+        final response = await MapSearchAircraftListRepository()
+            .getListOfAllLiveFlights(querySearch: querySearch);
+
+        emit(
+          state.copyWith(
+            flights: response.results,
+            isLoading: false,
+            isSuccess: true,
+            status: CommonApiStatus.success,
+          ),
+        );
+
+        if (response.results.isNotEmpty) {
+          final typeList = response.results
+              .map((f) => f.detail.acType)
+              .toList();
+          final callSignTypeList = response.results
+              .map((f) => f.detail.callsign)
+              .toList();
+          fetchAircraftDetailsFromFlightsList(
+            context,
+            typeList,
+            callSignTypeList,
+          );
+        }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            status: CommonApiStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
       }
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          isLoading: false,
-          isSuccess: false,
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => loadListOfAllLiveFlights(
+          querySearch: querySearch,
+          context: context,
         ),
       );
     }
   }
 
   Future<void> fetchAircraftDetailsFromFlightsList(
+    BuildContext context,
     List<String> uniqueTypes,
     List<String> callSignListTypes,
   ) async {
-    final flightsDetails = await AircraftListDataRepository()
-        .getListOfAllPlanes(
-          aircraftIds: uniqueTypes,
-          callSignListTypes: callSignListTypes,
-        );
+    if (await InternetConnection().hasInternetAccess) {
+      final flightsDetails = await AircraftListDataRepository()
+          .getListOfAllPlanes(
+            aircraftIds: uniqueTypes,
+            callSignListTypes: callSignListTypes,
+          );
 
-    if (flightsDetails.data.isNotEmpty) {
-      final enrichedFlights = await mergeFlightsWithDetails(
-        state.flights,
-        flightsDetails.data,
-      );
-      emit(
-        state.copyWith(
-          flights: enrichedFlights,
-          status: CommonApiStatus.success,
-          isSuccess: true,
-          isLoading: false,
+      if (flightsDetails.data.isNotEmpty) {
+        final enrichedFlights = await mergeFlightsWithDetails(
+          state.flights,
+          flightsDetails.data,
+        );
+        emit(
+          state.copyWith(
+            flights: enrichedFlights,
+            status: CommonApiStatus.success,
+            isSuccess: true,
+            isLoading: false,
+          ),
+        );
+      }
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => fetchAircraftDetailsFromFlightsList(
+          context,
+          uniqueTypes,
+          callSignListTypes,
         ),
       );
     }
@@ -169,47 +199,53 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
     FlightResult flightDetails,
     BuildContext context,
   ) async {
-    emit(state.copyWith(status: CommonApiStatus.submitting));
+    if (await InternetConnection().hasInternetAccess) {
+      emit(state.copyWith(status: CommonApiStatus.submitting));
 
-    try {
-      // Fetch flights
-      final flightsDetails = await repo.FlightRepository()
-          .getParticularFlightDetails(flightId: flightDetails.detail.flight);
+      try {
+        final flightsDetails = await repo.FlightRepository()
+            .getParticularFlightDetails(flightId: flightDetails.detail.flight);
 
-      if (flightsDetails.flights.isNotEmpty) {
-        final enrichedFlight = await mergeFlightsResponseDetails(
-          state.flights,
-          flightsDetails.flights,
-        );
+        if (flightsDetails.flights.isNotEmpty) {
+          final enrichedFlight = await mergeFlightsResponseDetails(
+            state.flights,
+            flightsDetails.flights,
+          );
 
-        final selected = enrichedFlight.firstWhere(
-          (f) => f.detail.flight == flightDetails.detail.flight,
-          orElse: () => enrichedFlight.first,
-        );
-        emit(
-          state.copyWith(
-            status: CommonApiStatus.success,
-            isLoading: false,
-            selectedFlight: selected,
-          ),
-        );
-      } else {
+          final selected = enrichedFlight.firstWhere(
+            (f) => f.detail.flight == flightDetails.detail.flight,
+            orElse: () => enrichedFlight.first,
+          );
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.success,
+              isLoading: false,
+              selectedFlight: selected,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              errorMessage: 'Tracking not available',
+              isLoading: false,
+            ),
+          );
+        }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,
-            errorMessage: 'Tracking not available',
+            errorMessage: e.toString(),
             isLoading: false,
           ),
         );
       }
-    } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-          isLoading: false,
-        ),
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => getCurrentSearchFlight(flightDetails, context),
       );
     }
   }
