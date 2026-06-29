@@ -24,6 +24,14 @@ class AvtarCubit extends Cubit<AvtarState> {
     );
   }
 
+  void resetIsComeFromSignupValue(){
+    emit(
+      state.copyWith(
+        isComeFromSignup: -2,
+      ),
+    );
+  }
+
   Future<void> selectAvatar(
     String userTypeUrl,
     String userType,
@@ -79,7 +87,12 @@ class AvtarCubit extends Cubit<AvtarState> {
         await SharedPrefsHelper.setAvtarUserType(userType);
         await SharedPrefsHelper.setAvtarUserUrl(userTypeUrl);
 
-        emit(state.copyWith(status: CommonApiStatus.success));
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.success,
+            isComeFromSignup: isComeFromSignup == false ? 2 : -1,
+          ),
+        );
 
         if (!context.mounted) return;
 

@@ -25,6 +25,7 @@ import 'SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
 import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
 import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';
@@ -259,19 +260,19 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   onTap: () => _navigate(context, ModelTestScreen()),
                     // ),
 
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.glossaryProfile,
-                    //   ),
-                    //   title: "Flight Stickers",
-                    //   onTap: () {
-                    //     AppNavigator.push(
-                    //       context,
-                    //       const AircraftCategoryScreen(),
-                    //       disableSwipeBack: true,
-                    //     );
-                    //   },
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.glossaryProfile,
+                      ),
+                      title: "Flight Stickers",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const AircraftCategoryScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
 
                     // SettingsListItem(
                     //   leadingSvgAsset: CommonUi.setSvgImage(

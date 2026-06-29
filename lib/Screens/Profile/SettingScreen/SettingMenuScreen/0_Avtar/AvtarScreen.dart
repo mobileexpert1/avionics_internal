@@ -44,11 +44,13 @@ class _AvtarScreenState extends State<AvtarScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<AvtarCubit>().resetIsComeFromSignupValue();
     context.read<AvtarCubit>().loadAvatars(
       widget.isComeFromSignupScreen,
       widget.isComeFromSocialLogin,
       context,
     );
+
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.avtarScreen);
   }
 
@@ -101,6 +103,11 @@ class _AvtarScreenState extends State<AvtarScreen> {
               ),
             );
             context.read<AvtarCubit>().resetStatus();
+          } else if (state.status == CommonApiStatus.success &&
+              state.isComeFromSignup == 2) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Avatar updated successfully')),
+            );
           }
           if (state.avatars.isEmpty) {
             Center(child: Text('No avatars found'));
