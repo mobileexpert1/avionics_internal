@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -60,6 +61,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   final _selectableFocusNode = FocusNode();
 
   StreamSubscription<bool>? _internetSub;
+
+  final FocusNode _messageFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -553,52 +556,112 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                     }
                   },
 
-                  child: TextField(
-                    controller: _controller,
-                    minLines: 1,
-                    maxLines: 5,
-                    style: AppTextStyles.regular(
-                      16,
-                    ).copyWith(height: 1.0, color: AppColors.black),
+                  // child: TextField(
+                  //   controller: _controller,
+                  //   minLines: 1,
+                  //   maxLines: 5,
+                  //   style: AppTextStyles.regular(
+                  //     16,
+                  //   ).copyWith(height: 1.0, color: AppColors.black),
+                  //
+                  //   textInputAction: TextInputAction.done,
+                  //
+                  //   onSubmitted: (val) {
+                  //     if (!kIsWeb) return;
+                  //
+                  //     final text = val.trim();
+                  //
+                  //     if (text.isEmpty) return;
+                  //
+                  //     final cubit = context.read<ChatCubit>();
+                  //
+                  //     final isAnalyzing = cubit.state.any(
+                  //       (msg) => msg['type'] == 'analyzing',
+                  //     );
+                  //
+                  //     if (!isAnalyzing) {
+                  //       cubit.sendMessage(
+                  //         text,
+                  //         context,
+                  //         isReceivedTokenFullWarning,
+                  //       );
+                  //
+                  //       _controller.clear();
+                  //
+                  //       _stopListening(context);
+                  //
+                  //       _scrollToBottom();
+                  //     }
+                  //   },
+                  //   decoration: InputDecoration(
+                  //     border: InputBorder.none,
+                  //     hintText: 'Type your message here...',
+                  //     hintStyle: AppTextStyles.regular(16).copyWith(
+                  //       height: 1.0,
+                  //       color: AppColors.greyFlightDetailText,
+                  //     ),
+                  //   ),
+                  // ),
 
-                    textInputAction: TextInputAction.done,
+                  child: Builder(
+                    builder: (chatContext) {
+                      return Focus(
+                        focusNode: _messageFocusNode,
+                        onKeyEvent: (node, event) {
+                          if (kIsWeb &&
+                              event is KeyDownEvent &&
+                              event.logicalKey == LogicalKeyboardKey.enter) {
+                            final text = _controller.text.trim();
+                            if (text.isEmpty) {
+                              return KeyEventResult.handled;
+                            }
+                            final cubit = chatContext.read<ChatCubit>();
 
-                    onSubmitted: (val) {
-                      if (!kIsWeb) return;
+                            final isAnalyzing = cubit.state.any(
+                                  (msg) => msg['type'] == 'analyzing',
+                            );
 
-                      final text = val.trim();
+                            if (!isAnalyzing) {
+                              cubit.sendMessage(
+                                text,
+                                chatContext,
+                                isReceivedTokenFullWarning,
+                              );
 
-                      if (text.isEmpty) return;
+                              _controller.clear();
 
-                      final cubit = context.read<ChatCubit>();
+                              _stopListening(chatContext);
 
-                      final isAnalyzing = cubit.state.any(
-                        (msg) => msg['type'] == 'analyzing',
+                              _scrollToBottom();
+                            }
+
+                            return KeyEventResult.handled;
+                          }
+
+                          return KeyEventResult.ignored;
+                        },
+
+                        child: TextField(
+                          controller: _controller,
+                          minLines: 1,
+                          maxLines: 5,
+                          style: AppTextStyles.regular(
+                            16,
+                          ).copyWith(height: 1.0, color: AppColors.black),
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Type your message here...',
+                            hintStyle: AppTextStyles.regular(16).copyWith(
+                              height: 1.0,
+                              color: AppColors.greyFlightDetailText,
+                            ),
+                          ),
+                        ),
                       );
-
-                      if (!isAnalyzing) {
-                        cubit.sendMessage(
-                          text,
-                          context,
-                          isReceivedTokenFullWarning,
-                        );
-
-                        _controller.clear();
-
-                        _stopListening(context);
-
-                        _scrollToBottom();
-                      }
                     },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Type your message here...',
-                      hintStyle: AppTextStyles.regular(16).copyWith(
-                        height: 1.0,
-                        color: AppColors.greyFlightDetailText,
-                      ),
-                    ),
                   ),
+
                 ),
               ),
 
