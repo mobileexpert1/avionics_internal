@@ -25,6 +25,8 @@ class AtmosphereAssets {
 
 abstract class AssetsPath {
   /// svg Images
+  ///
+  static const String mainLogoWhiteColour = "0_0MainLogo";
   static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";
   static const String homeLeftMainLogo = "2homeLeftMainLogo";
@@ -153,7 +155,7 @@ abstract class AssetsPath {
   static const expandForCalculation = '126CalculationExpand';
   static const historyForCalculation = '127CalculationHistory';
   static const switchLGridForCalculation = '128CalculationSwitch';
-  static const blackBoxLockIcon = '129BlackBoxLockIcon';
+  static const viewCreditsToken = '129ViewCreditsToken';
 
   //JPG
   static const String startExploreIcon = "1StartExploreIcon";
@@ -163,6 +165,9 @@ abstract class AssetsPath {
   static const String infoWrongSecond = "2InfoWrongGameIcon";
   static const String infoWrongThird = "3InfoWrongGameIcon";
   static const String towerImageForGame = "4TowerImage";
+  static const String towerImageForWebGame = "4_1TowerImage";
+  static const String cloudsLeftForGame = "12LeftSideClouds";
+  static const String cloudsRightForGame = "13RightSideClouds";
   static const String flightDownBB = "5FlightDownBB";
   static const String decodeBB = "6DecodeBB";
   static const String chainOfBB = "7ChainOfBB";
