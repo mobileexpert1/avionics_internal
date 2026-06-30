@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Constants/ConstantStrings.dart';
@@ -254,6 +255,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                   disableSwipeBack: true,
                                 );
                               },
+
                               // onCancelTap: () {
                               //   if (!canManageSubscription(
                               //     context,
@@ -272,34 +274,37 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                               //     showDeleteConfirmation(context);
                               //   }
                               // },
+                              onCancelTap: () async {
+                                final bool isWeb = kIsWeb;
 
-                              onCancelTap: () {
-                                final bool isMobilePlatform =
+                                final bool isMobile =
                                     !kIsWeb &&
-                                        (defaultTargetPlatform == TargetPlatform.iOS ||
-                                            defaultTargetPlatform == TargetPlatform.android);
+                                    (defaultTargetPlatform ==
+                                            TargetPlatform.iOS ||
+                                        defaultTargetPlatform ==
+                                            TargetPlatform.android);
 
                                 final bool isWebPurchase =
                                     activeBuyPlatform.toLowerCase() == "web";
 
-                                // Web subscription + Mobile app
-                                if (isWebPurchase && isMobilePlatform) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "This subscription was purchased on the website. Please log in to the website to cancel your subscription.",
-                                      ),
-                                    ),
+                                if (isWeb && !isWebPurchase) {
+                                  final String redirectUrl =
+                                      activeBuyPlatform.toLowerCase() == "ios"
+                                      ? "https://appleid.apple.com/"
+                                      : "https://accounts.google.com/";
+
+                                  await launchUrl(
+                                    Uri.parse(redirectUrl),
+                                    mode: LaunchMode.externalApplication,
                                   );
                                   return;
                                 }
 
-                                // App Store / Play Store subscription + Web
-                                if (!isWebPurchase && !isMobilePlatform) {
+                                if (isMobile && isWebPurchase) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        "This subscription was purchased through the mobile app. Please use the App Store or Google Play Store to cancel your subscription.",
+                                        "This subscription was purchased on the website. Please log in on web to manage it.",
                                       ),
                                     ),
                                   );
@@ -428,8 +433,25 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                 return InfoBottomSheet(
                   isComeFromLogout: true,
                   isComeFromSubscription: true,
-                  onYes: () {
-                    _cubit.guideUserToCancelSubscription();
+                  onYes: () async {
+                    if (!kIsWeb &&
+                        (defaultTargetPlatform == TargetPlatform.android ||
+                            defaultTargetPlatform == TargetPlatform.iOS)) {
+                      _cubit.guideUserToCancelSubscription();
+                    } else {
+                      final result = await AppNavigator.push(
+                        context,
+                        SubscriptionPlanDetailScreen(
+                          isComeFromSignup: false,
+                          isComeFromProfile: true,
+                        ),
+                        disableSwipeBack: true,
+                      );
+
+                      if (result == true) {
+                        _cubit.loadSubscriptionsHistory(context);
+                      }
+                    }
                   },
                   onNo: () => Navigator.pop(innerContext),
                 );
@@ -517,7 +539,7 @@ class BillingHistoryCard extends StatelessWidget {
                 Text(
                   planPriceWithSymbol,
                   style: AppTextStyles.semiBold(
-                    kIsWeb ? 16 :14,
+                    kIsWeb ? 16 : 14,
                   ).copyWith(height: 1.0, color: AppColors.black),
                 ),
                 const SizedBox(width: 4),
@@ -579,7 +601,7 @@ class BillingHistoryCard extends StatelessWidget {
                 Text(
                   addOnPriceWithSymbol,
                   style: AppTextStyles.semiBold(
-                    kIsWeb ? 16 :14,
+                    kIsWeb ? 16 : 14,
                   ).copyWith(height: 1.0, color: AppColors.black),
                 ),
                 const SizedBox(width: 4),

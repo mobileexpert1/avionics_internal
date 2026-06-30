@@ -151,7 +151,7 @@ double getHeight(int index) {
     case 3:
       return kIsWeb ? 170 : 120;
     default:
-      return 120;
+      return kIsWeb ? 150 :120;
   }
 }
 

@@ -42,9 +42,9 @@ class AircraftCategoryCard extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 category.letter,
-                style: AppTextStyles.medium(
-                  19,
-                ).copyWith(height: 1.4, color: Colors.white),
+                style: AppTextStyles.medium(19).copyWith(
+                  color: Colors.white,
+                ),
               ),
             ),
 
@@ -53,37 +53,37 @@ class AircraftCategoryCard extends StatelessWidget {
             Expanded(
               child: Text(
                 category.title,
-                style: AppTextStyles.bold(
-                  15,
-                ).copyWith(height: 1.4, color: AppColors.primaryDark),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.bold(15).copyWith(
+                  color: AppColors.primaryDark,
+                ),
               ),
             ),
 
             const SizedBox(height: 8),
 
             Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
                         text: "${category.unlockedCount}",
-
-                        style: AppTextStyles.medium(
-                          15,
-                        ).copyWith(color: AppColors.primaryBlue),
+                        style: AppTextStyles.medium(15).copyWith(
+                          color: AppColors.primaryBlue,
+                        ),
                       ),
-
                       TextSpan(
                         text: "/${category.totalCount}",
-                        style: AppTextStyles.medium(
-                          15,
-                        ).copyWith(color: AppColors.primaryDark),
+                        style: AppTextStyles.medium(15).copyWith(
+                          color: AppColors.primaryDark,
+                        ),
                       ),
                     ],
                   ),
                 ),
+
                 const Spacer(),
 
                 Stack(
@@ -100,12 +100,12 @@ class AircraftCategoryCard extends StatelessWidget {
                     ),
 
                     Positioned(
-                      right: 8,
-                      top: -8,
+                      right: 4,
+                      top: -6,
                       child: Image.asset(
                         category.image,
-                        width: 90,
-                        height: 60,
+                        width: 70, // 🔥 reduced for web stability
+                        height: 50,
                         fit: BoxFit.contain,
                       ),
                     ),

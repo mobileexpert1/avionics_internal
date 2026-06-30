@@ -208,7 +208,8 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                     child: manufacturerLogo.isEmpty
                                         ? SvgPicture.asset(
                                             CommonUi.setSvgImage(
-                                              AssetsPath.manufacturerPlaceholder,
+                                              AssetsPath
+                                                  .manufacturerPlaceholder,
                                             ),
                                             width: 30,
                                             height: 25,
@@ -217,9 +218,9 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                         : CachedAnyImage(
                                             imagePath: manufacturerLogo,
                                             isForPlaneList: true,
-                                            width: 75,
-                                            height: 30,
-                                            contentImage: BoxFit.cover,
+                                            width: 80,
+                                            height: 20,
+                                            contentImage: BoxFit.fill,
                                           ),
                                   ),
                                   Row(
