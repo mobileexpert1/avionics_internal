@@ -363,7 +363,8 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
           ),
         );
       } catch (e) {
-        emit(state.copyWith(loading: false, error: "Failed to load offerings"));
+        debugPrint(e.toString());
+        emit(state.copyWith(loading: false, error: "Failed to load offerings ${e.toString()}"));
       }
     }
   }

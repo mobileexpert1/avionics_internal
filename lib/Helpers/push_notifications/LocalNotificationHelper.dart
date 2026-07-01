@@ -2,23 +2,24 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationHelper {
   static final FlutterLocalNotificationsPlugin _plugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
     const AndroidInitializationSettings androidInit =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings iosInit =
-    DarwinInitializationSettings(
+    const DarwinInitializationSettings iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
-    const InitializationSettings settings =
-    InitializationSettings(android: androidInit, iOS: iosInit);
+    const InitializationSettings settings = InitializationSettings(
+      android: androidInit,
+      iOS: iosInit,
+    );
 
-    await _plugin.initialize(settings);
+    await _plugin.initialize(settings: settings);
   }
 
   static Future<void> show({
@@ -27,28 +28,29 @@ class LocalNotificationHelper {
     String? screenName,
   }) async {
     const AndroidNotificationDetails androidDetails =
-    AndroidNotificationDetails(
-      'local_channel',
-      'Local Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+        AndroidNotificationDetails(
+          'local_channel',
+          'Local Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
-    const DarwinNotificationDetails iosDetails =
-    DarwinNotificationDetails(
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
 
-    const NotificationDetails details =
-    NotificationDetails(android: androidDetails, iOS: iosDetails);
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     await _plugin.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title,
-      body,
-      details,
+      id: DateTime.now().millisecondsSinceEpoch,
+      title: title,
+      body: body,
+      notificationDetails: details,
       payload: screenName,
     );
   }

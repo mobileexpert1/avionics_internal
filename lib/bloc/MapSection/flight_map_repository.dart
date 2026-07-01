@@ -87,13 +87,15 @@ class FlightRepository {
       var mapKeyValue = await SharedPrefsHelper.getMapKeyValuesForApi();
       if (mapKeyValue.isEmpty) {
         try {
-          final responseKeyValue = await FlightRepository()
-              .getMapKeyValueFromServer();
-          if (responseKeyValue.data.fr24 != null &&
-              responseKeyValue.data.fr24 != "") {
-            await SharedPrefsHelper.seMapKeyValuesFromServer(
-              responseKeyValue.data.fr24 ?? "",
-            );
+          final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
+          if (localKey.isEmpty) {
+            final responseKeyValue = await getMapKeyValueFromServer();
+            if (responseKeyValue.data.fr24 != null &&
+                responseKeyValue.data.fr24 != "") {
+              await SharedPrefsHelper.seMapKeyValuesFromServer(
+                responseKeyValue.data.fr24 ?? "",
+              );
+            }
           }
         } catch (e) {
           throw e.toString();
@@ -178,6 +180,17 @@ class FlightRepository {
     );
 
     try {
+      final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
+      if (localKey.isEmpty) {
+        final responseKeyValue = await getMapKeyValueFromServer();
+        if (responseKeyValue.data.fr24 != null &&
+            responseKeyValue.data.fr24 != "") {
+          await SharedPrefsHelper.seMapKeyValuesFromServer(
+            responseKeyValue.data.fr24 ?? "",
+          );
+        }
+      }
+
       final response = await ApiService.get(url: url, isForFlightRadar: true);
       final flightResponse = FlightDetailResponse.fromJson(response);
 

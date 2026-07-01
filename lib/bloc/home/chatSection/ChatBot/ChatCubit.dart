@@ -130,7 +130,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     print("Server Count => ${serverMessages.length}");
 
     final converted = serverMessages.map(
-          (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+      (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
     );
 
     await _repo.insertOrIgnoreLocalMessages(converted.toList());
@@ -138,6 +138,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     final merged = await _repo.getMessagesForSession(sessionId);
 
     print("Merged Count => ${merged.length}");
+
     if (kIsWeb && merged.isEmpty && converted.isNotEmpty) {
       final uiList = converted.map((msg) {
         return {
@@ -146,10 +147,9 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         };
       }).toList();
 
-      final cleanList = removeDuplicates(uiList);
-      final finalList = [...greeting, ...cleanList];
+      final finalList = [...greeting, ...uiList];
 
-      emit(removeDuplicates(finalList));
+      emit(finalList);
       return;
     }
 
@@ -160,10 +160,9 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       };
     }).toList();
 
-    final cleanList = removeDuplicates(uiList);
-    final finalList = [...greeting, ...cleanList];
+    final finalList = [...greeting, ...uiList];
 
-    emit(removeDuplicates(finalList));
+    emit(finalList);
   }
 
   Future<void> openAddOnPacksBottomSheet(

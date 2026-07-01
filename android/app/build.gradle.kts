@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,28 +9,32 @@ plugins {
     id("com.google.firebase.crashlytics")
 }
 
-import java . util . Properties
-        import java . io . FileInputStream
+kotlin {
+    jvmToolchain(17)
+}
 
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
+
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
     namespace = "com.avioflai.aviation"
-    compileSdk = flutter.compileSdkVersion
-//    ndkVersion = "27.0.12077973"
+    compileSdk = 36
+
     ndkVersion = "28.2.13676358"
 
     defaultConfig {
         applicationId = "com.avioflai.aviation"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
         vectorDrawables.useSupportLibrary = true
+
         manifestPlaceholders += mapOf(
             "fbLoginProtocolScheme" to "fb1430451834195464"
         )
@@ -42,10 +49,8 @@ android {
         }
     }
 
-
     buildTypes {
         release {
-//            signingConfig = signingConfigs.getByName("debug")
             signingConfig = signingConfigs.getByName("release")
 
             isMinifyEnabled = false
@@ -54,13 +59,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     packaging {
@@ -80,7 +85,6 @@ flutter {
     source = "../.."
 }
 
-
 dependencies {
     implementation("com.google.firebase:firebase-crashlytics:18.6.2")
     implementation("com.google.firebase:firebase-analytics:21.6.2")
@@ -88,9 +92,5 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.apache.httpcomponents:httpcore:4.4.16")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
-
-
-// ✅ Add this at the very bottom:
-//apply(plugin = "com.google.gms.google-services")

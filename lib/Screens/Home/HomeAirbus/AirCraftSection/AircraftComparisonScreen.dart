@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
@@ -35,6 +36,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   late final AircraftComparisonCubit _cubit;
   final TextEditingController searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -57,6 +59,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _scrollController.dispose();
     _cubit.close();
     searchController.dispose();
@@ -64,7 +67,11 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   }
 
   void _onSearch(String value) {
-    _cubit.loadAircraftModels(context: context, query: value, page: 1);
+    _debounce?.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _cubit.loadAircraftModels(context: context, query: value, page: 1);
+    });
   }
 
   @override
@@ -321,7 +328,9 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                             ),
                                                         ],
                                                       ),
-                                                      const SizedBox(height: 10),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -448,8 +457,24 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                           children: [
                                                             ClipRRect(
                                                               child: SizedBox(
-                                                                width: 60,
-                                                                height: 15,
+                                                                width:
+                                                                    model
+                                                                        .manufacturer!
+                                                                        .logo
+                                                                        .contains(
+                                                                          "fi_corp.svg",
+                                                                        )
+                                                                    ? 30
+                                                                    : 60,
+                                                                height:
+                                                                    model
+                                                                        .manufacturer!
+                                                                        .logo
+                                                                        .contains(
+                                                                          "fi_corp.svg",
+                                                                        )
+                                                                    ? 30
+                                                                    : 20,
                                                                 child: CachedAnyImage(
                                                                   imagePath:
                                                                       model

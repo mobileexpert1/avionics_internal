@@ -9,6 +9,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Helpers/NoInternetDialog.dart';
 import '../../Home/AircraftComparison/AircraftComparisonModel.dart';
 import '../MapAircraftList/aircraft_List_Data_Repository.dart';
@@ -203,6 +204,17 @@ class MapSearchAircraftListCubit extends Cubit<MapSearchAircraftListState> {
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
       try {
+        final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
+        if (localKey.isEmpty) {
+          final responseKeyValue = await repo.FlightRepository().getMapKeyValueFromServer();
+          if (responseKeyValue.data.fr24 != null &&
+              responseKeyValue.data.fr24 != "") {
+            await SharedPrefsHelper.seMapKeyValuesFromServer(
+              responseKeyValue.data.fr24 ?? "",
+            );
+          }
+        }
+
         final flightsDetails = await repo.FlightRepository()
             .getParticularFlightDetails(flightId: flightDetails.detail.flight);
 

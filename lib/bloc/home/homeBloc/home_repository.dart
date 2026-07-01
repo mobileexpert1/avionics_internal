@@ -49,22 +49,6 @@ class HomeRepository {
     return null;
   }
 
-  Future<void> getFlightKeyValueFromServer() async {
-    final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
-    if (localKey.isNotEmpty) {
-      return;
-    }
-    try {
-      final response = await FlightRepository().getMapKeyValueFromServer(
-      );
-      if (response.data.fr24 != null && response.data.fr24!.isNotEmpty) {
-        await SharedPrefsHelper.seMapKeyValuesFromServer(response.data.fr24!);
-      }
-    } catch (e) {
-      print(e.toString());
-      return;
-    }
-  }
 
   Future<HomeResponse> getHomeData() async {
     final uri = Uri.parse(

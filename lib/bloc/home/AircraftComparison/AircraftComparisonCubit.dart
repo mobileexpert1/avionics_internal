@@ -10,6 +10,8 @@ import 'AircraftComparisonState.dart';
 class AircraftComparisonCubit extends Cubit<AircraftState> {
   AircraftComparisonCubit() : super(const AircraftState(aircraftList: []));
 
+  bool _isRequestInProgress = false;
+
   Future<void> loadAircraftModels({
     required BuildContext context,
     String? query,
@@ -17,7 +19,13 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
     bool isLoadMore = false,
   }) async {
     if (await InternetConnection().hasInternetAccess) {
+      if (_isRequestInProgress) return;
+
+      _isRequestInProgress = true;
+
       final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
+
+      debugPrint('Loading Page => $nextPage  isLoadMore => $isLoadMore');
 
       if (isLoadMore) {
         emit(state.copyWith(isFetchingMore: true));
@@ -43,15 +51,20 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
             ? [...state.aircraftList, ...paginated.results]
             : paginated.results;
 
-        updatedList.sort(
+        final uniqueMap = {for (final item in updatedList) item.id: item};
+
+        final uniqueList = uniqueMap.values.toList();
+
+        uniqueList.sort(
           (a, b) => a.aircraftModel.toLowerCase().compareTo(
             b.aircraftModel.toLowerCase(),
           ),
         );
 
+        _isRequestInProgress = false;
         emit(
           state.copyWith(
-            aircraftList: updatedList,
+            aircraftList: uniqueList,
             currentPage: paginated.currentPage,
             hasNextPage: paginated.hasNext,
             isLoading: false,
@@ -59,10 +72,14 @@ class AircraftComparisonCubit extends Cubit<AircraftState> {
           ),
         );
       } catch (e) {
+        _isRequestInProgress = false;
+
         SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(state.copyWith(isLoading: false, isFetchingMore: false));
       }
     } else {
+      _isRequestInProgress = false;
+
       NoInternetDialog.show(
         context,
         onRetry: () async {

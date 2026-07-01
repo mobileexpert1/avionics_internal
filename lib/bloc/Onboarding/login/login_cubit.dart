@@ -101,64 +101,44 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      final googleSignIn = kIsWeb
-          ? GoogleSignIn(
-              clientId:
-                  '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com',
-              scopes: const ['email', 'profile'],
-            )
-          : GoogleSignIn(scopes: const ['email', 'profile']);
+      final GoogleSignIn signIn = GoogleSignIn.instance;
 
-      await googleSignIn.signOut();
+      await signIn.initialize(
+        clientId: kIsWeb
+            ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
+            : null,
+      );
+
+      await signIn.disconnect();
+
       await _auth.signOut();
 
-      if (kIsWeb) {
-        final userCred = await _auth.signInWithPopup(GoogleAuthProvider());
-        if (userCred.user == null) return;
+      final GoogleSignInAccount account = await signIn.authenticate();
 
-        emit(state.copyWith(status: CommonApiStatus.submitting));
+      final GoogleSignInClientAuthorization auth = await account
+          .authorizationClient
+          .authorizeScopes(['email', 'profile']);
 
-        final accessToken =
-            (userCred.credential as OAuthCredential).accessToken ?? '';
+      if (auth == null) return;
 
-        final result = await LoginRepository().loginUserWithSocialPlatform(
-          token: accessToken,
-          provider: 'google',
-        );
+      final String accessToken = auth.accessToken ?? '';
 
-        emit(state.copyWith(status: CommonApiStatus.success));
-        await _navigateAfterLogin(context, result);
-      } else {
-        final googleUser = await googleSignIn.signIn();
-        if (googleUser == null) return;
+      emit(state.copyWith(status: CommonApiStatus.submitting));
 
-        final googleAuth = await googleUser.authentication;
+      final result = await LoginRepository().loginUserWithSocialPlatform(
+        token: accessToken,
+        provider: 'google',
+      );
 
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      emit(state.copyWith(status: CommonApiStatus.success));
 
-        final userCred = await _auth.signInWithCredential(credential);
-        if (userCred.user == null) return;
-
-        emit(state.copyWith(status: CommonApiStatus.submitting));
-
-        final result = await LoginRepository().loginUserWithSocialPlatform(
-          token: googleAuth.accessToken ?? '',
-          provider: 'google',
-        );
-
-        emit(state.copyWith(status: CommonApiStatus.success));
-        await _navigateAfterLogin(context, result);
-      }
+      await _navigateAfterLogin(context, result);
     } catch (e, st) {
       debugPrintStack(label: e.toString(), stackTrace: st);
+
+      final message = GoogleSignInErrorHandler.getMessage(e);
       emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CommonApiStatus.failure, errorMessage: message),
       );
     }
   }
@@ -170,25 +150,51 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (kIsWeb) {
         final facebookProvider = FacebookAuthProvider();
+
         userCredential = await _auth.signInWithPopup(facebookProvider);
+
         backendToken = await userCredential.user?.getIdToken() ?? '';
+
         debugPrint('WEB → Firebase ID Token: $backendToken');
       } else {
         final result = await FacebookAuth.instance.login(
           permissions: ['email', 'public_profile'],
+          loginBehavior: LoginBehavior.nativeWithFallback,
         );
-        if (result.status != LoginStatus.success) {
-          throw Exception('Facebook login cancelled');
+
+        if (result.status != LoginStatus.success ||
+            result.accessToken == null) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              errorMessage: 'Facebook login cancelled or failed',
+            ),
+          );
+          return;
         }
 
         final accessToken = result.accessToken!;
-        backendToken = accessToken.token;
+
+        backendToken = accessToken.tokenString;
+
         debugPrint('MOBILE → Facebook Access Token: $backendToken');
-        final credential = FacebookAuthProvider.credential(accessToken.token);
-        userCredential = await _auth.signInWithCredential(credential);
+
+        final OAuthCredential credential = FacebookAuthProvider.credential(
+          accessToken.tokenString,
+        );
+        try {
+          userCredential = await _auth.signInWithCredential(credential);
+          debugPrint('User: ${userCredential.user?.displayName}');
+        } catch (e) {
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              errorMessage: e.toString(),
+            ),
+          );
+        }
       }
 
-      debugPrint('User: ${userCredential.user?.displayName}');
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
       final resultResponse = await LoginRepository()
@@ -196,9 +202,13 @@ class LoginCubit extends Cubit<LoginState> {
             token: backendToken,
             provider: 'facebook',
           );
+
       emit(state.copyWith(status: CommonApiStatus.success));
+
       await _navigateAfterLogin(context, resultResponse);
-    } catch (e) {
+    } catch (e, st) {
+      debugPrintStack(label: e.toString(), stackTrace: st);
+
       emit(
         state.copyWith(
           status: CommonApiStatus.failure,
@@ -293,7 +303,6 @@ class LoginCubit extends Cubit<LoginState> {
       // );
       //
       // FlutterUxcam.logEvent('Login Success');
-
 
       await SharedPrefsHelper.setAvtarUserType(
         result.userDetails?.userType ?? '',

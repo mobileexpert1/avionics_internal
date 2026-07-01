@@ -46,26 +46,26 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_svg: ^2.0.7
   shared_preferences: ^2.5.3
-  connectivity_plus: ^6.1.4
+  connectivity_plus: ^7.2.0
   url_launcher:
-  sqflite: ^2.3.0
+  sqflite: ^2.4.3
   path_provider: ^2.1.2
   path: ^1.8.3
-  sqflite_common_ffi: ^2.3.0
+  sqflite_common_ffi: ^2.4.2
   web_socket_channel:
-  google_sign_in: ^6.2.1
-  flutter_facebook_auth: ^5.0.6
-  firebase_core: ^3.15.0
+  google_sign_in: ^7.2.0
+  flutter_facebook_auth: ^7.1.7
+  firebase_core: ^4.11.0
   firebase_crashlytics:
-  cloud_firestore: ^5.6.11
-  sign_in_with_apple: ^7.0.1
-  firebase_auth: ^5.6.2
+  cloud_firestore: ^6.6.0
+  sign_in_with_apple: ^8.1.0
+  firebase_auth: ^6.5.4
   cupertino_icons: ^1.0.8
-  smooth_page_indicator: ^1.1.0
-  pinput: ^5.0.1
+  smooth_page_indicator: ^2.0.1
+  pinput: ^6.0.2
   responsive_sizer: ^3.3.1
   flutter_slidable: ^4.0.0
-  geolocator: ^11.0.0
+  geolocator: ^14.0.3
   cached_network_image: ^3.2.3
   flutter_cache_manager: ^3.3.0
   google_maps_flutter:
@@ -75,11 +75,11 @@ dependencies:
   animated_text_kit: ^4.3.0
   flutter_local_notifications:
   firebase_messaging:
-  device_info_plus: ^12.3.0
+  device_info_plus: ^13.2.0
   video_player: ^2.9.1
-  firebase_analytics: ^11.0.0
+  firebase_analytics: ^12.4.3
   flutter_dotenv:
-  internet_connection_checker_plus: ^2.5.1
+  internet_connection_checker_plus: ^3.1.0
 #  flutter_uxcam: ^2.8.3
 #  flutter_3d_controller: ^2.3.0
 

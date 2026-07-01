@@ -12,6 +12,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
+import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/NoInternetDialog.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
@@ -310,6 +311,18 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         final hasCategoryFilter =
             state.selectedFlightCategories != null &&
             state.selectedFlightCategories!.isNotEmpty;
+
+
+        final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
+        if (localKey.isEmpty) {
+          final responseKeyValue = await FlightRepository().getMapKeyValueFromServer();
+          if (responseKeyValue.data.fr24 != null &&
+              responseKeyValue.data.fr24 != "") {
+            await SharedPrefsHelper.seMapKeyValuesFromServer(
+              responseKeyValue.data.fr24 ?? "",
+            );
+          }
+        }
 
         final flights = await FlightRepository().getFlights(
           flightLimit: flightLimit,
