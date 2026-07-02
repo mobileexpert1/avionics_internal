@@ -35,7 +35,6 @@ void main() {
 
         expect(homeData.manufacturers, isNotNull);
         expect(homeData.manufacturers.isNotEmpty, true);
-        expect(homeData.flights, isNotNull);
       }
     });
 

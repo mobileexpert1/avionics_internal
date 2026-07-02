@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -123,46 +122,42 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
     emit(greeting);
 
-    print("Session => $sessionId");
+    try {
+      final isConnected = await InternetConnection().hasInternetAccess;
 
-    final serverMessages = await _repo.fetchFullServerHistory(sessionId);
+      if (isConnected) {
+        final serverMessages = await _repo.fetchFullServerHistory(sessionId);
 
-    print("Server Count => ${serverMessages.length}");
+        final uiList = serverMessages.map((msg) {
+          return {
+            'type': msg.role.toLowerCase() == 'user' ? 'user' : 'bot',
+            'text': msg.content,
+          };
+        }).toList();
 
-    final converted = serverMessages.map(
-      (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
-    );
+        emit([...greeting, ...uiList]);
 
-    await _repo.insertOrIgnoreLocalMessages(converted.toList());
+        final converted = serverMessages.map(
+          (s) =>
+              _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+        );
 
-    final merged = await _repo.getMessagesForSession(sessionId);
+        await _repo.insertOrIgnoreLocalMessages(converted.toList());
+      } else {
+        final localMessages = await _repo.getMessagesForSession(sessionId);
 
-    print("Merged Count => ${merged.length}");
+        final uiList = localMessages.map((msg) {
+          return {
+            'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+            'text': msg.text,
+          };
+        }).toList();
 
-    if (kIsWeb && merged.isEmpty && converted.isNotEmpty) {
-      final uiList = converted.map((msg) {
-        return {
-          'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
-          'text': msg.text,
-        };
-      }).toList();
-
-      final finalList = [...greeting, ...uiList];
-
-      emit(finalList);
-      return;
+        emit([...greeting, ...uiList]);
+      }
+    } catch (e) {
+      print("History Error => $e");
     }
-
-    final uiList = merged.map((msg) {
-      return {
-        'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
-        'text': msg.text,
-      };
-    }).toList();
-
-    final finalList = [...greeting, ...uiList];
-
-    emit(finalList);
   }
 
   Future<void> openAddOnPacksBottomSheet(

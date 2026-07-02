@@ -40,8 +40,6 @@ class HomeCubit extends Cubit<HomeState> {
           emit(
             HomeLoaded(
               manufacturers: top2Manufacturers,
-              flights: data.flights,
-              favourites: data.favourites,
               detail: data.detail,
               isActiveSubscription: data.isActiveSubscription,
               currentPlan: data.currentPlan,

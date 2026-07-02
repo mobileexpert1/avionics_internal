@@ -79,8 +79,6 @@ class HomeRepository {
       detail: '',
       isActiveSubscription: false,
       manufacturers: manufacturers,
-      favourites: [],
-      flights: const [],
       currentPlan: null,
     );
   }
