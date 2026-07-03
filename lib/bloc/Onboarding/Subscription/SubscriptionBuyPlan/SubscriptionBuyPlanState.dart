@@ -128,7 +128,7 @@ class SubscriptionBuyPlanState {
     'Live Aircraft Tracking',
     'Compare Models',
     'Filter, Search & Save',
-    'AskWILCO AI Assistant',
+    'WILCO AI Assistant',
     'Learning Games',
     'Offline Access',
     'Priority Support',

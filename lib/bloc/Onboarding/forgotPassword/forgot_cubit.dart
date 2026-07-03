@@ -5,6 +5,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/NoInternetDialog.dart';
@@ -43,6 +44,14 @@ class ForgotCubit extends Cubit<ForgotState> {
 
       try {
         await ForgotRepository().forgotUserApi(email: state.email);
+        Future.delayed(Duration.zero, () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(ConstantStrings.otpSendCheckEmail),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        });
         emit(state.copyWith(status: CommonApiStatus.success));
         if (!context.mounted) return;
         AppNavigator.push(

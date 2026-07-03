@@ -115,112 +115,96 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                   children: [
                     Column(
                       children: [
-                        _buildImageCoverScroller(
-                          screenHeight,
-                          detail.general.coverPhoto,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Stack(
                           children: [
+                            _buildImageCoverScroller(
+                              screenHeight,
+                              screenWidth,
+                              detail.general.coverPhoto,
+                            ),
                             if (kIsWeb)
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  color: Colors.grey.shade100,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical: 16,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      ClipOval(
-                                        child: Container(
-                                          width: screenWidth * 0.03,
+                              Positioned(
+                                top: screenHeight * 0.27,
+                                left: screenWidth * 0.01,
+                                child: ClipOval(
+                                  child: Container(
+                                    width: screenWidth * 0.05,
+                                    height: screenWidth * 0.05,
+                                    color: Colors.grey.shade200,
+                                    child: Builder(
+                                      builder: (context) {
+                                        final logoUrl =
+                                            '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
+                                        debugPrint(logoUrl);
 
-                                          height: screenWidth * 0.03,
+                                        final isSvg = detail.general.logo
+                                            .contains(".svg");
+                                        final isAsset = detail.general.logo
+                                            .contains("assets");
 
-                                          color: Colors.grey.shade200,
-                                          child: Builder(
-                                            builder: (context) {
-                                              final logoUrl =
-                                                  '${detail.general.logo}?v=${DateTime.now().millisecondsSinceEpoch}';
-                                              final isSvg = detail.general.logo
-                                                  .contains(".svg");
-                                              final isAsset = detail
-                                                  .general
-                                                  .logo
-                                                  .contains("assets");
-
-                                              if (isAsset) {
-                                                return Image.asset(
-                                                  detail.general.logo,
-                                                  width: screenWidth * 0.06,
-                                                  height: screenWidth * 0.06,
-                                                  fit: BoxFit.cover,
+                                        if (isAsset) {
+                                          return Image.asset(
+                                            detail.general.logo,
+                                            width: screenWidth * 0.22,
+                                            height: screenWidth * 0.22,
+                                            fit: BoxFit.cover,
+                                          );
+                                        } else {
+                                          return isSvg
+                                              ? SvgPicture.network(
+                                                  logoUrl,
+                                                  fit: BoxFit.contain,
+                                                  placeholderBuilder:
+                                                      (
+                                                        context,
+                                                      ) => SvgPicture.asset(
+                                                        CommonUi.setSvgImage(
+                                                          AssetsPath
+                                                              .manufacturerPlaceholder,
+                                                        ),
+                                                        height: 10,
+                                                        width: 10,
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                )
+                                              : Image.network(
+                                                  logoUrl,
+                                                  width: screenWidth * 0.22,
+                                                  height: screenWidth * 0.22,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (_, _, _) =>
+                                                      SvgPicture.asset(
+                                                        CommonUi.setSvgImage(
+                                                          AssetsPath
+                                                              .manufacturerPlaceholder,
+                                                        ),
+                                                        height: 10,
+                                                        width: 10,
+                                                        fit: BoxFit.contain,
+                                                      ),
                                                 );
-                                              } else {
-                                                return isSvg
-                                                    ? SvgPicture.network(
-                                                        logoUrl,
-                                                        fit: BoxFit.contain,
-                                                        placeholderBuilder:
-                                                            (
-                                                              context,
-                                                            ) => SvgPicture.asset(
-                                                              CommonUi.setSvgImage(
-                                                                AssetsPath
-                                                                    .manufacturerPlaceholder,
-                                                              ),
-                                                              height: 10,
-                                                              width: 10,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                      )
-                                                    : Image.network(
-                                                        logoUrl,
-                                                        width:
-                                                            screenWidth * 0.06,
-                                                        height:
-                                                            screenWidth * 0.06,
-                                                        fit: BoxFit.contain,
-                                                        errorBuilder: (_, _, _) =>
-                                                            SvgPicture.asset(
-                                                              CommonUi.setSvgImage(
-                                                                AssetsPath
-                                                                    .manufacturerPlaceholder,
-                                                              ),
-                                                              height: 10,
-                                                              width: 10,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                      );
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                    ],
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
+                          ],
+                        ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Container(
                               width: double.infinity,
                               color: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
+                                horizontal: 15,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: 60),
+                                  const SizedBox(height: 50),
                                   CustomHeaderViewExpandable(
                                     isNeedToShowLeftRightBottomBorder: true,
                                     isNeedToShowLeftImage: true,
@@ -283,11 +267,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                   )
                                 : const SizedBox.shrink(),
 
-                            // Divider(
-                            //   height: 0,
-                            //   color: AppColors.separatorColourAppBar,
-                            //   thickness: 3,
-                            // ),
                             _buildSectionHeader(
                               title: "ABOUT THE COMPANY",
                               isExpanded: showMoreAboutInfo,
@@ -648,8 +627,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                     ),
                     if (kIsWeb == false)
                       Positioned(
-                        top: screenHeight * 0.21,
-                        left: screenWidth * 0.06,
+                        top: screenHeight * 0.24,
+                        left: screenWidth * 0.035,
                         child: ClipOval(
                           child: Container(
                             width: screenWidth * 0.22,
@@ -824,18 +803,22 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
     );
   }
 
-  Widget _buildImageCoverScroller(double screenHeight, CoverPhoto coverImages) {
+  Widget _buildImageCoverScroller(
+    double screenHeight,
+    double screenWidth,
+    CoverPhoto coverImages,
+  ) {
     final image = ClipRRect(
       child: CachedAnyImage(
         imagePath: coverImages.url,
         width: MediaQuery.of(context).size.width,
-        height: screenHeight * 0.30,
+        height: screenHeight * (kIsWeb ? 0.40 : 0.30),
         contentImage: BoxFit.cover,
       ),
     );
 
     return SizedBox(
-      height: screenHeight * 0.30,
+      height: screenHeight * (kIsWeb ? 0.40 : 0.30),
       width: double.infinity,
       child: Stack(
         children: [
@@ -843,8 +826,9 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
           if ((coverImages.wiki?.isNotEmpty ?? false) &&
               (coverImages.author?.isNotEmpty ?? false))
             Positioned(
-              right: 8,
-              bottom: 8,
+              left: 60,
+              right: 0,
+              bottom: 0,
               child: GestureDetector(
                 onTap: () async {
                   final uri = Uri.tryParse(coverImages.wiki!);
@@ -858,24 +842,46 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
+                    horizontal: 25,
+                    vertical: 5,
                   ),
                   constraints: const BoxConstraints(maxWidth: 250),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: ((0.6))),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.primaryDark.withValues(alpha: ((0.6))),
                   ),
-                  child: Text(
-                    '© ${coverImages.author}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: AppTextStyles.medium(
+                        13.5,
+                      ).copyWith(color: AppColors.white),
+                      children: [
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Text(
+                            "©",
+                            style: AppTextStyles.medium(
+                              20,
+                            ).copyWith(color: AppColors.white),
+                          ),
+                        ),
+                        TextSpan(text: " ${coverImages.author}"),
+                      ],
                     ),
-                    softWrap: true,
-                    overflow: TextOverflow.visible,
                   ),
+
+                  //
+                  //
+                  // Text(
+                  //   '© ',
+                  //   style: const TextStyle(
+                  //     color: Colors.white,
+                  //     fontSize: 13,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  //   softWrap: true,
+                  //   overflow: TextOverflow.visible,
+                  // ),
                 ),
               ),
             ),

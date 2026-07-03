@@ -360,7 +360,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   void startTimer(BuildContext context) {
     print(
-      "Current Quesiton correctIndex:- ${state.currentQuestion.correctIndex}",
+      "Current Quesiton correctIndex:- ${state.currentQuestion.correctIndex}      Current Quesiton Image Url:- ${state.currentQuestion.imgUrl}",
     );
 
     _startTime = DateTime.now();

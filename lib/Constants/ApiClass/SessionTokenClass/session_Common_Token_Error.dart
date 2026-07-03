@@ -16,6 +16,7 @@ class SessionCommonTokenError {
       );
 
       Future.delayed(const Duration(seconds: 1), () async {
+        if (!context.mounted) return;
         await SharedPrefsHelper.clearAll([], false);
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => LoginScreen()),

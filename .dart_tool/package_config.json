@@ -147,7 +147,7 @@
     },
     {
       "name": "dbus",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/dbus-0.7.14",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/dbus-0.7.13",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -339,7 +339,7 @@
     },
     {
       "name": "flutter_facebook_auth",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_facebook_auth-7.1.7",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_facebook_auth-7.1.8",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -645,7 +645,7 @@
     },
     {
       "name": "internet_connection_checker_plus",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/internet_connection_checker_plus-3.1.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/internet_connection_checker_plus-3.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -897,7 +897,7 @@
     },
     {
       "name": "purchases_flutter",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/purchases_flutter-10.3.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/purchases_flutter-10.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -1065,7 +1065,7 @@
     },
     {
       "name": "sqlite3",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-3.3.3",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sqlite3-3.3.4",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     },
@@ -1317,9 +1317,9 @@
     },
     {
       "name": "xml",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/xml-6.6.1",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/xml-7.0.1",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.11"
     },
     {
       "name": "yaml",

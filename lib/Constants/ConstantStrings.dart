@@ -112,6 +112,9 @@ class ConstantStrings {
   static const String otpVerified =
       'Your OTP verified successfully. Please reset your password within 5 minutes.';
 
+  static const String otpSendCheckEmail =
+      'Otp send successfully please check your email.';
+
   // ─────────────────────────────
   // Chat History
   // ─────────────────────────────

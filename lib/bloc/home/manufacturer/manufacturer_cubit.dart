@@ -67,10 +67,6 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
           ),
         );
 
-        debugPrint(
-          "updatedList Sorted -=-=-=-=${JsonEncoder.withIndent('  ').convert(updatedList)}",
-        );
-
         emit(
           state.copyWith(
             manufacturers: updatedList,

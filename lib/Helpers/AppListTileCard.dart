@@ -36,21 +36,24 @@ class AppListTileCard extends StatelessWidget {
             horizontal: horizontalPadding,
             vertical: 5,
           ),
-          child: ListTile(
-            dense: true,
-            visualDensity: VisualDensity(vertical: -3),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03,
-              vertical: 6,
+          child: Material(
+            color: Colors.transparent,
+            child: ListTile(
+              dense: true,
+              visualDensity: const VisualDensity(vertical: -3),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03,
+                vertical: 6,
+              ),
+              leading: _buildLeadingImage(iconSize),
+              title: Text(
+                title,
+                style: AppTextStyles.medium(
+                  16,
+                ).copyWith(height: 1.0, color: AppColors.black),
+              ),
+              onTap: onTap,
             ),
-            leading: _buildLeadingImage(iconSize),
-            title: Text(
-              title,
-              style: AppTextStyles.medium(
-                16,
-              ).copyWith(height: 1.0, color: AppColors.black),
-            ),
-            onTap: onTap,
           ),
         ),
         const Divider(

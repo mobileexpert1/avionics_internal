@@ -156,7 +156,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => MySubscriptionCubit()),
         BlocProvider(create: (_) => StickerCubit()),
         BlocProvider(create: (_) => AircraftCategoryCubit()),
-
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {

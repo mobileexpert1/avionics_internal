@@ -107,7 +107,7 @@
     },
     {
       "name": "internet_connection_checker_plus",
-      "version": "3.1.0",
+      "version": "3.1.1",
       "dependencies": [
         "http"
       ]
@@ -367,7 +367,7 @@
     },
     {
       "name": "flutter_facebook_auth",
-      "version": "7.1.7",
+      "version": "7.1.8",
       "dependencies": [
         "facebook_auth_desktop",
         "flutter",
@@ -551,7 +551,7 @@
     },
     {
       "name": "purchases_flutter",
-      "version": "10.3.0",
+      "version": "10.4.0",
       "dependencies": [
         "equatable",
         "flutter",
@@ -1301,7 +1301,7 @@
     },
     {
       "name": "sqlite3",
-      "version": "3.3.3",
+      "version": "3.3.4",
       "dependencies": [
         "code_assets",
         "collection",
@@ -1770,7 +1770,7 @@
     },
     {
       "name": "xml",
-      "version": "6.6.1",
+      "version": "7.0.1",
       "dependencies": [
         "collection",
         "meta",
@@ -1787,7 +1787,7 @@
     },
     {
       "name": "dbus",
-      "version": "0.7.14",
+      "version": "0.7.13",
       "dependencies": [
         "args",
         "ffi",

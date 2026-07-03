@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/Validators.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
@@ -116,6 +117,10 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         await repository.updateProfileInformation(
           firstName: state.firstName,
           lastName: state.lastName,
+        );
+
+        await SharedPrefsHelper.setUserProfileName(
+          '${state.firstName ?? ''} ${state.lastName ?? ''}'.trim(),
         );
 
         emit(state.copyWith(isLoading: false, status: CommonApiStatus.success));
