@@ -26,6 +26,7 @@ import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dar
 import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
 import 'SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
+import 'SettingMenuScreen/5_6_AllDemoScreen/GoogleEarthMap/GoogleEarthMap.dart';
 import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';
@@ -145,22 +146,22 @@ class _SettingScreenState extends State<SettingScreen> {
                   padding: const EdgeInsets.all(13),
                   child: userAvtarTypeUrl.isNotEmpty
                       ? SvgPicture.network(
-                    userAvtarTypeUrl,
-                    fit: BoxFit.contain,
-                    color: userAvtarTypeUrl.contains("57ATSEPWhite.svg")
-                        ? null
-                        : Colors.white,
-                    placeholderBuilder: (_) => SvgPicture.asset(
-                      CommonUi.setSvgImage(
-                        AssetsPath.manufacturerPlaceholder,
-                      ),
-                    ),
-                  )
+                          userAvtarTypeUrl,
+                          fit: BoxFit.contain,
+                          color: userAvtarTypeUrl.contains("57ATSEPWhite.svg")
+                              ? null
+                              : Colors.white,
+                          placeholderBuilder: (_) => SvgPicture.asset(
+                            CommonUi.setSvgImage(
+                              AssetsPath.manufacturerPlaceholder,
+                            ),
+                          ),
+                        )
                       : SvgPicture.asset(
-                    CommonUi.setSvgImage(
-                      AssetsPath.manufacturerPlaceholder,
-                    ),
-                  ),
+                          CommonUi.setSvgImage(
+                            AssetsPath.manufacturerPlaceholder,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -259,21 +260,20 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   title: "3D Animation",
                     //   onTap: () => _navigate(context, ModelTestScreen()),
                     // ),
-
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.glossaryProfile,
-                      ),
-                      title: "Flight Stickers",
-                      onTap: () {
-                        AppNavigator.push(
-                          context,
-                          const AircraftCategoryScreen(),
-                          disableSwipeBack: true,
-                        );
-                      },
-                    ),
-
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.glossaryProfile,
+                    //   ),
+                    //   title: "Flight Stickers",
+                    //   onTap: () {
+                    //     AppNavigator.push(
+                    //       context,
+                    //       const AircraftCategoryScreen(),
+                    //       disableSwipeBack: true,
+                    //     );
+                    //   },
+                    // ),
+                    //
                     // SettingsListItem(
                     //   leadingSvgAsset: CommonUi.setSvgImage(
                     //     AssetsPath.manageAccountProfile,
@@ -402,19 +402,19 @@ class _SettingScreenState extends State<SettingScreen> {
       ),
       body: kIsWeb
           ? Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: content,
-        ),
-      )
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1500),
+                child: content,
+              ),
+            )
           : content,
     );
   }
 
   /// ---------------- LOGOUT ----------------
   Future<void> _clearAllDataAndRedirectToSplashScreen(
-      BuildContext context,
-      ) async {
+    BuildContext context,
+  ) async {
     try {
       // try {
       //   final info = await Purchases.getCustomerInfo();
@@ -427,7 +427,7 @@ class _SettingScreenState extends State<SettingScreen> {
       await SharedPrefsHelper.clearAll([], false);
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
-            (_) => false,
+        (_) => false,
       );
     } catch (e) {
       debugPrint(e.toString());
@@ -436,9 +436,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   /// ---------------- DELETE / LOGOUT SHEET ----------------
   void showDeleteConfirmation(
-      BuildContext bottomSheetContext,
-      bool isComeFromLogout,
-      ) {
+    BuildContext bottomSheetContext,
+    bool isComeFromLogout,
+  ) {
     showModalBottomSheet(
       context: bottomSheetContext,
       backgroundColor: Colors.transparent,

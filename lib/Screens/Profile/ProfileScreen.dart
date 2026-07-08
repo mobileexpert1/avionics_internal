@@ -1,9 +1,7 @@
-import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
@@ -25,8 +23,8 @@ import 'ProfileMenuScreen/2_FormulaSection/FormulaScreen.dart';
 import 'ProfileMenuScreen/3_Glossary/GlossaryScreen.dart';
 import 'ProfileMenuScreen/4_GameBadges/BadgesScreens.dart';
 import 'ProfileMenuScreen/5_SavedFlights/SavedFlighScreen.dart';
-import 'ProfileMenuScreen/6_UnitSelection/UnitSelectionScreen.dart';
 import 'ProfileSettingsSectionHeader.dart';
+import 'SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
 import 'SettingScreen/SettingScreen.dart';
 
 class ProfileScreenWrapper extends StatelessWidget {
@@ -237,11 +235,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.badgeProfile,
                       ),
-                      title: "Badges",
+                      title: "My Badges",
                       onTap: () {
                         AppNavigator.push(
                           context,
                           const BadgesScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.glossaryProfile,
+                      ),
+                      title: "My Stickers",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const AircraftCategoryScreen(),
                           disableSwipeBack: true,
                         );
                       },

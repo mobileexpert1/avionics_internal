@@ -33,7 +33,7 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: ConstantStrings.settingScreen,
+        title: "My Stickers",
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(

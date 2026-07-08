@@ -1,4 +1,3 @@
-import '../../../Database/db_helper.dart';
 import '../../home/manufacturer/manufacturer_list_model.dart';
 
 class HomeResponse {

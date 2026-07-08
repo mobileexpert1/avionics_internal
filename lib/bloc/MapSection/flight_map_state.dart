@@ -205,15 +205,28 @@ double getZoomLevelFromRadius(int radiusNm) {
   return 3.4;
 }
 
-double getVisualRadiusBufferNm(int radiusNm) {
-  debugPrint("Radius NM: $radiusNm");
-  if (radiusNm <= 50) return 40;
-  if (radiusNm <= 100) return 60;
-  if (radiusNm <= 200) return 80;
-  if (radiusNm <= 300) return 100;
-  if (radiusNm <= 400) return 130;
-  if (radiusNm <= 500) return 150;
-  if (radiusNm <= 750) return 170;
-  if (radiusNm <= 1050) return 200;
-  return 30;
-}
+// double getVisualRadiusBufferNm(int radiusNm) {
+//   debugPrint("Radius NM: $radiusNm");
+//   // if (radiusNm <= 50) return 2;
+//   // if (radiusNm <= 100) return 4;
+//   // if (radiusNm <= 200) return 8;
+//   // if (radiusNm <= 300) return 10;
+//   // if (radiusNm <= 400) return 13;
+//   // if (radiusNm <= 500) return 15;
+//   // if (radiusNm <= 750) return 17;
+//   // if (radiusNm <= 1050) return 20;
+//   return 0;
+// }
+//
+// double getVisualRadiusBufferNm(int radiusNm) {
+//   debugPrint("Radius NM: $radiusNm");
+//   if (radiusNm <= 50) return 40;
+//   if (radiusNm <= 100) return 60;
+//   if (radiusNm <= 200) return 80;
+//   if (radiusNm <= 300) return 100;
+//   if (radiusNm <= 400) return 130;
+//   if (radiusNm <= 500) return 150;
+//   if (radiusNm <= 750) return 170;
+//   if (radiusNm <= 1050) return 200;
+//   return 30;
+// }

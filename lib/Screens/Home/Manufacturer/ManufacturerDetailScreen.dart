@@ -826,12 +826,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
           if ((coverImages.wiki?.isNotEmpty ?? false) &&
               (coverImages.author?.isNotEmpty ?? false))
             Positioned(
-              left: 60,
               right: 0,
               bottom: 0,
               child: GestureDetector(
                 onTap: () async {
                   final uri = Uri.tryParse(coverImages.wiki!);
+
                   if (uri != null && await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   } else {
@@ -841,19 +841,22 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 25,
-                    vertical: 5,
+                  width: 320,
+                  padding: const EdgeInsets.only(
+                    left: 80,
+                    right: 10,
+                    top: 3,
+                    bottom: 3,
                   ),
-                  constraints: const BoxConstraints(maxWidth: 250),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryDark.withValues(alpha: ((0.6))),
+                    color: AppColors.primaryDark.withValues(alpha: 0.6),
                   ),
+                  alignment: Alignment.centerRight,
                   child: RichText(
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.right,
                     text: TextSpan(
                       style: AppTextStyles.medium(
-                        13.5,
+                        11,
                       ).copyWith(color: AppColors.white),
                       children: [
                         WidgetSpan(
@@ -869,19 +872,6 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                       ],
                     ),
                   ),
-
-                  //
-                  //
-                  // Text(
-                  //   '© ',
-                  //   style: const TextStyle(
-                  //     color: Colors.white,
-                  //     fontSize: 13,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  //   softWrap: true,
-                  //   overflow: TextOverflow.visible,
-                  // ),
                 ),
               ),
             ),

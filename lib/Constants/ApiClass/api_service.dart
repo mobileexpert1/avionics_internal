@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 
 import 'ApiErrorModel.dart';
 import 'SessionTokenClass/refresh_accessRepository.dart';

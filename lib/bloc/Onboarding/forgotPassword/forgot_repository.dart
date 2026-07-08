@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ApiClass/baseDetailResponseModel.dart';
 import '../../../Constants/ConstantStrings.dart';

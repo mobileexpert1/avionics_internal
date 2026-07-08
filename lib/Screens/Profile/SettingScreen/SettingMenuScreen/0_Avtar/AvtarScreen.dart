@@ -77,7 +77,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                 )
               : Navigator.pop(context, true)),
         ),
-        rightButton: widget.isComeFromSettingScreen == false
+        rightButton: widget.isComeFromSocialLogin == false
             ? IconButton(
                 icon: SvgPicture.asset(
                   CommonUi.setSvgImage(AssetsPath.homeRightSetting),
@@ -293,7 +293,7 @@ class _AvtarScreenState extends State<AvtarScreen> {
                         SizedBox(
                           width: kIsWeb
                               ? MediaQuery.of(context).size.width * 0.45
-                              : MediaQuery.of(context).size.width - 150,
+                              : MediaQuery.of(context).size.width - 70,
                           child: CustomBottomButton(
                             fontStyle: AppTextStyles.regular(21.46).copyWith(
                               height: 1.0,

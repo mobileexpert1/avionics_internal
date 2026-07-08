@@ -69,7 +69,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'Badges',
+          title: 'My Badges',
           centerTitle: false,
           leftButton: IconButton(
             icon: SvgPicture.asset(

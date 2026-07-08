@@ -68,8 +68,6 @@ class _GamesScreenState extends State<GamesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sw = MediaQuery.of(context).size.width;
-    final cx = sw / 2;
     final screenHeight =
         MediaQuery.sizeOf(context).height + (kIsWeb ? 100 : 50);
 

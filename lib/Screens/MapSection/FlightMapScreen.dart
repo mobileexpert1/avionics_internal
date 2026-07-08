@@ -346,8 +346,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     _isProgrammaticMove = true;
 
-    final visualRadiusNm = radiusNm + getVisualRadiusBufferNm(radiusNm).toInt();
-    final visualRadiusMeters = convertNmToMeters(visualRadiusNm);
+    //final visualRadiusNm = radiusNm; //+ getVisualRadiusBufferNm(radiusNm).toInt();
+    final visualRadiusMeters = convertNmToMeters(radiusNm);
 
     _circles.clear();
     _circles.add(

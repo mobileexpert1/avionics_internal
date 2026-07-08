@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:avionics_internal/Screens/Onboarding/Otp/OtpScreen.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -108,22 +113,35 @@ class LoginCubit extends Cubit<LoginState> {
             ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
             : null,
       );
+      String accessToken = "";
+      try {
+        final GoogleSignInAccount account = await signIn.authenticate();
 
-      await signIn.disconnect();
+        debugPrint("Email: ${account.email}");
 
-      await _auth.signOut();
+        final auth = await account.authorizationClient.authorizationForScopes([
+          'email',
+          'profile',
+        ]);
 
-      final GoogleSignInAccount account = await signIn.authenticate();
+        debugPrint("Access Token: ${auth?.accessToken}");
 
-      final GoogleSignInClientAuthorization auth = await account
-          .authorizationClient
-          .authorizeScopes(['email', 'profile']);
+        if (auth == null) return;
 
-      if (auth == null) return;
+        accessToken = auth.accessToken ?? '';
 
-      final String accessToken = auth.accessToken ?? '';
+        emit(state.copyWith(status: CommonApiStatus.submitting));
+      } catch (e, st) {
+        debugPrintStack(label: e.toString(), stackTrace: st);
 
-      emit(state.copyWith(status: CommonApiStatus.submitting));
+        final message = GoogleSignInErrorHandler.getMessage(e);
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.failure,
+            errorMessage: message,
+          ),
+        );
+      }
 
       final result = await LoginRepository().loginUserWithSocialPlatform(
         token: accessToken,
@@ -145,57 +163,79 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> signInWithFacebook(BuildContext context) async {
     try {
-      UserCredential userCredential;
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+
       String backendToken = '';
 
       if (kIsWeb) {
         final facebookProvider = FacebookAuthProvider();
 
-        userCredential = await _auth.signInWithPopup(facebookProvider);
+        final userCredential = await FirebaseAuth.instance.signInWithPopup(
+          facebookProvider,
+        );
 
-        backendToken = await userCredential.user?.getIdToken() ?? '';
+        backendToken = await userCredential.user?.getIdToken(true) ?? '';
 
-        debugPrint('WEB → Firebase ID Token: $backendToken');
+        if (backendToken.isEmpty) {
+          throw Exception('Unable to get Firebase token');
+        }
       } else {
-        final result = await FacebookAuth.instance.login(
+        final rawNonce = generateNonce();
+        final nonce = sha256ofString(rawNonce);
+
+        final LoginResult loginResult = await FacebookAuth.instance.login(
           permissions: ['email', 'public_profile'],
-          loginBehavior: LoginBehavior.nativeWithFallback,
+          loginTracking: LoginTracking.limited,
+          nonce: nonce,
         );
 
-        if (result.status != LoginStatus.success ||
-            result.accessToken == null) {
-          emit(
-            state.copyWith(
-              status: CommonApiStatus.failure,
-              errorMessage: 'Facebook login cancelled or failed',
-            ),
-          );
-          return;
+        debugPrint('Facebook Status: ${loginResult.status}');
+        debugPrint('Facebook Token Type: ${loginResult.accessToken?.type}');
+
+        if (loginResult.status != LoginStatus.success ||
+            loginResult.accessToken == null) {
+          throw Exception('Facebook login cancelled or failed');
         }
 
-        final accessToken = result.accessToken!;
+        OAuthCredential credential;
 
-        backendToken = accessToken.tokenString;
+        if (Platform.isIOS) {
+          switch (loginResult.accessToken!.type) {
+            case AccessTokenType.classic:
+              final token = loginResult.accessToken as ClassicToken;
 
-        debugPrint('MOBILE → Facebook Access Token: $backendToken');
+              credential = FacebookAuthProvider.credential(token.tokenString);
+              break;
 
-        final OAuthCredential credential = FacebookAuthProvider.credential(
-          accessToken.tokenString,
+            case AccessTokenType.limited:
+              final token = loginResult.accessToken as LimitedToken;
+
+              credential = OAuthCredential(
+                providerId: 'facebook.com',
+                signInMethod: 'oauth',
+                idToken: token.tokenString,
+                rawNonce: rawNonce,
+              );
+              break;
+          }
+        } else {
+          credential = FacebookAuthProvider.credential(
+            loginResult.accessToken!.tokenString,
+          );
+        }
+
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(
+          credential,
         );
-        try {
-          userCredential = await _auth.signInWithCredential(credential);
-          debugPrint('User: ${userCredential.user?.displayName}');
-        } catch (e) {
-          emit(
-            state.copyWith(
-              status: CommonApiStatus.failure,
-              errorMessage: e.toString(),
-            ),
-          );
+
+        backendToken = await userCredential.user?.getIdToken(true) ?? '';
+
+        if (backendToken.isEmpty) {
+          throw Exception('Unable to get Firebase token');
         }
+
+        debugPrint('FIREBASE TOKEN LENGTH: ${backendToken.length}');
       }
-
-      emit(state.copyWith(status: CommonApiStatus.submitting));
 
       final resultResponse = await LoginRepository()
           .loginUserWithSocialPlatform(
@@ -207,7 +247,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       await _navigateAfterLogin(context, resultResponse);
     } catch (e, st) {
-      debugPrintStack(label: e.toString(), stackTrace: st);
+      debugPrintStack(label: 'Facebook Login Error', stackTrace: st);
 
       emit(
         state.copyWith(
@@ -216,6 +256,24 @@ class LoginCubit extends Cubit<LoginState> {
         ),
       );
     }
+  }
+
+  String generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+
+    final random = Random.secure();
+
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
+  }
+
+  String sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
   Future<void> signInWithApple(BuildContext context) async {

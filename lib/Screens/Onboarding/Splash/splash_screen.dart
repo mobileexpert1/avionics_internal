@@ -1,15 +1,12 @@
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../Home/RootTabbar/RootDecider.dart';
-import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _navigateAfterDelay() async {
     await Future.delayed(const Duration(seconds: 3));
     if (!mounted) return;
-    final isFirst = await SharedPrefsHelper.isFirstLaunch();
+    // final isFirst = await SharedPrefsHelper.isFirstLaunch();
     if (!mounted) return;
     // if (!isFirst) {
     //   await SharedPrefsHelper.setFirstLaunchDone();
