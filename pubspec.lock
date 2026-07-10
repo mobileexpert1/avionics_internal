@@ -229,10 +229,10 @@ packages:
     dependency: "direct main"
     description:
       name: equatable
-      sha256: "3e0141505477fd8ad55d6eb4e7776d3fe8430be8e497ccb1521370c3f21a3e2b"
+      sha256: "3bce007a596ff8b3119c45d68aaef631272537c03d30e5d4534dd24bf4c5eaa2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.8"
+    version: "2.1.0"
   eval_ex:
     dependency: "direct main"
     description:
@@ -450,10 +450,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_facebook_auth
-      sha256: "07c8197583040df135eea75ceae29ff4e09de32609a482deb123029742010298"
+      sha256: "393c87b4ffa6cc75d2f39239b8d6ebc9095725805016133f80d1d89adb84682d"
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.8"
+    version: "7.2.0"
   flutter_facebook_auth_platform_interface:
     dependency: transitive
     description:
@@ -780,10 +780,10 @@ packages:
     dependency: transitive
     description:
       name: google_sign_in_android
-      sha256: dd86f662332689df4954cd6ec4f7f9f87b91ea40e3437ad94f159c1df7a08d8c
+      sha256: a01d4fd5a0e4eb0c1961434a0289a436abf9225b0933963c8e4e5ed88c26e40b
       url: "https://pub.dev"
     source: hosted
-    version: "7.2.14"
+    version: "7.2.15"
   google_sign_in_ios:
     dependency: transitive
     description:
@@ -1188,10 +1188,10 @@ packages:
     dependency: "direct main"
     description:
       name: purchases_flutter
-      sha256: "8b70ab671adca2cd067492e24f2d1b342e948c7dace35bf0baa6d3c8901674e9"
+      sha256: "15c354a07aeabe1cda32fff84ce3e1d7e6645725cb7f9fca7c0738982d1b499d"
       url: "https://pub.dev"
     source: hosted
-    version: "10.4.0"
+    version: "10.4.1"
   rational:
     dependency: transitive
     description:
@@ -1228,10 +1228,10 @@ packages:
     dependency: transitive
     description:
       name: sanitize_html
-      sha256: "12669c4a913688a26555323fb9cec373d8f9fbe091f2d01c40c723b33caa8989"
+      sha256: "60257e2b8fd8b13b7c755065c2639a6c800031bb5bd3e30a007fc6739c77b2e1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1641,10 +1641,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_platform_interface
-      sha256: e4ae5bc934b528e5b95c5e47be2812860186260cd3eed3ac62f5ed380fdd1613
+      sha256: "92c0fbabe20c788e71fd10d26cea998d0d253282e65d145aed0818731cf593ce"
       url: "https://pub.dev"
     source: hosted
-    version: "6.8.0"
+    version: "6.9.0"
   video_player_web:
     dependency: transitive
     description:
@@ -1689,10 +1689,10 @@ packages:
     dependency: "direct main"
     description:
       name: webview_flutter
-      sha256: e4d3474277c5043f5f3100ed27d94ad693abfd5c602b0221c719a4497e4ba1e4
+      sha256: d53e1ccf5516f25017e3c9d44c39034db352d20fa34fe200674270242c2c5111
       url: "https://pub.dev"
     source: hosted
-    version: "4.14.0"
+    version: "4.14.1"
   webview_flutter_android:
     dependency: transitive
     description:

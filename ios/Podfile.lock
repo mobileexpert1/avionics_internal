@@ -1194,7 +1194,7 @@ PODS:
   - AppAuth/Core (2.1.0)
   - AppAuth/ExternalUserAgent (2.1.0):
     - AppAuth/Core
-  - AppCheckCore (11.3.0):
+  - AppCheckCore (11.3.1):
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
@@ -1552,13 +1552,13 @@ PODS:
   - PromisesObjC (2.4.1)
   - PromisesSwift (2.4.1):
     - PromisesObjC (= 2.4.1)
-  - purchases_flutter (10.4.0):
+  - purchases_flutter (10.4.1):
     - Flutter
-    - PurchasesHybridCommon (= 18.18.0)
-  - PurchasesHybridCommon (18.18.0):
-    - RevenueCat (= 5.80.0)
+    - PurchasesHybridCommon (= 18.19.0)
+  - PurchasesHybridCommon (18.19.0):
+    - RevenueCat (= 5.80.2)
   - RecaptchaInterop (101.0.0)
-  - RevenueCat (5.80.0)
+  - RevenueCat (5.80.2)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -1713,7 +1713,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
   AppAuth: ef4da5a3fc2e10b90c09a0a94a9baeaedc0341d5
-  AppCheckCore: 214137f5c378d1dec88a68425c467fe65aaff637
+  AppCheckCore: e215d35177a9cf469927863e69c13e220df32a8b
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   cloud_firestore: f7ca38720511e65eede1b19041948ce35f66ebb7
   connectivity_plus: 2a701ffec2c0ae28a48cf7540e279787e77c447d
@@ -1770,10 +1770,10 @@ SPEC CHECKSUMS:
   permission_handler_apple: ee2fe0fd04551b304eb002714ff067c371c822ed
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   PromisesSwift: 217dea0fd5d2ad65222a109c48698add13cc1c5b
-  purchases_flutter: 0d78f173515258a58dc14ee6e576bbe956d0f1ca
-  PurchasesHybridCommon: a5c81898ee5e1fa4a679c3c12e948ce3b4f4e341
+  purchases_flutter: b234a4bcb9faa754dd87a81dfd1ca3aa98de2333
+  PurchasesHybridCommon: 1eb67a6c8997233b35ed9b4eee8205dd8dd92890
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
-  RevenueCat: f4427b8a1daa7a04a26cb20d60807aa818d9420b
+  RevenueCat: b772273e51fa103a2ecc644439dd54a5dec199f3
   shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
   sign_in_with_apple: fb98447f3dfb81e2926945ea43a8c9c7205eaca9
   speech_to_text: 87bf9298952e8d9073be1b6aade6d5758db5170c

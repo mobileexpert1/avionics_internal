@@ -283,7 +283,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
           purchased: false,
           waitingForBackendConfirmation: false,
           loading: false,
-          error: "In Progress to verification",
+          // error: "In Progress to verification",
         ),
       );
     }

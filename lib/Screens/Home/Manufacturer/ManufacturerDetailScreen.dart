@@ -823,58 +823,63 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
       child: Stack(
         children: [
           image,
-          if ((coverImages.wiki?.isNotEmpty ?? false) &&
-              (coverImages.author?.isNotEmpty ?? false))
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: GestureDetector(
-                onTap: () async {
-                  final uri = Uri.tryParse(coverImages.wiki!);
+          if (coverImages.license != "public domain") ...[
+            if ((coverImages.wiki?.isNotEmpty ?? false) &&
+                (coverImages.author?.isNotEmpty ?? false))
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: GestureDetector(
+                  onTap: () async {
+                    final uri = Uri.tryParse(coverImages.wiki!);
 
-                  if (uri != null && await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Could not open URL.')),
-                    );
-                  }
-                },
-                child: Container(
-                  width: 320,
-                  padding: const EdgeInsets.only(
-                    left: 80,
-                    right: 10,
-                    top: 3,
-                    bottom: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryDark.withValues(alpha: 0.6),
-                  ),
-                  alignment: Alignment.centerRight,
-                  child: RichText(
-                    textAlign: TextAlign.right,
-                    text: TextSpan(
-                      style: AppTextStyles.medium(
-                        11,
-                      ).copyWith(color: AppColors.white),
-                      children: [
-                        WidgetSpan(
-                          alignment: PlaceholderAlignment.middle,
-                          child: Text(
-                            "©",
-                            style: AppTextStyles.medium(
-                              20,
-                            ).copyWith(color: AppColors.white),
+                    if (uri != null && await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Could not open URL.')),
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: 320,
+                    padding: const EdgeInsets.only(
+                      left: 80,
+                      right: 10,
+                      top: 3,
+                      bottom: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryDark.withValues(alpha: 0.6),
+                    ),
+                    alignment: Alignment.centerRight,
+                    child: RichText(
+                      textAlign: TextAlign.right,
+                      text: TextSpan(
+                        style: AppTextStyles.medium(
+                          11,
+                        ).copyWith(color: AppColors.white),
+                        children: [
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: Text(
+                              "©",
+                              style: AppTextStyles.medium(
+                                20,
+                              ).copyWith(color: AppColors.white),
+                            ),
                           ),
-                        ),
-                        TextSpan(text: " ${coverImages.author}"),
-                      ],
+                          TextSpan(text: " ${coverImages.author}"),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+          ],
         ],
       ),
     );

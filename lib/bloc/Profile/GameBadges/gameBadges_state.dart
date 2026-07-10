@@ -9,7 +9,7 @@ class BadgesState {
   final String? apiError;
   final CommonApiStatus status;
   final String? errorMessage;
-  final String selectedTab;
+  final int selectedTab;
   final BadgeResponse? response;
 
   BadgesState({
@@ -20,7 +20,7 @@ class BadgesState {
     this.apiError,
     this.status = CommonApiStatus.initial,
     this.errorMessage,
-    this.selectedTab = "Quiz",
+    this.selectedTab = 0,
     this.response,
   });
 
@@ -32,7 +32,7 @@ class BadgesState {
     String? apiError,
     CommonApiStatus? status,
     String? errorMessage,
-    String? selectedTab,
+    int? selectedTab,
     BadgeResponse? response,
 
   }) {

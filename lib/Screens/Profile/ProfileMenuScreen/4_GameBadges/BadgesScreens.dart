@@ -10,12 +10,15 @@ import 'package:universal_html/html.dart' as html;
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../bloc/Profile/GameBadges/gameBadges_cubit.dart';
 import '../../../../bloc/Profile/GameBadges/gameBadges_model.dart';
 import '../../../../bloc/Profile/GameBadges/gameBadges_state.dart';
+import '../../../MapSection/MapHelpers/FlightDetailScreenForMapSection.dart';
 
 class BadgesScreen extends StatefulWidget {
   final bool fromResultScreen;
@@ -60,15 +63,12 @@ class _BadgesScreenState extends State<BadgesScreen> {
             MediaQuery.of(context).size.height > 600);
 
     return BlocProvider(
-      create: (_) => BadgesCubit(context)
-        ..loadBadges(
-          //totalPoints: widget.totalPoints,
-          selectedTab: "Quiz",
-          context: context,
-        ),
+      create: (_) =>
+          BadgesCubit(context)..loadBadges(selectedTab: 0, context: context),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
+          isForComparison: true,
           title: 'My Badges',
           centerTitle: false,
           leftButton: IconButton(
@@ -106,8 +106,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
             return Column(
               children: [
-                const SizedBox(height: 10),
                 _buildTabs(context, state),
+                Container(height: 5, color: AppColors.extraDarkYellow),
 
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -201,10 +201,10 @@ class _BadgesScreenState extends State<BadgesScreen> {
                               padding: EdgeInsets.symmetric(
                                 horizontal:
                                     MediaQuery.of(context).size.width *
-                                    (isWide ? 0.10 : 0.02),
+                                    (isWide ? 0.10 : 0.03),
                                 vertical:
                                     MediaQuery.of(context).size.height *
-                                    (isWide ? 0.02 : 0.01),
+                                    (isWide ? 0.02 : 0.00),
                               ),
                               itemCount: state.badges.length,
                               gridDelegate:
@@ -239,8 +239,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
   }
 
   Widget _buildTabs(BuildContext context, BadgesState state) {
-    final tabs = ["Quiz", "One Word", "Black Box", "Calculations"];
-    final selectedTab = state.selectedTab;
+    final tabs = ["Aviation Quiz", "Basic Topics", "Black Box", "Calculations"];
+    var selectedTab = state.selectedTab;
 
     final bool ikweb =
         kIsWeb &&
@@ -248,65 +248,69 @@ class _BadgesScreenState extends State<BadgesScreen> {
             MediaQuery.of(context).size.height > 600);
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * (ikweb ? 0.07 : 0.06),
-      child: Center(
-        child: ListView.separated(
-          padding: EdgeInsets.symmetric(
-            horizontal:
-                MediaQuery.of(context).size.width * (ikweb ? 0.12 : 0.06),
-          ),
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemCount: tabs.length,
-          separatorBuilder: (_, _) => SizedBox(
-            width: MediaQuery.of(context).size.width * (ikweb ? 0.09 : 0.02),
-          ),
-          itemBuilder: (context, index) {
-            final isSelected = tabs[index] == selectedTab;
-            return GestureDetector(
-              onTap: () {
-                context.read<BadgesCubit>().changeTab(
-                  tabs[index],
-                  context: context,
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal:
-                      MediaQuery.of(context).size.width *
-                      (ikweb ? 0.015 : 0.010),
+      height: MediaQuery.of(context).size.height * (ikweb ? 0.07 : 0.05),
+      child: Container(
+        color: AppColors.primaryDark,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final tabWidth = constraints.maxWidth / tabs.length;
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(tabs.length, (index) {
+                      final isSelected = selectedTab == index;
+
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedTab = index;
+                          });
+                          context.read<BadgesCubit>().changeTab(
+                            index,
+                            context: context,
+                          );
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOut,
+
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              if (isSelected)
+                                Positioned.fill(
+                                  child: CustomPaint(
+                                    painter: BrowserTabPainter(
+                                      tabColor: AppColors.extraDarkYellow,
+                                      topRadius: 16,
+                                    ),
+                                  ),
+                                ),
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 13,
+                                ),
+                                child: Text(
+                                  tabs[index],
+                                  style: AppTextStyles.regular(16).copyWith(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      tabs[index],
-                      style: TextStyle(
-                        fontWeight: isSelected
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                        color: isSelected ? Colors.blue : Colors.grey,
-                        fontSize:
-                            MediaQuery.of(context).size.width *
-                            (ikweb ? 0.013 : 0.040),
-                        letterSpacing: ikweb ? 1.2 : 1.0,
-                      ),
-                    ),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      height: ikweb ? 3.5 : 2.5,
-                      width: isSelected
-                          ? (tabs[index].length * (ikweb ? 10.0 : 8.0) + 10)
-                          : 0,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             );
           },
         ),
@@ -317,7 +321,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
   void _showBadgeDetails(BuildContext context, BadgeModel badge) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.4),
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -335,51 +339,63 @@ class _BadgesScreenState extends State<BadgesScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    const SizedBox(height: 20),
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        /// 🔵 Only the image is ColorFiltered
-                        ColorFiltered(
-                          colorFilter: badge.isEarned
-                              ? const ColorFilter.mode(
-                                  Colors.transparent,
-                                  BlendMode.dst,
-                                )
-                              : ColorFilter.mode(
-                                  Colors.white.withOpacity(0.2),
+                        badge.isEarned
+                            ? ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                ),
+                                child: CachedAnyImage(
+                                  imagePath: badge.icon.isNotEmpty
+                                      ? badge.icon
+                                      : CommonUi.setPngImage(
+                                          AssetsPath.badgeMainIcon,
+                                        ),
+                                  width: 200,
+                                  height: 150,
+                                  contentImage: BoxFit.contain,
+                                ),
+                              )
+                            : ColorFiltered(
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white.withValues(alpha: 0.2),
                                   BlendMode.srcATop,
                                 ),
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16),
-                            ),
-                            child: CachedAnyImage(
-                              imagePath:
-                                  (badge.icon != null && badge.icon!.isNotEmpty)
-                                  ? badge.icon!
-                                  : CommonUi.setPngImage(AssetsPath.badgeMainIcon),
-                              width: 250,
-                              height: 200,
-                              contentImage: BoxFit.contain,
-                            ),
-                          ),
-                        ),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
+                                  ),
+                                  child: CachedAnyImage(
+                                    imagePath: badge.icon.isNotEmpty
+                                        ? badge.icon
+                                        : CommonUi.setPngImage(
+                                            AssetsPath.badgeMainIcon,
+                                          ),
+                                    width: 200,
+                                    height: 150,
+                                    contentImage: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
 
-                        if (!badge.isEarned)
-                          Positioned(
-                            top: 90,
-                            child: SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
-                              width: 40,
-                              height: 40,
-                              color: const Color(0xFF1C66C5),
-                            ),
-                          ),
+                        // if (!badge.isEarned)
+                        //   Positioned(
+                        //     top: 90,
+                        //     child: SvgPicture.asset(
+                        //       CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
+                        //       width: 40,
+                        //       height: 40,
+                        //       color: const Color(0xFF1C66C5),
+                        //     ),
+                        //   ),
                       ],
                     ),
-
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
                     Text(
                       badge.name,
                       textAlign: TextAlign.center,
@@ -460,8 +476,9 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 15),
                     ],
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -519,30 +536,35 @@ class _BadgeCard extends StatelessWidget {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16),
                         ),
-                        child: CachedAnyImage(
-                          useCache: true,
-                          imagePath: badge.icon?.isNotEmpty == true
-                              ? badge.icon!
-                              : CommonUi.setPngImage(AssetsPath.badgeMainIcon),
-                          width: double.infinity,
-                          height: double.infinity,
-                          contentImage: BoxFit.contain,
+                        child: Center(
+                          child: SizedBox(
+                            width: 125,
+                            height: 125,
+                            child: CachedAnyImage(
+                              useCache: true,
+                              imagePath: badge.icon.isNotEmpty == true
+                                  ? badge.icon
+                                  : CommonUi.setPngImage(
+                                      AssetsPath.badgeMainIcon,
+                                    ),
+                              width: 125,
+                              height: 125,
+                              contentImage: BoxFit.contain,
+                            ),
+                          ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 8),
-
                     Text(
                       badge.name,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
+                      style: AppTextStyles.semiBold(
+                        14,
+                      ).copyWith(height: 1.0, color: Colors.black),
                     ),
 
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 10),
 
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -551,20 +573,34 @@ class _BadgeCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: badge.isEarned
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.blue.withOpacity(0.05),
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : Colors.blue.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            badge.isEarned
-                                ? Icons.check_circle
-                                : Icons.lock_outline,
-                            size: 15,
-                            color: badge.isEarned ? Colors.green : Colors.blue,
-                          ),
+                          badge.isEarned
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.circle,
+                                      size: 18,
+                                      color: Colors.green,
+                                    ),
+                                    const Icon(
+                                      Icons.check,
+                                      size: 21,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                )
+                              : const Icon(
+                                  Icons.lock_outline,
+                                  size: 15,
+                                  color: Colors.blue,
+                                ),
                           const SizedBox(width: 4),
                           Text(
                             badge.isEarned
@@ -581,7 +617,7 @@ class _BadgeCard extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -590,12 +626,12 @@ class _BadgeCard extends StatelessWidget {
           if (!badge.isEarned)
             Positioned.fill(
               child: Align(
-                alignment: const Alignment(0, -0.22),
+                alignment: const Alignment(0, -0.35),
                 child: SvgPicture.asset(
                   CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
                   width: ikweb ? 45 : 35,
                   height: ikweb ? 45 : 35,
-                  color: const Color(0xFF1C66C5),
+                  color: AppColors.primaryDark,
                 ),
               ),
             ),

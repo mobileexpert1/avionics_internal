@@ -4,6 +4,10 @@
 <dict>
 <!--    <key>FacebookLoginTracking</key>-->
 <!--    <string>enabled</string>-->
+    <key>GIDClientID</key>
+    <string>951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com</string>
+    <key>GIDServerClientID</key>
+    <string>951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

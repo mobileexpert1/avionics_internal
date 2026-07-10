@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../Constants/ConstantStrings.dart';
 import '../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class CustomSocialLoginButtons extends StatelessWidget {
@@ -28,7 +30,11 @@ class CustomSocialLoginButtons extends StatelessWidget {
         label: Text(
           title,
           style: AppTextStyles.regular(
-            18,
+            kIsWeb
+                ? title == ConstantStrings.loginWithFacebook
+                      ? 13
+                      : 18
+                : 18,
           ).copyWith(height: 1.0, color: textColor),
         ),
 

@@ -451,44 +451,64 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                 "No parameters selected for this category",
                               ),
                             )
-                          : Table(
-                              columnWidths: const {
-                                0: FlexColumnWidth(3),
-                                1: FlexColumnWidth(2),
-                                2: FlexColumnWidth(2),
-                              },
-                              border: TableBorder.all(
-                                color: AppColors.dividerLineColourForComparison,
-                                width: 1,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-
+                          : Column(
                               children: [
                                 for (int i = 0; i < labels.length; i++)
-                                  TableRow(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Text(
-                                          labels[i],
-                                          style: AppTextStyles.bold(14)
-                                              .copyWith(
-                                                height: 1.3,
-                                                color: AppColors
-                                                    .grayForCompareTextColour,
+                                  IntrinsicHeight(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Expanded(
+                                          flex: 25,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                  i == 0 ? 12 : 0,
+                                                ),
+                                                bottomLeft: Radius.circular(
+                                                  i == labels.length - 1
+                                                      ? 12
+                                                      : 0,
+                                                ),
                                               ),
-                                        ),
-                                      ),
 
-                                      TableCell(
-                                        verticalAlignment:
-                                            TableCellVerticalAlignment.fill,
-                                        child: Container(
-                                          color: AppColors.grayForCompareItem,
-                                          padding: const EdgeInsets.all(10),
-                                          child: Center(
+                                              border: Border.all(
+                                                color: AppColors
+                                                    .dividerLineColourForComparison,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              labels[i],
+                                              style: AppTextStyles.bold(14)
+                                                  .copyWith(
+                                                    height: 1.3,
+                                                    color: AppColors
+                                                        .grayForCompareTextColour,
+                                                  ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          flex: 23,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+
+                                              color:
+                                                  AppColors.grayForCompareItem,
+                                              border: Border.all(
+
+                                                color: AppColors
+                                                    .dividerLineColourForComparison,
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.all(10),
                                             child: Text(
                                               a1Values[i],
+                                              softWrap: true,
                                               style: AppTextStyles.regular(15)
                                                   .copyWith(
                                                     height: 1.3,
@@ -497,22 +517,40 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                                             ),
                                           ),
                                         ),
-                                      ),
 
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Center(
-                                          child: Text(
-                                            a2Values[i],
-                                            style: AppTextStyles.regular(15)
-                                                .copyWith(
-                                                  height: 1.3,
-                                                  color: AppColors.black,
+                                        Expanded(
+                                          flex: 20,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topRight: Radius.circular(
+                                                  i == 0 ? 12 : 0,
                                                 ),
+                                                bottomRight: Radius.circular(
+                                                  i == labels.length - 1
+                                                      ? 12
+                                                      : 0,
+                                                ),
+                                              ),
+                                              border: Border.all(
+                                                color: AppColors
+                                                    .dividerLineColourForComparison,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              a2Values[i],
+                                              softWrap: true,
+                                              style: AppTextStyles.regular(15)
+                                                  .copyWith(
+                                                    height: 1.3,
+                                                    color: AppColors.black,
+                                                  ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                               ],
                             ),

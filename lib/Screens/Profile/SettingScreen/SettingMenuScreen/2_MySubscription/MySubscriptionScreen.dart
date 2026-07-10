@@ -248,12 +248,15 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 }
                                 openAddOnPacksBottomSheet();
                               },
-                              onViewCreditsTokensTap: () {
-                                AppNavigator.push(
+                              onViewCreditsTokensTap: () async {
+                                final result = await AppNavigator.push(
                                   context,
                                   CreditsTokenUsageScreen(),
                                   disableSwipeBack: true,
                                 );
+                                if (result == true) {
+                                  _cubit.loadSubscriptionsHistory(context);
+                                }
                               },
 
                               // onCancelTap: () {

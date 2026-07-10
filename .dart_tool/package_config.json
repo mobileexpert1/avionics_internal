@@ -171,9 +171,9 @@
     },
     {
       "name": "equatable",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/equatable-2.0.8",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/equatable-2.1.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.0"
     },
     {
       "name": "eval_ex",
@@ -339,7 +339,7 @@
     },
     {
       "name": "flutter_facebook_auth",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_facebook_auth-7.1.8",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/flutter_facebook_auth-7.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -591,7 +591,7 @@
     },
     {
       "name": "google_sign_in_android",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_sign_in_android-7.2.14",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/google_sign_in_android-7.2.15",
       "packageUri": "lib/",
       "languageVersion": "3.12"
     },
@@ -897,7 +897,7 @@
     },
     {
       "name": "purchases_flutter",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/purchases_flutter-10.4.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/purchases_flutter-10.4.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -927,9 +927,9 @@
     },
     {
       "name": "sanitize_html",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sanitize_html-2.1.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/sanitize_html-2.2.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.5"
     },
     {
       "name": "shared_preferences",
@@ -1239,7 +1239,7 @@
     },
     {
       "name": "video_player_platform_interface",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/video_player_platform_interface-6.8.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/video_player_platform_interface-6.9.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -1275,7 +1275,7 @@
     },
     {
       "name": "webview_flutter",
-      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/webview_flutter-4.14.0",
+      "rootUri": "file:///Users/mobile/.pub-cache/hosted/pub.dev/webview_flutter-4.14.1",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },

@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:flutter_uxcam/flutter_uxcam.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
@@ -17,6 +16,7 @@ import '../../../CustomFiles/CustomSocialLoginButtons.dart';
 import '../../../CustomFiles/CustomTextField.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../bloc/Onboarding/login/google_web_button.dart';
 import '../../../bloc/Onboarding/login/login_cubit.dart';
 import '../../../bloc/Onboarding/login/login_state.dart';
 import '../ForgotCreateNewPassword/ForgotScreen.dart';
@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.loginScreen);
     // FlutterUxcam.tagScreenName("Login Screen");
+    context.read<LoginCubit>().initGoogle(context);
   }
 
   @override
@@ -202,21 +203,25 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 20),
 
                             // -------- Google --------
-                            CustomSocialLoginButtons(
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              title: ConstantStrings.loginWithGoogle,
-                              icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.googleIcon),
-                                fit: BoxFit.fill,
+                            if (!kIsWeb) ...[
+                              CustomSocialLoginButtons(
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                title: ConstantStrings.loginWithGoogle,
+                                icon: SvgPicture.asset(
+                                  CommonUi.setSvgImage(AssetsPath.googleIcon),
+                                  fit: BoxFit.fill,
+                                ),
+                                onPressed: () {
+                                  if (!mounted) return;
+                                  context.read<LoginCubit>().signInWithGoogle(
+                                    context,
+                                  );
+                                },
                               ),
-                              onPressed: () {
-                                if (!mounted) return;
-                                context.read<LoginCubit>().signInWithGoogle(
-                                  context,
-                                );
-                              },
-                            ),
+                            ],
+
+                            if (kIsWeb) ...[GoogleWebButton()],
 
                             const SizedBox(height: 12),
 
@@ -244,20 +249,25 @@ class _LoginScreenState extends State<LoginScreen> {
                             ],
 
                             // -------- Facebook --------
-                            CustomSocialLoginButtons(
-                              backgroundColor: AppColors.facebookButton,
-                              textColor: Colors.white,
-                              title: ConstantStrings.loginWithFacebook,
-                              icon: SvgPicture.asset(
-                                CommonUi.setSvgImage(AssetsPath.facebookIcon),
-                                fit: BoxFit.fill,
+                            SizedBox(
+                              width: kIsWeb ? 185 : null,
+                              child: CustomSocialLoginButtons(
+                                backgroundColor: AppColors.facebookButton,
+                                textColor: Colors.white,
+                                title: ConstantStrings.loginWithFacebook,
+                                icon: SvgPicture.asset(
+                                  CommonUi.setSvgImage(AssetsPath.facebookIcon),
+                                  fit: BoxFit.fill,
+                                  width: kIsWeb ? 10 : 25,
+                                  height: kIsWeb ? 15 : 25,
+                                ),
+                                onPressed: () {
+                                  if (!mounted) return;
+                                  context.read<LoginCubit>().signInWithFacebook(
+                                    context,
+                                  );
+                                },
                               ),
-                              onPressed: () {
-                                if (!mounted) return;
-                                context.read<LoginCubit>().signInWithFacebook(
-                                  context,
-                                );
-                              },
                             ),
 
                             const SizedBox(height: 20),
@@ -297,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // -------- Loader --------
               if (state.status == CommonApiStatus.submitting)
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
             ],

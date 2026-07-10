@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "951110180167-fdl2o5t0hl8ek6cf19hjcjr8r0bvd3ma.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.avioflai.aviation",
+            "certificate_hash": "2c643dff02997470d69f8c6fe9d97ae8ba5c8fce"
+          }
+        },
+        {
           "client_id": "951110180167-lka7rml3vfg94qbud80bvifrhlab409v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

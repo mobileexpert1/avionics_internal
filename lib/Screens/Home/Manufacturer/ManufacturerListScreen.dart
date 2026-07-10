@@ -46,7 +46,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
       final cubit = context.read<ManufacturerCubit>();
-      if (cubit.state.hasNextPage && !cubit.state.isFetchingMore && !cubit.isFetching) {
+      if (cubit.state.hasNextPage &&
+          !cubit.state.isFetchingMore &&
+          !cubit.isFetching) {
         cubit.loadListOfManufacturers(
           context: context,
           page: cubit.state.currentPage + 1,
@@ -55,7 +57,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +124,9 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                         spacing: 8,
                         runSpacing: 8,
                         children: (state.categories).map((label) {
-                          final isSelected = state.selectedManufacturerCategories.contains(
-                            label,
-                          );
+                          final isSelected = state
+                              .selectedManufacturerCategories
+                              .contains(label);
 
                           return Material(
                             color: Colors.transparent,
@@ -239,16 +240,17 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                         children: [
                                           item.icon != null
                                               ? CachedAnyImage(
-                                            useCache: true,
-                                                   isForPlaneList: true,
-                                                   imagePath: item.icon ?? "",
+                                                  useCache: true,
+                                                  isForManufacturer: true,
+                                                  imagePath: item.icon ?? "",
                                                   width: 40,
                                                   height: 40,
                                                   contentImage: BoxFit.contain,
                                                 )
                                               : SvgPicture.asset(
                                                   CommonUi.setSvgImage(
-                                                    AssetsPath.manufacturerPlaceholder,
+                                                    AssetsPath
+                                                        .manufacturerPlaceholder,
                                                   ),
                                                   width: 40,
                                                   height: 40,
@@ -264,12 +266,6 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                                     height: 1.0,
                                                     color: AppColors.black,
                                                   ),
-
-                                              // const TextStyle(
-                                              //   fontSize: 14,
-                                              //   fontWeight: FontWeight.w500,
-                                              //   color: Color(0xFF3F3D56),
-                                              // ),
                                             ),
                                           ),
                                         ],

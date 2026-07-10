@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,9 +10,11 @@ import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../Helpers/AppNavigator.dart';
 import '../../../../../Helpers/WebAndMobileBrowser/web_iframe_widget.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
+import '../../../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 
 class CreditsTokenUsageScreen extends StatefulWidget {
   const CreditsTokenUsageScreen({super.key});
@@ -36,7 +39,56 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
 
     if (!kIsWeb) {
       controller = WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted);
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..addJavaScriptChannel(
+          'Flutter',
+          onMessageReceived: (JavaScriptMessage message) async {
+            if (message.message == "AddOnPacksScreen") {
+              openAddOnPacksBottomSheet();
+            }
+
+            if (message.message == "MySubscriptionScreen") {
+              AppNavigator.push(
+                context,
+                SubscriptionPlanDetailScreen(
+                  isComeFromSignup: false,
+                  isComeFromProfile: true,
+                ),
+                disableSwipeBack: true,
+              );
+            }
+          },
+        );
+    }
+  }
+
+  Future<void> openAddOnPacksBottomSheet() async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.70,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: const AddOnPacksScreen(packType: AddOnPackType.both),
+          ),
+        );
+      },
+    );
+
+    if (result == true && mounted) {
+      setState(() {
+        final url = _buildUrl();
+
+        if (kIsWeb) {
+          setState(() => _webUrl = url);
+        } else {
+          controller!.loadRequest(Uri.parse(url));
+        }
+      });
     }
   }
 
@@ -82,7 +134,7 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
                   CommonUi.setSvgImage(AssetsPath.backArrowButton),
                   fit: BoxFit.cover,
                 ),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context,true),
               ),
             ),
             body: kIsWeb

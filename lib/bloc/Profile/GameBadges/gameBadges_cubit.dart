@@ -13,17 +13,17 @@ class BadgesCubit extends Cubit<BadgesState> {
   BadgesCubit(BuildContext context) : super(BadgesState());
 
   Future<void> loadBadges({
-    String? selectedTab,
+    int? selectedTab,
     required BuildContext context,
   }) async {
     if (await InternetConnection().hasInternetAccess) {
-      if (selectedTab == null || selectedTab.isEmpty) {
+      if (selectedTab == null) {
         emit(
           state.copyWith(
             isLoading: false,
             isSuccess: false,
             badges: [],
-            selectedTab: selectedTab ?? '',
+            selectedTab: selectedTab ?? 0,
             status: CommonApiStatus.initial,
           ),
         );
@@ -36,16 +36,16 @@ class BadgesCubit extends Cubit<BadgesState> {
         BadgeResponse response;
 
         switch (selectedTab) {
-          case "Quiz":
+          case 0:
             response = await BadgesRepository().getQuizBadges();
             break;
-          case "One Word":
+          case 1:
             response = await BadgesRepository().getOneWordBadges();
             break;
-          case "Black Box":
+          case 2:
             response = await BadgesRepository().getBlackBoxBadges();
             break;
-          case "Calculations":
+          case 3:
             response = await BadgesRepository().getCalculationBadges();
             break;
           default:
@@ -91,10 +91,8 @@ class BadgesCubit extends Cubit<BadgesState> {
     }
   }
 
-  Future<void> changeTab(
-    String tabName, {
-    required BuildContext context,
-  }) async {
+
+  Future<void> changeTab(int tabName, {required BuildContext context}) async {
     emit(state.copyWith(selectedTab: tabName));
     await loadBadges(selectedTab: tabName, context: context);
   }

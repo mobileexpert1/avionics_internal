@@ -33,7 +33,49 @@ import 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _googleInitialized = false;
+
+  Future<void> initGoogle(BuildContext context) async {
+    if (_googleInitialized) return;
+
+    await GoogleSignIn.instance.initialize(
+      clientId: kIsWeb
+          ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
+          : (Platform.isIOS
+                ? '951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com'
+                : null),
+    );
+
+    GoogleSignIn.instance.authenticationEvents.listen((event) async {
+      if (event is GoogleSignInAuthenticationEventSignIn) {
+        try {
+          final user = event.user;
+
+          final idToken = user.authentication.idToken;
+
+          debugPrint("GOOGLE ID TOKEN => $idToken");
+
+          if (idToken == null || idToken.isEmpty) {
+            throw Exception("Google ID token missing");
+          }
+
+          emit(state.copyWith(status: CommonApiStatus.submitting));
+
+          final result = await LoginRepository().loginUserWithSocialPlatform(
+            token: idToken,
+            provider: 'google',
+          );
+
+          emit(state.copyWith(status: CommonApiStatus.success));
+
+          await _navigateAfterLogin(context, result);
+        } catch (e) {
+          debugPrint("Google Web Login Error: $e");
+        }
+      }
+    });
+    _googleInitialized = true;
+  }
 
   void emailChanged(String email) {
     if (email == state.email) return;
@@ -106,57 +148,47 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      final GoogleSignIn signIn = GoogleSignIn.instance;
+      if (kIsWeb) {
+        return;
+      }
 
-      await signIn.initialize(
-        clientId: kIsWeb
-            ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
-            : null,
-      );
-      String accessToken = "";
+      await initGoogle(context);
+
+      emit(state.copyWith(status: CommonApiStatus.submitting));
+
       try {
-        final GoogleSignInAccount account = await signIn.authenticate();
-
-        debugPrint("Email: ${account.email}");
+        final GoogleSignInAccount account = await GoogleSignIn.instance
+            .authenticate();
 
         final auth = await account.authorizationClient.authorizationForScopes([
           'email',
           'profile',
         ]);
 
-        debugPrint("Access Token: ${auth?.accessToken}");
+        final accessToken = auth?.accessToken ?? '';
 
-        if (auth == null) return;
+        final result = await LoginRepository().loginUserWithSocialPlatform(
+          token: accessToken,
+          provider: 'google',
+        );
 
-        accessToken = auth.accessToken ?? '';
+        emit(state.copyWith(status: CommonApiStatus.success));
 
-        emit(state.copyWith(status: CommonApiStatus.submitting));
-      } catch (e, st) {
-        debugPrintStack(label: e.toString(), stackTrace: st);
-
-        final message = GoogleSignInErrorHandler.getMessage(e);
+        await _navigateAfterLogin(context, result);
+      } catch (e) {
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,
-            errorMessage: message,
+            errorMessage: e.toString(),
           ),
         );
       }
-
-      final result = await LoginRepository().loginUserWithSocialPlatform(
-        token: accessToken,
-        provider: 'google',
-      );
-
-      emit(state.copyWith(status: CommonApiStatus.success));
-
-      await _navigateAfterLogin(context, result);
-    } catch (e, st) {
-      debugPrintStack(label: e.toString(), stackTrace: st);
-
-      final message = GoogleSignInErrorHandler.getMessage(e);
+    } catch (e) {
       emit(
-        state.copyWith(status: CommonApiStatus.failure, errorMessage: message),
+        state.copyWith(
+          status: CommonApiStatus.failure,
+          errorMessage: e.toString(),
+        ),
       );
     }
   }
