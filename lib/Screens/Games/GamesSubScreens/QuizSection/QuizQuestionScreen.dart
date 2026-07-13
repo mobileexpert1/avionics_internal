@@ -743,9 +743,8 @@ class QuizProgressCard extends StatelessWidget {
                               : Colors.blue,
                         ),
 
-                  const SizedBox(width: 4),
                   SizedBox(
-                    width: 40,
+                    width: 50,
                     child: Text(
                       '${secondsRemaining}s',
                       textAlign: TextAlign.left,

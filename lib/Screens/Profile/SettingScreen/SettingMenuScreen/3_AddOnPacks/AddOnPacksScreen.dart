@@ -147,7 +147,6 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
         listener: _onStateChange,
         builder: (context, state) {
           final allPackages = state.consumablePackages;
-
           final packages = allPackages.where((package) {
             final id = package.identifier.toLowerCase();
 
@@ -425,7 +424,11 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                           const SizedBox(height: 4),
 
                                           Text(
-                                            package.storeProduct.description,
+                                            context
+                                                .read<SubscriptionBuyPlanCubit>()
+                                                .getPackageDescriptionTitle(
+                                              package.storeProduct.description,
+                                            ),
                                             style: AppTextStyles.regular(
                                               14,
                                             ).copyWith(color: Colors.grey),

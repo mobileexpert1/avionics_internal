@@ -327,7 +327,7 @@ class _PlanCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${package.storeProduct.title} ",
+                            "${package.storeProduct.title.replaceAll("(avioflai)", "")} ",
                             style: AppTextStyles.semiBold(18).copyWith(
                               height: 1.0,
                               color: isBasicPlan ? Colors.black : Colors.white,

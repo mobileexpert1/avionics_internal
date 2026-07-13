@@ -33,6 +33,19 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
 
   SubscriptionBuyPlanCubit() : super(SubscriptionBuyPlanState());
 
+  String getPackageDescriptionTitle(String description) {
+    if (description.contains('Small')) {
+      return ('Light (L)');
+    }
+    if (description.contains('Medium')) {
+      return ('Medium (M)');
+    }
+    if (description.contains('Large')) {
+      return ('Heavy (H)');
+    }
+    return description;
+  }
+
   String _getRCUserId(String email) {
     return email.trim().toLowerCase();
   }
@@ -364,7 +377,12 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
         );
       } catch (e) {
         debugPrint(e.toString());
-        emit(state.copyWith(loading: false, error: "Failed to load offerings ${e.toString()}"));
+        emit(
+          state.copyWith(
+            loading: false,
+            error: "Failed to load offerings ${e.toString()}",
+          ),
+        );
       }
     }
   }
@@ -424,7 +442,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
                 response!.currentPlan!.alreadyTotalAddOnToken ||
             CreditManager().creditAlreadyAdded <=
                 response.currentPlan!.alreadyTotalAddOnCredit) {
-          emit(state.copyWith(loading: false, consumablePurchased: true));
+          if (!isClosed) {
+            emit(state.copyWith(loading: false, consumablePurchased: true));
+          }
         }
       });
     } on PlatformException catch (e) {

@@ -32,6 +32,8 @@ class BadgesScreen extends StatefulWidget {
 class _BadgesScreenState extends State<BadgesScreen> {
   bool _isFullScreen = false;
   StreamSubscription? _fullScreenSubscription;
+  final ScrollController _tabScrollController = ScrollController();
+  final tabs = ["Aviation Quiz", "Basic Topics", "Black Box", "Calculations"];
 
   @override
   void initState() {
@@ -100,6 +102,14 @@ class _BadgesScreenState extends State<BadgesScreen> {
             }
           },
           builder: (context, state) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_tabScrollController.hasClients &&
+                  state.selectedTab == tabs.length - 1) {
+                _tabScrollController.jumpTo(
+                  _tabScrollController.position.maxScrollExtent,
+                );
+              }
+            });
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -239,24 +249,23 @@ class _BadgesScreenState extends State<BadgesScreen> {
   }
 
   Widget _buildTabs(BuildContext context, BadgesState state) {
-    final tabs = ["Aviation Quiz", "Basic Topics", "Black Box", "Calculations"];
     var selectedTab = state.selectedTab;
 
-    final bool ikweb =
+    final bool ikWeb =
         kIsWeb &&
         (MediaQuery.of(context).size.width > 600 ||
             MediaQuery.of(context).size.height > 600);
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * (ikweb ? 0.07 : 0.05),
+      height: MediaQuery.of(context).size.height * (ikWeb ? 0.07 : 0.055),
       child: Container(
         color: AppColors.primaryDark,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final tabWidth = constraints.maxWidth / tabs.length;
             return Stack(
               children: [
                 SingleChildScrollView(
+                  controller: _tabScrollController,
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: List.generate(tabs.length, (index) {
@@ -267,43 +276,55 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           setState(() {
                             selectedTab = index;
                           });
+
                           context.read<BadgesCubit>().changeTab(
                             index,
                             context: context,
                           );
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
 
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              if (isSelected)
-                                Positioned.fill(
-                                  child: CustomPaint(
-                                    painter: BrowserTabPainter(
-                                      tabColor: AppColors.extraDarkYellow,
-                                      topRadius: 16,
+                          if (index == tabs.length - 1) {
+                            _tabScrollController.animateTo(
+                              _tabScrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                if (isSelected)
+                                  Positioned.fill(
+                                    child: CustomPaint(
+                                      painter: BrowserTabPainter(
+                                        tabColor: AppColors.extraDarkYellow,
+                                        topRadius: 16,
+                                      ),
+                                    ),
+                                  ),
+
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 5,
+                                    vertical: 13,
+                                  ),
+                                  child: Text(
+                                    tabs[index],
+                                    style: AppTextStyles.regular(16).copyWith(
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.white,
                                     ),
                                   ),
                                 ),
-
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 13,
-                                ),
-                                child: Text(
-                                  tabs[index],
-                                  style: AppTextStyles.regular(16).copyWith(
-                                    color: isSelected
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );

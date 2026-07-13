@@ -630,6 +630,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                               _controller.clear();
 
+                              _messageFocusNode.unfocus();
+
                               _stopListening(chatContext);
 
                               _scrollToBottom();
@@ -706,6 +708,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                   );
 
                                   _controller.clear();
+
+                                  _messageFocusNode.unfocus();
 
                                   _scrollToBottom();
 

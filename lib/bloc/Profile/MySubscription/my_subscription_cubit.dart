@@ -76,4 +76,35 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
   void selectSubscription(MySubscriptionItem item) {
     emit(state.copyWith(selectedSubscription: item));
   }
+
+  String getPackageDescriptionTitle(
+      String description,
+      bool isComeFromHistory,
+      ) {
+    final lowerDescription = description.toLowerCase();
+
+    final packType =
+    lowerDescription.contains('credit') ? 'Credit' : 'Token';
+
+    if (lowerDescription.contains('small')) {
+      return isComeFromHistory
+          ? 'Light (L) $packType Pack'
+          : 'Light (L)';
+    }
+
+    if (lowerDescription.contains('medium')) {
+      return isComeFromHistory
+          ? 'Medium (M) $packType Pack'
+          : 'Medium (M)';
+    }
+
+    if (lowerDescription.contains('large')) {
+      return isComeFromHistory
+          ? 'Heavy (H) $packType Pack'
+          : 'Heavy (H)';
+    }
+
+    print(description);
+    return description;
+  }
 }

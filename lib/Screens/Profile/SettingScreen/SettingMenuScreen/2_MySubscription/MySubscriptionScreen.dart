@@ -502,7 +502,7 @@ class BillingHistoryCard extends StatelessWidget {
           children: [
             Expanded(
               child: isForAddOn
-                  ? _buildAddOnContent()
+                  ? _buildAddOnContent(context)
                   : _buildSubscriptionContent(),
             ),
           ],
@@ -576,7 +576,7 @@ class BillingHistoryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAddOnContent() {
+  Widget _buildAddOnContent(BuildContext context) {
     final addOn = item.addOnItem!;
 
     String addOnPriceWithSymbol = "";
@@ -588,12 +588,29 @@ class BillingHistoryCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: AppColors.greenColourForPlan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(50),
+            border: Border.all(color: AppColors.greenColourForPlan),
+          ),
+          child: Text(
+            "Add-on",
+            style: AppTextStyles.medium(
+              14,
+            ).copyWith(height: 1.0, color: AppColors.greenColourForPlan),
+          ),
+        ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Text(
-                addOn.planName,
+                context.read<MySubscriptionCubit>().getPackageDescriptionTitle(
+                  addOn.planName,
+                  true,
+                ),
                 style: AppTextStyles.bold(
                   16,
                 ).copyWith(height: 1.0, color: AppColors.black),

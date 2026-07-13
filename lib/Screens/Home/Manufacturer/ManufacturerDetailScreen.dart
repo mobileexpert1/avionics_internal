@@ -810,6 +810,8 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   ) {
     final image = ClipRRect(
       child: CachedAnyImage(
+        useCache: true,
+        isForPlaneList:true,
         imagePath: coverImages.url,
         width: MediaQuery.of(context).size.width,
         height: screenHeight * (kIsWeb ? 0.40 : 0.30),

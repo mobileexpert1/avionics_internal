@@ -73,7 +73,7 @@ class _CachedAnyImageState extends State<CachedAnyImage> {
 
           _svgMemoryCache[widget.imagePath] = bytes;
 
-          debugPrint(file.path);
+          debugPrint("CustomCacheManager-=-=-${file.path}");
           return bytes;
         });
   }
