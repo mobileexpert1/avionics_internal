@@ -1,5 +1,4 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomSegmentController extends StatelessWidget {
@@ -18,12 +17,11 @@ class CustomSegmentController extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: const BoxDecoration(
         color: AppColors.greyForAirportDetailCard,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
         border: Border(
           top: BorderSide(width: 1),
@@ -37,21 +35,22 @@ class CustomSegmentController extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: List.generate(segments.length, (index) {
             final isSelected = selectedIndex == index;
-
             return GestureDetector(
               onTap: () => onChanged?.call(index),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width <= 375 ? 8 : 12,
+                  vertical: 12,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primaryDark
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                 ),
                 child: Text(
                   segments[index],

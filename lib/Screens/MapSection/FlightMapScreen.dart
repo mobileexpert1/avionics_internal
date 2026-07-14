@@ -102,8 +102,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     _loadGeoJson(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-
-     //
+      //
 
       final hasPermission = await _mapCubit.getCurrentLocation(context);
 
@@ -119,7 +118,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             _isUserGesture = false;
             isFirstTimeUserCome = false;
 
-            _disableMapGesture = kIsWeb ? true :false;
+            _disableMapGesture = kIsWeb ? true : false;
             _handleFilterTap(context);
 
             AnalyticsService.instance.buttonPressed(
@@ -227,7 +226,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   void _sheetListenerForChangeTheTap() {
     final currentSize = _sheetController.size;
 
-    _disableMapGesture = kIsWeb ? true :false;
+    _disableMapGesture = kIsWeb ? true : false;
 
     if (currentSize > 0.15) {
       _hasTriggeredMapView = true;
@@ -857,7 +856,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
                   isFirstTimeUserCome = false;
 
-                  _disableMapGesture = kIsWeb ? true :false;
+                  _disableMapGesture = kIsWeb ? true : false;
 
                   _handleFilterTap(context);
                 },
@@ -1159,7 +1158,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         isComeFromMapSection: true,
         controller: _searchController,
         onFilterTap: () {
-          _disableMapGesture = kIsWeb ? true :false;
+          _disableMapGesture = kIsWeb ? true : false;
           _handleFilterTap(context);
         },
         searchTitle: _isForFlyingInTheArea == 2
@@ -1610,7 +1609,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                           .contain,
                                                                     )
                                                                   : CachedAnyImage(
-                                                                    isForManufacturer:true,
+                                                                      isForManufacturer:
+                                                                          true,
                                                                       imagePath:
                                                                           manufacturerLogo,
                                                                       width:
@@ -1624,7 +1624,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                       contentImage:
                                                                           BoxFit
                                                                               .contain,
-
                                                                     ),
                                                             ),
 
@@ -1787,13 +1786,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 540.0 : MediaQuery.of(context).size.width / 3.2,
+          right: kIsWeb
+              ? MediaQuery.of(context).size.width / 1.51
+              : MediaQuery.of(context).size.width / 2.5,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
-            width: 400,
             height: segmentHeight,
             child: CustomSegmentController(
-              segments: ["Airport details", "More Details"],
+              segments: ["Airport Info", "Operational Info"],
               selectedIndex: selectedSegmentIndex,
               onChanged: (index) {
                 setState(() {

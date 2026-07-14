@@ -649,7 +649,7 @@ Widget buildFieldRows(
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.regular(14).copyWith(
-                        height: 1.4,
+                        height: 1.3,
                         color: AppColors.lightGreyTextFieldHeading,
                       ),
                     ),

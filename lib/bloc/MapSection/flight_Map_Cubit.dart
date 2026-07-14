@@ -190,7 +190,6 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   // ── DATA LOADING ───────────────────────────────────────────────────────────
-
   Future<void> loadFavoritesFlights(BuildContext context) async {
     if (await InternetConnection().hasInternetAccess) {
       final favCallSigns = await SavedFlightRepository().getFavoriteCallSigns();
@@ -312,10 +311,10 @@ class FlightMapCubit extends Cubit<FlightMapState> {
             state.selectedFlightCategories != null &&
             state.selectedFlightCategories!.isNotEmpty;
 
-
         final localKey = await SharedPrefsHelper.getMapKeyValuesForApi();
         if (localKey.isEmpty) {
-          final responseKeyValue = await FlightRepository().getMapKeyValueFromServer();
+          final responseKeyValue = await FlightRepository()
+              .getMapKeyValueFromServer();
           if (responseKeyValue.data.fr24 != null &&
               responseKeyValue.data.fr24 != "") {
             await SharedPrefsHelper.seMapKeyValuesFromServer(

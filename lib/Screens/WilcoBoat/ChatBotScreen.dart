@@ -21,6 +21,7 @@ import '../../Helpers/FormattedText/FormattedText.dart';
 import '../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import '../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
 import '../Onboarding/Login/LoginScreen.dart';
+import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'ChatHistoryScreen.dart';
 
@@ -204,7 +205,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           switch (status) {
             case ChatResponseStatus.tokenLimitExpired:
               setState(() => isReceivedTokenFullWarning = true);
-
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
                 title: "Token limit exhausted",
@@ -219,9 +219,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                   );
                 },
               );
-
               break;
-
             case ChatResponseStatus.creditLimitExpired:
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
@@ -238,7 +236,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 },
               );
               break;
-
             case ChatResponseStatus.accessTokenExpired:
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -254,6 +251,16 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 );
               });
 
+              break;
+            case ChatResponseStatus.subscriptionExpired:
+              AlertHelperForSubsPopup.showSubscriptionEndAlert(
+                context: context,
+                title: "Subscription Required",
+                message: "Your subscription has expired. Please renew to continue using the service.",
+                navigateTo: const SubscriptionPlanDetailScreen(
+                  isComeFromSignup: true,
+                ),
+              );
               break;
 
             default:
@@ -602,7 +609,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                   //     ),
                   //   ),
                   // ),
-
                   child: Builder(
                     builder: (chatContext) {
                       return Focus(
@@ -618,7 +624,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                             final cubit = chatContext.read<ChatCubit>();
 
                             final isAnalyzing = cubit.state.any(
-                                  (msg) => msg['type'] == 'analyzing',
+                              (msg) => msg['type'] == 'analyzing',
                             );
 
                             if (!isAnalyzing) {
@@ -663,7 +669,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                       );
                     },
                   ),
-
                 ),
               ),
 

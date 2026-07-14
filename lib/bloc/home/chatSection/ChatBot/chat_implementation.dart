@@ -22,6 +22,7 @@ enum ChatResponseStatus {
   tokenLimitExpired,
   creditLimitExpired,
   accessTokenExpired,
+  subscriptionExpired,
 }
 
 class ChatResponseEvent {
@@ -142,6 +143,12 @@ class ChatRepositoryImpl implements ChatRepository {
           _closing = true;
           _onResponseEvent?.call(
             ChatResponseEvent(status: ChatResponseStatus.accessTokenExpired),
+          );
+          break;
+        case 5:
+          _closing = true;
+          _onResponseEvent?.call(
+            ChatResponseEvent(status: ChatResponseStatus.subscriptionExpired),
           );
           break;
         default:

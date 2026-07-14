@@ -39,6 +39,7 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
 
     if (!kIsWeb) {
       controller = WebViewController()
+        ..enableZoom(false)
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..addJavaScriptChannel(
           'Flutter',
@@ -134,7 +135,7 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
                   CommonUi.setSvgImage(AssetsPath.backArrowButton),
                   fit: BoxFit.cover,
                 ),
-                onPressed: () => Navigator.pop(context,true),
+                onPressed: () => Navigator.pop(context, true),
               ),
             ),
             body: kIsWeb

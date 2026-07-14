@@ -90,15 +90,6 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
                   );
                 },
               );
-
-              // AlertHelperForSubsPopup.showSubscriptionEndAlert(
-              //   context: context,
-              //   title: "Subscription Required",
-              //   message: message,
-              //   navigateTo: const SubscriptionPlanDetailScreen(
-              //     isComeFromSignup: true,
-              //   ),
-              // );
             });
           }
         },
