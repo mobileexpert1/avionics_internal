@@ -97,52 +97,53 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
     polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
 
-    _loadGeoJson(context);
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      //
-
       final hasPermission = await _mapCubit.getCurrentLocation(context);
+      Future.delayed(Duration(seconds: 3), () {
+        if (hasPermission) {
+          if (widget.skipInitialPopup && widget.openMode != null) {
+            if (widget.openMode == 1) {
+              setState(() {
+                _singleSearchMarker = null;
+                _isMapListViewShown = true;
+                _isForFlyingInTheArea = 1;
+              });
+              _resetFlightSelection();
+              _isUserGesture = false;
+              isFirstTimeUserCome = false;
 
-      if (hasPermission) {
-        if (widget.skipInitialPopup && widget.openMode != null) {
-          if (widget.openMode == 1) {
-            setState(() {
-              _singleSearchMarker = null;
-              _isMapListViewShown = true;
-              _isForFlyingInTheArea = 1;
-            });
-            _resetFlightSelection();
-            _isUserGesture = false;
-            isFirstTimeUserCome = false;
+              _disableMapGesture = kIsWeb ? true : false;
+              _handleFilterTap(context);
 
-            _disableMapGesture = kIsWeb ? true : false;
-            _handleFilterTap(context);
-
-            AnalyticsService.instance.buttonPressed(
-              FirebaseEvents.flyingInTheAreaButton,
-              FirebaseEvents.trackScreen,
-            );
-          } else if (widget.openMode == 2) {
-            setState(() {
-              _activeCard = 0;
-              _singleSearchMarker = null;
-              _isMapListViewShown = false;
-              _isForFlyingInTheArea = 2;
-            });
-            _handleTextTap(context);
+              AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.flyingInTheAreaButton,
+                FirebaseEvents.trackScreen,
+              );
+            } else if (widget.openMode == 2) {
+              setState(() {
+                _activeCard = 0;
+                _singleSearchMarker = null;
+                _isMapListViewShown = false;
+                _isForFlyingInTheArea = 2;
+              });
+              _handleTextTap(context);
+            }
           }
+          Future.delayed(Duration(seconds: 2), () async {
+            await _mapCubit.loadFavoritesFlights(context);
+          });
         }
-        await _mapCubit.loadFavoritesFlights(context);
-      }
+      });
     });
 
-    _sheetController.addListener(_sheetListenerForChangeTheTap);
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
-
-    _mapCubit.setFilters(["Passenger"], []);
+    Future.delayed(Duration(seconds: 5), () {
+      _sheetController.addListener(_sheetListenerForChangeTheTap);
+      _mapCubit.setFilters(["Passenger"], []);
+      _loadGeoJson(context);
+    });
   }
 
   @override
@@ -345,7 +346,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     _isProgrammaticMove = true;
 
-    //final visualRadiusNm = radiusNm; //+ getVisualRadiusBufferNm(radiusNm).toInt();
     final visualRadiusMeters = convertNmToMeters(radiusNm);
 
     _circles.clear();

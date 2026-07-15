@@ -416,8 +416,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                       ),
 
                       if (model.ICAOCode.isNotEmpty)
-
-                      Container(
+                        Container(
                           margin: const EdgeInsets.only(left: 8),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
@@ -436,7 +435,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                           ),
                         ),
                       const SizedBox(width: 40),
-
                     ],
                   ),
                 ),

@@ -596,8 +596,9 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
   final fieldColor = const Color(0xFF3E3C55);
 
   Widget _buildTechnicalData(IdentificationClassification? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         [
           'ICAO Type Code',
           detail?.icaoTypeCode ?? _currentFlightDetail?.type ?? 'N/A',
@@ -629,14 +630,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           detail?.numberOfPassengers?.maximum ?? 'N/A',
         ],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _buildPowerPlantData(PowerplantPropulsion? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Number of Engines', detail?.numberOfEngines?.toString() ?? 'N/A'],
         ['Fuel Consumption', detail?.fuel?.burnRate ?? 'N/A'],
         ['Manufacturer', detail?.engine?.manufacturer ?? 'N/A'],
@@ -649,14 +650,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ['Fuel Additives', detail?.fuel?.fuelAdditives ?? 'N/A'],
         ['Fuel Capacity', detail?.fuel?.capacity ?? 'N/A'],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _buildDimenionsData(Dimensions? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Wingspan (m)', detail?.wingspanM ?? 'N/A'],
         ['Cabin Width (m)', detail?.cabinWidthM ?? 'N/A'],
         ['Length (m)', detail?.lengthM ?? 'N/A'],
@@ -665,14 +666,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ['Wing Area (m²)', detail?.wingAreaM2 ?? 'N/A'],
         ['Door Height (m)', detail?.doorHeightM ?? 'N/A'],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _buildWeightsData(Weights? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Operating Empty Weight (kg)', detail?.emptyWeight ?? 'N/A'],
         ['Maximum Zero Fuel Weight (kg)', detail?.zeroFuelWeight ?? 'N/A'],
         ['Maximum Takeoff Weight (kg)', detail?.takeoffWeight ?? 'N/A'],
@@ -687,14 +688,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           detail?.baggage?.minimum ?? 'N/A',
         ],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _builPerfomanceOrderedBYsData(Performance? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Takeoff Speed (kts)', detail?.takeoffSpeedKts ?? 'N/A'],
         ['Takeoff Distance (m)', detail?.takeoffDistanceM ?? 'N/A'],
         ['Initial Rate of Climb (fpm)', detail?.climbInitialFpm ?? 'N/A'],
@@ -722,14 +723,14 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ['Runway Length Required (m)', detail?.runwayRequired ?? 'N/A'],
         ['Stall Speed (kts)', detail?.stallSpeed ?? 'N/A'],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _builOperationLimitationsData(OperationalLimitations? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Runway Slope Limit (%)', detail?.runwaySlopeLimit ?? 'N/A'],
         ['Max Crosswind Normal Law (kts)', detail?.maxCrosswindNormal ?? 'N/A'],
         [
@@ -747,27 +748,27 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ],
         ['Certified Autoland Level', detail?.autoland?.certifiedLevel ?? 'N/A'],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _builLandingGearData(LandingGear? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Landing Gear Configuration', detail?.type ?? 'N/A'],
         ['Number of Wheels', detail?.numberOfWheels ?? 'N/A'],
         ['Tyre Size (inches)', detail?.tyreSize ?? 'N/A'],
         ['Tyre Pressure (psi)', detail?.tyrePressure ?? 'N/A'],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
   Widget _builCertificationData(CertificationEnvironmental? detail) {
-    return _buildFieldRows(
-      [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Certification Basis', detail?.certificationBasis ?? 'N/A'],
         ['Special Conditions', detail?.specialConditions ?? 'N/A'],
         ['Noise Compliance', detail?.noiseCompliance ?? 'N/A'],
@@ -775,8 +776,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
         ['EASA TCDS Number', detail?.easa ?? 'N/A'],
         ['FAA TCDS Number', detail?.faa ?? 'N/A'],
       ],
-      labelColor: fieldColor,
-      valueColor: fieldColor,
+      context: context,
     );
   }
 
@@ -952,24 +952,26 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildFieldRows([
-                    ['Call Sign', flight.callsign ?? 'N/A'],
-                    ['Flight Code', flight.flightNumber ?? 'N/A'],
-                    ['Squawk', flight.squawk ?? 'N/A', true],
-                    ['ADS-B Hex', flight.hex ?? 'N/A', true],
-                    [
-                      'Latitude',
-                      flight.latitude?.toStringAsFixed(6) ?? 'N/A',
-                      true,
+                  customFieldForTextAndValue(
+                    true,
+                    fields: [
+                      ['Call Sign', flight.callsign ?? 'N/A'],
+                      ['Flight Code', flight.flightNumber ?? 'N/A'],
+                      ['Squawk', flight.squawk ?? 'N/A'],
+                      ['ADS-B Hex', flight.hex ?? 'N/A'],
+                      [
+                        'Latitude',
+                        flight.latitude?.toStringAsFixed(6) ?? 'N/A',
+                      ],
+                      [
+                        'Longitude',
+                        flight.longitude?.toStringAsFixed(6) ?? 'N/A',
+                      ],
+                      ['Registration', flight.registration ?? 'N/A'],
+                      ['Data Source', flight.source ?? 'N/A'],
                     ],
-                    [
-                      'Longitude',
-                      flight.longitude?.toStringAsFixed(6) ?? 'N/A',
-                      true,
-                    ],
-                    ['Registration', flight.registration ?? 'N/A', true],
-                    ['Data Source', flight.source ?? 'N/A', true],
-                  ]),
+                    context: context,
+                  ),
                 ],
               ),
             ),
@@ -988,66 +990,54 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           if (showFlightPlan)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _buildFieldRows([
-                ['Track (degree)', flight.track?.toString() ?? 'N/A'],
-                ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
-                [
-                  'Ground Speed (kts)',
-                  flight.groundSpeed?.toString() ?? 'N/A',
-                  true,
+              child: customFieldForTextAndValue(
+                true,
+                fields: [
+                  ['Track (degree)', flight.track?.toString() ?? 'N/A'],
+                  ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
+                  [
+                    'Ground Speed (kts)',
+                    flight.groundSpeed?.toString() ?? 'N/A',
+                  ],
+                  [
+                    'Vertical Speed (ft/min)',
+                    flight.vspeed?.toString() ?? 'N/A',
+                  ],
+                  ['Airport of Departure', flight.originAirport?.city ?? 'N/A'],
+                  [
+                    'Airport of Arrival',
+                    flight.destinationAirport?.city ?? 'N/A',
+                  ],
+                  [
+                    'Take-off Time',
+                    flight.takeoffTime != null
+                        ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.takeoffTime!.toLocal())} IST'
+                        : 'N/A',
+                  ],
+                  [
+                    'Estimated Time of Arrival',
+                    flight.eta != null
+                        ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.eta!.toLocal())} IST'
+                        : 'N/A',
+                  ],
+                  [
+                    'Take-off Runway',
+                    flight.takeoffRunway?.toString() ?? 'N/A',
+                  ],
+                  ['Landing Runway', flight.landingRunway?.toString() ?? 'N/A'],
+                  [
+                    'Actual ground distance (km)',
+                    flight.actualDistance?.toString() ?? 'N/A',
+                  ],
+                  [
+                    'Circle distance (km)',
+                    flight.circleDistance?.toString() ?? 'N/A',
+                  ],
+                  ['Flight Duration', flight.flightTime ?? 'N/A'],
+                  ['Carrier Operating', flight.operatingAs ?? 'N/A'],
                 ],
-                [
-                  'Vertical Speed (ft/min)',
-                  flight.vspeed?.toString() ?? 'N/A',
-                  true,
-                ],
-                [
-                  'Airport of Departure',
-                  flight.originAirport?.city ?? 'N/A',
-                  true,
-                ],
-                [
-                  'Airport of Arrival',
-                  flight.destinationAirport?.city ?? 'N/A',
-                  true,
-                ],
-                [
-                  'Take-off Time',
-                  flight.takeoffTime != null
-                      ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.takeoffTime!.toLocal())} IST'
-                      : 'N/A',
-                  true,
-                ],
-                [
-                  'Estimated Time of Arrival',
-                  flight.eta != null
-                      ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.eta!.toLocal())} IST'
-                      : 'N/A',
-                  true,
-                ],
-                [
-                  'Take-off Runway',
-                  flight.takeoffRunway?.toString() ?? 'N/A',
-                  true,
-                ],
-                [
-                  'Landing Runway',
-                  flight.landingRunway?.toString() ?? 'N/A',
-                  true,
-                ],
-                [
-                  'Actual ground distance (km)',
-                  flight.actualDistance?.toString() ?? 'N/A',
-                  true,
-                ],
-                [
-                  'Circle distance (km)',
-                  flight.circleDistance?.toString() ?? 'N/A',
-                  true,
-                ],
-                ['Flight Duration', flight.flightTime ?? 'N/A', true],
-                ['Carrier Operating', flight.operatingAs ?? 'N/A', true],
-              ]),
+                context: context,
+              ),
             ),
           const Divider(
             height: 0,
@@ -1065,12 +1055,16 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
           if (showTrackingStatus)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _buildFieldRows([
-                ['First seen', flight.firstSeen?.toString() ?? 'N/A'],
-                ['Last seen', flight.lastSeen?.toString() ?? 'N/A'],
-                ['Landed', flight.flightEnded == true ? "Yes (Ended)" : "No"],
-                ['Landing Time', flight.landingTime?.toString() ?? 'N/A'],
-              ]),
+              child: customFieldForTextAndValue(
+                true,
+                fields: [
+                  ['First seen', flight.firstSeen?.toString() ?? 'N/A'],
+                  ['Last seen', flight.lastSeen?.toString() ?? 'N/A'],
+                  ['Landed', flight.flightEnded == true ? "Yes (Ended)" : "No"],
+                  ['Landing Time', flight.landingTime?.toString() ?? 'N/A'],
+                ],
+                context: context,
+              ),
             ),
           const Divider(
             height: 0,
@@ -1213,58 +1207,58 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
     );
   }
 
-  Widget _buildFieldRows(
-    List<List<dynamic>> fields, {
-    Color labelColor = Colors.white70,
-    Color valueColor = Colors.white,
-    List<int>? showInfoFields,
-  }) {
-    return Column(
-      children: List.generate((fields.length / 2).ceil(), (i) {
-        final first = fields[i * 2];
-        final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: Row(
-            children: [
-              Expanded(
-                child: customField(
-                  label: first[0],
-                  text: first[1],
-                  labelColor: labelColor,
-                  textColor: valueColor,
-                  showInfoIcon:
-                      (first.length > 2 && first[2] == true) ||
-                      (showInfoFields?.contains(i * 2) ?? false),
-                  onInfoTap: () {
-                    showAutoDismissDialog(context, first[0], first[1]);
-                  },
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: second != null
-                    ? customField(
-                        label: second[0],
-                        text: second[1],
-                        labelColor: labelColor,
-                        textColor: valueColor,
-                        showInfoIcon:
-                            (second.length > 2 && second[2] == true) ||
-                            (showInfoFields?.contains(i * 2 + 1) ?? false),
-                        onInfoTap: () {
-                          showAutoDismissDialog(context, second[0], second[1]);
-                        },
-                      )
-                    : const SizedBox(),
-              ),
-            ],
-          ),
-        );
-      }),
-    );
-  }
+  // Widget _buildFieldRows(
+  //   List<List<dynamic>> fields, {
+  //   Color labelColor = Colors.white70,
+  //   Color valueColor = Colors.white,
+  //   List<int>? showInfoFields,
+  // }) {
+  //   return Column(
+  //     children: List.generate((fields.length / 2).ceil(), (i) {
+  //       final first = fields[i * 2];
+  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+  //
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 15),
+  //         child: Row(
+  //           children: [
+  //             Expanded(
+  //               child: customField(
+  //                 label: first[0],
+  //                 text: first[1],
+  //                 labelColor: labelColor,
+  //                 textColor: valueColor,
+  //                 showInfoIcon:
+  //                     (first.length > 2 && first[2] == true) ||
+  //                     (showInfoFields?.contains(i * 2) ?? false),
+  //                 onInfoTap: () {
+  //                   showAutoDismissDialog(context, first[0], first[1]);
+  //                 },
+  //               ),
+  //             ),
+  //             const SizedBox(width: 15),
+  //             Expanded(
+  //               child: second != null
+  //                   ? customField(
+  //                       label: second[0],
+  //                       text: second[1],
+  //                       labelColor: labelColor,
+  //                       textColor: valueColor,
+  //                       showInfoIcon:
+  //                           (second.length > 2 && second[2] == true) ||
+  //                           (showInfoFields?.contains(i * 2 + 1) ?? false),
+  //                       onInfoTap: () {
+  //                         showAutoDismissDialog(context, second[0], second[1]);
+  //                       },
+  //                     )
+  //                   : const SizedBox(),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
 
   Widget _buildExpandableSection({
     required String title,

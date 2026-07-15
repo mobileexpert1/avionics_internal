@@ -3,8 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Constants/AppColors.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../Helpers/Custom_widget.dart';
 import '../../../bloc/MapSection/AircraftStationList/aircraft_Station_List_Model.dart';
-import '../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
 
 class AirportStationDetailCard extends StatefulWidget {
   final AircraftStationModel? airportDetail;
@@ -83,8 +83,9 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
   /// -------- Airport Details --------
   List<Widget> _buildAirportDetails(AircraftStationModel detail) {
     return [
-      buildFieldRows(
-        [
+      customFieldForTextAndValue(
+        false,
+        fields: [
           ["Name", detail.name],
           [
             "IATA/ICAO Code",
@@ -95,14 +96,8 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
           ["Country", detail.country],
           ["Time Zone", detail.timezone],
           ["Type", detail.runwaySurfaceType.toString()],
-
-          // ["Elevation (m)", (detail.valueOrNA(detail.elev))],
-          // ["Runway(s) Length (m)", detail.runwayLength.toString()],
-          // ["ICAO Code", detail.icao.toString()],
-          // ["IATA Code", detail.iataCode.toString()],
         ],
-        labelColor: labelColor,
-        valueColor: valueColor,
+        context: context,
       ),
       if (detail.websiteUrl != null &&
           detail.websiteUrl!.isNotEmpty &&
@@ -127,8 +122,9 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
       ),
       const SizedBox(height: 15),
       if (subSegmentIndex == 0) ...[
-        buildFieldRows(
-          [
+        customFieldForTextAndValue(
+          false,
+          fields: [
             ["Terminal(s) No", detail.numberOfTerminals.toString()],
             ["Runway(s) No", detail.numberOfRunways.toString()],
             ["Runway Surface", detail.runwaySurfaceType.toString()],
@@ -136,21 +132,20 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
             ["Runway(s) Elevation", detail.runwaySurfaceType.toString()],
             ["Runway(s) Length", detail.runwayLength.toString()],
           ],
-          labelColor: labelColor,
-          valueColor: valueColor,
+          context: context,
         ),
       ],
       if (subSegmentIndex == 1) ...[
-        buildFieldRows(
-          [
+        customFieldForTextAndValue(
+          false,
+          fields: [
             ["Annual Movements (approx.)", detail.annualMovements.toString()],
             [
               "Annual Passenger Traffic (approx.)",
               detail.annualPassengerTraffic.toString(),
             ],
           ],
-          labelColor: labelColor,
-          valueColor: valueColor,
+          context: context,
         ),
 
         if (detail.airportWeatherUrl != null &&
@@ -233,7 +228,11 @@ Widget buildActionText(String title, VoidCallback onTap) {
           ),
         ),
         const SizedBox(width: 6),
-        const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.primaryBlue),
+        const Icon(
+          Icons.arrow_forward_ios,
+          size: 14,
+          color: AppColors.primaryBlue,
+        ),
       ],
     ),
   );

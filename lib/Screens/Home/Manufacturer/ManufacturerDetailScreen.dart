@@ -703,34 +703,11 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   }
 
   Widget _buildGeneralInfo(General generalDetails) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: customField(
-                label: 'Headquarters',
-                text: generalDetails.headquarter ?? '',
-                fontSize: 18,
-                labelColor: AppColors.lightGreyTextFieldHeading,
-                textColor: AppColors.primaryValueColour,
-              ),
-            ),
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: customField(
-                label: 'Founding Date',
-                text: generalDetails.foundingDate,
-                fontSize: 18,
-                labelColor: AppColors.lightGreyTextFieldHeading,
-                textColor: AppColors.primaryValueColour,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
+    return customFieldForTextAndValue(false, fields: [
+        ['Headquarters', generalDetails.headquarter ?? ''],
+        ['Founding Date', generalDetails.foundingDate],
       ],
+        context: context
     );
   }
 
@@ -811,7 +788,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
     final image = ClipRRect(
       child: CachedAnyImage(
         useCache: true,
-        isForPlaneList:true,
+        isForPlaneList: true,
         imagePath: coverImages.url,
         width: MediaQuery.of(context).size.width,
         height: screenHeight * (kIsWeb ? 0.40 : 0.30),

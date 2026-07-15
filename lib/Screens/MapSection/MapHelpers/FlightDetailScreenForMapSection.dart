@@ -78,7 +78,7 @@ class _FlightDetailScreenForMapSectionState
     "Performance",
     "Operational Limitations",
     "Landing Gear",
-    "Certification",
+    "Certification & Environmental",
   ];
 
   @override
@@ -598,7 +598,6 @@ class _FlightDetailScreenForMapSectionState
                               contentImage: kIsWeb
                                   ? BoxFit.cover
                                   : BoxFit.cover,
-
                             ),
 
                             if (hasCopyright)
@@ -609,13 +608,16 @@ class _FlightDetailScreenForMapSectionState
                                   onTap: () async {
                                     final uri = Uri.tryParse(image.source);
 
-                                    if (uri != null && await canLaunchUrl(uri)) {
+                                    if (uri != null &&
+                                        await canLaunchUrl(uri)) {
                                       await launchUrl(
                                         uri,
                                         mode: LaunchMode.externalApplication,
                                       );
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         const SnackBar(
                                           content: Text('Could not open URL.'),
                                         ),
@@ -879,76 +881,68 @@ class _FlightDetailScreenForMapSectionState
     if (mainTab == 0) {
       switch (index) {
         case 0:
-          return _buildFieldRows([
-            ['Call Sign', flight.callsign ?? 'N/A'],
-            ['Flight Code', flight.flightNumber ?? 'N/A'],
-            ['Squawk', flight.squawk ?? 'N/A', true],
-            ['ADS-B Hex', flight.hex ?? 'N/A', true],
-            ['Latitude', flight.latitude.toStringAsFixed(6), true],
-            ['Longitude', flight.longitude.toStringAsFixed(6), true],
-            ['Registration', flight.registration ?? 'N/A', true],
-            ['Data Source', flight.source ?? 'N/A', true],
-          ]);
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              ['Call Sign', flight.callsign ?? 'N/A', true],
+              ['Flight Code', flight.flightNumber ?? 'N/A', true],
+              ['Squawk', flight.squawk ?? 'N/A', true],
+              ['ADS-B Hex', flight.hex ?? 'N/A', true],
+              ['Latitude', flight.latitude.toStringAsFixed(6), true],
+              ['Longitude', flight.longitude.toStringAsFixed(6), true],
+              ['Registration', flight.registration ?? 'N/A', true],
+              ['Data Source', flight.source ?? 'N/A', true],
+            ],
+            context: context,
+          );
         case 1:
-          return _buildFieldRows([
-            ['Track (degree)', flight.track?.toString() ?? 'N/A'],
-            ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
-            [
-              'Ground Speed (kts)',
-              flight.groundSpeed?.toString() ?? 'N/A',
-              true,
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              ['Track (degree)', flight.track?.toString() ?? 'N/A'],
+              ['Altitude (ft)', flight.altitude?.toString() ?? 'N/A'],
+              ['Ground Speed (kts)', flight.groundSpeed?.toString() ?? 'N/A'],
+              ['Vertical Speed (ft/min)', flight.vspeed?.toString() ?? 'N/A'],
+              ['Airport of Departure', flight.originAirport?.city ?? 'N/A'],
+              ['Airport of Arrival', flight.destinationAirport?.city ?? 'N/A'],
+              [
+                'Take-off Time',
+                flight.takeoffTime != null
+                    ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.takeoffTime!.toLocal())} IST'
+                    : 'N/A',
+              ],
+              [
+                'Estimated Time of Arrival',
+                flight.eta != null
+                    ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.eta!.toLocal())} IST'
+                    : 'N/A',
+              ],
+              ['Take-off Runway', flight.takeoffRunway?.toString() ?? 'N/A'],
+              ['Landing Runway', flight.landingRunway?.toString() ?? 'N/A'],
+              [
+                'Actual ground distance (km)',
+                flight.actualDistance?.toString() ?? 'N/A',
+              ],
+              [
+                'Circle distance (km)',
+                flight.circleDistance?.toString() ?? 'N/A',
+              ],
+              ['Flight Duration', flight.flightTime ?? 'N/A'],
+              ['Carrier Operating', flight.operatingAs ?? 'N/A'],
             ],
-            [
-              'Vertical Speed (ft/min)',
-              flight.vspeed?.toString() ?? 'N/A',
-              true,
-            ],
-            ['Airport of Departure', flight.originAirport?.city ?? 'N/A', true],
-            [
-              'Airport of Arrival',
-              flight.destinationAirport?.city ?? 'N/A',
-              true,
-            ],
-            [
-              'Take-off Time',
-              flight.takeoffTime != null
-                  ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.takeoffTime!.toLocal())} IST'
-                  : 'N/A',
-              true,
-            ],
-            [
-              'Estimated Time of Arrival',
-              flight.eta != null
-                  ? '${DateFormat('yyyy-MM-dd HH:mm:ss').format(flight.eta!.toLocal())} IST'
-                  : 'N/A',
-              true,
-            ],
-            [
-              'Take-off Runway',
-              flight.takeoffRunway?.toString() ?? 'N/A',
-              true,
-            ],
-            ['Landing Runway', flight.landingRunway?.toString() ?? 'N/A', true],
-            [
-              'Actual ground distance (km)',
-              flight.actualDistance?.toString() ?? 'N/A',
-              true,
-            ],
-            [
-              'Circle distance (km)',
-              flight.circleDistance?.toString() ?? 'N/A',
-              true,
-            ],
-            ['Flight Duration', flight.flightTime ?? 'N/A', true],
-            ['Carrier Operating', flight.operatingAs ?? 'N/A', true],
-          ]);
+            context: context,
+          );
         case 2:
-          return _buildFieldRows([
-            ['First seen', flight.firstSeen?.toString() ?? 'N/A'],
-            ['Last seen', flight.lastSeen?.toString() ?? 'N/A'],
-            ['Landed', flight.flightEnded == true ? "Yes (Ended)" : "No"],
-            ['Landing Time', flight.landingTime?.toString() ?? 'N/A'],
-          ]);
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              ['First seen', flight.firstSeen?.toString() ?? 'N/A'],
+              ['Last seen', flight.lastSeen?.toString() ?? 'N/A'],
+              ['Landed', flight.flightEnded == true ? "Yes (Ended)" : "No"],
+              ['Landing Time', flight.landingTime?.toString() ?? 'N/A'],
+            ],
+            context: context,
+          );
       }
     } else {
       switch (index) {
@@ -958,350 +952,498 @@ class _FlightDetailScreenForMapSectionState
               if (hasValidImages) const SizedBox(height: 10),
               _buildImageCoverScroller(screenHeight, aircraftData!.images!),
               if (hasValidImages) const SizedBox(height: 30),
-              _buildFieldRows([
-                [
-                  'ICAO Type Code',
-                  detail?.identification.icaoTypeCode ??
-                      _currentFlightDetail?.type ??
-                      'N/A',
+              customFieldForTextAndValue(
+                false,
+                fields: [
+                  [
+                    'ICAO Type Code',
+                    detail?.identification.icaoTypeCode ??
+                        _currentFlightDetail?.type ??
+                        'N/A',
+                  ],
+                  [
+                    'Aircraft Manufacturer',
+                    detail?.identification.manufacturer ?? 'N/A',
+                  ],
+                  [
+                    'Aircraft Model',
+                    detail?.identification.aircraftModel ?? 'N/A',
+                  ],
+                  [
+                    'Wake Turbulence Category',
+                    detail?.identification.wakeTurbulenceCategory ?? 'N/A',
+                  ],
+                  [
+                    'Civilian / Military / Dual Use',
+                    detail?.identification.civilianMilitaryOrDualUse ?? 'N/A',
+                  ],
+                  [
+                    'Country of Origin',
+                    detail?.identification.countryOfOrigin ?? 'N/A',
+                  ],
+                  [
+                    'Date of Maiden Flight',
+                    detail?.identification.dateOfMaidenFlight ?? 'N/A',
+                  ],
+                  [
+                    'Year of Introduction',
+                    detail?.identification.yearOfIntroduction ?? 'N/A',
+                  ],
+                  [
+                    'Production Status',
+                    detail?.identification.productionStatus ?? 'N/A',
+                  ],
+                  [
+                    'Avionics System Name',
+                    detail?.identification.avionicsSystem ?? 'N/A',
+                  ],
+                  [
+                    'Number of Crew',
+                    detail?.identification.numberOfCrew ?? 'N/A',
+                  ],
+                  [
+                    'Number of Passengers (Maximum)',
+                    detail?.identification.numberOfPassengers.maximum ?? 'N/A',
+                  ],
+                  [
+                    'Number of Passengers (Typical)',
+                    detail?.identification.numberOfPassengers.typical ?? 'N/A',
+                  ],
+
+                  // [
+                  //   'Aircraft Role',
+                  //   detail?.identification.aircraftRole ?? 'N/A',
+                  // ],
+                  // [
+                  //   'Aircraft Type',
+                  //   detail?.identification.aircraftType ??
+                  //       _currentFlightDetail?.type ??
+                  //       'N/A',
+                  // ],
                 ],
-                [
-                  'Aircraft Manufacturer',
-                  detail?.identification.manufacturer ?? 'N/A',
-                ],
-                [
-                  'Aircraft Model',
-                  detail?.identification.aircraftModel ?? 'N/A',
-                ],
-                ['Aircraft Role', detail?.identification.aircraftRole ?? 'N/A'],
-                [
-                  'Aircraft Type',
-                  detail?.identification.aircraftType ??
-                      _currentFlightDetail?.type ??
-                      'N/A',
-                ],
-                [
-                  'Wake Turbulence Category',
-                  detail?.identification.wakeTurbulenceCategory ?? 'N/A',
-                ],
-                [
-                  'Civilian / Military / Dual Use',
-                  detail?.identification.civilianMilitaryOrDualUse ?? 'N/A',
-                ],
-                [
-                  'Country of Origin',
-                  detail?.identification.countryOfOrigin ?? 'N/A',
-                ],
-                [
-                  'Date of Maiden Flight',
-                  detail?.identification.dateOfMaidenFlight ?? 'N/A',
-                ],
-                [
-                  'Year of Introduction',
-                  detail?.identification.yearOfIntroduction ?? 'N/A',
-                ],
-                [
-                  'Production Status',
-                  detail?.identification.productionStatus ?? 'N/A',
-                ],
-                [
-                  'Avionics System Name',
-                  detail?.identification.avionicsSystem ?? 'N/A',
-                ],
-                [
-                  'Number of Crew',
-                  detail?.identification.numberOfCrew ?? 'N/A',
-                ],
-                [
-                  'Number of Passengers (Typical)',
-                  detail?.identification.numberOfPassengers.typical ?? 'N/A',
-                ],
-                [
-                  'Number of Passengers (Maximum)',
-                  detail?.identification.numberOfPassengers.maximum ?? 'N/A',
-                ],
-              ]),
+                context: context,
+              ),
             ],
           );
         case 1:
-          return _buildFieldRows([
-            [
-              'Number of Engines',
-              detail?.powerplant.numberOfEngines.toString() ?? 'N/A',
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              [
+                'Number of Engines',
+                detail?.powerplant.numberOfEngines.toString() ?? 'N/A',
+              ],
+              [
+                'Fuel Consumption (kg/h)',
+                detail?.powerplant.fuel.burnRate ?? 'N/A',
+              ],
+              ['Manufacturer', detail?.powerplant.engine.manufacturer ?? 'N/A'],
+              ['Model', detail?.powerplant.engine.model ?? 'N/A'],
+              ['Engine Type', detail?.powerplant.engine.engineType ?? 'N/A'],
+              [
+                'Thrust Per Engine (kN)',
+                detail?.powerplant.engine.thrust ?? 'N/A',
+              ],
+              [
+                'Physical Engine Code',
+                detail?.powerplant.engine.physicalEngineCode ?? 'N/A',
+              ],
+              ['APU Type', detail?.powerplant.apuType ?? 'N/A'],
+              ['Fuel Type', detail?.powerplant.fuel.fuelType ?? 'N/A'],
+              [
+                'Fuel Additives',
+                detail?.powerplant.fuel.fuelAdditives ?? 'N/A',
+              ],
+              ['Fuel Capacity (L)', detail?.powerplant.fuel.capacity ?? 'N/A'],
             ],
-            ['Fuel Consumption', detail?.powerplant.fuel.burnRate ?? 'N/A'],
-            ['Manufacturer', detail?.powerplant.engine.manufacturer ?? 'N/A'],
-            ['Model', detail?.powerplant.engine.model ?? 'N/A'],
-            ['Engine Type', detail?.powerplant.engine.engineType ?? 'N/A'],
-            [
-              'Thrust Per Engine (kN)',
-              detail?.powerplant.engine.thrust ?? 'N/A',
-            ],
-            [
-              'Physical Engine Code',
-              detail?.powerplant.engine.physicalEngineCode ?? 'N/A',
-            ],
-            ['APU Type', detail?.powerplant.apuType ?? 'N/A'],
-            ['Fuel Type', detail?.powerplant.fuel.fuelType ?? 'N/A'],
-            ['Fuel Additives', detail?.powerplant.fuel.fuelAdditives ?? 'N/A'],
-            ['Fuel Capacity', detail?.powerplant.fuel.capacity ?? 'N/A'],
-          ]);
+            context: context,
+          );
         case 2:
-          return _buildFieldRows([
-            ['Wingspan (m)', detail?.dimensions.wingspanM ?? 'N/A'],
-            ['Cabin Width (m)', detail?.dimensions.cabinWidthM ?? 'N/A'],
-            ['Length (m)', detail?.dimensions.lengthM ?? 'N/A'],
-            [
-              'Wingtip Configuration',
-              detail?.dimensions.wingtipConfiguration ?? 'N/A',
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              ['Wingspan (m)', detail?.dimensions.wingspanM ?? 'N/A'],
+              ['Cabin Width (m)', detail?.dimensions.cabinWidthM ?? 'N/A'],
+              ['Length (m)', detail?.dimensions.lengthM ?? 'N/A'],
+              [
+                'Wingtip Configuration',
+                detail?.dimensions.wingtipConfiguration ?? 'N/A',
+              ],
+              ['Height (m)', detail?.dimensions.heightM ?? 'N/A'],
+              ['Wing Area (m²)', detail?.dimensions.wingAreaM2 ?? 'N/A'],
+              ['Door Height (m)', detail?.dimensions.doorHeightM ?? 'N/A'],
             ],
-            ['Height (m)', detail?.dimensions.heightM ?? 'N/A'],
-            ['Wing Area (m²)', detail?.dimensions.wingAreaM2 ?? 'N/A'],
-            ['Door Height (m)', detail?.dimensions.doorHeightM ?? 'N/A'],
-          ]);
+            context: context,
+          );
         case 3:
-          return _buildFieldRows([
-            [
-              'Operating Empty Weight (kg)',
-              detail?.weights.emptyWeight ?? 'N/A',
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              [
+                'Operating Empty Weight(OEW, kg)',
+                detail?.weights.emptyWeight ?? 'N/A',
+              ],
+              [
+                'Maximum Zero Fuel Weight (MZFW, kg)',
+                detail?.weights.zeroFuelWeight ?? 'N/A',
+              ],
+              [
+                'Maximum Takeoff Weight(MTOW, kg)',
+                detail?.weights.takeoffWeight ?? 'N/A',
+              ],
+              ['Maximum Payload (kg)', detail?.weights.payload ?? 'N/A'],
+              [
+                'Maximum Landing Weight(MLW, kg)',
+                detail?.weights.landingWeight ?? 'N/A',
+              ],
+              [
+                'Maximum Baggage or Cargo Volume (m³)',
+                detail?.weights.baggage.maximum ?? 'N/A',
+              ],
+              [
+                'Minimum Baggage or Cargo Volume (m³)',
+                detail?.weights.baggage.minimum ?? 'N/A',
+              ],
             ],
-            [
-              'Maximum Zero Fuel Weight (kg)',
-              detail?.weights.zeroFuelWeight ?? 'N/A',
-            ],
-            [
-              'Maximum Takeoff Weight (kg)',
-              detail?.weights.takeoffWeight ?? 'N/A',
-            ],
-            ['Max Payload (kg)', detail?.weights.payload ?? 'N/A'],
-            [
-              'Maximum Landing Weight (kg)',
-              detail?.weights.landingWeight ?? 'N/A',
-            ],
-            [
-              'Maximum Baggage or Cargo Volume (m³)',
-              detail?.weights.baggage.maximum ?? 'N/A',
-            ],
-            [
-              'Minimum Baggage or Cargo Volume (m³)',
-              detail?.weights.baggage.minimum ?? 'N/A',
-            ],
-          ]);
+            context: context,
+          );
         case 4:
-          return _buildFieldRows([
-            [
-              'Takeoff Speed (kts)',
-              detail?.performance.takeoffSpeedKts ?? 'N/A',
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              [
+                'Takeoff Speed (kts)',
+                detail?.performance.takeoffSpeedKts ?? 'N/A',
+              ],
+              [
+                'Takeoff Distance (m)',
+                detail?.performance.takeoffDistanceM ?? 'N/A',
+              ],
+              [
+                'Initial Rate of Climb (fpm)',
+                detail?.performance.climbInitialFpm ?? 'N/A',
+              ],
+              [
+                'Average Rate of Climb (fpm)',
+                detail?.performance.climbAvgFpm ?? 'N/A',
+              ],
+              [
+                'Maximum Rate of Climb(fpm)',
+                detail?.performance.climbMaxFpm ?? 'N/A',
+              ],
+              [
+                'Service Ceiling (ft)',
+                detail?.performance.serviceCeiling ?? 'N/A',
+              ],
+              [
+                'Max Certified Altitude (ft)',
+                detail?.performance.maxCertifiedAltitude ?? 'N/A',
+              ],
+              [
+                'Cruise Speed (kt/Mach)',
+                detail?.performance.cruiseSpeedKt ?? 'N/A',
+              ],
+              [
+                'Maximum Speed (VMO/MMO, kts/Mach)',
+                detail?.performance.maxCruiseSpeed ?? 'N/A',
+              ],
+              [
+                'Range (NM /km)',
+                "${detail?.performance.range.normalRangeNm ?? 'N/A'} NM / ${detail?.performance.range.normalRangeKm ?? 'N/A'} Km",
+              ],
+              [
+                'Ferry Range (NM/km)',
+                (detail?.performance.range.ferryRangeNm ?? 'N/A'),
+              ],
+              [
+                'Initial Rate of Descent (fpm)',
+                detail?.performance.descentInitialFpm ?? 'N/A',
+              ],
+              [
+                'Average Rate of Descent(fpm)',
+                detail?.performance.descentAvgFpm ?? 'N/A',
+              ],
+              [
+                'Minimum Clean Speed (kts)',
+                detail?.performance.minCleanSpeed ?? 'N/A',
+              ],
+              [
+                'Approach Category',
+                detail?.performance.approachCategory ?? 'N/A',
+              ],
+
+              [
+                'Approach Speed (kts)',
+                detail?.performance.approachSpeed ?? 'N/A',
+              ],
+              [
+                'Landing Distance (m)',
+                detail?.performance.landingDistance ?? 'N/A',
+              ],
+
+              [
+                'Landing Speed (kts)',
+                detail?.performance.landingSpeed ?? 'N/A',
+              ],
+
+              ['Stall Speed (kts)', detail?.performance.stallSpeed ?? 'N/A'],
+              [
+                'Runway Length Required (m)',
+                detail?.performance.runwayRequired ?? 'N/A',
+              ],
             ],
-            [
-              'Takeoff Distance (m)',
-              detail?.performance.takeoffDistanceM ?? 'N/A',
-            ],
-            [
-              'Initial Rate of Climb (fpm)',
-              detail?.performance.climbInitialFpm ?? 'N/A',
-            ],
-            [
-              'Average Rate of Climb (fpm)',
-              detail?.performance.climbAvgFpm ?? 'N/A',
-            ],
-            [
-              'Maximum Rate of Climb (fpm)',
-              detail?.performance.climbMaxFpm ?? 'N/A',
-            ],
-            [
-              'Service Ceiling (ft)',
-              detail?.performance.serviceCeiling ?? 'N/A',
-            ],
-            [
-              'Max Certified Altitude (ft)',
-              detail?.performance.maxCertifiedAltitude ?? 'N/A',
-            ],
-            ['Cruise Speed (kt)', detail?.performance.cruiseSpeedKt ?? 'N/A'],
-            ['Cruise (Mach)', detail?.performance.cruiseMach ?? 'N/A'],
-            ['Maximum Speed', detail?.performance.maxCruiseSpeed ?? 'N/A'],
-            ['VMO (kts)', detail?.performance.vmoKts ?? 'N/A'],
-            ['MMO (Mach)', detail?.performance.mmoMach ?? 'N/A'],
-            [
-              'Range (NM / km)',
-              "${detail?.performance.range.normalRangeNm ?? 'N/A'} NM / ${detail?.performance.range.normalRangeKm ?? 'N/A'} Km",
-            ],
-            [
-              'Ferry Range (if applicable)',
-              detail?.performance.range.ferryRangeNm ?? 'N/A',
-            ],
-            [
-              'Initial Rate of Descent (fpm)',
-              detail?.performance.descentInitialFpm ?? 'N/A',
-            ],
-            [
-              'Average Rate of Descent (fpm)',
-              detail?.performance.descentAvgFpm ?? 'N/A',
-            ],
-            [
-              'Minimum Clean Speed (kts)',
-              detail?.performance.minCleanSpeed ?? 'N/A',
-            ],
-            [
-              'Approach Speed (kts)',
-              detail?.performance.approachSpeed ?? 'N/A',
-            ],
-            [
-              'Approach Category',
-              detail?.performance.approachCategory ?? 'N/A',
-            ],
-            ['Landing Speed (kts)', detail?.performance.landingSpeed ?? 'N/A'],
-            [
-              'Landing Distance (m)',
-              detail?.performance.landingDistance ?? 'N/A',
-            ],
-            [
-              'Runway Length Required (m)',
-              detail?.performance.runwayRequired ?? 'N/A',
-            ],
-            ['Stall Speed (kts)', detail?.performance.stallSpeed ?? 'N/A'],
-          ]);
+            context: context,
+          );
         case 5:
-          return _buildFieldRows([
-            [
-              'Runway Slope Limit (%)',
-              detail?.operationalLimitations.runwaySlopeLimit ?? 'N/A',
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              [
+                'Runway Slope Limit (%)',
+                detail?.operationalLimitations.runwaySlopeLimit ?? 'N/A',
+              ],
+              [
+                'Max Crosswind (Normal Law, kts)',
+                detail?.operationalLimitations.maxCrosswindNormal ?? 'N/A',
+              ],
+              [
+                'Maximum Crosswind (Degraded Law, kts)',
+                detail?.operationalLimitations.maxCrosswindDegraded ?? 'N/A',
+              ],
+              [
+                'Max Tailwind (Landing, kts)',
+                detail?.operationalLimitations.maxTailwindLanding ?? 'N/A',
+              ],
+              [
+                'Max Tailwind Takeoff (kts)',
+                detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
+              ],
+              [
+                'Field Elevation Limit (ft)',
+                detail?.operationalLimitations.fieldElevationLimit ?? 'N/A',
+              ],
+              [
+                'Maximum Runway Altitude (ft)',
+                detail?.operationalLimitations.maxRunwayAltitude ?? 'N/A',
+              ],
+              [
+                'Tailwind Limit (Flaps ≤10°)',
+                detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
+              ],
+              [
+                'Supported Categories',
+                detail?.operationalLimitations.autoland.supportedCategories ??
+                    'N/A',
+              ],
+              [
+                'Certified Autoland Level',
+                detail?.operationalLimitations.autoland.certifiedLevel ?? 'N/A',
+              ],
             ],
-            [
-              'Max Crosswind Normal Law (kts)',
-              detail?.operationalLimitations.maxCrosswindNormal ?? 'N/A',
-            ],
-            [
-              'Maximum Crosswind (Degraded Law)',
-              detail?.operationalLimitations.maxCrosswindDegraded ?? 'N/A',
-            ],
-            [
-              'Max Tailwind Landing (kts)',
-              detail?.operationalLimitations.maxTailwindLanding ?? 'N/A',
-            ],
-            [
-              'Max Tailwind Takeoff (kts)',
-              detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
-            ],
-            [
-              'Field Elevation Limit (ft)',
-              detail?.operationalLimitations.fieldElevationLimit ?? 'N/A',
-            ],
-            [
-              'Maximum Runway Altitude (ft)',
-              detail?.operationalLimitations.maxRunwayAltitude ?? 'N/A',
-            ],
-            [
-              'Tailwind Limit (Flaps ≤10°)',
-              detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
-            ],
-            [
-              'Supported Categories',
-              detail?.operationalLimitations.autoland.supportedCategories ??
-                  'N/A',
-            ],
-            [
-              'Certified Autoland Level',
-              detail?.operationalLimitations.autoland.certifiedLevel ?? 'N/A',
-            ],
-          ]);
+            context: context,
+          );
         case 6:
-          return _buildFieldRows([
-            ['Landing Gear Configuration', detail?.landingGear.type ?? 'N/A'],
-            ['Number of Wheels', detail?.landingGear.numberOfWheels ?? 'N/A'],
-            ['Tyre Size (inches)', detail?.landingGear.tyreSize ?? 'N/A'],
-            ['Tyre Pressure (psi)', detail?.landingGear.tyrePressure ?? 'N/A'],
-          ]);
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              ['Landing Gear Configuration', detail?.landingGear.type ?? 'N/A'],
+              ['Number of Wheels', detail?.landingGear.numberOfWheels ?? 'N/A'],
+              ['Tyre Size (inches)', detail?.landingGear.tyreSize ?? 'N/A'],
+              [
+                'Tyre Pressure (psi or bar)',
+                detail?.landingGear.tyrePressure ?? 'N/A',
+              ],
+            ],
+            context: context,
+          );
         case 7:
-          return _buildFieldRows([
-            [
-              'Certification Basis',
-              detail?.certification.certificationBasis ?? 'N/A',
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              [
+                'Certification Basis',
+                detail?.certification.certificationBasis ?? 'N/A',
+              ],
+              [
+                'Special Conditions',
+                detail?.certification.specialConditions ?? 'N/A',
+              ],
+              [
+                'Noise Compliance',
+                detail?.certification.noiseCompliance ?? 'N/A',
+              ],
+              [
+                'Emissions Category',
+                detail?.certification.emissionsCategory ?? 'N/A',
+              ],
+              ['EASA TCDS Number', detail?.certification.easa ?? 'N/A'],
+              ['FAA TCDS Number', detail?.certification.faa ?? 'N/A'],
             ],
-            [
-              'Special Conditions',
-              detail?.certification.specialConditions ?? 'N/A',
-            ],
-            [
-              'Noise Compliance',
-              detail?.certification.noiseCompliance ?? 'N/A',
-            ],
-            [
-              'Emissions Category',
-              detail?.certification.emissionsCategory ?? 'N/A',
-            ],
-            ['EASA TCDS Number', detail?.certification.easa ?? 'N/A'],
-            ['FAA TCDS Number', detail?.certification.faa ?? 'N/A'],
-          ]);
+            context: context,
+          );
       }
     }
     return Container();
   }
 
-  Widget _buildFieldRows(List<List<dynamic>> fields) {
-    return Column(
-      children: List.generate((fields.length / 2).ceil(), (i) {
-        final first = fields[i * 2];
-        final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+  // Widget _buildFieldRows(List<List<dynamic>> fields) {
+  //   return Column(
+  //     children: List.generate((fields.length / 2).ceil(), (i) {
+  //       final first = fields[i * 2];
+  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+  //
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 30),
+  //         child: Row(
+  //           children: [
+  //             Expanded(
+  //               child: customFieldWithNewModifications(
+  //                 fontStyleLabel: AppTextStyles.regular(14).copyWith(
+  //                   height: 1.0,
+  //                   color: AppColors.grayMedium,
+  //                   decoration: TextDecoration.underline,
+  //                   decorationThickness: 1.2,
+  //                 ),
+  //                 label: first[0],
+  //                 text: first[1],
+  //                 labelColor: AppColors.grayMedium,
+  //                 textColor: AppColors.primaryValueColour,
+  //                 showInfoIcon: true,
+  //                 onInfoTap: () {
+  //                   showAutoDismissDialog(context, first[0], first[1]);
+  //                 },
+  //                 fontStyleText: AppTextStyles.bold(
+  //                   16,
+  //                 ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: kIsWeb ? MediaQuery.of(context).size.width * 0.5 : 15,
+  //             ),
+  //             Expanded(
+  //               child: second != null
+  //                   ? customFieldWithNewModifications(
+  //                       fontStyleText: AppTextStyles.bold(16).copyWith(
+  //                         height: 1.0,
+  //                         color: AppColors.primaryValueColour,
+  //                       ),
+  //                       label: second[0],
+  //                       text: second[1],
+  //                       labelColor: AppColors.grayMedium,
+  //                       textColor: AppColors.primaryValueColour,
+  //                       showInfoIcon: true,
+  //                       onInfoTap: () {
+  //                         showAutoDismissDialog(context, second[0], second[1]);
+  //                       },
+  //                       fontStyleLabel: AppTextStyles.regular(14).copyWith(
+  //                         height: 1.0,
+  //                         color: AppColors.grayMedium,
+  //                         decoration: TextDecoration.underline,
+  //                         decorationThickness: 1.2,
+  //                       ),
+  //                     )
+  //                   : const SizedBox(),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Row(
-            children: [
-              Expanded(
-                child: customFieldWithNewModifications(
-                  fontStyleLabel: AppTextStyles.regular(14).copyWith(
-                    height: 1.0,
-                    color: AppColors.grayMedium,
-                    decoration: TextDecoration.underline,
-                    decorationThickness: 1.2,
-                  ),
-                  label: first[0],
-                  text: first[1],
-                  labelColor: AppColors.grayMedium,
-                  textColor: AppColors.primaryValueColour,
-                  showInfoIcon: true,
-                  onInfoTap: () {
-                    showAutoDismissDialog(context, first[0], first[1]);
-                  },
-                  fontStyleText: AppTextStyles.bold(
-                    16,
-                  ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
-                ),
-              ),
-              SizedBox(
-                width: kIsWeb ? MediaQuery.of(context).size.width * 0.5 : 15,
-              ),
-              Expanded(
-                child: second != null
-                    ? customFieldWithNewModifications(
-                        fontStyleText: AppTextStyles.bold(16).copyWith(
-                          height: 1.0,
-                          color: AppColors.primaryValueColour,
-                        ),
-                        label: second[0],
-                        text: second[1],
-                        labelColor: AppColors.grayMedium,
-                        textColor: AppColors.primaryValueColour,
-                        showInfoIcon: true,
-                        onInfoTap: () {
-                          showAutoDismissDialog(context, second[0], second[1]);
-                        },
-                        fontStyleLabel: AppTextStyles.regular(14).copyWith(
-                          height: 1.0,
-                          color: AppColors.grayMedium,
-                          decoration: TextDecoration.underline,
-                          decorationThickness: 1.2,
-                        ),
-                      )
-                    : const SizedBox(),
-              ),
-            ],
-          ),
-        );
-      }),
-    );
-  }
+  // Widget _buildFieldRows(List<List<dynamic>> fields) {
+  //   return Column(
+  //     children: List.generate((fields.length / 2).ceil(), (i) {
+  //       final first = fields[i * 2];
+  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 7),
+  //         child: Column(
+  //           children: [
+  //             Row(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Expanded(
+  //                   child: SizedBox(
+  //                     child: Text(
+  //                       first[0],
+  //                       maxLines: 2,
+  //                       overflow: TextOverflow.ellipsis,
+  //                       style: AppTextStyles.regular(14).copyWith(
+  //                         height: 1.3,
+  //                         color: AppColors.lightGreyTextFieldHeading,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 15),
+  //                 Expanded(
+  //                   child: second != null
+  //                       ? SizedBox(
+  //                           child: Text(
+  //                             second[0],
+  //                             maxLines: 2,
+  //                             overflow: TextOverflow.ellipsis,
+  //                             style: AppTextStyles.regular(14).copyWith(
+  //                               height: 1.4,
+  //                               color: AppColors.lightGreyTextFieldHeading,
+  //                             ),
+  //                           ),
+  //                         )
+  //                       : const SizedBox(),
+  //                 ),
+  //               ],
+  //             ),
+  //             Row(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Expanded(
+  //                   child: Text(
+  //                     first[1],
+  //                     style: AppTextStyles.bold(
+  //                       18,
+  //                     ).copyWith(height: 1.4, color: AppColors.black),
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 15),
+  //                 Expanded(
+  //                   child: second != null
+  //                       ? Text(
+  //                           second[1],
+  //                           style: AppTextStyles.bold(
+  //                             18,
+  //                           ).copyWith(height: 1.4, color: AppColors.black),
+  //                         )
+  //                       : const SizedBox(),
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: Divider(
+  //                     thickness: 2,
+  //                     color: AppColors.separatorColourAppBar,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 15),
+  //                 Expanded(
+  //                   child: second != null
+  //                       ? Divider(
+  //                           thickness: 2,
+  //                           color: AppColors.separatorColourAppBar,
+  //                         )
+  //                       : const SizedBox(),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
 
   void showAutoDismissDialog(
     BuildContext context,
