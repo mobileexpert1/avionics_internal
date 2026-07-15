@@ -16,7 +16,7 @@ import 'SubscriptionPlanCard.dart';
 class MySubscriptionDetailScreen extends StatefulWidget {
   final MySubscriptionItem? subscriptionItem;
   final bool isComeFromExtraPacks;
-  final AddOnModel? isAddOnPacksModelAvailable;
+  final MySubscriptionItem? isAddOnPacksModelAvailable;
 
   const MySubscriptionDetailScreen({
     super.key,
@@ -210,7 +210,7 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
     ];
   }
 
-  List<Widget> _buildAddOnSection(AddOnModel addOn) {
+  List<Widget> _buildAddOnSection(MySubscriptionItem addOn) {
     final addOnPriceWithSymbol =
         "${addOn.currencySymbol} ${addOn.priceInPurchasedCurrency}";
 
@@ -300,7 +300,12 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  buildRow(title: "Plan Name", value: addOn.planName),
+                  buildRow(
+                    title: "Plan Name",
+                    value: context
+                        .read<MySubscriptionCubit>()
+                        .getPackageDescriptionTitle(addOn.planName, true),
+                  ),
                   buildDivider(),
                   buildRow(title: "Price", value: addOnPriceWithSymbol),
                   buildDivider(),

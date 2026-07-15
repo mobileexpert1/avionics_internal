@@ -50,10 +50,6 @@ class _FlightDetailScreenForMapSectionState
   double progress = 0.6;
   bool _isLoadingProgress = false;
 
-  List<String> get activeTabs {
-    return mainTab == 0 ? subTabs : sub2Tabs;
-  }
-
   // ── Separate controllers for image carousel and tab swipe ──
   int _currentImageIndex = 0;
   late final PageController _imagePageController = PageController();
@@ -80,6 +76,13 @@ class _FlightDetailScreenForMapSectionState
     "Landing Gear",
     "Certification & Environmental",
   ];
+
+  List<String> get activeTabs {
+    return mainTab == 0 ? subTabs : sub2Tabs;
+  }
+
+  final liveTabKeys = List.generate(3, (_) => GlobalKey());
+  final encyclopediaTabKeys = List.generate(8, (_) => GlobalKey());
 
   @override
   void initState() {
@@ -226,19 +229,21 @@ class _FlightDetailScreenForMapSectionState
   }
 
   void _scrollToSelectedSubTab(int index) {
-    const itemWidth = 140.0;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final targetOffset =
-        (index * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+    final key = mainTab == 0 ? liveTabKeys[index] : encyclopediaTabKeys[index];
 
-    if (_subTabScrollController.hasClients) {
-      _subTabScrollController.animateTo(
-        targetOffset.clamp(
-          0.0,
-          _subTabScrollController.position.maxScrollExtent,
-        ),
+    final context = key.currentContext;
+
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
+
+        alignment: index == 0
+            ? 1.0
+            : index == activeTabs.length - 1
+            ? 1.0
+            : 0.5,
       );
     }
   }
@@ -254,6 +259,14 @@ class _FlightDetailScreenForMapSectionState
           );
         }
         final details = state.airCraftDetails?.results;
+        final aircraftData = context
+            .read<AirCraftDetailCubit>()
+            .state
+            .airCraftDetails
+            ?.results;
+
+        final hasValidImages =
+            aircraftData?.images != null && aircraftData!.images!.isNotEmpty;
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: CustomAppBar(
@@ -408,8 +421,9 @@ class _FlightDetailScreenForMapSectionState
                 child: ListView.separated(
                   controller: _subTabScrollController,
                   scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: activeTabs.length,
-                  padding: EdgeInsets.zero,
+                  //padding: EdgeInsets.zero,
                   separatorBuilder: (context, index) {
                     return Center(
                       child: Container(
@@ -425,6 +439,9 @@ class _FlightDetailScreenForMapSectionState
                     return GestureDetector(
                       onTap: () => _goToSubTab(index),
                       child: Container(
+                        key: mainTab == 0
+                            ? liveTabKeys[index]
+                            : encyclopediaTabKeys[index],
                         height: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         alignment: Alignment.center,
@@ -469,6 +486,15 @@ class _FlightDetailScreenForMapSectionState
 
               // ── TAB CONTENT (swipeable PageView) ──
               if (_currentFlightDetail != null) ...[
+                if (mainTab == 1 && hasValidImages)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildImageCoverScroller(
+                      MediaQuery.of(context).size.height,
+                      aircraftData.images!,
+                    ),
+                  ),
+
                 Expanded(
                   child: PageView.builder(
                     controller: _tabPageController,
@@ -480,10 +506,15 @@ class _FlightDetailScreenForMapSectionState
                     itemBuilder: (context, index) {
                       return SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: _getTabContentByIndex(
-                          index,
-                          _currentFlightDetail!,
-                          details,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 15),
+                            _getTabContentByIndex(
+                              index,
+                              _currentFlightDetail!,
+                              details,
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -869,15 +900,6 @@ class _FlightDetailScreenForMapSectionState
     FlightAircraftDetail flight,
     AircraftResult? detail,
   ) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final aircraftData = context
-        .read<AirCraftDetailCubit>()
-        .state
-        .airCraftDetails
-        ?.results;
-    final hasValidImages =
-        aircraftData?.images != null && aircraftData!.images.isNotEmpty;
-
     if (mainTab == 0) {
       switch (index) {
         case 0:
@@ -947,83 +969,69 @@ class _FlightDetailScreenForMapSectionState
     } else {
       switch (index) {
         case 0:
-          return Column(
-            children: [
-              if (hasValidImages) const SizedBox(height: 10),
-              _buildImageCoverScroller(screenHeight, aircraftData!.images!),
-              if (hasValidImages) const SizedBox(height: 30),
-              customFieldForTextAndValue(
-                false,
-                fields: [
-                  [
-                    'ICAO Type Code',
-                    detail?.identification.icaoTypeCode ??
-                        _currentFlightDetail?.type ??
-                        'N/A',
-                  ],
-                  [
-                    'Aircraft Manufacturer',
-                    detail?.identification.manufacturer ?? 'N/A',
-                  ],
-                  [
-                    'Aircraft Model',
-                    detail?.identification.aircraftModel ?? 'N/A',
-                  ],
-                  [
-                    'Wake Turbulence Category',
-                    detail?.identification.wakeTurbulenceCategory ?? 'N/A',
-                  ],
-                  [
-                    'Civilian / Military / Dual Use',
-                    detail?.identification.civilianMilitaryOrDualUse ?? 'N/A',
-                  ],
-                  [
-                    'Country of Origin',
-                    detail?.identification.countryOfOrigin ?? 'N/A',
-                  ],
-                  [
-                    'Date of Maiden Flight',
-                    detail?.identification.dateOfMaidenFlight ?? 'N/A',
-                  ],
-                  [
-                    'Year of Introduction',
-                    detail?.identification.yearOfIntroduction ?? 'N/A',
-                  ],
-                  [
-                    'Production Status',
-                    detail?.identification.productionStatus ?? 'N/A',
-                  ],
-                  [
-                    'Avionics System Name',
-                    detail?.identification.avionicsSystem ?? 'N/A',
-                  ],
-                  [
-                    'Number of Crew',
-                    detail?.identification.numberOfCrew ?? 'N/A',
-                  ],
-                  [
-                    'Number of Passengers (Maximum)',
-                    detail?.identification.numberOfPassengers.maximum ?? 'N/A',
-                  ],
-                  [
-                    'Number of Passengers (Typical)',
-                    detail?.identification.numberOfPassengers.typical ?? 'N/A',
-                  ],
+          // return
 
-                  // [
-                  //   'Aircraft Role',
-                  //   detail?.identification.aircraftRole ?? 'N/A',
-                  // ],
-                  // [
-                  //   'Aircraft Type',
-                  //   detail?.identification.aircraftType ??
-                  //       _currentFlightDetail?.type ??
-                  //       'N/A',
-                  // ],
-                ],
-                context: context,
-              ),
+          // Column(
+          // children: [
+          //   if (hasValidImages) const SizedBox(height: 10),
+          //   _buildImageCoverScroller(screenHeight, aircraftData!.images!),
+          //   if (hasValidImages) const SizedBox(height: 30),
+
+          return customFieldForTextAndValue(
+            false,
+            fields: [
+              [
+                'ICAO Type Code',
+                detail?.identification.icaoTypeCode ??
+                    _currentFlightDetail?.type ??
+                    'N/A',
+              ],
+              [
+                'Aircraft Manufacturer',
+                detail?.identification.manufacturer ?? 'N/A',
+              ],
+              ['Aircraft Model', detail?.identification.aircraftModel ?? 'N/A'],
+              [
+                'Wake Turbulence Category',
+                detail?.identification.wakeTurbulenceCategory ?? 'N/A',
+              ],
+              [
+                'Civilian / Military / Dual Use',
+                detail?.identification.civilianMilitaryOrDualUse ?? 'N/A',
+              ],
+              [
+                'Country of Origin',
+                detail?.identification.countryOfOrigin ?? 'N/A',
+              ],
+              [
+                'Date of Maiden Flight',
+                detail?.identification.dateOfMaidenFlight ?? 'N/A',
+              ],
+              [
+                'Year of Introduction',
+                detail?.identification.yearOfIntroduction ?? 'N/A',
+              ],
+              [
+                'Production Status',
+                detail?.identification.productionStatus ?? 'N/A',
+              ],
+              [
+                'Avionics System Name',
+                detail?.identification.avionicsSystem ?? 'N/A',
+              ],
+              ['Number of Crew', detail?.identification.numberOfCrew ?? 'N/A'],
+              [
+                'Number of Passengers (Maximum)',
+                detail?.identification.numberOfPassengers.maximum ?? 'N/A',
+              ],
+              [
+                'Number of Passengers (Typical)',
+                detail?.identification.numberOfPassengers.typical ?? 'N/A',
+              ],
             ],
+            context: context,
+            // ),
+            // ],
           );
         case 1:
           return customFieldForTextAndValue(
@@ -1284,245 +1292,6 @@ class _FlightDetailScreenForMapSectionState
       }
     }
     return Container();
-  }
-
-  // Widget _buildFieldRows(List<List<dynamic>> fields) {
-  //   return Column(
-  //     children: List.generate((fields.length / 2).ceil(), (i) {
-  //       final first = fields[i * 2];
-  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-  //
-  //       return Padding(
-  //         padding: const EdgeInsets.only(bottom: 30),
-  //         child: Row(
-  //           children: [
-  //             Expanded(
-  //               child: customFieldWithNewModifications(
-  //                 fontStyleLabel: AppTextStyles.regular(14).copyWith(
-  //                   height: 1.0,
-  //                   color: AppColors.grayMedium,
-  //                   decoration: TextDecoration.underline,
-  //                   decorationThickness: 1.2,
-  //                 ),
-  //                 label: first[0],
-  //                 text: first[1],
-  //                 labelColor: AppColors.grayMedium,
-  //                 textColor: AppColors.primaryValueColour,
-  //                 showInfoIcon: true,
-  //                 onInfoTap: () {
-  //                   showAutoDismissDialog(context, first[0], first[1]);
-  //                 },
-  //                 fontStyleText: AppTextStyles.bold(
-  //                   16,
-  //                 ).copyWith(height: 1.0, color: AppColors.primaryValueColour),
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: kIsWeb ? MediaQuery.of(context).size.width * 0.5 : 15,
-  //             ),
-  //             Expanded(
-  //               child: second != null
-  //                   ? customFieldWithNewModifications(
-  //                       fontStyleText: AppTextStyles.bold(16).copyWith(
-  //                         height: 1.0,
-  //                         color: AppColors.primaryValueColour,
-  //                       ),
-  //                       label: second[0],
-  //                       text: second[1],
-  //                       labelColor: AppColors.grayMedium,
-  //                       textColor: AppColors.primaryValueColour,
-  //                       showInfoIcon: true,
-  //                       onInfoTap: () {
-  //                         showAutoDismissDialog(context, second[0], second[1]);
-  //                       },
-  //                       fontStyleLabel: AppTextStyles.regular(14).copyWith(
-  //                         height: 1.0,
-  //                         color: AppColors.grayMedium,
-  //                         decoration: TextDecoration.underline,
-  //                         decorationThickness: 1.2,
-  //                       ),
-  //                     )
-  //                   : const SizedBox(),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }),
-  //   );
-  // }
-
-  // Widget _buildFieldRows(List<List<dynamic>> fields) {
-  //   return Column(
-  //     children: List.generate((fields.length / 2).ceil(), (i) {
-  //       final first = fields[i * 2];
-  //       final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-  //       return Padding(
-  //         padding: const EdgeInsets.only(bottom: 7),
-  //         child: Column(
-  //           children: [
-  //             Row(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Expanded(
-  //                   child: SizedBox(
-  //                     child: Text(
-  //                       first[0],
-  //                       maxLines: 2,
-  //                       overflow: TextOverflow.ellipsis,
-  //                       style: AppTextStyles.regular(14).copyWith(
-  //                         height: 1.3,
-  //                         color: AppColors.lightGreyTextFieldHeading,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 const SizedBox(width: 15),
-  //                 Expanded(
-  //                   child: second != null
-  //                       ? SizedBox(
-  //                           child: Text(
-  //                             second[0],
-  //                             maxLines: 2,
-  //                             overflow: TextOverflow.ellipsis,
-  //                             style: AppTextStyles.regular(14).copyWith(
-  //                               height: 1.4,
-  //                               color: AppColors.lightGreyTextFieldHeading,
-  //                             ),
-  //                           ),
-  //                         )
-  //                       : const SizedBox(),
-  //                 ),
-  //               ],
-  //             ),
-  //             Row(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Expanded(
-  //                   child: Text(
-  //                     first[1],
-  //                     style: AppTextStyles.bold(
-  //                       18,
-  //                     ).copyWith(height: 1.4, color: AppColors.black),
-  //                   ),
-  //                 ),
-  //                 const SizedBox(width: 15),
-  //                 Expanded(
-  //                   child: second != null
-  //                       ? Text(
-  //                           second[1],
-  //                           style: AppTextStyles.bold(
-  //                             18,
-  //                           ).copyWith(height: 1.4, color: AppColors.black),
-  //                         )
-  //                       : const SizedBox(),
-  //                 ),
-  //               ],
-  //             ),
-  //
-  //             Row(
-  //               children: [
-  //                 Expanded(
-  //                   child: Divider(
-  //                     thickness: 2,
-  //                     color: AppColors.separatorColourAppBar,
-  //                   ),
-  //                 ),
-  //                 const SizedBox(width: 15),
-  //                 Expanded(
-  //                   child: second != null
-  //                       ? Divider(
-  //                           thickness: 2,
-  //                           color: AppColors.separatorColourAppBar,
-  //                         )
-  //                       : const SizedBox(),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }),
-  //   );
-  // }
-
-  void showAutoDismissDialog(
-    BuildContext context,
-    String title,
-    String content,
-  ) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierColor: Colors.black54,
-      builder: (_) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SizedBox(
-            width: kIsWeb ? screenWidth * 0.2 : null,
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF1F1F4B),
-                borderRadius: BorderRadius.circular(28),
-              ),
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-              child: Stack(
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 40),
-                        child: Text(
-                          title,
-                          style: AppTextStyles.regular(15).copyWith(
-                            height: 1.0,
-                            color: AppColors.greyFlightDetailText,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(height: 1, color: Colors.white24),
-                      const SizedBox(height: 20),
-                      Text(
-                        content,
-                        style: AppTextStyles.regular(
-                          15,
-                        ).copyWith(height: 1.0, color: AppColors.white),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        height: 25,
-                        width: 25,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white54),
-                        ),
-                        child: const Icon(
-                          Icons.close,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 }
 

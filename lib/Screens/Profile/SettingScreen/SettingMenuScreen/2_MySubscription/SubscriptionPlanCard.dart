@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../../Constants/AppColors.dart';
+import '../../../../../Constants/constantImages.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
 
@@ -50,28 +52,17 @@ class SubscriptionPlanCard extends StatelessWidget {
     final tokenCounts = getTokenPackageCount(addOns);
 
     final addOnItems = <String>[
-      if (creditCounts.small > 0) '10,000 × ${creditCounts.small} Light (L)',
-      if (creditCounts.medium > 0) '25,000 × ${creditCounts.medium} Medium (M)',
-      if (creditCounts.large > 0) '50,000 × ${creditCounts.large} Heavy (H)',
+      if (creditCounts.small > 0) 'Credit Small Pack × ${creditCounts.small}',
+      if (creditCounts.medium > 0)
+        'Credit Medium Pack × ${creditCounts.medium}',
+      if (creditCounts.large > 0) 'Credit Large Pack × ${creditCounts.large}',
 
-      if (tokenCounts.small > 0) '100,000 × ${tokenCounts.small} Light (L)',
-      if (tokenCounts.medium > 0) '300,000 × ${tokenCounts.medium} Medium (M)',
-      if (tokenCounts.large > 0) '600,000 × ${tokenCounts.large} Heavy (H)',
+      if (tokenCounts.small > 0) 'Token Small Pack × ${tokenCounts.small}',
+      if (tokenCounts.medium > 0) 'Token Medium Pack × ${tokenCounts.medium}',
+      if (tokenCounts.large > 0) 'Token Large Pack × ${tokenCounts.large}',
     ];
 
-    final creditItems = <String>[
-      if (creditCounts.small > 0) '10,000 × ${creditCounts.small} Light (L)',
-      if (creditCounts.medium > 0) '25,000 × ${creditCounts.medium} Medium (M)',
-      if (creditCounts.large > 0) '50,000 × ${creditCounts.large} Heavy (H)',
-    ];
-
-    final tokenItems = <String>[
-      if (tokenCounts.small > 0) '100,000 × ${tokenCounts.small} Light (L)',
-      if (tokenCounts.medium > 0) '300,000 × ${tokenCounts.medium} Medium (M)',
-      if (tokenCounts.large > 0) '600,000 × ${tokenCounts.large} Heavy (H)',
-    ];
-
-    //final hasAddOns = addOnItems.isNotEmpty;
+    final hasAddOns = addOnItems.isNotEmpty;
 
     return Container(
       width: double.infinity,
@@ -110,62 +101,24 @@ class SubscriptionPlanCard extends StatelessWidget {
                             Icons.credit_card,
                             color: isPremiumPlan
                                 ? AppColors.greyWithBottomLine
-                                : AppColors.black,
+                                : AppColors.greyForTextSubscription,
                             size: 18,
                           ),
 
                           const SizedBox(width: 6),
 
                           Text(
-                            "$planPriceWithSymbol/ month",
+                            planPriceWithSymbol,
                             style: AppTextStyles.regular(14).copyWith(
                               height: 1.0,
                               color: isPremiumPlan
                                   ? AppColors.greyWithBottomLine
-                                  : AppColors.black,
+                                  : AppColors.greyForTextSubscription,
                             ),
                           ),
                         ],
                       ),
                     ],
-
-                    if (showActions) ...[
-                      const SizedBox(height: 10),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Next Billing Date on ',
-                                    style: AppTextStyles.regular(14).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.grayMedium,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: expiryDate,
-                                    style: AppTextStyles.regular(14).copyWith(
-                                      height: 1.0,
-                                      color: AppColors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                    // Padding(
-                    //   padding:
-                    //   const EdgeInsets.symmetric(
-                    //     horizontal: 20,
-                    //   ),
-                    //   child:
-                    //)
                   ],
                 ),
               ),
@@ -202,265 +155,189 @@ class SubscriptionPlanCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
-          if (showActions) ...[
-            SizedBox(
-              width: double.infinity,
-              child: Divider(thickness: 1.2, color: AppColors.grayLight),
+          /// BILLING DATE CARD
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(showActions ? 10 : 15),
+            decoration: BoxDecoration(
+              color: isPremiumPlan
+                  ? AppColors.blueColorForSubsBackgroundColour
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(10),
             ),
-
-            const SizedBox(height: 10),
-
-            GestureDetector(
-              onTap: onViewCreditsTokensTap,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          'Available Balance',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Icon(Icons.chevron_right, color: Colors.grey.shade600),
-                    ],
+            child: Row(
+              children: [
+                Container(
+                  height: 35,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    color: isPremiumPlan
+                        ? AppColors.primaryBlue
+                        : AppColors.greenColourForPlan,
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  child: const Icon(
+                    Icons.calendar_today_outlined,
+                    color: AppColors.white,
+                  ),
+                ),
 
-                  const SizedBox(height: 12),
+                const SizedBox(width: 12),
 
-                  if (addOnItems.isNotEmpty) ...[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(.6),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          _buildBalanceRow('Credits', creditItems),
-
-                          const SizedBox(height: 10),
-
-                          _buildBalanceRow('Tokens', tokenItems),
-                        ],
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      showActions
+                          ? (isPlanExpired == true
+                                ? "Last Billing Details"
+                                : "Next Billing Date")
+                          : "Last Billing Date",
+                      style: AppTextStyles.medium(12).copyWith(
+                        height: 1.0,
+                        color: isPremiumPlan
+                            ? AppColors.greyWithBottomLine
+                            : AppColors.greyForTextSubscription,
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
 
-                    Row(
+                    Text(
+                      expiryDate,
+                      style: AppTextStyles.semiBold(showActions ? 16 : 11)
+                          .copyWith(
+                            height: 1.0,
+                            color: isPremiumPlan
+                                ? AppColors.white
+                                : AppColors.black,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+          if (showActions) ...[
+            GestureDetector(
+              onTap: onViewCreditsTokensTap,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(showActions ? 10 : 15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 35,
+                      width: 35,
+                      decoration: BoxDecoration(
+                        color: AppColors.greenColourForPlan,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.viewCreditsToken),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          size: 14,
-                          color: Colors.grey.shade700,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'Your available Credits and AI Tokens are valid until your subscription expires.',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey.shade700,
-                            ),
+                        Text(
+                          "Check your available balance",
+                          style: AppTextStyles.medium(12).copyWith(
+                            height: 1.0,
+                            color: AppColors.greyForTextSubscription,
                           ),
                         ),
-                        const SizedBox(height: 20),
+
+                        const SizedBox(height: 8),
+
+                        Text(
+                          "View Credits & Tokens",
+                          style: AppTextStyles.semiBold(
+                            16,
+                          ).copyWith(height: 1.0, color: AppColors.black),
+                        ),
                       ],
                     ),
                   ],
-                ],
+                ),
               ),
             ),
-          ],
 
-          // BILLING DATE CARD
-          if (!showActions) ...[
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(showActions ? 10 : 15),
-              decoration: BoxDecoration(
-                color: isPremiumPlan
-                    ? AppColors.blueColorForSubsBackgroundColour
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    height: 35,
-                    width: 35,
-                    decoration: BoxDecoration(
-                      color: isPremiumPlan
-                          ? AppColors.primaryBlue
-                          : AppColors.greenColourForPlan,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.calendar_today_outlined,
-                      color: AppColors.white,
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        showActions
-                            ? "Last Billing Details"
-                            : "Last Billing Date",
-                        style: AppTextStyles.medium(12).copyWith(
-                          height: 1.0,
-                          color: isPremiumPlan
-                              ? AppColors.greyWithBottomLine
-                              : AppColors.greyForTextSubscription,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        expiryDate,
-                        style: AppTextStyles.semiBold(showActions ? 16 : 11)
-                            .copyWith(
-                              height: 1.0,
-                              color: isPremiumPlan
-                                  ? AppColors.white
-                                  : AppColors.black,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 10),
-          ],
 
-          if (showActions) ...[
-            // GestureDetector(
-            //   onTap: onViewCreditsTokensTap,
-            //   child: Container(
-            //     width: double.infinity,
-            //     padding: EdgeInsets.all(showActions ? 10 : 15),
-            //     decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       borderRadius: BorderRadius.circular(10),
-            //     ),
-            //     child: Row(
-            //       children: [
-            //         Container(
-            //           height: 35,
-            //           width: 35,
-            //           decoration: BoxDecoration(
-            //             color: AppColors.greenColourForPlan,
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //           child: Padding(
-            //             padding: EdgeInsets.all(6),
-            //             child: SvgPicture.asset(
-            //               CommonUi.setSvgImage(AssetsPath.viewCreditsToken),
-            //               fit: BoxFit.contain,
-            //             ),
-            //           ),
-            //         ),
-            //
-            //         const SizedBox(width: 12),
-            //
-            //         Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             Text(
-            //               "Check your available balance",
-            //               style: AppTextStyles.medium(12).copyWith(
-            //                 height: 1.0,
-            //                 color: AppColors.greyForTextSubscription,
-            //               ),
-            //             ),
-            //
-            //             const SizedBox(height: 8),
-            //
-            //             Text(
-            //               "View Credits & Tokens",
-            //               style: AppTextStyles.semiBold(
-            //                 16,
-            //               ).copyWith(height: 1.0, color: AppColors.black),
-            //             ),
-            //           ],
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            //
-            // const SizedBox(height: 10),
-            // if (hasAddOns) ...[
-            //   Container(
-            //     width: double.infinity,
-            //     padding: EdgeInsets.all(showActions ? 10 : 15),
-            //     decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       borderRadius: BorderRadius.circular(10),
-            //     ),
-            //     child: Row(
-            //       crossAxisAlignment: CrossAxisAlignment.start,
-            //       children: [
-            //         Container(
-            //           height: 35,
-            //           width: 35,
-            //           decoration: BoxDecoration(
-            //             color: AppColors.extraDarkYellow,
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //           child: const Icon(
-            //             Icons.add,
-            //             size: 20,
-            //             color: AppColors.black,
-            //           ),
-            //         ),
-            //
-            //         const SizedBox(width: 12),
-            //
-            //         Expanded(
-            //           child: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               Text(
-            //                 "Add-ons",
-            //                 style: AppTextStyles.semiBold(
-            //                   16,
-            //                 ).copyWith(height: 1.0, color: AppColors.black),
-            //               ),
-            //
-            //               const SizedBox(height: 8),
-            //               ...addOnItems.map(
-            //                 (item) => Padding(
-            //                   padding: const EdgeInsets.only(bottom: 8),
-            //                   child: Text(
-            //                     item,
-            //                     style: AppTextStyles.medium(12).copyWith(
-            //                       height: 1.0,
-            //                       color: AppColors.grayMedium,
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ],
+            if (hasAddOns) ...[
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(showActions ? 10 : 15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 35,
+                      width: 35,
+                      decoration: BoxDecoration(
+                        color: AppColors.extraDarkYellow,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        size: 20,
+                        color: AppColors.black,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Add-ons",
+                            style: AppTextStyles.semiBold(
+                              16,
+                            ).copyWith(height: 1.0, color: AppColors.black),
+                          ),
+
+                          const SizedBox(height: 8),
+                          ...addOnItems.map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                item,
+                                style: AppTextStyles.medium(12).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.grayMedium,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
 
           /// ACTIONS
@@ -580,71 +457,6 @@ class SubscriptionPlanCard extends StatelessWidget {
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildBalanceRow(String title, List<String> items) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 70,
-          child: Text(
-            title,
-            style: const TextStyle(color: Colors.grey, fontSize: 14),
-          ),
-        ),
-
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: items.isEmpty
-                ? [
-                    const Text(
-                      '-',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ]
-                : items.map((e) => _buildPackText(e)).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPackText(String value) {
-    final match = RegExp(
-      r'^(\d{1,3}(?:,\d{3})*\s×\s\d+)\s(.*)$',
-    ).firstMatch(value);
-
-    if (match == null) {
-      return Text(value);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: RichText(
-        textAlign: TextAlign.right,
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: '${match.group(1)} ',
-              style: AppTextStyles.medium(
-                14,
-              ).copyWith(height: 1.3, color: AppColors.black),
-            ),
-            TextSpan(
-              text: match.group(2),
-              style: AppTextStyles.regular(
-                14,
-              ).copyWith(height: 1.3, color: AppColors.grayMedium),
-            ),
-          ],
-        ),
       ),
     );
   }

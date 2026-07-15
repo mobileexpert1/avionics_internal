@@ -338,30 +338,36 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                             const SizedBox(height: 10),
 
                             ListView.separated(
-                              itemCount: buildFlatBillingHistory(
-                                state.subscriptionData!.data.old,
-                              ).length,
+                              itemCount:
+                                  state.subscriptionData!.data.old.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               separatorBuilder: (_, _) =>
                                   const SizedBox(height: 10),
                               itemBuilder: (context, index) {
-                                final item = buildFlatBillingHistory(
-                                  state.subscriptionData!.data.old,
-                                )[index];
+                                final item =
+                                    state.subscriptionData!.data.old[index];
+                                // final item = buildFlatBillingHistory(
+                                //   state.subscriptionData!.data.old,
+                                // )[index];
                                 return BillingHistoryCard(
                                   item: item,
                                   currentIndex: index,
-                                  isForAddOn: item.addOnItem != null,
+                                  isForAddOn: item.type.toLowerCase().contains(
+                                    "NON_RENEWING_PURCHASE".toLowerCase(),
+                                  ),
                                   onTapGesture: () {
                                     AppNavigator.push(
                                       context,
                                       MySubscriptionDetailScreen(
-                                        subscriptionItem: item.subscriptionItem,
-                                        isComeFromExtraPacks:
-                                            item.addOnItem != null,
-                                        isAddOnPacksModelAvailable:
-                                            item.addOnItem,
+                                        subscriptionItem: item,
+                                        isComeFromExtraPacks: item.type
+                                            .toLowerCase()
+                                            .contains(
+                                              "NON_RENEWING_PURCHASE"
+                                                  .toLowerCase(),
+                                            ),
+                                        isAddOnPacksModelAvailable: item,
                                       ),
                                       disableSwipeBack: true,
                                     );
@@ -469,7 +475,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
 class BillingHistoryCard extends StatelessWidget {
   final VoidCallback onTapGesture;
-  final BillingHistoryEntry item;
+  final MySubscriptionItem item;
   final int currentIndex;
   final bool isForAddOn;
 
@@ -512,7 +518,7 @@ class BillingHistoryCard extends StatelessWidget {
   }
 
   Widget _buildSubscriptionContent() {
-    final sub = item.subscriptionItem!;
+    final sub = item;
 
     String planPriceWithSymbol = "";
     if (sub.priceInPurchasedCurrency != null &&
@@ -529,9 +535,7 @@ class BillingHistoryCard extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                currentIndex == 0
-                    ? "Current Plan: ${sub.plan.name}"
-                    : sub.plan.name,
+                sub.plan.name,
                 style: AppTextStyles.bold(
                   16,
                 ).copyWith(height: 1.0, color: AppColors.black),
@@ -577,7 +581,7 @@ class BillingHistoryCard extends StatelessWidget {
   }
 
   Widget _buildAddOnContent(BuildContext context) {
-    final addOn = item.addOnItem!;
+    final addOn = item;
 
     String addOnPriceWithSymbol = "";
     if (addOn.priceInPurchasedCurrency.isNotEmpty) {
@@ -588,20 +592,28 @@ class BillingHistoryCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColors.greenColourForPlan.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: AppColors.greenColourForPlan),
-          ),
-          child: Text(
-            "Add-on",
-            style: AppTextStyles.medium(
-              14,
-            ).copyWith(height: 1.0, color: AppColors.greenColourForPlan),
+        // Status Container
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColors.greenColourForPlan.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(color: AppColors.greenColourForPlan),
+            ),
+            child: Text(
+              "Add-on",
+              style: AppTextStyles.medium(
+                14,
+              ).copyWith(height: 1.0, color: AppColors.greenColourForPlan),
+            ),
           ),
         ),
+
+        const SizedBox(height: 12),
+
+        // Plan Name + Price Row
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -630,7 +642,10 @@ class BillingHistoryCard extends StatelessWidget {
             ),
           ],
         ),
+
         const SizedBox(height: 8),
+
+        // Purchase Date
         Row(
           children: [
             const Icon(

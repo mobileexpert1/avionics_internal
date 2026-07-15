@@ -88,19 +88,19 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
 
     if (lowerDescription.contains('small')) {
       return isComeFromHistory
-          ? 'Light (L) $packType Pack'
+          ? 'Light Add-on $packType'
           : 'Light (L)';
     }
 
     if (lowerDescription.contains('medium')) {
       return isComeFromHistory
-          ? 'Medium (M) $packType Pack'
+          ? 'Medium Add-on $packType'
           : 'Medium (M)';
     }
 
     if (lowerDescription.contains('large')) {
       return isComeFromHistory
-          ? 'Heavy (H) $packType Pack'
+          ? 'Heavy Add-on $packType'
           : 'Heavy (H)';
     }
 

@@ -88,6 +88,11 @@ class MySubscriptionItem {
 
   final List<AddOnModel> addOnPacksModel;
 
+  final String purchaseDateLocal;
+  final String planName;
+  final int credit;
+  final int token;
+
   MySubscriptionItem({
     required this.id,
     required this.status,
@@ -107,6 +112,10 @@ class MySubscriptionItem {
     required this.plan,
     required this.currencySymbol,
     required this.addOnPacksModel,
+    required this.purchaseDateLocal,
+    required this.planName,
+    required this.credit,
+    required this.token,
   });
 
   factory MySubscriptionItem.fromJson(Map<String, dynamic> json) {
@@ -115,6 +124,8 @@ class MySubscriptionItem {
     final startDate = json['start_date'] ?? '';
 
     final expiryDate = json['expiry_date'] ?? '';
+
+    final purchaseDateLocal = json['purchase_date'] ?? '';
 
     return MySubscriptionItem(
       id: json['id'] ?? '',
@@ -152,6 +163,11 @@ class MySubscriptionItem {
                     .toList() ??
                 [])
             ..sort((a, b) => b.purchaseDateTime.compareTo(a.purchaseDateTime)),
+
+      purchaseDateLocal: convertUtcToLocal24Hour(purchaseDateLocal),
+      planName: json['plan_name'] ?? '',
+      credit: json['credit'] ?? 0,
+      token: json['token'] ?? 0,
     );
   }
 
@@ -173,6 +189,9 @@ class MySubscriptionItem {
       'plan': plan.toJson(),
       'currency_symbol': currencySymbol,
       'add_on': addOnPacksModel.map((e) => e.toJson()).toList(),
+      'plan_name': planName,
+      'credit': credit,
+      'token': token,
     };
   }
 }
@@ -385,36 +404,36 @@ class MySubscriptionPlanModel {
   }
 }
 
-enum BillingHistoryEntryType { subscription, addOn }
+//enum BillingHistoryEntryType { subscription, addOn }
 
-class BillingHistoryEntry {
-  final BillingHistoryEntryType entryType;
-  final MySubscriptionItem? subscriptionItem;
-  final AddOnModel? addOnItem;
+// class BillingHistoryEntry {
+//   final BillingHistoryEntryType entryType;
+//   final MySubscriptionItem? subscriptionItem;
+//   final AddOnModel? addOnItem;
+//
+//   BillingHistoryEntry.subscription(this.subscriptionItem)
+//     : entryType = BillingHistoryEntryType.subscription,
+//       addOnItem = null;
+//
+//   BillingHistoryEntry.addOn(this.addOnItem)
+//     : entryType = BillingHistoryEntryType.addOn,
+//       subscriptionItem = null;
+//
+//   bool get isAddOn => entryType == BillingHistoryEntryType.addOn;
+//
+//   bool get isSubscription => entryType == BillingHistoryEntryType.subscription;
+// }
 
-  BillingHistoryEntry.subscription(this.subscriptionItem)
-    : entryType = BillingHistoryEntryType.subscription,
-      addOnItem = null;
-
-  BillingHistoryEntry.addOn(this.addOnItem)
-    : entryType = BillingHistoryEntryType.addOn,
-      subscriptionItem = null;
-
-  bool get isAddOn => entryType == BillingHistoryEntryType.addOn;
-
-  bool get isSubscription => entryType == BillingHistoryEntryType.subscription;
-}
-
-List<BillingHistoryEntry> buildFlatBillingHistory(
-  List<MySubscriptionItem> items,
-) {
-  final List<BillingHistoryEntry> result = [];
-
-  for (final item in items) {
-    result.add(BillingHistoryEntry.subscription(item));
-    for (final addOn in item.addOnPacksModel) {
-      result.add(BillingHistoryEntry.addOn(addOn));
-    }
-  }
-  return result;
-}
+// List<BillingHistoryEntry> buildFlatBillingHistory(
+//   List<MySubscriptionItem> items,
+// ) {
+//   final List<BillingHistoryEntry> result = [];
+//
+//   for (final item in items) {
+//     result.add(BillingHistoryEntry.subscription(item));
+//     for (final addOn in item.addOnPacksModel) {
+//       result.add(BillingHistoryEntry.addOn(addOn));
+//     }
+//   }
+//   return result;
+// }
