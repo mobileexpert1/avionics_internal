@@ -74,9 +74,16 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         }
       });
 
-      if (!isNewSession && sessionId.isNotEmpty) {
-        await _loadCompleteHistory(sessionId);
-      }
+      // if (!isNewSession && sessionId.isNotEmpty) {
+      //   await _loadCompleteHistory(sessionId);
+      // }
+
+      _repo.onSocketConnected = () async {
+        if (sessionId.isNotEmpty) {
+          await _loadCompleteHistory(sessionId);
+        }
+      };
+
       await _repo.connect(accessToken: token, existingSessionId: sessionId);
       _sub = _repo.messages.listen(_onSocketMessage);
     } else {
@@ -301,12 +308,41 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     emit(next);
   }
 
+  // void _startInternetListener() {
+  //   _internetSub = Connectivity().onConnectivityChanged.listen((result) {
+  //     final connected = result != ConnectivityResult.none;
+  //     if (connected && !_isConnected) {
+  //       _isConnected = true;
+  //
+  //       _internetStatusController.add(true);
+  //
+  //       print("Internet restored -> reconnect socket");
+  //
+  //       _repo.reconnect();
+  //     }
+  //   });
+  // }
+
   void _startInternetListener() {
-    _internetSub = Connectivity().onConnectivityChanged.listen((result) {
+    _internetSub = Connectivity().onConnectivityChanged.listen((result) async {
       final connected = result != ConnectivityResult.none;
+
       if (connected != _isConnected) {
         _isConnected = connected;
         _internetStatusController.add(_isConnected);
+
+        if (_isConnected) {
+          final hasInternet =
+          await InternetConnection().hasInternetAccess;
+
+          if (hasInternet) {
+            print(
+              '[Internet] Restored. Reconnecting socket...',
+            );
+
+            await _repo.reconnect();
+          }
+        }
       }
     });
   }

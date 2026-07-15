@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -45,6 +46,8 @@ class ChatRepositoryImpl implements ChatRepository {
 
   WebSocketChannel? _channel;
   StreamSubscription? _socketSub;
+  bool _isSocketConnected = false;
+  VoidCallback? onSocketConnected;
 
   String? _sessionId;
   String? _accessToken;
@@ -103,6 +106,8 @@ class ChatRepositoryImpl implements ChatRepository {
       onDone: _onDone,
       cancelOnError: true,
     );
+    _isSocketConnected = true;
+    onSocketConnected?.call();
 
     if (_pendingUserMessage != null) {
       Future.delayed(const Duration(seconds: 1), () {
@@ -227,11 +232,26 @@ class ChatRepositoryImpl implements ChatRepository {
   // }
 
   void _onError(Object error) {
+    _isSocketConnected = false;
     print('[WebSocket] Error: $error');
-    _pushSystem("Unexpected error occurred. Please try again later. ⚠️");
+
+    if (_closing) return;
+
+    _retries = (_retries + 1).clamp(1, 5);
+
+    final delay = Duration(seconds: 2 << (_retries - 1));
+
+    print('[WebSocket] Reconnecting after error in ${delay.inSeconds}s');
+
+    Future.delayed(delay, () {
+      if (!_closing && _accessToken != null) {
+        _openSocket();
+      }
+    });
   }
 
   void _onDone() {
+    _isSocketConnected = false;
     if (_closing) return;
 
     _retries = (_retries + 1).clamp(1, 5);
@@ -247,6 +267,17 @@ class ChatRepositoryImpl implements ChatRepository {
 
   void send(String text) {
     print('[WebSocket] Sending: $text');
+
+    if (!_isSocketConnected) {
+      print('[WebSocket] Socket not connected');
+
+      _pendingUserMessage = text;
+
+      reconnect();
+
+      return;
+    }
+
     _channel?.sink.add(jsonEncode({'query': text}));
 
     final msg = ChatMessage(
@@ -366,5 +397,20 @@ class ChatRepositoryImpl implements ChatRepository {
     if (toInsert.isNotEmpty) {
       await _chatDb.insertAll(toInsert);
     }
+  }
+
+  Future<void> reconnect() async {
+    print('[WebSocket] Manual reconnect triggered');
+
+    try {
+      await _socketSub?.cancel();
+      await _channel?.sink.close();
+    } catch (e) {
+      print('[WebSocket] Reconnect cleanup error: $e');
+    }
+
+    _isSocketConnected = false;
+
+    await _openSocket();
   }
 }
