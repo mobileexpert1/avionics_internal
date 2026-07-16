@@ -1,3 +1,5 @@
+import 'package:google_sign_in/google_sign_in.dart';
+
 class AppleSignInErrorHandler {
   static String getMessage(dynamic error) {
     final errorString = error.toString();
@@ -28,34 +30,29 @@ class AppleSignInErrorHandler {
 
 class GoogleSignInErrorHandler {
   static String getMessage(dynamic error) {
-    final errorString = error.toString();
+    if (error is GoogleSignInException) {
+      switch (error.code) {
+        case GoogleSignInExceptionCode.canceled:
+          return 'Sign in was cancelled.';
 
-    if (errorString.contains('GoogleSignInExceptionCode.canceled')) {
-      return 'Sign in was cancelled.';
-    }
+        case GoogleSignInExceptionCode.interrupted:
+          return 'Sign in was interrupted. Please try again.';
 
-    if (errorString.contains('GoogleSignInExceptionCode.interrupted')) {
-      return 'Sign in was interrupted. Please try again.';
-    }
+        case GoogleSignInExceptionCode.clientConfigurationError:
+          return 'Google Sign In is not configured correctly.';
 
-    if (errorString.contains('GoogleSignInExceptionCode.clientConfigurationError')) {
-      return 'Google Sign In is not configured correctly. Please contact support.';
-    }
+        case GoogleSignInExceptionCode.providerConfigurationError:
+          return 'Google Sign In is currently unavailable.';
 
-    if (errorString.contains('GoogleSignInExceptionCode.providerConfigurationError')) {
-      return 'Google Sign In is currently unavailable. Please try again later.';
-    }
+        case GoogleSignInExceptionCode.uiUnavailable:
+          return 'Google Sign In could not be displayed.';
 
-    if (errorString.contains('GoogleSignInExceptionCode.uiUnavailable')) {
-      return 'Google Sign In could not be displayed. Please try again.';
-    }
+        case GoogleSignInExceptionCode.userMismatch:
+          return 'The signed-in account does not match.';
 
-    if (errorString.contains('GoogleSignInExceptionCode.userMismatch')) {
-      return 'The signed-in account does not match. Please try again.';
-    }
-
-    if (errorString.contains('GoogleSignInExceptionCode.unknownError')) {
-      return 'Google Sign In failed. Please try again.';
+        case GoogleSignInExceptionCode.unknownError:
+          return 'Google Sign In failed. Please try again.';
+      }
     }
 
     return 'Something went wrong while signing in with Google.';

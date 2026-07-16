@@ -130,7 +130,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
                           style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all<Color>(
+                            foregroundColor: WidgetStateProperty.all<Color>(
                               Colors.black,
                             ),
                           ),
@@ -145,10 +145,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                             Navigator.of(context).pop(true);
                           },
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
+                            backgroundColor: WidgetStateProperty.all<Color>(
                               Colors.blue,
                             ),
-                            foregroundColor: MaterialStateProperty.all<Color>(
+                            foregroundColor: WidgetStateProperty.all<Color>(
                               AppColors.separatorColourAppBar,
                             ),
                           ),
@@ -293,7 +293,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
                     if (state.isLoading)
                       Container(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         child: const Center(child: CircularProgressIndicator()),
                       ),
                   ],
@@ -478,7 +478,8 @@ class QuizQuestionCard extends StatelessWidget {
                                             height: 40,
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                color: Colors.red,
+                                                color: AppColors
+                                                    .blackBoxColorForGame,
                                                 width: 1,
                                               ),
                                             ),
@@ -503,7 +504,8 @@ class QuizQuestionCard extends StatelessWidget {
                                           height: viewHeight,
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                              color: Colors.red,
+                                              color: AppColors
+                                                  .blackBoxColorForGame,
                                               width: 1,
                                             ),
                                           ),
@@ -551,10 +553,10 @@ class QuizQuestionCard extends StatelessWidget {
                         );
                       } else if (isSelected && !isCorrect && isShowAnswers) {
                         backgroundColor = Colors.red.shade100;
-                        borderColor = Colors.red;
+                        borderColor = AppColors.blackBoxColorForGame;
                         trailingIcon = const Icon(
                           Icons.cancel,
-                          color: Colors.red,
+                          color: AppColors.blackBoxColorForGame,
                           size: 20,
                         );
                       } else if (isSelected) {
@@ -662,7 +664,7 @@ class QuizQuestionCard extends StatelessWidget {
                         title: isShowAnswers == false
                             ? ConstantStrings.submitTitle
                             : ConstantStrings.next,
-                        backgroundColor: AppColors.customBottomEnabledColour,
+                        backgroundColor: AppColors.primaryDark,
                         textColor: Colors.white,
                         icon: const SizedBox(width: 0),
                         isEnabled: selectedOption != null,
@@ -739,7 +741,7 @@ class QuizProgressCard extends StatelessWidget {
                           Icons.access_time,
                           size: 30,
                           color: secondsRemaining == 0
-                              ? Colors.red
+                              ? AppColors.blackBoxColorForGame
                               : Colors.blue,
                         ),
 
@@ -916,12 +918,14 @@ class _RadioPopupState extends State<RadioPopup> {
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Colors.red),
+                        borderSide: const BorderSide(
+                          color: AppColors.blackBoxColorForGame,
+                        ),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: const BorderSide(
-                          color: Colors.red,
+                          color: AppColors.blackBoxColorForGame,
                           width: 1.5,
                         ),
                       ),

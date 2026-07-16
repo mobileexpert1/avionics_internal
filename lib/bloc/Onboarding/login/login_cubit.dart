@@ -70,6 +70,13 @@ class LoginCubit extends Cubit<LoginState> {
 
           await _navigateAfterLogin(context, result);
         } catch (e) {
+          final message = GoogleSignInErrorHandler.getMessage(e);
+          emit(
+            state.copyWith(
+              status: CommonApiStatus.failure,
+              errorMessage: message,
+            ),
+          );
           debugPrint("Google Web Login Error: $e");
         }
       }
@@ -176,19 +183,18 @@ class LoginCubit extends Cubit<LoginState> {
 
         await _navigateAfterLogin(context, result);
       } catch (e) {
+        final message = GoogleSignInErrorHandler.getMessage(e);
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,
-            errorMessage: e.toString(),
+            errorMessage: message,
           ),
         );
       }
     } catch (e) {
+      final message = GoogleSignInErrorHandler.getMessage(e);
       emit(
-        state.copyWith(
-          status: CommonApiStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CommonApiStatus.failure, errorMessage: message),
       );
     }
   }

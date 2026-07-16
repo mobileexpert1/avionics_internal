@@ -27,6 +27,9 @@ class LocalNotificationHelper {
     required String body,
     String? screenName,
   }) async {
+    final int notificationId =
+        DateTime.now().millisecondsSinceEpoch % 2147483647;
+
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
           'local_channel',
@@ -47,7 +50,7 @@ class LocalNotificationHelper {
     );
 
     await _plugin.show(
-      id: DateTime.now().millisecondsSinceEpoch,
+      id: notificationId,
       title: title,
       body: body,
       notificationDetails: details,

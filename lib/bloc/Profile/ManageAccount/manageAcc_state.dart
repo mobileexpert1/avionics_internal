@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 
 class ManageAccState extends Equatable {
+  final String userId;
   final String firstName;
   final String lastName;
   final String email;
@@ -22,6 +23,7 @@ class ManageAccState extends Equatable {
   final String? errorMessage;
 
   const ManageAccState({
+    this.userId = '',
     this.tokenUsagePercentage = 0.0,
     this.creditUsagePercentage = 0.0,
     this.firstName = '',
@@ -39,6 +41,8 @@ class ManageAccState extends Equatable {
   });
 
   ManageAccState copyWith({
+    String? userId,
+
     double? tokenUsagePercentage,
     double? creditUsagePercentage,
     String? firstName,
@@ -55,6 +59,8 @@ class ManageAccState extends Equatable {
     String? errorMessage,
   }) {
     return ManageAccState(
+      userId: userId ?? this.userId,
+
       tokenUsagePercentage: tokenUsagePercentage ?? this.tokenUsagePercentage,
       creditUsagePercentage: creditUsagePercentage ?? this.creditUsagePercentage,
 
@@ -75,6 +81,7 @@ class ManageAccState extends Equatable {
 
   @override
   List<Object?> get props => [
+    userId,
     tokenUsagePercentage,
     creditUsagePercentage,
     firstName,

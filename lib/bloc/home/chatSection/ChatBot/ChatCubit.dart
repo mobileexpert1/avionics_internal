@@ -69,6 +69,12 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             emit(next);
             onResponse?.call(ChatResponseStatus.accessTokenExpired);
             break;
+          case ChatResponseStatus.subscriptionExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.subscriptionExpired);
+            break;
           default:
             break;
         }

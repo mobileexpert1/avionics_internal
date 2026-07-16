@@ -117,7 +117,9 @@ class ChatRepositoryImpl implements ChatRepository {
       print('[WebSocket] Raw: $data');
       final decoded = jsonDecode(data as String);
       final response = ChatSocketResponse.fromJson(decoded);
-      CreditManager().totalToken = response.totalTokenUsage!.toDouble();
+      if (response.code != 5) {
+        CreditManager().totalToken = response.totalTokenUsage!.toDouble();
+      }
       print('[WebSocket] Parsed Code: ${response.code}');
       switch (response.code) {
         case 1:

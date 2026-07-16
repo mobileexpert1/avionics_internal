@@ -257,7 +257,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
             MediaQuery.of(context).size.height > 600);
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * (ikWeb ? 0.07 : 0.055),
+      height: MediaQuery.of(context).size.height * (ikWeb ? 0.07 : 0.05),
       child: Container(
         color: AppColors.primaryDark,
         child: LayoutBuilder(
@@ -291,7 +291,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                           }
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 7),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 250),
                             curve: Curves.easeInOut,
@@ -311,8 +311,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 5,
-                                    vertical: 13,
+                                    horizontal: 7,
+                                    vertical: 11,
                                   ),
                                   child: Text(
                                     tabs[index],

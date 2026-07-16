@@ -26,6 +26,7 @@ class CreditsTokenUsageScreen extends StatefulWidget {
 class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
   WebViewController? controller;
 
+  String currentUserId = "";
   double tokenUsagePercentage = 0.0;
   double creditUsagePercentage = 0.0;
   String _webUrl = "";
@@ -95,7 +96,7 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
 
   String _buildUrl() {
     return "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}user/usage-meter"
-        "?credit_usage=$creditUsagePercentage&token_usage=$tokenUsagePercentage";
+        "?credit_usage=$creditUsagePercentage&token_usage=$tokenUsagePercentage&$currentUserId";
   }
 
   @override
@@ -105,14 +106,17 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) async {
           if (!state.isLoading) {
+            currentUserId = state.userId ?? "";
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
-            final url = _buildUrl();
-
-            if (kIsWeb) {
-              setState(() => _webUrl = url);
-            } else {
-              controller!.loadRequest(Uri.parse(url));
+            if (currentUserId != "") {
+              final url = _buildUrl();
+              print(url);
+              if (kIsWeb) {
+                setState(() => _webUrl = url);
+              } else {
+                controller!.loadRequest(Uri.parse(url));
+              }
             }
           }
         },

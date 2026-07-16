@@ -18,6 +18,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
   ManageaccCubit() : super(ManageAccState());
 
   void initializeUserData({
+    required String userId,
     required String firstName,
     required String lastName,
     required String email,
@@ -27,6 +28,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
   }) {
     emit(
       state.copyWith(
+        userId: userId,
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -86,6 +88,7 @@ class ManageaccCubit extends Cubit<ManageAccState> {
         final user = await repository.getUserDetail();
 
         initializeUserData(
+          userId: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
