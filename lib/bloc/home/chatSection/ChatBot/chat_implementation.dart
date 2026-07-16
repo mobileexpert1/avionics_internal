@@ -48,10 +48,13 @@ class ChatRepositoryImpl implements ChatRepository {
   StreamSubscription? _socketSub;
   bool _isSocketConnected = false;
   VoidCallback? onSocketConnected;
+  bool _hasInternet = true;
+  bool _isConnecting = false;
 
   String? _sessionId;
   String? _accessToken;
   bool _closing = false;
+  String? get currentSessionId => _sessionId;
   int _retries = 0;
   String? _lastSystem;
   String? _pendingUserMessage;
@@ -85,34 +88,46 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   Future<void> _openSocket() async {
-    if (_accessToken == null || _accessToken!.isEmpty) {
-      print('[WebSocket] Missing access token');
+    if (!_hasInternet) {
+      print('[WebSocket] Skip connection. No internet');
       return;
     }
 
-    final isNewSession = _sessionId == null || _sessionId!.isEmpty;
-    final endpoint = isNewSession
-        ? 'wss://${ApiBaseUrlConstant.baseChatUrl}/ai-engine/wilco/new-session?token=$_accessToken'
-        : 'wss://${ApiBaseUrlConstant.baseChatUrl}/ai-engine/wilco/session/$_sessionId?token=$_accessToken';
+    if (_isConnecting) return;
 
-    print('[WebSocket] Connecting to: $endpoint');
+    _isConnecting = true;
 
-    // Platform agnostic WebSocket for Web & Mobile
-    _channel = WebSocketChannel.connect(Uri.parse(endpoint));
+    try {
+      if (_accessToken == null || _accessToken!.isEmpty) {
+        print('[WebSocket] Missing access token');
+        return;
+      }
 
-    _socketSub = _channel!.stream.listen(
-      _onData,
-      onError: _onError,
-      onDone: _onDone,
-      cancelOnError: true,
-    );
-    _isSocketConnected = true;
-    onSocketConnected?.call();
+      final isNewSession = _sessionId == null || _sessionId!.isEmpty;
 
-    if (_pendingUserMessage != null) {
-      Future.delayed(const Duration(seconds: 1), () {
-        resendPendingMessageIfAny();
-      });
+      final endpoint = isNewSession
+          ? 'wss://${ApiBaseUrlConstant.baseChatUrl}/ai-engine/wilco/new-session?token=$_accessToken'
+          : 'wss://${ApiBaseUrlConstant.baseChatUrl}/ai-engine/wilco/session/$_sessionId?token=$_accessToken';
+
+      print('[WebSocket] Connecting to: $endpoint');
+
+      _channel = WebSocketChannel.connect(Uri.parse(endpoint));
+
+      _socketSub = _channel!.stream.listen(
+        _onData,
+        onError: _onError,
+        onDone: _onDone,
+        cancelOnError: true,
+      );
+
+      _isSocketConnected = true;
+      _retries = 0;
+
+      onSocketConnected?.call();
+    } catch (e) {
+      print("[WebSocket] Connection failed $e");
+    } finally {
+      _isConnecting = false;
     }
   }
 
@@ -233,18 +248,20 @@ class ChatRepositoryImpl implements ChatRepository {
 
   void _onError(Object error) {
     _isSocketConnected = false;
+
     print('[WebSocket] Error: $error');
 
-    if (_closing) return;
+    if (_closing || !_hasInternet) {
+      print('[WebSocket] Reconnect skipped');
+      return;
+    }
 
-    _retries = (_retries + 1).clamp(1, 5);
+    _retries++;
 
     final delay = Duration(seconds: 2 << (_retries - 1));
 
-    print('[WebSocket] Reconnecting after error in ${delay.inSeconds}s');
-
     Future.delayed(delay, () {
-      if (!_closing && _accessToken != null) {
+      if (!_closing && _hasInternet && _accessToken != null) {
         _openSocket();
       }
     });
@@ -252,14 +269,19 @@ class ChatRepositoryImpl implements ChatRepository {
 
   void _onDone() {
     _isSocketConnected = false;
-    if (_closing) return;
 
-    _retries = (_retries + 1).clamp(1, 5);
+    if (_closing || !_hasInternet) {
+      return;
+    }
+
+    _retries++;
+
     final delay = Duration(seconds: 2 << (_retries - 1));
-    print('[WebSocket] Disconnected. Reconnecting in ${delay.inSeconds}s...');
+
+    print('[WebSocket] Reconnect in ${delay.inSeconds}s');
 
     Future.delayed(delay, () {
-      if (!_closing && _accessToken != null) {
+      if (!_closing && _hasInternet && _accessToken != null) {
         _openSocket();
       }
     });
@@ -273,7 +295,9 @@ class ChatRepositoryImpl implements ChatRepository {
 
       _pendingUserMessage = text;
 
-      reconnect();
+      if (_hasInternet) {
+        reconnect();
+      }
 
       return;
     }
@@ -412,5 +436,37 @@ class ChatRepositoryImpl implements ChatRepository {
     _isSocketConnected = false;
 
     await _openSocket();
+  }
+
+  void updateInternetStatus(bool value) {
+    _hasInternet = value;
+
+    if (!value) {
+      _socketSub?.cancel();
+      _channel?.sink.close();
+      _channel = null;
+      _isSocketConnected = false;
+    }
+  }
+
+  Future<void> resetSession() async {
+    print("[WebSocket] Reset Session");
+
+    _sessionId = null;
+
+    _pendingUserMessage = null;
+    _pendingUserMessageObject = null;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('wilco_session_id');
+
+    try {
+      await _socketSub?.cancel();
+      await _channel?.sink.close();
+    } catch (e) {
+      print(e);
+    }
+
+    _isSocketConnected = false;
   }
 }

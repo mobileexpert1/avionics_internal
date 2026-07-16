@@ -14,6 +14,10 @@ import 'chat_model.dart';
 
 class ChatCubit extends Cubit<List<Map<String, String>>> {
   void Function(ChatResponseStatus status)? onResponse;
+  VoidCallback? onInternetLost;
+  StreamSubscription? _internetSub;
+  bool _isHistoryLoading = false;
+  bool _needFreshSession = false;
 
   ChatCubit({
     required String accessToken,
@@ -30,7 +34,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
-  dynamic _internetSub;
+  // dynamic _internetSub;
   final _internetStatusController = StreamController<bool>.broadcast();
   bool _isConnected = true;
 
@@ -74,17 +78,31 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         }
       });
 
-      // if (!isNewSession && sessionId.isNotEmpty) {
-      //   await _loadCompleteHistory(sessionId);
-      // }
+      // _repo.onSocketConnected = () async {
+      //   if (sessionId.isNotEmpty) {
+      //     await _loadCompleteHistory(sessionId);
+      //   }
+      // };
 
       _repo.onSocketConnected = () async {
-        if (sessionId.isNotEmpty) {
-          await _loadCompleteHistory(sessionId);
+        final currentSessionId = _repo.currentSessionId;
+
+        if (_isHistoryLoading) return;
+
+        if (currentSessionId != null && currentSessionId.isNotEmpty) {
+          _isHistoryLoading = true;
+
+          try {
+            await _loadCompleteHistory(currentSessionId);
+          } finally {
+            _isHistoryLoading = false;
+          }
         }
       };
 
-      await _repo.connect(accessToken: token, existingSessionId: sessionId);
+      if (_isConnected) {
+        await _repo.connect(accessToken: token, existingSessionId: sessionId);
+      }
       _sub = _repo.messages.listen(_onSocketMessage);
     } else {
       NoInternetDialog.show(
@@ -95,31 +113,14 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     }
   }
 
-  // Future<void> _loadCompleteHistory(String sessionId) async {
-  //   List<Map<String, String>> greeting = [
-  //     {'type': 'bot', 'text': 'Hey there!'},
-  //     {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
-  //   ];
-  //   emit(greeting);
-  //   final serverMessages = await _repo.fetchFullServerHistory(sessionId);
-  //
-  //   final converted = serverMessages.map(
-  //     (s) => _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
-  //   );
-  //   await _repo.insertOrIgnoreLocalMessages(converted.toList());
-  //   final merged = await _repo.getMessagesForSession(sessionId);
-  //
-  //   final uiList = merged.map((msg) {
-  //     return {
-  //       'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
-  //       'text': msg.text,
-  //     };
-  //   }).toList();
-  //   final cleanList = removeDuplicates(uiList);
-  //   final finalList = [...greeting, ...cleanList];
-  //
-  //   emit(removeDuplicates(finalList));
-  // }
+  Future<void> startFreshChat() async {
+    print("🔥 startFreshChat called");
+    emit([
+      {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+    ]);
+    await _repo.resetSession();
+    await _repo.reconnect();
+  }
 
   Future<void> _loadCompleteHistory(String sessionId) async {
     List<Map<String, String>> greeting = [
@@ -237,7 +238,15 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     } else {
       NoInternetDialog.show(
         context,
-        onRetry: () => sendMessage(text, context, isReceivedTokenFullWarning),
+        onRetry: () async {
+          final hasInternet = await InternetConnection().hasInternetAccess;
+
+          if (hasInternet) {
+            await _repo.reconnect();
+          } else {
+            NoInternetDialog.show(context, onRetry: () async {});
+          }
+        },
       );
       return;
     }
@@ -308,40 +317,107 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     emit(next);
   }
 
-  // void _startInternetListener() {
-  //   _internetSub = Connectivity().onConnectivityChanged.listen((result) {
-  //     final connected = result != ConnectivityResult.none;
-  //     if (connected && !_isConnected) {
-  //       _isConnected = true;
-  //
-  //       _internetStatusController.add(true);
-  //
-  //       print("Internet restored -> reconnect socket");
-  //
-  //       _repo.reconnect();
-  //     }
-  //   });
-  // }
-
   void _startInternetListener() {
-    _internetSub = Connectivity().onConnectivityChanged.listen((result) async {
-      final connected = result != ConnectivityResult.none;
+    _internetSub = Connectivity().onConnectivityChanged.listen((results) async {
+      print("Connectivity Changed => $results");
 
-      if (connected != _isConnected) {
-        _isConnected = connected;
-        _internetStatusController.add(_isConnected);
+      final hasNetwork = !results.contains(ConnectivityResult.none);
+
+      if (!hasNetwork) {
+
+        if (_repo.currentSessionId == null ||
+            _repo.currentSessionId!.isEmpty) {
+          _needFreshSession = true;
+
+          print("⚠️ Session not created. Fresh session needed");
+        }
+        _repo.updateInternetStatus(false);
 
         if (_isConnected) {
-          final hasInternet =
-          await InternetConnection().hasInternetAccess;
+          _isConnected = false;
 
-          if (hasInternet) {
-            print(
-              '[Internet] Restored. Reconnecting socket...',
-            );
+          _internetStatusController.add(false);
+
+          print('[Internet] No Network');
+
+          _responseTimer?.cancel();
+
+          final next = List<Map<String, String>>.from(state);
+          next.removeWhere((m) => m['type'] == 'analyzing');
+          emit(next);
+
+          onInternetLost?.call();
+        }
+
+        return;
+      }
+
+      final hasInternet = await InternetConnection().hasInternetAccess;
+
+      print('Network Available: $hasNetwork, Internet Available: $hasInternet');
+
+      if (hasInternet) {
+        if (!_isConnected) {
+          _isConnected = true;
+
+          _repo.updateInternetStatus(true);
+
+          _internetStatusController.add(true);
+          if (_needFreshSession) {
+            print("🔥 Fresh Chat Triggered");
+
+            final next = List<Map<String, String>>.from(state);
+
+            next.removeWhere((m) => m['type'] == 'analyzing');
+
+            // Last user message remove karo
+            for (int i = next.length - 1; i >= 0; i--) {
+              if (next[i]['type'] == 'user') {
+                print(
+                  "Removing Pending Message => ${next[i]['text']}",
+                );
+
+                next.removeAt(i);
+                break;
+              }
+            }
+
+            emit(next);
+
+            await startFreshChat();
+
+            _needFreshSession = false;
+          } else {
+            print("🔥 Normal Reconnect");
 
             await _repo.reconnect();
           }
+        }
+      } else {
+        _repo.updateInternetStatus(false);
+
+        if (_isConnected) {
+
+          if (_repo.currentSessionId == null ||
+              _repo.currentSessionId!.isEmpty) {
+            _needFreshSession = true;
+
+            print("⚠️ Session not created. Fresh session needed");
+          }
+
+          _isConnected = false;
+
+          _internetStatusController.add(false);
+
+          print('[Internet] Internet Lost');
+
+          _responseTimer?.cancel();
+
+          final next = List<Map<String, String>>.from(state);
+          next.removeWhere((m) => m['type'] == 'analyzing');
+          emit(next);
+
+          onInternetLost?.call();
         }
       }
     });

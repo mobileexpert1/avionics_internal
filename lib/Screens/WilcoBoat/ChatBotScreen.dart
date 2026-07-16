@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -18,6 +19,7 @@ import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Helpers/ChatAnalyzingIndicator/ChatAnalyzingIndicator.dart';
 import '../../Helpers/FormattedText/FormattedText.dart';
+import '../../Helpers/NoInternetDialog.dart';
 import '../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
 import '../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
 import '../Onboarding/Login/LoginScreen.dart';
@@ -63,6 +65,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   StreamSubscription<bool>? _internetSub;
 
   final FocusNode _messageFocusNode = FocusNode();
+
+  bool _isNoInternetDialogOpen = false;
+  bool _needFreshSession = false;
 
   @override
   void initState() {
@@ -187,6 +192,33 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     });
   }
 
+  void _showNoInternetDialog() {
+    if (_isNoInternetDialogOpen) return;
+
+    _isNoInternetDialogOpen = true;
+
+    NoInternetDialog.show(
+      context,
+      onRetry: () async {
+        final hasInternet = await InternetConnection().hasInternetAccess;
+
+        if (hasInternet) {
+          print("Internet restored");
+          _isNoInternetDialogOpen = false;
+        } else {
+          print("Internet still unavailable");
+          _isNoInternetDialogOpen = false;
+
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (mounted) {
+              _showNoInternetDialog();
+            }
+          });
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -199,6 +231,11 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         );
 
         _listenToInternet(cubit);
+
+        cubit.onInternetLost = () {
+          _needFreshSession = true;
+          _showNoInternetDialog();
+        };
 
         cubit.onResponse = (status) {
           switch (status) {
@@ -549,9 +586,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 child: BlocListener<ChatCubit, List<Map<String, String>>>(
                   listener: (ctx, messages) {
                     if (messages.isNotEmpty &&
-                        messages.last['type'] == 'user') {
-                      _controller.clear();
-                      //_scrollToBottom(); New
+                        messages.last['type'] == 'user' &&
+                        _controller.text.isEmpty) {
                       _stopListening(context);
                     }
                   },
@@ -602,7 +638,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                   //     ),
                   //   ),
                   // ),
-
                   child: Builder(
                     builder: (chatContext) {
                       return Focus(
@@ -618,7 +653,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                             final cubit = chatContext.read<ChatCubit>();
 
                             final isAnalyzing = cubit.state.any(
-                                  (msg) => msg['type'] == 'analyzing',
+                              (msg) => msg['type'] == 'analyzing',
                             );
 
                             if (!isAnalyzing) {
@@ -663,7 +698,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                       );
                     },
                   ),
-
                 ),
               ),
 
@@ -692,8 +726,19 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                         onTap: showSendButton && isConnected
                             ? () {
+                                // if (isAnalyzing) {
+                                //   context.read<ChatCubit>().stopResponse();
+                                //
+                                //   return;
+                                // }
+
                                 if (isAnalyzing) {
                                   context.read<ChatCubit>().stopResponse();
+
+                                  Future.delayed(
+                                    const Duration(milliseconds: 100),
+                                    () {},
+                                  );
 
                                   return;
                                 }
