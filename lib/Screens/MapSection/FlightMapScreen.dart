@@ -1782,17 +1782,53 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           ),
         ),
 
+        // AnimatedPositioned(
+        //   duration: const Duration(milliseconds: 300),
+        //   curve: Curves.easeInOut,
+        //   left: kIsWeb ? 400.0 : 0.0,
+        //   right: kIsWeb
+        //       ? MediaQuery.of(context).size.width / 1.51
+        //       : MediaQuery.of(context).size.width / 2.5,
+        //   bottom: _activeCard == 2 ? cardHeight : -cardHeight,
+        //   child: SizedBox(
+        //     height: segmentHeight,
+        //     child: CustomSegmentController(
+        //       segments: ["Airport Info", "Operational Info"],
+        //       selectedIndex: selectedSegmentIndex,
+        //       onChanged: (index) {
+        //         setState(() {
+        //           selectedSegmentIndex = index;
+        //         });
+        //       },
+        //     ),
+        //   ),
+        // ),
+
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb
-              ? MediaQuery.of(context).size.width / 1.51
-              : MediaQuery.of(context).size.width / 2.5,
+          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 2.5,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             height: segmentHeight,
-            child: CustomSegmentController(
+            child: kIsWeb
+                ? Center(
+              child: SizedBox(
+                width: 600,
+                child: CustomSegmentController(
+                  isWeb: true,
+                  segments: ["Airport Info", "Operational Info"],
+                  selectedIndex: selectedSegmentIndex,
+                  onChanged: (index) {
+                    setState(() {
+                      selectedSegmentIndex = index;
+                    });
+                  },
+                ),
+              ),
+            )
+                : CustomSegmentController(
               segments: ["Airport Info", "Operational Info"],
               selectedIndex: selectedSegmentIndex,
               onChanged: (index) {
