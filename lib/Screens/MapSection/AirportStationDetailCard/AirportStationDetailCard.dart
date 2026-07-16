@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -51,8 +52,12 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
       child: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(5),
+          borderRadius: kIsWeb
+              ? const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          )
+              : const BorderRadius.only(
             topRight: Radius.circular(30),
           ),
           boxShadow: [
