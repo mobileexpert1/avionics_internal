@@ -159,7 +159,15 @@ class LoginCubit extends Cubit<LoginState> {
         return;
       }
 
-      await initGoogle(context);
+      if (_googleInitialized) return;
+
+      await GoogleSignIn.instance.initialize(
+        clientId: kIsWeb
+            ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
+            : (Platform.isIOS
+                  ? '951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com'
+                  : null),
+      );
 
       emit(state.copyWith(status: CommonApiStatus.submitting));
 

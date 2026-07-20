@@ -294,6 +294,8 @@ class ManufacturerModel {
 
 extension FlightAircraftDetailCopy on FlightAircraftDetail {
   FlightAircraftDetail copyWith({
+    bool? isFavorite,
+
     // ── POSITION ──
     double? latitude,
     double? longitude,

@@ -52,14 +52,14 @@ class SubscriptionPlanCard extends StatelessWidget {
     final tokenCounts = getTokenPackageCount(addOns);
 
     final addOnItems = <String>[
-      if (creditCounts.small > 0) 'Credit Small Pack × ${creditCounts.small}',
+      if (creditCounts.small > 0) 'Light Add-on Credit × ${creditCounts.small}',
       if (creditCounts.medium > 0)
-        'Credit Medium Pack × ${creditCounts.medium}',
-      if (creditCounts.large > 0) 'Credit Large Pack × ${creditCounts.large}',
+        'Medium Add-on Credit × ${creditCounts.medium}',
+      if (creditCounts.large > 0) 'Heavy Add-on Credit × ${creditCounts.large}',
 
-      if (tokenCounts.small > 0) 'Token Small Pack × ${tokenCounts.small}',
-      if (tokenCounts.medium > 0) 'Token Medium Pack × ${tokenCounts.medium}',
-      if (tokenCounts.large > 0) 'Token Large Pack × ${tokenCounts.large}',
+      if (tokenCounts.small > 0) 'Light Add-on Token × ${tokenCounts.small}',
+      if (tokenCounts.medium > 0) 'Medium Add-on Token × ${tokenCounts.medium}',
+      if (tokenCounts.large > 0) 'Heavy Add-on onToken × ${tokenCounts.large}',
     ];
 
     final hasAddOns = addOnItems.isNotEmpty;

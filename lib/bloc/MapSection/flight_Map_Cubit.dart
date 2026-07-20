@@ -69,20 +69,38 @@ class FlightMapCubit extends Cubit<FlightMapState> {
   }
 
   void toggleFavoriteByCallSign(String? callSign) {
-    if (callSign == null || state.flights == null) return;
+    if (callSign == null) return;
+
+    // Single Flight Detail Screen
+    if (state.flights == null || state.flights!.isEmpty) {
+      final detail = state.selectedFlightDetail;
+
+      if (detail != null && detail.callsign == callSign) {
+        emit(
+          state.copyWith(
+            selectedFlightDetail: detail.copyWith(
+              isFavorite: !(detail.isFavorite ?? false),
+            ),
+            isFavFlightByS: !(state.isFavFlightByS ?? false),
+          ),
+        );
+      }
+
+      return;
+    }
+
+    // Flight List Screen
     final updatedFlights = state.flights!.map((flight) {
       if (flight.callSign == callSign) {
-        return flight.copyWith(isFavorite: !(flight.isFavorite));
+        return flight.copyWith(isFavorite: !flight.isFavorite);
       }
       return flight;
     }).toList();
 
-    emit(state.copyWith(flights: updatedFlights));
-    final newValueForFavUnFavFlights = state.isFavFlightByS ?? false;
     emit(
       state.copyWith(
         flights: updatedFlights,
-        isFavFlightByS: !newValueForFavUnFavFlights,
+        isFavFlightByS: !(state.isFavFlightByS ?? false),
       ),
     );
   }
@@ -387,6 +405,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     }
   }
 
+  // Main From Search Section.
   Future<void> fetchFlightDetails({
     required String flightId,
     required BuildContext context,

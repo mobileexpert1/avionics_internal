@@ -68,7 +68,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
   final FocusNode _messageFocusNode = FocusNode();
 
   bool _isNoInternetDialogOpen = false;
-  bool _needFreshSession = false;
 
   @override
   void initState() {
@@ -234,7 +233,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         _listenToInternet(cubit);
 
         cubit.onInternetLost = () {
-          _needFreshSession = true;
           _showNoInternetDialog();
         };
 
@@ -293,7 +291,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               AlertHelperForSubsPopup.showSubscriptionEndAlert(
                 context: context,
                 title: "Subscription Required",
-                message: "Your subscription has expired. Please renew to continue using the service.",
+                message:
+                    "Your subscription has expired. Please renew to continue using the service.",
                 navigateTo: const SubscriptionPlanDetailScreen(
                   isComeFromSignup: true,
                 ),
@@ -470,7 +469,6 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                                         child: isUser
                                             ? SelectableText(
-                                                // user message as-is rehne do
                                                 message['text'] ?? '',
                                                 style: AppTextStyles.regular(15)
                                                     .copyWith(
@@ -783,8 +781,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                             shape: BoxShape.circle,
                             color: _isListening
                                 ? const Color(0xFFF3F4F6)
-                                : Colors
-                                      .transparent, // ← null ki jagah transparent
+                                : Colors.transparent,
                           ),
 
                           child: Center(

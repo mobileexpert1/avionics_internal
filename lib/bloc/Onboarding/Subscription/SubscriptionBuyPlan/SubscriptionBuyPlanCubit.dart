@@ -212,6 +212,7 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
     } catch (e) {
       debugPrint(e.toString());
       await SharedPrefsHelper.clearAll([], false);
+      if (isClosed) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
         (route) => false,

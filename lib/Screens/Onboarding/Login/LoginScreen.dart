@@ -37,7 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.loginScreen);
     // FlutterUxcam.tagScreenName("Login Screen");
-    context.read<LoginCubit>().initGoogle(context);
+    if (kIsWeb) {
+      context.read<LoginCubit>().initGoogle(context);
+    }
   }
 
   @override

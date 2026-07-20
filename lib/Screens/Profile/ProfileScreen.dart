@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
@@ -57,6 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.profileScreen);
     homeCubit = HomeCubit();
     setLocalData();
+    homeCubit.fetchHomeData(context);
   }
 
   @override
@@ -208,7 +210,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     //     );
                     //   },
                     // ),
-
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,
