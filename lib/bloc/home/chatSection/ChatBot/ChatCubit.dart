@@ -34,6 +34,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   final ChatRepositoryImpl _repo;
   StreamSubscription? _sub;
+
   // dynamic _internetSub;
   final _internetStatusController = StreamController<bool>.broadcast();
   bool _isConnected = true;
@@ -330,9 +331,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       final hasNetwork = !results.contains(ConnectivityResult.none);
 
       if (!hasNetwork) {
-
-        if (_repo.currentSessionId == null ||
-            _repo.currentSessionId!.isEmpty) {
+        if (_repo.currentSessionId == null || _repo.currentSessionId!.isEmpty) {
           _needFreshSession = true;
 
           print("⚠️ Session not created. Fresh session needed");
@@ -379,9 +378,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             // Last user message remove karo
             for (int i = next.length - 1; i >= 0; i--) {
               if (next[i]['type'] == 'user') {
-                print(
-                  "Removing Pending Message => ${next[i]['text']}",
-                );
+                print("Removing Pending Message => ${next[i]['text']}");
 
                 next.removeAt(i);
                 break;
@@ -403,7 +400,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         _repo.updateInternetStatus(false);
 
         if (_isConnected) {
-
           if (_repo.currentSessionId == null ||
               _repo.currentSessionId!.isEmpty) {
             _needFreshSession = true;
