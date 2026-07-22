@@ -200,6 +200,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     NoInternetDialog.show(
       context,
       onRetry: () async {
+        await Future.delayed(const Duration(seconds: 1));
+
         final hasInternet = await InternetConnection().hasInternetAccess;
 
         if (hasInternet) {
