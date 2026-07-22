@@ -308,8 +308,6 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       'type': msg.author == ChatAuthor.user ? 'user' : 'bot',
       'text': msg.text.trim(),
     };
-
-    // FIX: check entire list, not only last element
     final isDuplicate = next.any(
       (m) =>
           m['type'] == mapped['type'] &&
@@ -323,110 +321,235 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     emit(next);
   }
 
+  // void _startInternetListener() {
+  //   _internetSub = Connectivity().onConnectivityChanged.listen((results) async {
+  //     print("Connectivity Changed => $results");
+  //
+  //     final hasNetwork = !results.contains(ConnectivityResult.none);
+  //
+  //     if (!hasNetwork) {
+  //
+  //       if (_repo.currentSessionId == null ||
+  //           _repo.currentSessionId!.isEmpty) {
+  //         _needFreshSession = true;
+  //
+  //         print("⚠️ Session not created. Fresh session needed");
+  //       }
+  //       _repo.updateInternetStatus(false);
+  //
+  //       if (_isConnected) {
+  //         _isConnected = false;
+  //
+  //         _internetStatusController.add(false);
+  //
+  //         print('[Internet] No Network');
+  //
+  //         _responseTimer?.cancel();
+  //
+  //         final next = List<Map<String, String>>.from(state);
+  //         next.removeWhere((m) => m['type'] == 'analyzing');
+  //         emit(next);
+  //
+  //         onInternetLost?.call();
+  //       }
+  //
+  //       return;
+  //     }
+  //
+  //     final hasInternet = await InternetConnection().hasInternetAccess;
+  //
+  //     print('Network Available: $hasNetwork, Internet Available: $hasInternet');
+  //
+  //     if (hasInternet) {
+  //       if (!_isConnected) {
+  //         _isConnected = true;
+  //
+  //         _repo.updateInternetStatus(true);
+  //
+  //         _internetStatusController.add(true);
+  //         if (_needFreshSession) {
+  //           print("🔥 Fresh Chat Triggered");
+  //
+  //           final next = List<Map<String, String>>.from(state);
+  //
+  //           next.removeWhere((m) => m['type'] == 'analyzing');
+  //           for (int i = next.length - 1; i >= 0; i--) {
+  //             if (next[i]['type'] == 'user') {
+  //               print(
+  //                 "Removing Pending Message => ${next[i]['text']}",
+  //               );
+  //
+  //               next.removeAt(i);
+  //               break;
+  //             }
+  //           }
+  //
+  //           emit(next);
+  //
+  //           await startFreshChat();
+  //
+  //           _needFreshSession = false;
+  //         } else {
+  //           print("🔥 Normal Reconnect");
+  //
+  //           await _repo.reconnect();
+  //         }
+  //       }
+  //     } else {
+  //       _repo.updateInternetStatus(false);
+  //
+  //       if (_isConnected) {
+  //
+  //         if (_repo.currentSessionId == null ||
+  //             _repo.currentSessionId!.isEmpty) {
+  //           _needFreshSession = true;
+  //
+  //           print("⚠️ Session not created. Fresh session needed");
+  //         }
+  //
+  //         _isConnected = false;
+  //
+  //         _internetStatusController.add(false);
+  //
+  //         print('[Internet] Internet Lost');
+  //
+  //         _responseTimer?.cancel();
+  //
+  //         final next = List<Map<String, String>>.from(state);
+  //         next.removeWhere((m) => m['type'] == 'analyzing');
+  //         emit(next);
+  //
+  //         onInternetLost?.call();
+  //       }
+  //     }
+  //   });
+  // }
+
   void _startInternetListener() {
-    _internetSub = Connectivity().onConnectivityChanged.listen((results) async {
-      print("Connectivity Changed => $results");
+    _internetSub =
+        Connectivity().onConnectivityChanged.listen((results) async {
+          print("Connectivity Changed => $results");
 
-      final hasNetwork = !results.contains(ConnectivityResult.none);
+          final hasNetwork = !results.contains(ConnectivityResult.none);
 
-      if (!hasNetwork) {
+          // iOS fix: Connectivity kabhi-kabhi false none return karta hai
+          if (!hasNetwork) {
+            await Future.delayed(const Duration(seconds: 1));
 
-        if (_repo.currentSessionId == null ||
-            _repo.currentSessionId!.isEmpty) {
-          _needFreshSession = true;
+            final hasInternet =
+            await InternetConnection().hasInternetAccess;
 
-          print("⚠️ Session not created. Fresh session needed");
-        }
-        _repo.updateInternetStatus(false);
+            print("iOS None Check => Internet Available: $hasInternet");
 
-        if (_isConnected) {
-          _isConnected = false;
-
-          _internetStatusController.add(false);
-
-          print('[Internet] No Network');
-
-          _responseTimer?.cancel();
-
-          final next = List<Map<String, String>>.from(state);
-          next.removeWhere((m) => m['type'] == 'analyzing');
-          emit(next);
-
-          onInternetLost?.call();
-        }
-
-        return;
-      }
-
-      final hasInternet = await InternetConnection().hasInternetAccess;
-
-      print('Network Available: $hasNetwork, Internet Available: $hasInternet');
-
-      if (hasInternet) {
-        if (!_isConnected) {
-          _isConnected = true;
-
-          _repo.updateInternetStatus(true);
-
-          _internetStatusController.add(true);
-          if (_needFreshSession) {
-            print("🔥 Fresh Chat Triggered");
-
-            final next = List<Map<String, String>>.from(state);
-
-            next.removeWhere((m) => m['type'] == 'analyzing');
-
-            // Last user message remove karo
-            for (int i = next.length - 1; i >= 0; i--) {
-              if (next[i]['type'] == 'user') {
-                print(
-                  "Removing Pending Message => ${next[i]['text']}",
-                );
-
-                next.removeAt(i);
-                break;
-              }
+            // Internet hai to false connectivity event ignore karo
+            if (hasInternet) {
+              print("⚡ Ignoring false iOS connectivity event");
+              return;
             }
 
-            emit(next);
+            if (_repo.currentSessionId == null ||
+                _repo.currentSessionId!.isEmpty) {
+              _needFreshSession = true;
+              print("⚠️ Session not created. Fresh session needed");
+            }
 
-            await startFreshChat();
+            _repo.updateInternetStatus(false);
 
-            _needFreshSession = false;
+            if (_isConnected) {
+              _isConnected = false;
+
+              _internetStatusController.add(false);
+
+              print('[Internet] No Network');
+
+              _responseTimer?.cancel();
+
+              final next = List<Map<String, String>>.from(state);
+              next.removeWhere((m) => m['type'] == 'analyzing');
+
+              emit(next);
+
+              onInternetLost?.call();
+            }
+
+            return;
+          }
+
+          // Actual internet check
+          await Future.delayed(const Duration(milliseconds: 500));
+
+          final hasInternet =
+          await InternetConnection().hasInternetAccess;
+
+          print(
+            'Network Available: $hasNetwork, Internet Available: $hasInternet',
+          );
+
+          if (hasInternet) {
+            if (!_isConnected) {
+              _isConnected = true;
+
+              _repo.updateInternetStatus(true);
+
+              _internetStatusController.add(true);
+
+              if (_needFreshSession) {
+                print("🔥 Fresh Chat Triggered");
+
+                final next = List<Map<String, String>>.from(state);
+
+                next.removeWhere((m) => m['type'] == 'analyzing');
+
+                for (int i = next.length - 1; i >= 0; i--) {
+                  if (next[i]['type'] == 'user') {
+                    print(
+                      "Removing Pending Message => ${next[i]['text']}",
+                    );
+
+                    next.removeAt(i);
+                    break;
+                  }
+                }
+
+                emit(next);
+
+                await startFreshChat();
+
+                _needFreshSession = false;
+              } else {
+                print("🔥 Normal Reconnect");
+
+                await _repo.reconnect();
+              }
+            }
           } else {
-            print("🔥 Normal Reconnect");
+            _repo.updateInternetStatus(false);
 
-            await _repo.reconnect();
+            if (_isConnected) {
+              if (_repo.currentSessionId == null ||
+                  _repo.currentSessionId!.isEmpty) {
+                _needFreshSession = true;
+
+                print("⚠️ Session not created. Fresh session needed");
+              }
+
+              _isConnected = false;
+
+              _internetStatusController.add(false);
+
+              print('[Internet] Internet Lost');
+
+              _responseTimer?.cancel();
+
+              final next = List<Map<String, String>>.from(state);
+              next.removeWhere((m) => m['type'] == 'analyzing');
+
+              emit(next);
+
+              onInternetLost?.call();
+            }
           }
-        }
-      } else {
-        _repo.updateInternetStatus(false);
-
-        if (_isConnected) {
-
-          if (_repo.currentSessionId == null ||
-              _repo.currentSessionId!.isEmpty) {
-            _needFreshSession = true;
-
-            print("⚠️ Session not created. Fresh session needed");
-          }
-
-          _isConnected = false;
-
-          _internetStatusController.add(false);
-
-          print('[Internet] Internet Lost');
-
-          _responseTimer?.cancel();
-
-          final next = List<Map<String, String>>.from(state);
-          next.removeWhere((m) => m['type'] == 'analyzing');
-          emit(next);
-
-          onInternetLost?.call();
-        }
-      }
-    });
+        });
   }
 
   void stopResponse() {
