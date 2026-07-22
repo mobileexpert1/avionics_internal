@@ -668,9 +668,11 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             polygonNotifier.value = newPolygons;
 
             if (_selectedPolygonId != null) {
-              ScaffoldMessenger.of(
+              AppSnackBar.custom(
                 context,
-              ).showSnackBar(SnackBar(content: Text(p.name)));
+                message: p.name,
+                svgAsset: "",
+              );
             }
           },
         ),

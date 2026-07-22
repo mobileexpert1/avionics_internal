@@ -16,6 +16,8 @@ import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Helpers/CreditManager/CreditManager.dart';
 import '../../Helpers/NoInternetDialog.dart';
 import '../../Helpers/push_notifications/LocalNotificationHelper.dart';
+import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
+import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../Home/SavedFlighDetails/savedFlight_repository.dart';
 import 'AircraftStationList/aircraft_Station_List_Model.dart';
@@ -580,8 +582,26 @@ class FlightMapCubit extends Cubit<FlightMapState> {
         }
       } catch (e) {
         if (kDebugMode) {
-          print(e.toString());
+          print("testing${e.toString()}");
         }
+        if (e.toString().toLowerCase().contains(
+          "subscription plan not found".toLowerCase(),
+        )) {
+          AlertHelperForSubsPopup.showSubscriptionEndAlert(
+            hideTheCrossButton: true,
+            context: context,
+            title: "Subscription Required",
+            message:
+                "Your subscription has expired. Please renew to continue using the service.",
+            navigateTo: const SubscriptionPlanDetailScreen(
+              isComeFromSignup: true,
+            ),
+            onGoToFirstTab: () {
+              RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
+            },
+          );
+        }
+        return;
       }
     } else {
       NoInternetDialog.show(

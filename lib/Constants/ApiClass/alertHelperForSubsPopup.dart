@@ -14,6 +14,7 @@ class AlertHelperForSubsPopup {
     VoidCallback? onGoToFirstTab,
     bool? isFromWilcoAndTrackingScreen,
     VoidCallback? onGoToActionBlock,
+    bool? hideTheCrossButton,
   }) {
     showDialog(
       context: context,
@@ -44,7 +45,7 @@ class AlertHelperForSubsPopup {
                     onGoToFirstTab?.call();
                   });
                 },
-                child: const Icon(Icons.close, size: 20),
+                child: Icon(Icons.close, size: hideTheCrossButton == true ? 0 :20),
               ),
             ],
           ),
