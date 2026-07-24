@@ -68,9 +68,14 @@ class _GamesScreenState extends State<GamesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final screenHeight =
-        MediaQuery.sizeOf(context).height + (kIsWeb ? 100 : 50);
-
+        MediaQuery.sizeOf(context).height +
+        (kIsWeb
+            ? screenWidth > 500
+                  ? 100
+                  : 50
+            : 50);
     return BlocProvider.value(
       value: _gamesCubit,
       child: Scaffold(
@@ -215,7 +220,12 @@ class _GamesScreenState extends State<GamesScreen> {
                                         if (row.left != null)
                                           Positioned(
                                             top: row.left!.topValue,
-                                            left: kIsWeb ? 200 : 30,
+                                            left: (kIsWeb
+                                                ? screenWidth > 500
+                                                      ? 200
+                                                      : 30
+                                                : 30),
+
                                             child: GameCard(
                                               model: row.left!,
                                               onTap: (_) {
@@ -226,13 +236,18 @@ class _GamesScreenState extends State<GamesScreen> {
                                                   ),
                                                 );
                                               },
+                                              screenWidth: screenWidth,
                                             ),
                                           ),
 
                                         if (row.right != null)
                                           Positioned(
                                             top: row.right!.topValue,
-                                            right: kIsWeb ? 200 : 30,
+                                            right: (kIsWeb
+                                                ? screenWidth > 500
+                                                      ? 200
+                                                      : 30
+                                                : 30),
                                             child: GameCard(
                                               model: row.right!,
                                               onTap: (_) {
@@ -243,6 +258,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                                   ),
                                                 );
                                               },
+                                              screenWidth: screenWidth,
                                             ),
                                           ),
                                       ],
@@ -252,7 +268,7 @@ class _GamesScreenState extends State<GamesScreen> {
                               ),
                             ),
                           ),
-                          if (kIsWeb) ...[
+                          if (kIsWeb || screenWidth > 500) ...[
                             Positioned(
                               bottom: -20,
                               left: 0,
@@ -291,7 +307,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: SizedBox(
-                                        height: 300,
+                                        height: screenWidth > 500 ? 300:160,
                                         child: Container(
                                           color: Colors.white,
                                           child: Image.asset(
@@ -309,27 +325,26 @@ class _GamesScreenState extends State<GamesScreen> {
                               ),
                             ),
                           ],
-                              if (!kIsWeb) ...[
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  height: 160,
-                                  child: IgnorePointer(
-                                    child: Container(
-                                      color: Colors.white,
-                                      child: Image.asset(
-                                        CommonUi.setPngImage(
-                                          AssetsPath.towerImageForGame,
-                                        ),
-                                        fit: BoxFit.contain,
-                                        alignment: Alignment.bottomCenter,
-                                      ),
+                          if (!kIsWeb || screenWidth < 500) ...[
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              height: 160,
+                              child: IgnorePointer(
+                                child: Container(
+                                  color: Colors.white,
+                                  child: Image.asset(
+                                    CommonUi.setPngImage(
+                                      AssetsPath.towerImageForGame,
                                     ),
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.bottomCenter,
                                   ),
                                 ),
-                                ]
-
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     );
@@ -348,8 +363,14 @@ class _GamesScreenState extends State<GamesScreen> {
 class GameCard extends StatelessWidget {
   final GameCardModel model;
   final Function(String id) onTap;
+  final double screenWidth;
 
-  const GameCard({super.key, required this.model, required this.onTap});
+  const GameCard({
+    super.key,
+    required this.model,
+    required this.onTap,
+    required this.screenWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -363,8 +384,18 @@ class GameCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              width: MediaQuery.of(context).size.width / (kIsWeb ? 5 : 3),
-              height: kIsWeb ? 100 : 65,
+              width:
+                  MediaQuery.of(context).size.width /
+                  (kIsWeb
+                      ? screenWidth > 500
+                            ? 5
+                            : 3
+                      : 3),
+              height: kIsWeb
+                  ? screenWidth > 500
+                        ? 100
+                        : 65
+                  : 65,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: model.color, width: 1.0),
@@ -386,7 +417,11 @@ class GameCard extends StatelessWidget {
                       model.title,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.medium(
-                        (kIsWeb ? 24 : 14),
+                        (kIsWeb
+                            ? screenWidth > 500
+                                  ? 24
+                                  : 14
+                            : 14),
                       ).copyWith(height: 1.2, color: AppColors.black),
                     ),
                   ),

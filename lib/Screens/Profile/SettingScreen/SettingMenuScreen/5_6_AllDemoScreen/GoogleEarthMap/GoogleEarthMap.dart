@@ -10,7 +10,6 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
-import 'coordinate_state.dart';
 import 'globe_controls_state.dart';
 
 class GoogleEarthMap extends StatefulWidget {
@@ -92,7 +91,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
       rotationSpeed: 0.01,
       minZoom: -1.0,
       maxZoom: 5,
-      zoom: 1.0,
+      zoom: 0.9,
       isRotating: false,
       atmosphereOpacity: 0.8,
       zoomToMousePosition: false,
@@ -153,7 +152,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[1].coordinates,
         curveScale: 0.5,
         id: '1',
-        // isLastId: "",
+        isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -166,7 +165,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[2].coordinates,
         curveScale: 0.5,
         id: '2',
-        // isLastId: "",
+        isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -179,7 +178,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[3].coordinates,
         curveScale: 0.5,
         id: '3',
-        // isLastId: "",
+        isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -192,7 +191,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[4].coordinates,
         curveScale: 0.5,
         id: '4',
-        // isLastId: "",
+        isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -205,7 +204,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[5].coordinates,
         curveScale: 0.5,
         id: '5',
-        // isLastId: "",
+        isLastId: "",
         style: const PointConnectionStyle(
           type: PointConnectionType.dashed,
           color: AppColors.greenColourForPlan,
@@ -219,7 +218,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[0].coordinates,
         curveScale: 0.5,
         id: '6',
-        // isLastId: "6",
+        isLastId: "6",
         style: const PointConnectionStyle(
           type: PointConnectionType.dotted,
           color: AppColors.greenColourForPlan,
@@ -319,6 +318,8 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
     );
   }
 
+  bool _showLocations = false;
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -345,18 +346,69 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: FlutterEarthGlobe(
-                onZoomChanged: (zoom) {
-                  GlobeControlsState.instance.setZoom(zoom);
+              child: FlutterEarthGlobe(controller: _controller, radius: radius),
+            ),
+
+            // Bottom List
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              left: 0,
+              right: 0,
+              bottom: _showLocations ? 70 : -300,
+              child: Material(
+                color: Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+                child: SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                    itemCount: points.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(points[index].label ?? ''),
+                        onTap: () {
+                          _controller.focusOnCoordinates(
+                            points[index].coordinates,
+                            animate: true,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+
+            // Bottom Button
+            Positioned(
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _showLocations = !_showLocations;
+                  });
                 },
-                onTap: (coordinates) {
-                  CoordinateState.instance.updateClickCoordinates(coordinates);
+                child: Text(
+                  _showLocations ? 'Hide Locations' : 'Show Locations',
+                ),
+              ),
+            ), // Bottom Button
+            Positioned(
+              bottom: 70,
+              left: 16,
+              right: 16,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _showLocations = !_showLocations;
+                  });
                 },
-                onHover: (coordinates) {
-                  CoordinateState.instance.updateHoverCoordinates(coordinates);
-                },
-                controller: _controller,
-                radius: radius,
+                child: Text(
+                  _showLocations ? 'Hide Locations' : 'Show Locations',
+                ),
               ),
             ),
           ],

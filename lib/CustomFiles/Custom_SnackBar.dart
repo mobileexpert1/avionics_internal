@@ -24,7 +24,11 @@ class AppSnackBar {
         elevation: 6,
         duration: duration,
 
-        width: kIsWeb ? screenWidth * 0.3 : null,
+        width: kIsWeb
+            ? screenWidth > 500
+                  ? screenWidth * 0.3
+                  : null
+            : null,
 
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         content: Row(

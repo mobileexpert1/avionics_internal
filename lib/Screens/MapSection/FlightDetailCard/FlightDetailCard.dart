@@ -60,7 +60,6 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
       child: BlocBuilder<FlightMapCubit, FlightMapState>(
-        //Sham
         builder: (context, state) {
           final selectedFlight = state.selectedFlight;
           final detail = widget.flightDetail;

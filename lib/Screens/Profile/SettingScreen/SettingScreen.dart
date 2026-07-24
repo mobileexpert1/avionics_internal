@@ -25,6 +25,7 @@ import 'SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
 import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
 import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/5_6_AllDemoScreen/GoogleEarthMap/GoogleEarthMap.dart';
 import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';
@@ -274,13 +275,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   },
                     // ),
                     //
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.manageAccountProfile,
-                    //   ),
-                    //   title: "Google Earth Map",
-                    //   onTap: () => _navigate(context, GoogleEarthMap()),
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.manageAccountProfile,
+                      ),
+                      title: "Google Earth Map",
+                      onTap: () => _navigate(context, GoogleEarthMap()),
+                    ),
                   ],
                 ),
 

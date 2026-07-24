@@ -116,8 +116,13 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
             return Column(
               children: [
-                _buildTabs(context, state),
-                Container(height: 5, color: AppColors.extraDarkYellow),
+                ikweb
+                    ? _buildBrowserTabBar(context, state)
+                    : _buildTabs(context, state),
+
+                if (!ikweb) ...[
+                  Container(height: 5, color: AppColors.extraDarkYellow),
+                ],
 
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -171,7 +176,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                                 fontWeight: FontWeight.w600,
                                 fontSize:
                                     MediaQuery.of(context).size.width *
-                                    (ikweb ? 0.013 : 0.037),
+                                    (ikweb ? 0.016 : 0.037),
                                 color: const Color(0xFF32377D),
                               ),
                             ),
@@ -183,7 +188,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                             fontWeight: FontWeight.bold,
                             fontSize:
                                 MediaQuery.of(context).size.width *
-                                (ikweb ? 0.013 : 0.037),
+                                (ikweb ? 0.016 : 0.037),
                             color: const Color(0xFF32377D),
                           ),
                         ),
@@ -226,7 +231,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                                     mainAxisSpacing:
                                         MediaQuery.of(context).size.height *
                                         (isWide ? 0.025 : 0.015),
-                                    childAspectRatio: isWide ? 1.0 : 0.75,
+                                    childAspectRatio: isWide ? 0.85 : 0.75,
                                   ),
                               itemBuilder: (context, index) {
                                 final badge = state.badges[index];
@@ -245,6 +250,62 @@ class _BadgesScreenState extends State<BadgesScreen> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildBrowserTabBar(BuildContext context, BadgesState state) {
+    return Column(
+      children: [
+        Container(
+          height: 50,
+          color: AppColors.primaryDark,
+          child: Row(
+            children: List.generate(tabs.length, (index) {
+              final isSelected = state.selectedTab == index;
+
+              return Expanded(
+                child: InkWell(
+                  onTap: () {
+                    context.read<BadgesCubit>().changeTab(
+                      index,
+                      context: context,
+                    );
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (isSelected)
+                        Positioned.fill(
+                          child: CustomPaint(
+                            painter: BrowserTabPainter(
+                              tabColor: AppColors.extraDarkYellow,
+                              topRadius: 16,
+                            ),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 16,
+                        ),
+                        child: Text(
+                          tabs[index],
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.regular(16).copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: isSelected ? Colors.black : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+        Container(height: 5, color: AppColors.extraDarkYellow),
+      ],
     );
   }
 
@@ -312,7 +373,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 7,
-                                    vertical: 11,
+                                    vertical: 13,
                                   ),
                                   child: Text(
                                     tabs[index],
@@ -602,36 +663,33 @@ class _BadgeCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           badge.isEarned
-                              ? Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.circle,
-                                      size: 18,
-                                      color: Colors.green,
-                                    ),
-                                    const Icon(
-                                      Icons.check,
-                                      size: 21,
-                                      color: Colors.white,
-                                    ),
-                                  ],
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 16,
                                 )
                               : const Icon(
                                   Icons.lock_outline,
-                                  size: 15,
                                   color: Colors.blue,
+                                  size: 15,
                                 ),
+
                           const SizedBox(width: 4),
-                          Text(
-                            badge.isEarned
-                                ? "Unlocked"
-                                : "Unlock after ${badge.requireWin} wins",
-                            style: TextStyle(
-                              color: badge.isEarned
-                                  ? Colors.green
-                                  : Colors.blue,
-                              fontSize: 12,
+
+                          Flexible(
+                            child: Text(
+                              badge.isEarned
+                                  ? "Unlocked"
+                                  : "Unlock after ${badge.requireWin} wins",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: badge.isEarned
+                                    ? Colors.green
+                                    : Colors.blue,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
