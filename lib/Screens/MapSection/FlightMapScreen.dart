@@ -225,9 +225,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   void _sheetListenerForChangeTheTap() {
+    final bool isDesktopWeb =
+        kIsWeb && MediaQuery.of(context).size.width >= 900;
+
     final currentSize = _sheetController.size;
 
-    _disableMapGesture = kIsWeb ? true : false;
+    _disableMapGesture = isDesktopWeb;
+
 
     if (currentSize > 0.15) {
       _hasTriggeredMapView = true;
@@ -481,21 +485,24 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   double getIconSize(double currentZoom) {
+    final bool isDesktopWeb =
+        kIsWeb && MediaQuery.of(context).size.width >= 900;
+
     switch (currentZoom.floor()) {
       case 0:
       case 1:
       case 2:
       case 3:
       case 4:
-        return kIsWeb ? 30 : 50;
+        return isDesktopWeb ? 30 : 50;
       case 5:
       case 6:
       case 7:
-        return kIsWeb ? 50 : 60;
+        return isDesktopWeb ? 50 : 60;
       case 8:
       case 9:
       case 10:
-        return kIsWeb ? 80 : 70;
+        return isDesktopWeb ? 80 : 70;
       default:
         return 100;
     }
@@ -748,12 +755,14 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     final screenWidth = size.width;
     final screenHeight = size.height;
 
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+
     showModalBottomSheet(
       context: context,
       useRootNavigator: false,
       isDismissible: false,
       enableDrag: false,
-      isScrollControlled: kIsWeb ? true : false,
+      isScrollControlled: isDesktopWeb ? true : false,
       backgroundColor: Colors.transparent,
       builder: (context) {
         Widget popupContent = Container(
@@ -763,7 +772,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
               ? BoxConstraints(maxHeight: screenHeight * 0.9)
               : null,
 
-          margin: kIsWeb ? const EdgeInsets.all(20) : EdgeInsets.zero,
+          margin: isDesktopWeb ? const EdgeInsets.all(20) : EdgeInsets.zero,
 
           padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.04,
@@ -806,7 +815,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 ],
               ),
 
-              SizedBox(height: kIsWeb ? 20 : screenWidth * 0.06),
+              SizedBox(height: isDesktopWeb ? 20 : screenWidth * 0.06),
 
               /// Flying in Area
               CustomHeaderViewExpandable(
@@ -854,13 +863,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
                   isFirstTimeUserCome = false;
 
-                  _disableMapGesture = kIsWeb ? true : false;
+                  _disableMapGesture = isDesktopWeb ? true : false;
 
                   _handleFilterTap(context);
                 },
               ),
 
-              SizedBox(height: kIsWeb ? 8 : screenWidth * 0.02),
+              SizedBox(height: isDesktopWeb ? 8 : screenWidth * 0.02),
 
               Text(
                 "Click to view flights currently flying in this area on the map",
@@ -870,7 +879,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 textAlign: TextAlign.start,
               ),
 
-              SizedBox(height: kIsWeb ? 20 : screenWidth * 0.06),
+              SizedBox(height: isDesktopWeb ? 20 : screenWidth * 0.06),
 
               /// Track Flight
               CustomHeaderViewExpandable(
@@ -919,7 +928,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 },
               ),
 
-              SizedBox(height: kIsWeb ? 8 : screenWidth * 0.02),
+              SizedBox(height: isDesktopWeb ? 8 : screenWidth * 0.02),
 
               Text(
                 "View real-time status, route, and updates for a flight",
@@ -929,13 +938,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 textAlign: TextAlign.start,
               ),
 
-              SizedBox(height: kIsWeb ? 20 : screenWidth * 0.1),
+              SizedBox(height: isDesktopWeb ? 20 : screenWidth * 0.1),
             ],
           ),
         );
 
         /// WEB ONLY FIX
-        if (kIsWeb) {
+        if (isDesktopWeb) {
           return SafeArea(
             child: SingleChildScrollView(child: Center(child: popupContent)),
           );
@@ -950,6 +959,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   // ── BUILD ──────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+    final bool isDesktopWeb = kIsWeb && !isMobileWeb;
     return Scaffold(
       appBar: CustomAppBar(
         isForHomeScreen: true,
@@ -1107,7 +1120,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
                   if (_isMapListViewShown)
                     Positioned(
-                      top: kIsWeb ? 100 : 65,
+                      top: isDesktopWeb ? 100 : 65,
                       right: 10,
                       child: MapToggleButtons(
                         isMapViewSelected: isMapViewSelected,
@@ -1142,10 +1155,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
   // ── WIDGET BUILDERS ────────────────────────────────────────────────────────
   Widget _buildSearchBar(BuildContext context, FlightMapState state) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+    final bool isDesktopWeb = kIsWeb && !isMobileWeb;
     return Positioned(
-      top: kIsWeb ? 10 : 0,
-      left: kIsWeb ? 100 : 0,
-      right: kIsWeb ? 100 : 0,
+      top: isDesktopWeb ? 10 : 0,
+      left: isDesktopWeb ? 100 : 0,
+      right: isDesktopWeb ? 100 : 0,
       child: SearchBarWidget(
         enableGestureMode: true,
         onTextTap: () => _handleTextTap(context),
@@ -1156,7 +1172,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         isComeFromMapSection: true,
         controller: _searchController,
         onFilterTap: () {
-          _disableMapGesture = kIsWeb ? true : false;
+          _disableMapGesture = isDesktopWeb ? true : false;
           _handleFilterTap(context);
         },
         searchTitle: _isForFlyingInTheArea == 2
@@ -1299,8 +1315,12 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     BuildContext context,
     FlightMapState state,
   ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+    final bool isDesktopWeb = kIsWeb && !isMobileWeb;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
+      padding: EdgeInsets.symmetric(horizontal: isDesktopWeb  ? 400.0 : 0.0),
       child: DraggableScrollableSheet(
         controller: _sheetController,
         initialChildSize: 0.00,
@@ -1355,7 +1375,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                           vertical: kIsWeb
                               ? MediaQuery.of(context).size.width * 0.005
                               : MediaQuery.of(context).size.width * 0.016,
-                          horizontal: kIsWeb
+                          horizontal: isDesktopWeb
                               ? MediaQuery.of(context).size.width * 0.15
                               : 15,
                         ),
@@ -1743,6 +1763,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   }
 
   Widget _buildAnimatedAirportDetailsCard(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+
     final screenHeight = MediaQuery.of(context).size.height;
     final cardHeight = screenHeight * 0.32;
     const segmentHeight = 45.0;
@@ -1753,8 +1776,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : 0.0,
+          left: isDesktopWeb  ? 400.0 : 0.0,
+          right: isDesktopWeb  ? 400.0 : 0.0,
           bottom: _activeCard == 2 ? 0 : -cardHeight,
           child: SizedBox(
             height: cardHeight,
@@ -1783,7 +1806,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         // AnimatedPositioned(
         //   duration: const Duration(milliseconds: 300),
         //   curve: Curves.easeInOut,
-        //   left: kIsWeb ? 400.0 : 0.0,
+        //   left: isDesktopWeb ? 400.0 : 0.0,
         //   right: kIsWeb
         //       ? MediaQuery.of(context).size.width / 1.51
         //       : MediaQuery.of(context).size.width / 2.5,
@@ -1804,12 +1827,12 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          left: kIsWeb ? 400.0 : 0.0,
-          right: kIsWeb ? 400.0 : MediaQuery.of(context).size.width / 2.56,
+          left: isDesktopWeb ? 400.0 : 0.0,
+          right: isDesktopWeb ? 400.0 : MediaQuery.of(context).size.width / 2.56,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             height: segmentHeight,
-            child: kIsWeb
+            child: isDesktopWeb
                 ? Center(
                     child: SizedBox(
                       width: 600,

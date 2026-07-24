@@ -417,6 +417,8 @@ class CustomDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -428,9 +430,13 @@ class CustomDialog extends StatelessWidget {
           children: [
             Text(
               title,
+              textAlign: TextAlign.center,
               style: AppTextStyles.bold(
-                22,
-              ).copyWith(height: 1.0, color: AppColors.primaryDark),
+                isDesktopWeb ? 22 : 18,
+              ).copyWith(
+                height: 1.2,
+                color: AppColors.primaryDark,
+              ),
             ),
 
             if (description != null) ...[
@@ -439,8 +445,11 @@ class CustomDialog extends StatelessWidget {
                 description!,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.regular(
-                  18,
-                ).copyWith(height: 1.0, color: AppColors.grayMedium),
+                  isDesktopWeb ? 18 : 14,
+                ).copyWith(
+                  height: 1.4,
+                  color: AppColors.grayMedium,
+                ),
               ),
             ],
 
@@ -459,7 +468,7 @@ class CustomDialog extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(width: 12),
+                SizedBox(width: isDesktopWeb ? 12 : 8),
 
                 Expanded(
                   child: _DialogButton(

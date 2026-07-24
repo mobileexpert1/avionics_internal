@@ -40,10 +40,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double maxWidth = MediaQuery.of(context).size.width > 1500
-        ? 1500
-        : MediaQuery.of(context).size.width;
-
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
+    // double maxWidth = isDesktopWeb ? 1500 : double.infinity;
     return BlocProvider(
       create: (_) => FeedbackCubit(),
       child: Scaffold(
@@ -62,8 +61,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         body: SafeArea(
           child: Align(
             alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
+            child:SizedBox(
+              width: isDesktopWeb ? 1500 : double.infinity,
+              // constraints: BoxConstraints(maxWidth: maxWidth),
               child: BlocListener<FeedbackCubit, FeedbackState>(
                 listenWhen: (previous, current) =>
                     current.submissionSuccess && !previous.submissionSuccess,
@@ -80,8 +80,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   builder: (context, state) {
                     final isEmpty = controller.text.trim().isEmpty;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktopWeb ? 20 : 16,
                         vertical: 20,
                       ),
                       child: SingleChildScrollView(
@@ -301,7 +301,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             /// SUBMIT BUTTON
                             Center(
                               child: SizedBox(
-                                width: kIsWeb
+                                width: isDesktopWeb
                                     ? MediaQuery.of(context).size.width * 0.45
                                     : double.infinity,
                                 child: CustomBottomButton(

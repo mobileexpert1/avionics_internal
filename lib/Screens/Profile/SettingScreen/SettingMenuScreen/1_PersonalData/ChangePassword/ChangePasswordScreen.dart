@@ -45,6 +45,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
     return BlocProvider(
       create: (_) => ChangePasswordCubit(),
       child: BlocConsumer<ChangePasswordCubit, ChangeNewPasswordState>(
@@ -156,38 +158,29 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 builder: (context, isButtonEnabled) {
                                   return Center(
                                     child: SizedBox(
-                                      width: kIsWeb
-                                          ? MediaQuery.of(context).size.width *
-                                                0.5
-                                          : double.infinity,
+                                      width: isDesktopWeb ? 500 : double.infinity,
                                       height: 50,
                                       child: CustomBottomButton(
-                                        fontStyle: AppTextStyles.regular(21.46)
-                                            .copyWith(
-                                              height: 1.0,
-                                              color: isButtonEnabled
-                                                  ? Colors.white
-                                                  : Colors.grey.shade600,
-                                            ),
+                                        fontStyle: AppTextStyles.regular(21.46).copyWith(
+                                          height: 1.0,
+                                          color: isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade600,
+                                        ),
                                         title: ConstantStrings.save,
                                         backgroundColor: isButtonEnabled
                                             ? AppColors.primaryValueColour
-                                            : AppColors
-                                                  .darkSeparatorColourAppBar,
+                                            : AppColors.darkSeparatorColourAppBar,
                                         textColor: Colors.white,
                                         icon: const SizedBox(width: 0),
                                         isEnabled: isButtonEnabled,
                                         onPressed: () {
-                                          context
-                                              .read<ChangePasswordCubit>()
-                                              .submitIfValid(context);
-                                          AnalyticsService.instance
-                                              .buttonPressed(
-                                                FirebaseEvents
-                                                    .changePasswordButton,
-                                                FirebaseEvents
-                                                    .changePasswordScreen,
-                                              );
+                                          context.read<ChangePasswordCubit>().submitIfValid(context);
+
+                                          AnalyticsService.instance.buttonPressed(
+                                            FirebaseEvents.changePasswordButton,
+                                            FirebaseEvents.changePasswordScreen,
+                                          );
                                         },
                                       ),
                                     ),

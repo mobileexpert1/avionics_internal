@@ -50,7 +50,8 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    double getPadding() => kIsWeb ? screenWidth * 0.02 : 10;
+    double getPadding() =>
+        kIsWeb && screenWidth < 900 ? 10 : (kIsWeb ? screenWidth * 0.02 : 10);
     return BlocProvider(
       create: (_) => blackboxCubit,
       child: Scaffold(
@@ -265,8 +266,14 @@ class _BlackBoxCardState extends State<_BlackBoxCard> {
                 link: _layerLink,
                 showWhenUnlinked: false,
                 offset: Offset(
-                  kIsWeb ? MediaQuery.of(context).size.width / 4 : -0,
-                  kIsWeb ? -50 : -25,
+                  kIsWeb
+                      ? (MediaQuery.of(context).size.width < 900
+                      ? 0
+                      : MediaQuery.of(context).size.width / 4)
+                      : 0,
+                  kIsWeb
+                      ? (MediaQuery.of(context).size.width < 900 ? -25 : -50)
+                      : -25,
                 ),
                 child: ArrowPopup(
                   isLocked: widget.blackBoxGameItem.isLocked,

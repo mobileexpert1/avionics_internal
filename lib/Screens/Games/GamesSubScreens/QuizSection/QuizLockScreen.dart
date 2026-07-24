@@ -300,15 +300,27 @@ class ArrowPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
+
     return Material(
       color: Colors.transparent,
       child: Container(
-        width: 300,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        width: isDesktopWeb ? 300 : double.infinity,
+        constraints: const BoxConstraints(
+          maxWidth: 300,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 15,
+        ),
         decoration: BoxDecoration(
           color: AppColors.separatorColourAppBar,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.black, width: 1),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -319,7 +331,10 @@ class ArrowPopup extends StatelessWidget {
               textAlign: TextAlign.left,
               style: AppTextStyles.regular(
                 16,
-              ).copyWith(height: 1.0, color: AppColors.grayMedium),
+              ).copyWith(
+                height: 1.0,
+                color: AppColors.grayMedium,
+              ),
             ),
             const SizedBox(height: 18),
             CustomHeaderViewExpandable(

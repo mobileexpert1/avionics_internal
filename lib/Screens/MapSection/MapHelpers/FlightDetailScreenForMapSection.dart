@@ -590,9 +590,10 @@ class _FlightDetailScreenForMapSectionState
     List<AircraftImage> coverImages,
   ) {
     if (coverImages.isEmpty) return const SizedBox.shrink();
-
     return StatefulBuilder(
       builder: (context, setState) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
         return SizedBox(
           height: screenHeight * 0.20,
           child: Stack(
@@ -613,8 +614,8 @@ class _FlightDetailScreenForMapSectionState
                     borderRadius: BorderRadius.circular(6),
                     child: Center(
                       child: SizedBox(
-                        width: kIsWeb
-                            ? MediaQuery.of(context).size.width * 0.2
+                        width: isDesktopWeb
+                            ? screenWidth * 0.2
                             : double.infinity,
                         height: screenHeight * 0.20,
                         child: Stack(

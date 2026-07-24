@@ -89,6 +89,8 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobileWeb = kIsWeb && screenWidth < 900;
     return BlocProvider(
       create: (_) => BlackBoxQuestionCubit(
         context,
@@ -212,8 +214,8 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
             body: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kIsWeb ? 200 : 10,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobileWeb ? 10 : (kIsWeb ? 200 : 10),
                   ),
                   child: SingleChildScrollView(
                     controller: _scrollController,
@@ -477,7 +479,9 @@ class BlackBoxCard extends StatelessWidget {
                   Center(
                     child: SizedBox(
                       width: kIsWeb
-                          ? MediaQuery.of(context).size.width * 0.45
+                          ? (MediaQuery.of(context).size.width < 900
+                          ? double.infinity
+                          : MediaQuery.of(context).size.width * 0.45)
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(

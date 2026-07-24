@@ -260,9 +260,20 @@ class _CourseCardState extends State<_CourseCard> {
               CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
+                // offset: Offset(
+                //   kIsWeb ? MediaQuery.of(context).size.width / 4 : -13,
+                //   kIsWeb ? -50 : 0,
+                // ),
+
                 offset: Offset(
-                  kIsWeb ? MediaQuery.of(context).size.width / 4 : -13,
-                  kIsWeb ? -50 : 0,
+                  kIsWeb
+                      ? (MediaQuery.of(context).size.width < 900
+                      ? 0
+                      : MediaQuery.of(context).size.width / 4)
+                      : 0,
+                  kIsWeb
+                      ? (MediaQuery.of(context).size.width < 900 ? -25 : -50)
+                      : -25,
                 ),
 
                 child: ArrowPopup(

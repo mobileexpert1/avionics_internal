@@ -81,6 +81,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
     Widget content = BlocBuilder<ProfileScreenCubit, ProfileScreenState>(
       builder: (context, state) {
         if (state.isLoading) {
@@ -89,9 +91,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return SingleChildScrollView(
           child: Container(
-            width: kIsWeb ? 1500 : double.infinity,
+            // width: kIsWeb ? 1500 : double.infinity,
+            // alignment: Alignment.center,
+            // margin: kIsWeb
+            //     ? const EdgeInsets.symmetric(horizontal: 50)
+            //     : EdgeInsets.zero,
+
+            width: isDesktopWeb ? 1500 : double.infinity,
             alignment: Alignment.center,
-            margin: kIsWeb
+            margin: isDesktopWeb
                 ? const EdgeInsets.symmetric(horizontal: 50)
                 : EdgeInsets.zero,
             child: Column(

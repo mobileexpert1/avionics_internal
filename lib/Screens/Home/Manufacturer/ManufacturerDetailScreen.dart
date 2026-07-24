@@ -60,6 +60,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final isDesktopWeb = kIsWeb && screenWidth >= 900;
 
     return BlocBuilder<ManufacturerCubit, ManufacturerState>(
       builder: (context, state) {
@@ -108,8 +109,12 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
           ),
 
           body: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1500),
+            child: Container(
+              width: isDesktopWeb ? 1500 : double.infinity,
+              alignment: Alignment.center,
+              margin: isDesktopWeb
+                  ? const EdgeInsets.symmetric(horizontal: 50)
+                  : EdgeInsets.zero,
               child: SingleChildScrollView(
                 child: Stack(
                   children: [
@@ -124,12 +129,22 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                             ),
                             if (kIsWeb)
                               Positioned(
-                                top: screenHeight * 0.27,
-                                left: screenWidth * 0.01,
+                                top: (kIsWeb && screenWidth < 900)
+                                    ? screenHeight * 0.22
+                                    : screenHeight * 0.27,
+
+                                left: (kIsWeb && screenWidth < 900)
+                                    ? 20
+                                    : screenWidth * 0.01,
                                 child: ClipOval(
                                   child: Container(
-                                    width: screenWidth * 0.05,
-                                    height: screenWidth * 0.05,
+                                    width: (kIsWeb && screenWidth < 900)
+                                        ? 85
+                                        : screenWidth * 0.05,
+
+                                    height: (kIsWeb && screenWidth < 900)
+                                        ? 85
+                                        : screenWidth * 0.05,
                                     color: Colors.grey.shade200,
                                     child: Builder(
                                       builder: (context) {
@@ -145,8 +160,13 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                         if (isAsset) {
                                           return Image.asset(
                                             detail.general.logo,
-                                            width: screenWidth * 0.22,
-                                            height: screenWidth * 0.22,
+                                            width: (kIsWeb && screenWidth < 900)
+                                                ? 85
+                                                : screenWidth * 0.22,
+
+                                            height: (kIsWeb && screenWidth < 900)
+                                                ? 85
+                                                : screenWidth * 0.22,
                                             fit: BoxFit.cover,
                                           );
                                         } else {
@@ -169,8 +189,13 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                                 )
                                               : Image.network(
                                                   logoUrl,
-                                                  width: screenWidth * 0.22,
-                                                  height: screenWidth * 0.22,
+                                            width: (kIsWeb && screenWidth < 900)
+                                                ? 85
+                                                : screenWidth * 0.22,
+
+                                            height: (kIsWeb && screenWidth < 900)
+                                                ? 85
+                                                : screenWidth * 0.22,
                                                   fit: BoxFit.contain,
                                                   errorBuilder: (_, _, _) =>
                                                       SvgPicture.asset(
@@ -703,11 +728,13 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
   }
 
   Widget _buildGeneralInfo(General generalDetails) {
-    return customFieldForTextAndValue(false, fields: [
+    return customFieldForTextAndValue(
+      false,
+      fields: [
         ['Headquarters', generalDetails.headquarter ?? ''],
         ['Founding Date', generalDetails.foundingDate],
       ],
-        context: context
+      context: context,
     );
   }
 
@@ -791,13 +818,23 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
         isForPlaneList: true,
         imagePath: coverImages.url,
         width: MediaQuery.of(context).size.width,
-        height: screenHeight * (kIsWeb ? 0.40 : 0.30),
+        height: screenHeight *
+            (kIsWeb && screenWidth < 900
+                ? 0.30
+                : kIsWeb
+                ? 0.40
+                : 0.30),
         contentImage: BoxFit.cover,
       ),
     );
 
     return SizedBox(
-      height: screenHeight * (kIsWeb ? 0.40 : 0.30),
+      height: screenHeight *
+          (kIsWeb && screenWidth < 900
+              ? 0.30
+              : kIsWeb
+              ? 0.40
+              : 0.30),
       width: double.infinity,
       child: Stack(
         children: [

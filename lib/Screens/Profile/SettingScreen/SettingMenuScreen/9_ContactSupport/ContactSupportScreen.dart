@@ -55,6 +55,9 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
+
     double maxWidth = MediaQuery.of(context).size.width > 1500
         ? 1500
         : MediaQuery.of(context).size.width;
@@ -251,15 +254,70 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                             const SizedBox(height: 28),
 
                             /// SUBMIT BUTTON
+                            // Center(
+                            //   child: SizedBox(
+                            //     width: kIsWeb
+                            //         ? MediaQuery.of(context).size.width * 0.45
+                            //         : double.infinity,
+                            //     child: CustomBottomButton(
+                            //       fontStyle: AppTextStyles.regular(
+                            //         18,
+                            //       ).copyWith(color: Colors.white, height: 1),
+                            //
+                            //       title: state.isSubmitting ? "" : "Submit",
+                            //
+                            //       backgroundColor: const Color(0xFF1B1453),
+                            //
+                            //       textColor: Colors.white,
+                            //
+                            //       icon: state.isSubmitting
+                            //           ? const SizedBox(
+                            //               height: 22,
+                            //               width: 22,
+                            //               child: CircularProgressIndicator(
+                            //                 valueColor:
+                            //                     AlwaysStoppedAnimation<Color>(
+                            //                       Colors.white,
+                            //                     ),
+                            //                 strokeWidth: 2,
+                            //               ),
+                            //             )
+                            //           : const SizedBox.shrink(),
+                            //
+                            //       isEnabled:
+                            //           !state.isSubmitting &&
+                            //           state.email.isNotEmpty &&
+                            //           cubit.isValidEmail(state.email) &&
+                            //           state.message.isNotEmpty,
+                            //
+                            //       onPressed: () {
+                            //         FocusScope.of(context).unfocus();
+                            //
+                            //         if (state.email.isNotEmpty &&
+                            //             cubit.isValidEmail(state.email) &&
+                            //             state.message.isNotEmpty) {
+                            //           cubit.submitSupport(context);
+                            //
+                            //           AnalyticsService.instance.buttonPressed(
+                            //             FirebaseEvents.contactSupportButton,
+                            //             FirebaseEvents.contactSupportScreen,
+                            //           );
+                            //         }
+                            //       },
+                            //     ),
+                            //   ),
+                            // ),
+
                             Center(
                               child: SizedBox(
-                                width: kIsWeb
-                                    ? MediaQuery.of(context).size.width * 0.45
-                                    : double.infinity,
+                                width: isDesktopWeb ? 500 : double.infinity,
                                 child: CustomBottomButton(
                                   fontStyle: AppTextStyles.regular(
                                     18,
-                                  ).copyWith(color: Colors.white, height: 1),
+                                  ).copyWith(
+                                    color: Colors.white,
+                                    height: 1,
+                                  ),
 
                                   title: state.isSubmitting ? "" : "Submit",
 
@@ -269,20 +327,19 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
 
                                   icon: state.isSubmitting
                                       ? const SizedBox(
-                                          height: 22,
-                                          width: 22,
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                  Colors.white,
-                                                ),
-                                            strokeWidth: 2,
-                                          ),
-                                        )
+                                    height: 22,
+                                    width: 22,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                      strokeWidth: 2,
+                                    ),
+                                  )
                                       : const SizedBox.shrink(),
 
                                   isEnabled:
-                                      !state.isSubmitting &&
+                                  !state.isSubmitting &&
                                       state.email.isNotEmpty &&
                                       cubit.isValidEmail(state.email) &&
                                       state.message.isNotEmpty,

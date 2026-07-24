@@ -459,11 +459,16 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                           return Center(
                             child: SizedBox(
                               width: kIsWeb
-                                  ? MediaQuery.of(context).size.width * 0.45
+                                  ? (MediaQuery.of(context).size.width < 900
+                                  ? double.infinity
+                                  : MediaQuery.of(context).size.width * 0.45)
                                   : double.infinity,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: kIsWeb ? 0 : 30,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: kIsWeb &&
+                                      MediaQuery.of(context).size.width < 900
+                                      ? 10
+                                      : (kIsWeb ? 0 : 30),
                                 ),
                                 child: CustomHeaderViewExpandable(
                                   textAlign: TextAlign.center,
@@ -517,12 +522,17 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                         return Center(
                           child: SizedBox(
                             width: kIsWeb
-                                ? MediaQuery.of(context).size.width * 0.45
+                                ? (MediaQuery.of(context).size.width < 900
+                                ? double.infinity
+                                : MediaQuery.of(context).size.width * 0.45)
                                 : double.infinity,
                             child: CustomBottomButton(
                               fontStyle: AppTextStyles.regular(
                                 21.46,
-                              ).copyWith(height: 1.0, color: Colors.white),
+                              ).copyWith(
+                                height: 1.0,
+                                color: Colors.white,
+                              ),
                               title: ConstantStrings.beginAnalysisText,
                               backgroundColor: AppColors.primaryDark,
                               textColor: Colors.white,

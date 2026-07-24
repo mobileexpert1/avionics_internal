@@ -288,12 +288,16 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
   }
 
   Future<bool> _deleteChat(String sessionId, bool isComeFromBookMark) async {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && screenWidth >= 900;
     final shouldDelete = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
       builder: (dialogContext) => Center(
         child: SizedBox(
-          width: MediaQuery.of(dialogContext).size.width * (kIsWeb ? 0.3 : 1),
+          width: isDesktopWeb
+              ? MediaQuery.of(dialogContext).size.width * 0.3
+              : MediaQuery.of(dialogContext).size.width * 0.9,
           child: CustomDialog(
             title: isComeFromBookMark
                 ? 'Remove from Bookmark'

@@ -58,6 +58,8 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktopWeb = kIsWeb && width >= 900;
     return BlocProvider(
       create: (_) => ManageaccCubit()..fetchUserDetails(context),
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
@@ -173,44 +175,49 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
 
                           Center(
                             child: SizedBox(
-                              width: kIsWeb
-                                  ? MediaQuery.of(context).size.width * 0.45
-                                  : double.infinity,
+                              width: isDesktopWeb ? 500 : double.infinity,
                               height: 50,
                               child: CustomBottomButton(
                                 fontStyle: AppTextStyles.regular(
                                   18,
-                                ).copyWith(height: 1.0, color: Colors.white),
+                                ).copyWith(
+                                  height: 1.0,
+                                  color: Colors.white,
+                                ),
+
                                 title: buttonBottomTitle,
+
                                 backgroundColor: state.isButtonEnabled
                                     ? AppColors.primaryValueColour
                                     : AppColors.darkSeparatorColourAppBar,
+
                                 textColor: Colors.white,
+
                                 icon: const SizedBox(width: 0),
-                                isEnabled:
-                                    (buttonBottomTitle == ConstantStrings.save)
+
+                                isEnabled: (buttonBottomTitle == ConstantStrings.save)
                                     ? state.isButtonEnabled
                                     : !isSocialLogin && state.isButtonEnabled,
+
                                 onPressed: () async {
-                                  if (buttonBottomTitle ==
-                                      ConstantStrings.changePassword) {
+                                  if (buttonBottomTitle == ConstantStrings.changePassword) {
                                     AppNavigator.push(
                                       context,
                                       ChangePasswordScreen(),
                                       disableSwipeBack: true,
                                     );
-                                  } else if (buttonBottomTitle ==
-                                      ConstantStrings.save) {
-                                    final cubit = context
-                                        .read<ManageaccCubit>();
+                                  } else if (buttonBottomTitle == ConstantStrings.save) {
+                                    final cubit = context.read<ManageaccCubit>();
+
                                     if (cubit.validateFields()) {
                                       await cubit.updateUserDetails(context);
+
                                       setState(() {
                                         isTextFiledEnabled = false;
                                         isRightButtonShow = true;
-                                        buttonBottomTitle =
-                                            ConstantStrings.changePassword;
+                                        buttonBottomTitle = ConstantStrings.changePassword;
                                       });
+
                                       AnalyticsService.instance.buttonPressed(
                                         FirebaseEvents.saveProfileInfoButton,
                                         FirebaseEvents.manageAccountScreen,

@@ -200,11 +200,13 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     double screenHeight,
     List<AircraftImage> coverImages,
   ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
     if (coverImages.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    if (kIsWeb) {
+    if (isDesktopWeb) {
       final isSingleImage = coverImages.length == 1;
 
       return SizedBox(

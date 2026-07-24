@@ -78,10 +78,13 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+
     // Dynamic sizes
-    double bodyFontSize = kIsWeb ? screenWidth * 0.015 : 16;
-    double cardHeight = kIsWeb ? 120 : 80;
-    double imageWidth = kIsWeb ? screenWidth * 0.12 : screenWidth * 0.22;
+    double bodyFontSize = isDesktopWeb ? screenWidth * 0.015 : 16;
+    double cardHeight = isDesktopWeb ? 120 : 80;
+    double imageWidth = isDesktopWeb ? screenWidth * 0.12 : screenWidth * 0.22;
     double imageHeight = cardHeight - 20;
 
     return BlocProvider.value(
@@ -104,7 +107,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
         body: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: kIsWeb ? 1500 : double.infinity,
+              maxWidth: isDesktopWeb ? 1500 : double.infinity,
             ),
             child: SafeArea(
               child: BlocBuilder<AircraftComparisonCubit, AircraftState>(
@@ -127,12 +130,14 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: kIsWeb
+                        height: isDesktopWeb
                             ? screenWidth * 0.01
                             : screenWidth * 0.03,
                       ),
                       PreferredSize(
-                        preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+                        preferredSize: Size.fromHeight(
+                          isDesktopWeb ? 130 : 110,
+                        ),
                         child: SafeArea(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -150,7 +155,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: kIsWeb
+                        height: isDesktopWeb
                             ? screenWidth * 0.01
                             : screenWidth * 0.02,
                       ),
@@ -213,7 +218,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                     }
 
                                     final model = models[index];
-                                    if (kIsWeb) {
+                                    if (isDesktopWeb) {
                                       return Padding(
                                         key: ValueKey(model.id),
                                         padding: const EdgeInsets.symmetric(
@@ -386,10 +391,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                     ],
                                                   ),
                                                 ),
-                                                const Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 30,
-                                                ),
+                                                const SizedBox.shrink(),
                                               ],
                                             ),
                                           ),
