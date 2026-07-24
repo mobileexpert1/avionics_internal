@@ -152,7 +152,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[1].coordinates,
         curveScale: 0.5,
         id: '1',
-        isLastId: "",
+        //isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -165,7 +165,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[2].coordinates,
         curveScale: 0.5,
         id: '2',
-        isLastId: "",
+        //isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -178,7 +178,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[3].coordinates,
         curveScale: 0.5,
         id: '3',
-        isLastId: "",
+        //isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -191,7 +191,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[4].coordinates,
         curveScale: 0.5,
         id: '4',
-        isLastId: "",
+        //isLastId: "",
         style: const PointConnectionStyle(
           color: AppColors.greenColourForPlan,
           transitionDuration: 2000,
@@ -204,7 +204,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[5].coordinates,
         curveScale: 0.5,
         id: '5',
-        isLastId: "",
+        //isLastId: "",
         style: const PointConnectionStyle(
           type: PointConnectionType.dashed,
           color: AppColors.greenColourForPlan,
@@ -218,7 +218,7 @@ class _GoogleEarthMap extends State<GoogleEarthMap> {
         end: points[0].coordinates,
         curveScale: 0.5,
         id: '6',
-        isLastId: "6",
+        //isLastId: "6",
         style: const PointConnectionStyle(
           type: PointConnectionType.dotted,
           color: AppColors.greenColourForPlan,
