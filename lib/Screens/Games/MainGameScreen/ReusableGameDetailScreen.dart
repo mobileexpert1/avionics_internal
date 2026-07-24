@@ -127,14 +127,17 @@ class ReusableGameDetailScreen extends StatelessWidget {
 
                       const SizedBox(height: 15),
                       Center(
-                        child: SizedBox(
-                          width: kIsWeb
-                              ? MediaQuery.of(context).size.width * 0.45
-                              : double.infinity,
-                          height: 50,
-                          child: ReusableBottomButton(
-                            text: buttonText,
-                            onTap: onButtonTap,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: kIsWeb ? 900 : double.infinity,
+                          ),
+                          child: SizedBox(
+                            height: 50,
+                            width: double.infinity,
+                            child: ReusableBottomButton(
+                              text: buttonText,
+                              onTap: onButtonTap,
+                            ),
                           ),
                         ),
                       ),

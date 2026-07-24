@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
+    final isDesktopWeb = kIsWeb && screenWidth >= 900;
 
     return MultiBlocProvider(
       providers: [BlocProvider<HomeCubit>(create: (_) => homeCubit)],
@@ -141,7 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.topCenter,
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1500),
+                    constraints: BoxConstraints(
+                      maxWidth: isDesktopWeb ? 1500 : double.infinity,
+                    ),
                     child: SingleChildScrollView(
                       controller: scrollController,
                       physics: const BouncingScrollPhysics(),
@@ -150,23 +153,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: kIsWeb
+                            height: isDesktopWeb
                                 ? screenWidth * 0.01
                                 : screenWidth * 0.05,
                           ),
                           SizedBox(
-                            width: kIsWeb ? size.width : double.infinity,
-                            height: kIsWeb
+                            width: isDesktopWeb ? size.width : double.infinity,
+                            height: isDesktopWeb
                                 ? screenWidth * 0.2
                                 : screenWidth * 0.53,
                             child: SvgPicture.asset(
                               CommonUi.setSvgImage(AssetsPath.avionicaHome),
-                              fit: kIsWeb ? BoxFit.contain : BoxFit.fill,
+                              fit: isDesktopWeb ? BoxFit.contain : BoxFit.fill,
                             ),
                           ),
 
                           SizedBox(
-                            height: kIsWeb
+                            height: isDesktopWeb
                                 ? screenWidth * 0.01
                                 : screenWidth * 0.05,
                           ),
@@ -353,6 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
     List<ManufacturerListModel> category,
     double screenWidth,
   ) {
+    final isDesktopWeb = kIsWeb && screenWidth >= 900;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.greyForConversionScreen,
@@ -385,12 +389,12 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
           Center(
             child: Container(
-              width: kIsWeb ? 260 : null,
+              width: isDesktopWeb  ? 260 : null,
               padding: EdgeInsets.symmetric(vertical: kIsWeb ? 8 : 0),
               alignment: Alignment.center,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  minimumSize: Size(kIsWeb ? 240 : 0, kIsWeb ? 50 : 40),
+                  minimumSize: Size(isDesktopWeb  ? 240 : 0, isDesktopWeb  ? 50 : 40),
                 ),
                 onPressed: () {
                   AnalyticsService.instance.buttonPressed(
@@ -406,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Text(
                   'See All',
-                  style: AppTextStyles.bold(16).copyWith(
+                  style: AppTextStyles.bold(isDesktopWeb ? 18 : 16,).copyWith(
                     height: kIsWeb ? 0.8 : 1.0,
                     color: AppColors.black,
                   ),
@@ -443,11 +447,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFlyingInTheAreaBody(double screenWidth) {
+    final isDesktopWeb = kIsWeb && screenWidth >= 900;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.04,
-        vertical: 10,
+        horizontal: isDesktopWeb ? 35 : screenWidth * 0.04,
+        vertical: isDesktopWeb ? 22 : 10,
       ),
       decoration: BoxDecoration(
         color: AppColors.greyForConversionScreen,
@@ -460,7 +465,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             "Choose Your Tracking Mode",
             style: AppTextStyles.bold(
-              18,
+              isDesktopWeb ? 22 : 18,
             ).copyWith(height: 1.0, color: AppColors.black),
           ),
 
@@ -558,7 +563,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             "Click to view flights currently flying in this area on the map",
             style: AppTextStyles.regular(
-              14,
+              isDesktopWeb ? 16 : 14,
             ).copyWith(height: 1.4, color: AppColors.textHomeColour),
             textAlign: TextAlign.start,
           ),
@@ -657,7 +662,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             "View real-time status, route, and updates for a flight",
             style: AppTextStyles.regular(
-              14,
+              isDesktopWeb ? 16 : 14,
             ).copyWith(height: 1.4, color: AppColors.textHomeColour),
             textAlign: TextAlign.start,
           ),

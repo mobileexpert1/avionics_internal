@@ -45,7 +45,10 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isWeb = kIsWeb;
+
+    final isMobileWeb = kIsWeb && screenWidth < 900;
+    final isWeb = kIsWeb && !isMobileWeb;
+
     double getPadding() => isWeb ? screenWidth * 0.02 : 16;
 
     return BlocProvider.value(
@@ -172,6 +175,8 @@ class _TopicCardState extends State<_TopicCard> {
   OverlayEntry? _overlayEntry;
 
   void _showPopup() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobileWeb = kIsWeb && screenWidth < 900;
     if (_overlayEntry != null) return;
 
     _overlayEntry = OverlayEntry(
@@ -191,8 +196,18 @@ class _TopicCardState extends State<_TopicCard> {
                 link: _layerLink,
                 showWhenUnlinked: false,
                 offset: Offset(
-                  kIsWeb ? MediaQuery.of(context).size.width / 4 : 20,
-                  kIsWeb ? -40 : widget.index == 4 || widget.index == 5 ? -100 : 0,
+                  isMobileWeb
+                      ? 20
+                      : kIsWeb
+                      ? screenWidth / 4
+                      : 20,
+                  isMobileWeb
+                      ? -20
+                      : kIsWeb
+                      ? -40
+                      : widget.index == 4 || widget.index == 5
+                      ? -100
+                      : 0,
                 ),
                 child: ArrowPopup(
                   isLocked: false,

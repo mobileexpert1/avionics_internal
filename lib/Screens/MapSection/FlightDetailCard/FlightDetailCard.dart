@@ -57,8 +57,10 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kIsWeb ? 400.0 : 0.0),
+      padding: EdgeInsets.symmetric(horizontal: isDesktopWeb ? 400.0 : 0.0),
       child: BlocBuilder<FlightMapCubit, FlightMapState>(
         //Sham
         builder: (context, state) {

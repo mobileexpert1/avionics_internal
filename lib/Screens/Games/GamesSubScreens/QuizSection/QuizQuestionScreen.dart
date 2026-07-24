@@ -92,6 +92,8 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobileWeb = kIsWeb && screenWidth < 900;
     return BlocProvider(
       create: (_) =>
           QuizQuestionCubit(widget.sectionId, context, gameId: widget.gameId),
@@ -215,8 +217,12 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 return Stack(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: kIsWeb ? 200 : 10,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobileWeb
+                            ? 10
+                            : kIsWeb
+                            ? 200
+                            : 10,
                       ),
                       child: SingleChildScrollView(
                         key: ValueKey(state.currentIndex),
@@ -345,8 +351,20 @@ class QuizQuestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final imageWidth = kIsWeb ? screenWidth * 0.6 : screenWidth;
-    final imageHeight = kIsWeb ? screenWidth * 0.35 : screenWidth * 0.6;
+
+    final isMobileWeb = kIsWeb && screenWidth < 900;
+
+    final imageWidth = isMobileWeb
+        ? screenWidth
+        : kIsWeb
+        ? screenWidth * 0.6
+        : screenWidth;
+
+    final imageHeight = isMobileWeb
+        ? screenWidth * 0.6
+        : kIsWeb
+        ? screenWidth * 0.35
+        : screenWidth * 0.6;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -650,8 +668,10 @@ class QuizQuestionCard extends StatelessWidget {
 
                   Center(
                     child: SizedBox(
-                      width: kIsWeb
-                          ? MediaQuery.of(context).size.width * 0.45
+                      width: isMobileWeb
+                          ? double.infinity
+                          : kIsWeb
+                          ? screenWidth * 0.45
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(

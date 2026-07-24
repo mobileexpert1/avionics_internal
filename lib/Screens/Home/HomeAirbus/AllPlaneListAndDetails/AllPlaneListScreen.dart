@@ -88,11 +88,14 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    double paddingHorizontal = kIsWeb ? screenWidth * 0.02 : 20;
 
-    // card height for web
-    double cardHeight = kIsWeb ? 120 : 80;
-    double imageWidth = kIsWeb ? screenWidth * 0.12 : screenWidth * 0.22;
+    final isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final isMobileWeb = kIsWeb && screenWidth < 900;
+
+    double paddingHorizontal = isDesktopWeb ? screenWidth * 0.02 : 20;
+
+    double cardHeight = isDesktopWeb ? 120 : 80;
+    double imageWidth = isDesktopWeb ? screenWidth * 0.12 : screenWidth * 0.22;
     double imageHeight = cardHeight - 20;
 
     return Scaffold(
@@ -123,11 +126,15 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1500),
+            constraints: BoxConstraints(
+              maxWidth: (kIsWeb && MediaQuery.of(context).size.width >= 900)
+                  ? 1500
+                  : double.infinity,
+            ),
             child: Column(
               children: [
                 PreferredSize(
-                  preferredSize: Size.fromHeight(kIsWeb ? 130 : 110),
+                  preferredSize: Size.fromHeight(isDesktopWeb  ? 130 : 110),
                   child: SafeArea(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -158,7 +165,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: kIsWeb ? 10 : 10),
+                const SizedBox(height: 10),
                 Expanded(
                   child: BlocBuilder<AllPlanesCubit, AllPlanesState>(
                     builder: (context, state) {
@@ -351,8 +358,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     double imageHeight,
     bool isWeb,
   ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+
     return Container(
-      height: 60,
+      height: isDesktopWeb ? 75 : 65,
       color: Colors.white,
       child: Stack(
         children: [
@@ -397,8 +407,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                 ),
               ),
 
-              const SizedBox(width: kIsWeb ? 100 : 10),
-
+              SizedBox(width: isDesktopWeb ? 100 : 12),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -407,7 +416,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                       Expanded(
                         child: Text(
                           model.model,
-                          style: AppTextStyles.bold(18).copyWith(
+                          style: AppTextStyles.bold(isDesktopWeb ? 18 : 16).copyWith(
                             height: 1.0,
                             color: AppColors.planListTitleColour,
                           ),
@@ -428,7 +437,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                           ),
                           child: Text(
                             model.ICAOCode,
-                            style: AppTextStyles.medium(18).copyWith(
+                            style: AppTextStyles.medium(isDesktopWeb ? 18 : 14).copyWith(
                               height: 1.0,
                               color: AppColors.planListTitleColour,
                             ),
@@ -440,7 +449,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                 ),
               ),
 
-              if (isWeb)
+              if (isDesktopWeb)
                 IconButton(
                   icon: Icon(
                     Icons.bookmark,
@@ -465,7 +474,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                     );
                   },
                 ),
-              SizedBox(width: isWeb ? 80 : 15),
+              SizedBox(width: isDesktopWeb ? 80 : 15),
             ],
           ),
         ],
