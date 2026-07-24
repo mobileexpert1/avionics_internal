@@ -277,13 +277,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     //   },
                     // ),
                     //
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.manageAccountProfile,
-                      ),
-                      title: "Google Earth Map",
-                      onTap: () => _navigate(context, GoogleEarthMap()),
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.manageAccountProfile,
+                    //   ),
+                    //   title: "Google Earth Map",
+                    //   onTap: () => _navigate(context, GoogleEarthMap()),
+                    // ),
                   ],
                 ),
 
