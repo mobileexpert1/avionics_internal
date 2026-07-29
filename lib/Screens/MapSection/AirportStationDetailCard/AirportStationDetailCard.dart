@@ -41,6 +41,9 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
     final detail = widget.airportDetail;
 
     if (detail == null) {
@@ -50,9 +53,9 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
     return GestureDetector(
       onTap: widget.callBackForHideFlightCard,
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: kIsWeb
+          borderRadius: isDesktopWeb
               ? const BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -60,7 +63,7 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
               : const BorderRadius.only(
             topRight: Radius.circular(30),
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 10,

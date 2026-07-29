@@ -44,6 +44,9 @@ class SubscriptionPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
     final bool hasPrice = planPriceWithSymbol.trim().isNotEmpty;
 
     final addOns = currentPlan?.addOnPacksModel ?? [];
@@ -345,93 +348,97 @@ class SubscriptionPlanCard extends StatelessWidget {
             if (!isPlanExpired) ...[
               const SizedBox(height: 20),
 
-              SizedBox(
-                width: kIsWeb
-                    ? MediaQuery.of(context).size.width * 0.45
-                    : double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: isPlanExpired
-                        ? (isPremiumPlan
-                              ? AppColors.white
-                              : AppColors.primaryBlue)
-                        : (isPremiumPlan
-                              ? AppColors.white
-                              : AppColors.greenColourForPlan),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              Center(
+                child: SizedBox(
+                  width: isDesktopWeb
+                      ? screenWidth * 0.60
+                      : double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: isPlanExpired
+                          ? (isPremiumPlan
+                                ? AppColors.white
+                                : AppColors.primaryBlue)
+                          : (isPremiumPlan
+                                ? AppColors.white
+                                : AppColors.greenColourForPlan),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  onPressed: onModifyTap,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        isPlanExpired ? "Renew" : "Modify Plan",
-                        style: AppTextStyles.semiBold(18).copyWith(
-                          height: 1.0,
+                    onPressed: onModifyTap,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          isPlanExpired ? "Renew" : "Modify Plan",
+                          style: AppTextStyles.semiBold(18).copyWith(
+                            height: 1.0,
+                            color: isPremiumPlan
+                                ? AppColors.black
+                                : AppColors.white,
+                          ),
+                        ),
+
+                        const SizedBox(width: 5),
+
+                        Icon(
+                          Icons.open_in_new,
                           color: isPremiumPlan
                               ? AppColors.black
                               : AppColors.white,
                         ),
-                      ),
-
-                      const SizedBox(width: 5),
-
-                      Icon(
-                        Icons.open_in_new,
-                        color: isPremiumPlan
-                            ? AppColors.black
-                            : AppColors.white,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              SizedBox(
-                width: kIsWeb
-                    ? MediaQuery.of(context).size.width * 0.45
-                    : double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: (isPremiumPlan
-                        ? AppColors.white
-                        : AppColors.primaryBlue),
+              Center(
+                child: SizedBox(
+                  width: isDesktopWeb
+                      ? screenWidth * 0.60
+                      : double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: (isPremiumPlan
+                          ? AppColors.white
+                          : AppColors.primaryBlue),
 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  onPressed: onAddOnTap,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Buy Add-ons",
-                        style: AppTextStyles.semiBold(18).copyWith(
-                          height: 1.0,
+                    onPressed: onAddOnTap,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Buy Add-ons",
+                          style: AppTextStyles.semiBold(18).copyWith(
+                            height: 1.0,
+                            color: isPremiumPlan
+                                ? AppColors.black
+                                : AppColors.white,
+                          ),
+                        ),
+
+                        const SizedBox(width: 5),
+
+                        Icon(
+                          Icons.open_in_new,
                           color: isPremiumPlan
                               ? AppColors.black
                               : AppColors.white,
                         ),
-                      ),
-
-                      const SizedBox(width: 5),
-
-                      Icon(
-                        Icons.open_in_new,
-                        color: isPremiumPlan
-                            ? AppColors.black
-                            : AppColors.white,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

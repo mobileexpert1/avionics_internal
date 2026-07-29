@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,6 +28,10 @@ class _StickerUnlockScreenState extends State<StickerUnlockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -55,40 +60,75 @@ class _StickerUnlockScreenState extends State<StickerUnlockScreen> {
           return SafeArea(
             child: Column(
               children: [
-                ProgressHeader(
-                  unlocked: state.unlockedCount,
-                  total: state.total,
+                Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: isDesktopWeb ? 1400 : double.infinity,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktopWeb
+                            ? 20
+                            : isMobileWeb
+                            ? 12
+                            : 0,
+                      ),
+                      child: ProgressHeader(
+                        unlocked: state.unlockedCount,
+                        total: state.total,
+                      ),
+                    ),
+                  ),
                 ),
 
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    child: GridView.builder(
-                      itemCount: state.stickers.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 1,
-                          ),
-                      itemBuilder: (context, index) {
-                        final sticker = state.stickers[index];
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isDesktopWeb ? 1400 : double.infinity,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isDesktopWeb
+                              ? 30
+                              : isMobileWeb
+                              ? 12
+                              : 10,
+                          vertical: 8,
+                        ),
+                        child: GridView.builder(
+                          itemCount: state.stickers.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: isDesktopWeb
+                                    ? 4
+                                    : isMobileWeb
+                                    ? 2
+                                    : 2,
+                                crossAxisSpacing: isDesktopWeb ? 20 : 10,
+                                mainAxisSpacing: isDesktopWeb ? 20 : 10,
+                                childAspectRatio: isDesktopWeb
+                                    ? 1.0
+                                    : isMobileWeb
+                                    ? 0.92
+                                    : 1.0,
+                              ),
+                          itemBuilder: (context, index) {
+                            final sticker = state.stickers[index];
 
-                        return StickerCard(
-                          sticker: sticker,
-                          onTap: !sticker.isUnlocked
-                              ? () {
-                                  context.read<StickerCubit>().unlockSticker(
-                                    sticker.id,
-                                  );
-                                }
-                              : null,
-                        );
-                      },
+                            return StickerCard(
+                              sticker: sticker,
+                              onTap: !sticker.isUnlocked
+                                  ? () {
+                                      context
+                                          .read<StickerCubit>()
+                                          .unlockSticker(sticker.id);
+                                    }
+                                  : null,
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ),

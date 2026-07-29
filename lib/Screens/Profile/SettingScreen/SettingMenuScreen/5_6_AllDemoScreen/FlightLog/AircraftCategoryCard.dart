@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -12,11 +13,15 @@ class AircraftCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(isDesktopWeb ? 18 : 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -33,8 +38,8 @@ class AircraftCategoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 30,
-              height: 30,
+              width: isDesktopWeb ? 40 : 30,
+              height: isDesktopWeb ? 40 : 30,
               decoration: const BoxDecoration(
                 color: Color(0xff25235D),
                 shape: BoxShape.circle,
@@ -42,9 +47,9 @@ class AircraftCategoryCard extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 category.letter,
-                style: AppTextStyles.medium(19).copyWith(
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.medium(
+                  isDesktopWeb ? 22 : 19,
+                ).copyWith(color: Colors.white),
               ),
             ),
 
@@ -55,9 +60,9 @@ class AircraftCategoryCard extends StatelessWidget {
                 category.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.bold(15).copyWith(
-                  color: AppColors.primaryDark,
-                ),
+                style: AppTextStyles.bold(
+                  isDesktopWeb ? 18 : 15,
+                ).copyWith(color: AppColors.primaryDark),
               ),
             ),
 
@@ -70,15 +75,15 @@ class AircraftCategoryCard extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: "${category.unlockedCount}",
-                        style: AppTextStyles.medium(15).copyWith(
-                          color: AppColors.primaryBlue,
-                        ),
+                        style: AppTextStyles.medium(
+                          isDesktopWeb ? 17 : 15,
+                        ).copyWith(color: AppColors.primaryBlue),
                       ),
                       TextSpan(
                         text: "/${category.totalCount}",
-                        style: AppTextStyles.medium(15).copyWith(
-                          color: AppColors.primaryDark,
-                        ),
+                        style: AppTextStyles.medium(
+                          isDesktopWeb ? 17 : 15,
+                        ).copyWith(color: AppColors.primaryDark),
                       ),
                     ],
                   ),
@@ -91,8 +96,8 @@ class AircraftCategoryCard extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: isDesktopWeb ? 55 : 40,
+                      height: isDesktopWeb ? 55 : 40,
                       decoration: BoxDecoration(
                         color: category.color,
                         shape: BoxShape.circle,
@@ -100,12 +105,12 @@ class AircraftCategoryCard extends StatelessWidget {
                     ),
 
                     Positioned(
-                      right: 4,
-                      top: -6,
+                      right: isDesktopWeb ? 6 : 4,
+                      top: isDesktopWeb ? -10 : -6,
                       child: Image.asset(
                         category.image,
-                        width: 70, // 🔥 reduced for web stability
-                        height: 50,
+                        width: isDesktopWeb ? 90 : 70,
+                        height: isDesktopWeb ? 65 : 50,
                         fit: BoxFit.contain,
                       ),
                     ),
