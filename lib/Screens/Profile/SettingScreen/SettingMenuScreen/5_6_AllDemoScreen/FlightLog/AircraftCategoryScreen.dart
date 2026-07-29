@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/StickerUnlockScreen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,6 +31,18 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+
+    final int crossAxisCount = isDesktopWeb
+        ? (screenWidth >= 1500
+              ? 5
+              : screenWidth >= 1200
+              ? 4
+              : 3)
+        : 2;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -58,9 +71,7 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
           return SafeArea(
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 1500,
-                ),
+                constraints: const BoxConstraints(maxWidth: 1500),
                 child: Column(
                   children: [
                     ProgressHeader(
@@ -73,12 +84,13 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
                         padding: const EdgeInsets.all(10),
                         child: GridView.builder(
                           itemCount: state.categories.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // same as mobile
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 1,
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: isDesktopWeb ? 20 : 10,
+                                mainAxisSpacing: isDesktopWeb ? 20 : 10,
+                                childAspectRatio: isDesktopWeb ? 1.05 : 1,
+                              ),
                           itemBuilder: (_, index) {
                             return AircraftCategoryCard(
                               category: state.categories[index],
@@ -90,7 +102,7 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
                                     category: state.categories[index],
                                     stickerName: "Airbus A318",
                                     imagePath:
-                                    "assets/dummyPictures/MainLogoAirplane.png",
+                                        "assets/dummyPictures/MainLogoAirplane.png",
                                     onTap: () {
                                       AppNavigator.push(
                                         context,

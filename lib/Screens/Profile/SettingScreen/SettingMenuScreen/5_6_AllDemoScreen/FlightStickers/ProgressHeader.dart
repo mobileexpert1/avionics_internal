@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../Constants/AppColors.dart';
@@ -17,11 +18,26 @@ class ProgressHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+
+    final double horizontalPadding = isDesktopWeb
+        ? 30
+        : isMobileWeb
+        ? 14
+        : 16;
+
+    final double titleSize = isDesktopWeb ? 20 : 16;
+    final double countSize = isDesktopWeb ? 24 : 20;
+
     final progress = total == 0 ? 0.0 : unlocked / total;
 
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(horizontalPadding),
       child: Column(
         children: [
           Row(
@@ -30,7 +46,7 @@ class ProgressHeader extends StatelessWidget {
                 child: Text(
                   "Sticker Unlock Progress",
                   style: AppTextStyles.bold(
-                    16,
+                    titleSize,
                   ).copyWith(color: AppColors.black),
                 ),
               ),
@@ -40,14 +56,14 @@ class ProgressHeader extends StatelessWidget {
                     TextSpan(
                       text: "$unlocked",
                       style: AppTextStyles.bold(
-                        20,
+                        countSize,
                       ).copyWith(color: AppColors.primaryBlue),
                     ),
 
                     TextSpan(
                       text: "/$total",
                       style: AppTextStyles.bold(
-                        20,
+                        countSize,
                       ).copyWith(color: AppColors.primaryDark),
                     ),
                   ],
