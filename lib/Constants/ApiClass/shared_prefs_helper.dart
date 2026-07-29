@@ -17,6 +17,21 @@ class SharedPrefsHelper {
   static const String _isAvtarForProfileUrlKey = 'avtarForProfileUrlKey';
   static const String _userProfileNameKey = 'userProfileNameKey';
 
+  static Future<void> saveString(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+
+  static Future<String?> getString(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  static Future<void> removeString(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
+
   static Future<void> save(String uid) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_key, uid);
@@ -179,6 +194,8 @@ class SharedPrefsHelper {
   static Future<void> removeTempKeyBeforeLaunch() async {
     removeMapApiKey();
     clearApiFetchServer();
+    removeString('flight_params_1');
+    removeString('flight_params_2');
   }
 
   static Future<void> removeMapApiKey() async {

@@ -166,6 +166,14 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
           }
         },
         builder: (context, state) {
+          if (state.loading) {
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            );
+          }
           final subscriptionPackages = state.subscriptionPackages;
 
           final isComeFromSignup = _cubit.isComeFromSignup;

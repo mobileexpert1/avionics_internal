@@ -166,8 +166,6 @@ abstract class AssetsPath {
   static const String infoWrongThird = "3InfoWrongGameIcon";
   static const String towerImageForGame = "4TowerImage";
   static const String towerImageForWebGame = "4_1TowerImage";
-  static const String cloudsLeftForGame = "12LeftSideClouds";
-  static const String cloudsRightForGame = "13RightSideClouds";
   static const String flightDownBB = "5FlightDownBB";
   static const String decodeBB = "6DecodeBB";
   static const String chainOfBB = "7ChainOfBB";
@@ -175,6 +173,12 @@ abstract class AssetsPath {
   static const String comparisonPlaceholder = "9ComparisonPlaceholder";
   static const String badgeMainIcon = "10BadgeMainIcon";
   static const String carFollowImage = "11CarFollowIcon";
+  static const String cloudsLeftForGame = "12LeftSideClouds";
+  static const String cloudsRightForGame = "13RightSideClouds";
+
+  static const String viewCreditTokensImage = "14ViewCreditTokens";
+  static const String addOnPacksImage = "15AddOnPacks";
+
 
   //Gif
   static const String badgeGif = "1BadgeGif";

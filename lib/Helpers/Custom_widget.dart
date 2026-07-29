@@ -1,7 +1,9 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'AppTextStyles/AppTextStyles.dart';
 
 Widget customFieldForTextAndValue(
@@ -16,10 +18,9 @@ Widget customFieldForTextAndValue(
     child: Column(
       children: List.generate((fields.length / 2).ceil(), (i) {
         final first = fields[i * 2];
+
         final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
-
         final bool firstShowInfo = first.length > 2 && first[2] == true;
-
         final bool secondShowInfo =
             second != null && second.length > 2 && second[2] == true;
 
@@ -51,11 +52,26 @@ Widget customFieldForTextAndValue(
                           const SizedBox(width: 4),
                           GestureDetector(
                             onTap: () {
-                              showAutoDismissDialog(
-                                context,
-                                first[0],
-                                first[1],
-                              );
+                              if (first.length > 3 && first[3] != null) {
+                                final key = first[3].toString();
+                                final isForLive = first[4].toString();
+
+                                final value = context
+                                    .read<AirCraftDetailCubit>()
+                                    .getFieldValue(key, isForLive);
+
+                                showAutoDismissDialog(
+                                  context,
+                                  first[0].toString(),
+                                  value,
+                                );
+                              } else {
+                                showAutoDismissDialog(
+                                  context,
+                                  first[0],
+                                  first[1],
+                                );
+                              }
                             },
                             child: const Icon(Icons.info_outline, size: 16),
                           ),
@@ -88,11 +104,27 @@ Widget customFieldForTextAndValue(
                                 const SizedBox(width: 4),
                                 GestureDetector(
                                   onTap: () {
-                                    showAutoDismissDialog(
-                                      context,
-                                      second[0],
-                                      second[1],
-                                    );
+                                    if (second.length > 3 &&
+                                        second[3] != null) {
+                                      final key = second[3].toString();
+                                      final isForLive = second[4].toString();
+
+                                      final value = context
+                                          .read<AirCraftDetailCubit>()
+                                          .getFieldValue(key, isForLive);
+
+                                      showAutoDismissDialog(
+                                        context,
+                                        second[0].toString(),
+                                        value,
+                                      );
+                                    } else {
+                                      showAutoDismissDialog(
+                                        context,
+                                        second[0],
+                                        second[1],
+                                      );
+                                    }
                                   },
                                   child: const Icon(
                                     Icons.info_outline,

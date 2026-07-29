@@ -1,6 +1,8 @@
 import 'dart:ui';
+
 import 'package:avionics_internal/Constants/ApiClass/shared_prefs_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../bloc/Onboarding/login/login_response_model.dart';
@@ -27,7 +29,9 @@ class RefreshAccessTokenRepository {
       );
       final tokenModel = LoginResponseModel.fromJson(response);
       await SharedPrefsHelper.setUserAccessToken(tokenModel.accessToken ?? '');
-      await SharedPrefsHelper.setUserRefreshToken(tokenModel.refreshToken ?? '');
+      await SharedPrefsHelper.setUserRefreshToken(
+        tokenModel.refreshToken ?? '',
+      );
       return tokenModel;
     } catch (e) {
       onUnauthorized?.call();

@@ -6,13 +6,19 @@ class MapSearchAircraftListRepository {
   Future<MapSearchAircraftListModel> getListOfAllLiveFlights({
     required String querySearch,
   }) async {
+    // final url = Uri.parse(
+    //   "${MapFlightAircraftSectionConstant.baseUrlSearch}$querySearch&limit=10&type=live",
+    // );
+
     final url = Uri.parse(
-      "${MapFlightAircraftSectionConstant.baseUrlSearch}$querySearch&limit=10&type=live",
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+      "${ApiServiceUrlAirplaneConstant.getListAirbus}"
+      "flight-radar/find?query=$querySearch&limit=10&type=live",
     );
+
     try {
-      final jsonData =
-          await ApiService.get(url: url)
-              as Map<String, dynamic>;
+      final jsonData = await ApiService.get(url: url) as Map<String, dynamic>;
       return MapSearchAircraftListModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();

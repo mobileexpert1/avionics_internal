@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
+import 'FlightInfoParamsResponse.dart';
 import 'airCraftDetail_model.dart';
 
 class AirCraftRepository {
@@ -58,6 +59,24 @@ class AirCraftRepository {
       debugPrint("Stacktrace: $stacktrace");
       if (e.statusCode == 400 || e.statusCode == 404) {}
       throw e.toString();
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<FlightInfoParamsResponse?> getTheFlightInfoParamsResponse(
+    int actionNumber,
+  ) async {
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlAirplaneConstant.airplaneService}"
+      "${ApiServiceUrlAirplaneConstant.getListAirbus}"
+      "${ApiFunctionUrlAirplaneConstant.paramInfo}"
+      "$actionNumber",
+    );
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      return FlightInfoParamsResponse.fromJson(jsonData);
     } catch (e) {
       throw e.toString();
     }

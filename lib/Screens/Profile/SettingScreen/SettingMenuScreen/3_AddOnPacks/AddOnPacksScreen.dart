@@ -146,6 +146,14 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
       child: BlocConsumer<SubscriptionBuyPlanCubit, SubscriptionBuyPlanState>(
         listener: _onStateChange,
         builder: (context, state) {
+          if (state.loading) {
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            );
+          }
           final allPackages = state.consumablePackages;
           final packages = allPackages.where((package) {
             final id = package.identifier.toLowerCase();
@@ -425,10 +433,14 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
 
                                           Text(
                                             context
-                                                .read<SubscriptionBuyPlanCubit>()
+                                                .read<
+                                                  SubscriptionBuyPlanCubit
+                                                >()
                                                 .getPackageDescriptionTitle(
-                                              package.storeProduct.description,
-                                            ),
+                                                  package
+                                                      .storeProduct
+                                                      .description,
+                                                ),
                                             style: AppTextStyles.regular(
                                               14,
                                             ).copyWith(color: Colors.grey),

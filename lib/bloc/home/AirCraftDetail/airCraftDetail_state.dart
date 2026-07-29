@@ -1,3 +1,4 @@
+import 'FlightInfoParamsResponse.dart';
 import 'airCraftDetail_model.dart';
 
 class AirCraftDetailState {
@@ -6,6 +7,8 @@ class AirCraftDetailState {
   final bool isSuccess;
   final bool isError;
   final String? errorMessage;
+  final FlightInfoParamsResponse? flightParamsLiveResponse;
+  final FlightInfoParamsResponse? aircraftParamsInfoResponse;
 
   const AirCraftDetailState({
     this.airCraftDetails,
@@ -13,6 +16,8 @@ class AirCraftDetailState {
     this.isSuccess = false,
     this.isError = false,
     this.errorMessage,
+    this.flightParamsLiveResponse,
+    this.aircraftParamsInfoResponse,
   });
 
   AirCraftDetailState copyWith({
@@ -21,6 +26,8 @@ class AirCraftDetailState {
     bool? isSuccess,
     bool? isError,
     String? errorMessage,
+    FlightInfoParamsResponse? flightParamsLiveResponse,
+    FlightInfoParamsResponse? aircraftParamsInfoResponse,
   }) {
     return AirCraftDetailState(
       airCraftDetails: airCraftDetails ?? this.airCraftDetails,
@@ -28,6 +35,10 @@ class AirCraftDetailState {
       isSuccess: isSuccess ?? this.isSuccess,
       isError: isError ?? this.isError,
       errorMessage: errorMessage ?? this.errorMessage,
+      flightParamsLiveResponse:
+          flightParamsLiveResponse ?? this.flightParamsLiveResponse,
+      aircraftParamsInfoResponse:
+          aircraftParamsInfoResponse ?? this.aircraftParamsInfoResponse,
     );
   }
 }

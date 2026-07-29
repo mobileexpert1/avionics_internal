@@ -1,4 +1,5 @@
 import 'package:avionics_internal/bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_State.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -115,7 +116,8 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                                 key: ValueKey(index),
                                 padding: EdgeInsets.symmetric(
                                   vertical:
-                                      MediaQuery.of(context).size.width * 0.017,
+                                      MediaQuery.of(context).size.width *
+                                      (kIsWeb ? 0.01 : 0.017),
                                 ),
                                 child: SimpleAircraftCard(
                                   imagePath:

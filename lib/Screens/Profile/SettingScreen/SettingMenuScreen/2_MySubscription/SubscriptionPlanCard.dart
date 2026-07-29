@@ -243,9 +243,11 @@ class SubscriptionPlanCard extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(6),
-                        child: SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.viewCreditsToken),
-                          fit: BoxFit.contain,
+                        child: Image.asset(
+                          CommonUi.setPngImage(AssetsPath.viewCreditTokensImage),
+                          width: 20,
+                          height: 20,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -256,7 +258,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Check your available balance",
+                          "CHECK YOUR AVAILABLE BALANCE",
                           style: AppTextStyles.medium(12).copyWith(
                             height: 1.0,
                             color: AppColors.greyForTextSubscription,
@@ -280,64 +282,83 @@ class SubscriptionPlanCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            if (hasAddOns) ...[
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(showActions ? 10 : 15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        color: AppColors.extraDarkYellow,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 20,
-                        color: AppColors.black,
-                      ),
+            //if (hasAddOns) ...[
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(showActions ? 10 : 15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 35,
+                    width: 35,
+                    decoration: BoxDecoration(
+                      color: AppColors.extraDarkYellow,
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child:Image.asset(
+                      CommonUi.setPngImage(AssetsPath.addOnPacksImage),
+                      width: 20,
+                      height: 20,
+                      fit: BoxFit.cover,
+                    )),
 
-                    const SizedBox(width: 12),
+                    // const Icon(
+                    //   Icons.add,
+                    //   size: 20,
+                    //   color: AppColors.black,
+                    // ),
+                  ),
 
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Add-ons",
-                            style: AppTextStyles.semiBold(
-                              16,
-                            ).copyWith(height: 1.0, color: AppColors.black),
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "PURCHASE ADDITIONAL BALANCE",
+                          style: AppTextStyles.medium(12).copyWith(
+                            height: 1.0,
+                            color: AppColors.greyForTextSubscription,
                           ),
+                        ),
+                        const SizedBox(height: 8),
 
-                          const SizedBox(height: 8),
-                          ...addOnItems.map(
-                            (item) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Text(
-                                item,
-                                style: AppTextStyles.medium(12).copyWith(
-                                  height: 1.0,
-                                  color: AppColors.grayMedium,
-                                ),
+
+                        Text(
+                          "Add-on Packs",
+                          style: AppTextStyles.semiBold(
+                            16,
+                          ).copyWith(height: 1.0, color: AppColors.black),
+                        ),
+
+                        const SizedBox(height: 8),
+                        ...addOnItems.map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              item,
+                              style: AppTextStyles.medium(12).copyWith(
+                                height: 1.0,
+                                color: AppColors.grayMedium,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
+            //],
           ],
 
           /// ACTIONS

@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SimpleAircraftCard extends StatelessWidget {
@@ -31,7 +32,10 @@ class SimpleAircraftCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        margin: const EdgeInsets.symmetric(
+          vertical: kIsWeb ? 0 : 5,
+          horizontal: kIsWeb ? 30 : 15,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(6),
@@ -47,7 +51,7 @@ class SimpleAircraftCard extends StatelessWidget {
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 10,
-            vertical: 6,
+            vertical: kIsWeb ? 10 : 6,
           ),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -65,20 +69,18 @@ class SimpleAircraftCard extends StatelessWidget {
                   color: Color(0xFF3F3D56),
                 ),
               ),
-              if (badge.isNotEmpty) ...[
-                _buildBadge(badge, false, "")
-              ]
+              if (badge.isNotEmpty) ...[_buildBadge(badge, false, "")],
             ],
           ),
           subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: kIsWeb ? 0 : 4),
             child: Row(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(2),
                   child: SizedBox(
-                    width: 30, // Increased size for better visibility
-                    height: 10,
+                    width: kIsWeb ? 50 : 30,
+                    height: kIsWeb ? 15 : 10,
                     child: airlineImagePath,
                   ),
                 ),
@@ -110,7 +112,11 @@ class SimpleAircraftCard extends StatelessWidget {
             ),
           ),
           trailing: showArrow
-              ? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black)
+              ? const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.black,
+                )
               : null,
         ),
       ),
