@@ -19,7 +19,6 @@ import '../../../../bloc/MapSection/flight_map_detailModel.dart';
 import '../../../../bloc/home/SavedFlighDetails/savedFlight_cubit.dart';
 import '../../../../bloc/home/SavedFlighDetails/savedFlight_state.dart';
 import '../../../Home/HomeAirbus/AirCraftSection/AirCraftDetailScreen.dart';
-import '../../../MapSection/MapHelpers/FlightDetailScreen.dart';
 import '../../../MapSection/MapHelpers/FlightDetailScreenForMapSection.dart';
 import '../../../WilcoBoat/ChatHistoryScreen.dart';
 
@@ -113,7 +112,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
                       value: context.read<FlightMapCubit>(),
-                      child: FlightDetailScreen(
+                      child: FlightDetailScreenForMapSection(
                         ICAOType: item.icaoTypeCode ?? '',
                         flightNumber: item.flightNumber,
                         callsign: item.callsign,

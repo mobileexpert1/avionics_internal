@@ -122,7 +122,7 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
     }
   }
 
-  Future<void> fetchFlightLiveInfoParams(
+  Future<FlightInfoParamsResponse?> _getFlightParams(
     BuildContext context,
     int actionNumber,
   ) async {
@@ -132,59 +132,55 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
       final cachedResponse = await SharedPrefsHelper.getString(cacheKey);
 
       if (cachedResponse != null && cachedResponse.isNotEmpty) {
-        final response = FlightInfoParamsResponse.fromJson(
-          jsonDecode(cachedResponse),
-        );
+        return FlightInfoParamsResponse.fromJson(jsonDecode(cachedResponse));
+      }
 
-        emit(
-          state.copyWith(
-            flightParamsLiveResponse: response,
-            isLoading: false,
-            isSuccess: true,
-            isError: false,
-          ),
+      if (!await InternetConnection().hasInternetAccess) {
+        return null;
+      }
+
+      final response = await repository.getTheFlightInfoParamsResponse(
+        actionNumber,
+      );
+
+      await SharedPrefsHelper.saveString(
+        cacheKey,
+        jsonEncode(response?.toJson()),
+      );
+
+      return response;
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+      rethrow;
+    }
+  }
+
+  Future<void> fetchFlightLiveInfoParams(
+    BuildContext context,
+    int actionNumber,
+  ) async {
+    try {
+      emit(state.copyWith(isLoading: true, isSuccess: false, isError: false));
+
+      final response = await _getFlightParams(context, actionNumber);
+
+      if (response == null) {
+        NoInternetDialog.show(
+          context,
+          onRetry: () => fetchFlightLiveInfoParams(context, actionNumber),
         );
         return;
       }
 
-      if (await InternetConnection().hasInternetAccess) {
-        emit(
-          state.copyWith(
-            flightParamsLiveResponse: null,
-            isLoading: true,
-            isSuccess: false,
-            isError: false,
-          ),
-        );
-
-        final response = await repository.getTheFlightInfoParamsResponse(
-          actionNumber,
-        );
-
-        await SharedPrefsHelper.saveString(
-          cacheKey,
-          jsonEncode(response?.toJson()),
-        );
-
-        emit(
-          state.copyWith(
-            flightParamsLiveResponse: response,
-            isLoading: false,
-            isSuccess: true,
-            isError: false,
-          ),
-        );
-      } else {
-        NoInternetDialog.show(
-          context,
-          onRetry: () async {
-            await fetchFlightLiveInfoParams(context, actionNumber);
-          },
-        );
-      }
+      emit(
+        state.copyWith(
+          flightParamsLiveResponse: response,
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+        ),
+      );
     } catch (e) {
-      SessionCommonTokenError.handleUnauthorizedError(context, e);
-
       emit(
         state.copyWith(
           isLoading: false,
@@ -200,65 +196,30 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
     BuildContext context,
     int actionNumber,
   ) async {
-    final cacheKey = 'flight_params_$actionNumber';
-
     try {
-      final cachedResponse = await SharedPrefsHelper.getString(cacheKey);
+      emit(state.copyWith(isLoading: true, isSuccess: false, isError: false));
 
-      if (cachedResponse != null && cachedResponse.isNotEmpty) {
-        final response = FlightInfoParamsResponse.fromJson(
-          jsonDecode(cachedResponse),
-        );
+      final aircraftResponse = await _getFlightParams(context, actionNumber);
 
-        emit(
-          state.copyWith(
-            aircraftParamsInfoResponse: response,
-            isLoading: false,
-            isSuccess: true,
-            isError: false,
-          ),
+      if (aircraftResponse == null) {
+        NoInternetDialog.show(
+          context,
+          onRetry: () => fetchAircraftParams(context, actionNumber),
         );
         return;
       }
 
-      if (await InternetConnection().hasInternetAccess) {
-        emit(
-          state.copyWith(
-            aircraftParamsInfoResponse: null,
-            isLoading: true,
-            isSuccess: false,
-            isError: false,
-          ),
-        );
+      final liveResponse = await _getFlightParams(context, 2);
 
-        final response = await repository.getTheFlightInfoParamsResponse(
-          actionNumber,
-        );
-
-        await SharedPrefsHelper.saveString(
-          cacheKey,
-          jsonEncode(response?.toJson()),
-        );
-
-        await fetchFlightLiveInfoParams(context, 2);
-
-        emit(
-          state.copyWith(
-            aircraftParamsInfoResponse: response,
-            flightParamsLiveResponse: state.flightParamsLiveResponse,
-            isLoading: false,
-            isSuccess: true,
-            isError: false,
-          ),
-        );
-      } else {
-        NoInternetDialog.show(
-          context,
-          onRetry: () async {
-            await fetchAircraftParams(context, actionNumber);
-          },
-        );
-      }
+      emit(
+        state.copyWith(
+          aircraftParamsInfoResponse: aircraftResponse,
+          flightParamsLiveResponse: liveResponse,
+          isLoading: false,
+          isSuccess: true,
+          isError: false,
+        ),
+      );
     } catch (e) {
       SessionCommonTokenError.handleUnauthorizedError(context, e);
 

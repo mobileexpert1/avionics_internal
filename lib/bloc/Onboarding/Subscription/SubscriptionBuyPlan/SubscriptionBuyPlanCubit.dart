@@ -183,9 +183,11 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       } catch (e) {
         if (!isClosed) {
           debugPrint("RC login: ${e.toString()}");
-          emit(
-            state.copyWith(loading: false, error: "RevenueCat init failed: $e"),
-          );
+          if (e is PlatformException) {
+            emit(state.copyWith(loading: false, error: "${e.message}"));
+          } else {
+            emit(state.copyWith(loading: false, error: "$e"));
+          }
         }
       }
     } else {
@@ -227,6 +229,9 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
       debugPrint("RC Success login: $result");
     } catch (e) {
       debugPrint("RC False login failed: $e");
+      if (e is PlatformException) {
+        debugPrint('message: ${e.message}');
+      }
     }
   }
 
@@ -377,13 +382,26 @@ class SubscriptionBuyPlanCubit extends Cubit<SubscriptionBuyPlanState> {
           ),
         );
       } catch (e) {
-        debugPrint(e.toString());
-        emit(
-          state.copyWith(
-            loading: false,
-            error: "Failed to load offerings ${e.toString()}",
-          ),
-        );
+        if (e is PlatformException &&
+            e.details != null &&
+            e.details['readable_error_code'] == "CONFIGURATION_ERROR") {
+          emit(
+            state.copyWith(
+              loading: false,
+              error:
+                  "There is an issue with your configuration. Check the underlying error for more details",
+            ),
+          );
+          return;
+        } else {
+          debugPrint(e.toString());
+          emit(
+            state.copyWith(
+              loading: false,
+              error: "Failed to load offerings ${e.toString()}",
+            ),
+          );
+        }
       }
     }
   }

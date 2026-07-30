@@ -234,12 +234,12 @@ void showAutoDismissDialog(BuildContext context, String title, String content) {
                     ),
                     const SizedBox(height: 20),
                     Container(height: 1, color: Colors.white24),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Text(
                       content,
                       style: AppTextStyles.regular(
                         15,
-                      ).copyWith(height: 1.0, color: AppColors.white),
+                      ).copyWith(height: 1.3, color: AppColors.white),
                     ),
                   ],
                 ),

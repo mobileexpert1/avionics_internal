@@ -66,6 +66,7 @@ class _FlightDetailScreenForMapSectionState
     "Flight Plan",
     "Tracking Status",
   ];
+
   final sub2Tabs = [
     "Identification & Classification",
     "Powerplant & Propulsion",
@@ -295,15 +296,14 @@ class _FlightDetailScreenForMapSectionState
             rightButton: IconButton(
               icon: const Icon(Icons.refresh, color: Colors.white),
               onPressed: () async {
+                setState(() {
+                  _isLoadingProgress = true;
+                });
+                await Future.delayed(const Duration(seconds: 1));
+
                 if (widget.fromSavedFlight) {
                   await _loadFullFlightDetailsFromSaved();
                 } else {
-                  setState(() {
-                    _isLoadingProgress = true;
-                  });
-
-                  await Future.delayed(const Duration(seconds: 1));
-
                   final flightNumber = widget.flightDetail?.flightNumber ?? '';
                   if (flightNumber.isNotEmpty) {
                     await context.read<FlightMapCubit>().refreshFlightPosition(
@@ -337,10 +337,10 @@ class _FlightDetailScreenForMapSectionState
                       }
                     }
                   }
-                  setState(() {
-                    _isLoadingProgress = false;
-                  });
                 }
+                setState(() {
+                  _isLoadingProgress = false;
+                });
               },
             ),
           ),
@@ -510,7 +510,7 @@ class _FlightDetailScreenForMapSectionState
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
                           children: [
-                            SizedBox(height: 15),
+                            SizedBox(height: 20),
                             _getTabContentByIndex(
                               index,
                               _currentFlightDetail!,

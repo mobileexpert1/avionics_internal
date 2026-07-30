@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../../../../Constants/ConstantStrings.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
 import 'ProgressHeader.dart';
