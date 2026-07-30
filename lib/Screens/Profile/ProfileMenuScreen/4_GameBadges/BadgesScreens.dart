@@ -102,6 +102,8 @@ class _BadgesScreenState extends State<BadgesScreen> {
             }
           },
           builder: (context, state) {
+            final isMobileWeb =
+                kIsWeb && MediaQuery.of(context).size.width < 900;
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_tabScrollController.hasClients &&
                   state.selectedTab == tabs.length - 1) {
@@ -126,21 +128,19 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal:
-                        MediaQuery.of(context).size.width *
-                        (ikweb ? 0.16 : 0.04),
-                    vertical:
-                        MediaQuery.of(context).size.height *
-                        (ikweb ? 0.02 : 0.01),
+                    horizontal: ikweb
+                        ? MediaQuery.of(context).size.width * 0.16
+                        : isMobileWeb
+                        ? 12
+                        : MediaQuery.of(context).size.width * 0.04,
+                    vertical: ikweb
+                        ? MediaQuery.of(context).size.height * 0.02
+                        : 10,
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      vertical:
-                          MediaQuery.of(context).size.height *
-                          (ikweb ? 0.014 : 0.01),
-                      horizontal:
-                          MediaQuery.of(context).size.width *
-                          (ikweb ? 0.03 : 0.02),
+                      vertical: ikweb ? 14 : 10,
+                      horizontal: isMobileWeb ? 12 : (ikweb ? 24 : 10),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -155,40 +155,45 @@ class _BadgesScreenState extends State<BadgesScreen> {
                       ],
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              CommonUi.setSvgImage(AssetsPath.badgeStarIcon),
-                              height:
-                                  MediaQuery.of(context).size.height *
-                                  (ikweb ? 0.03 : 0.025),
-                            ),
-                            SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width *
-                                  (ikweb ? 0.015 : 0.01),
-                            ),
-                            Text(
-                              "Total Points Earned",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize:
-                                    MediaQuery.of(context).size.width *
-                                    (ikweb ? 0.016 : 0.037),
-                                color: const Color(0xFF32377D),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                CommonUi.setSvgImage(AssetsPath.badgeStarIcon),
+                                height: isMobileWeb
+                                    ? 18
+                                    : MediaQuery.of(context).size.height *
+                                          (ikweb ? 0.03 : 0.025),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: isMobileWeb ? 6 : 10),
+                              Expanded(
+                                child: Text(
+                                  "Total Points Earned",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: isMobileWeb
+                                        ? 13
+                                        : MediaQuery.of(context).size.width *
+                                              (ikweb ? 0.016 : 0.037),
+                                    color: const Color(0xFF32377D),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         Text(
                           "${state.totalPoints} points",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.width *
-                                (ikweb ? 0.016 : 0.037),
+                            fontSize: isMobileWeb
+                                ? 13
+                                : MediaQuery.of(context).size.width *
+                                      (ikweb ? 0.016 : 0.037),
                             color: const Color(0xFF32377D),
                           ),
                         ),

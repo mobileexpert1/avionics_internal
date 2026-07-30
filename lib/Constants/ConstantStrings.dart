@@ -187,8 +187,6 @@ class ApiBaseUrlConstant {
 
   static const String baseUrl = _prodUrl;
   static const String baseChatUrl = prodChatUrl;
-
-
 }
 
 class ApiFunctionUrlConstant {
