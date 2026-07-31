@@ -134,7 +134,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
             child: Column(
               children: [
                 PreferredSize(
-                  preferredSize: Size.fromHeight(isDesktopWeb  ? 130 : 110),
+                  preferredSize: Size.fromHeight(isDesktopWeb ? 130 : 110),
                   child: SafeArea(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -416,10 +416,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                       Expanded(
                         child: Text(
                           model.model,
-                          style: AppTextStyles.bold(isDesktopWeb ? 18 : 16).copyWith(
-                            height: 1.0,
-                            color: AppColors.planListTitleColour,
-                          ),
+                          style: AppTextStyles.bold(isDesktopWeb ? 18 : 16)
+                              .copyWith(
+                                height: 1.0,
+                                color: AppColors.planListTitleColour,
+                              ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -437,10 +438,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                           ),
                           child: Text(
                             model.ICAOCode,
-                            style: AppTextStyles.medium(isDesktopWeb ? 18 : 14).copyWith(
-                              height: 1.0,
-                              color: AppColors.planListTitleColour,
-                            ),
+                            style: AppTextStyles.medium(isDesktopWeb ? 18 : 14)
+                                .copyWith(
+                                  height: 1.0,
+                                  color: AppColors.planListTitleColour,
+                                ),
                           ),
                         ),
                       const SizedBox(width: 40),

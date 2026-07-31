@@ -232,7 +232,6 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     _disableMapGesture = isDesktopWeb;
 
-
     if (currentSize > 0.15) {
       _hasTriggeredMapView = true;
       return;
@@ -1320,7 +1319,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     final bool isMobileWeb = kIsWeb && screenWidth < 900;
     final bool isDesktopWeb = kIsWeb && !isMobileWeb;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isDesktopWeb  ? 400.0 : 0.0),
+      padding: EdgeInsets.symmetric(horizontal: isDesktopWeb ? 400.0 : 0.0),
       child: DraggableScrollableSheet(
         controller: _sheetController,
         initialChildSize: 0.00,
@@ -1549,6 +1548,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                           await cubit
                                                               .planFavOrUnfav1(
                                                                 aircraft
+                                                                    .aircraftModel
+                                                                    .toString(),
+                                                                aircraft
                                                                     .aircraftId
                                                                     .toString(),
                                                                 data.callSign,
@@ -1776,8 +1778,8 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          left: isDesktopWeb  ? 400.0 : 0.0,
-          right: isDesktopWeb  ? 400.0 : 0.0,
+          left: isDesktopWeb ? 400.0 : 0.0,
+          right: isDesktopWeb ? 400.0 : 0.0,
           bottom: _activeCard == 2 ? 0 : -cardHeight,
           child: SizedBox(
             height: cardHeight,
@@ -1828,7 +1830,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: isDesktopWeb ? 400.0 : 0.0,
-          right: isDesktopWeb ? 400.0 : MediaQuery.of(context).size.width / 2.53,
+          right: isDesktopWeb
+              ? 400.0
+              : MediaQuery.of(context).size.width / 2.53,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             height: segmentHeight,

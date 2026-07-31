@@ -314,12 +314,12 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
 
                                       Navigator.pop(context, flightId);
                                     } else {
-                                      if (callSign.isNotEmpty &&
-                                          flightNumber.isNotEmpty &&
-                                          flightId.isNotEmpty &&
-                                          detail!.aircraftModelId != "" &&
-                                          detail.aircraftModelId != null) {
-                                        AnalyticsService.instance.buttonPressed(
+                                      // if (callSign.isNotEmpty &&
+                                      //     flightNumber.isNotEmpty &&
+                                      //     flightId.isNotEmpty &&
+                                      //     detail!.aircraftModelId != "" &&
+                                      //     detail.aircraftModelId != null) {
+                                      AnalyticsService.instance.buttonPressed(
                                           FirebaseEvents.favOrUnFavFlightButton,
                                           FirebaseEvents.trackScreen,
                                         );
@@ -328,6 +328,7 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                             .read<AllPlanesCubit>();
 
                                         await cubit.planFavOrUnfav1(
+                                          detail?.aircraftModel ?? selectedFlight?.type ?? "",
                                           detail?.aircraftModelId ?? "",
                                           callSign,
                                           flightNumber,
@@ -350,13 +351,14 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                                               : "Airline Unfavorite",
                                           svgAsset: "",
                                         );
-                                      } else {
-                                        AppSnackBar.custom(
-                                          context,
-                                          message: "Error to fav the airline.",
-                                          svgAsset: "",
-                                        );
-                                      }
+
+                                      // } else {
+                                      //   AppSnackBar.custom(
+                                      //     context,
+                                      //     message: "Error to fav the airline.",
+                                      //     svgAsset: "",
+                                      //   );
+                                      // }
                                     }
                                   },
                                   child: Padding(

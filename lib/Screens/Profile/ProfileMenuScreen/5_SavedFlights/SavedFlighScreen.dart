@@ -148,7 +148,9 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               : item.airline?.logo ?? '',
                           width: isSavedTab == true ? 100 : 80,
                           height: isSavedTab == true ? 50 : 40,
-                          contentImage: isSavedTab == true ? BoxFit.cover: BoxFit.contain,
+                          contentImage: isSavedTab == true
+                              ? BoxFit.cover
+                              : BoxFit.contain,
                         ),
                       ),
 
@@ -252,6 +254,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                             await cubit.planFavOrUnfav(item.id, context);
                           } else {
                             await cubit.planFavOrUnfav1(
+                              item.aircraftModel,
                               item.id,
                               item.callsign,
                               item.flightId,

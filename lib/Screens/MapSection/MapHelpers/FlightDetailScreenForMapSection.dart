@@ -24,6 +24,7 @@ class FlightDetailScreenForMapSection extends StatefulWidget {
   final String ICAOType;
   final FlightAircraftDetail? flightDetail;
   final bool fromSavedFlight;
+  final bool isShowImageContent;
   final String? flightNumber;
   final String? callsign;
   final String? flightId;
@@ -33,6 +34,7 @@ class FlightDetailScreenForMapSection extends StatefulWidget {
     required this.ICAOType,
     this.flightDetail,
     this.fromSavedFlight = false,
+    this.isShowImageContent = false,
     this.flightNumber,
     this.callsign,
     this.flightId,
@@ -489,14 +491,15 @@ class _FlightDetailScreenForMapSectionState
 
               // ── TAB CONTENT (swipeable PageView) ──
               if (_currentFlightDetail != null) ...[
-                if (mainTab == 1 && hasValidImages)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _buildImageCoverScroller(
-                      MediaQuery.of(context).size.height,
-                      details.images!,
+                if (widget.isShowImageContent == true)
+                  if (mainTab == 1 && hasValidImages)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildImageCoverScroller(
+                        MediaQuery.of(context).size.height,
+                        details.images!,
+                      ),
                     ),
-                  ),
 
                 Expanded(
                   child: PageView.builder(
@@ -962,7 +965,7 @@ class _FlightDetailScreenForMapSectionState
             false,
             fields: [
               [
-                'Track (degree)',
+                'Track (°)',
                 flight.track?.toString() ?? 'N/A',
                 true,
                 "track_degrees",
@@ -1462,12 +1465,29 @@ class _FlightDetailScreenForMapSectionState
                 "Aircraft",
               ],
               [
-                'Maximum Speed (VMO/MMO, kts/Mach)',
+                'Maximum Speed (kts/Mach)',
                 detail?.performance.maxCruiseSpeed ?? 'N/A',
                 true,
                 "maximum_speed",
                 "Aircraft",
               ],
+
+              [
+                'VMO (kts)',
+                detail?.performance.vmoKts ?? 'N/A',
+                true,
+                "vmo",
+                "Aircraft",
+              ],
+
+              [
+                'MMO (Mach)',
+                detail?.performance.mmoMach ?? 'N/A',
+                true,
+                "mmo",
+                "Aircraft",
+              ],
+
               [
                 'Range (NM /km)',
                 "${detail?.performance.range.normalRangeNm ?? 'N/A'} NM / ${detail?.performance.range.normalRangeKm ?? 'N/A'} Km",

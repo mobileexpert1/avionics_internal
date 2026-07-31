@@ -55,6 +55,7 @@ class AllPlanesReposistory {
   }
 
   Future<BaseDetailResponseModel> setFavOrUnfavPlanFromList1({
+    required String aircraftModel,
     required String aircraftId,
     required String callSign,
     required String flightId,
@@ -70,6 +71,7 @@ class AllPlanesReposistory {
       final response = await ApiService.post(
         url: url,
         body: {
+          "aircraft_model": aircraftModel,
           "aircraft_id": aircraftId,
           "callsign": callSign,
           "flight_id": flightId,

@@ -100,6 +100,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
   }
 
   Future<void> planFavOrUnfav1(
+    String aircraftModel,
     String aircraftId,
     String callSign,
     String flightId,
@@ -112,6 +113,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
 
       try {
         await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
+          aircraftModel: aircraftModel,
           aircraftId: aircraftId,
           callSign: callSign,
           flightId: flightId,
@@ -134,6 +136,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         context,
         onRetry: () async {
           await planFavOrUnfav1(
+            aircraftModel,
             aircraftId,
             callSign,
             flightId,
