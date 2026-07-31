@@ -412,6 +412,9 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required String flightId,
     required BuildContext context,
   }) async {
+    if (_favCallSigns == null) {
+      await loadFavoritesFlights(context);
+    }
     if (await InternetConnection().hasInternetAccess) {
       try {
         final now = DateTime.now().toUtc();
@@ -434,12 +437,20 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           submitFlightCreditApi(1, 2, context);
           print("flightDetail.isFavorite-=-=-=${flightDetail.isFavorite}");
           clearSelectedFlightDetail();
+
+
+
+          final isFav =
+              _favCallSigns?.contains(flightDetail.callsign ?? "") ?? false;
+
           emit(
             state.copyWith(
-              selectedFlightDetail: flightDetail,
+              selectedFlightDetail: flightDetail.copyWith(
+                isFavorite: isFav,
+              ),
               status: CommonApiStatus.success,
               isLoading: false,
-              isFavFlightByS: flightDetail.isFavorite,
+              isFavFlightByS: isFav,
             ),
           );
         }
