@@ -148,11 +148,11 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                               : item.airline?.logo ?? '',
                           width: isSavedTab == true ? 100 : 80,
                           height: isSavedTab == true ? 50 : 40,
-                          contentImage: BoxFit.contain,
+                          contentImage: isSavedTab == true ? BoxFit.cover: BoxFit.contain,
                         ),
                       ),
 
-                      const SizedBox(width: 15),
+                      const SizedBox(width: 8),
 
                       Expanded(
                         child: isSavedTab
@@ -162,20 +162,24 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Text(
-                                        item.aircraftModel ??
-                                            'Unknown Aircraft',
-                                        style: AppTextStyles.bold(16).copyWith(
-                                          height: 1.4,
-                                          color: AppColors.textColour,
-                                          letterSpacing: 0.5,
+                                      Expanded(
+                                        child: Text(
+                                          item.aircraftModel ??
+                                              'Unknown Aircraft',
+                                          style: AppTextStyles.bold(16)
+                                              .copyWith(
+                                                height: 1.4,
+                                                color: AppColors.textColour,
+                                                letterSpacing: 0.5,
+                                              ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      const SizedBox(width: 8),
 
                                       if (item.icaoTypeCode?.isNotEmpty ==
                                           true) ...[
+                                        const SizedBox(width: 8),
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 10,
@@ -200,6 +204,7 @@ class _SavedFlighScreenState extends State<SavedFlighScreen> {
                                           ),
                                         ),
                                       ],
+                                      const SizedBox(width: 10),
                                     ],
                                   ),
                                 ],

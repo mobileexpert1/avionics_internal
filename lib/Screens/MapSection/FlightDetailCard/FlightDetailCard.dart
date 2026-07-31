@@ -12,6 +12,7 @@ import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomDivider.dart';
+import '../../../bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../bloc/MapSection/flight_Map_Cubit.dart';
 import '../../../bloc/MapSection/flight_map_detailModel.dart';
@@ -313,37 +314,49 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
 
                                       Navigator.pop(context, flightId);
                                     } else {
-                                      AnalyticsService.instance.buttonPressed(
-                                        FirebaseEvents.favOrUnFavFlightButton,
-                                        FirebaseEvents.trackScreen,
-                                      );
+                                      if (callSign.isNotEmpty &&
+                                          flightNumber.isNotEmpty &&
+                                          flightId.isNotEmpty &&
+                                          detail!.aircraftModelId != "" &&
+                                          detail.aircraftModelId != null) {
+                                        AnalyticsService.instance.buttonPressed(
+                                          FirebaseEvents.favOrUnFavFlightButton,
+                                          FirebaseEvents.trackScreen,
+                                        );
 
-                                      final cubit = context
-                                          .read<AllPlanesCubit>();
+                                        final cubit = context
+                                            .read<AllPlanesCubit>();
 
-                                      await cubit.planFavOrUnfav1(
-                                        detail?.aircraftModelId ?? "",
-                                        callSign,
-                                        flightNumber,
-                                        flightId,
-                                        context,
-                                      );
+                                        await cubit.planFavOrUnfav1(
+                                          detail?.aircraftModelId ?? "",
+                                          callSign,
+                                          flightNumber,
+                                          flightId,
+                                          context,
+                                        );
 
-                                      context
-                                          .read<FlightMapCubit>()
-                                          .toggleFavoriteByCallSign(callSign);
+                                        context
+                                            .read<FlightMapCubit>()
+                                            .toggleFavoriteByCallSign(callSign);
 
-                                      setState(() {
-                                        isFavLocal = !isFavLocal;
-                                      });
+                                        setState(() {
+                                          isFavLocal = !isFavLocal;
+                                        });
 
-                                      AppSnackBar.custom(
-                                        context,
-                                        message: isFavLocal
-                                            ? "Airline Favorite"
-                                            : "Airline Unfavorite",
-                                        svgAsset: "",
-                                      );
+                                        AppSnackBar.custom(
+                                          context,
+                                          message: isFavLocal
+                                              ? "Airline Favorite"
+                                              : "Airline Unfavorite",
+                                          svgAsset: "",
+                                        );
+                                      } else {
+                                        AppSnackBar.custom(
+                                          context,
+                                          message: "Error to fav the airline.",
+                                          svgAsset: "",
+                                        );
+                                      }
                                     }
                                   },
                                   child: Padding(
@@ -536,6 +549,10 @@ class _FlightDetailCardState extends State<FlightDetailCard> {
                             FirebaseEvents.flightDetailScreen,
                             FirebaseEvents.trackScreen,
                           );
+
+                          context
+                              .read<AirCraftDetailCubit>()
+                              .resetAllTheDataBeforeEnter();
 
                           AppNavigator.push(
                             context,

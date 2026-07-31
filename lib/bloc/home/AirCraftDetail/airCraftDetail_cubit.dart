@@ -52,6 +52,10 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
     }
   }
 
+  Future<void> resetAllTheDataBeforeEnter() async {
+    emit(AirCraftDetailState());
+  }
+
   Future<void> fetchAircraftDetailByICAOCode(
     String ICAOCode,
     BuildContext context,
@@ -90,10 +94,10 @@ class AirCraftDetailCubit extends Cubit<AirCraftDetailState> {
         SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(
           state.copyWith(
+            airCraftDetails: null,
             isLoading: false,
             isError: true,
             errorMessage: e.toString(),
-            airCraftDetails: null,
           ),
         );
       }

@@ -261,15 +261,11 @@ class _FlightDetailScreenForMapSectionState
             body: Center(child: CircularProgressIndicator()),
           );
         }
+
         final details = state.airCraftDetails?.results;
-        final aircraftData = context
-            .read<AirCraftDetailCubit>()
-            .state
-            .airCraftDetails
-            ?.results;
 
         final hasValidImages =
-            aircraftData?.images != null && aircraftData!.images!.isNotEmpty;
+            details?.images != null && details!.images!.isNotEmpty;
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: CustomAppBar(
@@ -291,7 +287,12 @@ class _FlightDetailScreenForMapSectionState
                 CommonUi.setSvgImage(AssetsPath.backArrowButton),
                 fit: BoxFit.cover,
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                context
+                    .read<AirCraftDetailCubit>()
+                    .resetAllTheDataBeforeEnter();
+                Navigator.pop(context);
+              },
             ),
             rightButton: IconButton(
               icon: const Icon(Icons.refresh, color: Colors.white),
@@ -493,7 +494,7 @@ class _FlightDetailScreenForMapSectionState
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: _buildImageCoverScroller(
                       MediaQuery.of(context).size.height,
-                      aircraftData.images!,
+                      details.images!,
                     ),
                   ),
 

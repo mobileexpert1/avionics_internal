@@ -31,6 +31,7 @@ class FlightDetailResponse {
           ...json['results'],
           'orig_icao_airport': json['orig_icao_airport'],
           'dest_icao_airport': json['dest_icao_airport'],
+          'airline': json['AirlineModelData'],
         }),
       );
     }
@@ -289,6 +290,24 @@ class ManufacturerModel {
       'airline_logo': airlineLogo,
       'airline_name': airlineName,
     };
+  }
+}
+
+class AirlineModelData {
+  final String logo;
+  final String airlineName;
+
+  const AirlineModelData({required this.logo, required this.airlineName});
+
+  factory AirlineModelData.fromJson(Map<String, dynamic> json) {
+    return AirlineModelData(
+      logo: json['logo'] ?? '',
+      airlineName: json['airline_name'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'logo': logo, 'airline_name': airlineName};
   }
 }
 
