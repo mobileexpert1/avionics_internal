@@ -413,7 +413,17 @@ class FlightMapCubit extends Cubit<FlightMapState> {
     required BuildContext context,
   }) async {
     if (_favCallSigns == null) {
-      await loadFavoritesFlights(context);
+      try {
+        await loadFavoritesFlights(context);
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error fetching flight details: ${e.toString()}'),
+          ),
+        );
+        emit(state.copyWith(isLoading: false));
+      }
     }
     if (await InternetConnection().hasInternetAccess) {
       try {
@@ -438,16 +448,12 @@ class FlightMapCubit extends Cubit<FlightMapState> {
           print("flightDetail.isFavorite-=-=-=${flightDetail.isFavorite}");
           clearSelectedFlightDetail();
 
-
-
           final isFav =
               _favCallSigns?.contains(flightDetail.callsign ?? "") ?? false;
 
           emit(
             state.copyWith(
-              selectedFlightDetail: flightDetail.copyWith(
-                isFavorite: isFav,
-              ),
+              selectedFlightDetail: flightDetail.copyWith(isFavorite: isFav),
               status: CommonApiStatus.success,
               isLoading: false,
               isFavFlightByS: isFav,

@@ -1034,7 +1034,7 @@ class _AirCraftDetailScreenState extends State<FlightDetailScreen> {
                     flight.circleDistance?.toString() ?? 'N/A',
                   ],
                   ['Flight Duration', flight.flightTime ?? 'N/A'],
-                  ['Carrier Operating', flight.operatingAs ?? 'N/A'],
+                  ['Operating Carrier', flight.operatingAs ?? 'N/A'],
                 ],
                 context: context,
               ),

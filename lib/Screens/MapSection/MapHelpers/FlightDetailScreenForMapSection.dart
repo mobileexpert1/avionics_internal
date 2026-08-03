@@ -1060,7 +1060,7 @@ class _FlightDetailScreenForMapSectionState
                 "Live",
               ],
               [
-                'Carrier Operating',
+                'Operating Carrier',
                 flight.operatingAs ?? 'N/A',
                 true,
                 "operating_carrier",
@@ -1134,6 +1134,8 @@ class _FlightDetailScreenForMapSectionState
                 "aircraft_model",
                 "Aircraft",
               ],
+              ['Aircraft Role', detail?.identification.aircraftRole ?? 'N/A',true,"aircraft_role","Aircraft"],
+              ['Aircraft Type', detail?.identification.aircraftType ?? 'N/A',true,"aircraft_type","Aircraft"],
               [
                 'Wake Turbulence Category',
                 detail?.identification.wakeTurbulenceCategory ?? 'N/A',
