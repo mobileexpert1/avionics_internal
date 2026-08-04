@@ -22,6 +22,7 @@ class TrackAndSearchFlight extends StatefulWidget {
 class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -29,6 +30,19 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.trackAndSearchFlight,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        searchFocusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    searchFocusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _onSearch(String value) {
@@ -50,6 +64,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
               children: [
                 const SizedBox(height: 10),
                 SearchBarWidget(
+                  focusNode: searchFocusNode,
                   enableBackArrow: true,
                   enableFilter: false,
                   enableCloseScreen: false,

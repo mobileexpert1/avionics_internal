@@ -64,6 +64,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
           page: cubit.state.currentPage + 1,
           isLoadMore: true,
           selectedAirbusId: widget.selectedAirbusId,
+          query: cubit.state.currentQuery,
         );
       }
     }

@@ -7,6 +7,8 @@ import 'AppTextStyles/AppTextStyles.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode? focusNode;
+
   final VoidCallback? onFilterTap;
   final VoidCallback? onBackButtonTap;
   final bool enableFilter;
@@ -20,8 +22,9 @@ class SearchBarWidget extends StatelessWidget {
   final VoidCallback? onTextTap;
 
   const SearchBarWidget({
-    Key? key,
+    super.key,
     required this.controller,
+    this.focusNode,
     this.onFilterTap,
     this.onBackButtonTap,
     required this.enableFilter,
@@ -32,7 +35,7 @@ class SearchBarWidget extends StatelessWidget {
     required this.searchTitle,
     this.enableGestureMode = false,
     this.onTextTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +80,11 @@ class SearchBarWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(13),
                       ),
                       child: TextField(
+                        focusNode: focusNode,
+
                         controller: controller,
                         onChanged: onChanged,
 
-                        /// 🔥 KEY FIX
                         readOnly: enableGestureMode,
                         onTap: enableGestureMode ? onTextTap : null,
 

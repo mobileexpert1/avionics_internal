@@ -12,6 +12,8 @@ import '../../../Helpers/NoInternetDialog.dart';
 class AllPlanesCubit extends Cubit<AllPlanesState> {
   AllPlanesCubit() : super(const AllPlanesState(listoFAircraftModels: []));
 
+  bool _isPaginationRunning = false;
+
   Future<void> loadListOAllAirbusModels({
     String? query,
     required String selectedAirbusId,
@@ -19,28 +21,71 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     int page = 1,
     bool isLoadMore = false,
   }) async {
+    if (isLoadMore && _isPaginationRunning) {
+      return;
+    }
+
+    if (!isLoadMore) {
+      emit(
+        state.copyWith(
+          currentQuery: query ?? '',
+          currentPage: 1,
+          hasNextPage: false,
+        ),
+      );
+    }
+
     if (await InternetConnection().hasInternetAccess) {
-      if (query == "" || query == null) {
-        if (isLoadMore) {
-          emit(state.copyWith(isFetchingMore: true));
-        } else {
-          emit(state.copyWith(isLoading: true, currentPage: 1));
-        }
+      if (isLoadMore) {
+        _isPaginationRunning = true;
+
+        emit(
+          state.copyWith(
+            isFetchingMore: true,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: true,
+            currentPage: 1,
+          ),
+        );
       }
 
       try {
+        final requestQuery = isLoadMore
+            ? state.currentQuery
+            : (query ?? '');
+
         final paginated = await AllPlanesReposistory().getListOfAllPlanes(
-          query: query,
+          query: requestQuery,
           page: page,
           selectedAirbusId: selectedAirbusId,
         );
 
+        if (paginated.results.isEmpty) {
+          emit(
+            state.copyWith(
+              hasNextPage: false,
+              isLoading: false,
+              isFetchingMore: false,
+            ),
+          );
+          return;
+        }
+
         final updatedList = isLoadMore
-            ? [...state.listoFAircraftModels, ...paginated.results]
+            ? [
+          ...state.listoFAircraftModels,
+          ...paginated.results,
+        ]
             : paginated.results;
 
         updatedList.sort(
-          (a, b) => a.model.toLowerCase().compareTo(b.model.toLowerCase()),
+              (a, b) => a.model.toLowerCase().compareTo(
+            b.model.toLowerCase(),
+          ),
         );
 
         emit(
@@ -54,7 +99,15 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         );
       } catch (e) {
         SessionCommonTokenError.handleUnauthorizedError(context, e);
-        emit(state.copyWith(isLoading: false, isFetchingMore: false));
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isFetchingMore: false,
+          ),
+        );
+      } finally {
+        _isPaginationRunning = false;
       }
     } else {
       NoInternetDialog.show(
@@ -72,16 +125,22 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  Future<void> planFavOrUnfav(String aircraftId, BuildContext context) async {
+  Future<void> planFavOrUnfav(
+      String aircraftId,
+      BuildContext context,
+      ) async {
     if (await InternetConnection().hasInternetAccess) {
       emit(state.copyWith(status: CommonApiStatus.submitting));
+
       try {
         await AllPlanesReposistory().setFavOrUnfavPlanFromList(
           aircraftId: aircraftId,
         );
+
         emit(state.copyWith(status: CommonApiStatus.success));
       } catch (e) {
         SessionCommonTokenError.handleUnauthorizedError(context, e);
+
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,
@@ -93,23 +152,31 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
       NoInternetDialog.show(
         context,
         onRetry: () async {
-          await planFavOrUnfav(aircraftId, context);
+          await planFavOrUnfav(
+            aircraftId,
+            context,
+          );
         },
       );
     }
   }
 
   Future<void> planFavOrUnfav1(
-    String aircraftModel,
-    String aircraftId,
-    String callSign,
-    String flightId,
-    String flightNumber,
-    BuildContext context,
-  ) async {
+      String aircraftModel,
+      String aircraftId,
+      String callSign,
+      String flightId,
+      String flightNumber,
+      BuildContext context,
+      ) async {
     if (await InternetConnection().hasInternetAccess) {
       updateFlightFavoriteByCallSign(callSign);
-      emit(state.copyWith(status: CommonApiStatus.submitting));
+
+      emit(
+        state.copyWith(
+          status: CommonApiStatus.submitting,
+        ),
+      );
 
       try {
         await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
@@ -119,11 +186,22 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
           flightId: flightId,
           flightNumber: flightNumber,
         );
+
         updateFlightFavoriteByCallSign(callSign);
-        emit(state.copyWith(status: CommonApiStatus.success));
+
+        emit(
+          state.copyWith(
+            status: CommonApiStatus.success,
+          ),
+        );
       } catch (e) {
         updateFlightFavoriteByCallSign(callSign);
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        SessionCommonTokenError.handleUnauthorizedError(
+          context,
+          e,
+        );
+
         emit(
           state.copyWith(
             status: CommonApiStatus.failure,
@@ -148,7 +226,11 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  void toggleFavorite(String id, BuildContext context, bool isSaved) {
+  void toggleFavorite(
+      String id,
+      BuildContext context,
+      bool isSaved,
+      ) {
     final updatedList = state.listoFAircraftModels.map((model) {
       if (model.id == id) {
         return AircraftListModel(
@@ -160,25 +242,42 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
           isSaved: !isSaved,
         );
       }
+
       return model;
     }).toList();
 
-    planFavOrUnfav(id, context);
-    emit(state.copyWith(listoFAircraftModels: updatedList));
+    emit(
+      state.copyWith(
+        listoFAircraftModels: updatedList,
+      ),
+    );
+
+    planFavOrUnfav(
+      id,
+      context,
+    );
   }
 
-  void updateFlightFavoriteByCallSign(String callSign) {
+  void updateFlightFavoriteByCallSign(
+      String callSign,
+      ) {
     final updatedFlights = state.flights?.map((flight) {
       if (flight.callSign == callSign) {
         return flight.copyWith(
           aircraftDetails: flight.aircraftDetails?.copyWith(
-            isFavorite: !(flight.aircraftDetails?.isFavorite ?? false),
+            isFavorite:
+            !(flight.aircraftDetails?.isFavorite ?? false),
           ),
         );
       }
+
       return flight;
     }).toList();
 
-    emit(state.copyWith(flights: updatedFlights));
+    emit(
+      state.copyWith(
+        flights: updatedFlights,
+      ),
+    );
   }
 }

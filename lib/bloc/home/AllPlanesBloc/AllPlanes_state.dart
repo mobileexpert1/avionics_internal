@@ -16,6 +16,8 @@ class AllPlanesState {
   final CommonApiStatus status;
   final String? errorMessage;
   final List<FlightModel>? flights;
+  final String currentQuery;
+
 
   const AllPlanesState({
     required this.listoFAircraftModels,
@@ -29,6 +31,7 @@ class AllPlanesState {
     this.status = CommonApiStatus.initial,
     this.errorMessage,
     this.flights,
+    this.currentQuery = '',
   });
 
   AllPlanesState copyWith({
@@ -43,6 +46,7 @@ class AllPlanesState {
     CommonApiStatus? status,
     String? errorMessage,
     List<FlightModel>? flights,
+    String? currentQuery,
   }) {
     return AllPlanesState(
       listoFAircraftModels: listoFAircraftModels ?? this.listoFAircraftModels,
@@ -56,6 +60,7 @@ class AllPlanesState {
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
       flights: flights ?? this.flights,
+      currentQuery: currentQuery ?? this.currentQuery,
     );
   }
 }

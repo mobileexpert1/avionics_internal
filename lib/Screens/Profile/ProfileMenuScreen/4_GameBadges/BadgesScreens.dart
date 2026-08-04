@@ -323,7 +323,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
             MediaQuery.of(context).size.height > 600);
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * (ikWeb ? 0.07 : 0.05),
+      height: MediaQuery.of(context).size.height * (ikWeb ? 0.07 : 0.052),
       child: Container(
         color: AppColors.primaryDark,
         child: LayoutBuilder(

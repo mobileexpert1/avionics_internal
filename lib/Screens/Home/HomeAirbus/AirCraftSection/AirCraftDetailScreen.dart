@@ -464,8 +464,9 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
                             if (hasCopyright)
                               Positioned(
-                                left: 8,
-                                bottom: 8,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
                                 child: GestureDetector(
                                   onTap: () async {
                                     final uri = Uri.tryParse(image.source);
@@ -486,23 +487,40 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                                       );
                                     }
                                   },
+
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
+                                    width: 320,
+                                    padding: const EdgeInsets.only(
+                                      left: 80,
+                                      right: 10,
+                                      bottom: 5,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(
+                                      color: AppColors.primaryDark.withValues(
                                         alpha: 0.6,
                                       ),
-                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Text(
-                                      '© ${image.cc}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w500,
+                                    alignment: Alignment.centerRight,
+                                    child: RichText(
+                                      textAlign: TextAlign.right,
+                                      text: TextSpan(
+                                        style: AppTextStyles.medium(
+                                          11,
+                                        ).copyWith(color: AppColors.white),
+                                        children: [
+                                          WidgetSpan(
+                                            alignment:
+                                                PlaceholderAlignment.middle,
+                                            child: Text(
+                                              "©",
+                                              style: AppTextStyles.medium(22)
+                                                  .copyWith(
+                                                    color: AppColors.white,
+                                                  ),
+                                            ),
+                                          ),
+                                          TextSpan(text: " ${image.cc}"),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -575,7 +593,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               ),
 
               Positioned(
-                bottom: 6,
+                bottom: 3,
                 left: 0,
                 right: 0,
                 child: Row(

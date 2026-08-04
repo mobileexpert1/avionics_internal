@@ -445,7 +445,15 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       color: Colors.blue,
       useCallSign: true,
       onTap: () {
-        _mapCubit.setSelectedFlight(flight);
+        //_mapCubit.setSelectedFlight(flight);
+        if (selectedFlightId != flight.id) {
+          _isMapListViewShown = false;
+          selectedFlightId = flight.id;
+          _mapCubit.setSelectedFlight(flight);
+          _toggleFlightCard(flight: flight.id);
+        } else {
+          _resetFlightSelection();
+        }
       },
     );
   }

@@ -33,8 +33,8 @@ class ManufacturerState {
     this.selectedManufacturerCategories = const [],
     this.showCategories = true,
     this.categories = const [
-      "AIRPLANES",
-      "HELICOPTERS (ROTOR CRAFTS)",
+      "Airplanes",
+      "Helicopters (Rotorcrafts)",
     ],
   });
 
