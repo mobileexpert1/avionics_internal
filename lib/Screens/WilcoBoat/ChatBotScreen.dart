@@ -26,6 +26,7 @@ import '../Onboarding/Login/LoginScreen.dart';
 import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
 import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'ChatHistoryScreen.dart';
+import 'ChatHistoryShimmer.dart';
 
 class AskWilcoScreen extends StatefulWidget {
   const AskWilcoScreen({
@@ -309,216 +310,297 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
         return cubit;
       },
 
-      child: Scaffold(
-        backgroundColor: Colors.white,
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: Colors.white,
 
-        appBar: CustomAppBar(
-          title: 'WILCO',
+            appBar: CustomAppBar(
+              title: 'WILCO',
 
-          leftButton: widget.isComeFromTab
-              ? const SizedBox()
-              : IconButton(
-                  icon: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.backArrowButton),
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                ),
+              leftButton: widget.isComeFromTab
+                  ? const SizedBox()
+                  : IconButton(
+                      icon: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                        fit: BoxFit.cover,
+                      ),
+                      onPressed: () async {
+                        await context.read<ChatCubit>().clearCurrentChat();
 
-          rightButton: InkWell(
-            borderRadius: BorderRadius.circular(30),
-
-            onTap: () {
-              AppNavigator.push(
-                context,
-                ChatHistoryScreen(),
-                disableSwipeBack: true,
-              );
-            },
-
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-              ),
-
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.chatHistoryIcon),
-                    height: 18,
-                    width: 18,
-                  ),
-
-                  const SizedBox(width: 6),
-
-                  const Text(
-                    'History',
-                    style: TextStyle(
-                      color: Color(0xFF1A1A1A),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                        if (mounted) {
+                          Navigator.of(
+                            context,
+                          ).popUntil((route) => route.isFirst);
+                        }
+                      },
                     ),
+
+              rightButton: InkWell(
+                borderRadius: BorderRadius.circular(30),
+
+                onTap: () {
+                  AppNavigator.push(
+                    context,
+                    ChatHistoryScreen(),
+                    disableSwipeBack: true,
+                  );
+                },
+
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
                   ),
-                ],
+
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.chatHistoryIcon),
+                        height: 18,
+                        width: 18,
+                      ),
+
+                      const SizedBox(width: 6),
+
+                      const Text(
+                        'History',
+                        style: TextStyle(
+                          color: Color(0xFF1A1A1A),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
 
-        body: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: kIsWeb ? 900 : double.infinity,
-            ),
-            child: BlocListener<ChatCubit, List<Map<String, String>>>(
-              listener: (_, _) => _scrollToBottom(),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
-                      builder: (context, messages) {
-                        return SelectableRegion(
-                          focusNode: _selectableFocusNode,
+            body: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: kIsWeb ? 900 : double.infinity,
+                ),
+                child: BlocListener<ChatCubit, List<Map<String, String>>>(
+                  listener: (_, _) => _scrollToBottom(),
+                  child: Column(
+                    children: [
+                      // Expanded(
+                      //   child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
+                      //     builder: (context, messages) {
+                      //       return SelectableRegion(
+                      //         focusNode: _selectableFocusNode,
+                      //
+                      //         selectionControls: MaterialTextSelectionControls(),
+                      //
+                      //         child: ListView.builder(
+                      //           controller: _scrollCtrl,
+                      //
+                      //           padding: const EdgeInsets.symmetric(
+                      //             horizontal: 16,
+                      //             vertical: 16,
+                      //           ),
+                      //
+                      //           itemCount: messages.length + 1,
+                      //
+                      //           itemBuilder: (context, index) {
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            final cubit = context.read<ChatCubit>();
 
-                          selectionControls: MaterialTextSelectionControls(),
+                            return ValueListenableBuilder<bool>(
+                              valueListenable: cubit.historyLoadingNotifier,
+                              builder: (_, isLoading, __) {
+                                if (!isLoading) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    _scrollToBottom();
+                                  });
+                                }
 
-                          child: ListView.builder(
-                            controller: _scrollCtrl,
+                                if (isLoading) {
+                                  return const ChatHistoryShimmer();
+                                }
 
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
-                            ),
+                                return BlocBuilder<
+                                  ChatCubit,
+                                  List<Map<String, String>>
+                                >(
+                                  builder: (context, messages) {
+                                    return SelectableRegion(
+                                      focusNode: _selectableFocusNode,
+                                      selectionControls:
+                                          MaterialTextSelectionControls(),
 
-                            itemCount: messages.length + 1,
-
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return _buildTopSection();
-                              }
-
-                              final message = messages[index - 1];
-
-                              if (message['type'] == 'analyzing') {
-                                return const Padding(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: ChatAnalyzingIndicator(),
-                                );
-                              }
-
-                              final isUser = message['type'] == 'user';
-
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                                  mainAxisAlignment: isUser
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
-
-                                  children: [
-                                    if (!isUser)
-                                      _buildBotAvatarOrUser(
-                                        true,
-                                        message['text'] ?? "",
-                                      ),
-
-                                    Flexible(
-                                      child: Container(
+                                      child: ListView.builder(
+                                        controller: _scrollCtrl,
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 10,
+                                          horizontal: 16,
+                                          vertical: 16,
                                         ),
+                                        itemCount: messages.length + 1,
 
-                                        constraints: BoxConstraints(
-                                          maxWidth: MediaQuery.of(
-                                            context,
-                                          ).size.width,
-                                        ),
+                                        itemBuilder: (context, index) {
+                                          if (index == 0) {
+                                            return _buildTopSection();
+                                          }
 
-                                        decoration: isUser
-                                            ? BoxDecoration(
-                                                color: AppColors.primaryDark,
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  bottomLeft: Radius.circular(
-                                                    10,
+                                          final message = messages[index - 1];
+
+                                          if (message['type'] == 'analyzing') {
+                                            return const Padding(
+                                              padding: EdgeInsets.only(top: 8),
+                                              child: ChatAnalyzingIndicator(),
+                                            );
+                                          }
+
+                                          final isUser =
+                                              message['type'] == 'user';
+
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 16,
+                                            ),
+
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+
+                                              mainAxisAlignment: isUser
+                                                  ? MainAxisAlignment.end
+                                                  : MainAxisAlignment.start,
+
+                                              children: [
+                                                if (!isUser)
+                                                  _buildBotAvatarOrUser(
+                                                    true,
+                                                    message['text'] ?? "",
                                                   ),
-                                                  bottomRight: Radius.circular(
-                                                    10,
+
+                                                Flexible(
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 15,
+                                                          vertical: 10,
+                                                        ),
+
+                                                    constraints: BoxConstraints(
+                                                      maxWidth: MediaQuery.of(
+                                                        context,
+                                                      ).size.width,
+                                                    ),
+
+                                                    decoration: isUser
+                                                        ? BoxDecoration(
+                                                            color: AppColors
+                                                                .primaryDark,
+                                                            borderRadius: BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(
+                                                                    10,
+                                                                  ),
+                                                              bottomLeft:
+                                                                  Radius.circular(
+                                                                    10,
+                                                                  ),
+                                                              bottomRight:
+                                                                  Radius.circular(
+                                                                    10,
+                                                                  ),
+                                                            ),
+
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.04,
+                                                                    ),
+                                                                blurRadius: 8,
+                                                                offset:
+                                                                    const Offset(
+                                                                      0,
+                                                                      2,
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : null,
+
+                                                    child: isUser
+                                                        ? SelectableText(
+                                                            message['text'] ??
+                                                                '',
+                                                            style:
+                                                                AppTextStyles.regular(
+                                                                  15,
+                                                                ).copyWith(
+                                                                  height: 1.5,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                          )
+                                                        : FormattedText(
+                                                            text:
+                                                                message['text'] ??
+                                                                '',
+                                                            fontSize: 15,
+                                                            normalColor:
+                                                                Colors.black87,
+                                                            boldColor:
+                                                                Colors.black,
+                                                            lineHeight: 1.5,
+                                                          ),
+
+                                                    // SelectableText(
+                                                    //   message['text'] ?? '',
+                                                    //   style: AppTextStyles.regular(15).copyWith(
+                                                    //     height: 1.5,
+                                                    //     color: isUser
+                                                    //         ? Colors.white
+                                                    //         : Colors.black87,
+                                                    //   ),
+                                                    // ),
                                                   ),
                                                 ),
 
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withValues(
-                                                          alpha: 0.04,
-                                                        ),
-                                                    blurRadius: 8,
-                                                    offset: const Offset(0, 2),
+                                                if (isUser)
+                                                  _buildBotAvatarOrUser(
+                                                    false,
+                                                    message['text'] ?? "",
                                                   ),
-                                                ],
-                                              )
-                                            : null,
-
-                                        child: isUser
-                                            ? SelectableText(
-                                                message['text'] ?? '',
-                                                style: AppTextStyles.regular(15)
-                                                    .copyWith(
-                                                      height: 1.5,
-                                                      color: Colors.white,
-                                                    ),
-                                              )
-                                            : FormattedText(
-                                                text: message['text'] ?? '',
-                                                fontSize: 15,
-                                                normalColor: Colors.black87,
-                                                boldColor: Colors.black,
-                                                lineHeight: 1.5,
-                                              ),
-
-                                        // SelectableText(
-                                        //   message['text'] ?? '',
-                                        //   style: AppTextStyles.regular(15).copyWith(
-                                        //     height: 1.5,
-                                        //     color: isUser
-                                        //         ? Colors.white
-                                        //         : Colors.black87,
-                                        //   ),
-                                        // ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
 
-                                    if (isUser)
-                                      _buildBotAvatarOrUser(
-                                        false,
-                                        message['text'] ?? "",
-                                      ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                      _chatInput(context),
+                    ],
                   ),
-
-                  _chatInput(context),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

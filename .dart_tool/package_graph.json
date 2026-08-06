@@ -44,6 +44,7 @@
         "purchases_flutter",
         "responsive_sizer",
         "shared_preferences",
+        "shimmer",
         "sign_in_with_apple",
         "smooth_page_indicator",
         "speech_to_text",
@@ -103,6 +104,13 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "shimmer",
+      "version": "3.0.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

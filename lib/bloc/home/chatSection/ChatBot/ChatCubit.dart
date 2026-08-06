@@ -7,6 +7,8 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 
 import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../../../Helpers/CreditManager/CreditManager.dart';
+import '../../../../Helpers/GreetingHelpers/GreetingHelper.dart';
+import '../../../../Helpers/GreetingHelpers/GreetingStorage.dart';
 import '../../../../Helpers/NoInternetDialog.dart';
 import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import 'chat_implementation.dart';
@@ -18,16 +20,15 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   StreamSubscription? _internetSub;
   bool _isHistoryLoading = false;
   bool _needFreshSession = false;
-
+  final ValueNotifier<bool> historyLoadingNotifier = ValueNotifier(false);
   ChatCubit({
     required String accessToken,
     required String existingSessionId,
     required bool isNewSession,
     required BuildContext context,
   }) : _repo = ChatRepositoryImpl(),
-        super([
-        {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
-      ]) {
+       super(_initialMessages()) {
+    currentGreeting = _initialGreeting;
     _init(accessToken, existingSessionId, isNewSession, context);
     _startInternetListener();
   }
@@ -44,13 +45,25 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   bool get isConnected => _isConnected;
 
   Stream<bool> get internetStream => _internetStatusController.stream;
+  String currentGreeting = "";
+
+  static String _initialGreeting = "";
+
+  static List<Map<String, String>> _initialMessages() {
+    _initialGreeting = GreetingHelper.getRandomGreeting();
+
+    return [
+      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': _initialGreeting},
+    ];
+  }
 
   Future<void> _init(
-      String token,
-      String sessionId,
-      bool isNewSession,
-      BuildContext context,
-      ) async {
+    String token,
+    String sessionId,
+    bool isNewSession,
+    BuildContext context,
+  ) async {
     if (await InternetConnection().hasInternetAccess) {
       _repo.setResponseCallback((event) {
         switch (event.status) {
@@ -90,12 +103,48 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       //   }
       // };
 
+      // _repo.onSocketConnected = () async {
+      //   final currentSessionId = _repo.currentSessionId;
+      //   if (currentGreeting.isNotEmpty &&
+      //       currentSessionId != null &&
+      //       currentSessionId.isNotEmpty) {
+      //     await GreetingStorage.save(currentSessionId, currentGreeting);
+      //   }
+      //
+      //   if (_isHistoryLoading) return;
+      //
+      //   if (currentSessionId != null && currentSessionId.isNotEmpty) {
+      //     _isHistoryLoading = true;
+      //
+      //     try {
+      //       await _loadCompleteHistory(currentSessionId);
+      //     } finally {
+      //       _isHistoryLoading = false;
+      //     }
+      //   }
+      // };
+
       _repo.onSocketConnected = () async {
         final currentSessionId = _repo.currentSessionId;
 
-        if (_isHistoryLoading) return;
-
         if (currentSessionId != null && currentSessionId.isNotEmpty) {
+
+          final savedGreeting =
+          await GreetingStorage.get(currentSessionId);
+
+          if (savedGreeting != null && savedGreeting.isNotEmpty) {
+            currentGreeting = savedGreeting;
+          } else {
+            currentGreeting = GreetingHelper.getRandomGreeting();
+
+            await GreetingStorage.save(
+              currentSessionId,
+              currentGreeting,
+            );
+          }
+
+          if (_isHistoryLoading) return;
+
           _isHistoryLoading = true;
 
           try {
@@ -121,19 +170,27 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   Future<void> startFreshChat() async {
     print("🔥 startFreshChat called");
+    currentGreeting = GreetingHelper.getRandomGreeting();
+    print("CURRENT GREETING => $currentGreeting");
     emit([
-      {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': currentGreeting},
     ]);
     await _repo.resetSession();
     await _repo.reconnect();
   }
 
   Future<void> _loadCompleteHistory(String sessionId) async {
+    historyLoadingNotifier.value = true;
+    final savedGreeting = await GreetingStorage.get(sessionId);
+
     List<Map<String, String>> greeting = [
-      {'type': 'bot', 'text': 'Hey there!'},
-      {'type': 'bot', 'text': 'I’m your WILCO, How can I help you?'},
+      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
     ];
 
+    if (savedGreeting != null && savedGreeting.isNotEmpty) {
+      greeting.add({'type': 'bot', 'text': savedGreeting});
+    }
     emit(greeting);
 
     try {
@@ -152,7 +209,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         emit([...greeting, ...uiList]);
 
         final converted = serverMessages.map(
-              (s) =>
+          (s) =>
               _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
         );
 
@@ -171,13 +228,15 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       }
     } catch (e) {
       print("History Error => $e");
+    } finally {
+      historyLoadingNotifier.value = false;
     }
   }
 
   Future<void> openAddOnPacksBottomSheet(
-      BuildContext context,
-      AddOnPackType packType,
-      ) async {
+    BuildContext context,
+    AddOnPackType packType,
+  ) async {
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -196,10 +255,10 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   Future<void> sendMessage(
-      String text,
-      BuildContext context,
-      bool isReceivedTokenFullWarning,
-      ) async {
+    String text,
+    BuildContext context,
+    bool isReceivedTokenFullWarning,
+  ) async {
     if (await InternetConnection().hasInternetAccess) {
       if (CreditManager().remainingToken <= 0 ||
           isReceivedTokenFullWarning == true) {
@@ -211,7 +270,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             isFromWilcoAndTrackingScreen: true,
             buttonText: "Buy Token",
             message:
-            "Your token limit has been exhausted. Please purchase a extra tokens.",
+                "Your token limit has been exhausted. Please purchase a extra tokens.",
             onGoToActionBlock: () {
               openAddOnPacksBottomSheet(context, AddOnPackType.tokensOnly);
             },
@@ -309,8 +368,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       'text': msg.text.trim(),
     };
     final isDuplicate = next.any(
-          (m) =>
-      m['type'] == mapped['type'] &&
+      (m) =>
+          m['type'] == mapped['type'] &&
           (m['text'] ?? '').trim() == mapped['text'],
     );
 
@@ -426,130 +485,122 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   // }
 
   void _startInternetListener() {
-    _internetSub =
-        Connectivity().onConnectivityChanged.listen((results) async {
-          print("Connectivity Changed => $results");
+    _internetSub = Connectivity().onConnectivityChanged.listen((results) async {
+      print("Connectivity Changed => $results");
 
-          final hasNetwork = !results.contains(ConnectivityResult.none);
+      final hasNetwork = !results.contains(ConnectivityResult.none);
 
-          // iOS fix: Connectivity kabhi-kabhi false none return karta hai
-          if (!hasNetwork) {
-            await Future.delayed(const Duration(seconds: 1));
+      // iOS fix: Connectivity kabhi-kabhi false none return karta hai
+      if (!hasNetwork) {
+        await Future.delayed(const Duration(seconds: 1));
 
-            final hasInternet =
-            await InternetConnection().hasInternetAccess;
+        final hasInternet = await InternetConnection().hasInternetAccess;
 
-            print("iOS None Check => Internet Available: $hasInternet");
+        print("iOS None Check => Internet Available: $hasInternet");
 
-            // Internet hai to false connectivity event ignore karo
-            if (hasInternet) {
-              print("⚡ Ignoring false iOS connectivity event");
-              return;
-            }
+        // Internet hai to false connectivity event ignore karo
+        if (hasInternet) {
+          print("⚡ Ignoring false iOS connectivity event");
+          return;
+        }
 
-            if (_repo.currentSessionId == null ||
-                _repo.currentSessionId!.isEmpty) {
-              _needFreshSession = true;
-              print("⚠️ Session not created. Fresh session needed");
-            }
+        if (_repo.currentSessionId == null || _repo.currentSessionId!.isEmpty) {
+          _needFreshSession = true;
+          print("⚠️ Session not created. Fresh session needed");
+        }
 
-            _repo.updateInternetStatus(false);
+        _repo.updateInternetStatus(false);
 
-            if (_isConnected) {
-              _isConnected = false;
+        if (_isConnected) {
+          _isConnected = false;
 
-              _internetStatusController.add(false);
+          _internetStatusController.add(false);
 
-              print('[Internet] No Network');
+          print('[Internet] No Network');
 
-              _responseTimer?.cancel();
+          _responseTimer?.cancel();
 
-              final next = List<Map<String, String>>.from(state);
-              next.removeWhere((m) => m['type'] == 'analyzing');
+          final next = List<Map<String, String>>.from(state);
+          next.removeWhere((m) => m['type'] == 'analyzing');
 
-              emit(next);
+          emit(next);
 
-              onInternetLost?.call();
-            }
+          onInternetLost?.call();
+        }
 
-            return;
-          }
+        return;
+      }
 
-          // Actual internet check
-          await Future.delayed(const Duration(milliseconds: 500));
+      // Actual internet check
+      await Future.delayed(const Duration(milliseconds: 500));
 
-          final hasInternet =
-          await InternetConnection().hasInternetAccess;
+      final hasInternet = await InternetConnection().hasInternetAccess;
 
-          print(
-            'Network Available: $hasNetwork, Internet Available: $hasInternet',
-          );
+      print('Network Available: $hasNetwork, Internet Available: $hasInternet');
 
-          if (hasInternet) {
-            if (!_isConnected) {
-              _isConnected = true;
+      if (hasInternet) {
+        if (!_isConnected) {
+          _isConnected = true;
 
-              _repo.updateInternetStatus(true);
+          _repo.updateInternetStatus(true);
 
-              _internetStatusController.add(true);
+          _internetStatusController.add(true);
 
-              if (_needFreshSession) {
-                print("🔥 Fresh Chat Triggered");
+          if (_needFreshSession) {
+            print("🔥 Fresh Chat Triggered");
 
-                final next = List<Map<String, String>>.from(state);
+            final next = List<Map<String, String>>.from(state);
 
-                next.removeWhere((m) => m['type'] == 'analyzing');
+            next.removeWhere((m) => m['type'] == 'analyzing');
 
-                for (int i = next.length - 1; i >= 0; i--) {
-                  if (next[i]['type'] == 'user') {
-                    print(
-                      "Removing Pending Message => ${next[i]['text']}",
-                    );
+            for (int i = next.length - 1; i >= 0; i--) {
+              if (next[i]['type'] == 'user') {
+                print("Removing Pending Message => ${next[i]['text']}");
 
-                    next.removeAt(i);
-                    break;
-                  }
-                }
-
-                emit(next);
-
-                await startFreshChat();
-
-                _needFreshSession = false;
-              } else {
-                print("🔥 Normal Reconnect");
-
-                await _repo.reconnect();
+                next.removeAt(i);
+                break;
               }
             }
+
+            emit(next);
+
+            await startFreshChat();
+
+            _needFreshSession = false;
           } else {
-            _repo.updateInternetStatus(false);
+            print("🔥 Normal Reconnect");
 
-            if (_isConnected) {
-              if (_repo.currentSessionId == null ||
-                  _repo.currentSessionId!.isEmpty) {
-                _needFreshSession = true;
-
-                print("⚠️ Session not created. Fresh session needed");
-              }
-
-              _isConnected = false;
-
-              _internetStatusController.add(false);
-
-              print('[Internet] Internet Lost');
-
-              _responseTimer?.cancel();
-
-              final next = List<Map<String, String>>.from(state);
-              next.removeWhere((m) => m['type'] == 'analyzing');
-
-              emit(next);
-
-              onInternetLost?.call();
-            }
+            await _repo.reconnect();
           }
-        });
+        }
+      } else {
+        _repo.updateInternetStatus(false);
+
+        if (_isConnected) {
+          if (_repo.currentSessionId == null ||
+              _repo.currentSessionId!.isEmpty) {
+            _needFreshSession = true;
+
+            print("⚠️ Session not created. Fresh session needed");
+          }
+
+          _isConnected = false;
+
+          _internetStatusController.add(false);
+
+          print('[Internet] Internet Lost');
+
+          _responseTimer?.cancel();
+
+          final next = List<Map<String, String>>.from(state);
+          next.removeWhere((m) => m['type'] == 'analyzing');
+
+          emit(next);
+
+          onInternetLost?.call();
+        }
+      }
+    });
   }
 
   void stopResponse() {
@@ -568,5 +619,15 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     await _internetStatusController.close();
     await _repo.dispose();
     return super.close();
+  }
+
+  Future<void> clearCurrentChat() async {
+    currentGreeting = GreetingHelper.getRandomGreeting();
+    emit([
+      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': currentGreeting},
+    ]);
+
+    await _repo.resetSession();
   }
 }
