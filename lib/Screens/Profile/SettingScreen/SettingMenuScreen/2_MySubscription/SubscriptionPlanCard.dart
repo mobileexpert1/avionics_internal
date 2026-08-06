@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -46,7 +44,6 @@ class SubscriptionPlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
-    final bool isMobileWeb = kIsWeb && screenWidth < 900;
     final bool hasPrice = planPriceWithSymbol.trim().isNotEmpty;
 
     final addOns = currentPlan?.addOnPacksModel ?? [];
@@ -64,8 +61,6 @@ class SubscriptionPlanCard extends StatelessWidget {
       if (tokenCounts.medium > 0) 'Medium Add-on Token × ${tokenCounts.medium}',
       if (tokenCounts.large > 0) 'Heavy Add-on onToken × ${tokenCounts.large}',
     ];
-
-    final hasAddOns = addOnItems.isNotEmpty;
 
     return Container(
       width: double.infinity,

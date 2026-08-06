@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -192,7 +194,16 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                 ),
 
               Expanded(
-                child: PageView.builder(
+                child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context).copyWith(
+                      dragDevices: {
+                        PointerDeviceKind.touch,
+                        PointerDeviceKind.mouse,
+                        PointerDeviceKind.trackpad,
+                        PointerDeviceKind.stylus,
+                      },
+                    ),
+                    child:PageView.builder(
                   controller: _tabPageController,
                   itemCount: sub2Tabs.length,
                   onPageChanged: (index) {
@@ -210,7 +221,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                       ),
                     );
                   },
-                ),
+                )),
               ),
 
               // ── BOTTOM NAV ARROWS + DOTS ──
@@ -493,7 +504,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                                     padding: const EdgeInsets.only(
                                       left: 80,
                                       right: 10,
-                                      bottom: 5,
+                                      top: 3,
+                                      bottom: 3,
                                     ),
                                     decoration: BoxDecoration(
                                       color: AppColors.primaryDark.withValues(
@@ -504,8 +516,8 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                                     child: RichText(
                                       textAlign: TextAlign.right,
                                       text: TextSpan(
-                                        style: AppTextStyles.medium(
-                                          11,
+                                        style: AppTextStyles.regular(
+                                          10,
                                         ).copyWith(color: AppColors.white),
                                         children: [
                                           WidgetSpan(
@@ -513,7 +525,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
                                                 PlaceholderAlignment.middle,
                                             child: Text(
                                               "©",
-                                              style: AppTextStyles.medium(22)
+                                              style: AppTextStyles.regular(15)
                                                   .copyWith(
                                                     color: AppColors.white,
                                                   ),

@@ -14,6 +14,10 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
 
   bool _isPaginationRunning = false;
 
+  Future<void> resetAllTheDataBeforeEnter() async {
+    emit(AllPlanesState(listoFAircraftModels: []));
+  }
+
   Future<void> loadListOAllAirbusModels({
     String? query,
     required String selectedAirbusId,
@@ -21,8 +25,18 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     int page = 1,
     bool isLoadMore = false,
   }) async {
-    if (isLoadMore && _isPaginationRunning) {
-      return;
+    if (isLoadMore) {
+      if (_isPaginationRunning) {
+        debugPrint("Pagination already running");
+        return;
+      }
+
+      if (!state.hasNextPage) {
+        debugPrint("No more pages");
+        return;
+      }
+
+      _isPaginationRunning = true;
     }
 
     if (!isLoadMore) {
@@ -39,28 +53,19 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
       if (isLoadMore) {
         _isPaginationRunning = true;
 
-        emit(
-          state.copyWith(
-            isFetchingMore: true,
-          ),
-        );
+        emit(state.copyWith(isFetchingMore: true));
       } else {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            currentPage: 1,
-          ),
-        );
+        emit(state.copyWith(isLoading: true, currentPage: 1));
       }
 
       try {
-        final requestQuery = isLoadMore
-            ? state.currentQuery
-            : (query ?? '');
+        final requestQuery = isLoadMore ? state.currentQuery : (query ?? '');
+
+        final nextPage = isLoadMore ? state.currentPage + 1 : 1;
 
         final paginated = await AllPlanesReposistory().getListOfAllPlanes(
           query: requestQuery,
-          page: page,
+          page: nextPage,
           selectedAirbusId: selectedAirbusId,
         );
 
@@ -76,16 +81,11 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
         }
 
         final updatedList = isLoadMore
-            ? [
-          ...state.listoFAircraftModels,
-          ...paginated.results,
-        ]
+            ? [...state.listoFAircraftModels, ...paginated.results]
             : paginated.results;
 
         updatedList.sort(
-              (a, b) => a.model.toLowerCase().compareTo(
-            b.model.toLowerCase(),
-          ),
+          (a, b) => a.model.toLowerCase().compareTo(b.model.toLowerCase()),
         );
 
         emit(
@@ -100,12 +100,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
       } catch (e) {
         SessionCommonTokenError.handleUnauthorizedError(context, e);
 
-        emit(
-          state.copyWith(
-            isLoading: false,
-            isFetchingMore: false,
-          ),
-        );
+        emit(state.copyWith(isLoading: false, isFetchingMore: false));
       } finally {
         _isPaginationRunning = false;
       }
@@ -125,10 +120,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  Future<void> planFavOrUnfav(
-      String aircraftId,
-      BuildContext context,
-      ) async {
+  Future<void> planFavOrUnfav(String aircraftId, BuildContext context) async {
     if (await InternetConnection().hasInternetAccess) {
       emit(state.copyWith(status: CommonApiStatus.submitting));
 
@@ -152,31 +144,24 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
       NoInternetDialog.show(
         context,
         onRetry: () async {
-          await planFavOrUnfav(
-            aircraftId,
-            context,
-          );
+          await planFavOrUnfav(aircraftId, context);
         },
       );
     }
   }
 
   Future<void> planFavOrUnfav1(
-      String aircraftModel,
-      String aircraftId,
-      String callSign,
-      String flightId,
-      String flightNumber,
-      BuildContext context,
-      ) async {
+    String aircraftModel,
+    String aircraftId,
+    String callSign,
+    String flightId,
+    String flightNumber,
+    BuildContext context,
+  ) async {
     if (await InternetConnection().hasInternetAccess) {
       updateFlightFavoriteByCallSign(callSign);
 
-      emit(
-        state.copyWith(
-          status: CommonApiStatus.submitting,
-        ),
-      );
+      emit(state.copyWith(status: CommonApiStatus.submitting));
 
       try {
         await AllPlanesReposistory().setFavOrUnfavPlanFromList1(
@@ -189,18 +174,11 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
 
         updateFlightFavoriteByCallSign(callSign);
 
-        emit(
-          state.copyWith(
-            status: CommonApiStatus.success,
-          ),
-        );
+        emit(state.copyWith(status: CommonApiStatus.success));
       } catch (e) {
         updateFlightFavoriteByCallSign(callSign);
 
-        SessionCommonTokenError.handleUnauthorizedError(
-          context,
-          e,
-        );
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
 
         emit(
           state.copyWith(
@@ -226,11 +204,7 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
     }
   }
 
-  void toggleFavorite(
-      String id,
-      BuildContext context,
-      bool isSaved,
-      ) {
+  void toggleFavorite(String id, BuildContext context, bool isSaved) {
     final updatedList = state.listoFAircraftModels.map((model) {
       if (model.id == id) {
         return AircraftListModel(
@@ -246,27 +220,17 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
       return model;
     }).toList();
 
-    emit(
-      state.copyWith(
-        listoFAircraftModels: updatedList,
-      ),
-    );
+    emit(state.copyWith(listoFAircraftModels: updatedList));
 
-    planFavOrUnfav(
-      id,
-      context,
-    );
+    planFavOrUnfav(id, context);
   }
 
-  void updateFlightFavoriteByCallSign(
-      String callSign,
-      ) {
+  void updateFlightFavoriteByCallSign(String callSign) {
     final updatedFlights = state.flights?.map((flight) {
       if (flight.callSign == callSign) {
         return flight.copyWith(
           aircraftDetails: flight.aircraftDetails?.copyWith(
-            isFavorite:
-            !(flight.aircraftDetails?.isFavorite ?? false),
+            isFavorite: !(flight.aircraftDetails?.isFavorite ?? false),
           ),
         );
       }
@@ -274,10 +238,6 @@ class AllPlanesCubit extends Cubit<AllPlanesState> {
       return flight;
     }).toList();
 
-    emit(
-      state.copyWith(
-        flights: updatedFlights,
-      ),
-    );
+    emit(state.copyWith(flights: updatedFlights));
   }
 }

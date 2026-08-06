@@ -364,6 +364,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
+          AppListTileCard(
+            isForZeroIndex: true,
+            title:
+                "Explore library of aircraft manufacturers and model specifications",
+            imagePath: "",
+            onTap: () {},
+            isSvg: false,
+            isNetwork: false,
+          ),
           ...List.generate(category.length, (index) {
             final formula = category[index];
             return AppListTileCard(
@@ -389,12 +398,15 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
           Center(
             child: Container(
-              width: isDesktopWeb  ? 260 : null,
+              width: isDesktopWeb ? 260 : null,
               padding: EdgeInsets.symmetric(vertical: kIsWeb ? 8 : 0),
               alignment: Alignment.center,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  minimumSize: Size(isDesktopWeb  ? 240 : 0, isDesktopWeb  ? 50 : 40),
+                  minimumSize: Size(
+                    isDesktopWeb ? 240 : 0,
+                    isDesktopWeb ? 50 : 40,
+                  ),
                 ),
                 onPressed: () {
                   AnalyticsService.instance.buttonPressed(
@@ -410,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Text(
                   'See All',
-                  style: AppTextStyles.bold(isDesktopWeb ? 18 : 16,).copyWith(
+                  style: AppTextStyles.bold(isDesktopWeb ? 18 : 16).copyWith(
                     height: kIsWeb ? 0.8 : 1.0,
                     color: AppColors.black,
                   ),
@@ -480,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
             fontStyle: AppTextStyles.regular(
-              18,
+              16,
             ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
@@ -580,13 +592,13 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
             fontStyle: AppTextStyles.regular(
-              18,
+              16,
             ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
-                width: 30,
-                height: 30,
+                width: 25,
+                height: 25,
                 fit: BoxFit.cover,
                 color: Colors.white,
               ),

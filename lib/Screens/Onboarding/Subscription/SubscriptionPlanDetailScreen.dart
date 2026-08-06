@@ -561,24 +561,24 @@ class _PlanCard extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 10),
-            CustomBottomButton(
-              fontStyle: AppTextStyles.semiBold(
-                18,
-              ).copyWith(height: 1.0, color: Colors.white),
-              backgroundColor: AppColors.primaryDark,
-              textColor: Colors.white,
-              title: SubscriptionTexts.restoreSubTitle,
-              icon: const SizedBox(),
-              isEnabled: true,
-              onPressed: () {
-                context.read<SubscriptionBuyPlanCubit>().restorePurchases();
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.subscriptionScreen,
-                  FirebaseEvents.restoreSubscriptionButton,
-                );
-              },
-            ),
+            // const SizedBox(height: 10),
+            // CustomBottomButton(
+            //   fontStyle: AppTextStyles.semiBold(
+            //     18,
+            //   ).copyWith(height: 1.0, color: Colors.white),
+            //   backgroundColor: AppColors.primaryDark,
+            //   textColor: Colors.white,
+            //   title: SubscriptionTexts.restoreSubTitle,
+            //   icon: const SizedBox(),
+            //   isEnabled: true,
+            //   onPressed: () {
+            //     context.read<SubscriptionBuyPlanCubit>().restorePurchases();
+            //     AnalyticsService.instance.buttonPressed(
+            //       FirebaseEvents.subscriptionScreen,
+            //       FirebaseEvents.restoreSubscriptionButton,
+            //     );
+            //   },
+            // ),
             const SizedBox(height: 20),
           ],
         ],

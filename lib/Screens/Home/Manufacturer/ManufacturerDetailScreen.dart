@@ -15,6 +15,7 @@ import '../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../Helpers/CustomHeaderViewExpandable.dart';
 import '../../../Helpers/Custom_widget.dart';
 import '../../../Helpers/StringCommonMethods.dart';
+import '../../../bloc/Home/AllPlanesBloc/AllPlanes_cubit.dart';
 import '../../../bloc/Home/manufacturer/Manufacturer_detail_model.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_cubit.dart';
 import '../../../bloc/Home/manufacturer/manufacturer_state.dart';
@@ -257,6 +258,10 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                                     isExpandedViewAvailable: true,
                                     isExpanded: false,
                                     onHeaderTap: () {
+                                      context
+                                          .read<AllPlanesCubit>()
+                                          .resetAllTheDataBeforeEnter();
+
                                       AppNavigator.push(
                                         context,
                                         AllPlanesListScreen(
@@ -876,15 +881,15 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
                       textAlign: TextAlign.right,
                       text: TextSpan(
                         style: AppTextStyles.medium(
-                          11,
+                          10,
                         ).copyWith(color: AppColors.white),
                         children: [
                           WidgetSpan(
                             alignment: PlaceholderAlignment.middle,
                             child: Text(
                               "©",
-                              style: AppTextStyles.medium(
-                                20,
+                              style: AppTextStyles.regular(
+                                15,
                               ).copyWith(color: AppColors.white),
                             ),
                           ),

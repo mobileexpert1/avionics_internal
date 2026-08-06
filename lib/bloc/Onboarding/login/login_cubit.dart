@@ -36,52 +36,77 @@ class LoginCubit extends Cubit<LoginState> {
   bool _googleInitialized = false;
 
   Future<void> initGoogle(BuildContext context) async {
-    if (_googleInitialized) return;
+    debugPrint("================================");
+    debugPrint("INIT GOOGLE CALLED");
+    debugPrint("_googleInitialized = $_googleInitialized");
+    debugPrint("================================");
 
-    await GoogleSignIn.instance.initialize(
-      clientId: kIsWeb
-          ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
-          : (Platform.isIOS
-                ? '951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com'
-                : null),
-    );
+    if (_googleInitialized) {
+      debugPrint("INIT GOOGLE SKIPPED");
+      return;
+    }
 
-    GoogleSignIn.instance.authenticationEvents.listen((event) async {
-      if (event is GoogleSignInAuthenticationEventSignIn) {
-        try {
-          final user = event.user;
+    try {
+      debugPrint("GOOGLE INITIALIZE START");
 
-          final idToken = user.authentication.idToken;
+      await GoogleSignIn.instance.initialize(
+        clientId: kIsWeb
+            ? '951110180167-9c75t0t460jcmfsm0k5cvg8f424f2a4o.apps.googleusercontent.com'
+            : (Platform.isIOS
+                  ? '951110180167-a4d8j4fjjvpibaa8or8kthl310p81q7i.apps.googleusercontent.com'
+                  : null),
+      );
 
-          debugPrint("GOOGLE ID TOKEN => $idToken");
+      debugPrint("GOOGLE INITIALIZE SUCCESS");
 
-          if (idToken == null || idToken.isEmpty) {
-            throw Exception("Google ID token missing");
+      GoogleSignIn.instance.authenticationEvents.listen((event) async {
+        debugPrint("GOOGLE EVENT => ${event.runtimeType}");
+
+        if (event is GoogleSignInAuthenticationEventSignIn) {
+          try {
+            final user = event.user;
+
+            final idToken = user.authentication.idToken;
+
+            debugPrint("GOOGLE ID TOKEN => $idToken");
+
+            if (idToken == null || idToken.isEmpty) {
+              throw Exception("Google ID token missing");
+            }
+
+            emit(state.copyWith(status: CommonApiStatus.submitting));
+
+            final result = await LoginRepository().loginUserWithSocialPlatform(
+              token: idToken,
+              provider: 'google',
+            );
+
+            emit(state.copyWith(status: CommonApiStatus.success));
+
+            await _navigateAfterLogin(context, result);
+          } catch (e, stackTrace) {
+            debugPrint("GOOGLE WEB LOGIN ERROR => $e");
+            debugPrint("$stackTrace");
+
+            final message = GoogleSignInErrorHandler.getMessage(e);
+
+            emit(
+              state.copyWith(
+                status: CommonApiStatus.failure,
+                errorMessage: message,
+              ),
+            );
           }
-
-          emit(state.copyWith(status: CommonApiStatus.submitting));
-
-          final result = await LoginRepository().loginUserWithSocialPlatform(
-            token: idToken,
-            provider: 'google',
-          );
-
-          emit(state.copyWith(status: CommonApiStatus.success));
-
-          await _navigateAfterLogin(context, result);
-        } catch (e) {
-          final message = GoogleSignInErrorHandler.getMessage(e);
-          emit(
-            state.copyWith(
-              status: CommonApiStatus.failure,
-              errorMessage: message,
-            ),
-          );
-          debugPrint("Google Web Login Error: $e");
         }
-      }
-    });
-    _googleInitialized = true;
+      });
+
+      _googleInitialized = true;
+
+      debugPrint("_googleInitialized SET TO TRUE");
+    } catch (e, stackTrace) {
+      debugPrint("GOOGLE INITIALIZE ERROR => $e");
+      debugPrint("$stackTrace");
+    }
   }
 
   void emailChanged(String email) {
