@@ -29,6 +29,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }) : _repo = ChatRepositoryImpl(),
        super(_initialMessages()) {
     currentGreeting = _initialGreeting;
+    _repo.setInitialGreeting(currentGreeting);
     _init(accessToken, existingSessionId, isNewSession, context);
     _startInternetListener();
   }
@@ -171,6 +172,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   Future<void> startFreshChat() async {
     print("🔥 startFreshChat called");
     currentGreeting = GreetingHelper.getRandomGreeting();
+    _repo.setInitialGreeting(currentGreeting);
     print("CURRENT GREETING => $currentGreeting");
     emit([
       {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
@@ -182,15 +184,15 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   Future<void> _loadCompleteHistory(String sessionId) async {
     historyLoadingNotifier.value = true;
-    final savedGreeting = await GreetingStorage.get(sessionId);
+    // final savedGreeting = await GreetingStorage.get(sessionId);
 
     List<Map<String, String>> greeting = [
       {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
     ];
 
-    if (savedGreeting != null && savedGreeting.isNotEmpty) {
-      greeting.add({'type': 'bot', 'text': savedGreeting});
-    }
+    // if (savedGreeting != null && savedGreeting.isNotEmpty) {
+    //   greeting.add({'type': 'bot', 'text': savedGreeting});
+    // }
     emit(greeting);
 
     try {
@@ -623,6 +625,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
 
   Future<void> clearCurrentChat() async {
     currentGreeting = GreetingHelper.getRandomGreeting();
+    _repo.setInitialGreeting(currentGreeting);
     emit([
       {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
       {'type': 'bot', 'text': currentGreeting},
