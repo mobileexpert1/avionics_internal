@@ -60,6 +60,8 @@ class ChatRepositoryImpl implements ChatRepository {
   String? _lastSystem;
   String? _pendingUserMessage;
   ChatMessage? _pendingUserMessageObject;
+  String? _initialGreeting;
+  bool _isFirstMessage = true;
 
   @override
   Future<void> connect({
@@ -296,8 +298,63 @@ class ChatRepositoryImpl implements ChatRepository {
     });
   }
 
+  // void send(String text) {
+  //   print('[WebSocket] Sending: $text');
+  //
+  //   if (!_isSocketConnected) {
+  //     print('[WebSocket] Socket not connected');
+  //
+  //     _pendingUserMessage = text;
+  //
+  //     if (_hasInternet) {
+  //       reconnect();
+  //     }
+  //
+  //     return;
+  //   }
+  //
+  //   final payload = {
+  //     'query': text,
+  //   };
+  //
+  //   if (_isFirstMessage && _initialGreeting != null) {
+  //     payload['code'] = _initialGreeting!;
+  //     _isFirstMessage = false;
+  //   }
+  //
+  //   _channel?.sink.add(jsonEncode(payload));
+  //
+  //   final msg = ChatMessage(
+  //     id: _uuid.v4(),
+  //     author: ChatAuthor.user,
+  //     text: text,
+  //     sessionId: _sessionId ?? '',
+  //   );
+  //   _pendingUserMessage = text;
+  //   _pendingUserMessageObject = msg;
+  //   // _controller.add(msg);
+  //   _saveChatMessage(msg);
+  //
+  //   if (_sessionId != null && _sessionId!.isNotEmpty) {
+  //     _pendingUserMessage = null;
+  //   }
+  // }
+
   void send(String text) {
-    print('[WebSocket] Sending: $text');
+    print('[WebSocket] Sending Text => $text');
+
+    final payload = {
+      'query': text,
+    };
+
+    if (_isFirstMessage && _initialGreeting != null) {
+      payload['initial_message'] = _initialGreeting!;
+      _isFirstMessage = false;
+
+      print('[WebSocket] First Message Greeting => $_initialGreeting');
+    }
+
+    print('[WebSocket] Final Payload => ${jsonEncode(payload)}');
 
     if (!_isSocketConnected) {
       print('[WebSocket] Socket not connected');
@@ -311,7 +368,7 @@ class ChatRepositoryImpl implements ChatRepository {
       return;
     }
 
-    _channel?.sink.add(jsonEncode({'query': text}));
+    _channel?.sink.add(jsonEncode(payload));
 
     final msg = ChatMessage(
       id: _uuid.v4(),
@@ -319,9 +376,10 @@ class ChatRepositoryImpl implements ChatRepository {
       text: text,
       sessionId: _sessionId ?? '',
     );
+
     _pendingUserMessage = text;
     _pendingUserMessageObject = msg;
-    // _controller.add(msg);
+
     _saveChatMessage(msg);
 
     if (_sessionId != null && _sessionId!.isNotEmpty) {
@@ -477,5 +535,9 @@ class ChatRepositoryImpl implements ChatRepository {
     }
 
     _isSocketConnected = false;
+  }
+
+  void setInitialGreeting(String greeting) {
+    _initialGreeting = greeting;
   }
 }

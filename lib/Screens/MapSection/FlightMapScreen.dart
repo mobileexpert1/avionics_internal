@@ -769,13 +769,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       useRootNavigator: false,
       isDismissible: false,
       enableDrag: false,
-      isScrollControlled: isDesktopWeb ? true : false,
+      isScrollControlled: isDesktopWeb,
       backgroundColor: Colors.transparent,
       builder: (context) {
         Widget popupContent = Container(
-          width: kIsWeb && screenWidth > 700 ? 650 : double.infinity,
+          width: isDesktopWeb ? 650 : double.infinity,
 
-          constraints: kIsWeb
+          constraints: isDesktopWeb
               ? BoxConstraints(maxHeight: screenHeight * 0.9)
               : null,
 

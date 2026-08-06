@@ -29,6 +29,7 @@ class ChatHistoryCubit extends Cubit<ChatHistoryState> {
             currentPage: 1,
             chatList: [],
             errorMessage: null,
+            status: CommonApiStatus.submitting,
           ),
         );
       }
