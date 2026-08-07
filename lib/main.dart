@@ -31,6 +31,7 @@ import 'Screens/Profile/ProfileMenuScreen/0_ScientificCalculator/providers/histo
 import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryCubit.dart';
 import 'Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/StickerCubit.dart';
 import 'bloc/Games/MainGameSection/game_cubit.dart';
+import 'bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import 'bloc/Home/AirCraftDetail/airCraftDetail_cubit.dart';
 import 'bloc/Home/AircraftComparison/AircraftComparisonCubit.dart';
 import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
