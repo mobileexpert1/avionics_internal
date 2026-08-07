@@ -14,7 +14,7 @@ class ManufacturerState {
   final String? apiError;
   final CommonApiStatus status;
   final String? errorMessage;
-  final List<String> selectedManufacturerCategories;
+  final String selectedManufacturerCategories;
   final bool showCategories;
   final List<String> categories;
 
@@ -30,7 +30,7 @@ class ManufacturerState {
     this.apiError,
     this.status = CommonApiStatus.initial,
     this.errorMessage,
-    this.selectedManufacturerCategories = const [],
+    this.selectedManufacturerCategories = "",
     this.showCategories = true,
     this.categories = const [
       "Airplanes",
@@ -50,7 +50,7 @@ class ManufacturerState {
     String? apiError,
     CommonApiStatus? status,
     String? errorMessage,
-    List<String>? selectedManufacturerCategories,
+    String? selectedManufacturerCategories,
     bool? showCategories,
     List<String>? categories,
   }) {

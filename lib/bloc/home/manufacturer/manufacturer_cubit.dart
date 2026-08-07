@@ -77,9 +77,7 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
         );
       }
 
-      final selectedCategories = List<String>.from(
-        state.selectedManufacturerCategories,
-      );
+      final selectedCategories = state.selectedManufacturerCategories;
 
       final isHelicopter = selectedCategories.contains(
         "Helicopters (Rotorcrafts)",
@@ -188,12 +186,12 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
   }
 
   Future<void> toggleCategory(String category, BuildContext context) async {
-    final updated = List<String>.from(state.selectedManufacturerCategories);
+    var updated = state.selectedManufacturerCategories;
 
     if (updated.contains(category)) {
-      updated.remove(category);
+      updated = "";
     } else {
-      updated.add(category);
+      updated = category;
     }
 
     emit(state.copyWith(selectedManufacturerCategories: updated));
