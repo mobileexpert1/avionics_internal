@@ -156,6 +156,7 @@ abstract class AssetsPath {
   static const historyForCalculation = '127CalculationHistory';
   static const switchLGridForCalculation = '128CalculationSwitch';
   static const viewCreditsToken = '129ViewCreditsToken';
+  static const tickIcon = '130TickIcon';
 
   //JPG
   static const String startExploreIcon = "1StartExploreIcon";

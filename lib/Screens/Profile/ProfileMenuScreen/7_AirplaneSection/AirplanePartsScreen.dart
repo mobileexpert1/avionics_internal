@@ -1,39 +1,41 @@
-import 'package:avionics_internal/Screens/Profile/SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/StickerUnlockScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../../../../Constants/ConstantStrings.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../../../Helpers/AppNavigator.dart';
-import '../FlightStickers/ProgressHeader.dart';
-import '../FlightStickers/StickerUnlockedDialog.dart';
-import 'AircraftCategoryCard.dart';
-import 'AircraftCategoryCubit.dart';
-import 'AircraftCategoryState.dart';
 
-class AircraftCategoryScreen extends StatefulWidget {
-  const AircraftCategoryScreen({super.key});
+import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsCubit.dart';
+import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsState.dart';
+
+import 'Airplane3DViewScreen.dart';
+import 'AirplanePartLockedDialog.dart';
+import 'AirplanePartsCard.dart';
+
+import '../../SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/ProgressHeader.dart';
+
+class AirplanePartsScreen extends StatelessWidget {
+  const AirplanePartsScreen({super.key});
 
   @override
-  State<AircraftCategoryScreen> createState() => _AircraftCategoryScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => AirPlanePartsCubit()..loadAircraftParts(),
+      child: const _AirplanePartsView(),
+    );
+  }
 }
 
-class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<AircraftCategoryCubit>().loadCategories();
-  }
+class _AirplanePartsView extends StatelessWidget {
+  const _AirplanePartsView();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+
     final bool isMobileWeb = kIsWeb && screenWidth < 900;
 
     final int crossAxisCount = isDesktopWeb
@@ -43,10 +45,12 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
               ? 4
               : 3)
         : 2;
+
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: CustomAppBar(
-        title: "My Stickers",
+        title: "Plane Spotter",
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -58,13 +62,14 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
           },
         ),
       ),
-      body: BlocBuilder<AircraftCategoryCubit, AircraftCategoryState>(
+
+      body: BlocBuilder<AirPlanePartsCubit, AirPlanePartsState>(
         builder: (context, state) {
-          if (state.status == CommonApiStatus.initial) {
+          if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state.status == CommonApiStatus.failure) {
+          if (state.errorMessage != null) {
             return Center(child: Text(state.errorMessage ?? ''));
           }
 
@@ -72,47 +77,61 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1500),
+
                 child: Column(
                   children: [
                     ProgressHeader(
-                        title: 'Sticker Unlock Progress',
-                      unlocked: state.totalUnlocked,
-                      total: state.totalStickers,
+                      title: "3D Parts Unlocked",
+                      unlocked: state.unlockedCount,
+                      total: state.totalCount,
+                      bottomTitle:
+                          "Collect all ${state.totalCount} parts to complete your aircraft",
+                      isCompletedGreen: true,
+                      onView3DAircraft: () {},
                     ),
 
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(10),
+
                         child: GridView.builder(
-                          itemCount: state.categories.length,
+                          itemCount: state.parts.length,
+
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: crossAxisCount,
                                 crossAxisSpacing: isDesktopWeb ? 20 : 10,
                                 mainAxisSpacing: isDesktopWeb ? 20 : 10,
-                                childAspectRatio: isDesktopWeb ? 1.05 : 1,
+                                childAspectRatio: 1,
                               ),
+
                           itemBuilder: (_, index) {
-                            return AircraftCategoryCard(
-                              category: state.categories[index],
+                            final part = state.parts[index];
+
+                            return AirplanePartsCard(
+                              part: part,
                               onTap: () {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => StickerUnlockedDialog(
-                                    category: state.categories[index],
-                                    stickerName: "Airbus A318",
-                                    imagePath:
-                                        "assets/dummyPictures/MainLogoAirplane.png",
-                                    onTap: () {
-                                      AppNavigator.push(
-                                        context,
-                                        const StickerUnlockScreen(),
-                                        disableSwipeBack: true,
+                                if (part.collectedCount == 0) {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) {
+                                      return AirplanePartLockedDialog(
+                                        part: part,
+                                        onContinue: () {},
                                       );
                                     },
-                                  ),
-                                );
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => Airplane3DViewScreen(
+                                        selectedPart: part,
+                                      ),
+                                    ),
+                                  );
+                                }
                               },
                             );
                           },

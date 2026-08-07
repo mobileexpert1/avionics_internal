@@ -1,0 +1,142 @@
+import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Constants/constantImages.dart';
+import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsModel.dart';
+
+class AirplanePartsCard extends StatelessWidget {
+  final AirPlanePartsModel part;
+  final VoidCallback? onTap;
+
+  const AirplanePartsCard({super.key, required this.part, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+    final bool isMobileWeb = kIsWeb && screenWidth < 900;
+
+    final bool isUnlocked = part.collectedCount >= part.totalCount;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(isDesktopWeb ? 12 : 8),
+        decoration: BoxDecoration(
+          color: isUnlocked ? Colors.white : const Color(0xffD3D3D3),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xffE5E5E5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.04),
+              blurRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Part name + check icon
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${part.id}. ${part.name}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.medium(isDesktopWeb ? 16 : 16)
+                        .copyWith(
+                          color: isUnlocked
+                              ? AppColors.black
+                              : const Color(0xff666666),
+                        ),
+                  ),
+                ),
+
+                if (isUnlocked)
+                  SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.tickIcon),
+                    width: 16,
+                    height: 16,
+                    fit: BoxFit.contain,
+                  ),
+              ],
+            ),
+
+            const SizedBox(height: 4),
+
+            // Aircraft part image + lock
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Opacity(
+                    opacity: isUnlocked ? 1.0 : 0.45,
+                    child: Image.asset(
+                      part.image,
+                      width: isDesktopWeb ? 130 : 85,
+                      height: isDesktopWeb ? 90 : 65,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.airplanemode_active,
+                          size: isDesktopWeb ? 65 : 50,
+                          color: Colors.white,
+                        );
+                      },
+                    ),
+                  ),
+
+                  if (!isUnlocked)
+                    Center(
+                      child: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
+                        width: isDesktopWeb ? 38 : 30,
+                        height: isDesktopWeb ? 38 : 30,
+                        fit: BoxFit.contain,
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 3),
+
+            // Progress
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${part.collectedCount}',
+                    style: AppTextStyles.medium(
+                      isDesktopWeb ? 15 : 14,
+                    ).copyWith(color: const Color(0xff4797DB)),
+                  ),
+                  TextSpan(
+                    text: '/',
+                    style: AppTextStyles.medium(
+                      isDesktopWeb ? 15 : 14,
+                    ).copyWith(color: const Color(0xff201E48)),
+                  ),
+                  TextSpan(
+                    text: '${part.totalCount}',
+                    style: AppTextStyles.medium(
+                      isDesktopWeb ? 15 : 14,
+                    ).copyWith(color: const Color(0xff201E48)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

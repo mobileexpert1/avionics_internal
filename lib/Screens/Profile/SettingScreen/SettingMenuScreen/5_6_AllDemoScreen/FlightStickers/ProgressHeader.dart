@@ -9,16 +9,23 @@ import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 class ProgressHeader extends StatelessWidget {
   final int unlocked;
   final int total;
+  final String title;
+  final String? bottomTitle;
+  final bool isCompletedGreen;
+  final VoidCallback? onView3DAircraft;
 
   const ProgressHeader({
     super.key,
     required this.unlocked,
     required this.total,
+    required this.title,
+    this.bottomTitle,
+    this.isCompletedGreen = false,
+    this.onView3DAircraft,
   });
 
   @override
   Widget build(BuildContext context) {
-
     final screenWidth = MediaQuery.of(context).size.width;
 
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
@@ -33,7 +40,15 @@ class ProgressHeader extends StatelessWidget {
     final double titleSize = isDesktopWeb ? 20 : 16;
     final double countSize = isDesktopWeb ? 24 : 20;
 
-    final progress = total == 0 ? 0.0 : unlocked / total;
+    final double progress = total <= 0
+        ? 0.0
+        : (unlocked / total).clamp(0.0, 1.0);
+
+    final bool isCompleted = total > 0 && unlocked >= total;
+
+    final Color progressColor = isCompleted && isCompletedGreen
+        ? const Color(0xFF9CD450)
+        : const Color(0xFF4A90D9);
 
     return Container(
       color: Colors.white,
@@ -44,12 +59,13 @@ class ProgressHeader extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Sticker Unlock Progress",
+                  title,
                   style: AppTextStyles.bold(
                     titleSize,
                   ).copyWith(color: AppColors.black),
                 ),
               ),
+
               RichText(
                 text: TextSpan(
                   children: [
@@ -59,7 +75,6 @@ class ProgressHeader extends StatelessWidget {
                         countSize,
                       ).copyWith(color: AppColors.primaryBlue),
                     ),
-
                     TextSpan(
                       text: "/$total",
                       style: AppTextStyles.bold(
@@ -71,6 +86,7 @@ class ProgressHeader extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 15),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -102,7 +118,7 @@ class ProgressHeader extends StatelessWidget {
                       height: barHeight,
                       width: planePosition + (planeSize / 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF4A90D9),
+                        color: progressColor,
                         borderRadius: BorderRadius.circular(50),
                       ),
                     ),
@@ -115,10 +131,10 @@ class ProgressHeader extends StatelessWidget {
 
                     child: Transform.rotate(
                       angle: math.pi / 2,
-                      child: const Icon(
+                      child: Icon(
                         Icons.airplanemode_active,
                         size: planeSize,
-                        color: Color(0xFF4A90D9),
+                        color: progressColor,
                       ),
                     ),
                   ),
@@ -126,6 +142,69 @@ class ProgressHeader extends StatelessWidget {
               );
             },
           ),
+          if (isCompleted)
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 20,
+                left: 8,
+                right: 8,
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "You have collected all $total parts of the Airplane",
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.regular(
+                      isDesktopWeb ? 14 : 15,
+                    ).copyWith(
+                      color: AppColors.black,
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  SizedBox(
+                    width: isDesktopWeb ? 320 : double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: onView3DAircraft,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryDark,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "View 3D Aircraft",
+                        style: AppTextStyles.regular(
+                          16,
+                        ).copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+
+          else if (bottomTitle != null && bottomTitle!.trim().isNotEmpty)
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+              ),
+              child: Text(
+                bottomTitle!,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.regular(
+                  isDesktopWeb ? 14 : 15,
+                ).copyWith(
+                  color: AppColors.black,
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -75,6 +75,7 @@ class _StickerUnlockScreenState extends State<StickerUnlockScreen> {
                       child: ProgressHeader(
                         unlocked: state.unlockedCount,
                         total: state.total,
+                        title: 'Sticker Unlock Progress',
                       ),
                     ),
                   ),

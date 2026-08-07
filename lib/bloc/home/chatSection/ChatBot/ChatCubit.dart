@@ -54,7 +54,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     _initialGreeting = GreetingHelper.getRandomGreeting();
 
     return [
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': "I’m your WILCO"},
       {'type': 'bot', 'text': _initialGreeting},
     ];
   }
@@ -175,7 +175,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     _repo.setInitialGreeting(currentGreeting);
     print("CURRENT GREETING => $currentGreeting");
     emit([
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': "I’m your WILCO"},
       {'type': 'bot', 'text': currentGreeting},
     ]);
     await _repo.resetSession();
@@ -187,7 +187,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     // final savedGreeting = await GreetingStorage.get(sessionId);
 
     List<Map<String, String>> greeting = [
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': "I’m your WILCO"},
     ];
 
     // if (savedGreeting != null && savedGreeting.isNotEmpty) {
@@ -627,7 +627,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     currentGreeting = GreetingHelper.getRandomGreeting();
     _repo.setInitialGreeting(currentGreeting);
     emit([
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': "I’m your WILCO"},
       {'type': 'bot', 'text': currentGreeting},
     ]);
 
