@@ -53,9 +53,16 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   static List<Map<String, String>> _initialMessages() {
     _initialGreeting = GreetingHelper.getRandomGreeting();
 
+    // return [
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': _initialGreeting},
+    // ];
+
     return [
-      {'type': 'bot', 'text': "I’m your WILCO"},
-      {'type': 'bot', 'text': _initialGreeting},
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n\n$_initialGreeting",
+      },
     ];
   }
 
@@ -174,9 +181,16 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     currentGreeting = GreetingHelper.getRandomGreeting();
     _repo.setInitialGreeting(currentGreeting);
     print("CURRENT GREETING => $currentGreeting");
+    // emit([
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': currentGreeting},
+    // ]);
+
     emit([
-      {'type': 'bot', 'text': "I’m your WILCO"},
-      {'type': 'bot', 'text': currentGreeting},
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n\n$currentGreeting",
+      },
     ]);
     await _repo.resetSession();
     await _repo.reconnect();
@@ -187,7 +201,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     // final savedGreeting = await GreetingStorage.get(sessionId);
 
     List<Map<String, String>> greeting = [
-      {'type': 'bot', 'text': "I’m your WILCO"},
+      {'type': 'bot', 'text': "I’m your WILCO."},
     ];
 
     // if (savedGreeting != null && savedGreeting.isNotEmpty) {
@@ -201,9 +215,25 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       if (isConnected) {
         final serverMessages = await _repo.fetchFullServerHistory(sessionId);
 
-        final uiList = serverMessages.map((msg) {
+        // final uiList = serverMessages.map((msg) {
+        //   return {
+        //     'type': msg.role.toLowerCase() == 'user' ? 'user' : 'bot',
+        //     'text': msg.content,
+        //   };
+        // }).toList();
+
+        final uiList = serverMessages.asMap().entries.map((entry) {
+          final index = entry.key;
+          final msg = entry.value;
+
+          final role = msg.role.toLowerCase();
+
           return {
-            'type': msg.role.toLowerCase() == 'user' ? 'user' : 'bot',
+            'type': index == 0 && role == 'assistant'
+                ? 'initial_greeting'
+                : role == 'user'
+                ? 'user'
+                : 'bot',
             'text': msg.content,
           };
         }).toList();
@@ -626,9 +656,16 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   Future<void> clearCurrentChat() async {
     currentGreeting = GreetingHelper.getRandomGreeting();
     _repo.setInitialGreeting(currentGreeting);
+    // emit([
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': currentGreeting},
+    // ]);
+
     emit([
-      {'type': 'bot', 'text': "I’m your WILCO"},
-      {'type': 'bot', 'text': currentGreeting},
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n\n$currentGreeting",
+      },
     ]);
 
     await _repo.resetSession();

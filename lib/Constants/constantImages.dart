@@ -157,6 +157,8 @@ abstract class AssetsPath {
   static const switchLGridForCalculation = '128CalculationSwitch';
   static const viewCreditsToken = '129ViewCreditsToken';
   static const tickIcon = '130TickIcon';
+  static const myAirplaneIcon = '131myairplane';
+  static const dragRotateIcon = '132dragIcon';
 
   //JPG
   static const String startExploreIcon = "1StartExploreIcon";

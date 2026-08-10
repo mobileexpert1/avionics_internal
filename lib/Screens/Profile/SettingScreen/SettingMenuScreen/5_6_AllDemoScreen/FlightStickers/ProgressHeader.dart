@@ -145,7 +145,7 @@ class ProgressHeader extends StatelessWidget {
           if (isCompleted)
             Padding(
               padding: const EdgeInsets.only(
-                top: 20,
+                top: 15,
                 left: 8,
                 right: 8,
               ),
@@ -164,12 +164,12 @@ class ProgressHeader extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   SizedBox(
-                    width: isDesktopWeb ? 320 : double.infinity,
+                    width: isDesktopWeb ? 280 : 220,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: onView3DAircraft,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryDark,
+                        backgroundColor: const Color(0xFF4797DB),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -177,9 +177,7 @@ class ProgressHeader extends StatelessWidget {
                       ),
                       child: Text(
                         "View 3D Aircraft",
-                        style: AppTextStyles.regular(
-                          16,
-                        ).copyWith(
+                        style: AppTextStyles.regular(18).copyWith(
                           color: AppColors.white,
                         ),
                       ),
@@ -188,12 +186,12 @@ class ProgressHeader extends StatelessWidget {
                 ],
               ),
             )
-
           else if (bottomTitle != null && bottomTitle!.trim().isNotEmpty)
-            const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
+              padding: const EdgeInsets.only(
+                top: 15,
+                left: 8,
+                right: 8,
               ),
               child: Text(
                 bottomTitle!,

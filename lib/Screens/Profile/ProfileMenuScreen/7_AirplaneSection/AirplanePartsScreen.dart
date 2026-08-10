@@ -10,6 +10,7 @@ import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsCubit.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsState.dart';
 
 import 'Airplane3DViewScreen.dart';
+import 'AirplaneCompleteScreen.dart';
 import 'AirplanePartLockedDialog.dart';
 import 'AirplanePartsCard.dart';
 
@@ -87,7 +88,14 @@ class _AirplanePartsView extends StatelessWidget {
                       bottomTitle:
                           "Collect all ${state.totalCount} parts to complete your aircraft",
                       isCompletedGreen: true,
-                      onView3DAircraft: () {},
+                      onView3DAircraft: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AirplaneCompleteScreen(),
+                          ),
+                        );
+                      },
                     ),
 
                     Expanded(

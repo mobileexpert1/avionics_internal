@@ -13,25 +13,23 @@ class AirPlanePartsState extends Equatable {
     this.errorMessage,
   });
 
-
   int get unlockedCount {
     return parts
-        .where((part) => part.isUnlocked)
+        .where(
+          (part) => part.collectedCount >= part.totalCount,
+    )
         .length;
   }
-
 
   int get totalCount {
     return parts.length;
   }
-
 
   double get progress {
     if (totalCount == 0) return 0;
 
     return unlockedCount / totalCount;
   }
-
 
   AirPlanePartsState copyWith({
     List<AirPlanePartsModel>? parts,
@@ -44,7 +42,6 @@ class AirPlanePartsState extends Equatable {
       errorMessage: errorMessage,
     );
   }
-
 
   @override
   List<Object?> get props => [

@@ -256,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.badgeProfile,
+                        AssetsPath.myAirplaneIcon,
                       ),
                       title: "My Airplane",
                       onTap: () {

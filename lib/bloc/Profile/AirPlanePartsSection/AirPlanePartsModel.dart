@@ -6,7 +6,7 @@ class AirPlanePartsModel {
   final int totalCount;
   final bool isUnlocked;
   final String description;
-
+  final String modelPath;
   final List<AirPlaneSubPartModel> subParts;
 
   const AirPlanePartsModel({
@@ -18,6 +18,7 @@ class AirPlanePartsModel {
     this.isUnlocked = false,
     required this.description,
     this.subParts = const [],
+    this.modelPath = '',
   });
 
   double get progress {
@@ -34,6 +35,7 @@ class AirPlanePartsModel {
     bool? isUnlocked,
     String? description,
     List<AirPlaneSubPartModel>? subParts,
+    String? modelPath,
   }) {
     return AirPlanePartsModel(
       id: id ?? this.id,
@@ -44,6 +46,7 @@ class AirPlanePartsModel {
       isUnlocked: isUnlocked ?? this.isUnlocked,
       description: description ?? this.description,
       subParts: subParts ?? this.subParts,
+      modelPath: modelPath ?? this.modelPath,
     );
   }
 
@@ -59,6 +62,7 @@ class AirPlanePartsModel {
       subParts: (json['sub_parts'] as List? ?? [])
           .map((e) => AirPlaneSubPartModel.fromJson(e))
           .toList(),
+      modelPath: json['model_url'] ?? '',
     );
   }
 }
@@ -68,18 +72,23 @@ class AirPlaneSubPartModel {
   final int id;
   final String name;
   final String description;
+  final bool isUnlocked;
 
   const AirPlaneSubPartModel({
     required this.id,
     required this.name,
     required this.description,
+    this.isUnlocked = false,
   });
 
-  factory AirPlaneSubPartModel.fromJson(Map<String, dynamic> json) {
+  factory AirPlaneSubPartModel.fromJson(
+      Map<String, dynamic> json,
+      ) {
     return AirPlaneSubPartModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       description: json['description'] ?? '',
+      isUnlocked: json['is_unlocked'] ?? false,
     );
   }
 }

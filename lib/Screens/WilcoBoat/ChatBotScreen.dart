@@ -465,9 +465,13 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                           final isUser =
                                               message['type'] == 'user';
 
+                                          final isInitialGreeting =
+                                              message['type'] ==
+                                              'initial_greeting';
+
                                           return Padding(
                                             padding: const EdgeInsets.only(
-                                              bottom: 16,
+                                              bottom: 8,
                                             ),
 
                                             child: Row(
@@ -479,11 +483,16 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                                   : MainAxisAlignment.start,
 
                                               children: [
+                                                // if (!isUser)
                                                 if (!isUser)
-                                                  _buildBotAvatarOrUser(
-                                                    true,
-                                                    message['text'] ?? "",
-                                                  ),
+                                                  isInitialGreeting
+                                                      ? const SizedBox(
+                                                          width: 40,
+                                                        )
+                                                      : _buildBotAvatarOrUser(
+                                                          true,
+                                                          message['text'] ?? "",
+                                                        ),
 
                                                 Flexible(
                                                   child: Container(
