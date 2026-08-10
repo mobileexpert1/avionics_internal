@@ -27,7 +27,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     required bool isNewSession,
     required BuildContext context,
   }) : _repo = ChatRepositoryImpl(),
-       super(_initialMessages()) {
+        super(_initialMessages()) {
     currentGreeting = _initialGreeting;
     _repo.setInitialGreeting(currentGreeting);
     _init(accessToken, existingSessionId, isNewSession, context);
@@ -53,18 +53,25 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   static List<Map<String, String>> _initialMessages() {
     _initialGreeting = GreetingHelper.getRandomGreeting();
 
+    // return [
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': _initialGreeting},
+    // ];
+
     return [
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
-      {'type': 'bot', 'text': _initialGreeting},
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n\n$_initialGreeting",
+      },
     ];
   }
 
   Future<void> _init(
-    String token,
-    String sessionId,
-    bool isNewSession,
-    BuildContext context,
-  ) async {
+      String token,
+      String sessionId,
+      bool isNewSession,
+      BuildContext context,
+      ) async {
     if (await InternetConnection().hasInternetAccess) {
       _repo.setResponseCallback((event) {
         switch (event.status) {
@@ -174,9 +181,16 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     currentGreeting = GreetingHelper.getRandomGreeting();
     _repo.setInitialGreeting(currentGreeting);
     print("CURRENT GREETING => $currentGreeting");
+    // emit([
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': currentGreeting},
+    // ]);
+
     emit([
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
-      {'type': 'bot', 'text': currentGreeting},
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n$currentGreeting",
+      },
     ]);
     await _repo.resetSession();
     await _repo.reconnect();
@@ -187,7 +201,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     // final savedGreeting = await GreetingStorage.get(sessionId);
 
     List<Map<String, String>> greeting = [
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
+      {'type': 'bot', 'text': "I’m your WILCO."},
     ];
 
     // if (savedGreeting != null && savedGreeting.isNotEmpty) {
@@ -201,9 +215,25 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       if (isConnected) {
         final serverMessages = await _repo.fetchFullServerHistory(sessionId);
 
-        final uiList = serverMessages.map((msg) {
+        // final uiList = serverMessages.map((msg) {
+        //   return {
+        //     'type': msg.role.toLowerCase() == 'user' ? 'user' : 'bot',
+        //     'text': msg.content,
+        //   };
+        // }).toList();
+
+        final uiList = serverMessages.asMap().entries.map((entry) {
+          final index = entry.key;
+          final msg = entry.value;
+
+          final role = msg.role.toLowerCase();
+
           return {
-            'type': msg.role.toLowerCase() == 'user' ? 'user' : 'bot',
+            'type': index == 0 && role == 'assistant'
+                ? 'initial_greeting'
+                : role == 'user'
+                ? 'user'
+                : 'bot',
             'text': msg.content,
           };
         }).toList();
@@ -211,7 +241,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         emit([...greeting, ...uiList]);
 
         final converted = serverMessages.map(
-          (s) =>
+              (s) =>
               _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
         );
 
@@ -236,9 +266,9 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   Future<void> openAddOnPacksBottomSheet(
-    BuildContext context,
-    AddOnPackType packType,
-  ) async {
+      BuildContext context,
+      AddOnPackType packType,
+      ) async {
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -257,10 +287,10 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   Future<void> sendMessage(
-    String text,
-    BuildContext context,
-    bool isReceivedTokenFullWarning,
-  ) async {
+      String text,
+      BuildContext context,
+      bool isReceivedTokenFullWarning,
+      ) async {
     if (await InternetConnection().hasInternetAccess) {
       if (CreditManager().remainingToken <= 0 ||
           isReceivedTokenFullWarning == true) {
@@ -272,7 +302,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             isFromWilcoAndTrackingScreen: true,
             buttonText: "Buy Token",
             message:
-                "Your token limit has been exhausted. Please purchase a extra tokens.",
+            "Your token limit has been exhausted. Please purchase a extra tokens.",
             onGoToActionBlock: () {
               openAddOnPacksBottomSheet(context, AddOnPackType.tokensOnly);
             },
@@ -370,8 +400,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       'text': msg.text.trim(),
     };
     final isDuplicate = next.any(
-      (m) =>
-          m['type'] == mapped['type'] &&
+          (m) =>
+      m['type'] == mapped['type'] &&
           (m['text'] ?? '').trim() == mapped['text'],
     );
 
@@ -626,9 +656,16 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   Future<void> clearCurrentChat() async {
     currentGreeting = GreetingHelper.getRandomGreeting();
     _repo.setInitialGreeting(currentGreeting);
+    // emit([
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': currentGreeting},
+    // ]);
+
     emit([
-      {'type': 'bot', 'text': "I’m your WILCO, How can I help you?"},
-      {'type': 'bot', 'text': currentGreeting},
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n$currentGreeting",
+      },
     ]);
 
     await _repo.resetSession();
