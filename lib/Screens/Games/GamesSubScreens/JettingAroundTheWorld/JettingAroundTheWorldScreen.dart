@@ -35,8 +35,6 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
   List<Point> points = [];
   List<PointConnection> connections = [];
 
-  // late JettingTheWorldCubit _cubit;
-
   Widget pointLabelBuilder(
     BuildContext context,
     Point point,
@@ -46,23 +44,18 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      width: 90,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.primaryDark,
+        border: Border.all(color: Colors.white, width: 2),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            point.label ?? '',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
+      child: Text(
+        point.label ?? '',
+        textAlign: TextAlign.center,
+        softWrap: true,
+        style: AppTextStyles.medium(12).copyWith(color: AppColors.white),
       ),
     );
   }
@@ -76,10 +69,10 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
     });
 
     _controller = FlutterEarthGlobeController(
-      rotationSpeed: 0.01,
-      minZoom: -1.0,
-      maxZoom: 0.8,
-      zoom: 0.8,
+      rotationSpeed: 0.05,
+      minZoom: -1.5,
+      maxZoom: 5,
+      zoom: 1.8,
       isRotating: false,
       atmosphereOpacity: 0.8,
       zoomToMousePosition: false,
