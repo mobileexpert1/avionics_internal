@@ -1,913 +1,673 @@
 import 'dart:async';
 
-import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
-import 'package:flutter/foundation.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
-import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
-import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
-import '../../Constants/AppColors.dart';
-import '../../Constants/constantImages.dart';
-import '../../Helpers/AppNavigator.dart';
-import '../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../Helpers/ChatAnalyzingIndicator/ChatAnalyzingIndicator.dart';
-import '../../Helpers/FormattedText/FormattedText.dart';
-import '../../Helpers/NoInternetDialog.dart';
-import '../../bloc/home/chatSection/ChatBot/ChatCubit.dart';
-import '../../bloc/home/chatSection/ChatBot/chat_implementation.dart';
-import '../Onboarding/Login/LoginScreen.dart';
-import '../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
-import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
-import 'ChatHistoryScreen.dart';
-import 'ChatHistoryShimmer.dart';
+import '../../../../Constants/ApiClass/alertHelperForSubsPopup.dart';
+import '../../../../Helpers/CreditManager/CreditManager.dart';
+import '../../../../Helpers/GreetingHelpers/GreetingHelper.dart';
+import '../../../../Helpers/GreetingHelpers/GreetingStorage.dart';
+import '../../../../Helpers/NoInternetDialog.dart';
+import '../../../../Screens/Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
+import 'chat_implementation.dart';
+import 'chat_model.dart';
 
-class AskWilcoScreen extends StatefulWidget {
-  const AskWilcoScreen({
-    super.key,
-    required this.accessToken,
-    required this.isComeFromTab,
-    required this.sessionId,
-    required this.title,
-  });
+class ChatCubit extends Cubit<List<Map<String, String>>> {
+  void Function(ChatResponseStatus status)? onResponse;
+  VoidCallback? onInternetLost;
+  StreamSubscription? _internetSub;
+  bool _isHistoryLoading = false;
+  bool _needFreshSession = false;
+  final ValueNotifier<bool> historyLoadingNotifier = ValueNotifier(false);
+  ChatCubit({
+    required String accessToken,
+    required String existingSessionId,
+    required bool isNewSession,
+    required BuildContext context,
+  }) : _repo = ChatRepositoryImpl(),
+        super(_initialMessages()) {
+    currentGreeting = _initialGreeting;
+    _repo.setInitialGreeting(currentGreeting);
+    _init(accessToken, existingSessionId, isNewSession, context);
+    _startInternetListener();
+  }
 
-  final String accessToken;
-  final bool isComeFromTab;
-  final String sessionId;
-  final String title;
+  final ChatRepositoryImpl _repo;
+  StreamSubscription? _sub;
+  // dynamic _internetSub;
+  final _internetStatusController = StreamController<bool>.broadcast();
+  bool _isConnected = true;
 
-  @override
-  State<AskWilcoScreen> createState() => _AskWilcoScreenState();
-}
+  Timer? _responseTimer;
+  bool _isStopped = false;
 
-class _AskWilcoScreenState extends State<AskWilcoScreen> {
-  final _controller = TextEditingController();
+  bool get isConnected => _isConnected;
 
-  final _scrollCtrl = ScrollController();
+  Stream<bool> get internetStream => _internetStatusController.stream;
+  String currentGreeting = "";
 
-  final ValueNotifier<bool> _isConnected = ValueNotifier(true);
+  static String _initialGreeting = "";
 
-  late stt.SpeechToText _speech;
+  static List<Map<String, String>> _initialMessages() {
+    _initialGreeting = GreetingHelper.getRandomGreeting();
 
-  bool _isListening = false;
+    // return [
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': _initialGreeting},
+    // ];
 
-  Timer? _inactivityTimer;
-  Timer? _maxListeningTimer;
+    return [
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n\n$_initialGreeting",
+      },
+    ];
+  }
 
-  bool isReceivedTokenFullWarning = false;
+  Future<void> _init(
+      String token,
+      String sessionId,
+      bool isNewSession,
+      BuildContext context,
+      ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      _repo.setResponseCallback((event) {
+        switch (event.status) {
+          case ChatResponseStatus.tokenLimitExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.tokenLimitExpired);
+            break;
+          case ChatResponseStatus.creditLimitExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.creditLimitExpired);
+            break;
 
-  final _selectableFocusNode = FocusNode();
+          case ChatResponseStatus.accessTokenExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.accessTokenExpired);
+            break;
+          case ChatResponseStatus.subscriptionExpired:
+            final next = List<Map<String, String>>.from(state)
+              ..removeWhere((m) => m['type'] == 'analyzing');
+            emit(next);
+            onResponse?.call(ChatResponseStatus.subscriptionExpired);
+            break;
+          default:
+            break;
+        }
+      });
 
-  StreamSubscription<bool>? _internetSub;
+      // _repo.onSocketConnected = () async {
+      //   if (sessionId.isNotEmpty) {
+      //     await _loadCompleteHistory(sessionId);
+      //   }
+      // };
 
-  final FocusNode _messageFocusNode = FocusNode();
+      // _repo.onSocketConnected = () async {
+      //   final currentSessionId = _repo.currentSessionId;
+      //   if (currentGreeting.isNotEmpty &&
+      //       currentSessionId != null &&
+      //       currentSessionId.isNotEmpty) {
+      //     await GreetingStorage.save(currentSessionId, currentGreeting);
+      //   }
+      //
+      //   if (_isHistoryLoading) return;
+      //
+      //   if (currentSessionId != null && currentSessionId.isNotEmpty) {
+      //     _isHistoryLoading = true;
+      //
+      //     try {
+      //       await _loadCompleteHistory(currentSessionId);
+      //     } finally {
+      //       _isHistoryLoading = false;
+      //     }
+      //   }
+      // };
 
-  bool _isNoInternetDialogOpen = false;
+      _repo.onSocketConnected = () async {
+        final currentSessionId = _repo.currentSessionId;
 
-  @override
-  void initState() {
-    super.initState();
+        if (currentSessionId != null && currentSessionId.isNotEmpty) {
 
-    _speech = stt.SpeechToText();
+          final savedGreeting =
+          await GreetingStorage.get(currentSessionId);
 
-    _controller.addListener(() {
-      setState(() {});
+          if (savedGreeting != null && savedGreeting.isNotEmpty) {
+            currentGreeting = savedGreeting;
+          } else {
+            currentGreeting = GreetingHelper.getRandomGreeting();
+
+            await GreetingStorage.save(
+              currentSessionId,
+              currentGreeting,
+            );
+          }
+
+          if (_isHistoryLoading) return;
+
+          _isHistoryLoading = true;
+
+          try {
+            await _loadCompleteHistory(currentSessionId);
+          } finally {
+            _isHistoryLoading = false;
+          }
+        }
+      };
+
+      if (_isConnected) {
+        await _repo.connect(accessToken: token, existingSessionId: sessionId);
+      }
+      _sub = _repo.messages.listen(_onSocketMessage);
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () => _init(token, sessionId, isNewSession, context),
+      );
+      return;
+    }
+  }
+
+  Future<void> startFreshChat() async {
+    print("🔥 startFreshChat called");
+    currentGreeting = GreetingHelper.getRandomGreeting();
+    _repo.setInitialGreeting(currentGreeting);
+    print("CURRENT GREETING => $currentGreeting");
+    // emit([
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': currentGreeting},
+    // ]);
+
+    emit([
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n$currentGreeting",
+      },
+    ]);
+    await _repo.resetSession();
+    await _repo.reconnect();
+  }
+
+  Future<void> _loadCompleteHistory(String sessionId) async {
+    historyLoadingNotifier.value = true;
+    // final savedGreeting = await GreetingStorage.get(sessionId);
+
+    List<Map<String, String>> greeting = [
+      {'type': 'bot', 'text': "I’m your WILCO."},
+    ];
+
+    // if (savedGreeting != null && savedGreeting.isNotEmpty) {
+    //   greeting.add({'type': 'bot', 'text': savedGreeting});
+    // }
+    emit(greeting);
+
+    try {
+      final isConnected = await InternetConnection().hasInternetAccess;
+
+      if (isConnected) {
+        final serverMessages = await _repo.fetchFullServerHistory(sessionId);
+
+        // final uiList = serverMessages.map((msg) {
+        //   return {
+        //     'type': msg.role.toLowerCase() == 'user' ? 'user' : 'bot',
+        //     'text': msg.content,
+        //   };
+        // }).toList();
+
+        final uiList = serverMessages.asMap().entries.map((entry) {
+          final index = entry.key;
+          final msg = entry.value;
+
+          final role = msg.role.toLowerCase();
+
+          return {
+            'type': index == 0 && role == 'assistant'
+                ? 'initial_greeting'
+                : role == 'user'
+                ? 'user'
+                : 'bot',
+            'text': msg.content,
+          };
+        }).toList();
+
+        emit([...greeting, ...uiList]);
+
+        final converted = serverMessages.map(
+              (s) =>
+              _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
+        );
+
+        await _repo.insertOrIgnoreLocalMessages(converted.toList());
+      } else {
+        final localMessages = await _repo.getMessagesForSession(sessionId);
+
+        final uiList = localMessages.map((msg) {
+          return {
+            'type': msg.author == ChatAuthor.bot ? 'bot' : 'user',
+            'text': msg.text,
+          };
+        }).toList();
+
+        emit([...greeting, ...uiList]);
+      }
+    } catch (e) {
+      print("History Error => $e");
+    } finally {
+      historyLoadingNotifier.value = false;
+    }
+  }
+
+  Future<void> openAddOnPacksBottomSheet(
+      BuildContext context,
+      AddOnPackType packType,
+      ) async {
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.80,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: AddOnPacksScreen(packType: packType),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> sendMessage(
+      String text,
+      BuildContext context,
+      bool isReceivedTokenFullWarning,
+      ) async {
+    if (await InternetConnection().hasInternetAccess) {
+      if (CreditManager().remainingToken <= 0 ||
+          isReceivedTokenFullWarning == true) {
+        Future.microtask(() {
+          AlertHelperForSubsPopup.showSubscriptionEndAlert(
+            isFromTrackingClass: false,
+            context: context,
+            title: "Token limit exhausted",
+            isFromWilcoAndTrackingScreen: true,
+            buttonText: "Buy Token",
+            message:
+            "Your token limit has been exhausted. Please purchase a extra tokens.",
+            onGoToActionBlock: () {
+              openAddOnPacksBottomSheet(context, AddOnPackType.tokensOnly);
+            },
+          );
+        });
+        return;
+      }
+
+      _isStopped = false;
+      final next = List<Map<String, String>>.from(state)
+        ..removeWhere((m) => m['type'] == 'analyzing');
+
+      next.add({'type': 'user', 'text': text});
+
+      if (!_isConnected) {
+        next.add({'type': 'bot', 'text': 'Message not sent. No internet'});
+        emit(next);
+        return;
+      }
+
+      next.add({'type': 'analyzing', 'text': ''});
+      emit(next);
+
+      _responseTimer?.cancel();
+      _responseTimer = Timer(const Duration(seconds: 15), () {
+        _handleNoResponse();
+      });
+
+      _repo.send(text);
+    } else {
+      NoInternetDialog.show(
+        context,
+        onRetry: () async {
+          final hasInternet = await InternetConnection().hasInternetAccess;
+
+          if (hasInternet) {
+            await _repo.reconnect();
+          } else {
+            NoInternetDialog.show(context, onRetry: () async {});
+          }
+        },
+      );
+      return;
+    }
+  }
+
+  void _handleNoResponse() {
+    final next = List<Map<String, String>>.from(state);
+
+    next.removeWhere((m) => m['type'] == 'analyzing');
+
+    next.add({
+      'type': 'bot',
+      'text': 'Sorry, an error occurred while processing your request.',
     });
 
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.askChatScreen);
+    emit(next);
   }
 
-  @override
-  void dispose() {
-    _isConnected.dispose();
-    _internetSub?.cancel();
-    _inactivityTimer?.cancel();
-    _maxListeningTimer?.cancel();
-    _controller.dispose();
-    _scrollCtrl.dispose();
-    _speech.stop();
-    _selectableFocusNode.dispose();
-    super.dispose();
-  }
+  List<Map<String, String>> removeDuplicates(List<Map<String, String>> items) {
+    final seen = <String>{};
+    final filtered = <Map<String, String>>[];
 
-  Future<void> _startListening(BuildContext context) async {
-    if (_isListening) return;
-
-    var micStatus = await Permission.microphone.status;
-
-    if (!micStatus.isGranted) {
-      micStatus = await Permission.microphone.request();
+    for (final m in items) {
+      final key = "${m['type']}|${m['text']?.trim()}";
+      if (!seen.contains(key)) {
+        seen.add(key);
+        filtered.add(m);
+      }
     }
+    return filtered;
+  }
 
-    if (!micStatus.isGranted) {
-      debugPrint("Microphone permission not granted");
+  void _onSocketMessage(ChatMessage msg) {
+    if (msg.text == "__SESSION_EXPIRED__") {
+      emit(List<Map<String, String>>.from(state));
       return;
     }
 
-    bool available = await _speech.initialize(
-      onStatus: (status) async {
-        debugPrint("Speech status: $status");
+    if (msg.text.contains("token")) {
+      emit(List<Map<String, String>>.from(state));
+      return;
+    }
 
-        if (status == "done" || status == "notListening") {
-          await _stopListening(context);
+    _responseTimer?.cancel();
+    if (_isStopped) return;
+    final next = List<Map<String, String>>.from(state);
+
+    if (msg.author == ChatAuthor.bot) {
+      next.removeWhere((m) => m['type'] == 'analyzing');
+    }
+
+    final mapped = {
+      'type': msg.author == ChatAuthor.user ? 'user' : 'bot',
+      'text': msg.text.trim(),
+    };
+    final isDuplicate = next.any(
+          (m) =>
+      m['type'] == mapped['type'] &&
+          (m['text'] ?? '').trim() == mapped['text'],
+    );
+
+    if (!isDuplicate) {
+      next.add(mapped);
+    }
+
+    emit(next);
+  }
+
+  // void _startInternetListener() {
+  //   _internetSub = Connectivity().onConnectivityChanged.listen((results) async {
+  //     print("Connectivity Changed => $results");
+  //
+  //     final hasNetwork = !results.contains(ConnectivityResult.none);
+  //
+  //     if (!hasNetwork) {
+  //
+  //       if (_repo.currentSessionId == null ||
+  //           _repo.currentSessionId!.isEmpty) {
+  //         _needFreshSession = true;
+  //
+  //         print("⚠️ Session not created. Fresh session needed");
+  //       }
+  //       _repo.updateInternetStatus(false);
+  //
+  //       if (_isConnected) {
+  //         _isConnected = false;
+  //
+  //         _internetStatusController.add(false);
+  //
+  //         print('[Internet] No Network');
+  //
+  //         _responseTimer?.cancel();
+  //
+  //         final next = List<Map<String, String>>.from(state);
+  //         next.removeWhere((m) => m['type'] == 'analyzing');
+  //         emit(next);
+  //
+  //         onInternetLost?.call();
+  //       }
+  //
+  //       return;
+  //     }
+  //
+  //     final hasInternet = await InternetConnection().hasInternetAccess;
+  //
+  //     print('Network Available: $hasNetwork, Internet Available: $hasInternet');
+  //
+  //     if (hasInternet) {
+  //       if (!_isConnected) {
+  //         _isConnected = true;
+  //
+  //         _repo.updateInternetStatus(true);
+  //
+  //         _internetStatusController.add(true);
+  //         if (_needFreshSession) {
+  //           print("🔥 Fresh Chat Triggered");
+  //
+  //           final next = List<Map<String, String>>.from(state);
+  //
+  //           next.removeWhere((m) => m['type'] == 'analyzing');
+  //           for (int i = next.length - 1; i >= 0; i--) {
+  //             if (next[i]['type'] == 'user') {
+  //               print(
+  //                 "Removing Pending Message => ${next[i]['text']}",
+  //               );
+  //
+  //               next.removeAt(i);
+  //               break;
+  //             }
+  //           }
+  //
+  //           emit(next);
+  //
+  //           await startFreshChat();
+  //
+  //           _needFreshSession = false;
+  //         } else {
+  //           print("🔥 Normal Reconnect");
+  //
+  //           await _repo.reconnect();
+  //         }
+  //       }
+  //     } else {
+  //       _repo.updateInternetStatus(false);
+  //
+  //       if (_isConnected) {
+  //
+  //         if (_repo.currentSessionId == null ||
+  //             _repo.currentSessionId!.isEmpty) {
+  //           _needFreshSession = true;
+  //
+  //           print("⚠️ Session not created. Fresh session needed");
+  //         }
+  //
+  //         _isConnected = false;
+  //
+  //         _internetStatusController.add(false);
+  //
+  //         print('[Internet] Internet Lost');
+  //
+  //         _responseTimer?.cancel();
+  //
+  //         final next = List<Map<String, String>>.from(state);
+  //         next.removeWhere((m) => m['type'] == 'analyzing');
+  //         emit(next);
+  //
+  //         onInternetLost?.call();
+  //       }
+  //     }
+  //   });
+  // }
+
+  void _startInternetListener() {
+    _internetSub = Connectivity().onConnectivityChanged.listen((results) async {
+      print("Connectivity Changed => $results");
+
+      final hasNetwork = !results.contains(ConnectivityResult.none);
+
+      // iOS fix: Connectivity kabhi-kabhi false none return karta hai
+      if (!hasNetwork) {
+        await Future.delayed(const Duration(seconds: 1));
+
+        final hasInternet = await InternetConnection().hasInternetAccess;
+
+        print("iOS None Check => Internet Available: $hasInternet");
+
+        // Internet hai to false connectivity event ignore karo
+        if (hasInternet) {
+          print("⚡ Ignoring false iOS connectivity event");
+          return;
         }
-      },
-      onError: (error) => debugPrint("Speech error: $error"),
-    );
 
-    if (!mounted) return;
+        if (_repo.currentSessionId == null || _repo.currentSessionId!.isEmpty) {
+          _needFreshSession = true;
+          print("⚠️ Session not created. Fresh session needed");
+        }
 
-    if (!available) return;
+        _repo.updateInternetStatus(false);
 
-    setState(() => _isListening = true);
+        if (_isConnected) {
+          _isConnected = false;
 
-    _speech.listen(
-      onResult: (result) {
-        if (!_isListening) return;
+          _internetStatusController.add(false);
 
-        setState(() {
-          _controller.text = result.recognizedWords;
+          print('[Internet] No Network');
 
-          _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length),
-          );
-        });
+          _responseTimer?.cancel();
 
-        _inactivityTimer?.cancel();
+          final next = List<Map<String, String>>.from(state);
+          next.removeWhere((m) => m['type'] == 'analyzing');
 
-        _inactivityTimer = Timer(const Duration(seconds: 5), () async {
-          if (_isListening) {
-            debugPrint("Auto-stopping mic after inactivity");
-            await _stopListening(context);
+          emit(next);
+
+          onInternetLost?.call();
+        }
+
+        return;
+      }
+
+      // Actual internet check
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final hasInternet = await InternetConnection().hasInternetAccess;
+
+      print('Network Available: $hasNetwork, Internet Available: $hasInternet');
+
+      if (hasInternet) {
+        if (!_isConnected) {
+          _isConnected = true;
+
+          _repo.updateInternetStatus(true);
+
+          _internetStatusController.add(true);
+
+          if (_needFreshSession) {
+            print("🔥 Fresh Chat Triggered");
+
+            final next = List<Map<String, String>>.from(state);
+
+            next.removeWhere((m) => m['type'] == 'analyzing');
+
+            for (int i = next.length - 1; i >= 0; i--) {
+              if (next[i]['type'] == 'user') {
+                print("Removing Pending Message => ${next[i]['text']}");
+
+                next.removeAt(i);
+                break;
+              }
+            }
+
+            emit(next);
+
+            await startFreshChat();
+
+            _needFreshSession = false;
+          } else {
+            print("🔥 Normal Reconnect");
+
+            await _repo.reconnect();
           }
-        });
-      },
-    );
+        }
+      } else {
+        _repo.updateInternetStatus(false);
 
-    _maxListeningTimer?.cancel();
+        if (_isConnected) {
+          if (_repo.currentSessionId == null ||
+              _repo.currentSessionId!.isEmpty) {
+            _needFreshSession = true;
 
-    _maxListeningTimer = Timer(const Duration(seconds: 60), () async {
-      if (_isListening) {
-        await _stopListening(context);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Mic automatically stopped.')),
-          );
+            print("⚠️ Session not created. Fresh session needed");
+          }
+
+          _isConnected = false;
+
+          _internetStatusController.add(false);
+
+          print('[Internet] Internet Lost');
+
+          _responseTimer?.cancel();
+
+          final next = List<Map<String, String>>.from(state);
+          next.removeWhere((m) => m['type'] == 'analyzing');
+
+          emit(next);
+
+          onInternetLost?.call();
         }
       }
     });
   }
 
-  Future<void> _stopListening(BuildContext context) async {
-    if (!_isListening) return;
-    _inactivityTimer?.cancel();
-    _maxListeningTimer?.cancel();
-
-    _inactivityTimer = null;
-    _inactivityTimer = null;
-    if (mounted) setState(() => _isListening = false);
-    await _speech.stop();
-  }
-
-  void _listenToInternet(ChatCubit cubit) {
-    _internetSub = cubit.internetStream.listen((status) {
-      _isConnected.value = status;
-    });
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollCtrl.hasClients) return;
-
-      _scrollCtrl.animateTo(
-        _scrollCtrl.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
-  }
-
-  void _showNoInternetDialog() {
-    if (_isNoInternetDialogOpen) return;
-
-    _isNoInternetDialogOpen = true;
-
-    NoInternetDialog.show(
-      context,
-      onRetry: () async {
-        await Future.delayed(const Duration(seconds: 1));
-
-        final hasInternet = await InternetConnection().hasInternetAccess;
-
-        if (hasInternet) {
-          print("Internet restored");
-          _isNoInternetDialogOpen = false;
-        } else {
-          print("Internet still unavailable");
-          _isNoInternetDialogOpen = false;
-
-          Future.delayed(const Duration(milliseconds: 200), () {
-            if (mounted) {
-              _showNoInternetDialog();
-            }
-          });
-        }
-      },
-    );
+  void stopResponse() {
+    _isStopped = true;
+    _responseTimer?.cancel();
+    final next = List<Map<String, String>>.from(state)
+      ..removeWhere((m) => m['type'] == 'analyzing');
+    emit(next);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) {
-        final cubit = ChatCubit(
-          accessToken: widget.accessToken,
-          isNewSession: widget.accessToken.isEmpty,
-          existingSessionId: widget.sessionId,
-          context: context,
-        );
+  Future<void> close() async {
+    _responseTimer?.cancel();
+    await _sub?.cancel();
+    await _internetSub?.cancel();
+    await _internetStatusController.close();
+    await _repo.dispose();
+    return super.close();
+  }
 
-        _listenToInternet(cubit);
+  Future<void> clearCurrentChat() async {
+    currentGreeting = GreetingHelper.getRandomGreeting();
+    _repo.setInitialGreeting(currentGreeting);
+    // emit([
+    //   {'type': 'bot', 'text': "I’m your WILCO."},
+    //   {'type': 'bot', 'text': currentGreeting},
+    // ]);
 
-        cubit.onInternetLost = () {
-          _showNoInternetDialog();
-        };
-
-        cubit.onResponse = (status) {
-          switch (status) {
-            case ChatResponseStatus.tokenLimitExpired:
-              setState(() => isReceivedTokenFullWarning = true);
-              AlertHelperForSubsPopup.showSubscriptionEndAlert(
-                context: context,
-                title: "Token limit exhausted",
-                isFromWilcoAndTrackingScreen: true,
-                buttonText: "Buy Token",
-                message:
-                "Your token limit has been exhausted. Please purchase a subscription.",
-                onGoToActionBlock: () {
-                  cubit.openAddOnPacksBottomSheet(
-                    context,
-                    AddOnPackType.tokensOnly,
-                  );
-                },
-              );
-              break;
-            case ChatResponseStatus.creditLimitExpired:
-              AlertHelperForSubsPopup.showSubscriptionEndAlert(
-                context: context,
-                title: "Credit limit exhausted",
-                isFromWilcoAndTrackingScreen: true,
-                buttonText: "Buy Credits",
-                message:
-                "Your credit limit has been exhausted. Please purchase a subscription.",
-                onGoToActionBlock: () {
-                  cubit.openAddOnPacksBottomSheet(
-                    context,
-                    AddOnPackType.creditsOnly,
-                  );
-                },
-              );
-              break;
-            case ChatResponseStatus.accessTokenExpired:
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Session expired. Please login again.'),
-                ),
-              );
-
-              Future.delayed(const Duration(seconds: 1), () {
-                AppNavigator.pushAndRemoveUntil(
-                  context,
-                  LoginScreen(),
-                  disableSwipeBack: true,
-                );
-              });
-
-              break;
-            case ChatResponseStatus.subscriptionExpired:
-              AlertHelperForSubsPopup.showSubscriptionEndAlert(
-                context: context,
-                title: "Subscription Required",
-                message:
-                "Your subscription has expired. Please renew to continue using the service.",
-                navigateTo: const SubscriptionPlanDetailScreen(
-                  isComeFromSignup: true,
-                ),
-              );
-              break;
-
-            default:
-              break;
-          }
-        };
-
-        return cubit;
+    emit([
+      {
+        'type': 'bot',
+        'text': "I’m your WILCO.\n$currentGreeting",
       },
+    ]);
 
-      child: Builder(
-        builder: (context) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-
-            appBar: CustomAppBar(
-              title: 'WILCO',
-
-              leftButton: widget.isComeFromTab
-                  ? const SizedBox()
-                  : IconButton(
-                icon: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
-                  fit: BoxFit.cover,
-                ),
-                onPressed: () async {
-                  await context.read<ChatCubit>().clearCurrentChat();
-
-                  if (mounted) {
-                    Navigator.of(
-                      context,
-                    ).popUntil((route) => route.isFirst);
-                  }
-                },
-              ),
-
-              rightButton: InkWell(
-                borderRadius: BorderRadius.circular(30),
-
-                onTap: () {
-                  AppNavigator.push(
-                    context,
-                    ChatHistoryScreen(),
-                    disableSwipeBack: true,
-                  );
-                },
-
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.chatHistoryIcon),
-                        height: 18,
-                        width: 18,
-                      ),
-
-                      const SizedBox(width: 6),
-
-                      const Text(
-                        'History',
-                        style: TextStyle(
-                          color: Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            body: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: kIsWeb ? 900 : double.infinity,
-                ),
-                child: BlocListener<ChatCubit, List<Map<String, String>>>(
-                  listener: (_, _) => _scrollToBottom(),
-                  child: Column(
-                    children: [
-                      // Expanded(
-                      //   child: BlocBuilder<ChatCubit, List<Map<String, String>>>(
-                      //     builder: (context, messages) {
-                      //       return SelectableRegion(
-                      //         focusNode: _selectableFocusNode,
-                      //
-                      //         selectionControls: MaterialTextSelectionControls(),
-                      //
-                      //         child: ListView.builder(
-                      //           controller: _scrollCtrl,
-                      //
-                      //           padding: const EdgeInsets.symmetric(
-                      //             horizontal: 16,
-                      //             vertical: 16,
-                      //           ),
-                      //
-                      //           itemCount: messages.length + 1,
-                      //
-                      //           itemBuilder: (context, index) {
-                      Expanded(
-                        child: Builder(
-                          builder: (context) {
-                            final cubit = context.read<ChatCubit>();
-
-                            return ValueListenableBuilder<bool>(
-                              valueListenable: cubit.historyLoadingNotifier,
-                              builder: (_, isLoading, __) {
-                                if (!isLoading) {
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                      _,
-                                      ) {
-                                    _scrollToBottom();
-                                  });
-                                }
-
-                                if (isLoading) {
-                                  return const ChatHistoryShimmer();
-                                }
-
-                                return BlocBuilder<
-                                    ChatCubit,
-                                    List<Map<String, String>>
-                                >(
-                                  builder: (context, messages) {
-                                    return SelectableRegion(
-                                      focusNode: _selectableFocusNode,
-                                      selectionControls:
-                                      MaterialTextSelectionControls(),
-
-                                      child: ListView.builder(
-                                        controller: _scrollCtrl,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 16,
-                                        ),
-                                        itemCount: messages.length + 1,
-
-                                        itemBuilder: (context, index) {
-                                          if (index == 0) {
-                                            return _buildTopSection();
-                                          }
-
-                                          final message = messages[index - 1];
-
-                                          if (message['type'] == 'analyzing') {
-                                            return const Padding(
-                                              padding: EdgeInsets.only(top: 8),
-                                              child: ChatAnalyzingIndicator(),
-                                            );
-                                          }
-
-                                          final isUser =
-                                              message['type'] == 'user';
-
-                                          final isInitialGreeting =
-                                              message['type'] ==
-                                                  'initial_greeting';
-
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 8,
-                                            ),
-
-                                            child: Row(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-
-                                              mainAxisAlignment: isUser
-                                                  ? MainAxisAlignment.end
-                                                  : MainAxisAlignment.start,
-
-                                              children: [
-                                                // if (!isUser)
-                                                if (!isUser)
-                                                  isInitialGreeting
-                                                      ? const SizedBox(
-                                                    width: 40,
-                                                  )
-                                                      : _buildBotAvatarOrUser(
-                                                    true,
-                                                    message['text'] ?? "",
-                                                  ),
-
-                                                Flexible(
-                                                  child: Container(
-                                                    padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 10,
-                                                    ),
-
-                                                    constraints: BoxConstraints(
-                                                      maxWidth: MediaQuery.of(
-                                                        context,
-                                                      ).size.width,
-                                                    ),
-
-                                                    decoration: isUser
-                                                        ? BoxDecoration(
-                                                      color: AppColors
-                                                          .primaryDark,
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft:
-                                                        Radius.circular(
-                                                          10,
-                                                        ),
-                                                        bottomLeft:
-                                                        Radius.circular(
-                                                          10,
-                                                        ),
-                                                        bottomRight:
-                                                        Radius.circular(
-                                                          10,
-                                                        ),
-                                                      ),
-
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors
-                                                              .black
-                                                              .withValues(
-                                                            alpha:
-                                                            0.04,
-                                                          ),
-                                                          blurRadius: 8,
-                                                          offset:
-                                                          const Offset(
-                                                            0,
-                                                            2,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                        : null,
-
-                                                    child: isUser
-                                                        ? SelectableText(
-                                                      message['text'] ??
-                                                          '',
-                                                      style:
-                                                      AppTextStyles.regular(
-                                                        15,
-                                                      ).copyWith(
-                                                        height: 1.5,
-                                                        color: Colors
-                                                            .white,
-                                                      ),
-                                                    )
-                                                        : FormattedText(
-                                                      text:
-                                                      message['text'] ??
-                                                          '',
-                                                      fontSize: 15,
-                                                      normalColor:
-                                                      Colors.black87,
-                                                      boldColor:
-                                                      Colors.black,
-                                                      lineHeight: 1.5,
-                                                    ),
-
-                                                    // SelectableText(
-                                                    //   message['text'] ?? '',
-                                                    //   style: AppTextStyles.regular(15).copyWith(
-                                                    //     height: 1.5,
-                                                    //     color: isUser
-                                                    //         ? Colors.white
-                                                    //         : Colors.black87,
-                                                    //   ),
-                                                    // ),
-                                                  ),
-                                                ),
-
-                                                if (isUser)
-                                                  _buildBotAvatarOrUser(
-                                                    false,
-                                                    message['text'] ?? "",
-                                                  ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-
-                      _chatInput(context),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildTopSection() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-
-      child: Column(
-        children: [
-          SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.wilcoChatLogo),
-            height: kIsWeb ? 180 : 140,
-            width: kIsWeb ? 300 : null,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            "Hey there!",
-            style: AppTextStyles.bold(
-              30,
-            ).copyWith(height: 1.0, color: AppColors.black),
-          ),
-
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBotAvatarOrUser(bool isForBoat, String responseMessage) {
-    final isUnexpectedError = responseMessage.contains("Unexpected");
-    return Padding(
-      padding: EdgeInsets.only(left: isForBoat ? 0 : 8, bottom: 2),
-      child: SvgPicture.asset(
-        CommonUi.setSvgImage(
-          isUnexpectedError
-              ? AssetsPath.wilcoAttention
-              : (isForBoat
-              ? AssetsPath.wilcoChatBoat
-              : AssetsPath.wilcoChatUser),
-        ),
-        height: 40,
-      ),
-    );
-  }
-
-  Widget _chatInput(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.primaryDark),
-
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-
-          child: Row(
-            children: [
-              Expanded(
-                child: BlocListener<ChatCubit, List<Map<String, String>>>(
-                  listener: (ctx, messages) {
-                    if (messages.isNotEmpty &&
-                        messages.last['type'] == 'user' &&
-                        _controller.text.isEmpty) {
-                      _stopListening(context);
-                    }
-                  },
-
-                  // child: TextField(
-                  //   controller: _controller,
-                  //   minLines: 1,
-                  //   maxLines: 5,
-                  //   style: AppTextStyles.regular(
-                  //     16,
-                  //   ).copyWith(height: 1.0, color: AppColors.black),
-                  //
-                  //   textInputAction: TextInputAction.done,
-                  //
-                  //   onSubmitted: (val) {
-                  //     if (!kIsWeb) return;
-                  //
-                  //     final text = val.trim();
-                  //
-                  //     if (text.isEmpty) return;
-                  //
-                  //     final cubit = context.read<ChatCubit>();
-                  //
-                  //     final isAnalyzing = cubit.state.any(
-                  //       (msg) => msg['type'] == 'analyzing',
-                  //     );
-                  //
-                  //     if (!isAnalyzing) {
-                  //       cubit.sendMessage(
-                  //         text,
-                  //         context,
-                  //         isReceivedTokenFullWarning,
-                  //       );
-                  //
-                  //       _controller.clear();
-                  //
-                  //       _stopListening(context);
-                  //
-                  //       _scrollToBottom();
-                  //     }
-                  //   },
-                  //   decoration: InputDecoration(
-                  //     border: InputBorder.none,
-                  //     hintText: 'Type your message here...',
-                  //     hintStyle: AppTextStyles.regular(16).copyWith(
-                  //       height: 1.0,
-                  //       color: AppColors.greyFlightDetailText,
-                  //     ),
-                  //   ),
-                  // ),
-                  child: Builder(
-                    builder: (chatContext) {
-                      return Focus(
-                        focusNode: _messageFocusNode,
-                        onKeyEvent: (node, event) {
-                          if (kIsWeb &&
-                              event is KeyDownEvent &&
-                              event.logicalKey == LogicalKeyboardKey.enter) {
-                            final text = _controller.text.trim();
-                            if (text.isEmpty) {
-                              return KeyEventResult.handled;
-                            }
-                            final cubit = chatContext.read<ChatCubit>();
-
-                            final isAnalyzing = cubit.state.any(
-                                  (msg) => msg['type'] == 'analyzing',
-                            );
-
-                            if (!isAnalyzing) {
-                              cubit.sendMessage(
-                                text,
-                                chatContext,
-                                isReceivedTokenFullWarning,
-                              );
-
-                              _controller.clear();
-
-                              _messageFocusNode.unfocus();
-
-                              _stopListening(chatContext);
-
-                              _scrollToBottom();
-                            }
-
-                            return KeyEventResult.handled;
-                          }
-
-                          return KeyEventResult.ignored;
-                        },
-
-                        child: TextField(
-                          controller: _controller,
-                          minLines: 1,
-                          maxLines: 5,
-                          style: AppTextStyles.regular(
-                            16,
-                          ).copyWith(height: 1.0, color: AppColors.black),
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Type your message here...',
-                            hintStyle: AppTextStyles.regular(16).copyWith(
-                              height: 1.0,
-                              color: AppColors.greyFlightDetailText,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              BlocBuilder<ChatCubit, List<Map<String, String>>>(
-                builder: (context, state) {
-                  final isAnalyzing = state.any(
-                        (msg) => msg['type'] == 'analyzing',
-                  );
-
-                  return ValueListenableBuilder<bool>(
-                    valueListenable: _isConnected,
-
-                    builder: (_, isConnected, _) {
-                      final hasText = _controller.text.trim().isNotEmpty;
-
-                      final showSendButton = hasText || isAnalyzing;
-
-                      return GestureDetector(
-                        onLongPressStart: !showSendButton && isConnected
-                            ? (_) => _startListening(context)
-                            : null,
-
-                        onLongPressEnd: !showSendButton && isConnected
-                            ? (_) => _stopListening(context)
-                            : null,
-
-                        onTap: showSendButton && isConnected
-                            ? () {
-                          // if (isAnalyzing) {
-                          //   context.read<ChatCubit>().stopResponse();
-                          //
-                          //   return;
-                          // }
-
-                          if (isAnalyzing) {
-                            context.read<ChatCubit>().stopResponse();
-
-                            Future.delayed(
-                              const Duration(milliseconds: 100),
-                                  () {},
-                            );
-
-                            return;
-                          }
-
-                          final text = _controller.text.trim();
-
-                          if (text.isNotEmpty) {
-                            context.read<ChatCubit>().sendMessage(
-                              text,
-                              context,
-                              isReceivedTokenFullWarning,
-                            );
-
-                            _controller.clear();
-
-                            _messageFocusNode.unfocus();
-
-                            _scrollToBottom();
-
-                            _stopListening(context);
-
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.chatSendButton,
-                              FirebaseEvents.askChatScreen,
-                            );
-                          }
-                        }
-                            : null,
-
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 400),
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _isListening
-                                ? const Color(0xFFF3F4F6)
-                                : Colors.transparent,
-                          ),
-
-                          child: Center(
-                            child: showSendButton
-                                ? (isAnalyzing
-                                ? const Icon(
-                              Icons.stop,
-                              size: 40,
-                              //color: Color(0xFF2D235A),
-                            )
-                                : SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                AssetsPath.chatSendIcon,
-                              ),
-                            ))
-                                : Icon(
-                              _isListening
-                                  ? Icons.mic_rounded
-                                  : Icons.mic_none_rounded,
-                              color: AppColors.primaryDark,
-                              size: 40,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    await _repo.resetSession();
   }
 }
