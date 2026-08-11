@@ -107,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   AskWilcoScreen(
                     accessToken: token,
                     isComeFromTab: false,
+                    isFromHistory: false,
                     sessionId: '',
                     title: '',
                   ),
@@ -389,12 +390,15 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
           Center(
             child: Container(
-              width: isDesktopWeb  ? 260 : null,
+              width: isDesktopWeb ? 260 : null,
               padding: EdgeInsets.symmetric(vertical: kIsWeb ? 8 : 0),
               alignment: Alignment.center,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  minimumSize: Size(isDesktopWeb  ? 240 : 0, isDesktopWeb  ? 50 : 40),
+                  minimumSize: Size(
+                    isDesktopWeb ? 240 : 0,
+                    isDesktopWeb ? 50 : 40,
+                  ),
                 ),
                 onPressed: () {
                   AnalyticsService.instance.buttonPressed(
@@ -410,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Text(
                   'See All',
-                  style: AppTextStyles.bold(isDesktopWeb ? 18 : 16,).copyWith(
+                  style: AppTextStyles.bold(isDesktopWeb ? 18 : 16).copyWith(
                     height: kIsWeb ? 0.8 : 1.0,
                     color: AppColors.black,
                   ),

@@ -18,7 +18,8 @@ import '../../bloc/home/chatSection/ChatHistory/chat_history_state.dart';
 import 'ChatBotScreen.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
-  const ChatHistoryScreen({super.key});
+  final bool isComeFromTab;
+  const ChatHistoryScreen({super.key, required this.isComeFromTab});
 
   @override
   State<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
@@ -70,7 +71,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       MaterialPageRoute(
         builder: (_) => AskWilcoScreen(
           accessToken: token,
-          isComeFromTab: false,
+          isComeFromTab: widget.isComeFromTab,
+          isFromHistory: true,
           sessionId: item.id!,
           title: item.title,
         ),
@@ -433,10 +435,7 @@ class CustomDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: AppTextStyles.bold(
                 isDesktopWeb ? 22 : 18,
-              ).copyWith(
-                height: 1.2,
-                color: AppColors.primaryDark,
-              ),
+              ).copyWith(height: 1.2, color: AppColors.primaryDark),
             ),
 
             if (description != null) ...[
@@ -446,10 +445,7 @@ class CustomDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: AppTextStyles.regular(
                   isDesktopWeb ? 18 : 14,
-                ).copyWith(
-                  height: 1.4,
-                  color: AppColors.grayMedium,
-                ),
+                ).copyWith(height: 1.4, color: AppColors.grayMedium),
               ),
             ],
 

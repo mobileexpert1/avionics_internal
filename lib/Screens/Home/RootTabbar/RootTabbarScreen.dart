@@ -55,6 +55,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
             ? AskWilcoScreen(
                 accessToken: token,
                 isComeFromTab: true,
+                isFromHistory: false,
                 title: '',
                 sessionId: '',
               )

@@ -347,15 +347,18 @@ class ChatRepositoryImpl implements ChatRepository {
       'query': text,
     };
 
-    if (_isFirstMessage && _initialGreeting != null) {
+    final isNewSession = _sessionId == null || _sessionId!.isEmpty;
+
+    if (isNewSession && _isFirstMessage && _initialGreeting != null) {
       payload['initial_message'] = _initialGreeting!;
-      _isFirstMessage = false;
 
-      print('[WebSocket] First Message Greeting => $_initialGreeting');
+      print(
+        '[WebSocket] First Message Greeting => $_initialGreeting',
+      );
     }
-
-    print('[WebSocket] Final Payload => ${jsonEncode(payload)}');
-
+    print(
+      '[WebSocket] Final Payload => ${jsonEncode(payload)}',
+    );
     if (!_isSocketConnected) {
       print('[WebSocket] Socket not connected');
 
@@ -366,6 +369,10 @@ class ChatRepositoryImpl implements ChatRepository {
       }
 
       return;
+    }
+
+    if (isNewSession && _isFirstMessage) {
+      _isFirstMessage = false;
     }
 
     _channel?.sink.add(jsonEncode(payload));

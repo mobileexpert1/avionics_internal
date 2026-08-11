@@ -35,12 +35,14 @@ class AskWilcoScreen extends StatefulWidget {
     required this.isComeFromTab,
     required this.sessionId,
     required this.title,
+    this.isFromHistory = false,
   });
 
   final String accessToken;
   final bool isComeFromTab;
   final String sessionId;
   final String title;
+  final bool isFromHistory;
 
   @override
   State<AskWilcoScreen> createState() => _AskWilcoScreenState();
@@ -318,7 +320,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
             appBar: CustomAppBar(
               title: 'WILCO',
 
-              leftButton: widget.isComeFromTab
+              leftButton: widget.isComeFromTab && !widget.isFromHistory
                   ? const SizedBox()
                   : IconButton(
                       icon: SvgPicture.asset(
@@ -326,8 +328,9 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                         fit: BoxFit.cover,
                       ),
                       onPressed: () async {
-                        await context.read<ChatCubit>().clearCurrentChat();
-
+                        // if (widget.isComeFromTab) {
+                        //   await context.read<ChatCubit>().clearCurrentChat();
+                        // }
                         if (mounted) {
                           Navigator.of(
                             context,
@@ -342,7 +345,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 onTap: () {
                   AppNavigator.push(
                     context,
-                    ChatHistoryScreen(),
+                    ChatHistoryScreen(isComeFromTab: widget.isComeFromTab),
                     disableSwipeBack: true,
                   );
                 },

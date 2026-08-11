@@ -164,8 +164,8 @@ class ProgressHeader extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   SizedBox(
-                    width: isDesktopWeb ? 280 : 220,
-                    height: 50,
+                    width: isDesktopWeb ? 280 : 190,
+                    height: 45,
                     child: ElevatedButton(
                       onPressed: onView3DAircraft,
                       style: ElevatedButton.styleFrom(

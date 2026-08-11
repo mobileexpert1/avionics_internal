@@ -79,8 +79,8 @@ class _Airplane3DView extends StatelessWidget {
                     Text(
                       "3D View",
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.bold(
-                        isDesktopWeb ? 20 : 19,
+                      style: AppTextStyles.semiBold(
+                        isDesktopWeb ? 20 : 20,
                       ).copyWith(color: AppColors.primaryDark),
                     ),
 
@@ -101,15 +101,15 @@ class _Airplane3DView extends StatelessWidget {
                       children: [
                         SvgPicture.asset(
                           CommonUi.setSvgImage(AssetsPath.dragRotateIcon),
-                          width: 25,
-                          height: 23,
+                          width: 30,
+                          height: 27,
                           fit: BoxFit.contain,
                         ),
                         const SizedBox(width: 7),
                         Text(
                           "Drag to rotate",
-                          style: AppTextStyles.bold(
-                            isDesktopWeb ? 13 : 13,
+                          style: AppTextStyles.semiBold(
+                            isDesktopWeb ? 13 : 15,
                           ).copyWith(color: const Color(0xFF575757)),
                         ),
                       ],
@@ -169,21 +169,21 @@ class _AircraftPreview extends StatefulWidget {
 class _AircraftPreviewState extends State<_AircraftPreview> {
   late final Flutter3DController _controller;
 
+  bool _isLoading3D = true;
+
   @override
   void initState() {
     super.initState();
 
     _controller = Flutter3DController();
-    //
-    // _controller.onModelLoaded.addListener(() {
-    //   if (_controller.onModelLoaded.value) {
-    //     _controller.setCameraOrbit(
-    //       0,
-    //       75,
-    //       2.5,
-    //     );
-    //   }
-    // });
+
+    _controller.onModelLoaded.addListener(() {
+      if (_controller.onModelLoaded.value && mounted) {
+        setState(() {
+          _isLoading3D = false;
+        });
+      }
+    });
   }
 
   @override
@@ -194,9 +194,12 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
         height: widget.isDesktopWeb ? 320 : 190,
         decoration: BoxDecoration(
           color: const Color(0xffEDEDED),
-          borderRadius: BorderRadius.circular(widget.isDesktopWeb ? 24 : 20),
+          borderRadius: BorderRadius.circular(
+            widget.isDesktopWeb ? 24 : 20,
+          ),
         ),
         child: Stack(
+          alignment: Alignment.center,
           children: [
             if (widget.part.modelPath.isNotEmpty)
               Positioned.fill(
@@ -210,11 +213,19 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
                 ),
               ),
 
+            if (_isLoading3D)
+              const Center(
+                child: CircularProgressIndicator(
+                ),
+              ),
+
             if (!widget.isAircraftUnlocked)
               Positioned.fill(
                 child: IgnorePointer(
                   ignoring: false,
-                  child: Container(color: Colors.transparent),
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
                 ),
               ),
 
@@ -222,9 +233,11 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
               Positioned.fill(
                 child: Center(
                   child: SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
-                    width: widget.isDesktopWeb ? 48 : 38,
-                    height: widget.isDesktopWeb ? 48 : 38,
+                    CommonUi.setSvgImage(
+                      AssetsPath.badgesLockIcon,
+                    ),
+                    width: widget.isDesktopWeb ? 48 : 42,
+                    height: widget.isDesktopWeb ? 48 : 42,
                     fit: BoxFit.contain,
                     color: AppColors.primaryDark,
                   ),
@@ -274,7 +287,7 @@ class Airplane3DSubPartCard extends StatelessWidget {
                 child: Text(
                   subPart.name,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bold(isDesktopWeb ? 16 : 18).copyWith(
+                  style: AppTextStyles.semiBold(isDesktopWeb ? 17 : 20).copyWith(
                     color: isUnlocked
                         ? AppColors.primaryDark
                         : const Color(0xff777777),

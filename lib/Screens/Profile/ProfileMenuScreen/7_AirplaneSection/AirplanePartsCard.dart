@@ -78,12 +78,12 @@ class AirplanePartsCard extends StatelessWidget {
                 children: [
                   Opacity(
                     opacity: isUnlocked ? 1.0 : 0.45,
-                    child: Image.asset(
-                      part.image,
+                    child: SvgPicture.asset(
+                      CommonUi.setSvgImage(part.image),
                       width: isDesktopWeb ? 130 : 85,
                       height: isDesktopWeb ? 90 : 65,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
+                      placeholderBuilder: (context) {
                         return Icon(
                           Icons.airplanemode_active,
                           size: isDesktopWeb ? 65 : 50,

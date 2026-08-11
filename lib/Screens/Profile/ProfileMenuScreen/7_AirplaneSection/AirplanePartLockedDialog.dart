@@ -31,7 +31,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Stack(
           children: [
@@ -43,13 +43,14 @@ class AirplanePartLockedDialog extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Part Image
                   Container(
-                    width: isDesktopWeb ? 145 : 190,
-                    height: isDesktopWeb ? 95 : 100,
+                    width: isDesktopWeb ? 145 : 200,
+                    height: isDesktopWeb ? 95 : 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xffE7E7E7),
+                      color: const Color(0xffEDEDED),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     alignment: Alignment.center,
@@ -70,8 +71,8 @@ class AirplanePartLockedDialog extends StatelessWidget {
                           CommonUi.setSvgImage(
                             AssetsPath.badgesLockIcon,
                           ),
-                          width: 28,
-                          height: 28,
+                          width: 30,
+                          height: 30,
                           fit: BoxFit.contain,
                           color: AppColors.primaryDark,
                         ),
@@ -85,8 +86,8 @@ class AirplanePartLockedDialog extends StatelessWidget {
                   Text(
                     part.name,
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.bold(
-                      19,
+                    style: AppTextStyles.semiBold(
+                      22,
                     ).copyWith(
                       color: AppColors.primaryDark,
                     ),
@@ -97,25 +98,26 @@ class AirplanePartLockedDialog extends StatelessWidget {
                   Text(
                     "This Aircraft part is Currently locked.",
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.medium(
-                      14,
+                    style: AppTextStyles.semiBold(
+                      15,
                     ).copyWith(
                       color: AppColors.black,
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
 
                   // Requirement Box
                   Container(
                     width: double.infinity,
+                    height: isDesktopWeb ? 95 : 90,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xffF4F8FF),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: const Color(0xffC8DDF7),
                       ),
@@ -126,7 +128,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                           "3D part.",
                       textAlign: TextAlign.center,
                       style: AppTextStyles.medium(
-                        13,
+                        15,
                       ).copyWith(
                         color: AppColors.black,
                         height: 1.35,
@@ -150,13 +152,13 @@ class AirplanePartLockedDialog extends StatelessWidget {
                         elevation: 0,
                         padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
                         "Continue",
                         style: AppTextStyles.regular(
-                          13,
+                          15,
                         ).copyWith(
                           color: AppColors.white,
                         ),
