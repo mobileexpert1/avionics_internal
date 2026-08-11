@@ -27,7 +27,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
     required bool isNewSession,
     required BuildContext context,
   }) : _repo = ChatRepositoryImpl(),
-       super(_initialMessages()) {
+        super(_initialMessages()) {
     currentGreeting = _initialGreeting;
     _repo.setInitialGreeting(currentGreeting);
     _init(accessToken, existingSessionId, isNewSession, context);
@@ -67,11 +67,11 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   Future<void> _init(
-    String token,
-    String sessionId,
-    bool isNewSession,
-    BuildContext context,
-  ) async {
+      String token,
+      String sessionId,
+      bool isNewSession,
+      BuildContext context,
+      ) async {
     if (await InternetConnection().hasInternetAccess) {
       _repo.setResponseCallback((event) {
         switch (event.status) {
@@ -241,7 +241,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
         emit([...greeting, ...uiList]);
 
         final converted = serverMessages.map(
-          (s) =>
+              (s) =>
               _repo.serverToLocal(api: s, sessionId: sessionId, userId: null),
         );
 
@@ -266,9 +266,9 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   Future<void> openAddOnPacksBottomSheet(
-    BuildContext context,
-    AddOnPackType packType,
-  ) async {
+      BuildContext context,
+      AddOnPackType packType,
+      ) async {
     await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -287,10 +287,10 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
   }
 
   Future<void> sendMessage(
-    String text,
-    BuildContext context,
-    bool isReceivedTokenFullWarning,
-  ) async {
+      String text,
+      BuildContext context,
+      bool isReceivedTokenFullWarning,
+      ) async {
     if (await InternetConnection().hasInternetAccess) {
       if (CreditManager().remainingToken <= 0 ||
           isReceivedTokenFullWarning == true) {
@@ -302,7 +302,7 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
             isFromWilcoAndTrackingScreen: true,
             buttonText: "Buy Token",
             message:
-                "Your token limit has been exhausted. Please purchase a extra tokens.",
+            "Your token limit has been exhausted. Please purchase a extra tokens.",
             onGoToActionBlock: () {
               openAddOnPacksBottomSheet(context, AddOnPackType.tokensOnly);
             },
@@ -400,8 +400,8 @@ class ChatCubit extends Cubit<List<Map<String, String>>> {
       'text': msg.text.trim(),
     };
     final isDuplicate = next.any(
-      (m) =>
-          m['type'] == mapped['type'] &&
+          (m) =>
+      m['type'] == mapped['type'] &&
           (m['text'] ?? '').trim() == mapped['text'],
     );
 
