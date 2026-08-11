@@ -215,6 +215,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                             PointerDeviceKind.touch,
                                             PointerDeviceKind.mouse,
                                             PointerDeviceKind.trackpad,
+                                            PointerDeviceKind.stylus,
                                           },
                                         ),
                                     child: PageView.builder(

@@ -64,128 +64,115 @@ class _NoInternetDialogContentState extends State<_NoInternetDialogContent>
     }
   }
 
-  void _handleClose() {
-    Navigator.of(context).pop();
-    if (Platform.isAndroid) {
-      SystemNavigator.pop();
-    } else {
-      exit(0);
-    }
-  }
+  // void _handleClose() {
+  //   Navigator.of(context).pop();
+  //   if (Platform.isAndroid) {
+  //     SystemNavigator.pop();
+  //   } else {
+  //     exit(0);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return ScaleTransition(
       scale: _scaleAnim,
       child: Dialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  color: _iconBg,
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(child: _NoWifiIcon()),
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Title ────────────────────────
-              const Text(
-                'No Internet Connection',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: _navy,
-                  letterSpacing: -0.3,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-                'Please check your internet connection\nand try again.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: _textMuted,
-                  height: 1.5,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isRetrying ? null : _handleRetry,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _navy,
-                    disabledBackgroundColor: _navy.withValues(alpha: 0.6),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 24,
+        ),
+        child: SizedBox(
+          width: screenWidth > 800 ? 500 : screenWidth * 0.9,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 28,
+              vertical: 36,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 88,
+                  height: 88,
+                  decoration: const BoxDecoration(
+                    color: _iconBg,
+                    shape: BoxShape.circle,
                   ),
-                  child: _isRetrying
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2.5,
-                          ),
-                        )
-                      : const Text(
-                          'Retry',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: OutlinedButton(
-                  onPressed: _handleClose,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: _navy,
-                    side: BorderSide(
-                      color: _navy.withValues(alpha: 0.35),
-                      width: 1.5,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                  child: const Center(
+                    child: _NoWifiIcon(),
                   ),
-                  child: const Text(
-                    'Close App',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
+                ),
+
+                const SizedBox(height: 24),
+
+                const Text(
+                  'No Internet Connection',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: _navy,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                const Text(
+                  'Please check your internet connection\nand try again.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: _textMuted,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: _isRetrying ? null : _handleRetry,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _navy,
+                      disabledBackgroundColor:
+                      _navy.withValues(alpha: 0.6),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: _isRetrying
+                        ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                        : const Text(
+                      'Retry',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

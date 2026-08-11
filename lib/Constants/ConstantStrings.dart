@@ -44,6 +44,7 @@ class ConstantStrings {
   // ─────────────────────────────
   static const String beginAnalysisText = "Begin Analysis";
   static const String startInvestigationText = "  Start Investigation";
+  static const String readyForDepartureTitle = 'Ready For Departure';
 
   // ─────────────────────────────
   // Authentication
@@ -104,7 +105,9 @@ class ConstantStrings {
   static const String avatarTitle = 'Choose Your Avatar';
   static const String avatarRole = 'Role';
   static const String scientificCalculator = 'Calculator';
-  static const String creditTokenTitle = "Credit & Token Usage";
+  static const String creditTokenTitle = "Tracker & AI Usage";
+  static const String airlineTicketTitle = "Airline Ticket";
+
 
   // ─────────────────────────────
   // Create New Password
@@ -185,8 +188,8 @@ class ApiBaseUrlConstant {
   static const String devChatUrl =
       "avionica.csdevhub.com"; // Cs Url for development.
 
-  static const String baseUrl = _devUrl;
-  static const String baseChatUrl = devChatUrl;
+  static const String baseUrl = _prodUrl;
+  static const String baseChatUrl = prodChatUrl;
 }
 
 class ApiFunctionUrlConstant {
@@ -244,16 +247,6 @@ class ApiServiceUrlConstant {
   static const String chatHistorySession = 'ai-engine/wilco/session';
 }
 
-// // Ask WILCO
-// class ApiFunctionUrlChatConstant {
-//   const ApiFunctionUrlChatConstant._();
-//
-//   // NOTE: this duplicates ApiServiceUrlConstant.chatHistorySession exactly.
-//   // Pick one source of truth — referencing it here instead of repeating
-//   // the literal, so they can't drift out of sync.
-//   static const String chatService = ApiServiceUrlConstant.chatHistorySession;
-// }
-
 class ApiFunctionUrlAirplaneConstant {
   const ApiFunctionUrlAirplaneConstant._();
 
@@ -276,12 +269,6 @@ class ApiServiceUrlAirplaneConstant {
   static const String compareAircraft = "aircraft/comparison";
 }
 
-// ─────────────────────────────────────────────────────────
-// NOTE ON GAME URL PATHS
-// Original file had every "ai-engine/games/..." variant kept
-// as a commented-out line above its replacement. Removed —
-// check git history if the old prefix is ever needed again.
-// ─────────────────────────────────────────────────────────
 class ApiFunctionUrlGamesConstant {
   const ApiFunctionUrlGamesConstant._();
 
@@ -326,6 +313,7 @@ class ApiFunctionUrlMapSectionConstant {
   static const String aircraftFlyingList = "aircraft/flying-area/";
   static const String aircraftStationList = "airport/?";
   static const String aircraftListNew = 'airport/new';
+  static const String airport = 'airport';
 }
 
 class ApiServiceUrlGamesConstant {

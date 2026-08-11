@@ -219,7 +219,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                               isPlanActive: isPlanActive,
                               showActions: true,
                               onModifyTap: () async {
-                                if (!canManageSubscription(
+                                if (!await canManageSubscription(
                                   context,
                                   activeBuyPlatform,
                                 )) {
@@ -240,7 +240,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 }
                               },
                               onAddOnTap: () async {
-                                if (!canManageSubscription(
+                                // Added 'await' here to unwrap the Future<bool> into a raw bool
+                                if (!await canManageSubscription(
                                   context,
                                   activeBuyPlatform,
                                 )) {
@@ -387,15 +388,22 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
     );
   }
 
-  bool canManageSubscription(BuildContext context, String activeBuyPlatform) {
-    final bool isMobilePlatform =
+  Future<bool> canManageSubscription(
+    BuildContext context,
+    String activeBuyPlatform,
+  ) async {
+    final String platform = activeBuyPlatform.toLowerCase();
+    final bool isWebPurchase = platform == "web";
+
+    // Detect if the app is currently running on mobile hardware
+    final bool isCurrentlyMobile =
         !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.iOS ||
             defaultTargetPlatform == TargetPlatform.android);
 
-    final bool isWebPurchase = activeBuyPlatform.toLowerCase() == "web";
-
-    if (isWebPurchase && isMobilePlatform) {
+    // Case 1: Web purchase opened inside a Mobile App
+    if (isWebPurchase && isCurrentlyMobile) {
+      if (!context.mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -406,17 +414,38 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
       return false;
     }
 
-    if (!isWebPurchase && !isMobilePlatform) {
+    // Case 2: Mobile purchase opened on the Web
+    if (!isWebPurchase && kIsWeb) {
+      final String redirectUrl = platform == "ios"
+          ? "https://appleid.apple.com/"
+          : "https://accounts.google.com/";
+
+      await launchUrl(
+        Uri.parse(redirectUrl),
+        mode: LaunchMode.externalApplication,
+      );
+      return false;
+    }
+
+    // Case 3: Mixed mismatch (e.g., Android purchase opened on iOS app, or vice-versa)
+    final bool isIosPurchaseOnAndroid =
+        platform == "ios" && defaultTargetPlatform == TargetPlatform.android;
+    final bool isAndroidPurchaseOnIos =
+        platform == "android" && defaultTargetPlatform == TargetPlatform.iOS;
+
+    if (isIosPurchaseOnAndroid || isAndroidPurchaseOnIos) {
+      if (!context.mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            "Your current plan was purchased through the mobile app. Please use the app to manage it.",
+            "Your plan was purchased via ${activeBuyPlatform.toUpperCase()}. Please use that platform to manage it.",
           ),
         ),
       );
       return false;
     }
 
+    // Case 4: Perfect match (Web on Web, iOS on iOS, Android on Android)
     return true;
   }
 

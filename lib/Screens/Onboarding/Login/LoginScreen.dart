@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
 
-                            if (kIsWeb) ...[GoogleWebButton()],
+                            if (kIsWeb) const GoogleWebButton(),
 
                             const SizedBox(height: 12),
 

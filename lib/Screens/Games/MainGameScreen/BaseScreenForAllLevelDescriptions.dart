@@ -123,6 +123,15 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.blackBoxListScreen,
         );
 
+        // AppNavigator.push(
+        //   context,
+        //   JettingAroundTheWorldScreen(),
+        //   multiBlocProviders: [
+        //     BlocProvider(create: (_) => JettingTheWorldCubit()),
+        //   ],
+        //   disableSwipeBack: true,
+        // );
+
         AppNavigator.push(
           context,
           QuizQuestionScreen(

@@ -65,7 +65,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: 'Manufacturers Library',
+        title: 'Encyclopedia',
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -100,13 +100,13 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                     enableFilter: false,
                     enableCloseScreen: false,
                     controller: searchController,
+                    searchTitle: "Search Manufacturer",
                     onChanged: (value) {
-                      context.read<ManufacturerCubit>().loadListOfManufacturers(
-                        context: context,
-                        query: value.trim(),
+                      context.read<ManufacturerCubit>().searchManufacturers(
+                        value,
+                        context,
                       );
                     },
-                    searchTitle: "Search Manufacturer",
                   ),
                 ),
 
@@ -114,55 +114,66 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                   builder: (context, state) {
                     final cubit = context.read<ManufacturerCubit>();
 
-                    return Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: kIsWeb
-                            ? screenWidth * 0.02
-                            : screenWidth * 0.05,
-                      ),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: (state.categories).map((label) {
-                          final isSelected = state
-                              .selectedManufacturerCategories
-                              .contains(label);
+                    final bool isBusy = state.isLoading || state.isFetchingMore;
 
-                          return Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(14),
-                              onTap: () {
-                                debugPrint("Tapped: $label");
+                    return IgnorePointer(
+                      ignoring: isBusy,
+                      child: Opacity(
+                        opacity: isBusy ? 0.5 : 1.0,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: kIsWeb
+                                ? screenWidth * 0.02
+                                : screenWidth * 0.05,
+                          ),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: state.categories.map((label) {
+                              final isSelected = state
+                                  .selectedManufacturerCategories
+                                  .contains(label);
 
-                                cubit.toggleCategory(label, context);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 7,
-                                  vertical: 7,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.extraDarkYellow
-                                      : Colors.white,
+                              return Material(
+                                color: Colors.transparent,
+                                child: InkWell(
                                   borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: AppColors.black,
-                                    width: 1,
+                                  onTap: () async {
+                                    if (isBusy) return;
+
+                                    debugPrint("Tapped: $label");
+
+                                    await cubit.toggleCategory(label, context);
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 7,
+                                      vertical: 7,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.extraDarkYellow
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: AppColors.black,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      label,
+                                      style: AppTextStyles.regular(15).copyWith(
+                                        height: 1.0,
+                                        color: AppColors.primaryDark,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                child: Text(
-                                  label,
-                                  style: AppTextStyles.regular(15).copyWith(
-                                    height: 1.0,
-                                    color: AppColors.primaryDark,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
                     );
                   },

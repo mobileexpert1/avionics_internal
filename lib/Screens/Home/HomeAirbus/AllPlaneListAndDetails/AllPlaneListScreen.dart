@@ -91,8 +91,6 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final isDesktopWeb = kIsWeb && screenWidth >= 900;
-    final isMobileWeb = kIsWeb && screenWidth < 900;
-
     double paddingHorizontal = isDesktopWeb ? screenWidth * 0.02 : 20;
 
     double cardHeight = isDesktopWeb ? 120 : 80;
@@ -153,20 +151,20 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'All ${widget.manufacturerName} Models',
-                      style: AppTextStyles.bold(20).copyWith(
-                        height: 1.0,
-                        color: AppColors.primaryValueColour,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
+                // Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+                //   child: Align(
+                //     alignment: Alignment.centerLeft,
+                //     child: Text(
+                //       'All ${widget.manufacturerName} Models',
+                //       style: AppTextStyles.bold(20).copyWith(
+                //         height: 1.0,
+                //         color: AppColors.primaryValueColour,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: 10),
                 Expanded(
                   child: BlocBuilder<AllPlanesCubit, AllPlanesState>(
                     builder: (context, state) {
