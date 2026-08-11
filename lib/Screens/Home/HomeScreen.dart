@@ -91,43 +91,43 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(right: 10, bottom: 10),
-          child: FloatingActionButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final token = prefs.getString('UserAccessTokenKey');
-              if (token != null && token.isNotEmpty) {
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.openAskWilcoChatButton,
-                  FirebaseEvents.exploreScreen,
-                );
-                AppNavigator.push(
-                  context,
-                  AskWilcoScreen(
-                    accessToken: token,
-                    isComeFromTab: false,
-                    sessionId: '',
-                    title: '',
-                  ),
-                  disableSwipeBack: true,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Access token not found")),
-                );
-              }
-            },
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.homeWilco),
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
+        // floatingActionButton: Padding(
+        //   padding: const EdgeInsets.only(right: 10, bottom: 10),
+        //   child: FloatingActionButton(
+        //     onPressed: () async {
+        //       final prefs = await SharedPreferences.getInstance();
+        //       final token = prefs.getString('UserAccessTokenKey');
+        //       if (token != null && token.isNotEmpty) {
+        //         AnalyticsService.instance.buttonPressed(
+        //           FirebaseEvents.openAskWilcoChatButton,
+        //           FirebaseEvents.exploreScreen,
+        //         );
+        //         AppNavigator.push(
+        //           context,
+        //           AskWilcoScreen(
+        //             accessToken: token,
+        //             isComeFromTab: false,
+        //             sessionId: '',
+        //             title: '',
+        //           ),
+        //           disableSwipeBack: true,
+        //         );
+        //       } else {
+        //         ScaffoldMessenger.of(context).showSnackBar(
+        //           const SnackBar(content: Text("Access token not found")),
+        //         );
+        //       }
+        //     },
+        //     backgroundColor: Colors.transparent,
+        //     elevation: 0,
+        //     child: SvgPicture.asset(
+        //       CommonUi.setSvgImage(AssetsPath.homeWilco),
+        //       width: 50,
+        //       height: 50,
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ),
+        // ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading) {
