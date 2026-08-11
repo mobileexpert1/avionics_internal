@@ -13,7 +13,7 @@ import 'JettingAroundTheBoardingPass.dart';
 
 class JourneyRoutePopup extends StatefulWidget {
   const JourneyRoutePopup({super.key, required JettingTheWorldCubit cubit})
-    : _cubit = cubit;
+      : _cubit = cubit;
 
   final JettingTheWorldCubit _cubit;
 
@@ -153,14 +153,14 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                               child: Container(
                                                 width: 2,
                                                 margin:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 4,
-                                                    ),
+                                                const EdgeInsets.symmetric(
+                                                  vertical: 4,
+                                                ),
                                                 decoration: BoxDecoration(
                                                   border: Border(
                                                     left: BorderSide(
                                                       color:
-                                                          Colors.grey.shade400,
+                                                      Colors.grey.shade400,
                                                       width: 1.2,
                                                     ),
                                                   ),
@@ -196,29 +196,29 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     "${airport.city} (${airport.iata})",
                                                     style:
-                                                        AppTextStyles.bold(
-                                                          16,
-                                                        ).copyWith(
-                                                          color: AppColors
-                                                              .primaryDark,
-                                                          height: 2.0,
-                                                        ),
+                                                    AppTextStyles.bold(
+                                                      16,
+                                                    ).copyWith(
+                                                      color: AppColors
+                                                          .primaryDark,
+                                                      height: 2.0,
+                                                    ),
                                                   ),
 
                                                   Text(
                                                     airport.country,
                                                     style:
-                                                        AppTextStyles.bold(
-                                                          16,
-                                                        ).copyWith(
-                                                          color: AppColors
-                                                              .grayMedium,
-                                                        ),
+                                                    AppTextStyles.bold(
+                                                      16,
+                                                    ).copyWith(
+                                                      color: AppColors
+                                                          .grayMedium,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -226,27 +226,27 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
 
                                             Container(
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 6,
-                                                  ),
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 6,
+                                              ),
                                               decoration: BoxDecoration(
                                                 color: isCurrent
                                                     ? AppColors
-                                                          .greenColourForPlan
-                                                          .withValues(
-                                                            alpha: 0.2,
-                                                          )
+                                                    .greenColourForPlan
+                                                    .withValues(
+                                                  alpha: 0.2,
+                                                )
                                                     : AppColors.grayLight
-                                                          .withValues(
-                                                            alpha: 0.2,
-                                                          ),
+                                                    .withValues(
+                                                  alpha: 0.2,
+                                                ),
                                                 borderRadius:
-                                                    BorderRadius.circular(30),
+                                                BorderRadius.circular(30),
                                                 border: Border.all(
                                                   color: isCurrent
                                                       ? AppColors
-                                                            .greenColourForPlan
+                                                      .greenColourForPlan
                                                       : AppColors.grayLight,
                                                 ),
                                               ),
@@ -256,9 +256,9 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                                   if (isLocked)
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                            right: 4,
-                                                          ),
+                                                      const EdgeInsets.only(
+                                                        right: 4,
+                                                      ),
                                                       child: Icon(
                                                         Icons.lock_outline,
                                                         size: 14,
@@ -276,9 +276,9 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                                       fontSize: 12,
                                                       color: isCurrent
                                                           ? AppColors
-                                                                .greenColourForPlan
+                                                          .greenColourForPlan
                                                           : AppColors
-                                                                .grayMedium,
+                                                          .grayMedium,
                                                     ),
                                                   ),
                                                 ],

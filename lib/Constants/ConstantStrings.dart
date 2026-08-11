@@ -44,6 +44,7 @@ class ConstantStrings {
   // ─────────────────────────────
   static const String beginAnalysisText = "Begin Analysis";
   static const String startInvestigationText = "  Start Investigation";
+  static const String readyForDepartureTitle = 'Ready For Departure';
 
   // ─────────────────────────────
   // Authentication

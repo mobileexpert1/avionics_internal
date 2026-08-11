@@ -13,6 +13,9 @@ import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../Helpers/WebAndMobileBrowser/web_iframe_widget.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
+import '../../../../Constants/AppColors.dart';
+import '../../../../CustomFiles/CustomBottomButton.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class JettingAroundTheBoardingPass extends StatefulWidget {
   const JettingAroundTheBoardingPass({super.key});
@@ -30,6 +33,7 @@ class _JettingAroundTheBoardingState
   double tokenUsagePercentage = 0.0;
   double creditUsagePercentage = 0.0;
   String _webUrl = "";
+  bool isClickOnNextButton = false;
 
   @override
   void initState() {
@@ -123,14 +127,59 @@ class _JettingAroundTheBoardingState
                   CommonUi.setSvgImage(AssetsPath.backArrowButton),
                   fit: BoxFit.cover,
                 ),
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () {
+                  if (isClickOnNextButton) {
+                    setState(() {
+                      isClickOnNextButton = false;
+                    });
+                  } else {
+                    Navigator.pop(context, true);
+                  }
+                },
               ),
             ),
-            body: kIsWeb
-                ? _webUrl.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : WebIframeWidget(url: _webUrl)
-                : WebViewWidget(controller: controller!),
+            body: Column(
+              children: [
+                if (isClickOnNextButton) ...[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height - 100,
+                    width: MediaQuery.of(context).size.width - 200,
+                    child: Image.asset(
+                      CommonUi.setPngImage(AssetsPath.carFollowImage),
+                      width: 46,
+                      height: 46,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ] else
+                  Expanded(
+                    child: kIsWeb
+                        ? _webUrl.isEmpty
+                              ? const Center(child: CircularProgressIndicator())
+                              : WebIframeWidget(url: _webUrl)
+                        : controller == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : WebViewWidget(controller: controller!),
+                  ),
+
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: CustomBottomButton(
+                    fontStyle: AppTextStyles.regular(
+                      18,
+                    ).copyWith(height: 1.0, color: Colors.white),
+                    title: ConstantStrings.readyForDepartureTitle,
+                    backgroundColor: AppColors.primaryDark,
+                    textColor: Colors.white,
+                    icon: const SizedBox(width: 0),
+                    isEnabled: true,
+                    onPressed: () {},
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
           );
         },
       ),

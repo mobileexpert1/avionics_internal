@@ -2,10 +2,7 @@ class JettingTheWorldModel {
   final String detail;
   final List<AirportPerItemModel> data;
 
-  JettingTheWorldModel({
-    required this.detail,
-    required this.data,
-  });
+  JettingTheWorldModel({required this.detail, required this.data});
 
   factory JettingTheWorldModel.fromJson(Map<String, dynamic> json) {
     return JettingTheWorldModel(
@@ -17,10 +14,7 @@ class JettingTheWorldModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'detail': detail,
-      'data': data.map((e) => e.toJson()).toList(),
-    };
+    return {'detail': detail, 'data': data.map((e) => e.toJson()).toList()};
   }
 }
 
@@ -36,6 +30,7 @@ class AirportPerItemModel {
   final double distanceNm;
   final double latitude;
   final double longitude;
+  final bool unlocked;
 
   AirportPerItemModel({
     required this.id,
@@ -49,6 +44,7 @@ class AirportPerItemModel {
     required this.distanceNm,
     required this.latitude,
     required this.longitude,
+    required this.unlocked,
   });
 
   factory AirportPerItemModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +60,7 @@ class AirportPerItemModel {
       distanceNm: (json['distance_nm'] as num?)?.toDouble() ?? 0.0,
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
+      unlocked: (json['unlocked'] as bool?) ?? false,
     );
   }
 
@@ -80,6 +77,7 @@ class AirportPerItemModel {
       'distance_nm': distanceNm,
       'latitude': latitude,
       'longitude': longitude,
+      'unlocked': unlocked,
     };
   }
 }

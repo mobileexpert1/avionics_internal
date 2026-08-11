@@ -195,33 +195,34 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
 
               Expanded(
                 child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {
-                        PointerDeviceKind.touch,
-                        PointerDeviceKind.mouse,
-                        PointerDeviceKind.trackpad,
-                        PointerDeviceKind.stylus,
-                      },
-                    ),
-                    child:PageView.builder(
-                  controller: _tabPageController,
-                  itemCount: sub2Tabs.length,
-                  onPageChanged: (index) {
-                    setState(() => subTab = index);
-                    _scrollToSelectedSubTab(index);
-                  },
-                  itemBuilder: (context, index) {
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20),
-                          _getTabContentByIndex(index, details),
-                        ],
-                      ),
-                    );
-                  },
-                )),
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.mouse,
+                      PointerDeviceKind.trackpad,
+                      PointerDeviceKind.stylus,
+                    },
+                  ),
+                  child: PageView.builder(
+                    controller: _tabPageController,
+                    itemCount: sub2Tabs.length,
+                    onPageChanged: (index) {
+                      setState(() => subTab = index);
+                      _scrollToSelectedSubTab(index);
+                    },
+                    itemBuilder: (context, index) {
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
+                            _getTabContentByIndex(index, details),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
 
               // ── BOTTOM NAV ARROWS + DOTS ──
@@ -731,17 +732,17 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Number of Passengers (Maximum)',
-              detail?.identification.numberOfPassengers.maximum ?? 'N/A',
-              true,
-              "number_of_passengers_maximum",
-              "Aircraft",
-            ],
-            [
               'Number of Passengers (Typical)',
               detail?.identification.numberOfPassengers.typical ?? 'N/A',
               true,
               "number_of_passengers_typical",
+              "Aircraft",
+            ],
+            [
+              'Number of Passengers (Max)',
+              detail?.identification.numberOfPassengers.maximum ?? 'N/A',
+              true,
+              "number_of_passengers_maximum",
               "Aircraft",
             ],
           ],
@@ -757,13 +758,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               detail?.powerplant.numberOfEngines.toString() ?? 'N/A',
               true,
               "number_of_engines",
-              "Aircraft",
-            ],
-            [
-              'Fuel Consumption (kg/h)',
-              detail?.powerplant.fuel.burnRate ?? 'N/A',
-              true,
-              "fuel_consumption",
               "Aircraft",
             ],
             [
@@ -829,6 +823,13 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "fuel_capacity",
               "Aircraft",
             ],
+            [
+              'Fuel Consumption (kg/h)',
+              detail?.powerplant.fuel.burnRate ?? 'N/A',
+              true,
+              "fuel_consumption",
+              "Aircraft",
+            ],
           ],
           context: context,
         );
@@ -843,13 +844,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "wingspan",
               "Aircraft",
             ],
-            [
-              'Cabin Width (m)',
-              detail?.dimensions.cabinWidthM ?? 'N/A',
-              true,
-              "cabin_width",
-              "Aircraft",
-            ],
+
             [
               'Length (m)',
               detail?.dimensions.lengthM ?? 'N/A',
@@ -857,13 +852,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "length",
               "Aircraft",
             ],
-            [
-              'Wingtip Configuration',
-              detail?.dimensions.wingtipConfiguration ?? 'N/A',
-              true,
-              "wingtip_configuration",
-              "Aircraft",
-            ],
+
             [
               'Height (m)',
               detail?.dimensions.heightM ?? 'N/A',
@@ -871,6 +860,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "height",
               "Aircraft",
             ],
+
             [
               'Wing Area (m²)',
               detail?.dimensions.wingAreaM2 ?? 'N/A',
@@ -879,10 +869,24 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
+              'Cabin Width (m)',
+              detail?.dimensions.cabinWidthM ?? 'N/A',
+              true,
+              "cabin_width",
+              "Aircraft",
+            ],
+            [
               'Door Height (m)',
               detail?.dimensions.doorHeightM ?? 'N/A',
               true,
               "door_height",
+              "Aircraft",
+            ],
+            [
+              'Wingtip Configuration',
+              detail?.dimensions.wingtipConfiguration ?? 'N/A',
+              true,
+              "wingtip_configuration",
               "Aircraft",
             ],
           ],
@@ -900,47 +904,47 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Maximum Zero Fuel Weight (MZFW, kg)',
+              'Max Zero Fuel Weight (MZFW, kg)',
               detail?.weights.zeroFuelWeight ?? 'N/A',
               true,
               "maximum_zero_fuel_weight",
               "Aircraft",
             ],
             [
-              'Maximum Takeoff Weight(MTOW, kg)',
+              'Max Take-off Weight(MTOW, kg)',
               detail?.weights.takeoffWeight ?? 'N/A',
               true,
               "maximum_take_off_weight",
               "Aircraft",
             ],
             [
-              'Maximum Payload (kg)',
+              'Max Payload (kg)',
               detail?.weights.payload ?? 'N/A',
               true,
               "maximum_payload",
               "Aircraft",
             ],
             [
-              'Maximum Landing Weight(MLW, kg)',
+              'Max Landing Weight(MLW, kg)',
               detail?.weights.landingWeight ?? 'N/A',
               true,
               "maximum_landing_weight",
               "Aircraft",
             ],
             [
-              'Maximum Baggage or Cargo Volume (m³)',
+              'Baggage or Cargo Volume (m³)',
               detail?.weights.baggage.maximum ?? 'N/A',
               true,
               "maximum_baggage_or_cargo_volume",
               "Aircraft",
             ],
-            [
-              'Minimum Baggage or Cargo Volume (m³)',
-              detail?.weights.baggage.minimum ?? 'N/A',
-              true,
-              "minimum_baggage_or_cargo_volume",
-              "Aircraft",
-            ],
+            // [
+            //   'Minimum Baggage or Cargo Volume (m³)',
+            //   detail?.weights.baggage.minimum ?? 'N/A',
+            //   true,
+            //   "minimum_baggage_or_cargo_volume",
+            //   "Aircraft",
+            // ],
           ],
           context: context,
         );
@@ -977,7 +981,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Maximum Rate of Climb(fpm)',
+              'Max Rate of Climb(fpm)',
               detail?.performance.climbMaxFpm ?? 'N/A',
               true,
               "maximum_rate_of_climb",
@@ -1005,7 +1009,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Maximum Speed (VMO/MMO, kts/Mach)',
+              'Max Speed (VMO/MMO, kts/Mach)',
               detail?.performance.maxCruiseSpeed ?? 'N/A',
               true,
               "maximum_speed",
@@ -1040,17 +1044,10 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Minimum Clean Speed (kts)',
+              'Min Clean Speed (kts)',
               detail?.performance.minCleanSpeed ?? 'N/A',
               true,
               "minimum_clean_speed",
-              "Aircraft",
-            ],
-            [
-              'Approach Category',
-              detail?.performance.approachCategory ?? 'N/A',
-              true,
-              "approach_category",
               "Aircraft",
             ],
 
@@ -1062,10 +1059,10 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Landing Distance (m)',
-              detail?.performance.landingDistance ?? 'N/A',
+              'Approach Category',
+              detail?.performance.approachCategory ?? 'N/A',
               true,
-              "landing_distance",
+              "approach_category",
               "Aircraft",
             ],
 
@@ -1076,19 +1073,26 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "landing_speed",
               "Aircraft",
             ],
-
             [
-              'Stall Speed (kts)',
-              detail?.performance.stallSpeed ?? 'N/A',
+              'Landing Distance (m)',
+              detail?.performance.landingDistance ?? 'N/A',
               true,
-              "stall_speed",
+              "landing_distance",
               "Aircraft",
             ],
+
             [
               'Runway Length Required (m)',
               detail?.performance.runwayRequired ?? 'N/A',
               true,
               "runway_length_required",
+              "Aircraft",
+            ],
+            [
+              'Stall Speed (kts)',
+              detail?.performance.stallSpeed ?? 'N/A',
+              true,
+              "stall_speed",
               "Aircraft",
             ],
           ],
@@ -1113,7 +1117,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Maximum Crosswind (Degraded Law, kts)',
+              'Max Crosswind (Degraded Law, kts)',
               detail?.operationalLimitations.maxCrosswindDegraded ?? 'N/A',
               true,
               "maximum_crosswind_degraded_law",
@@ -1127,12 +1131,19 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Max Tailwind Takeoff (kts)',
+              'Tailwind Limit (Flaps ≤10°)',
               detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
               true,
-              "max_tailwind_take_off",
+              "tailwind_limit",
               "Aircraft",
             ],
+            // [
+            //   'Max Tailwind Takeoff (kts)',
+            //   detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
+            //   true,
+            //   "max_tailwind_take_off",
+            //   "Aircraft",
+            // ],
             [
               'Field Elevation Limit (ft)',
               detail?.operationalLimitations.fieldElevationLimit ?? 'N/A',
@@ -1141,19 +1152,13 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Maximum Runway Altitude (ft)',
+              'Max Runway Altitude (ft)',
               detail?.operationalLimitations.maxRunwayAltitude ?? 'N/A',
               true,
               "maximum_runway_altitude",
               "Aircraft",
             ],
-            [
-              'Tailwind Limit (Flaps ≤10°)',
-              detail?.operationalLimitations.maxTailwindTakeoff ?? 'N/A',
-              true,
-              "tailwind_limit",
-              "Aircraft",
-            ],
+
             [
               'Supported Categories',
               detail?.operationalLimitations.autoland.supportedCategories ??
@@ -1163,7 +1168,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
-              'Certified Autoland Level',
+              'Certified Autoland',
               detail?.operationalLimitations.autoland.certifiedLevel ?? 'N/A',
               true,
               "certified_autoland_level",
@@ -1219,6 +1224,20 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               "Aircraft",
             ],
             [
+              'EASA TCDS Number',
+              detail?.certification.easa ?? 'N/A',
+              true,
+              "easa_tcds_number",
+              "Aircraft",
+            ],
+            [
+              'FAA TCDS Number',
+              detail?.certification.faa ?? 'N/A',
+              true,
+              "faa_tcds_number",
+              "Aircraft",
+            ],
+            [
               'Special Conditions',
               detail?.certification.specialConditions ?? 'N/A',
               true,
@@ -1237,20 +1256,6 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
               detail?.certification.emissionsCategory ?? 'N/A',
               true,
               "emissions_category",
-              "Aircraft",
-            ],
-            [
-              'EASA TCDS Number',
-              detail?.certification.easa ?? 'N/A',
-              true,
-              "easa_tcds_number",
-              "Aircraft",
-            ],
-            [
-              'FAA TCDS Number',
-              detail?.certification.faa ?? 'N/A',
-              true,
-              "faa_tcds_number",
               "Aircraft",
             ],
           ],

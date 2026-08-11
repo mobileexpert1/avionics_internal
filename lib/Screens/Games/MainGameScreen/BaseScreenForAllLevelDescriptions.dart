@@ -2,15 +2,12 @@ import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Helpers/AppNavigator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 import '../../../Constants/ConstantStrings.dart';
-import '../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxQuestionScreen.dart';
 import '../GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
-import '../GamesSubScreens/JettingAroundTheWorld/JettingAroundTheWorldScreen.dart';
 import '../GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizLockScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
@@ -135,16 +132,15 @@ class _BaseScreenForAllLevelState
         //   disableSwipeBack: true,
         // );
 
-        // AppNavigator.push(
-        //   context,
-        //   JettingAroundTheWorldScreen(),
-        //   // QuizQuestionScreen(
-        //   //   sectionId: 0,
-        //   //   sectionTitle: "Jetting Around The World",
-        //   //   gameId: "trivia",
-        //   // ),
-        //   disableSwipeBack: true,
-        // );
+        AppNavigator.push(
+          context,
+          QuizQuestionScreen(
+            sectionId: 0,
+            sectionTitle: "Jetting Around The World",
+            gameId: "trivia",
+          ),
+          disableSwipeBack: true,
+        );
         break;
 
       case 'aircraftEncyclopaedia':
