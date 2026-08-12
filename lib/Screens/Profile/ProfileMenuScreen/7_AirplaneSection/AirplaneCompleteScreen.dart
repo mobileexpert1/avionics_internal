@@ -236,7 +236,7 @@ class _AirplaneCompleteScreenState extends State<AirplaneCompleteScreen> {
                         child: Text(
                           "Drag to rotate the Aircraft",
                           style: AppTextStyles.bold(
-                            isDesktopWeb ? 14 : 12,
+                            isDesktopWeb ? 14 : 14,
                           ).copyWith(
                             color: const Color(0xFF575757),
                           ),

@@ -73,7 +73,7 @@ class ProgressHeader extends StatelessWidget {
                       text: "$unlocked",
                       style: AppTextStyles.bold(
                         countSize,
-                      ).copyWith(color: AppColors.primaryBlue),
+                      ).copyWith(color: AppColors.primaryDark),
                     ),
                     TextSpan(
                       text: "/$total",
@@ -93,62 +93,64 @@ class ProgressHeader extends StatelessWidget {
               const planeSize = 30.0;
               const barHeight = 9.0;
 
-              final planePosition = (constraints.maxWidth) * progress;
+              final horizontalPadding = 20.0;
+              final barWidth = constraints.maxWidth - (horizontalPadding * 2);
+              final planePosition = barWidth * progress;
 
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    child: Align(
+              const planeGap = 1;
+
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          height: barHeight,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD9D9D9),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Align(
                       alignment: Alignment.centerLeft,
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
                         height: barHeight,
+                        width: planePosition,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD9D9D9),
+                          color: progressColor,
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                     ),
-                  ),
 
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: AnimatedContainer(
+                    AnimatedPositioned(
                       duration: const Duration(milliseconds: 400),
-                      height: barHeight,
-                      width: planePosition + (planeSize / 2),
-                      decoration: BoxDecoration(
-                        color: progressColor,
-                        borderRadius: BorderRadius.circular(50),
+                      left: planePosition + planeGap,
+                      top: (planeSize - 51) / 2,
+                      child: Transform.rotate(
+                        angle: math.pi / 2,
+                        child: Icon(
+                          Icons.airplanemode_active,
+                          size: planeSize,
+                          color: progressColor,
+                        ),
                       ),
                     ),
-                  ),
-
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 400),
-                    left: planePosition + (progress == 1.0 ? -15 : 15),
-                    top: (planeSize - 51) / 2,
-
-                    child: Transform.rotate(
-                      angle: math.pi / 2,
-                      child: Icon(
-                        Icons.airplanemode_active,
-                        size: planeSize,
-                        color: progressColor,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
           if (isCompleted)
             Padding(
-              padding: const EdgeInsets.only(
-                top: 15,
-                left: 8,
-                right: 8,
-              ),
+              padding: const EdgeInsets.only(top: 15, left: 8, right: 8),
               child: Column(
                 children: [
                   Text(
@@ -156,16 +158,14 @@ class ProgressHeader extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: AppTextStyles.regular(
                       isDesktopWeb ? 14 : 15,
-                    ).copyWith(
-                      color: AppColors.black,
-                    ),
+                    ).copyWith(color: AppColors.black),
                   ),
 
                   const SizedBox(height: 15),
 
                   SizedBox(
-                    width: isDesktopWeb ? 280 : 190,
-                    height: 45,
+                    width: isDesktopWeb ? 280 : 170,
+                    height: 40,
                     child: ElevatedButton(
                       onPressed: onView3DAircraft,
                       style: ElevatedButton.styleFrom(
@@ -177,9 +177,9 @@ class ProgressHeader extends StatelessWidget {
                       ),
                       child: Text(
                         "View 3D Aircraft",
-                        style: AppTextStyles.regular(18).copyWith(
-                          color: AppColors.white,
-                        ),
+                        style: AppTextStyles.regular(
+                          18,
+                        ).copyWith(color: AppColors.white),
                       ),
                     ),
                   ),
@@ -188,19 +188,13 @@ class ProgressHeader extends StatelessWidget {
             )
           else if (bottomTitle != null && bottomTitle!.trim().isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(
-                top: 15,
-                left: 8,
-                right: 8,
-              ),
+              padding: const EdgeInsets.only(top: 15, left: 8, right: 8),
               child: Text(
                 bottomTitle!,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.regular(
                   isDesktopWeb ? 14 : 15,
-                ).copyWith(
-                  color: AppColors.black,
-                ),
+                ).copyWith(color: AppColors.black),
               ),
             ),
         ],

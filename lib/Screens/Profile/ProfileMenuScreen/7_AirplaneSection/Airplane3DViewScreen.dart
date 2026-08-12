@@ -304,7 +304,7 @@ class Airplane3DSubPartCard extends StatelessWidget {
           Text(
             subPart.description,
             textAlign: TextAlign.center,
-            style: AppTextStyles.regular(isDesktopWeb ? 14 : 14).copyWith(
+            style: AppTextStyles.semiBold(isDesktopWeb ? 14 : 14).copyWith(
               color: isUnlocked ? AppColors.black : const Color(0xff777777),
               height: 1.4,
             ),

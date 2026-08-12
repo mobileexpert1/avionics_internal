@@ -73,37 +73,37 @@ class AirplanePartsCard extends StatelessWidget {
 
             // Aircraft part image + lock
             Expanded(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Opacity(
-                    opacity: isUnlocked ? 1.0 : 0.45,
-                    child: SvgPicture.asset(
-                      CommonUi.setSvgImage(part.image),
-                      width: isDesktopWeb ? 130 : 85,
-                      height: isDesktopWeb ? 90 : 65,
-                      fit: BoxFit.contain,
-                      placeholderBuilder: (context) {
-                        return Icon(
-                          Icons.airplanemode_active,
-                          size: isDesktopWeb ? 65 : 50,
-                          color: Colors.white,
-                        );
-                      },
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Opacity(
+                      opacity: isUnlocked ? 1.0 : 0.45,
+                      child: Image.asset(
+                        CommonUi.setPngImage(part.image),
+                        width: isDesktopWeb ? 150 : 150,
+                        height: isDesktopWeb ? 105 : 125,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.airplanemode_active,
+                            size: isDesktopWeb ? 65 : 50,
+                            color: Colors.white,
+                          );
+                        },
+                      ),
                     ),
-                  ),
 
-                  if (!isUnlocked)
-                    Center(
-                      child: SvgPicture.asset(
+                    if (!isUnlocked)
+                      SvgPicture.asset(
                         CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
                         width: isDesktopWeb ? 38 : 30,
                         height: isDesktopWeb ? 38 : 30,
                         fit: BoxFit.contain,
                         color: AppColors.primaryDark,
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
 

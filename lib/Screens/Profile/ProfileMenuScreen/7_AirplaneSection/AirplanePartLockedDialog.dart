@@ -46,6 +46,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Part Image
+                  // Part Image
                   Container(
                     width: isDesktopWeb ? 145 : 200,
                     height: isDesktopWeb ? 95 : 120,
@@ -60,10 +61,17 @@ class AirplanePartLockedDialog extends StatelessWidget {
                         Opacity(
                           opacity: 0.45,
                           child: Image.asset(
-                            part.image,
-                            width: 110,
-                            height: 75,
+                            CommonUi.setPngImage(part.image),
+                            width: isDesktopWeb ? 150 : 150,
+                            height: isDesktopWeb ? 105 : 125,
                             fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.airplanemode_active,
+                                size: isDesktopWeb ? 65 : 50,
+                                color: Colors.white,
+                              );
+                            },
                           ),
                         ),
 
