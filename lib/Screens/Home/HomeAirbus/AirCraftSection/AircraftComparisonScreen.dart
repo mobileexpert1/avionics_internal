@@ -79,7 +79,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
-    final bool isMobileWeb = kIsWeb && screenWidth < 900;
 
     // Dynamic sizes
     double bodyFontSize = isDesktopWeb ? screenWidth * 0.015 : 16;

@@ -1009,7 +1009,7 @@ class BlackBoxProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                          CommonUi.setGifImage(AssetsPath.timeoutAlertGif),
+                          CommonUi.setGifAndVideoImage(AssetsPath.timeoutAlertGif,false),
                           width: 30,
                           height: 30,
                           fit: BoxFit.cover,

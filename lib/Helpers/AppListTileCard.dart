@@ -12,6 +12,7 @@ class AppListTileCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isSvg;
   final bool isNetwork;
+  final bool isForZeroIndex;
 
   const AppListTileCard({
     Key? key,
@@ -20,6 +21,7 @@ class AppListTileCard extends StatelessWidget {
     this.onTap,
     this.isSvg = true,
     this.isNetwork = false,
+    this.isForZeroIndex = false,
   }) : super(key: key);
 
   @override
@@ -45,12 +47,16 @@ class AppListTileCard extends StatelessWidget {
                 horizontal: kIsWeb ? screenWidth * 0.01 : screenWidth * 0.03,
                 vertical: 6,
               ),
-              leading: _buildLeadingImage(iconSize),
+              leading: imagePath != "" ? _buildLeadingImage(iconSize) : null,
               title: Text(
                 title,
-                style: AppTextStyles.medium(
-                  16,
-                ).copyWith(height: 1.0, color: AppColors.black),
+
+                style: AppTextStyles.regular(isForZeroIndex ? 14 : 16).copyWith(
+                  height: isForZeroIndex ? 1.4 : 1.0,
+                  color: isForZeroIndex
+                      ? AppColors.textHomeColour
+                      : AppColors.black,
+                ),
               ),
               onTap: onTap,
             ),

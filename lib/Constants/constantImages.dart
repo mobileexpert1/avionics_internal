@@ -157,14 +157,9 @@ abstract class AssetsPath {
   static const switchLGridForCalculation = '128CalculationSwitch';
   static const viewCreditsToken = '129ViewCreditsToken';
   static const tickIcon = '130TickIcon';
-  static const myAirplaneIcon = '131myairplane';
+  static const myAirplaneIcon = '131MyAirplane';
   static const dragRotateIcon = '132dragIcon';
-  static const nose = '200nosse';
-  static const cockpit = '201cockpit';
-  static const fislage = '202fuslage';
-  static const leftwing = '203leftwing';
-  static const rightwing = '204rightwing';
-  static const engine = '205engine';
+  static const successJettingAround = '133SuccessJettingAround';
 
   //JPG
   static const String startExploreIcon = "1StartExploreIcon";
@@ -188,11 +183,12 @@ abstract class AssetsPath {
   static const String viewCreditTokensImage = "14ViewCreditTokens";
   static const String addOnPacksImage = "15AddOnPacks";
 
-
   //Gif
   static const String badgeGif = "1BadgeGif";
   static const String gameResultGif = "2GameResultGif";
   static const String timeoutAlertGif = "3TimeoutAlertGif";
+
+  static const String phaseAnimationVideo = "phase_Animation";
 }
 
 class CommonUi {
@@ -208,7 +204,10 @@ class CommonUi {
     return 'assets/svg_images/$image.svg';
   }
 
-  static String setGifImage(String image) {
+  static String setGifAndVideoImage(String image, bool isForVideo) {
+    if (isForVideo) {
+      return 'assets/gif/$image.mp4';
+    }
     return 'assets/gif/$image.gif';
   }
 }

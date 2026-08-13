@@ -30,6 +30,7 @@ class FilterMapState extends Equatable {
   final List<String> categories;
   final int numberOfFlights;
   final int searchRadius;
+  final bool showSearchRadiusOnMap;
 
   const FilterMapState({
     required this.showNumberOfFlights,
@@ -42,6 +43,7 @@ class FilterMapState extends Equatable {
     required this.categories,
     required this.numberOfFlights,
     required this.searchRadius,
+    required this.showSearchRadiusOnMap,
   });
 
   factory FilterMapState.initial() {
@@ -56,6 +58,7 @@ class FilterMapState extends Equatable {
       showAircraftLabels: true,
       mapType: CustomMapType.standard,
       categories: const ["Commercial", "Cargo", "Business", "Other"],
+      showSearchRadiusOnMap: false,
     );
   }
 
@@ -69,6 +72,7 @@ class FilterMapState extends Equatable {
     bool? showCategories,
     bool? showMap,
     bool? showAircraftLabels,
+    bool? showSearchRadiusOnMap,
     CustomMapType? mapType,
     List<String>? categories,
   }) {
@@ -78,12 +82,16 @@ class FilterMapState extends Equatable {
 
       numberOfFlights: numberOfFlights ?? this.numberOfFlights,
       searchRadius: searchRadius ?? this.searchRadius,
-      selectedFilterCategories: selectedFilterCategories ?? this.selectedFilterCategories,
+      selectedFilterCategories:
+          selectedFilterCategories ?? this.selectedFilterCategories,
       showCategories: showCategories ?? this.showCategories,
       showMap: showMap ?? this.showMap,
       showAircraftLabels: showAircraftLabels ?? this.showAircraftLabels,
       mapType: mapType ?? this.mapType,
       categories: categories ?? this.categories,
+
+      showSearchRadiusOnMap:
+          showSearchRadiusOnMap ?? this.showSearchRadiusOnMap,
     );
   }
 
@@ -99,5 +107,6 @@ class FilterMapState extends Equatable {
     showAircraftLabels,
     mapType,
     categories,
+    showSearchRadiusOnMap,
   ];
 }

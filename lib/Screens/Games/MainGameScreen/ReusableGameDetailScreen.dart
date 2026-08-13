@@ -137,6 +137,9 @@ class ReusableGameDetailScreen extends StatelessWidget {
                             child: ReusableBottomButton(
                               text: buttonText,
                               onTap: onButtonTap,
+                              fontStyle: AppTextStyles.semiBold(
+                                18,
+                              ).copyWith(height: 1.0, color:  AppColors.white),
                             ),
                           ),
                         ),
@@ -585,19 +588,17 @@ class HelpInfoCard extends StatelessWidget {
 
 class ReusableBottomButton extends StatelessWidget {
   final String text;
-
   final VoidCallback onTap;
-
   final Color? backgroundColor;
-
-  final Color? textColor;
+  final TextStyle fontStyle;
 
   const ReusableBottomButton({
     super.key,
     required this.text,
     required this.onTap,
     this.backgroundColor,
-    this.textColor,
+    required this.fontStyle,
+
   });
 
   @override
@@ -618,9 +619,7 @@ class ReusableBottomButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: AppTextStyles.semiBold(
-            18,
-          ).copyWith(height: 1.0, color: AppColors.white),
+          style: fontStyle,
         ),
       ),
     );

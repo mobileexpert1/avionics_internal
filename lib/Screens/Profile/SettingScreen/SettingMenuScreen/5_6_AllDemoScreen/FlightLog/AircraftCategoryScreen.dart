@@ -3,9 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../../../../../../Constants/ConstantStrings.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../../Helpers/AppNavigator.dart';
@@ -34,7 +32,6 @@ class _AircraftCategoryScreenState extends State<AircraftCategoryScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
-    final bool isMobileWeb = kIsWeb && screenWidth < 900;
 
     final int crossAxisCount = isDesktopWeb
         ? (screenWidth >= 1500

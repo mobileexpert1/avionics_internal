@@ -73,9 +73,11 @@ class AppColors {
   static const Color grayForCompareTextColour = Color.fromRGBO(27, 23, 72, 0.6);
   static const Color grayForFeedbackAndText = Color.fromRGBO(27, 23, 72, 0.05);
 
-
+  static const Color backgroundColourForSwitch = Color(0xFFF4F3F6);
 
   static const Color blackBoxColorForGame = Color(0xFFD44545);
   static const Color citiusAltiusColorForGame = Color(0xFFFDC20F);
   static const Color planeSpotterColorForGame = Color(0xFF3EE1E1);
+
+  static const Color showColourForJourneyRoute = Color.fromRGBO(58, 58, 58, 0.25);
 }

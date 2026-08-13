@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +18,89 @@ class SharedPrefsHelper {
   static const String fetchSubsIsTrueKey = 'fetchSubsIsTrue';
   static const String _isAvtarForProfileUrlKey = 'avtarForProfileUrlKey';
   static const String _userProfileNameKey = 'userProfileNameKey';
+  static const String _jettingAroundGameModel = 'model_data';
+  static const String _jettingGameCountKey = 'jettingGameCountKey';
+  static const String _jettingGameSetIdKey = 'jettingGameSetIdKey';
+
+  static Future<void> saveJettingGame(Map<String, dynamic> payload) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final String? existing = prefs.getString(_jettingAroundGameModel);
+
+    List<dynamic> list = [];
+
+    if (existing != null) {
+      list = jsonDecode(existing);
+    }
+
+    list.add(payload);
+
+    await prefs.setString(_jettingAroundGameModel, jsonEncode(list));
+  }
+
+  static Future<List<Map<String, dynamic>>> getJettingGames() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final String? existing = prefs.getString(_jettingAroundGameModel);
+
+    if (existing == null) return [];
+
+    return List<Map<String, dynamic>>.from(jsonDecode(existing));
+  }
+
+  static Future<void> clearJettingGames() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove(_jettingAroundGameModel);
+  }
+
+  /*static Future<void> saveJettingGameSetId(List<String> deviceIds) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_jettingGameSetIdKey, deviceIds);
+  }
+
+  static Future<List<String>?> getJettingGameSetId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(_jettingGameSetIdKey);
+  }
+
+  static Future<void> clearJettingGameSetId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_jettingGameSetIdKey);
+  }
+
+  static Future<void> saveJettingGameCount(int deviceId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_jettingGameCountKey, deviceId);
+  }
+
+  static Future<int?> getJettingGameCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_jettingGameCountKey);
+  }
+
+  static Future<void> clearJettingGameCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_jettingGameCountKey);
+  }
+
+  static Future<bool> saveModelWithId(
+    String id,
+    Map<String, Object> modelData,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String jsonString = jsonEncode(modelData);
+    return await prefs.setString('${_jettingAroundGameModel}_$id', jsonString);
+  }
+
+  static Future<Map<String, dynamic>?> getModelWithId(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? jsonString = prefs.getString(
+      '${_jettingAroundGameModel}_$id',
+    );
+    if (jsonString == null) return null;
+    return jsonDecode(jsonString) as Map<String, dynamic>;
+  }*/
 
   static Future<void> saveString(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();

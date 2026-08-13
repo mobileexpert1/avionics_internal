@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
@@ -25,7 +24,6 @@ import '../../bloc/home/manufacturer/manufacturer_list_model.dart';
 import '../MapSection/FlightMapScreen.dart';
 import '../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScreen.dart';
 import '../Profile/SettingScreen/SettingScreen.dart';
-import '../WilcoBoat/ChatBotScreen.dart';
 import 'Manufacturer/ManufacturerDetailScreen.dart';
 import 'Manufacturer/ManufacturerListScreen.dart';
 
@@ -91,44 +89,43 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(right: 10, bottom: 10),
-          child: FloatingActionButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final token = prefs.getString('UserAccessTokenKey');
-              if (token != null && token.isNotEmpty) {
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.openAskWilcoChatButton,
-                  FirebaseEvents.exploreScreen,
-                );
-                AppNavigator.push(
-                  context,
-                  AskWilcoScreen(
-                    accessToken: token,
-                    isComeFromTab: false,
-                    isFromHistory: false,
-                    sessionId: '',
-                    title: '',
-                  ),
-                  disableSwipeBack: true,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Access token not found")),
-                );
-              }
-            },
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: SvgPicture.asset(
-              CommonUi.setSvgImage(AssetsPath.homeWilco),
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
+        // floatingActionButton: Padding(
+        //   padding: const EdgeInsets.only(right: 10, bottom: 10),
+        //   child: FloatingActionButton(
+        //     onPressed: () async {
+        //       final prefs = await SharedPreferences.getInstance();
+        //       final token = prefs.getString('UserAccessTokenKey');
+        //       if (token != null && token.isNotEmpty) {
+        //         AnalyticsService.instance.buttonPressed(
+        //           FirebaseEvents.openAskWilcoChatButton,
+        //           FirebaseEvents.exploreScreen,
+        //         );
+        //         AppNavigator.push(
+        //           context,
+        //           AskWilcoScreen(
+        //             accessToken: token,
+        //             isComeFromTab: false,
+        //             sessionId: '',
+        //             title: '',
+        //           ),
+        //           disableSwipeBack: true,
+        //         );
+        //       } else {
+        //         ScaffoldMessenger.of(context).showSnackBar(
+        //           const SnackBar(content: Text("Access token not found")),
+        //         );
+        //       }
+        //     },
+        //     backgroundColor: Colors.transparent,
+        //     elevation: 0,
+        //     child: SvgPicture.asset(
+        //       CommonUi.setSvgImage(AssetsPath.homeWilco),
+        //       width: 50,
+        //       height: 50,
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ),
+        // ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading) {
@@ -365,6 +362,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
+          AppListTileCard(
+            isForZeroIndex: true,
+            title:
+                "Explore library of aircraft manufacturers and model specifications",
+            imagePath: "",
+            onTap: () {},
+            isSvg: false,
+            isNetwork: false,
+          ),
           ...List.generate(category.length, (index) {
             final formula = category[index];
             return AppListTileCard(
@@ -484,7 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
             fontStyle: AppTextStyles.regular(
-              18,
+              16,
             ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
@@ -584,13 +590,13 @@ class _HomeScreenState extends State<HomeScreen> {
             arrowFrontColor: Colors.black,
             isExpandedViewAvailable: true,
             fontStyle: AppTextStyles.regular(
-              18,
+              16,
             ).copyWith(height: 1.4, color: AppColors.white, letterSpacing: 0.2),
             isLeftImage: IconButton(
               icon: SvgPicture.asset(
                 CommonUi.setSvgImage(AssetsPath.homeLiveTracking),
-                width: 30,
-                height: 30,
+                width: 25,
+                height: 25,
                 fit: BoxFit.cover,
                 color: Colors.white,
               ),

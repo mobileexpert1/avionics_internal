@@ -1,8 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'filter_Map_State.dart';
 
 class FilterMapMainCubit extends Cubit<FilterMapState> {
   FilterMapMainCubit() : super(FilterMapState.initial());
+
+  final bool showSearchRadiusOnMap = false;
+
+  void toggleShowSearchRadius(bool value) {
+    emit(state.copyWith(showSearchRadiusOnMap: value));
+  }
 
   void updateFlights(int value) {
     emit(state.copyWith(numberOfFlights: value));
@@ -17,6 +24,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
     List<String> categories,
     int numberOfFlights,
     int searchRadius,
+    bool showSearchRadiusOnMap,
   ) {
     emit(
       state.copyWith(
@@ -24,6 +32,7 @@ class FilterMapMainCubit extends Cubit<FilterMapState> {
         selectedFilterCategories: List.from(categories),
         searchRadius: searchRadius,
         numberOfFlights: numberOfFlights,
+        showSearchRadiusOnMap: showSearchRadiusOnMap,
       ),
     );
   }

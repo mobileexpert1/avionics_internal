@@ -80,6 +80,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   GoogleMapController? _mapController;
 
   bool showPolygon = false;
+  bool showSearchRadiusOnMap = false;
   String? _selectedPolygonId;
   List<ParsedPolygon> _parsedPolygons = [];
   final Set<Polygon> cachedPolygons = <Polygon>{};
@@ -133,6 +134,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             }
           }
           Future.delayed(Duration(seconds: 2), () async {
+            if (!mounted) return;
             await _mapCubit.loadFavoritesFlights(context);
           });
         }
@@ -1058,7 +1060,9 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                   zoom: 8,
                                 ),
 
-                                circles: _circles,
+                                circles: showSearchRadiusOnMap
+                                    ? _circles
+                                    : null,
 
                                 markers: {
                                   Marker(
@@ -1225,6 +1229,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
               currentCategories,
               currentNumberOfFlight,
               currentSearchRadius,
+              showSearchRadiusOnMap,
             ),
           child: FractionallySizedBox(
             heightFactor: 0.8,
@@ -1260,6 +1265,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
 
     final bool shouldShowPolygon =
         filterResult.mapType == CustomMapType.polygon;
+
+    showSearchRadiusOnMap = filterResult.showSearchRadiusOnMap;
+
+    print("-=-=-=-=-=-=-=-=-=$showSearchRadiusOnMap");
 
     _selectedPolygonId = null;
     showPolygon = shouldShowPolygon;

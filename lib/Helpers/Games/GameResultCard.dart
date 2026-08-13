@@ -50,7 +50,7 @@ class GameResultCard extends StatelessWidget {
 
                 (score / total) >= 0.8
                     ? Image.asset(
-                        CommonUi.setGifImage(AssetsPath.gameResultGif),
+                        CommonUi.setGifAndVideoImage(AssetsPath.gameResultGif,false),
                         height: 120,
                         width: 120,
                       )

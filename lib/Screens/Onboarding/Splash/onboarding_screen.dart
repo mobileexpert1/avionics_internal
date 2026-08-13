@@ -180,6 +180,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       PointerDeviceKind.touch,
                       PointerDeviceKind.mouse,
                       PointerDeviceKind.trackpad,
+                      PointerDeviceKind.stylus,
                     },
                   ),
                   child: PageView.builder(

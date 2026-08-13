@@ -5,6 +5,8 @@ import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
 class QuizQuestionState {
   final List<QuizQuestion> questions;
+  final List<QuizQuestion> allTempQuestions;
+  final CalculationGameModel? gameTempData;
   final int currentIndex;
   final int? selectedIndex;
   final bool showAnswer;
@@ -39,6 +41,8 @@ class QuizQuestionState {
     required this.setId,
     required this.imageBasedId,
     required this.questions,
+    required this.allTempQuestions,
+    this.gameTempData,
     this.currentIndex = 0,
     this.selectedIndex,
     this.showAnswer = false,
@@ -74,6 +78,8 @@ class QuizQuestionState {
     String? setId,
     String? imageBasedId,
     List<QuizQuestion>? questions,
+    List<QuizQuestion>? allTempQuestions,
+    CalculationGameModel? gameTempData,
     int? currentIndex,
     int? selectedIndex,
     bool? showAnswer,
@@ -106,6 +112,8 @@ class QuizQuestionState {
       setId: setId ?? this.setId,
       imageBasedId: imageBasedId ?? this.imageBasedId,
       questions: questions ?? this.questions,
+      allTempQuestions: allTempQuestions ?? this.allTempQuestions,
+      gameTempData: gameTempData ?? this.gameTempData,
       currentIndex: currentIndex ?? this.currentIndex,
       selectedIndex: selectedIndex,
       showAnswer: showAnswer ?? this.showAnswer,
@@ -130,18 +138,19 @@ class QuizQuestionState {
       difficulty: difficulty ?? this.difficulty,
       categoryTypes: categoryTypes ?? this.categoryTypes,
       consecutiveWrongAnswers:
-      consecutiveWrongAnswers ?? this.consecutiveWrongAnswers,
+          consecutiveWrongAnswers ?? this.consecutiveWrongAnswers,
 
       wrongAnswerPopupCount:
-      wrongAnswerPopupCount ?? this.wrongAnswerPopupCount,
+          wrongAnswerPopupCount ?? this.wrongAnswerPopupCount,
 
-      showWrongAnswerPopup:
-      showWrongAnswerPopup ?? this.showWrongAnswerPopup,
+      showWrongAnswerPopup: showWrongAnswerPopup ?? this.showWrongAnswerPopup,
     );
   }
 
   factory QuizQuestionState.initial() => const QuizQuestionState(
     questions: [],
+    allTempQuestions: [],
+    gameTempData: null,
     timePerQuestion: [],
     questionResults: [],
     pointsEarned: 0,

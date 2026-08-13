@@ -21,6 +21,7 @@ class FilterResult {
   final List<String> aircraftIcaos;
   final int numberOfFlights;
   final int searchRadius;
+  final bool showSearchRadiusOnMap;
 
   FilterResult(
     this.mapType,
@@ -28,6 +29,7 @@ class FilterResult {
     this.aircraftIcaos,
     this.numberOfFlights,
     this.searchRadius,
+    this.showSearchRadiusOnMap,
   );
 }
 
@@ -37,6 +39,8 @@ class FilterForMapScreen extends StatefulWidget {
   final List<String>? initialAircraftIcaos;
   final int? numberOfFlights;
   final int? searchRadius;
+  final bool? showSearchRadiusOnMap;
+
   final VoidCallback onTapBackButton;
 
   const FilterForMapScreen({
@@ -47,6 +51,7 @@ class FilterForMapScreen extends StatefulWidget {
     this.initialAircraftIcaos,
     this.numberOfFlights,
     this.searchRadius,
+    this.showSearchRadiusOnMap,
   }) : super(key: key);
 
   @override
@@ -107,6 +112,7 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                                 .toList(),
                             state.numberOfFlights,
                             state.searchRadius,
+                            state.showSearchRadiusOnMap,
                           ),
                         );
                       },
@@ -186,6 +192,63 @@ class _filterMapScreenState extends State<FilterForMapScreen> {
                     ),
                   ),
                   const SizedBox(height: 25),
+
+                  /// Show Search Radius On Map Toggle
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 15,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundColourForSwitch,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Show Search Radius On Map",
+                          style: AppTextStyles.medium(
+                            16,
+                          ).copyWith(height: 1.0, color: AppColors.primaryDark),
+                        ),
+                        GestureDetector(
+                          onTap: () => cubit.toggleShowSearchRadius(
+                            !state.showSearchRadiusOnMap,
+                          ),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 46,
+                            height: 26,
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: state.showSearchRadiusOnMap
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade400,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: AnimatedAlign(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: state.showSearchRadiusOnMap
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
                   ExpandableSection(
                     isComeFromManufactureScreen: false,
                     title: "CATEGORIES",

@@ -2,12 +2,15 @@ import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Helpers/AppNavigator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 import '../../../Constants/ConstantStrings.dart';
+import '../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxQuestionScreen.dart';
 import '../GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
+import '../GamesSubScreens/JettingAroundTheWorld/JettingAroundTheWorldScreen.dart';
 import '../GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizLockScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
@@ -50,7 +53,7 @@ class _BaseScreenForAllLevelState
     );
   }
 
-  void onGameTap(BuildContext context, String gameId) {
+  Future<void> onGameTap(BuildContext context, String gameId) async {
     switch (gameId) {
       case 'quiz':
         AnalyticsService.instance.buttonPressed(
@@ -118,6 +121,10 @@ class _BaseScreenForAllLevelState
         break;
 
       case 'trivia':
+        // await SharedPrefsHelper.clearJettingGameCount();
+        // await SharedPrefsHelper.saveJettingGameCount(1);
+        // await SharedPrefsHelper.clearJettingGameSetId();
+
         AnalyticsService.instance.buttonPressed(
           FirebaseEvents.quizListButton,
           FirebaseEvents.blackBoxListScreen,
@@ -125,13 +132,13 @@ class _BaseScreenForAllLevelState
 
         AppNavigator.push(
           context,
-          QuizQuestionScreen(
-            sectionId: 0,
-            sectionTitle: "Jetting Around The World",
-            gameId: "trivia",
-          ),
+          JettingAroundTheWorldScreen(),
+          multiBlocProviders: [
+            BlocProvider(create: (_) => JettingTheWorldCubit()),
+          ],
           disableSwipeBack: true,
         );
+
         break;
 
       case 'aircraftEncyclopaedia':

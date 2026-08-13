@@ -58,13 +58,9 @@ class HomeCubit extends Cubit<HomeState> {
           }
         } else {
           if (!isClosed) {
-            if (e.toString().contains("Handshake error")) {
-              emit(
-                HomeError("Something went wrong. Please check after sometime."),
-              );
-            } else {
-              emit(HomeError(e.toString()));
-            }
+            emit(
+              HomeError("Something went wrong. Please check after sometime."),
+            );
           }
         }
       }

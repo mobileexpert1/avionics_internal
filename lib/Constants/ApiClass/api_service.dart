@@ -220,7 +220,7 @@ class ApiService {
             if (message.contains('not more approved questions') || message.contains('Sorry')) {
               return {"empty": true, "message": message};
             }
-            throw '400 $message';
+            throw message;
           }
           // throw '400 Bad request';
 

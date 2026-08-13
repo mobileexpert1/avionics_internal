@@ -16,7 +16,6 @@ class AircraftCategoryCard extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
-    final bool isMobileWeb = kIsWeb && screenWidth < 900;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,

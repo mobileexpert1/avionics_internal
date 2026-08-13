@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -16,6 +18,23 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       super(ManufacturerState(manufacturers: []));
 
   bool isFetching = false;
+  int _requestId = 0;
+
+  Timer? _searchDebounce;
+
+  @override
+  Future<void> close() {
+    _searchDebounce?.cancel();
+    return super.close();
+  }
+
+  void searchManufacturers(String value, BuildContext context) {
+    _searchDebounce?.cancel();
+
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      loadListOfManufacturers(context: context, query: value.trim());
+    });
+  }
 
   Future<void> loadListOfManufacturers({
     String? query,
@@ -23,9 +42,24 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
     int page = 1,
     bool isLoadMore = false,
   }) async {
-    if (isFetching) return;
+    final currentRequest = ++_requestId;
+
+    if (isFetching && !isLoadMore) {
+      return;
+    }
+
     isFetching = true;
-    if (await InternetConnection().hasInternetAccess) {
+
+    try {
+      if (!await InternetConnection().hasInternetAccess) {
+        NoInternetDialog.show(
+          context,
+          onRetry: () =>
+              loadListOfManufacturers(query: query, context: context),
+        );
+        return;
+      }
+
       if (isLoadMore && state.currentPage >= state.totalPages) {
         return;
       }
@@ -33,58 +67,69 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
       if (isLoadMore) {
         emit(state.copyWith(isFetchingMore: true));
       } else {
-        emit(state.copyWith(isLoading: true, currentPage: 1, totalPages: 1));
-      }
-
-      final isHelicopter = state.selectedManufacturerCategories.contains(
-        "HELICOPTERS (ROTOR CRAFTS)",
-      );
-
-      final isAirplane = state.selectedManufacturerCategories.contains(
-        "AIRPLANES",
-      );
-
-      try {
-        final paginated = await repository.getListOfManufacturers(
-          query: query,
-          page: page,
-          helicopter: isHelicopter,
-          airplane: isAirplane,
-        );
-
-        final merged = isLoadMore
-            ? [...state.manufacturers, ...paginated.results]
-            : paginated.results;
-
-        final seen = <dynamic>{};
-        final updatedList = merged.where((m) => seen.add(m.id)).toList();
-
-        updatedList.sort(
-          (a, b) => a.companyName.toLowerCase().compareTo(
-            b.companyName.toLowerCase(),
-          ),
-        );
-
         emit(
           state.copyWith(
-            manufacturers: updatedList,
-            currentPage: paginated.currentPage,
-            totalPages: paginated.totalPages,
-            hasNextPage: paginated.hasNext,
-            isLoading: false,
-            isFetchingMore: false,
+            isLoading: true,
+            currentPage: 1,
+            totalPages: 1,
+            manufacturers: [],
           ),
         );
-        isFetching = false;
-      } catch (e) {
-        SessionCommonTokenError.handleUnauthorizedError(context, e);
-        emit(state.copyWith(isLoading: false, isFetchingMore: false));
       }
-    } else {
-      NoInternetDialog.show(
-        context,
-        onRetry: () => loadListOfManufacturers(query: query, context: context),
+
+      final selectedCategories = state.selectedManufacturerCategories;
+
+      final isHelicopter = selectedCategories.contains(
+        "Helicopters (Rotorcrafts)",
       );
+
+      final isAirplane = selectedCategories.contains("Airplanes");
+
+      debugPrint("Selected Categories: $selectedCategories");
+
+      debugPrint("Helicopter: $isHelicopter | Airplane: $isAirplane");
+
+      final paginated = await repository.getListOfManufacturers(
+        query: query,
+        page: page,
+        helicopter: isHelicopter,
+        airplane: isAirplane,
+      );
+
+      // if (currentRequest != _requestId) {
+      //   debugPrint("Ignoring stale response");
+      //   return;
+      // }
+
+      final merged = isLoadMore
+          ? [...state.manufacturers, ...paginated.results]
+          : paginated.results;
+
+      final seen = <dynamic>{};
+
+      final updatedList = merged.where((m) => seen.add(m.id)).toList();
+
+      updatedList.sort(
+        (a, b) =>
+            a.companyName.toLowerCase().compareTo(b.companyName.toLowerCase()),
+      );
+
+      emit(
+        state.copyWith(
+          manufacturers: updatedList,
+          currentPage: paginated.currentPage,
+          totalPages: paginated.totalPages,
+          hasNextPage: paginated.hasNext,
+          isLoading: false,
+          isFetchingMore: false,
+        ),
+      );
+    } catch (e) {
+      SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+      emit(state.copyWith(isLoading: false, isFetchingMore: false));
+    } finally {
+      isFetching = false;
     }
   }
 
@@ -141,16 +186,19 @@ class ManufacturerCubit extends Cubit<ManufacturerState> {
   }
 
   Future<void> toggleCategory(String category, BuildContext context) async {
-    final updated = List<String>.from(state.selectedManufacturerCategories);
+    var updated = state.selectedManufacturerCategories;
 
     if (updated.contains(category)) {
-      updated.remove(category);
+      updated = "";
     } else {
-      updated.add(category);
+      updated = category;
     }
 
     emit(state.copyWith(selectedManufacturerCategories: updated));
-    await loadListOfManufacturers(context: context, page: 1);
+
+    debugPrint("New selected: $updated");
+
+    await loadListOfManufacturers(context: context);
   }
 
   void toggleCategoriesSection() {
