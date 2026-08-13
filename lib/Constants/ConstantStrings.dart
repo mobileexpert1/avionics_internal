@@ -108,6 +108,11 @@ class ConstantStrings {
   static const String creditTokenTitle = "Tracker & AI Usage";
   static const String airlineTicketTitle = "Airline Ticket";
 
+  static const String jettingAroundTheWorldTitle = "Jetting Around The World";
+  static const String boardingPassTitle = "  Boarding Pass";
+
+
+
 
   // ─────────────────────────────
   // Create New Password
@@ -188,8 +193,8 @@ class ApiBaseUrlConstant {
   static const String devChatUrl =
       "avionica.csdevhub.com"; // Cs Url for development.
 
-  static const String baseUrl = _prodUrl;
-  static const String baseChatUrl = prodChatUrl;
+  static const String baseUrl = _devUrl;
+  static const String baseChatUrl = devChatUrl;
 }
 
 class ApiFunctionUrlConstant {

@@ -13,8 +13,10 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/NoInternetDialog.dart';
+import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundResultPopup.dart';
 import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
@@ -135,7 +137,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           return;
         }
 
-        // Initialize results
         final initialResults = List<QuestionResult>.generate(
           maxQuestions,
           (index) => QuestionResult(
@@ -146,11 +147,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           ),
         );
 
-        // First emit (UI show)
         emit(
           state.copyWith(
             isLoading: false,
             questions: allQuestions,
+            allTempQuestions: allQuestions,
+            gameTempData: gameData,
             currentIndex: 0,
             selectedIndex: null,
             showAnswer: false,
@@ -215,9 +217,9 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   QuizQuestion _mapQuestion(Question q, String setId, String imageBasedId) {
     final correctIndex = q.options.indexWhere((o) => o.label == q.answer);
-    // print(
-    //   'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
-    // );
+    print(
+      'Mapping question: ${q.question}, options: ${q.options.length}, answer: ${q.answer}, correctIndex: $correctIndex, questionId: ${q.questionId}',
+    );
     if (correctIndex == -1) {
       // print(
       //   'Warning: No matching answer for question "${q.question}", answer: ${q.answer}',
@@ -519,130 +521,323 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
     } else if (state.currentIndex == maxQuestions - 1) {
       _timer?.cancel();
+      if (gameId == "trivia") {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => JettingAroundResultPopup(
+            isSuccess: state.correctAnswers < 4 ? false : true,
+            currentStep: state.correctAnswers,
+            totalStep: 5,
+            earnedJettons: 200,
+            onButtonTap: () async {
+              Navigator.of(context).pop();
+              if (state.correctAnswers < 4) {
+                emit(
+                  state.copyWith(
+                    currentIndex: 0,
+                    selectedIndex: null,
+                    showAnswer: false,
+                    timer: _totalDuration,
+                    isTimerEnded: false,
+                  ),
+                );
 
-      String formatTime(int seconds) => "${seconds}s";
-      String indexToLetter(int? index) {
-        if (index == null) return "";
-        return String.fromCharCode(65 + index);
-      }
-
-      final categoryTypeMap = <String, String>{};
-      state.categoryTypes.asMap().forEach((index, category) {
-        categoryTypeMap[category.name] = category.type.isNotEmpty
-            ? category.type
-            : "${index + 1}";
-      });
-
-      final categories = state.categorizedQuestions.entries.map((entry) {
-        final categoryName = entry.key;
-        final questions = entry.value;
-        final categoryType = categoryTypeMap[categoryName] ?? categoryName;
-        return {
-          "category_type": categoryType,
-          "category_name": formatCategoryName(categoryName),
-          // Format for display
-          "questions": questions.map((q) {
-            final resultIndex = state.questions.indexOf(q);
-            final result = resultIndex != -1
-                ? state.questionResults[resultIndex]
-                : QuestionResult(
+                final initialResults = List<QuestionResult>.generate(
+                  maxQuestions,
+                  (index) => QuestionResult(
                     userAnswerIndex: null,
                     correctPoint: 0,
                     bonusPoint: 0,
                     timeTakenSeconds: 0,
-                  );
-            return {
-              "question": q.question,
-              "options": List.generate(
-                q.options.length,
-                (optIndex) => {
-                  "label": String.fromCharCode(65 + optIndex),
-                  "value": q.options[optIndex],
-                },
-              ),
-              "answer": indexToLetter(q.correctIndex),
-              "explanation": q.hint,
-              "img_url": q.imgUrl,
-              "user_answered": indexToLetter(result.userAnswerIndex),
-              "correct_point": result.correctPoint,
-              "bonus_point": result.bonusPoint,
-              "time_taken": formatTime(result.timeTakenSeconds),
-            };
-          }).toList(),
-        };
-      }).toList();
-
-      // Final totals
-      final allCorrectBonus = (state.correctAnswers == maxQuestions) ? 3 : 0;
-      final finalScore = state.score + allCorrectBonus;
-
-      final payload = {
-        "total_questions": maxQuestions,
-        "correct_answers": state.correctAnswers,
-        "correct_points": state.pointsEarned,
-        "earned_points": finalScore,
-        "additional_points": state.bonusPoints,
-        "total_time": formatTime(state.timeTaken),
-        "game": state.game,
-        "level": state.level,
-        "difficulty": state.difficulty,
-        "categories": categories,
-        "game_number": _quizTypesId,
-        "set_id": gameId == "imageBased" ? state.imageBasedId : state.setId,
-        "img_id": state.imageBasedId,
-      };
-
-      debugPrint("🚀 QUIZ SUBMIT PAYLOAD:");
-      debugPrint(JsonEncoder.withIndent('  ').convert(payload));
-      if (await InternetConnection().hasInternetAccess) {
-        try {
-          final response = await QuizQuestionRepository().submitResult(
-            payload,
-            gameId,
-          );
-
-          if (response.detail.toLowerCase() ==
-              "quiz answer submitted successfully".toLowerCase()) {
-            final data = response.data;
-            Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MainResultScreen(
-                    correctedAnswer: data.correctAnswers,
-                    totalQuestion: data.totalQuestions,
-                    score: data.earnedPoints,
-                    bonusPoints: data.additionalPoints,
-                    isEarnedBadge: data.isEarnedBadge,
-                    badgeName: data.badgeName,
                   ),
+                );
+
+                emit(
+                  state.copyWith(
+                    isLoading: false,
+                    questions: state.allTempQuestions,
+                    allTempQuestions: state.allTempQuestions,
+                    currentIndex: 0,
+                    selectedIndex: null,
+                    showAnswer: false,
+                    timer: _totalDuration,
+                    score: 0,
+                    correctAnswers: 0,
+                    wrongAnswers: 0,
+                    pointsEarned: 0,
+                    bonusPoints: 0,
+                    timeTaken: 0,
+                    questionResults: initialResults,
+                    timePerQuestion: List<int>.filled(maxQuestions, 0),
+                    categorizedQuestions: state.categorizedQuestions,
+                    game: state.gameTempData!.game,
+                    level: state.gameTempData!.level,
+                    difficulty: state.gameTempData!.difficulty,
+                    categoryTypes: state.gameTempData!.categoryTypes,
+                    setId: state.gameTempData!.setId,
+                    imageBasedId: state.gameTempData!.imageBasedId,
+                  ),
+                );
+                startTimer(context);
+              } else {
+                String formatTime(int seconds) => "${seconds}s";
+                String indexToLetter(int? index) {
+                  if (index == null) return "";
+                  return String.fromCharCode(65 + index);
+                }
+
+                final categoryTypeMap = <String, String>{};
+                state.categoryTypes.asMap().forEach((index, category) {
+                  categoryTypeMap[category.name] = category.type.isNotEmpty
+                      ? category.type
+                      : "${index + 1}";
+                });
+
+                final categories = state.categorizedQuestions.entries.map((
+                  entry,
+                ) {
+                  final categoryName = entry.key;
+                  final questions = entry.value;
+                  final categoryType =
+                      categoryTypeMap[categoryName] ?? categoryName;
+                  return {
+                    "category_type": categoryType,
+                    "category_name": formatCategoryName(categoryName),
+                    // Format for display
+                    "questions": questions.map((q) {
+                      final resultIndex = state.questions.indexOf(q);
+                      final result = resultIndex != -1
+                          ? state.questionResults[resultIndex]
+                          : QuestionResult(
+                              userAnswerIndex: null,
+                              correctPoint: 0,
+                              bonusPoint: 0,
+                              timeTakenSeconds: 0,
+                            );
+                      return {
+                        "question": q.question,
+                        "options": List.generate(
+                          q.options.length,
+                          (optIndex) => {
+                            "label": String.fromCharCode(65 + optIndex),
+                            "value": q.options[optIndex],
+                          },
+                        ),
+                        "answer": indexToLetter(q.correctIndex),
+                        "explanation": q.hint,
+                        "img_url": q.imgUrl,
+                        "user_answered": indexToLetter(result.userAnswerIndex),
+                        "correct_point": result.correctPoint,
+                        "bonus_point": result.bonusPoint,
+                        "time_taken": formatTime(result.timeTakenSeconds),
+                      };
+                    }).toList(),
+                  };
+                }).toList();
+
+                final allCorrectBonus = (state.correctAnswers == maxQuestions)
+                    ? 3
+                    : 0;
+                final finalScore = state.score + allCorrectBonus;
+
+                final payload = {
+                  "total_questions": maxQuestions,
+                  "correct_answers": state.correctAnswers,
+                  "correct_points": state.pointsEarned,
+                  "earned_points": finalScore,
+                  "additional_points": state.bonusPoints,
+                  "total_time": formatTime(state.timeTaken),
+                  "game": state.game,
+                  "level": state.level,
+                  "difficulty": state.difficulty,
+                  "categories": categories,
+                  "game_number": _quizTypesId,
+                  "set_id": gameId == "imageBased"
+                      ? state.imageBasedId
+                      : state.setId,
+                  "img_id": state.imageBasedId,
+                };
+
+                debugPrint("QUIZ SUBMIT PAYLOAD:");
+                debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+
+                // final response = await SharedPrefsHelper.getJettingGameCount();
+                int totalCountGame = 1;
+                if (totalCountGame > 5) {
+                } else {
+                  // await SharedPrefsHelper.saveJettingGameCount(totalCountGame);
+                  // print("totalNumberOfPlaying-=-=-=-=$totalCountGame");
+                  //
+                  // final savedList =
+                  //     await SharedPrefsHelper.getJettingGameSetId();
+                  // final List<String> currentIds = savedList != null
+                  //     ? List.from(savedList)
+                  //     : [];
+                  // currentIds.add(state.gameTempData!.setId);
+                  // await SharedPrefsHelper.saveJettingGameSetId(currentIds);
+                  //
+                  // print('Save JettingGameSetId: $currentIds');
+                  //
+                  // final responseWait = await SharedPrefsHelper.saveModelWithId(
+                  //   state.gameTempData!.setId,
+                  //   payload,
+                  // );
+                  //
+                  // print('Save ModelWithId: $responseWait');
+                  // if (responseWait) {
+                  //   emit(
+                  //     state.copyWith(
+                  //       currentIndex: 0,
+                  //       selectedIndex: null,
+                  //       showAnswer: false,
+                  //       timer: _totalDuration,
+                  //       isTimerEnded: false,
+                  //     ),
+                  //   );
+                  //   loadQuestions(_quizTypesId, context);
+                  // } else {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(content: Text('Failed to submit results: $e')),
+                  //   );
+                  //   emit(
+                  //     state.copyWith(
+                  //       errorMessage: 'Failed to submit results: $e',
+                  //     ),
+                  //   );
+                  // }
+                }
+              }
+            },
+          ),
+        );
+      } else {
+        String formatTime(int seconds) => "${seconds}s";
+        String indexToLetter(int? index) {
+          if (index == null) return "";
+          return String.fromCharCode(65 + index);
+        }
+
+        final categoryTypeMap = <String, String>{};
+        state.categoryTypes.asMap().forEach((index, category) {
+          categoryTypeMap[category.name] = category.type.isNotEmpty
+              ? category.type
+              : "${index + 1}";
+        });
+
+        final categories = state.categorizedQuestions.entries.map((entry) {
+          final categoryName = entry.key;
+          final questions = entry.value;
+          final categoryType = categoryTypeMap[categoryName] ?? categoryName;
+          return {
+            "category_type": categoryType,
+            "category_name": formatCategoryName(categoryName),
+            // Format for display
+            "questions": questions.map((q) {
+              final resultIndex = state.questions.indexOf(q);
+              final result = resultIndex != -1
+                  ? state.questionResults[resultIndex]
+                  : QuestionResult(
+                      userAnswerIndex: null,
+                      correctPoint: 0,
+                      bonusPoint: 0,
+                      timeTakenSeconds: 0,
+                    );
+              return {
+                "question": q.question,
+                "options": List.generate(
+                  q.options.length,
+                  (optIndex) => {
+                    "label": String.fromCharCode(65 + optIndex),
+                    "value": q.options[optIndex],
+                  },
+                ),
+                "answer": indexToLetter(q.correctIndex),
+                "explanation": q.hint,
+                "img_url": q.imgUrl,
+                "user_answered": indexToLetter(result.userAnswerIndex),
+                "correct_point": result.correctPoint,
+                "bonus_point": result.bonusPoint,
+                "time_taken": formatTime(result.timeTakenSeconds),
+              };
+            }).toList(),
+          };
+        }).toList();
+
+        // Final totals
+        final allCorrectBonus = (state.correctAnswers == maxQuestions) ? 3 : 0;
+        final finalScore = state.score + allCorrectBonus;
+
+        final payload = {
+          "total_questions": maxQuestions,
+          "correct_answers": state.correctAnswers,
+          "correct_points": state.pointsEarned,
+          "earned_points": finalScore,
+          "additional_points": state.bonusPoints,
+          "total_time": formatTime(state.timeTaken),
+          "game": state.game,
+          "level": state.level,
+          "difficulty": state.difficulty,
+          "categories": categories,
+          "game_number": _quizTypesId,
+          "set_id": gameId == "imageBased" ? state.imageBasedId : state.setId,
+          "img_id": state.imageBasedId,
+        };
+
+        debugPrint("QUIZ SUBMIT PAYLOAD:");
+        debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+        if (await InternetConnection().hasInternetAccess) {
+          try {
+            final response = await QuizQuestionRepository().submitResult(
+              payload,
+              gameId,
+            );
+
+            if (response.detail.toLowerCase() ==
+                "quiz answer submitted successfully".toLowerCase()) {
+              final data = response.data;
+              Future.delayed(const Duration(milliseconds: 100), () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MainResultScreen(
+                      correctedAnswer: data.correctAnswers,
+                      totalQuestion: data.totalQuestions,
+                      score: data.earnedPoints,
+                      bonusPoints: data.additionalPoints,
+                      isEarnedBadge: data.isEarnedBadge,
+                      badgeName: data.badgeName,
+                    ),
+                  ),
+                );
+
+                AnalyticsService.instance.buttonPressed(
+                  FirebaseEvents.calculationsListButton,
+                  FirebaseEvents.calculationResultScreen,
+                );
+              });
+            } else {
+              SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Result submit failed. Try again.")),
+              );
+              emit(
+                state.copyWith(
+                  errorMessage: "Result submit failed. Try again.",
                 ),
               );
-
-              AnalyticsService.instance.buttonPressed(
-                FirebaseEvents.calculationsListButton,
-                FirebaseEvents.calculationResultScreen,
-              );
-            });
-          } else {
+            }
+          } catch (e) {
             SessionCommonTokenError.handleUnauthorizedError(context, e);
-
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Result submit failed. Try again.")),
+              SnackBar(content: Text('Failed to submit results: $e')),
             );
-            emit(
-              state.copyWith(errorMessage: "Result submit failed. Try again."),
-            );
+            emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
           }
-        } catch (e) {
-          SessionCommonTokenError.handleUnauthorizedError(context, e);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to submit results: $e')),
-          );
-          emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
+        } else {
+          NoInternetDialog.show(context, onRetry: () => nextQuestion(context));
         }
-      } else {
-        NoInternetDialog.show(context, onRetry: () => nextQuestion(context));
       }
     } else if (state.isLoading) {
       ScaffoldMessenger.of(context).showSnackBar(

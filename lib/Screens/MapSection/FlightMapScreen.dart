@@ -134,6 +134,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
             }
           }
           Future.delayed(Duration(seconds: 2), () async {
+            if (!mounted) return;
             await _mapCubit.loadFavoritesFlights(context);
           });
         }

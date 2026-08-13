@@ -413,7 +413,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
               ),
             );
           }
-          return Text("No Data");
+          return Center(child: Text("No Data"));
         },
       ),
     );

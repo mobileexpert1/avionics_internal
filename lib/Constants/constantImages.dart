@@ -157,8 +157,9 @@ abstract class AssetsPath {
   static const switchLGridForCalculation = '128CalculationSwitch';
   static const viewCreditsToken = '129ViewCreditsToken';
   static const tickIcon = '130TickIcon';
-  static const myAirplaneIcon = '131myairplane';
+  static const myAirplaneIcon = '131MyAirplane';
   static const dragRotateIcon = '132dragIcon';
+  static const successJettingAround = '133SuccessJettingAround';
 
   //JPG
   static const String startExploreIcon = "1StartExploreIcon";
@@ -187,6 +188,8 @@ abstract class AssetsPath {
   static const String badgeGif = "1BadgeGif";
   static const String gameResultGif = "2GameResultGif";
   static const String timeoutAlertGif = "3TimeoutAlertGif";
+
+  static const String phaseAnimationVideo = "phase_Animation";
 }
 
 class CommonUi {
@@ -202,7 +205,10 @@ class CommonUi {
     return 'assets/svg_images/$image.svg';
   }
 
-  static String setGifImage(String image) {
+  static String setGifAndVideoImage(String image,bool isForVideo) {
+    if (isForVideo) {
+      return 'assets/gif/$image.mp4';
+    }
     return 'assets/gif/$image.gif';
   }
 }

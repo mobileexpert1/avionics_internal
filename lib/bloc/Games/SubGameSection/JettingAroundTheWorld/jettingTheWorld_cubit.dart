@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import 'jettingTheWorld_model.dart';
 import 'jettingTheWorld_repository.dart';
 import 'jettingTheWorld_state.dart';
@@ -53,6 +54,7 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
           );
         }
       } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
         emit(
           state.copyWith(
             isLoading: false,

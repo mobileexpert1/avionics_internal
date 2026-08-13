@@ -46,7 +46,7 @@ class StickerUnlockedDialog extends StatelessWidget {
               Stack(
                 children: [
                   Image.asset(
-                    CommonUi.setGifImage(AssetsPath.badgeGif),
+                    CommonUi.setGifAndVideoImage(AssetsPath.badgeGif,false),
                     height: isDesktopWeb ? 140 : 100,
                     width: double.infinity,
                     fit: BoxFit.cover,
