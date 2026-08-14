@@ -18,6 +18,12 @@ import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/NoInternetDialog.dart';
 import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundResultPopup.dart';
 import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
+import '../../../Screens/Games/MainGameScreen/BaseScreenForAllLevelDescriptions.dart';
+import '../../../Screens/Games/MainGameScreen/ReusableGameDetailScreen.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/PartUnlockScreen.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/PlaneSpotterResultDialog.dart';
+import '../MainGameSection/GameDetail/gameInfo_model.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
@@ -41,6 +47,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     maxQuestions = switch (gameId) {
       "trivia" => 5,
       "aircraftEncyclopaedia" => 10,
+      "imageBased" => 10,
       _ => 20,
     };
 
@@ -793,28 +800,113 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
               gameId,
             );
 
+            // if (response.detail.toLowerCase() ==
+            //     "quiz answer submitted successfully".toLowerCase()) {
+            //   final data = response.data;
+            //   Future.delayed(const Duration(milliseconds: 100), () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (_) => MainResultScreen(
+            //           correctedAnswer: data.correctAnswers,
+            //           totalQuestion: data.totalQuestions,
+            //           score: data.earnedPoints,
+            //           bonusPoints: data.additionalPoints,
+            //           isEarnedBadge: data.isEarnedBadge,
+            //           badgeName: data.badgeName,
+            //         ),
+            //       ),
+            //     );
+            //
+            //     AnalyticsService.instance.buttonPressed(
+            //       FirebaseEvents.calculationsListButton,
+            //       FirebaseEvents.calculationResultScreen,
+            //     );
+            //   });
+            // }
             if (response.detail.toLowerCase() ==
                 "quiz answer submitted successfully".toLowerCase()) {
               final data = response.data;
-              Future.delayed(const Duration(milliseconds: 100), () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MainResultScreen(
-                      correctedAnswer: data.correctAnswers,
-                      totalQuestion: data.totalQuestions,
-                      score: data.earnedPoints,
-                      bonusPoints: data.additionalPoints,
-                      isEarnedBadge: data.isEarnedBadge,
-                      badgeName: data.badgeName,
-                    ),
-                  ),
-                );
 
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.calculationsListButton,
-                  FirebaseEvents.calculationResultScreen,
-                );
+              Future.delayed(const Duration(milliseconds: 100), () {
+                if (gameId == "imageBased") {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) {
+                      return ImageBasedResultDialog(
+                        correctAnswers: data.correctAnswers,
+                        totalQuestions: data.totalQuestions,
+                        componentEarned: data.componentEarned,
+                        componentTitle: data.component?.name ?? '',
+                        componentDescription: data.component?.description ?? '',
+                        onContinue: () {
+                          if (data.partUnlock && data.part != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ComponentUnlockedScreen(
+                                  partName: data.part!.name,
+                                  image3d: data.part!.icon,
+                                  onView3DPart: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const AirplanePartsScreen(),
+                                      ),
+                                    );
+                                  },
+
+                                  onNext: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BaseScreenForAllLevelDescriptions(
+                                          gameId: gameId,
+                                        ),
+                                      ),
+                                          (route) => false,
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    BaseScreenForAllLevelDescriptions(
+                                      gameId: gameId,
+                                    ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MainResultScreen(
+                        correctedAnswer: data.correctAnswers,
+                        totalQuestion: data.totalQuestions,
+                        score: data.earnedPoints,
+                        bonusPoints: data.additionalPoints,
+                        isEarnedBadge: data.isEarnedBadge,
+                        badgeName: data.badgeName,
+                      ),
+                    ),
+                  );
+
+                  AnalyticsService.instance.buttonPressed(
+                    FirebaseEvents.calculationsListButton,
+                    FirebaseEvents.calculationResultScreen,
+                  );
+                }
               });
             } else {
               SessionCommonTokenError.handleUnauthorizedError(context, e);

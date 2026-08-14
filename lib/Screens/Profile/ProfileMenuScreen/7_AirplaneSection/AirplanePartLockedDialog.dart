@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsModel.dart';
 
 class AirplanePartLockedDialog extends StatelessWidget {
@@ -36,11 +37,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                top: 30,
-                left: 2,
-                right: 2,
-              ),
+              padding: const EdgeInsets.only(top: 30, left: 2, right: 2),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,25 +57,22 @@ class AirplanePartLockedDialog extends StatelessWidget {
                       children: [
                         Opacity(
                           opacity: 0.45,
-                          child: Image.asset(
-                            CommonUi.setPngImage(part.image),
-                            width: isDesktopWeb ? 150 : 150,
-                            height: isDesktopWeb ? 105 : 125,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(
-                                Icons.airplanemode_active,
-                                size: isDesktopWeb ? 65 : 50,
-                                color: Colors.white,
-                              );
-                            },
-                          ),
+                          child: part.image.isNotEmpty
+                              ? CachedAnyImage(
+                                  imagePath: part.image,
+                                  width: isDesktopWeb ? 150 : 150,
+                                  height: isDesktopWeb ? 105 : 125,
+                                  contentImage: BoxFit.contain,
+                                )
+                              : Icon(
+                                  Icons.airplanemode_active,
+                                  size: isDesktopWeb ? 65 : 50,
+                                  color: Colors.white,
+                                ),
                         ),
 
                         SvgPicture.asset(
-                          CommonUi.setSvgImage(
-                            AssetsPath.badgesLockIcon,
-                          ),
+                          CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
                           width: 30,
                           height: 30,
                           fit: BoxFit.contain,
@@ -96,9 +90,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: AppTextStyles.semiBold(
                       22,
-                    ).copyWith(
-                      color: AppColors.primaryDark,
-                    ),
+                    ).copyWith(color: AppColors.primaryDark),
                   ),
 
                   const SizedBox(height: 3),
@@ -108,9 +100,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: AppTextStyles.semiBold(
                       15,
-                    ).copyWith(
-                      color: AppColors.black,
-                    ),
+                    ).copyWith(color: AppColors.black),
                   ),
 
                   const SizedBox(height: 14),
@@ -126,21 +116,16 @@ class AirplanePartLockedDialog extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: const Color(0xffF4F8FF),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xffC8DDF7),
-                      ),
+                      border: Border.all(color: const Color(0xffC8DDF7)),
                     ),
                     child: Text(
                       "Complete 10 more questions with a\n "
-                          "score of at least 60% to unlock this\n "
-                          "3D part.",
+                      "score of at least 60% to unlock this\n "
+                      "3D part.",
                       textAlign: TextAlign.center,
                       style: AppTextStyles.medium(
                         15,
-                      ).copyWith(
-                        color: AppColors.black,
-                        height: 1.35,
-                      ),
+                      ).copyWith(color: AppColors.black, height: 1.35),
                     ),
                   ),
 
@@ -167,9 +152,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                         "Continue",
                         style: AppTextStyles.regular(
                           15,
-                        ).copyWith(
-                          color: AppColors.white,
-                        ),
+                        ).copyWith(color: AppColors.white),
                       ),
                     ),
                   ),
@@ -191,10 +174,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                   height: 20,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.black,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.black, width: 1),
                   ),
                   child: const Icon(
                     Icons.close,

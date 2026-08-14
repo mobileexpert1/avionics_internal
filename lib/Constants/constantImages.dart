@@ -160,6 +160,14 @@ abstract class AssetsPath {
   static const myAirplaneIcon = '131MyAirplane';
   static const dragRotateIcon = '132dragIcon';
   static const successJettingAround = '133SuccessJettingAround';
+  static const planIcon = '134planeicon';
+
+  static const nose = '200nosse';
+  static const cockpit = '201cockpit';
+  static const fislage = '202fuslage';
+  static const leftwing = '203leftwing';
+  static const rightwing = '204rightwing';
+  static const engine = '205engine';
 
   //JPG
   static const String startExploreIcon = "1StartExploreIcon";

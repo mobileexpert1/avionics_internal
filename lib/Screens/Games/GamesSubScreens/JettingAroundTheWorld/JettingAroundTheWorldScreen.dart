@@ -147,7 +147,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
           end: points[0].coordinates,
           curveScale: 0.5,
           id: "0",
-          isLastId: "0",
+          // isLastId: "0",
           style: const PointConnectionStyle(
             color: AppColors.greenColourForPlan,
             transitionDuration: 2000,
@@ -227,8 +227,8 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
         color: color,
 
         // Border
-        borderColor: Colors.white,
-        borderWidth: 1.0,
+        // borderColor: Colors.white,
+        // borderWidth: 1.0,
 
         altitude: 0.05,
         transitionDuration: 600,

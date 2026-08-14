@@ -1,11 +1,10 @@
+import '../../../Profile/AirPlanePartsSection/AirPlanePartsModel.dart';
+
 class SubmitCalculationResultResponse {
   final String detail;
   final SubmitCalculationResultData data;
 
-  SubmitCalculationResultResponse({
-    required this.detail,
-    required this.data,
-  });
+  SubmitCalculationResultResponse({required this.detail, required this.data});
 
   factory SubmitCalculationResultResponse.fromJson(Map<String, dynamic> json) {
     return SubmitCalculationResultResponse(
@@ -14,10 +13,7 @@ class SubmitCalculationResultResponse {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'detail': detail,
-    'data': data.toJson(),
-  };
+  Map<String, dynamic> toJson() => {'detail': detail, 'data': data.toJson()};
 }
 
 class SubmitCalculationResultData {
@@ -30,6 +26,12 @@ class SubmitCalculationResultData {
   final bool isEarnedBadge;
   final String badgeName;
 
+  final bool componentEarned;
+  final AirPlaneSubPartModel? component;
+
+  final bool partUnlock;
+  final PlaneSpotterPart? part;
+
   SubmitCalculationResultData({
     required this.percentage,
     required this.totalQuestions,
@@ -39,9 +41,15 @@ class SubmitCalculationResultData {
     required this.additionalPoints,
     required this.isEarnedBadge,
     required this.badgeName,
+    required this.componentEarned,
+    this.component,
+    required this.partUnlock,
+    this.part,
   });
 
   factory SubmitCalculationResultData.fromJson(Map<String, dynamic> json) {
+    final componentJson = json['unlock_component'];
+    final partJson = json['unlock_part'];
     return SubmitCalculationResultData(
       percentage: (json['percentage'] ?? 0).toDouble(),
       totalQuestions: json['total_questions'] ?? 0,
@@ -50,7 +58,24 @@ class SubmitCalculationResultData {
       earnedPoints: json['earned_points'] ?? 0,
       additionalPoints: json['additional_points'] ?? 0,
       isEarnedBadge: json['is_earned_badge'] ?? false,
-      badgeName: json['badge_name'] ?? "",
+      badgeName: json['badge_name'] ?? '',
+
+      componentEarned: json['component_earned'] ?? false,
+
+      component: componentJson != null
+          ? AirPlaneSubPartModel(
+              id: componentJson['id'] ?? '',
+              name: componentJson['title'] ?? '',
+              description: componentJson['description'] ?? '',
+            )
+          : null,
+
+      // PART
+      partUnlock: json['part_unlock'] ?? false,
+
+      part: partJson != null
+          ? PlaneSpotterPart.fromJson(partJson as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -63,5 +88,17 @@ class SubmitCalculationResultData {
     'additional_points': additionalPoints,
     'is_earned_badge': isEarnedBadge,
     'badge_name': badgeName,
+    'component_earned': componentEarned,
+    'unlock_component': component == null
+        ? null
+        : {
+            'id': component!.id,
+            'title': component!.name,
+            'description': component!.description,
+            'unlocked': true,
+          },
+
+    'part_unlock': partUnlock,
+    'unlock_part': part?.toJson(),
   };
 }

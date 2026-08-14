@@ -254,19 +254,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.myAirplaneIcon,
-                    //   ),
-                    //   title: "My Airplane",
-                    //   onTap: () {
-                    //     AppNavigator.push(
-                    //       context,
-                    //       const AirplanePartsScreen(),
-                    //       disableSwipeBack: true,
-                    //     );
-                    //   },
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.myAirplaneIcon,
+                      ),
+                      title: "My Airplane",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const AirplanePartsScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,
