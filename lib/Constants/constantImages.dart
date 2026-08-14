@@ -161,6 +161,8 @@ abstract class AssetsPath {
   static const dragRotateIcon = '132dragIcon';
   static const successJettingAround = '133SuccessJettingAround';
   static const rightArrow = '134RightArrow';
+  static const String airplaneParts = 'aircraft-parts';
+
 
   static const nose = '200nosse';
   static const cockpit = '201cockpit';

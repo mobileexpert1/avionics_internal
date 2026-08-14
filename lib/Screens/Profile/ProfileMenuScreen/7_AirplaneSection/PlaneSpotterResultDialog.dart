@@ -36,14 +36,10 @@ class ImageBasedResultDialog extends StatelessWidget {
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: horizontalInset,
-      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: horizontalInset),
       child: Container(
         width: double.infinity,
-        constraints: BoxConstraints(
-          maxWidth: dialogWidth,
-        ),
+        constraints: BoxConstraints(maxWidth: dialogWidth),
         padding: EdgeInsets.fromLTRB(
           isDesktopWeb ? 18 : 12,
           isDesktopWeb ? 18 : 16,
@@ -70,14 +66,9 @@ class ImageBasedResultDialog extends StatelessWidget {
                   height: isDesktopWeb ? 24 : 22,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.black87,
-                    ),
+                    border: Border.all(color: Colors.black87),
                   ),
-                  child: Icon(
-                    Icons.close,
-                    size: isDesktopWeb ? 15 : 14,
-                  ),
+                  child: Icon(Icons.close, size: isDesktopWeb ? 15 : 14),
                 ),
               ),
             ),
@@ -94,9 +85,7 @@ class ImageBasedResultDialog extends StatelessWidget {
               ),
               child: Center(
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(
-                    AssetsPath.planIcon,
-                  ),
+                  CommonUi.setSvgImage(AssetsPath.myAirplaneIcon),
                   width: isDesktopWeb ? 45 : 40,
                   height: isDesktopWeb ? 45 : 40,
                 ),
@@ -119,9 +108,7 @@ class ImageBasedResultDialog extends StatelessWidget {
 
             // Result title
             Text(
-              isSuccess
-                  ? 'Component Earned!'
-                  : 'Aircraft\nComponent locked!',
+              isSuccess ? 'Component Earned!' : 'Aircraft\nComponent locked!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: isDesktopWeb ? 26 : 24,
@@ -135,105 +122,93 @@ class ImageBasedResultDialog extends StatelessWidget {
             // Information container
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(
-                isDesktopWeb ? 14 : 12,
-              ),
+              padding: EdgeInsets.all(isDesktopWeb ? 14 : 12),
               decoration: BoxDecoration(
                 color: const Color(0xffF2F7FD),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: const Color(0xffC9E0F8),
-                ),
+                border: Border.all(color: const Color(0xffC9E0F8)),
               ),
               child: isSuccess
                   ? Column(
-                children: [
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: isDesktopWeb ? 45 : 38,
-                        height: 1,
-                        color: const Color(0xff5799D8),
-                      ),
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: isDesktopWeb ? 45 : 38,
+                              height: 1,
+                              color: const Color(0xff5799D8),
+                            ),
 
-                      const SizedBox(width: 8),
+                            const SizedBox(width: 8),
 
-                      Flexible(
-                        child: Text(
-                          componentTitle.toUpperCase(),
+                            Flexible(
+                              child: Text(
+                                componentTitle.toUpperCase(),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: isDesktopWeb ? 21 : 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(width: 8),
+
+                            Container(
+                              width: isDesktopWeb ? 45 : 38,
+                              height: 1,
+                              color: const Color(0xff5799D8),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        Text(
+                          componentDescription,
                           textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize:
-                            isDesktopWeb ? 21 : 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            fontSize: isDesktopWeb ? 13 : 12,
+                            height: 1.4,
+                            color: Colors.black87,
                           ),
                         ),
-                      ),
-
-                      const SizedBox(width: 8),
-
-                      Container(
-                        width: isDesktopWeb ? 45 : 38,
-                        height: 1,
-                        color: const Color(0xff5799D8),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    componentDescription,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: isDesktopWeb ? 13 : 12,
-                      height: 1.4,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              )
+                      ],
+                    )
                   : Row(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 3,
-                    ),
-                    child: SvgPicture.asset(
-                      CommonUi.setSvgImage(
-                        AssetsPath.badgesLockIcon,
-                      ),
-                      width: isDesktopWeb ? 15 : 14,
-                      height: isDesktopWeb ? 15 : 14,
-                      color: AppColors.primaryDark,
-                    ),
-                  ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: SvgPicture.asset(
+                            CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
+                            width: isDesktopWeb ? 15 : 14,
+                            height: isDesktopWeb ? 15 : 14,
+                            color: AppColors.primaryDark,
+                          ),
+                        ),
 
-                  const SizedBox(width: 4),
+                        const SizedBox(width: 4),
 
-                  Expanded(
-                    child: Text(
-                      'Score 60% or higher to unlock more '
-                          'aircraft components and continue '
-                          'building your aircraft.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize:
-                        isDesktopWeb ? 15 : 15,
-                        height: 1.4,
-                        color: Colors.black87,
-                      ),
+                        Expanded(
+                          child: Text(
+                            'Score 60% or higher to unlock more '
+                            'aircraft components and continue '
+                            'building your aircraft.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: isDesktopWeb ? 15 : 15,
+                              height: 1.4,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
 
             const SizedBox(height: 12),
@@ -256,9 +231,7 @@ class ImageBasedResultDialog extends StatelessWidget {
                 ),
                 child: Text(
                   'Continue',
-                  style: TextStyle(
-                    fontSize: isDesktopWeb ? 19 : 18,
-                  ),
+                  style: TextStyle(fontSize: isDesktopWeb ? 19 : 18),
                 ),
               ),
             ),
@@ -269,7 +242,6 @@ class ImageBasedResultDialog extends StatelessWidget {
   }
 
   bool get isSuccess => componentEarned;
-
 
   void _handleContinue(BuildContext context) {
     Navigator.pop(context);
