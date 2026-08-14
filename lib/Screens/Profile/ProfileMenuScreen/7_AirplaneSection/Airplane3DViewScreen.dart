@@ -21,7 +21,7 @@ class Airplane3DViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AirPlanePartsCubit(),
+      create: (_) => AirPlanePartsCubit(context: context),
       child: _Airplane3DView(selectedPart: selectedPart),
     );
   }
@@ -265,7 +265,9 @@ class Airplane3DSubPartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: isDesktopWeb ? 120 : 105,
+      constraints: BoxConstraints(
+        minHeight: isDesktopWeb ? 120 : 105,
+      ),
       margin: const EdgeInsets.only(bottom: 7),
       padding: EdgeInsets.symmetric(
         horizontal: isDesktopWeb ? 16 : 10,
@@ -274,20 +276,29 @@ class Airplane3DSubPartCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isUnlocked ? Colors.white : const Color(0xffD0D0D0),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xffBDBDBD)),
+        border: Border.all(
+          color: const Color(0xffBDBDBD),
+        ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              const Expanded(child: Divider(color: Color(0xffB5B5B5))),
+              const Expanded(
+                child: Divider(
+                  color: Color(0xffB5B5B5),
+                ),
+              ),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   subPart.name,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.semiBold(isDesktopWeb ? 17 : 20).copyWith(
+                  style: AppTextStyles.semiBold(
+                    isDesktopWeb ? 17 : 20,
+                  ).copyWith(
                     color: isUnlocked
                         ? AppColors.primaryDark
                         : const Color(0xff777777),
@@ -295,7 +306,11 @@ class Airplane3DSubPartCard extends StatelessWidget {
                 ),
               ),
 
-              const Expanded(child: Divider(color: Color(0xffB5B5B5))),
+              const Expanded(
+                child: Divider(
+                  color: Color(0xffB5B5B5),
+                ),
+              ),
             ],
           ),
 
@@ -304,8 +319,12 @@ class Airplane3DSubPartCard extends StatelessWidget {
           Text(
             subPart.description,
             textAlign: TextAlign.center,
-            style: AppTextStyles.semiBold(isDesktopWeb ? 14 : 14).copyWith(
-              color: isUnlocked ? AppColors.black : const Color(0xff777777),
+            style: AppTextStyles.semiBold(
+              isDesktopWeb ? 14 : 14,
+            ).copyWith(
+              color: isUnlocked
+                  ? AppColors.black
+                  : const Color(0xff777777),
               height: 1.4,
             ),
           ),

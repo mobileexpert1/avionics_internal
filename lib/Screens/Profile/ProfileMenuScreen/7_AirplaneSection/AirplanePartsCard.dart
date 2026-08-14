@@ -5,13 +5,20 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsModel.dart';
 
 class AirplanePartsCard extends StatelessWidget {
   final AirPlanePartsModel part;
+  final int index;
   final VoidCallback? onTap;
 
-  const AirplanePartsCard({super.key, required this.part, this.onTap});
+  const AirplanePartsCard({
+    super.key,
+    required this.part,
+    this.onTap,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +54,7 @@ class AirplanePartsCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '${part.id}. ${part.name}',
+                    '${index + 1}. ${part.name}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.medium(isDesktopWeb ? 16 : 16)
@@ -79,19 +86,18 @@ class AirplanePartsCard extends StatelessWidget {
                   children: [
                     Opacity(
                       opacity: isUnlocked ? 1.0 : 0.45,
-                      child: Image.asset(
-                        CommonUi.setPngImage(part.image),
-                        width: isDesktopWeb ? 150 : 150,
-                        height: isDesktopWeb ? 105 : 125,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.airplanemode_active,
-                            size: isDesktopWeb ? 65 : 50,
-                            color: Colors.white,
-                          );
-                        },
-                      ),
+                      child: part.image.isNotEmpty
+                          ? CachedAnyImage(
+                              imagePath: part.image,
+                              width: isDesktopWeb ? 150 : 150,
+                              height: isDesktopWeb ? 105 : 125,
+                              contentImage: BoxFit.contain,
+                            )
+                          : Icon(
+                              Icons.airplanemode_active,
+                              size: isDesktopWeb ? 65 : 50,
+                              color: Colors.white,
+                            ),
                     ),
 
                     if (!isUnlocked)

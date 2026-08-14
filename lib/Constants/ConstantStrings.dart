@@ -250,6 +250,8 @@ class ApiServiceUrlConstant {
   static const String delete = 'user/';
   static const String getGlossary = 'user/glossary';
   static const String chatHistorySession = 'ai-engine/wilco/session';
+  static const String airplaneParts = 'aircraft-parts';
+
 }
 
 class ApiFunctionUrlAirplaneConstant {

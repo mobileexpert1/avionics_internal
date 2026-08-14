@@ -22,7 +22,7 @@ class AirplanePartsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AirPlanePartsCubit()..loadAircraftParts(),
+      create: (_) => AirPlanePartsCubit(context: context),
       child: const _AirplanePartsView(),
     );
   }
@@ -89,10 +89,17 @@ class _AirplanePartsView extends StatelessWidget {
                           "Collect all ${state.totalCount} parts to complete your aircraft",
                       isCompletedGreen: true,
                       onView3DAircraft: () {
+                        final part = state.parts.firstWhere(
+                          (part) => part.collectedCount >= part.totalCount,
+                          orElse: () => state.parts.first,
+                        );
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const AirplaneCompleteScreen(),
+                            builder: (_) => AirplaneCompleteScreen(
+                              modelPath: part.modelPath,
+                            ),
                           ),
                         );
                       },
@@ -118,6 +125,7 @@ class _AirplanePartsView extends StatelessWidget {
 
                             return AirplanePartsCard(
                               part: part,
+                              index: index,
                               onTap: () {
                                 if (part.collectedCount == 0) {
                                   showDialog(

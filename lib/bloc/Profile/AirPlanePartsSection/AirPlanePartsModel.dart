@@ -1,5 +1,5 @@
 class AirPlanePartsModel {
-  final int id;
+  final String id;
   final String name;
   final String image;
   final int collectedCount;
@@ -16,18 +16,19 @@ class AirPlanePartsModel {
     this.collectedCount = 0,
     this.totalCount = 5,
     this.isUnlocked = false,
-    required this.description,
+    this.description = '',
     this.subParts = const [],
     this.modelPath = '',
   });
 
   double get progress {
     if (totalCount == 0) return 0;
+
     return (collectedCount / totalCount).clamp(0.0, 1.0);
   }
 
   AirPlanePartsModel copyWith({
-    int? id,
+    String? id,
     String? name,
     String? image,
     int? collectedCount,
@@ -51,25 +52,40 @@ class AirPlanePartsModel {
   }
 
   factory AirPlanePartsModel.fromJson(Map<String, dynamic> json) {
+    final unlockedKey =
+        json['unlocked_key'] as Map<String, dynamic>? ?? {};
+
     return AirPlanePartsModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
-      collectedCount: json['collected_count'] ?? 0,
-      totalCount: json['total_count'] ?? 5,
-      isUnlocked: json['is_unlocked'] ?? false,
-      description: json['description'] ?? '',
-      subParts: (json['sub_parts'] as List? ?? [])
-          .map((e) => AirPlaneSubPartModel.fromJson(e))
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      image: json['icon']?.toString() ?? '',
+
+      collectedCount:
+      (unlockedKey['unlocked'] as num?)?.toInt() ?? 0,
+
+      totalCount:
+      (unlockedKey['total'] as num?)?.toInt() ?? 5,
+
+      isUnlocked: json['unlocked'] as bool? ?? false,
+
+      description: json['description']?.toString() ?? '',
+
+      modelPath: json['model_path']?.toString() ?? '',
+
+      subParts: (json['component'] as List? ?? [])
+          .map(
+            (e) => AirPlaneSubPartModel.fromJson(
+          e as Map<String, dynamic>,
+        ),
+      )
           .toList(),
-      modelPath: json['model_url'] ?? '',
     );
   }
 }
 
 
 class AirPlaneSubPartModel {
-  final int id;
+  final String id;
   final String name;
   final String description;
   final bool isUnlocked;
@@ -81,14 +97,60 @@ class AirPlaneSubPartModel {
     this.isUnlocked = false,
   });
 
+  AirPlaneSubPartModel copyWith({
+    String? id,
+    String? name,
+    String? description,
+    bool? isUnlocked,
+  }) {
+    return AirPlaneSubPartModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      isUnlocked: isUnlocked ?? this.isUnlocked,
+    );
+  }
+
   factory AirPlaneSubPartModel.fromJson(
       Map<String, dynamic> json,
       ) {
     return AirPlaneSubPartModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      isUnlocked: json['is_unlocked'] ?? false,
+      id: json['id']?.toString() ?? '',
+      name: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      isUnlocked: json['unlocked'] as bool? ?? false,
     );
   }
+}
+
+class PlaneSpotterPart {
+  final String id;
+  final String name;
+  final String icon;
+  final String modelPath;
+
+  const PlaneSpotterPart({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required this.modelPath,
+  });
+
+  factory PlaneSpotterPart.fromJson(
+      Map<String, dynamic> json,
+      ) {
+    return PlaneSpotterPart(
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      icon: json['icon']?.toString() ?? '',
+      modelPath: json['model_path']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'icon': icon,
+    'model_path': modelPath,
+  };
 }
