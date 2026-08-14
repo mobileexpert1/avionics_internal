@@ -15,10 +15,13 @@ import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/NoInternetDialog.dart';
 import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundResultPopup.dart';
+import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundTheWorldScreen.dart';
 import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
+import '../SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Timer? _timer;
@@ -659,53 +662,131 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                   "img_id": state.imageBasedId,
                 };
 
-                debugPrint("QUIZ SUBMIT PAYLOAD:");
-                debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+                final count = await SharedPrefsHelper.getJettingGamesCount();
+                if (count >= 4) {
+                  final responseWait = await SharedPrefsHelper.saveJettingGame(
+                    payload,
+                  );
 
-                // final response = await SharedPrefsHelper.getJettingGameCount();
-                int totalCountGame = 1;
-                if (totalCountGame > 5) {
+                  print('Save ModelWithId: $responseWait');
+
+                  final List<Map<String, dynamic>> allGames =
+                      await SharedPrefsHelper.getJettingGames();
+
+                  Map<String, dynamic> updatedPayLoadWithDict = {
+                    "game": allGames,
+                  };
+
+                  if (await InternetConnection().hasInternetAccess) {
+                    try {
+                      final response = await QuizQuestionRepository()
+                          .submitResult(updatedPayLoadWithDict, gameId);
+
+                      if (response.detail.toLowerCase() ==
+                          "quiz answer submitted successfully".toLowerCase()) {
+                        final data = response.data;
+                        Future.delayed(
+                          const Duration(milliseconds: 100),
+                          () async {
+                            await SharedPrefsHelper.clearJettingGames();
+                            AppNavigator.push(
+                              context,
+                              JettingAroundTheWorldScreen(
+                                isComeFromResultScreen: true,
+                              ),
+                              multiBlocProviders: [
+                                BlocProvider(
+                                  create: (_) => JettingTheWorldCubit(),
+                                ),
+                              ],
+                              disableSwipeBack: true,
+                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (_) => MainResultScreen(
+                            //       correctedAnswer: data.correctAnswers,
+                            //       totalQuestion: data.totalQuestions,
+                            //       score: data.earnedPoints,
+                            //       bonusPoints: data.additionalPoints,
+                            //       isEarnedBadge: data.isEarnedBadge,
+                            //       badgeName: data.badgeName,
+                            //       isComeFromTrivia: gameId == "trivia",
+                            //     ),
+                            //   ),
+                            // );
+
+                            AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.calculationsListButton,
+                              FirebaseEvents.calculationResultScreen,
+                            );
+                          },
+                        );
+                      } else {
+                        SessionCommonTokenError.handleUnauthorizedError(
+                          context,
+                          e,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Result submit failed. Try again."),
+                          ),
+                        );
+                        emit(
+                          state.copyWith(
+                            errorMessage: "Result submit failed. Try again.",
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      SessionCommonTokenError.handleUnauthorizedError(
+                        context,
+                        e,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to submit results: $e')),
+                      );
+                      emit(
+                        state.copyWith(
+                          errorMessage: 'Failed to submit results: $e',
+                        ),
+                      );
+                    }
+                  } else {
+                    NoInternetDialog.show(
+                      context,
+                      onRetry: () => nextQuestion(context),
+                    );
+                  }
                 } else {
-                  // await SharedPrefsHelper.saveJettingGameCount(totalCountGame);
-                  // print("totalNumberOfPlaying-=-=-=-=$totalCountGame");
-                  //
-                  // final savedList =
-                  //     await SharedPrefsHelper.getJettingGameSetId();
-                  // final List<String> currentIds = savedList != null
-                  //     ? List.from(savedList)
-                  //     : [];
-                  // currentIds.add(state.gameTempData!.setId);
-                  // await SharedPrefsHelper.saveJettingGameSetId(currentIds);
-                  //
-                  // print('Save JettingGameSetId: $currentIds');
-                  //
-                  // final responseWait = await SharedPrefsHelper.saveModelWithId(
-                  //   state.gameTempData!.setId,
-                  //   payload,
-                  // );
-                  //
-                  // print('Save ModelWithId: $responseWait');
-                  // if (responseWait) {
-                  //   emit(
-                  //     state.copyWith(
-                  //       currentIndex: 0,
-                  //       selectedIndex: null,
-                  //       showAnswer: false,
-                  //       timer: _totalDuration,
-                  //       isTimerEnded: false,
-                  //     ),
-                  //   );
-                  //   loadQuestions(_quizTypesId, context);
-                  // } else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text('Failed to submit results: $e')),
-                  //   );
-                  //   emit(
-                  //     state.copyWith(
-                  //       errorMessage: 'Failed to submit results: $e',
-                  //     ),
-                  //   );
-                  // }
+                  final responseWait = await SharedPrefsHelper.saveJettingGame(
+                    payload,
+                  );
+
+                  print('Save ModelWithId: $responseWait');
+
+                  if (responseWait) {
+                    emit(
+                      state.copyWith(
+                        currentIndex: 0,
+                        selectedIndex: null,
+                        showAnswer: false,
+                        timer: _totalDuration,
+                        isTimerEnded: false,
+                      ),
+                    );
+                    loadQuestions(_quizTypesId, context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to submit results: $e')),
+                    );
+                    emit(
+                      state.copyWith(
+                        errorMessage: 'Failed to submit results: $e',
+                      ),
+                    );
+                  }
                 }
               }
             },
@@ -807,6 +888,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                       bonusPoints: data.additionalPoints,
                       isEarnedBadge: data.isEarnedBadge,
                       badgeName: data.badgeName,
+                      isComeFromTrivia: gameId == "trivia",
                     ),
                   ),
                 );

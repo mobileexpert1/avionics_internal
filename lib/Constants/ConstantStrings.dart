@@ -301,6 +301,9 @@ class ApiFunctionUrlGamesConstant {
   static const String encyclopaediaTopics = "encyclopaedia/questions/";
   static const String imageBased = "image-game/";
   static const String encyclopaedia = "encyclopaedia/";
+
+  static const String boardingPass = "boarding-pass?";
+  static const String ticketUsername = "ticket?username=";
 }
 
 class ApiGameBadges {

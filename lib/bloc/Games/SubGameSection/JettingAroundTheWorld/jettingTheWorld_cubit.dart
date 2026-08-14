@@ -24,17 +24,12 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
               icao: airport.icao,
               iata: airport.iata,
               distanceNm: airport.distanceNm,
-
               flightSegment1: airport.flightSegment1,
               flightSegment2: airport.flightSegment2,
-
               id: airport.id,
-
               city: airport.city,
               country: airport.country,
-
               equatorDistance: airport.equatorDistance,
-
               latitude: airport.latitude,
               longitude: airport.longitude,
               unlocked: airport.unlocked,
@@ -44,11 +39,8 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
           emit(
             state.copyWith(
               airportList: airportList,
-
               isLoading: false,
-
               isSuccess: true,
-
               status: CommonApiStatus.success,
             ),
           );
@@ -64,5 +56,22 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
         );
       }
     }
+  }
+}
+
+String getTheDynamicTitleAccordingToLevel(int currentLevel) {
+  switch (currentLevel) {
+    case 0:
+      return "TakeOff";
+    case 1:
+      return "Climb";
+    case 2:
+      return "En- Route";
+    case 3:
+      return "Decent";
+    case 4:
+      return "Landing";
+    default:
+      return "";
   }
 }

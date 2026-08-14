@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
+
 import '../../../Constants/ApiClass/api_service.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Database/generic_methods.dart';
@@ -10,14 +12,17 @@ class GlossaryRepository {
     : _glossary = GenericMethods<GlossaryItem>(GlossaryItem.fromJson);
 
   final GenericMethods<GlossaryItem> _glossary;
+
   Future<Map<String, List<GlossaryItem>>> getGlossaryData({
     String? query,
+    required String prefixItem,
   }) async {
     final uri = Uri.parse(
       ApiBaseUrlConstant.baseUrl +
           ApiFunctionUrlConstant.userService +
           ApiServiceUrlConstant.getGlossary +
-          (query != null && query.isNotEmpty ? '?q=$query' : ''),
+          ('?prefix=$prefixItem') +
+          (query != null && query.isNotEmpty ? '&q=$query' : ''),
     );
 
     try {
@@ -42,25 +47,26 @@ class GlossaryRepository {
               .toList(),
         ),
       );
-    } on HttpStatusException catch (e) {
-      if (e.statusCode == 400 || e.statusCode == 404) {
-        return _getLocalData();
-      }
-      throw e.toString();
-    } catch (e) {
+    }
+    // if (e.statusCode == 400 || e.statusCode == 404) {
+    //   return _getLocalData();
+    // }
+    //   throw e.toString();
+    // }
+    catch (e) {
       throw e.toString();
     }
   }
 
-  Future<Map<String, List<GlossaryItem>>> _getLocalData() async {
-    final list = await _glossary.getAll('glossary');
-    final Map<String, List<GlossaryItem>> grouped = {};
-    for (final item in list) {
-      final key = item.title.isNotEmpty
-          ? item.title[0].toUpperCase()
-          : '#';
-      grouped.putIfAbsent(key, () => []).add(item);
-    }
-    return grouped;
-  }
+  // Future<Map<String, List<GlossaryItem>>> _getLocalData() async {
+  //   final list = await _glossary.getAll('glossary');
+  //   final Map<String, List<GlossaryItem>> grouped = {};
+  //   for (final item in list) {
+  //     final key = item.title.isNotEmpty
+  //         ? item.title[0].toUpperCase()
+  //         : '#';
+  //     grouped.putIfAbsent(key, () => []).add(item);
+  //   }
+  //   return grouped;
+  // }
 }

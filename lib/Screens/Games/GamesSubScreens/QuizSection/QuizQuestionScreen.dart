@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -130,7 +131,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                       ),
                       actions: [
                         TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
+                          onPressed: () async {
+                            await SharedPrefsHelper.clearJettingGames();
+                            Navigator.of(context).pop(false);
+                          },
                           style: ButtonStyle(
                             foregroundColor: WidgetStateProperty.all<Color>(
                               Colors.black,
@@ -752,7 +756,10 @@ class QuizProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                          CommonUi.setGifAndVideoImage(AssetsPath.timeoutAlertGif,false),
+                          CommonUi.setGifAndVideoImage(
+                            AssetsPath.timeoutAlertGif,
+                            false,
+                          ),
                           width: 30,
                           height: 30,
                           fit: BoxFit.cover,

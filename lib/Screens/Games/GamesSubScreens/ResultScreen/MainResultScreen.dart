@@ -19,6 +19,7 @@ class MainResultScreen extends StatefulWidget {
     required this.isEarnedBadge,
     required this.badgeName,
     required this.bonusPoints,
+    required this.isComeFromTrivia,
   });
 
   final int totalQuestion;
@@ -27,6 +28,7 @@ class MainResultScreen extends StatefulWidget {
   final bool isEarnedBadge;
   final String badgeName;
   final int bonusPoints;
+  final bool isComeFromTrivia;
 
   @override
   _MainResultScreenState createState() => _MainResultScreenState();

@@ -20,7 +20,9 @@ Widget customFieldForTextAndValue(
         final first = fields[i * 2];
 
         final second = i * 2 + 1 < fields.length ? fields[i * 2 + 1] : null;
+
         final bool firstShowInfo = first.length > 2 && first[2] == true;
+
         final bool secondShowInfo =
             second != null && second.length > 2 && second[2] == true;
 
@@ -28,33 +30,70 @@ Widget customFieldForTextAndValue(
           padding: const EdgeInsets.only(bottom: 7),
           child: Column(
             children: [
+              // =========================
+              // TITLE ROW
+              // =========================
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // =========================
+                  // FIRST FIELD
+                  // =========================
                   Expanded(
-                    child: Row(
-                      children: [
-                        Flexible(
-                          child: Text(
+                    child: _buildTitleWithInfo(
+                      title: first[0].toString(),
+                      showInfo: firstShowInfo,
+                      style: AppTextStyles.regular(14).copyWith(
+                        height: 1.3,
+                        color: isComeFromSavedFlight
+                            ? AppColors.white
+                            : AppColors.lightGreyTextFieldHeading,
+                      ),
+                      onInfoTap: () {
+                        if (first.length > 3 && first[3] != null) {
+                          final key = first[3].toString();
+                          final isForLive = first[4].toString();
+
+                          final value = context
+                              .read<AirCraftDetailCubit>()
+                              .getFieldValue(key, isForLive);
+
+                          showAutoDismissDialog(
+                            context,
                             first[0].toString(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                            value,
+                          );
+                        } else {
+                          showAutoDismissDialog(
+                            context,
+                            first[0].toString(),
+                            first[1].toString(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(width: 15),
+
+                  // =========================
+                  // SECOND FIELD
+                  // =========================
+                  Expanded(
+                    child: second != null
+                        ? _buildTitleWithInfo(
+                            title: second[0].toString(),
+                            showInfo: secondShowInfo,
                             style: AppTextStyles.regular(14).copyWith(
                               height: 1.3,
                               color: isComeFromSavedFlight
                                   ? AppColors.white
                                   : AppColors.lightGreyTextFieldHeading,
                             ),
-                          ),
-                        ),
-
-                        if (firstShowInfo) ...[
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () {
-                              if (first.length > 3 && first[3] != null) {
-                                final key = first[3].toString();
-                                final isForLive = first[4].toString();
+                            onInfoTap: () {
+                              if (second.length > 3 && second[3] != null) {
+                                final key = second[3].toString();
+                                final isForLive = second[4].toString();
 
                                 final value = context
                                     .read<AirCraftDetailCubit>()
@@ -62,83 +101,26 @@ Widget customFieldForTextAndValue(
 
                                 showAutoDismissDialog(
                                   context,
-                                  first[0].toString(),
+                                  second[0].toString(),
                                   value,
                                 );
                               } else {
                                 showAutoDismissDialog(
                                   context,
-                                  first[0],
-                                  first[1],
+                                  second[0].toString(),
+                                  second[1].toString(),
                                 );
                               }
                             },
-                            child: const Icon(Icons.info_outline, size: 16),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(width: 15),
-
-                  Expanded(
-                    child: second != null
-                        ? Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  second[0].toString(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.regular(14).copyWith(
-                                    height: 1.3,
-                                    color: isComeFromSavedFlight
-                                        ? AppColors.white
-                                        : AppColors.lightGreyTextFieldHeading,
-                                  ),
-                                ),
-                              ),
-
-                              if (secondShowInfo) ...[
-                                const SizedBox(width: 4),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (second.length > 3 &&
-                                        second[3] != null) {
-                                      final key = second[3].toString();
-                                      final isForLive = second[4].toString();
-
-                                      final value = context
-                                          .read<AirCraftDetailCubit>()
-                                          .getFieldValue(key, isForLive);
-
-                                      showAutoDismissDialog(
-                                        context,
-                                        second[0].toString(),
-                                        value,
-                                      );
-                                    } else {
-                                      showAutoDismissDialog(
-                                        context,
-                                        second[0],
-                                        second[1],
-                                      );
-                                    }
-                                  },
-                                  child: const Icon(
-                                    Icons.info_outline,
-                                    size: 16,
-                                  ),
-                                ),
-                              ],
-                            ],
                           )
                         : const SizedBox(),
                   ),
                 ],
               ),
 
+              // =========================
+              // VALUE ROW
+              // =========================
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -153,7 +135,9 @@ Widget customFieldForTextAndValue(
                       ),
                     ),
                   ),
+
                   const SizedBox(width: 15),
+
                   Expanded(
                     child: second != null
                         ? Text(
@@ -170,6 +154,9 @@ Widget customFieldForTextAndValue(
                 ],
               ),
 
+              // =========================
+              // DIVIDER ROW
+              // =========================
               Row(
                 children: [
                   Expanded(
@@ -178,7 +165,9 @@ Widget customFieldForTextAndValue(
                       color: AppColors.separatorColourAppBar,
                     ),
                   ),
+
                   const SizedBox(width: 15),
+
                   Expanded(
                     child: second != null
                         ? Divider(
@@ -194,6 +183,92 @@ Widget customFieldForTextAndValue(
         );
       }),
     ),
+  );
+}
+
+// ============================================================
+// TITLE + INLINE INFO ICON
+// ============================================================
+
+Widget _buildTitleWithInfo({
+  required String title,
+  required bool showInfo,
+  required TextStyle style,
+  required VoidCallback onInfoTap,
+}) {
+  if (!showInfo) {
+    return Text(
+      title,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: style,
+    );
+  }
+
+  final words = title.trim().split(RegExp(r'\s+'));
+
+  if (words.length == 1) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: title),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: GestureDetector(
+                onTap: onInfoTap,
+                child: const Icon(Icons.info_outline, size: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: style,
+    );
+  }
+
+  final lastWord = words.removeLast();
+  final remainingTitle = words.join(' ');
+
+  return Text.rich(
+    TextSpan(
+      children: [
+        TextSpan(text: '$remainingTitle '),
+
+        // Last word + icon ko ek saath rakho
+        WidgetSpan(
+          alignment: PlaceholderAlignment.baseline,
+          baseline: TextBaseline.alphabetic,
+          child: GestureDetector(
+            onTap: onInfoTap,
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: lastWord, style: style),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: style.color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: style,
   );
 }
 
@@ -232,9 +307,13 @@ void showAutoDismissDialog(BuildContext context, String title, String content) {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 20),
+
                     Container(height: 1, color: Colors.white24),
+
                     const SizedBox(height: 15),
+
                     Text(
                       content,
                       style: AppTextStyles.regular(
@@ -243,6 +322,7 @@ void showAutoDismissDialog(BuildContext context, String title, String content) {
                     ),
                   ],
                 ),
+
                 Positioned(
                   top: 0,
                   right: 0,

@@ -21,7 +21,9 @@ import '../../MainGameScreen/ReusableGameDetailScreen.dart';
 import 'JourneyRoutePopup.dart';
 
 class JettingAroundTheWorldScreen extends StatefulWidget {
-  const JettingAroundTheWorldScreen({super.key});
+  const JettingAroundTheWorldScreen({super.key, required this.isComeFromResultScreen});
+
+  final bool isComeFromResultScreen;
 
   @override
   State<JettingAroundTheWorldScreen> createState() =>

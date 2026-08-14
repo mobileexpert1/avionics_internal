@@ -14,11 +14,11 @@ import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../Helpers/WebAndMobileBrowser/web_iframe_widget.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_cubit.dart';
 import '../../../../../bloc/Profile/ManageAccount/manageAcc_state.dart';
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../CustomFiles/CustomBottomButton.dart';
-import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../QuizSection/QuizQuestionScreen.dart';
+import 'AviationChroniclePopup.dart';
 
 class JettingAroundTheBoardingPass extends StatefulWidget {
   const JettingAroundTheBoardingPass({super.key});
@@ -38,6 +38,7 @@ class _JettingAroundTheBoardingState
   double creditUsagePercentage = 0.0;
   String _webUrl = "";
   int isClickOnNextButton = 0;
+  int currentIndexForPass = 0;
   VideoPlayerController? _videoController;
 
   @override
@@ -66,6 +67,8 @@ class _JettingAroundTheBoardingState
               setState(() {});
             }
           });
+
+    _returnCurrentCount();
   }
 
   Future<void> openAddOnPacksBottomSheet() async {
@@ -98,11 +101,21 @@ class _JettingAroundTheBoardingState
     }
   }
 
+  Future<void> _returnCurrentCount() async {
+    final count = await SharedPrefsHelper.getJettingGamesCount();
+    setState(() {
+      currentIndexForPass = count;
+    });
+  }
+
   String _buildUrl(bool isForFirstScreen) {
     if (isForFirstScreen) {
-      return "https://avionica.csdevhub.com/user-service/boarding-pass";
+      return "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}${ApiFunctionUrlGamesConstant.boardingPass}user_id=$currentUserId&game_no=$currentIndexForPass";
     }
-    return "https://avionica.csdevhub.com/user-service/ticket?username=$userName";
+    return ApiBaseUrlConstant.baseUrl +
+        ApiFunctionUrlConstant.userService +
+        ApiFunctionUrlGamesConstant.ticketUsername +
+        userName;
   }
 
   @override
@@ -112,7 +125,8 @@ class _JettingAroundTheBoardingState
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) async {
           if (!state.isLoading) {
-            userName = state.firstName + state.lastName;
+            userName = "${state.firstName} ${state.lastName}";
+            currentUserId = state.userId;
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
             if (userName != "") {
@@ -227,41 +241,50 @@ class _JettingAroundTheBoardingState
                       icon: const SizedBox(width: 0),
                       isEnabled: true,
                       onPressed: () {
-                        if (isClickOnNextButton == 0) {
-                          setState(() {
-                            isClickOnNextButton = 1;
-                          });
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) => AviationChroniclePopup(
+                            onButtonTap: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        );
 
-                          if (_videoController != null &&
-                              _videoController!.value.isInitialized) {
-                            _videoController!
-                              ..seekTo(Duration.zero)
-                              ..play();
-
-                            Future.delayed(const Duration(seconds: 12), () {
-                              setState(() {
-                                isClickOnNextButton = 3;
-                                final url = _buildUrl(true);
-
-                                if (kIsWeb) {
-                                  setState(() => _webUrl = url);
-                                } else {
-                                  controller!.loadRequest(Uri.parse(url));
-                                }
-                              });
-                            });
-                          }
-                        } else if (isClickOnNextButton == 3) {
-                          AppNavigator.push(
-                            context,
-                            QuizQuestionScreen(
-                              sectionId: 0,
-                              sectionTitle: "Jetting Around The World",
-                              gameId: "trivia",
-                            ),
-                            disableSwipeBack: true,
-                          );
-                        }
+                        // if (isClickOnNextButton == 0) {
+                        //   setState(() {
+                        //     isClickOnNextButton = 1;
+                        //   });
+                        //
+                        //   if (_videoController != null &&
+                        //       _videoController!.value.isInitialized) {
+                        //     _videoController!
+                        //       ..seekTo(Duration.zero)
+                        //       ..play();
+                        //
+                        //     Future.delayed(const Duration(seconds: 12), () {
+                        //       setState(() {
+                        //         isClickOnNextButton = 3;
+                        //         final url = _buildUrl(true);
+                        //         if (kIsWeb) {
+                        //           setState(() => _webUrl = url);
+                        //         } else {
+                        //           controller!.loadRequest(Uri.parse(url));
+                        //         }
+                        //       });
+                        //     });
+                        //   }
+                        // } else if (isClickOnNextButton == 3) {
+                        //   AppNavigator.push(
+                        //     context,
+                        //     QuizQuestionScreen(
+                        //       sectionId: 0,
+                        //       sectionTitle: "Jetting Around The World",
+                        //       gameId: "trivia",
+                        //     ),
+                        //     disableSwipeBack: true,
+                        //   );
+                        // }
                       },
                     ),
                   ),

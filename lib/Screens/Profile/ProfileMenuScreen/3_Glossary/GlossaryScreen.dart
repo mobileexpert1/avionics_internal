@@ -38,10 +38,15 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.glossaryScreen);
+
+    context.read<GlossaryCubit>().state.selectedLetter = "A";
+    isSelectedExpanded = true;
+    context.read<GlossaryCubit>().loadGlossary(context: context);
   }
 
   void _onSearchChanged() {
     setState(() {
+      isSelectedExpanded = false;
       context.read<GlossaryCubit>().state.selectedLetter = "";
     });
   }
@@ -84,10 +89,16 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 enableCloseScreen: false,
                 controller: _searchController,
                 onChanged: (value) {
-                  context.read<GlossaryCubit>().searchGlossary(
+                  context.read<GlossaryCubit>().loadGlossary(
                     query: value.trim(),
                     context: context,
                   );
+                  isSelectedExpanded = true;
+
+                  // context.read<GlossaryCubit>().searchGlossary(
+                  //   query: value.trim(),
+                  //   context: context,
+                  // );
                 },
               ),
               Expanded(
@@ -318,10 +329,12 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           }
         });
 
-        context.read<GlossaryCubit>().filterByLetter(
-          letter: context.read<GlossaryCubit>().state.selectedLetter ?? "",
-          context: context,
-        );
+        context.read<GlossaryCubit>().loadGlossary(context: context);
+
+        // context.read<GlossaryCubit>().filterByLetter(
+        //   letter: context.read<GlossaryCubit>().state.selectedLetter ?? "",
+        //   context: context,
+        // );
       },
       borderRadius: BorderRadius.circular(3),
       child: AnimatedContainer(

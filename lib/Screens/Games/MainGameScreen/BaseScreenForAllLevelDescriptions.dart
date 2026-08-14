@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
@@ -121,9 +122,7 @@ class _BaseScreenForAllLevelState
         break;
 
       case 'trivia':
-        // await SharedPrefsHelper.clearJettingGameCount();
-        // await SharedPrefsHelper.saveJettingGameCount(1);
-        // await SharedPrefsHelper.clearJettingGameSetId();
+        await SharedPrefsHelper.clearJettingGames();
 
         AnalyticsService.instance.buttonPressed(
           FirebaseEvents.quizListButton,
@@ -132,7 +131,7 @@ class _BaseScreenForAllLevelState
 
         AppNavigator.push(
           context,
-          JettingAroundTheWorldScreen(),
+          JettingAroundTheWorldScreen(isComeFromResultScreen: false),
           multiBlocProviders: [
             BlocProvider(create: (_) => JettingTheWorldCubit()),
           ],
