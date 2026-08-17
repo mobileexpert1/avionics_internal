@@ -5,13 +5,19 @@ import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
-class AviationChroniclePopup extends StatelessWidget {
+class AviationChroniclePopup extends StatefulWidget {
   final VoidCallback onButtonTap;
 
   const AviationChroniclePopup({super.key, required this.onButtonTap});
 
+  @override
+  State<AviationChroniclePopup> createState() => _AviationChroniclePopupState();
+}
+
+class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
+  bool isExpanded = false;
+
   static const Color navy = Color(0xFF14205C);
-  static const Color gold = Color(0xFFF5C542);
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +130,10 @@ class AviationChroniclePopup extends StatelessWidget {
                   "aviation history—and a testament to courage, skill, "
                   "and the spirit of exploration.",
                   textAlign: TextAlign.center,
+                  maxLines: isExpanded ? null : 3,
+                  overflow: isExpanded
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
                   style: AppTextStyles.regular(
                     14,
                   ).copyWith(height: 1.7, color: AppColors.black),
@@ -133,7 +143,15 @@ class AviationChroniclePopup extends StatelessWidget {
                   width: 185,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: onButtonTap,
+                    onPressed: () {
+                      if (!isExpanded) {
+                        setState(() {
+                          isExpanded = true;
+                        });
+                      } else {
+                        widget.onButtonTap();
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: navy,
                       shape: RoundedRectangleBorder(
@@ -144,18 +162,17 @@ class AviationChroniclePopup extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Read More",
+                          isExpanded ? "Continue" : "Read More",
                           style: AppTextStyles.regular(
                             18,
                           ).copyWith(height: 1.0, color: AppColors.white),
                         ),
                         const SizedBox(width: 10),
-                        SizedBox(
-                          child: SvgPicture.asset(
+                        if (!isExpanded)
+                          SvgPicture.asset(
                             CommonUi.setSvgImage(AssetsPath.rightArrow),
                             height: 20,
                           ),
-                        ),
                       ],
                     ),
                   ),

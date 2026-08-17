@@ -17,9 +17,14 @@ import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../CustomFiles/Custom_SnackBar.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/NoInternetDialog.dart';
+import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/AviationChroniclePopup.dart';
 import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundResultPopup.dart';
 import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundTheWorldScreen.dart';
 import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
+import '../../../Screens/Games/MainGameScreen/BaseScreenForAllLevelDescriptions.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/PartUnlockScreen.dart';
+import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/PlaneSpotterResultDialog.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 import '../SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 
@@ -495,32 +500,75 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   Future<void> nextQuestion(BuildContext context) async {
     if (state.currentIndex + 1 < state.questions.length) {
-      emit(
-        state.copyWith(
-          currentIndex: state.currentIndex + 1,
-          selectedIndex: null,
-          showAnswer: false,
-          timer: _totalDuration,
-          isTimerEnded: false,
-        ),
-      );
+      final count = await SharedPrefsHelper.getJettingGamesCount();
+      print(gameId);
+      print(count);
+      print(state.currentIndex);
+      if (gameId == "trivia" && state.currentIndex == 1 && count == 2) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AviationChroniclePopup(
+            onButtonTap: () async {
+              Navigator.of(context).pop();
+              emit(
+                state.copyWith(
+                  currentIndex: state.currentIndex + 1,
+                  selectedIndex: null,
+                  showAnswer: false,
+                  timer: _totalDuration,
+                  isTimerEnded: false,
+                ),
+              );
 
-      startTimer(context);
+              startTimer(context);
 
-      if (gameId == "quiz") {
-        switch (state.currentIndex) {
-          case 10:
-            _totalDuration = 150;
-            break;
-          case 14:
-            _totalDuration = 90;
-            break;
-        }
-        _timer?.cancel();
+              if (gameId == "quiz") {
+                switch (state.currentIndex) {
+                  case 10:
+                    _totalDuration = 150;
+                    break;
+                  case 14:
+                    _totalDuration = 90;
+                    break;
+                }
+                _timer?.cancel();
+                startTimer(context);
+              }
+              if (state.currentIndex == 9 || state.currentIndex == 13) {
+                revealBufferedQuestions(context);
+              }
+            },
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            currentIndex: state.currentIndex + 1,
+            selectedIndex: null,
+            showAnswer: false,
+            timer: _totalDuration,
+            isTimerEnded: false,
+          ),
+        );
+
         startTimer(context);
-      }
-      if (state.currentIndex == 9 || state.currentIndex == 13) {
-        revealBufferedQuestions(context);
+
+        if (gameId == "quiz") {
+          switch (state.currentIndex) {
+            case 10:
+              _totalDuration = 150;
+              break;
+            case 14:
+              _totalDuration = 90;
+              break;
+          }
+          _timer?.cancel();
+          startTimer(context);
+        }
+        if (state.currentIndex == 9 || state.currentIndex == 13) {
+          revealBufferedQuestions(context);
+        }
       }
     } else if (state.currentIndex == maxQuestions - 1) {
       _timer?.cancel();
@@ -607,7 +655,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                   return {
                     "category_type": categoryType,
                     "category_name": formatCategoryName(categoryName),
-                    // Format for display
                     "questions": questions.map((q) {
                       final resultIndex = state.questions.indexOf(q);
                       final result = resultIndex != -1
@@ -688,11 +735,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                         Future.delayed(
                           const Duration(milliseconds: 100),
                           () async {
-                            await SharedPrefsHelper.clearJettingGames();
+                            // await SharedPrefsHelper.clearJettingGames(); Handle After Show All Button.
                             AppNavigator.push(
                               context,
                               JettingAroundTheWorldScreen(
                                 isComeFromResultScreen: true,
+                                responseFromResultScreenData: response.data,
                               ),
                               multiBlocProviders: [
                                 BlocProvider(
@@ -701,21 +749,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                               ],
                               disableSwipeBack: true,
                             );
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (_) => MainResultScreen(
-                            //       correctedAnswer: data.correctAnswers,
-                            //       totalQuestion: data.totalQuestions,
-                            //       score: data.earnedPoints,
-                            //       bonusPoints: data.additionalPoints,
-                            //       isEarnedBadge: data.isEarnedBadge,
-                            //       badgeName: data.badgeName,
-                            //       isComeFromTrivia: gameId == "trivia",
-                            //     ),
-                            //   ),
-                            // );
-
                             AnalyticsService.instance.buttonPressed(
                               FirebaseEvents.calculationsListButton,
                               FirebaseEvents.calculationResultScreen,
@@ -877,26 +910,88 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             if (response.detail.toLowerCase() ==
                 "quiz answer submitted successfully".toLowerCase()) {
               final data = response.data;
-              Future.delayed(const Duration(milliseconds: 100), () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MainResultScreen(
-                      correctedAnswer: data.correctAnswers,
-                      totalQuestion: data.totalQuestions,
-                      score: data.earnedPoints,
-                      bonusPoints: data.additionalPoints,
-                      isEarnedBadge: data.isEarnedBadge,
-                      badgeName: data.badgeName,
-                      isComeFromTrivia: gameId == "trivia",
-                    ),
-                  ),
-                );
 
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.calculationsListButton,
-                  FirebaseEvents.calculationResultScreen,
-                );
+              Future.delayed(const Duration(milliseconds: 100), () {
+                if (gameId == "imageBased") {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) {
+                      return ImageBasedResultDialog(
+                        correctAnswers: data.correctAnswers,
+                        totalQuestions: data.totalQuestions,
+                        componentEarned: data.componentEarned,
+                        componentTitle: data.component?.name ?? '',
+                        componentDescription: data.component?.description ?? '',
+                        onContinue: () {
+                          if (data.partUnlock && data.part != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ComponentUnlockedScreen(
+                                  partName: data.part!.name,
+                                  image3d: data.part!.icon,
+                                  onView3DPart: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const AirplanePartsScreen(),
+                                      ),
+                                    );
+                                  },
+
+                                  onNext: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            BaseScreenForAllLevelDescriptions(
+                                              gameId: gameId,
+                                            ),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    BaseScreenForAllLevelDescriptions(
+                                      gameId: gameId,
+                                    ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MainResultScreen(
+                        correctedAnswer: data.correctAnswers,
+                        totalQuestion: data.totalQuestions,
+                        score: data.earnedPoints,
+                        bonusPoints: data.additionalPoints,
+                        isEarnedBadge: data.isEarnedBadge,
+                        badgeName: data.badgeName,
+                        isComeFromTrivia: false,
+                      ),
+                    ),
+                  );
+
+                  AnalyticsService.instance.buttonPressed(
+                    FirebaseEvents.calculationsListButton,
+                    FirebaseEvents.calculationResultScreen,
+                  );
+                }
               });
             } else {
               SessionCommonTokenError.handleUnauthorizedError(context, e);

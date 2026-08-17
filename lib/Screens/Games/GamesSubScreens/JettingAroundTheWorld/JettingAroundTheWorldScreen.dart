@@ -14,6 +14,7 @@ import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/JettingAroundTheWorldHelper/globe_controls_state.dart';
+import '../../../../bloc/Games/SubGameSection/Calculation_Section/calculation_submit_model.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_model.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_state.dart';
@@ -21,9 +22,13 @@ import '../../MainGameScreen/ReusableGameDetailScreen.dart';
 import 'JourneyRoutePopup.dart';
 
 class JettingAroundTheWorldScreen extends StatefulWidget {
-  const JettingAroundTheWorldScreen({super.key, required this.isComeFromResultScreen});
+  const JettingAroundTheWorldScreen({
+    super.key,
+    required this.isComeFromResultScreen, this.responseFromResultScreenData,
+  });
 
   final bool isComeFromResultScreen;
+  final SubmitCalculationResultData? responseFromResultScreenData;
 
   @override
   State<JettingAroundTheWorldScreen> createState() =>
@@ -66,9 +71,15 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      context.read<JettingTheWorldCubit>().loadAirports(context);
-    });
+    if (!widget.isComeFromResultScreen) {
+      Future.microtask(() {
+        context.read<JettingTheWorldCubit>().loadAirports(context);
+      });
+    }else{
+      Future.microtask(() {
+        context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(context, widget.responseFromResultScreenData!);
+      });
+    }
 
     _controller = FlutterEarthGlobeController(
       rotationSpeed: 0.05,
@@ -231,7 +242,6 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
         // Border
         // borderColor: Colors.white,
         // borderWidth: 1.0,
-
         altitude: 0.05,
         transitionDuration: 600,
       ),

@@ -222,7 +222,9 @@ class JettingAroundResultPopup extends StatelessWidget {
                             ? upcomingTitle.contains("Journey")
                                   ? upcomingTitle
                                   : "Start $upcomingTitle"
-                            : "Retry $upcomingTitle",
+                            : isSuccess
+                            ? "Retry $upcomingTitle"
+                            : "Retry $currentTitle",
                         style: AppTextStyles.regular(
                           14,
                         ).copyWith(height: 1.0, color: AppColors.white),
