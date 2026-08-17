@@ -893,6 +893,8 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                   ),
                 );
 
+                
+
                 AnalyticsService.instance.buttonPressed(
                   FirebaseEvents.calculationsListButton,
                   FirebaseEvents.calculationResultScreen,
