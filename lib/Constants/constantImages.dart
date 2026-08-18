@@ -26,7 +26,10 @@ class AtmosphereAssets {
 abstract class AssetsPath {
   /// svg Images
   ///
-  static const String mainLogoWhiteColour = "0_0MainLogo";
+
+    static const String mainLogoTransparentColour = "0_0_ClearLogo";
+
+    static const String mainLogoWhiteColour = "0_0MainLogo";
   static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";
   static const String homeLeftMainLogo = "2homeLeftMainLogo";
@@ -159,9 +162,11 @@ abstract class AssetsPath {
   static const tickIcon = '130TickIcon';
   static const myAirplaneIcon = '131MyAirplane';
   static const dragRotateIcon = '132dragIcon';
-  static const successJettingAround = '133SuccessJettingAround';
-  static const rightArrow = '134RightArrow';
+  static const successJettingAround = '135SuccessJettingAround';
+  static const rightArrow = '136RightArrow';
   static const String airplaneParts = 'aircraft-parts';
+
+  static const successJettingYellowAround = '137SuccessJettingAround';
 
 
   static const nose = '200nosse';

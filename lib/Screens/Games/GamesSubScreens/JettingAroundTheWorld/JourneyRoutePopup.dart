@@ -125,7 +125,8 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                               SizedBox(height: 5),
                               IntrinsicHeight(
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     SizedBox(
                                       width: 50,
@@ -174,15 +175,14 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
 
                                           const SizedBox(height: 5),
 
-                                          // if (index != airports.length - 1)
-                                          SizedBox(
-                                            height: 50,
+                                          /// DYNAMIC HEIGHT LINE
+                                          Expanded(
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: List.generate(
-                                                6,
+                                                8,
                                                 (_) => Container(
                                                   width: 2,
                                                   height: 4,
@@ -338,7 +338,7 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                               ),
                                             ),
 
-                                            // LEFT SIDE ARROW
+                                            /// LEFT SIDE CHEVRON
                                             Positioned(
                                               left: -12,
                                               top: 10,

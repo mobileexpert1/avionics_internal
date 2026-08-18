@@ -61,12 +61,12 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
 
   Future<void> loadAirportsFromUnlockResponse(
     BuildContext context,
-      SubmitCalculationResultData responseData,
+    SubmitCalculationResultData responseData,
   ) async {
     try {
       emit(state.copyWith(isLoading: true, status: CommonApiStatus.initial));
 
-      final unlockAirport = responseData.['data']?['unlock_airport'];
+      final unlockAirport = responseData.unlockAirport;
 
       if (unlockAirport == null) {
         emit(
@@ -79,58 +79,15 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
         return;
       }
 
-      final preUnblock = unlockAirport['pre_unblock'];
-      final newUnblock = unlockAirport['new_unblock'];
-
       final List<AirportPerItemModel> updatedAirportList = [
         ...state.airportList,
       ];
 
-      // Previous airport
-      if (preUnblock != null) {
-        final airport = AirportPerItemModel(
-          id: preUnblock['id'],
-          city: preUnblock['city'],
-          country: preUnblock['country'],
-          icao: preUnblock['icao'],
-          iata: preUnblock['iata'],
-          equatorDistance: preUnblock['equator_distance'],
-          flightSegment1: preUnblock['flight_segment_1'],
-          flightSegment2: preUnblock['flight_segment_2'],
-          distanceNm: (preUnblock['distance_nm'] as num?)!.toDouble(),
-          latitude: (preUnblock['latitude'] as num?)!.toDouble(),
-          longitude: (preUnblock['longitude'] as num?)!.toDouble(),
-          unlocked: preUnblock['unlocked'] ?? false,
-        );
+      final airports = [unlockAirport.preUnblock, unlockAirport.newUnblock];
 
-        // Avoid duplicate airport
-        final alreadyExists = updatedAirportList.any(
-          (item) => item.id == airport.id,
-        );
+      for (final airport in airports) {
+        if (airport == null) continue;
 
-        if (!alreadyExists) {
-          updatedAirportList.add(airport);
-        }
-      }
-
-      // Newly unlocked airport
-      if (newUnblock != null) {
-        final airport = AirportPerItemModel(
-          id: newUnblock['id'],
-          city: newUnblock['city'],
-          country: newUnblock['country'],
-          icao: newUnblock['icao'],
-          iata: newUnblock['iata'],
-          equatorDistance: newUnblock['equator_distance'],
-          flightSegment1: newUnblock['flight_segment_1'],
-          flightSegment2: newUnblock['flight_segment_2'],
-          distanceNm: (newUnblock['distance_nm'] as num?)!.toDouble(),
-          latitude: (newUnblock['latitude'] as num?)!.toDouble(),
-          longitude: (newUnblock['longitude'] as num?)!.toDouble(),
-          unlocked: newUnblock['unlocked'] ?? false,
-        );
-
-        // Avoid duplicate airport
         final alreadyExists = updatedAirportList.any(
           (item) => item.id == airport.id,
         );
@@ -165,7 +122,7 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
 String getTheDynamicTitleAccordingToLevel(int currentLevel) {
   switch (currentLevel) {
     case 0:
-      return "TakeOff";
+      return "Takeoff";
     case 1:
       return "Climb";
     case 2:

@@ -143,11 +143,12 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                           child: const Text("Cancel"),
                         ),
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             setState(() {
                               isNeedToShowOrNot = false;
                               isNeedToShowFlagOptions = false;
                             });
+                            await SharedPrefsHelper.clearJettingGames();
                             Navigator.of(context).pop(true);
                           },
                           style: ButtonStyle(
@@ -164,6 +165,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                     ),
                   );
                   if (shouldExit ?? false) {
+                    await SharedPrefsHelper.clearJettingGames();
                     Navigator.pop(context);
                   }
                 },
@@ -172,7 +174,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
 
             body: BlocConsumer<QuizQuestionCubit, QuizQuestionState>(
               listener: (context, state) async {
-                if (state.showWrongAnswerPopup) {
+                if (state.showWrongAnswerPopup && widget.gameId != "trivia") {
                   print("wrongPopupCount :- ${state.wrongAnswerPopupCount}");
                   await Navigator.push(
                     context,

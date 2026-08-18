@@ -7,8 +7,13 @@ import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class AviationChroniclePopup extends StatefulWidget {
   final VoidCallback onButtonTap;
+  final VoidCallback onCancelButtonTap;
 
-  const AviationChroniclePopup({super.key, required this.onButtonTap});
+  const AviationChroniclePopup({
+    super.key,
+    required this.onButtonTap,
+    required this.onCancelButtonTap,
+  });
 
   @override
   State<AviationChroniclePopup> createState() => _AviationChroniclePopupState();
@@ -213,7 +218,9 @@ class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
             top: 8,
             right: 13,
             child: GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                widget.onCancelButtonTap();
+              },
               child: Container(
                 width: 20,
                 height: 20,

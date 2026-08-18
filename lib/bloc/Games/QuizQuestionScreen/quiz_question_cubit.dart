@@ -38,6 +38,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   int _totalDuration = 40;
   int _quizTypesId = 0;
   DateTime? _startTime;
+  final List<QuizQuestion> _bufferedQuestions = [];
 
   QuizQuestionCubit(
     int sectionId,
@@ -244,9 +245,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       imageBasedId: imageBasedId,
     );
   }
-
-  // Local buffer for silent background questions SD
-  List<QuizQuestion> _bufferedQuestions = [];
 
   Future<void> _fetchAndBufferBackgroundQuestions(
     int sectionId,
@@ -501,9 +499,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> nextQuestion(BuildContext context) async {
     if (state.currentIndex + 1 < state.questions.length) {
       final count = await SharedPrefsHelper.getJettingGamesCount();
-      print(gameId);
-      print(count);
-      print(state.currentIndex);
       if (gameId == "trivia" && state.currentIndex == 1 && count == 2) {
         showDialog(
           context: context,
@@ -511,510 +506,24 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           builder: (_) => AviationChroniclePopup(
             onButtonTap: () async {
               Navigator.of(context).pop();
-              emit(
-                state.copyWith(
-                  currentIndex: state.currentIndex + 1,
-                  selectedIndex: null,
-                  showAnswer: false,
-                  timer: _totalDuration,
-                  isTimerEnded: false,
-                ),
-              );
-
-              startTimer(context);
-
-              if (gameId == "quiz") {
-                switch (state.currentIndex) {
-                  case 10:
-                    _totalDuration = 150;
-                    break;
-                  case 14:
-                    _totalDuration = 90;
-                    break;
-                }
-                _timer?.cancel();
-                startTimer(context);
-              }
-              if (state.currentIndex == 9 || state.currentIndex == 13) {
-                revealBufferedQuestions(context);
-              }
+              await _moveToNextQuestion(context);
+            },
+            onCancelButtonTap: () async {
+              Navigator.of(context).pop();
+              await _moveToNextQuestion(context);
             },
           ),
         );
       } else {
-        emit(
-          state.copyWith(
-            currentIndex: state.currentIndex + 1,
-            selectedIndex: null,
-            showAnswer: false,
-            timer: _totalDuration,
-            isTimerEnded: false,
-          ),
-        );
-
-        startTimer(context);
-
-        if (gameId == "quiz") {
-          switch (state.currentIndex) {
-            case 10:
-              _totalDuration = 150;
-              break;
-            case 14:
-              _totalDuration = 90;
-              break;
-          }
-          _timer?.cancel();
-          startTimer(context);
-        }
-        if (state.currentIndex == 9 || state.currentIndex == 13) {
-          revealBufferedQuestions(context);
-        }
+        await _moveToNextQuestion(context);
       }
     } else if (state.currentIndex == maxQuestions - 1) {
       _timer?.cancel();
+
       if (gameId == "trivia") {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => JettingAroundResultPopup(
-            isSuccess: state.correctAnswers < 4 ? false : true,
-            currentStep: state.correctAnswers,
-            totalStep: 5,
-            earnedJettons: 200,
-            onButtonTap: () async {
-              Navigator.of(context).pop();
-              if (state.correctAnswers < 4) {
-                emit(
-                  state.copyWith(
-                    currentIndex: 0,
-                    selectedIndex: null,
-                    showAnswer: false,
-                    timer: _totalDuration,
-                    isTimerEnded: false,
-                  ),
-                );
-
-                final initialResults = List<QuestionResult>.generate(
-                  maxQuestions,
-                  (index) => QuestionResult(
-                    userAnswerIndex: null,
-                    correctPoint: 0,
-                    bonusPoint: 0,
-                    timeTakenSeconds: 0,
-                  ),
-                );
-
-                emit(
-                  state.copyWith(
-                    isLoading: false,
-                    questions: state.allTempQuestions,
-                    allTempQuestions: state.allTempQuestions,
-                    currentIndex: 0,
-                    selectedIndex: null,
-                    showAnswer: false,
-                    timer: _totalDuration,
-                    score: 0,
-                    correctAnswers: 0,
-                    wrongAnswers: 0,
-                    pointsEarned: 0,
-                    bonusPoints: 0,
-                    timeTaken: 0,
-                    questionResults: initialResults,
-                    timePerQuestion: List<int>.filled(maxQuestions, 0),
-                    categorizedQuestions: state.categorizedQuestions,
-                    game: state.gameTempData!.game,
-                    level: state.gameTempData!.level,
-                    difficulty: state.gameTempData!.difficulty,
-                    categoryTypes: state.gameTempData!.categoryTypes,
-                    setId: state.gameTempData!.setId,
-                    imageBasedId: state.gameTempData!.imageBasedId,
-                  ),
-                );
-                startTimer(context);
-              } else {
-                String formatTime(int seconds) => "${seconds}s";
-                String indexToLetter(int? index) {
-                  if (index == null) return "";
-                  return String.fromCharCode(65 + index);
-                }
-
-                final categoryTypeMap = <String, String>{};
-                state.categoryTypes.asMap().forEach((index, category) {
-                  categoryTypeMap[category.name] = category.type.isNotEmpty
-                      ? category.type
-                      : "${index + 1}";
-                });
-
-                final categories = state.categorizedQuestions.entries.map((
-                  entry,
-                ) {
-                  final categoryName = entry.key;
-                  final questions = entry.value;
-                  final categoryType =
-                      categoryTypeMap[categoryName] ?? categoryName;
-                  return {
-                    "category_type": categoryType,
-                    "category_name": formatCategoryName(categoryName),
-                    "questions": questions.map((q) {
-                      final resultIndex = state.questions.indexOf(q);
-                      final result = resultIndex != -1
-                          ? state.questionResults[resultIndex]
-                          : QuestionResult(
-                              userAnswerIndex: null,
-                              correctPoint: 0,
-                              bonusPoint: 0,
-                              timeTakenSeconds: 0,
-                            );
-                      return {
-                        "question": q.question,
-                        "options": List.generate(
-                          q.options.length,
-                          (optIndex) => {
-                            "label": String.fromCharCode(65 + optIndex),
-                            "value": q.options[optIndex],
-                          },
-                        ),
-                        "answer": indexToLetter(q.correctIndex),
-                        "explanation": q.hint,
-                        "img_url": q.imgUrl,
-                        "user_answered": indexToLetter(result.userAnswerIndex),
-                        "correct_point": result.correctPoint,
-                        "bonus_point": result.bonusPoint,
-                        "time_taken": formatTime(result.timeTakenSeconds),
-                      };
-                    }).toList(),
-                  };
-                }).toList();
-
-                final allCorrectBonus = (state.correctAnswers == maxQuestions)
-                    ? 3
-                    : 0;
-                final finalScore = state.score + allCorrectBonus;
-
-                final payload = {
-                  "total_questions": maxQuestions,
-                  "correct_answers": state.correctAnswers,
-                  "correct_points": state.pointsEarned,
-                  "earned_points": finalScore,
-                  "additional_points": state.bonusPoints,
-                  "total_time": formatTime(state.timeTaken),
-                  "game": state.game,
-                  "level": state.level,
-                  "difficulty": state.difficulty,
-                  "categories": categories,
-                  "game_number": _quizTypesId,
-                  "set_id": gameId == "imageBased"
-                      ? state.imageBasedId
-                      : state.setId,
-                  "img_id": state.imageBasedId,
-                };
-
-                final count = await SharedPrefsHelper.getJettingGamesCount();
-                if (count >= 4) {
-                  final responseWait = await SharedPrefsHelper.saveJettingGame(
-                    payload,
-                  );
-
-                  print('Save ModelWithId: $responseWait');
-
-                  final List<Map<String, dynamic>> allGames =
-                      await SharedPrefsHelper.getJettingGames();
-
-                  Map<String, dynamic> updatedPayLoadWithDict = {
-                    "game": allGames,
-                  };
-
-                  if (await InternetConnection().hasInternetAccess) {
-                    try {
-                      final response = await QuizQuestionRepository()
-                          .submitResult(updatedPayLoadWithDict, gameId);
-
-                      if (response.detail.toLowerCase() ==
-                          "quiz answer submitted successfully".toLowerCase()) {
-                        final data = response.data;
-                        Future.delayed(
-                          const Duration(milliseconds: 100),
-                          () async {
-                            // await SharedPrefsHelper.clearJettingGames(); Handle After Show All Button.
-                            AppNavigator.push(
-                              context,
-                              JettingAroundTheWorldScreen(
-                                isComeFromResultScreen: true,
-                                responseFromResultScreenData: response.data,
-                              ),
-                              multiBlocProviders: [
-                                BlocProvider(
-                                  create: (_) => JettingTheWorldCubit(),
-                                ),
-                              ],
-                              disableSwipeBack: true,
-                            );
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.calculationsListButton,
-                              FirebaseEvents.calculationResultScreen,
-                            );
-                          },
-                        );
-                      } else {
-                        SessionCommonTokenError.handleUnauthorizedError(
-                          context,
-                          e,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Result submit failed. Try again."),
-                          ),
-                        );
-                        emit(
-                          state.copyWith(
-                            errorMessage: "Result submit failed. Try again.",
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      SessionCommonTokenError.handleUnauthorizedError(
-                        context,
-                        e,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to submit results: $e')),
-                      );
-                      emit(
-                        state.copyWith(
-                          errorMessage: 'Failed to submit results: $e',
-                        ),
-                      );
-                    }
-                  } else {
-                    NoInternetDialog.show(
-                      context,
-                      onRetry: () => nextQuestion(context),
-                    );
-                  }
-                } else {
-                  final responseWait = await SharedPrefsHelper.saveJettingGame(
-                    payload,
-                  );
-
-                  print('Save ModelWithId: $responseWait');
-
-                  if (responseWait) {
-                    emit(
-                      state.copyWith(
-                        currentIndex: 0,
-                        selectedIndex: null,
-                        showAnswer: false,
-                        timer: _totalDuration,
-                        isTimerEnded: false,
-                      ),
-                    );
-                    loadQuestions(_quizTypesId, context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to submit results: $e')),
-                    );
-                    emit(
-                      state.copyWith(
-                        errorMessage: 'Failed to submit results: $e',
-                      ),
-                    );
-                  }
-                }
-              }
-            },
-          ),
-        );
+        await _showTriviaResultPopup(context);
       } else {
-        String formatTime(int seconds) => "${seconds}s";
-        String indexToLetter(int? index) {
-          if (index == null) return "";
-          return String.fromCharCode(65 + index);
-        }
-
-        final categoryTypeMap = <String, String>{};
-        state.categoryTypes.asMap().forEach((index, category) {
-          categoryTypeMap[category.name] = category.type.isNotEmpty
-              ? category.type
-              : "${index + 1}";
-        });
-
-        final categories = state.categorizedQuestions.entries.map((entry) {
-          final categoryName = entry.key;
-          final questions = entry.value;
-          final categoryType = categoryTypeMap[categoryName] ?? categoryName;
-          return {
-            "category_type": categoryType,
-            "category_name": formatCategoryName(categoryName),
-            // Format for display
-            "questions": questions.map((q) {
-              final resultIndex = state.questions.indexOf(q);
-              final result = resultIndex != -1
-                  ? state.questionResults[resultIndex]
-                  : QuestionResult(
-                      userAnswerIndex: null,
-                      correctPoint: 0,
-                      bonusPoint: 0,
-                      timeTakenSeconds: 0,
-                    );
-              return {
-                "question": q.question,
-                "options": List.generate(
-                  q.options.length,
-                  (optIndex) => {
-                    "label": String.fromCharCode(65 + optIndex),
-                    "value": q.options[optIndex],
-                  },
-                ),
-                "answer": indexToLetter(q.correctIndex),
-                "explanation": q.hint,
-                "img_url": q.imgUrl,
-                "user_answered": indexToLetter(result.userAnswerIndex),
-                "correct_point": result.correctPoint,
-                "bonus_point": result.bonusPoint,
-                "time_taken": formatTime(result.timeTakenSeconds),
-              };
-            }).toList(),
-          };
-        }).toList();
-
-        // Final totals
-        final allCorrectBonus = (state.correctAnswers == maxQuestions) ? 3 : 0;
-        final finalScore = state.score + allCorrectBonus;
-
-        final payload = {
-          "total_questions": maxQuestions,
-          "correct_answers": state.correctAnswers,
-          "correct_points": state.pointsEarned,
-          "earned_points": finalScore,
-          "additional_points": state.bonusPoints,
-          "total_time": formatTime(state.timeTaken),
-          "game": state.game,
-          "level": state.level,
-          "difficulty": state.difficulty,
-          "categories": categories,
-          "game_number": _quizTypesId,
-          "set_id": gameId == "imageBased" ? state.imageBasedId : state.setId,
-          "img_id": state.imageBasedId,
-        };
-
-        debugPrint("QUIZ SUBMIT PAYLOAD:");
-        debugPrint(JsonEncoder.withIndent('  ').convert(payload));
-        if (await InternetConnection().hasInternetAccess) {
-          try {
-            final response = await QuizQuestionRepository().submitResult(
-              payload,
-              gameId,
-            );
-
-            if (response.detail.toLowerCase() ==
-                "quiz answer submitted successfully".toLowerCase()) {
-              final data = response.data;
-
-              Future.delayed(const Duration(milliseconds: 100), () {
-                if (gameId == "imageBased") {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (_) {
-                      return ImageBasedResultDialog(
-                        correctAnswers: data.correctAnswers,
-                        totalQuestions: data.totalQuestions,
-                        componentEarned: data.componentEarned,
-                        componentTitle: data.component?.name ?? '',
-                        componentDescription: data.component?.description ?? '',
-                        onContinue: () {
-                          if (data.partUnlock && data.part != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ComponentUnlockedScreen(
-                                  partName: data.part!.name,
-                                  image3d: data.part!.icon,
-                                  onView3DPart: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            const AirplanePartsScreen(),
-                                      ),
-                                    );
-                                  },
-
-                                  onNext: () {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            BaseScreenForAllLevelDescriptions(
-                                              gameId: gameId,
-                                            ),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    BaseScreenForAllLevelDescriptions(
-                                      gameId: gameId,
-                                    ),
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    },
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MainResultScreen(
-                        correctedAnswer: data.correctAnswers,
-                        totalQuestion: data.totalQuestions,
-                        score: data.earnedPoints,
-                        bonusPoints: data.additionalPoints,
-                        isEarnedBadge: data.isEarnedBadge,
-                        badgeName: data.badgeName,
-                        isComeFromTrivia: false,
-                      ),
-                    ),
-                  );
-
-                  AnalyticsService.instance.buttonPressed(
-                    FirebaseEvents.calculationsListButton,
-                    FirebaseEvents.calculationResultScreen,
-                  );
-                }
-              });
-            } else {
-              SessionCommonTokenError.handleUnauthorizedError(context, e);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Result submit failed. Try again.")),
-              );
-              emit(
-                state.copyWith(
-                  errorMessage: "Result submit failed. Try again.",
-                ),
-              );
-            }
-          } catch (e) {
-            SessionCommonTokenError.handleUnauthorizedError(context, e);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to submit results: $e')),
-            );
-            emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
-          }
-        } else {
-          NoInternetDialog.show(context, onRetry: () => nextQuestion(context));
-        }
+        await _submitQuizResult(context);
       }
     } else if (state.isLoading) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1024,6 +533,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       );
     } else {
       isNoMoreQuestionArrived = true;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -1034,6 +544,501 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     }
   }
 
+  // -----------------------------------------------------------------------------
+  // MOVE TO NEXT QUESTION
+  // -----------------------------------------------------------------------------
+
+  Future<void> _moveToNextQuestion(BuildContext context) async {
+    emit(
+      state.copyWith(
+        currentIndex: state.currentIndex + 1,
+        selectedIndex: null,
+        showAnswer: false,
+        timer: _totalDuration,
+        isTimerEnded: false,
+      ),
+    );
+
+    startTimer(context);
+
+    if (gameId == "quiz") {
+      switch (state.currentIndex) {
+        case 10:
+          _totalDuration = 150;
+          break;
+
+        case 14:
+          _totalDuration = 90;
+          break;
+      }
+
+      _timer?.cancel();
+      startTimer(context);
+    }
+
+    if (state.currentIndex == 9 || state.currentIndex == 13) {
+      revealBufferedQuestions(context);
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // EMPTY QUESTION RESULT
+  // -----------------------------------------------------------------------------
+
+  QuestionResult _emptyQuestionResult() {
+    return QuestionResult(
+      userAnswerIndex: null,
+      correctPoint: 0,
+      bonusPoint: 0,
+      timeTakenSeconds: 0,
+    );
+  }
+
+  // -----------------------------------------------------------------------------
+  // FORMAT TIME
+  // -----------------------------------------------------------------------------
+
+  String _formatTime(int seconds) {
+    return "${seconds}s";
+  }
+
+  // -----------------------------------------------------------------------------
+  // INDEX TO LETTER
+  // -----------------------------------------------------------------------------
+
+  String _indexToLetter(int? index) {
+    if (index == null) return "";
+
+    return String.fromCharCode(65 + index);
+  }
+
+  // -----------------------------------------------------------------------------
+  // RESET QUESTION STATE
+  // -----------------------------------------------------------------------------
+
+  void _resetQuestionState() {
+    emit(
+      state.copyWith(
+        currentIndex: 0,
+        selectedIndex: null,
+        showAnswer: false,
+        timer: _totalDuration,
+        isTimerEnded: false,
+      ),
+    );
+  }
+
+  // -----------------------------------------------------------------------------
+  // INITIAL QUESTION RESULTS
+  // -----------------------------------------------------------------------------
+
+  List<QuestionResult> _createInitialQuestionResults() {
+    return List<QuestionResult>.generate(
+      maxQuestions,
+      (index) => _emptyQuestionResult(),
+    );
+  }
+
+  // -----------------------------------------------------------------------------
+  // BUILD CATEGORIES
+  // -----------------------------------------------------------------------------
+
+  List<Map<String, dynamic>> _buildCategories() {
+    final categoryTypeMap = <String, String>{};
+
+    state.categoryTypes.asMap().forEach((index, category) {
+      categoryTypeMap[category.name] = category.type.isNotEmpty
+          ? category.type
+          : "${index + 1}";
+    });
+
+    final categories = state.categorizedQuestions.entries.map((entry) {
+      final categoryName = entry.key;
+      final questions = entry.value;
+
+      final categoryType = categoryTypeMap[categoryName] ?? categoryName;
+
+      return {
+        "category_type": categoryType,
+        "category_name": formatCategoryName(categoryName),
+        "questions": questions.map((q) {
+          final resultIndex = state.questions.indexOf(q);
+
+          final result = resultIndex != -1
+              ? state.questionResults[resultIndex]
+              : _emptyQuestionResult();
+
+          return {
+            "question": q.question,
+            "options": List.generate(
+              q.options.length,
+              (optIndex) => {
+                "label": String.fromCharCode(65 + optIndex),
+                "value": q.options[optIndex],
+              },
+            ),
+            "answer": _indexToLetter(q.correctIndex),
+            "explanation": q.hint,
+            "img_url": q.imgUrl,
+            "user_answered": _indexToLetter(result.userAnswerIndex),
+            "correct_point": result.correctPoint,
+            "bonus_point": result.bonusPoint,
+            "time_taken": _formatTime(result.timeTakenSeconds),
+          };
+        }).toList(),
+      };
+    }).toList();
+
+    return categories;
+  }
+
+  // -----------------------------------------------------------------------------
+  // BUILD RESULT PAYLOAD
+  // -----------------------------------------------------------------------------
+
+  Map<String, dynamic> _buildResultPayload() {
+    final allCorrectBonus = state.correctAnswers == maxQuestions ? 3 : 0;
+
+    final finalScore = state.score + allCorrectBonus;
+
+    return {
+      "total_questions": maxQuestions,
+      "correct_answers": state.correctAnswers,
+      "correct_points": state.pointsEarned,
+      "earned_points": finalScore,
+      "additional_points": state.bonusPoints,
+      "total_time": _formatTime(state.timeTaken),
+      "game": state.game,
+      "level": state.level,
+      "difficulty": state.difficulty,
+      "categories": _buildCategories(),
+      "game_number": _quizTypesId,
+      "set_id": gameId == "imageBased" ? state.imageBasedId : state.setId,
+      "img_id": state.imageBasedId,
+    };
+  }
+
+  // -----------------------------------------------------------------------------
+  // TRIVIA RESULT POPUP
+  // -----------------------------------------------------------------------------
+
+  Future<void> _showTriviaResultPopup(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => JettingAroundResultPopup(
+        isSuccess: state.correctAnswers < 4 ? false : true,
+        currentStep: state.correctAnswers,
+        totalStep: 5,
+        earnedJettons: 200,
+        onCrossButtonTap: () async {
+          Navigator.of(context).pop();
+          if (state.correctAnswers < 4) {
+            await _restartTrivia(context);
+          } else {
+            await _handleSuccessfulTrivia(context);
+          }
+        },
+        onButtonTap: () async {
+          Navigator.of(context).pop();
+          if (state.correctAnswers < 4) {
+            await _restartTrivia(context);
+          } else {
+            await _handleSuccessfulTrivia(context);
+          }
+        },
+      ),
+    );
+  }
+
+  // -----------------------------------------------------------------------------
+  // RESTART TRIVIA
+  // -----------------------------------------------------------------------------
+
+  Future<void> _restartTrivia(BuildContext context) async {
+    _resetQuestionState();
+
+    final initialResults = _createInitialQuestionResults();
+
+    emit(
+      state.copyWith(
+        isLoading: false,
+        questions: state.allTempQuestions,
+        allTempQuestions: state.allTempQuestions,
+        currentIndex: 0,
+        selectedIndex: null,
+        showAnswer: false,
+        timer: _totalDuration,
+        score: 0,
+        correctAnswers: 0,
+        wrongAnswers: 0,
+        pointsEarned: 0,
+        bonusPoints: 0,
+        timeTaken: 0,
+        questionResults: initialResults,
+        timePerQuestion: List<int>.filled(maxQuestions, 0),
+        categorizedQuestions: state.categorizedQuestions,
+        game: state.gameTempData!.game,
+        level: state.gameTempData!.level,
+        difficulty: state.gameTempData!.difficulty,
+        categoryTypes: state.gameTempData!.categoryTypes,
+        setId: state.gameTempData!.setId,
+        imageBasedId: state.gameTempData!.imageBasedId,
+      ),
+    );
+
+    startTimer(context);
+  }
+
+  // -----------------------------------------------------------------------------
+  // SUCCESSFUL TRIVIA
+  // -----------------------------------------------------------------------------
+
+  Future<void> _handleSuccessfulTrivia(BuildContext context) async {
+    final payload = _buildResultPayload();
+
+    final count = await SharedPrefsHelper.getJettingGamesCount();
+
+    if (count >= 4) {
+      await _saveAndSubmitTriviaResult(context, payload);
+    } else {
+      await _saveTriviaResultLocally(context, payload);
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // SAVE + SUBMIT TRIVIA RESULT
+  // -----------------------------------------------------------------------------
+
+  Future<void> _saveAndSubmitTriviaResult(
+    BuildContext context,
+    Map<String, dynamic> payload,
+  ) async {
+    final responseWait = await SharedPrefsHelper.saveJettingGame(payload);
+
+    print('Save ModelWithId: $responseWait');
+
+    final List<Map<String, dynamic>> allGames =
+        await SharedPrefsHelper.getJettingGames();
+
+    final Map<String, dynamic> updatedPayLoadWithDict = {"game": allGames};
+
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final response = await QuizQuestionRepository().submitResult(
+          updatedPayLoadWithDict,
+          gameId,
+        );
+
+        if (response.detail.toLowerCase() ==
+            "quiz answer submitted successfully".toLowerCase()) {
+          final data = response.data;
+
+          Future.delayed(const Duration(milliseconds: 100), () async {
+            // await SharedPrefsHelper.clearJettingGames();
+            // Handle After Show All Button.
+
+            AppNavigator.push(
+              context,
+              JettingAroundTheWorldScreen(
+                isComeFromResultScreen: true,
+                responseFromResultScreenData: response.data,
+              ),
+              multiBlocProviders: [
+                BlocProvider(create: (_) => JettingTheWorldCubit()),
+              ],
+              disableSwipeBack: true,
+            );
+
+            AnalyticsService.instance.buttonPressed(
+              FirebaseEvents.calculationsListButton,
+              FirebaseEvents.calculationResultScreen,
+            );
+          });
+        } else {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Result submit failed. Try again.")),
+          );
+
+          emit(
+            state.copyWith(errorMessage: "Result submit failed. Try again."),
+          );
+        }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
+
+        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
+      }
+    } else {
+      NoInternetDialog.show(context, onRetry: () => nextQuestion(context));
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // SAVE TRIVIA RESULT LOCALLY
+  // -----------------------------------------------------------------------------
+
+  Future<void> _saveTriviaResultLocally(
+    BuildContext context,
+    Map<String, dynamic> payload,
+  ) async {
+    final responseWait = await SharedPrefsHelper.saveJettingGame(payload);
+
+    print('Save ModelWithId: $responseWait');
+
+    if (responseWait) {
+      _resetQuestionState();
+      loadQuestions(_quizTypesId, context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to submit results.')),
+      );
+
+      emit(state.copyWith(errorMessage: 'Failed to submit results.'));
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // SUBMIT QUIZ / IMAGE BASED RESULT
+  // -----------------------------------------------------------------------------
+
+  Future<void> _submitQuizResult(BuildContext context) async {
+    final payload = _buildResultPayload();
+
+    debugPrint("QUIZ SUBMIT PAYLOAD:");
+    debugPrint(JsonEncoder.withIndent('  ').convert(payload));
+
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        final response = await QuizQuestionRepository().submitResult(
+          payload,
+          gameId,
+        );
+
+        if (response.detail.toLowerCase() ==
+            "quiz answer submitted successfully".toLowerCase()) {
+          final data = response.data;
+
+          Future.delayed(const Duration(milliseconds: 100), () {
+            if (gameId == "imageBased") {
+              _showImageBasedResult(context, data);
+            } else {
+              _showMainResult(context, data);
+            }
+          });
+        } else {
+          SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Result submit failed. Try again.")),
+          );
+          emit(
+            state.copyWith(errorMessage: "Result submit failed. Try again."),
+          );
+        }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to submit results: $e')));
+        emit(state.copyWith(errorMessage: 'Failed to submit results: $e'));
+      }
+    } else {
+      NoInternetDialog.show(context, onRetry: () => nextQuestion(context));
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // IMAGE BASED RESULT
+  // -----------------------------------------------------------------------------
+
+  void _showImageBasedResult(BuildContext context, dynamic data) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return ImageBasedResultDialog(
+          correctAnswers: data.correctAnswers,
+          totalQuestions: data.totalQuestions,
+          componentEarned: data.componentEarned,
+          componentTitle: data.component?.name ?? '',
+          componentDescription: data.component?.description ?? '',
+          onContinue: () {
+            if (data.partUnlock && data.part != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ComponentUnlockedScreen(
+                    partName: data.part!.name,
+                    image3d: data.part!.icon,
+                    onView3DPart: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AirplanePartsScreen(),
+                        ),
+                      );
+                    },
+                    onNext: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              BaseScreenForAllLevelDescriptions(gameId: gameId),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      BaseScreenForAllLevelDescriptions(gameId: gameId),
+                ),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  // -----------------------------------------------------------------------------
+  // MAIN RESULT
+  // -----------------------------------------------------------------------------
+
+  void _showMainResult(BuildContext context, dynamic data) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MainResultScreen(
+          correctedAnswer: data.correctAnswers,
+          totalQuestion: data.totalQuestions,
+          score: data.earnedPoints,
+          bonusPoints: data.additionalPoints,
+          isEarnedBadge: data.isEarnedBadge,
+          badgeName: data.badgeName,
+          isComeFromTrivia: false,
+        ),
+      ),
+    );
+
+    AnalyticsService.instance.buttonPressed(
+      FirebaseEvents.calculationsListButton,
+      FirebaseEvents.calculationResultScreen,
+    );
+  }
+
   String formatCategoryName(String name) {
     return name
         .split('_')
@@ -1041,15 +1046,15 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         .join(' ');
   }
 
-  @override
-  Future<void> close() {
-    _timer?.cancel();
-    return super.close();
-  }
-
   void continueAfterWrongPopup(BuildContext context) {
     emit(state.copyWith(showWrongAnswerPopup: false));
 
     nextQuestion(context);
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }

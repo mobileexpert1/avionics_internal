@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -12,6 +13,7 @@ class JettingAroundResultPopup extends StatelessWidget {
   final int totalStep;
   final int earnedJettons;
   final VoidCallback onButtonTap;
+  final VoidCallback onCrossButtonTap;
 
   const JettingAroundResultPopup({
     super.key,
@@ -20,10 +22,11 @@ class JettingAroundResultPopup extends StatelessWidget {
     required this.totalStep,
     required this.earnedJettons,
     required this.onButtonTap,
+    required this.onCrossButtonTap,
   });
 
   Future<(String, String)> getJettingGameTitle() async {
-    final currentCount = 0;
+    final currentCount = await SharedPrefsHelper.getJettingGamesCount();
     final currentTitle = getTheDynamicTitleAccordingToLevel(currentCount);
     final upcomingTitle = getTheDynamicTitleAccordingToLevel(currentCount + 1);
     return (
@@ -57,22 +60,21 @@ class JettingAroundResultPopup extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: SvgPicture.asset(
-                        CommonUi.setSvgImage(AssetsPath.gameInfoClose),
+                if (isSuccess) ...[
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: onCrossButtonTap,
+                      child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.gameInfoClose),
+                        ),
                       ),
                     ),
                   ),
-                ),
-
+                ],
                 const SizedBox(height: 10),
 
                 Text(

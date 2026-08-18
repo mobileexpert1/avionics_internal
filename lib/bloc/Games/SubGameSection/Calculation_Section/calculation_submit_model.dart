@@ -1,4 +1,5 @@
 import '../../../Profile/AirPlanePartsSection/AirPlanePartsModel.dart';
+import '../JettingAroundTheWorld/jettingTheWorld_model.dart';
 
 class SubmitCalculationResultResponse {
   final String detail;
@@ -32,6 +33,8 @@ class SubmitCalculationResultData {
   final bool partUnlock;
   final PlaneSpotterPart? part;
 
+  final UnlockAirportModel? unlockAirport;
+
   SubmitCalculationResultData({
     required this.percentage,
     required this.totalQuestions,
@@ -45,11 +48,14 @@ class SubmitCalculationResultData {
     this.component,
     required this.partUnlock,
     this.part,
+    this.unlockAirport,
   });
 
   factory SubmitCalculationResultData.fromJson(Map<String, dynamic> json) {
     final componentJson = json['unlock_component'];
     final partJson = json['unlock_part'];
+    final airportJson = json['unlock_airport'];
+
     return SubmitCalculationResultData(
       percentage: (json['percentage'] ?? 0).toDouble(),
       totalQuestions: json['total_questions'] ?? 0,
@@ -70,11 +76,14 @@ class SubmitCalculationResultData {
             )
           : null,
 
-      // PART
       partUnlock: json['part_unlock'] ?? false,
 
       part: partJson != null
           ? PlaneSpotterPart.fromJson(partJson as Map<String, dynamic>)
+          : null,
+
+      unlockAirport: airportJson != null
+          ? UnlockAirportModel.fromJson(airportJson as Map<String, dynamic>)
           : null,
     );
   }
@@ -88,6 +97,7 @@ class SubmitCalculationResultData {
     'additional_points': additionalPoints,
     'is_earned_badge': isEarnedBadge,
     'badge_name': badgeName,
+
     'component_earned': componentEarned,
     'unlock_component': component == null
         ? null
@@ -100,5 +110,32 @@ class SubmitCalculationResultData {
 
     'part_unlock': partUnlock,
     'unlock_part': part?.toJson(),
+
+    'unlock_airport': unlockAirport?.toJson(),
   };
+}
+
+class UnlockAirportModel {
+  final AirportPerItemModel? preUnblock;
+  final AirportPerItemModel? newUnblock;
+
+  UnlockAirportModel({this.preUnblock, this.newUnblock});
+
+  factory UnlockAirportModel.fromJson(Map<String, dynamic> json) {
+    return UnlockAirportModel(
+      preUnblock: json['pre_unblock'] != null
+          ? AirportPerItemModel.fromJson(json['pre_unblock'])
+          : null,
+      newUnblock: json['new_unblock'] != null
+          ? AirportPerItemModel.fromJson(json['new_unblock'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'pre_unblock': preUnblock?.toJson(),
+      'new_unblock': newUnblock?.toJson(),
+    };
+  }
 }

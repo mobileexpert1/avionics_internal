@@ -9,22 +9,27 @@ import 'package:flutter_earth_globe/point_connection.dart';
 import 'package:flutter_earth_globe/point_connection_style.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/JettingAroundTheWorldHelper/globe_controls_state.dart';
 import '../../../../bloc/Games/SubGameSection/Calculation_Section/calculation_submit_model.dart';
+import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_model.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_state.dart';
 import '../../MainGameScreen/ReusableGameDetailScreen.dart';
+import 'JettingAroundBoardingPassesScreen.dart';
 import 'JourneyRoutePopup.dart';
 
 class JettingAroundTheWorldScreen extends StatefulWidget {
   const JettingAroundTheWorldScreen({
     super.key,
-    required this.isComeFromResultScreen, this.responseFromResultScreenData,
+    required this.isComeFromResultScreen,
+    this.responseFromResultScreenData,
   });
 
   final bool isComeFromResultScreen;
@@ -40,6 +45,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
   late FlutterEarthGlobeController _controller;
 
   List<Point> points = [];
+  bool _showLocations = false;
   List<PointConnection> connections = [];
 
   Widget pointLabelBuilder(
@@ -75,9 +81,12 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       Future.microtask(() {
         context.read<JettingTheWorldCubit>().loadAirports(context);
       });
-    }else{
+    } else {
       Future.microtask(() {
-        context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(context, widget.responseFromResultScreenData!);
+        context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(
+          context,
+          widget.responseFromResultScreenData!,
+        );
       });
     }
 
@@ -138,13 +147,10 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
 
     for (int i = 0; i < airports.length; i++) {
       final airport = airports[i];
-
       points.add(
         buildPoint(
           id: airport.id.toString(),
-
           coordinates: GlobeCoordinates(airport.latitude, airport.longitude),
-
           label: airport.city,
           color: airport.unlocked == true
               ? AppColors.greenColourForPlan
@@ -160,7 +166,6 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
           end: points[0].coordinates,
           curveScale: 0.5,
           id: "0",
-          // isLastId: "0",
           style: const PointConnectionStyle(
             color: AppColors.greenColourForPlan,
             transitionDuration: 2000,
@@ -171,32 +176,25 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       );
     }
 
-    // for (int i = 0; i < points.length - 1; i++) {
-    //   connections.add(
-    //     PointConnection(
-    //       start: points[i].coordinates,
-    //
-    //       end: points[i + 1].coordinates,
-    //
-    //       curveScale: 0.5,
-    //
-    //       id: i.toString(),
-    //
-    //       isLastId: i == points.length - 2 ? i.toString() : "",
-    //
-    //       style: const PointConnectionStyle(
-    //         color: AppColors.greenColourForPlan,
-    //
-    //         transitionDuration: 2000,
-    //
-    //         animateOnAdd: true,
-    //
-    //         growthAnimationDuration: 2000,
-    //       ),
-    //     ),
-    //   );
-    // }
-
+    if (widget.isComeFromResultScreen) {
+      for (int i = 0; i < points.length - 1; i++) {
+        connections.add(
+          PointConnection(
+            start: points[i].coordinates,
+            end: points[i + 1].coordinates,
+            curveScale: 0.5,
+            id: i.toString(),
+            isLastId: i == points.length - 2 ? i.toString() : "",
+            style: const PointConnectionStyle(
+              color: AppColors.greenColourForPlan,
+              transitionDuration: 2000,
+              animateOnAdd: true,
+              growthAnimationDuration: 2000,
+            ),
+          ),
+        );
+      }
+    }
     loadPointsOnGlobe();
   }
 
@@ -238,21 +236,10 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       style: PointStyle(
         size: 2,
         color: color,
-
-        // Border
-        // borderColor: Colors.white,
-        // borderWidth: 1.0,
         altitude: 0.05,
         transitionDuration: 600,
       ),
-      onTap: () {
-        // showPointDialog(
-        //   title: label,
-        //   level: id,
-        //   latitude: coordinates.latitude,
-        //   longitude: coordinates.longitude,
-        // );
-      },
+      onTap: () {},
     );
   }
 
@@ -287,8 +274,6 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       },
     );
   }
-
-  bool _showLocations = false;
 
   @override
   Widget build(BuildContext context) {
@@ -412,21 +397,122 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                             fontStyle: AppTextStyles.regular(
                               18,
                             ).copyWith(height: 1.0, color: AppColors.black),
-                            text: "View Your Journey",
-                            onTap: () {
-                              openAddOnPacksBottomSheet(context);
+                            text: widget.isComeFromResultScreen
+                                ? "Journey around the world"
+                                : "View Your Journey",
+                            onTap: () async {
+                              if (widget.isComeFromResultScreen) {
+                                await SharedPrefsHelper.clearJettingGames();
+                                AppNavigator.push(
+                                  context,
+                                  JettingAroundBoardingPassesScreen(),
+                                  multiBlocProviders: [
+                                    BlocProvider(create: (_) => JettingBoardingPassCubit()),
+                                  ],
+                                  disableSwipeBack: true,
+                                );
+                              } else {
+                                openAddOnPacksBottomSheet(context);
+                              }
                             },
                           ),
                         ),
                       ),
                     ),
                   ),
+
+                  if (widget.isComeFromResultScreen) ...[
+                    Positioned(
+                      bottom: 60,
+                      left: 15,
+                      right: 15,
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: kIsWeb ? 900 : double.infinity,
+                          ),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 40),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: statCard(
+                                      value: '80',
+                                      label:
+                                          'Jettons earned as the\nFrequent Flyer',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: statCard(
+                                      value: '1000',
+                                      label: 'Total Jettons Earned',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             );
           }
           return Center(child: Text("No Data"));
         },
+      ),
+    );
+  }
+
+  Widget statCard({required String value, required String label}) {
+    return Container(
+      width: 160,
+      height: 160,
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2B2B2E),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: const BoxDecoration(
+              color: AppColors.extraDarkYellow,
+              shape: BoxShape.circle,
+            ),
+            child: SizedBox(
+              height: 20,
+              width: 20,
+              child: SvgPicture.asset(
+                CommonUi.setSvgImage(AssetsPath.successJettingYellowAround),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: AppTextStyles.bold(
+              24,
+            ).copyWith(height: 1.0, color: AppColors.white),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.medium(
+              16,
+            ).copyWith(height: 1.0, color: AppColors.white),
+          ),
+          SizedBox(height: label.contains("Total") ? 20 : 0),
+        ],
       ),
     );
   }

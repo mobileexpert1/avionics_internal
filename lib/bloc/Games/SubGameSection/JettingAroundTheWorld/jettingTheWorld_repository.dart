@@ -20,4 +20,22 @@ class JettingTheWorldRepository {
       throw e.toString();
     }
   }
+
+  Future<JettingTheWorldModel?> getUnlockedAirports() async {
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+          "${ApiFunctionUrlGamesConstant.trivia}"
+          "${ApiFunctionUrlMapSectionConstant.airport}"
+          "?unlock=true",
+    );
+
+    try {
+      final jsonData =
+      await ApiService.get(url: uri) as Map<String, dynamic>;
+
+      return JettingTheWorldModel.fromJson(jsonData);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 }
