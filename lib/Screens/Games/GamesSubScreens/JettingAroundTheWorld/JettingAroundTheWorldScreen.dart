@@ -77,7 +77,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       });
     }else{
       Future.microtask(() {
-        context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(context, widget.responseFromResultScreenData!);
+        // context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(context, widget.responseFromResultScreenData!);
       });
     }
 

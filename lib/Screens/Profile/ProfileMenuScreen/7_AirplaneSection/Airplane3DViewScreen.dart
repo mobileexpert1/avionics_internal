@@ -43,7 +43,7 @@ class _Airplane3DView extends StatelessWidget {
       backgroundColor: Colors.white,
 
       appBar: CustomAppBar(
-        title: "Plane Spotter",
+        title: "My Airplane",
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -115,7 +115,7 @@ class _Airplane3DView extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
 
                     Expanded(
                       child: Padding(
@@ -176,14 +176,21 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
     super.initState();
 
     _controller = Flutter3DController();
+    _controller.onModelLoaded.addListener(_onModelLoaded);
+  }
 
-    _controller.onModelLoaded.addListener(() {
-      if (_controller.onModelLoaded.value && mounted) {
-        setState(() {
-          _isLoading3D = false;
-        });
-      }
-    });
+  void _onModelLoaded() {
+    if (_controller.onModelLoaded.value && mounted) {
+      setState(() {
+        _isLoading3D = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.onModelLoaded.removeListener(_onModelLoaded);
+    super.dispose();
   }
 
   @override
@@ -194,9 +201,7 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
         height: widget.isDesktopWeb ? 320 : 190,
         decoration: BoxDecoration(
           color: const Color(0xffEDEDED),
-          borderRadius: BorderRadius.circular(
-            widget.isDesktopWeb ? 24 : 20,
-          ),
+          borderRadius: BorderRadius.circular(widget.isDesktopWeb ? 24 : 20),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -208,24 +213,46 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
                   child: Flutter3DViewer(
                     controller: _controller,
                     src: widget.part.modelPath,
+                    activeGestureInterceptor: true,
+                    enableTouch: widget.isAircraftUnlocked,
                     progressBarColor: Colors.transparent,
+
+                    onProgress: (progress) {
+                      debugPrint(
+                        '[3D] Progress: ${(progress * 100).toStringAsFixed(0)}%',
+                      );
+                    },
+
+                    onLoad: (modelAddress) {
+                      debugPrint('[3D] Loaded: $modelAddress');
+
+                      if (mounted) {
+                        setState(() {
+                          _isLoading3D = false;
+                        });
+                      }
+                    },
+
+                    onError: (error) {
+                      debugPrint('[3D] ERROR: $error');
+
+                      if (mounted) {
+                        setState(() {
+                          _isLoading3D = false;
+                        });
+                      }
+                    },
                   ),
                 ),
               ),
 
-            if (_isLoading3D)
-              const Center(
-                child: CircularProgressIndicator(
-                ),
-              ),
+            if (_isLoading3D) const Center(child: CircularProgressIndicator()),
 
             if (!widget.isAircraftUnlocked)
               Positioned.fill(
                 child: IgnorePointer(
                   ignoring: false,
-                  child: Container(
-                    color: Colors.transparent,
-                  ),
+                  child: Container(color: Colors.transparent),
                 ),
               ),
 
@@ -233,9 +260,7 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
               Positioned.fill(
                 child: Center(
                   child: SvgPicture.asset(
-                    CommonUi.setSvgImage(
-                      AssetsPath.badgesLockIcon,
-                    ),
+                    CommonUi.setSvgImage(AssetsPath.badgesLockIcon),
                     width: widget.isDesktopWeb ? 48 : 42,
                     height: widget.isDesktopWeb ? 48 : 42,
                     fit: BoxFit.contain,
@@ -265,10 +290,12 @@ class Airplane3DSubPartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(
-        minHeight: isDesktopWeb ? 120 : 105,
+      constraints: BoxConstraints(minHeight: isDesktopWeb ? 120 : 105),
+      margin: const EdgeInsets.only(
+        left: 5,
+        right: 5,
+        bottom: 7,
       ),
-      margin: const EdgeInsets.only(bottom: 7),
       padding: EdgeInsets.symmetric(
         horizontal: isDesktopWeb ? 16 : 10,
         vertical: isDesktopWeb ? 10 : 8,
@@ -276,41 +303,30 @@ class Airplane3DSubPartCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isUnlocked ? Colors.white : const Color(0xffD0D0D0),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: const Color(0xffBDBDBD),
-        ),
+        border: Border.all(color: const Color(0xffBDBDBD)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              const Expanded(
-                child: Divider(
-                  color: Color(0xffB5B5B5),
-                ),
-              ),
+              const Expanded(child: Divider(color: Color(0xffB5B5B5))),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   subPart.name,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.semiBold(
-                    isDesktopWeb ? 17 : 20,
-                  ).copyWith(
-                    color: isUnlocked
-                        ? AppColors.primaryDark
-                        : const Color(0xff777777),
-                  ),
+                  style: AppTextStyles.semiBold(isDesktopWeb ? 17 : 20)
+                      .copyWith(
+                        color: isUnlocked
+                            ? AppColors.primaryDark
+                            : const Color(0xff777777),
+                      ),
                 ),
               ),
 
-              const Expanded(
-                child: Divider(
-                  color: Color(0xffB5B5B5),
-                ),
-              ),
+              const Expanded(child: Divider(color: Color(0xffB5B5B5))),
             ],
           ),
 
@@ -319,12 +335,9 @@ class Airplane3DSubPartCard extends StatelessWidget {
           Text(
             subPart.description,
             textAlign: TextAlign.center,
-            style: AppTextStyles.semiBold(
-              isDesktopWeb ? 14 : 14,
-            ).copyWith(
-              color: isUnlocked
-                  ? AppColors.black
-                  : const Color(0xff777777),
+            style: AppTextStyles.semiBold(14).copyWith(
+              fontWeight: FontWeight.w500,
+              color: isUnlocked ? AppColors.black : const Color(0xff777777),
               height: 1.4,
             ),
           ),

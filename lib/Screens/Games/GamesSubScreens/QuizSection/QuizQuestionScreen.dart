@@ -170,27 +170,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
               ),
             ),
 
-            body: BlocConsumer<QuizQuestionCubit, QuizQuestionState>(
-              listener: (context, state) async {
-                if (state.showWrongAnswerPopup) {
-                  print("wrongPopupCount :- ${state.wrongAnswerPopupCount}");
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => InfoWrongGameScreen(
-                        screenIndex: state.wrongAnswerPopupCount,
-                        gameTitle: widget.sectionTitle,
-                        callBackForMoveToNextScreen: () {
-                          context
-                              .read<QuizQuestionCubit>()
-                              .continueAfterWrongPopup(context);
-                        },
-                      ),
-                    ),
-                  );
-                }
-              },
-
+            body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
 

@@ -17,19 +17,22 @@ import 'AirplanePartsCard.dart';
 import '../../SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/ProgressHeader.dart';
 
 class AirplanePartsScreen extends StatelessWidget {
-  const AirplanePartsScreen({super.key});
+  final bool isFromGame;
+  const AirplanePartsScreen({super.key, this.isFromGame = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => AirPlanePartsCubit(context: context),
-      child: const _AirplanePartsView(),
+      child: _AirplanePartsView(isFromGame: isFromGame),
     );
   }
 }
 
 class _AirplanePartsView extends StatelessWidget {
-  const _AirplanePartsView();
+  final bool isFromGame;
+
+  const _AirplanePartsView({required this.isFromGame});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,7 @@ class _AirplanePartsView extends StatelessWidget {
       backgroundColor: Colors.white,
 
       appBar: CustomAppBar(
-        title: "Plane Spotter",
+        title: "My Airplane",
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -59,7 +62,11 @@ class _AirplanePartsView extends StatelessWidget {
             fit: BoxFit.cover,
           ),
           onPressed: () {
-            Navigator.pop(context, true);
+            if (isFromGame) {
+              Navigator.pop(context, true);
+            } else {
+              Navigator.pop(context, true);
+            }
           },
         ),
       ),
@@ -93,7 +100,6 @@ class _AirplanePartsView extends StatelessWidget {
                           (part) => part.collectedCount >= part.totalCount,
                           orElse: () => state.parts.first,
                         );
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -107,8 +113,7 @@ class _AirplanePartsView extends StatelessWidget {
 
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(10),
-
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                         child: GridView.builder(
                           itemCount: state.parts.length,
 
