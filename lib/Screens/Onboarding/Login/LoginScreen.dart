@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: BlocConsumer<LoginCubit, LoginState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
-          if (!mounted) return;
+          if (!context.mounted) return;
           if (state.status == CommonApiStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage ?? 'Login failed')),

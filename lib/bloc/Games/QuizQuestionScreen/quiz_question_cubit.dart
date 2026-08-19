@@ -499,17 +499,25 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   Future<void> nextQuestion(BuildContext context) async {
     if (state.currentIndex + 1 < state.questions.length) {
       final count = await SharedPrefsHelper.getJettingGamesCount();
-      if (gameId == "trivia" && state.currentIndex == 1 && count == 2) {
+      final isAlreadyPressed =
+          await SharedPrefsHelper.getIsAlreadyShowPopup() ?? false;
+
+      if (gameId == "trivia" &&
+          state.currentIndex == 1 &&
+          count == 2 &&
+          !isAlreadyPressed) {
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (_) => AviationChroniclePopup(
             onButtonTap: () async {
               Navigator.of(context).pop();
+              await SharedPrefsHelper.saveIsAlreadyShowPopup(true);
               await _moveToNextQuestion(context);
             },
             onCancelButtonTap: () async {
               Navigator.of(context).pop();
+              await SharedPrefsHelper.saveIsAlreadyShowPopup(true);
               await _moveToNextQuestion(context);
             },
           ),
@@ -608,7 +616,6 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
   String _indexToLetter(int? index) {
     if (index == null) return "";
-
     return String.fromCharCode(65 + index);
   }
 

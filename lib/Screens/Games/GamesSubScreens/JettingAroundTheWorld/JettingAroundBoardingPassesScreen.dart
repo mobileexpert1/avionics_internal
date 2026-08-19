@@ -6,13 +6,20 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_cubit.dart';
+import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_model.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_state.dart';
-import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_model.dart';
+import 'JettingAroundTheBoardingPass.dart';
 
 class JettingAroundBoardingPassesScreen extends StatefulWidget {
-  const JettingAroundBoardingPassesScreen({super.key});
+  final bool isComeFromResultScreen;
+
+  const JettingAroundBoardingPassesScreen({
+    super.key,
+    required this.isComeFromResultScreen,
+  });
 
   @override
   State<JettingAroundBoardingPassesScreen> createState() =>
@@ -30,11 +37,6 @@ class _JettingAroundBoardingPassesState
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -48,7 +50,11 @@ class _JettingAroundBoardingPassesState
             fit: BoxFit.cover,
           ),
           onPressed: () {
-            Navigator.pop(context, true);
+            if (widget.isComeFromResultScreen) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            } else {
+              Navigator.pop(context, true);
+            }
           },
         ),
       ),
@@ -70,8 +76,19 @@ class _JettingAroundBoardingPassesState
             separatorBuilder: (_, __) => const SizedBox(height: 14),
             itemBuilder: (context, index) {
               final airport = airports[index];
-
-              return RouteCard(airport: airport);
+              return GestureDetector(
+                onTap: () {
+                  AppNavigator.push(
+                    context,
+                    JettingAroundTheBoardingPass(
+                      isComeFromHistoryScreen: true,
+                      boardingPassId: airport.id,
+                    ),
+                    disableSwipeBack: true,
+                  );
+                },
+                child: RouteCard(airport: airport, isFirst: index == 0),
+              );
             },
           );
         },
@@ -81,9 +98,10 @@ class _JettingAroundBoardingPassesState
 }
 
 class RouteCard extends StatelessWidget {
-  final AirportPerItemModel airport;
+  final BoardingPassModel airport;
+  final bool isFirst;
 
-  const RouteCard({super.key, required this.airport});
+  const RouteCard({super.key, required this.airport, this.isFirst = false});
 
   @override
   Widget build(BuildContext context) {
@@ -121,30 +139,42 @@ class RouteCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 20, 15, 18),
       child: Column(
-        children: [
-          _buildTopLabels(),
-          const SizedBox(height: 5),
-          _buildRoute(),
-          const SizedBox(height: 10),
-          _buildBottomLabels(),
-        ],
+        children: isFirst
+            ? [
+                _buildFromToLabels(),
+                const SizedBox(height: 10),
+                _buildCountryRow(true),
+                const SizedBox(height: 5),
+                _buildRoute(),
+                const SizedBox(height: 10),
+              ]
+            : [
+                _buildCountryRow(false),
+                const SizedBox(height: 5),
+                _buildRoute(),
+                const SizedBox(height: 10),
+                _buildFromToLabels(),
+              ],
       ),
     );
   }
 
-  Widget _buildTopLabels() {
+  Widget _buildFromToLabels() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [_SmallLabel('From'), _SmallLabel('To')],
+    );
+  }
+
+  Widget _buildCountryRow(bool isComeFromTop) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _SmallLabel(
-          airport.flightSegment1.isNotEmpty
-              ? airport.flightSegment1
-              : airport.iata,
-        ),
-        _SmallLabel(
-          airport.flightSegment2.isNotEmpty
-              ? airport.flightSegment2
-              : airport.iata,
+        _SubText(airport.fromAirport.country, isComeFromTop: isComeFromTop),
+        _SubText(
+          airport.toAirport.country,
+          alignRight: true,
+          isComeFromTop: isComeFromTop,
         ),
       ],
     );
@@ -155,10 +185,7 @@ class RouteCard extends StatelessWidget {
       children: [
         Expanded(child: _buildLeftAirport()),
         Expanded(
-          child: buildCustomProgressBar(
-            0.5,
-            airport.unlocked ? AppColors.extraDarkYellow : Colors.grey,
-          ),
+          child: buildCustomProgressBar(0.5, AppColors.greenColourForPlan),
         ),
         Expanded(child: _buildRightAirport()),
       ],
@@ -168,32 +195,14 @@ class RouteCard extends StatelessWidget {
   Widget _buildLeftAirport() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SubText(airport.country),
-        const SizedBox(height: 3),
-        _MainText(airport.city),
-      ],
+      children: [_MainText(airport.fromAirport.city)],
     );
   }
 
   Widget _buildRightAirport() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        _SubText(airport.country, alignRight: true),
-        const SizedBox(height: 3),
-        _MainText(airport.city, alignRight: true),
-      ],
-    );
-  }
-
-  Widget _buildBottomLabels() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _SmallLabel('${airport.distanceNm.toStringAsFixed(0)} NM'),
-        _SmallLabel(airport.unlocked ? 'UNLOCKED' : 'LOCKED'),
-      ],
+      children: [_MainText(airport.toAirport.city, alignRight: true)],
     );
   }
 
@@ -204,7 +213,7 @@ class RouteCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 40,
+            height: 30,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final totalWidth = constraints.maxWidth;
@@ -280,17 +289,26 @@ class _SmallLabel extends StatelessWidget {
 class _SubText extends StatelessWidget {
   final String text;
   final bool alignRight;
+  final bool isComeFromTop;
 
-  const _SubText(this.text, {this.alignRight = false});
+  const _SubText(
+    this.text, {
+    this.alignRight = false,
+    this.isComeFromTop = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       textAlign: alignRight ? TextAlign.right : TextAlign.left,
-      style: AppTextStyles.regular(
-        12,
-      ).copyWith(height: 1.0, color: AppColors.primaryDark),
+      style: isComeFromTop
+          ? AppTextStyles.regular(
+              12,
+            ).copyWith(height: 1.0, color: AppColors.primaryDark)
+          : AppTextStyles.medium(
+              16,
+            ).copyWith(height: 1.0, color: AppColors.primaryDark),
     );
   }
 }

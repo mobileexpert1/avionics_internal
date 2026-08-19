@@ -117,8 +117,10 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                         itemBuilder: (context, index) {
                           final airport = airports[index];
 
-                          final bool isCurrent = index == 0;
-                          final bool isLocked = index > 0;
+                          final bool isCurrent =
+                              airports[index].current == true;
+                          final bool isLocked =
+                              airports[index].unlocked == false;
 
                           return Column(
                             children: [
@@ -152,9 +154,13 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                             child: Icon(
                                               isCurrent
                                                   ? Icons.location_on
-                                                  : Icons.lock_outline,
+                                                  : isLocked
+                                                  ? Icons.lock_outline
+                                                  : Icons.lock_open_outlined,
                                               color: isCurrent
                                                   ? Colors.white
+                                                  : isLocked
+                                                  ? Colors.grey.shade600
                                                   : AppColors.primaryDark,
                                               size: isCurrent ? 24 : 18,
                                             ),
@@ -168,14 +174,15 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                             decoration: BoxDecoration(
                                               color: isCurrent
                                                   ? AppColors.black
-                                                  : AppColors.grayMedium,
+                                                  : isLocked
+                                                  ? AppColors.grayMedium
+                                                  : AppColors.black,
                                               shape: BoxShape.circle,
                                             ),
                                           ),
 
                                           const SizedBox(height: 5),
 
-                                          /// DYNAMIC HEIGHT LINE
                                           Expanded(
                                             child: Column(
                                               mainAxisAlignment:
@@ -189,7 +196,9 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                                   decoration: BoxDecoration(
                                                     color: isCurrent
                                                         ? AppColors.black
-                                                        : AppColors.grayMedium,
+                                                        : isLocked
+                                                        ? AppColors.grayMedium
+                                                        : AppColors.black,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           10,
@@ -295,8 +304,11 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                                         color: isCurrent
                                                             ? AppColors
                                                                   .greenColourForPlan
+                                                            : isLocked
+                                                            ? AppColors
+                                                                  .grayLight
                                                             : AppColors
-                                                                  .grayLight,
+                                                                  .primaryBlue,
                                                       ),
                                                     ),
                                                     child: Row(
@@ -321,14 +333,19 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                                         Text(
                                                           isCurrent
                                                               ? "Current Airport"
-                                                              : "Locked",
+                                                              : isLocked
+                                                              ? "Locked"
+                                                              : "UnLocked",
                                                           style: TextStyle(
                                                             fontSize: 12,
                                                             color: isCurrent
                                                                 ? AppColors
                                                                       .greenColourForPlan
+                                                                : isLocked
+                                                                ? AppColors
+                                                                      .grayMedium
                                                                 : AppColors
-                                                                      .grayMedium,
+                                                                      .primaryBlue,
                                                           ),
                                                         ),
                                                       ],
@@ -388,7 +405,7 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
 
                             AppNavigator.push(
                               context,
-                              JettingAroundTheBoardingPass(),
+                              JettingAroundTheBoardingPass(isComeFromHistoryScreen: false,boardingPassId: ""),
                               disableSwipeBack: true,
                             );
                           },

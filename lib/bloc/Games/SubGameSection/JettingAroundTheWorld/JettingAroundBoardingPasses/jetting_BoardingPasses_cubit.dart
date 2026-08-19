@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_earth_globe/globe_coordinates.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
@@ -33,23 +32,17 @@ class JettingBoardingPassCubit extends Cubit<JettingBoardingPassState> {
             isLoading: false,
             isSuccess: false,
             status: CommonApiStatus.failure,
-            errorMessage: 'No airports found',
+            errorMessage: 'No boarding passes found',
           ),
         );
         return;
       }
 
-      final routeCoordinates = response.data
-          .map(
-            (airport) => GlobeCoordinates(airport.latitude, airport.longitude),
-          )
-          .toList();
-
       emit(
         state.copyWith(
           jettingTheWorldModel: response,
           airportList: response.data,
-          routeCoordinates: routeCoordinates,
+          routeCoordinates: const [],
           isLoading: false,
           isSuccess: true,
           status: CommonApiStatus.success,

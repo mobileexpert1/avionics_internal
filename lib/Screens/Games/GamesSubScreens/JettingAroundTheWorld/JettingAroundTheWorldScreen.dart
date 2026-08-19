@@ -46,6 +46,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
 
   List<Point> points = [];
   bool _showLocations = false;
+  int isShowCurrentAirportIndex = 0;
   List<PointConnection> connections = [];
 
   Widget pointLabelBuilder(
@@ -94,7 +95,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       rotationSpeed: 0.05,
       minZoom: 1.0,
       maxZoom: 8,
-      zoom: 1.0,
+      zoom: widget.isComeFromResultScreen ? 2.0 : 1.0,
       isRotating: false,
       atmosphereOpacity: 0.8,
       zoomToMousePosition: false,
@@ -152,28 +153,16 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
           id: airport.id.toString(),
           coordinates: GlobeCoordinates(airport.latitude, airport.longitude),
           label: airport.city,
-          color: airport.unlocked == true
+          color: airport.current == true
               ? AppColors.greenColourForPlan
-              : AppColors.primaryBlue,
+              : airport.unlocked == true
+              ? AppColors.primaryBlue
+              : AppColors.greyForTextfield,
         ),
       );
-    }
-
-    if (points.length > 1) {
-      connections.add(
-        PointConnection(
-          start: points[0].coordinates,
-          end: points[0].coordinates,
-          curveScale: 0.5,
-          id: "0",
-          style: const PointConnectionStyle(
-            color: AppColors.greenColourForPlan,
-            transitionDuration: 2000,
-            animateOnAdd: true,
-            growthAnimationDuration: 2000,
-          ),
-        ),
-      );
+      if (airport.current) {
+        isShowCurrentAirportIndex = i;
+      }
     }
 
     if (widget.isComeFromResultScreen) {
@@ -184,7 +173,24 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             end: points[i + 1].coordinates,
             curveScale: 0.5,
             id: i.toString(),
-            isLastId: i == points.length - 2 ? i.toString() : "",
+            isLastId: points[isShowCurrentAirportIndex].id,
+            style: const PointConnectionStyle(
+              color: AppColors.greenColourForPlan,
+              transitionDuration: 2000,
+              animateOnAdd: true,
+              growthAnimationDuration: 2000,
+            ),
+          ),
+        );
+      }
+    } else {
+      if (points.length > 1) {
+        connections.add(
+          PointConnection(
+            start: points[isShowCurrentAirportIndex].coordinates,
+            end: points[isShowCurrentAirportIndex].coordinates,
+            curveScale: 0.5,
+            id: "0",
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,
@@ -291,7 +297,11 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             fit: BoxFit.cover,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            if (widget.isComeFromResultScreen) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            } else {
+              Navigator.pop(context);
+            }
           },
         ),
       ),
@@ -345,40 +355,76 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                     ),
                   ),
 
-                  Positioned(
-                    top: 15,
-                    left: 15,
-                    right: 15,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.left,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "Begin Your Adventure\n",
-                                style: AppTextStyles.bold(
-                                  24,
-                                ).copyWith(color: AppColors.white),
-                              ),
-                              TextSpan(
-                                text: "\n",
-                                style: TextStyle(fontSize: 10),
-                              ),
-                              TextSpan(
-                                text:
-                                    "Travel across the world, explore iconic airports, and earn Jettons as you progress.",
-                                style: AppTextStyles.regular(
-                                  16,
-                                ).copyWith(color: AppColors.white),
-                              ),
-                            ],
+                  if (widget.isComeFromResultScreen) ...[
+                    Positioned(
+                      top: 15,
+                      left: 15,
+                      right: 15,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Congratulations\n",
+                                  style: AppTextStyles.bold(
+                                    24,
+                                  ).copyWith(color: AppColors.white),
+                                ),
+                                TextSpan(
+                                  text: "\n",
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                TextSpan(
+                                  text:
+                                      "You have Reached ${state.airportList.last.city}",
+                                  style: AppTextStyles.regular(
+                                    16,
+                                  ).copyWith(color: AppColors.white),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ] else
+                    Positioned(
+                      top: 15,
+                      left: 15,
+                      right: 15,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Begin Your Adventure\n",
+                                  style: AppTextStyles.bold(
+                                    24,
+                                  ).copyWith(color: AppColors.white),
+                                ),
+                                TextSpan(
+                                  text: "\n",
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                TextSpan(
+                                  text:
+                                      "Travel across the world, explore iconic airports, and earn Jettons as you progress.",
+                                  style: AppTextStyles.regular(
+                                    16,
+                                  ).copyWith(color: AppColors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
                   Positioned(
                     bottom: 15,
@@ -405,9 +451,13 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                                 await SharedPrefsHelper.clearJettingGames();
                                 AppNavigator.push(
                                   context,
-                                  JettingAroundBoardingPassesScreen(),
+                                  JettingAroundBoardingPassesScreen(
+                                    isComeFromResultScreen: true,
+                                  ),
                                   multiBlocProviders: [
-                                    BlocProvider(create: (_) => JettingBoardingPassCubit()),
+                                    BlocProvider(
+                                      create: (_) => JettingBoardingPassCubit(),
+                                    ),
                                   ],
                                   disableSwipeBack: true,
                                 );

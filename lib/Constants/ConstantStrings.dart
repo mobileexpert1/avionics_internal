@@ -109,7 +109,7 @@ class ConstantStrings {
   static const String airlineTicketTitle = "Airline Ticket";
 
   static const String jettingAroundTheWorldTitle = "Jetting Around The World";
-  static const String boardingPassTitle = "  Boarding Pass";
+  static const String boardingPassTitle = "Boarding Passes";
 
 
 
@@ -324,6 +324,8 @@ class ApiFunctionUrlMapSectionConstant {
   static const String aircraftStationList = "airport/?";
   static const String aircraftListNew = 'airport/new';
   static const String airport = 'airport';
+  static const String boardingPassHistory = 'boarding-pass-history';
+
 }
 
 class ApiServiceUrlGamesConstant {

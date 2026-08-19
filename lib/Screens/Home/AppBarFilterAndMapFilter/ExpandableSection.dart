@@ -30,7 +30,7 @@ class ExpandableSection extends StatelessWidget {
               Text(
                 title,
                 style: AppTextStyles.regular(
-                  18,
+                  16,
                 ).copyWith(height: 1.0, color: AppColors.primaryDark),
               ),
               InkWell(

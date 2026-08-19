@@ -22,7 +22,14 @@ import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../QuizSection/QuizQuestionScreen.dart';
 
 class JettingAroundTheBoardingPass extends StatefulWidget {
-  const JettingAroundTheBoardingPass({super.key});
+  const JettingAroundTheBoardingPass({
+    super.key,
+    required this.isComeFromHistoryScreen,
+    required this.boardingPassId,
+  });
+
+  final bool isComeFromHistoryScreen;
+  final String boardingPassId;
 
   @override
   State<JettingAroundTheBoardingPass> createState() =>
@@ -111,7 +118,10 @@ class _JettingAroundTheBoardingState
 
   String _buildUrl(bool isForFirstScreen) {
     if (isForFirstScreen) {
-      return "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}${ApiFunctionUrlGamesConstant.boardingPass}user_id=$currentUserId&game_no=$currentIndexForPass";
+      final gameNoOrBoardingId = widget.isComeFromHistoryScreen
+          ? "boarding_pass_id=${widget.boardingPassId}"
+          : "game_no=$currentIndexForPass";
+      return "${ApiBaseUrlConstant.baseUrl}${ApiFunctionUrlConstant.userService}${ApiFunctionUrlGamesConstant.boardingPass}user_id=$currentUserId&$gameNoOrBoardingId";
     }
     return ApiBaseUrlConstant.baseUrl +
         ApiFunctionUrlConstant.userService +
@@ -131,7 +141,9 @@ class _JettingAroundTheBoardingState
             tokenUsagePercentage = state.tokenUsagePercentage ?? 0.0;
             creditUsagePercentage = state.creditUsagePercentage ?? 0.0;
             if (userName != "") {
-              final url = _buildUrl(false);
+              final url = _buildUrl(
+                widget.isComeFromHistoryScreen ? true : false,
+              );
               print(url);
               if (kIsWeb) {
                 setState(() => _webUrl = url);
@@ -153,7 +165,9 @@ class _JettingAroundTheBoardingState
             backgroundColor: Colors.white,
             appBar: CustomAppBar(
               title: isClickOnNextButton == 0
-                  ? ConstantStrings.airlineTicketTitle
+                  ? widget.isComeFromHistoryScreen
+                        ? ConstantStrings.boardingPassTitle
+                        : ConstantStrings.airlineTicketTitle
                   : isClickOnNextButton == 1
                   ? ConstantStrings.jettingAroundTheWorldTitle
                   : ConstantStrings.boardingPassTitle,
@@ -230,55 +244,57 @@ class _JettingAroundTheBoardingState
                   ),
 
                   const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: CustomBottomButton(
-                      fontStyle: AppTextStyles.regular(
-                        18,
-                      ).copyWith(height: 1.0, color: Colors.white),
-                      title: ConstantStrings.readyForDepartureTitle,
-                      backgroundColor: AppColors.primaryDark,
-                      textColor: Colors.white,
-                      icon: const SizedBox(width: 0),
-                      isEnabled: true,
-                      onPressed: () {
-                        if (isClickOnNextButton == 0) {
-                          setState(() {
-                            isClickOnNextButton = 1;
-                          });
-
-                          if (_videoController != null &&
-                              _videoController!.value.isInitialized) {
-                            _videoController!
-                              ..seekTo(Duration.zero)
-                              ..play();
-
-                            Future.delayed(const Duration(seconds: 12), () {
-                              setState(() {
-                                isClickOnNextButton = 3;
-                                final url = _buildUrl(true);
-                                if (kIsWeb) {
-                                  setState(() => _webUrl = url);
-                                } else {
-                                  controller!.loadRequest(Uri.parse(url));
-                                }
-                              });
+                  if (!widget.isComeFromHistoryScreen) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                      child: CustomBottomButton(
+                        fontStyle: AppTextStyles.regular(
+                          18,
+                        ).copyWith(height: 1.0, color: Colors.white),
+                        title: ConstantStrings.readyForDepartureTitle,
+                        backgroundColor: AppColors.primaryDark,
+                        textColor: Colors.white,
+                        icon: const SizedBox(width: 0),
+                        isEnabled: true,
+                        onPressed: () {
+                          if (isClickOnNextButton == 0) {
+                            setState(() {
+                              isClickOnNextButton = 1;
                             });
+
+                            if (_videoController != null &&
+                                _videoController!.value.isInitialized) {
+                              _videoController!
+                                ..seekTo(Duration.zero)
+                                ..play();
+
+                              Future.delayed(const Duration(seconds: 12), () {
+                                setState(() {
+                                  isClickOnNextButton = 3;
+                                  final url = _buildUrl(true);
+                                  if (kIsWeb) {
+                                    setState(() => _webUrl = url);
+                                  } else {
+                                    controller!.loadRequest(Uri.parse(url));
+                                  }
+                                });
+                              });
+                            }
+                          } else if (isClickOnNextButton == 3) {
+                            AppNavigator.push(
+                              context,
+                              QuizQuestionScreen(
+                                sectionId: 0,
+                                sectionTitle: "Jetting Around The World",
+                                gameId: "trivia",
+                              ),
+                              disableSwipeBack: true,
+                            );
                           }
-                        } else if (isClickOnNextButton == 3) {
-                          AppNavigator.push(
-                            context,
-                            QuizQuestionScreen(
-                              sectionId: 0,
-                              sectionTitle: "Jetting Around The World",
-                              gameId: "trivia",
-                            ),
-                            disableSwipeBack: true,
-                          );
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: 30),
                 ],
               ],

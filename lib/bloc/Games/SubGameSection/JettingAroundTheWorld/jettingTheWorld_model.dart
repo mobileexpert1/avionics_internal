@@ -31,6 +31,7 @@ class AirportPerItemModel {
   final double latitude;
   final double longitude;
   final bool unlocked;
+  final bool current;
 
   AirportPerItemModel({
     required this.id,
@@ -45,6 +46,7 @@ class AirportPerItemModel {
     required this.latitude,
     required this.longitude,
     required this.unlocked,
+    required this.current,
   });
 
   factory AirportPerItemModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class AirportPerItemModel {
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
       unlocked: (json['unlocked'] as bool?) ?? false,
+      current: (json['current'] as bool?) ?? false,
     );
   }
 
@@ -78,6 +81,7 @@ class AirportPerItemModel {
       'latitude': latitude,
       'longitude': longitude,
       'unlocked': unlocked,
+      'current': current,
     };
   }
 }

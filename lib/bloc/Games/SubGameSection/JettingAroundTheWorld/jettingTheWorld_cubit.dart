@@ -34,6 +34,7 @@ class JettingTheWorldCubit extends Cubit<JettingTheWorldState> {
               latitude: airport.latitude,
               longitude: airport.longitude,
               unlocked: airport.unlocked,
+              current: airport.current,
             );
           }).toList();
 

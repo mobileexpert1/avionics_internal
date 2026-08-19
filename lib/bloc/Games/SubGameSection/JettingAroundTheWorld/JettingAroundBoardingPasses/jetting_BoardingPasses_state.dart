@@ -1,17 +1,16 @@
 import 'package:flutter_earth_globe/globe_coordinates.dart';
 
 import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
-import '../jettingTheWorld_model.dart';
+import 'jetting_BoardingPasses_model.dart';
 
 class JettingBoardingPassState {
-  final JettingTheWorldModel? jettingTheWorldModel;
-  final List<AirportPerItemModel> airportList;
+  final JettingBoardingPassModel? jettingTheWorldModel;
+  final List<BoardingPassModel> airportList;
   final List<GlobeCoordinates> routeCoordinates;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
   final String? apiError;
-
   final CommonApiStatus status;
 
   const JettingBoardingPassState({
@@ -26,8 +25,8 @@ class JettingBoardingPassState {
   });
 
   JettingBoardingPassState copyWith({
-    JettingTheWorldModel? jettingTheWorldModel,
-    List<AirportPerItemModel>? airportList,
+    JettingBoardingPassModel? jettingTheWorldModel,
+    List<BoardingPassModel>? airportList,
     List<GlobeCoordinates>? routeCoordinates,
     bool? isLoading,
     bool? isSuccess,

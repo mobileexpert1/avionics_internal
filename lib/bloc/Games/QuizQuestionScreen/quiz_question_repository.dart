@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../Constants/ApiClass/baseDetailResponseModel.dart';
+import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
 import '../SubGameSection/Calculation_Section/calculation_submit_model.dart';
 
@@ -186,16 +188,24 @@ class QuizQuestionRepository {
     int gameNumber,
     int actionNumber,
   ) async {
+    final setIdsLocal = await SharedPrefsHelper.getSetIdForTrivia() ?? "";
+    print(setIdsLocal);
     final uri = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
-      "${ApiFunctionUrlGamesConstant.triviaTopic}",
+      "${ApiFunctionUrlGamesConstant.triviaTopic}?set_id=$setIdsLocal",
     );
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
       if (jsonData['empty'] == true) {
         return null;
       }
-      return CalculationGameModel.fromJson(jsonData);
+      final responseJsonData = CalculationGameModel.fromJson(jsonData);
+
+      String combinedSetId = '$setIdsLocal, ${responseJsonData.setId}';
+      await SharedPrefsHelper.removeSetIdForTrivia();
+      await SharedPrefsHelper.saveSetIdForTrivia(combinedSetId);
+
+      return responseJsonData;
     } catch (e) {
       throw e.toString();
     }

@@ -19,8 +19,33 @@ class SharedPrefsHelper {
   static const String _isAvtarForProfileUrlKey = 'avtarForProfileUrlKey';
   static const String _userProfileNameKey = 'userProfileNameKey';
   static const String _jettingAroundGameModel = 'model_data';
-  static const String _jettingGameCountKey = 'jettingGameCountKey';
-  static const String _jettingGameSetIdKey = 'jettingGameSetIdKey';
+  static const String _isAlreadyShowPopup = 'isAlreadyShowPopup';
+  static const String _isSetIdForTrivia = '_isSetIdForTrivia';
+
+  static Future<void> saveSetIdForTrivia(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_isSetIdForTrivia, value);
+  }
+
+  static Future<String?> getSetIdForTrivia() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_isSetIdForTrivia);
+  }
+
+  static Future<void> removeSetIdForTrivia() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_isSetIdForTrivia);
+  }
+
+  static Future<void> saveIsAlreadyShowPopup(bool isPressed) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isAlreadyShowPopup, isPressed);
+  }
+
+  static Future<bool?> getIsAlreadyShowPopup() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isAlreadyShowPopup);
+  }
 
   static Future<int> getJettingGamesCount() async {
     final prefs = await SharedPreferences.getInstance();
@@ -53,6 +78,8 @@ class SharedPrefsHelper {
   static Future<void> clearJettingGames() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_jettingAroundGameModel);
+    await prefs.remove(_isAlreadyShowPopup);
+    await prefs.remove(_isSetIdForTrivia);
   }
 
   static Future<void> saveString(String key, String value) async {

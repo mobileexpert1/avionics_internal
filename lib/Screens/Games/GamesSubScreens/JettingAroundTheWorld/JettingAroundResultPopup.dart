@@ -209,7 +209,6 @@ class JettingAroundResultPopup extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 0),
                   child: SizedBox(
-                    width: upcomingTitle.contains("Journey") ? 170 : 150,
                     height: 40,
                     child: ElevatedButton(
                       onPressed: onButtonTap,

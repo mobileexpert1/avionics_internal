@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundBoardingPassesScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
 import '../../Helpers/AppNavigator.dart';
 import '../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_cubit.dart';
 import '../../bloc/Profile/ConversionSection/conversion_cubit.dart';
 import '../../bloc/Profile/DeleteProfile/delete_cubit.dart';
 import '../../bloc/Profile/FormulaSection/formula_cubit.dart';
@@ -97,7 +99,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // margin: kIsWeb
             //     ? const EdgeInsets.symmetric(horizontal: 50)
             //     : EdgeInsets.zero,
-
             width: isDesktopWeb ? 1500 : double.infinity,
             alignment: Alignment.center,
             margin: isDesktopWeb
@@ -276,6 +277,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AppNavigator.push(
                           context,
                           const AircraftCategoryScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.glossaryProfile,
+                      ),
+                      title: "My Boarding Passes",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const JettingAroundBoardingPassesScreen(
+                            isComeFromResultScreen: false,
+                          ),
+                          multiBlocProviders: [
+                            BlocProvider(
+                              create: (_) => JettingBoardingPassCubit(),
+                            ),
+                          ],
                           disableSwipeBack: true,
                         );
                       },

@@ -79,5 +79,10 @@ class AppColors {
   static const Color citiusAltiusColorForGame = Color(0xFFFDC20F);
   static const Color planeSpotterColorForGame = Color(0xFF3EE1E1);
 
-  static const Color showColourForJourneyRoute = Color.fromRGBO(58, 58, 58, 0.25);
+  static const Color showColourForJourneyRoute = Color.fromRGBO(
+    58,
+    58,
+    58,
+    0.25,
+  );
 }
