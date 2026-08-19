@@ -36,7 +36,7 @@ class ComponentUnlockedScreen extends StatelessWidget {
         centerTitle: false,
         leftButton: IconButton(
           padding: EdgeInsets.zero,
-          onPressed: () => Navigator.pop(context),
+          onPressed: onNext,
           icon: SvgPicture.asset(
             CommonUi.setSvgImage(AssetsPath.backArrowButton),
           ),

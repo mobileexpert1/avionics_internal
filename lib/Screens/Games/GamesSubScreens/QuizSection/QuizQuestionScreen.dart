@@ -171,7 +171,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 },
               ),
             ),
-
             body: BlocConsumer<QuizQuestionCubit, QuizQuestionState>(
               listener: (context, state) async {
                 if (state.showWrongAnswerPopup && widget.gameId != "trivia") {
@@ -192,7 +191,6 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                   );
                 }
               },
-
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
 

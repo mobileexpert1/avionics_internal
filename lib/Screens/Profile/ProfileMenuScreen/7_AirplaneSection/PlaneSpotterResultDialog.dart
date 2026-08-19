@@ -85,7 +85,7 @@ class ImageBasedResultDialog extends StatelessWidget {
               ),
               child: Center(
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.myAirplaneIcon),
+                  CommonUi.setSvgImage(AssetsPath.planeIcon),
                   width: isDesktopWeb ? 45 : 40,
                   height: isDesktopWeb ? 45 : 40,
                 ),
@@ -114,6 +114,7 @@ class ImageBasedResultDialog extends StatelessWidget {
                 fontSize: isDesktopWeb ? 26 : 24,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xff201E48),
+                height: 1.0,
               ),
             ),
 
@@ -172,7 +173,7 @@ class ImageBasedResultDialog extends StatelessWidget {
                           componentDescription,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: isDesktopWeb ? 13 : 12,
+                            fontSize: isDesktopWeb ? 13 : 14,
                             height: 1.4,
                             color: Colors.black87,
                           ),
@@ -192,16 +193,14 @@ class ImageBasedResultDialog extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(width: 4),
-
                         Expanded(
                           child: Text(
-                            'Score 60% or higher to unlock more '
+                            'Score 80% or higher to unlock more '
                             'aircraft components and continue '
                             'building your aircraft.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: isDesktopWeb ? 15 : 15,
+                              fontSize: 15,
                               height: 1.4,
                               color: Colors.black87,
                             ),

@@ -19,6 +19,7 @@ import '../../Profile/SettingScreen/SettingScreen.dart';
 import 'BaseScreenForAllLevelDescriptions.dart';
 
 class GamesScreen extends StatefulWidget {
+  static const String routeName = '/games';
   const GamesScreen({super.key});
 
   @override

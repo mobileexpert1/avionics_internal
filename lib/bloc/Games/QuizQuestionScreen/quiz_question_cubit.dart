@@ -50,6 +50,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     maxQuestions = switch (gameId) {
       "trivia" => 5,
       "aircraftEncyclopaedia" => 10,
+      "imageBased" => 10,
       _ => 20,
     };
 
@@ -984,35 +985,28 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
                   builder: (_) => ComponentUnlockedScreen(
                     partName: data.part!.name,
                     image3d: data.part!.icon,
-                    onView3DPart: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AirplanePartsScreen(),
-                        ),
-                      );
-                    },
-                    onNext: () {
-                      Navigator.pushAndRemoveUntil(
+                    onView3DPart: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              BaseScreenForAllLevelDescriptions(gameId: gameId),
+                              const AirplanePartsScreen(isFromGame: true),
                         ),
-                        (route) => false,
                       );
+                      if (result == true && context.mounted) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
+                    },
+                    onNext: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
                     },
                   ),
                 ),
               );
             } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      BaseScreenForAllLevelDescriptions(gameId: gameId),
-                ),
-              );
+              Navigator.pop(context);
             }
           },
         );
