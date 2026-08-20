@@ -85,7 +85,7 @@ class ImageBasedResultDialog extends StatelessWidget {
               ),
               child: Center(
                 child: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.myAirplaneIcon),
+                  CommonUi.setSvgImage(AssetsPath.resultpopplaneIcon),
                   width: isDesktopWeb ? 45 : 40,
                   height: isDesktopWeb ? 45 : 40,
                 ),

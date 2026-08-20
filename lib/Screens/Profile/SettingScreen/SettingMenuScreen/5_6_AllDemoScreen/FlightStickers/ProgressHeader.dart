@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
+import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -87,26 +89,41 @@ class ProgressHeader extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 15),
           LayoutBuilder(
             builder: (context, constraints) {
-              const planeSize = 30.0;
-              const barHeight = 9.0;
+              const double planeSize = 30.0;
+              const double barHeight = 9.0;
+              const double horizontalPadding = 1.0;
+              const double planeSpacing = 4.0;
 
-              final horizontalPadding = 20.0;
-              final barWidth = constraints.maxWidth - (horizontalPadding * 2);
-              final planePosition = barWidth * progress;
+              final double totalWidth =
+                  constraints.maxWidth - (horizontalPadding * 2);
 
-              const planeGap = 1;
+              final double barWidth = totalWidth - planeSize - planeSpacing;
+
+              final bool isComplete = progress >= 1.0;
+
+              final double progressWidth = isComplete
+                  ? barWidth
+                  : (barWidth * progress).clamp(0.0, barWidth);
+              final double planeLeft = (progressWidth + planeSpacing).clamp(
+                0.0,
+                totalWidth - planeSize,
+              );
 
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                ),
+                child: SizedBox(
+                  height: planeSize,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned(
+                        left: 0,
+                        right: isComplete ? planeSize + planeSpacing : 0,
+                        top: (planeSize - barHeight) / 2,
                         child: Container(
                           height: barHeight,
                           decoration: BoxDecoration(
@@ -115,42 +132,48 @@ class ProgressHeader extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
-
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: AnimatedContainer(
+                      AnimatedPositioned(
                         duration: const Duration(milliseconds: 400),
-                        height: barHeight,
-                        width: planePosition,
-                        decoration: BoxDecoration(
-                          color: progressColor,
-                          borderRadius: BorderRadius.circular(50),
+                        curve: Curves.easeInOut,
+                        left: 0,
+                        top: (planeSize - barHeight) / 2,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOut,
+                          width: progressWidth,
+                          height: barHeight,
+                          decoration: BoxDecoration(
+                            color: progressColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
                         ),
                       ),
-                    ),
-
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 400),
-                      left: planePosition + planeGap,
-                      top: (planeSize - 51) / 2,
-                      child: Transform.rotate(
-                        angle: math.pi / 2,
-                        child: Icon(
-                          Icons.airplanemode_active,
-                          size: planeSize,
-                          color: progressColor,
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                        left: planeLeft,
+                        top: 0.5,
+                        child: SvgPicture.asset(
+                          CommonUi.setSvgImage(AssetsPath.progressbarplaneIcon),
+                          width: planeSize,
+                          height: planeSize,
+                          fit: BoxFit.contain,
+                          colorFilter: ColorFilter.mode(
+                            progressColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
           ),
+
           if (isCompleted)
             Padding(
-              padding: const EdgeInsets.only(top: 15, left: 8, right: 8),
+              padding: const EdgeInsets.only(top: 5, left: 8, right: 8),
               child: Column(
                 children: [
                   Text(
@@ -171,15 +194,20 @@ class ProgressHeader extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF4797DB),
                         elevation: 0,
+                        padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
-                        "View 3D Aircraft",
-                        style: AppTextStyles.regular(
-                          18,
-                        ).copyWith(color: AppColors.white),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "View 3D Aircraft",
+                          maxLines: 1,
+                          style: AppTextStyles.regular(
+                            18,
+                          ).copyWith(color: AppColors.white),
+                        ),
                       ),
                     ),
                   ),

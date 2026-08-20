@@ -173,7 +173,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             end: points[i + 1].coordinates,
             curveScale: 0.5,
             id: i.toString(),
-            isLastId: points[isShowCurrentAirportIndex].id,
+            // isLastId: points[isShowCurrentAirportIndex].id,
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,
