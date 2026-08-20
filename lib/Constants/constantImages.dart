@@ -167,6 +167,8 @@ abstract class AssetsPath {
   static const String airplaneParts = 'aircraft-parts';
 
   static const successJettingYellowAround = '137SuccessJettingAround';
+  static const resultpopplaneIcon = '138resultplaneIcon';
+  static const progressbarplaneIcon = '139ProgressplaneIcon';
 
 
   static const nose = '200nosse';

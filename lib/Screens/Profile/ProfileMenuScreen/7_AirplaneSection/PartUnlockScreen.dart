@@ -201,12 +201,12 @@ class ComponentUnlockedScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
 
                       // View 3D Part
                       SizedBox(
                         width: isDesktopWeb ? 180 : 160,
-                        height: isDesktopWeb ? 48 : 45,
+                        height: isDesktopWeb ? 48 : 40,
                         child: ElevatedButton(
                           onPressed: onView3DPart,
                           style: ButtonStyle(
@@ -238,7 +238,7 @@ class ComponentUnlockedScreen extends StatelessWidget {
 
                       // Next
                       SizedBox(
-                        width: isDesktopWeb ? 140 : 125,
+                        width: isDesktopWeb ? 140 : 130,
                         height: isDesktopWeb ? 42 : 40,
                         child: ElevatedButton(
                           onPressed: onNext,
