@@ -164,7 +164,6 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
         isShowCurrentAirportIndex = i;
       }
     }
-
     if (widget.isComeFromResultScreen) {
       for (int i = 0; i < points.length - 1; i++) {
         connections.add(
@@ -173,7 +172,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             end: points[i + 1].coordinates,
             curveScale: 0.5,
             id: i.toString(),
-            isLastId: points[isShowCurrentAirportIndex].id,
+            isLastId: i == points.length - 2 ? points.last.id : "",
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,

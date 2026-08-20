@@ -18,7 +18,6 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 import '../../../../Helpers/FormattedText/FormattedText.dart';
-import '../../MainGameScreen/InfoWrongGameScreen.dart';
 
 final GlobalKey _iconKey = GlobalKey();
 
@@ -171,26 +170,26 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                 },
               ),
             ),
-            body: BlocConsumer<QuizQuestionCubit, QuizQuestionState>(
-              listener: (context, state) async {
-                if (state.showWrongAnswerPopup && widget.gameId != "trivia") {
-                  print("wrongPopupCount :- ${state.wrongAnswerPopupCount}");
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => InfoWrongGameScreen(
-                        screenIndex: state.wrongAnswerPopupCount,
-                        gameTitle: widget.sectionTitle,
-                        callBackForMoveToNextScreen: () {
-                          context
-                              .read<QuizQuestionCubit>()
-                              .continueAfterWrongPopup(context);
-                        },
-                      ),
-                    ),
-                  );
-                }
-              },
+            body: BlocBuilder<QuizQuestionCubit, QuizQuestionState>(
+              // listener: (context, state) async {
+              //   if (state.showWrongAnswerPopup && widget.gameId != "trivia") {
+              //     print("wrongPopupCount :- ${state.wrongAnswerPopupCount}");
+              //     await Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (_) => InfoWrongGameScreen(
+              //           screenIndex: state.wrongAnswerPopupCount,
+              //           gameTitle: widget.sectionTitle,
+              //           callBackForMoveToNextScreen: () {
+              //             context
+              //                 .read<QuizQuestionCubit>()
+              //                 .continueAfterWrongPopup(context);
+              //           },
+              //         ),
+              //       ),
+              //     );
+              //   }
+              // },
               builder: (context, state) {
                 final quizCubit = context.read<QuizQuestionCubit>();
 
