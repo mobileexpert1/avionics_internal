@@ -46,6 +46,7 @@ class _BaseScreenForAllLevelState
       gameInfo: gameInfo,
       buttonText: "Start Game",
       onButtonTap: () {
+        if (widget.gameId == "imageBased") return;
         onGameTap(context, widget.gameId);
       },
       onBackTap: () {
