@@ -1,4 +1,3 @@
-import 'package:avionics_internal/Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundBoardingPassesScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,15 +19,14 @@ import '../../bloc/Profile/Glossary/glossary_cubit.dart';
 import '../../bloc/Profile/ProfileMain/profile_cubit.dart';
 import '../../bloc/Profile/ProfileMain/profile_state.dart';
 import '../../bloc/home/homeBloc/home_cubit.dart';
+import '../Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundBoardingPassesScreen.dart';
 import 'ProfileMenuScreen/0_ScientificCalculator/screens/calculator_home_main_screen.dart';
 import 'ProfileMenuScreen/1_UnitConversion/UnitConversionsScreen.dart';
 import 'ProfileMenuScreen/2_FormulaSection/FormulaScreen.dart';
 import 'ProfileMenuScreen/3_Glossary/GlossaryScreen.dart';
 import 'ProfileMenuScreen/4_GameBadges/BadgesScreens.dart';
 import 'ProfileMenuScreen/5_SavedFlights/SavedFlighScreen.dart';
-import 'ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
 import 'ProfileSettingsSectionHeader.dart';
-import 'SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightLog/AircraftCategoryScreen.dart';
 import 'SettingScreen/SettingScreen.dart';
 
 class ProfileScreenWrapper extends StatelessWidget {
@@ -255,32 +253,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.myAirplaneIcon,
-                      ),
-                      title: "My Airplane",
-                      onTap: () {
-                        AppNavigator.push(
-                          context,
-                          const AirplanePartsScreen(),
-                          disableSwipeBack: true,
-                        );
-                      },
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.glossaryProfile,
-                      ),
-                      title: "My Stickers",
-                      onTap: () {
-                        AppNavigator.push(
-                          context,
-                          const AircraftCategoryScreen(),
-                          disableSwipeBack: true,
-                        );
-                      },
-                    ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.myAirplaneIcon,
+                    //   ),
+                    //   title: "My Airplane",
+                    //   onTap: () {
+                    //     AppNavigator.push(
+                    //       context,
+                    //       const AirplanePartsScreen(),
+                    //       disableSwipeBack: true,
+                    //     );
+                    //   },
+                    // ),
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.glossaryProfile,
+                    //   ),
+                    //   title: "My Stickers",
+                    //   onTap: () {
+                    //     AppNavigator.push(
+                    //       context,
+                    //       const AllMyStickerScreen(),
+                    //       disableSwipeBack: true,
+                    //     );
+                    //   },
+                    // ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,

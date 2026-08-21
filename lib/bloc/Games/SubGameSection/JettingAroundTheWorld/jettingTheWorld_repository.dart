@@ -1,6 +1,7 @@
 import '../../../../Constants/ApiClass/api_service.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import 'JettingAroundBoardingPasses/jetting_BoardingPasses_model.dart';
+import 'JettingChronicleModel/JettingChronicleModel.dart';
 import 'jettingTheWorld_model.dart';
 
 class JettingTheWorldRepository {
@@ -31,8 +32,22 @@ class JettingTheWorldRepository {
 
     try {
       final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
-
       return JettingBoardingPassModel.fromJson(jsonData);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<JettingChronicleModel?> getChronicleDetails() async {
+    final uri = Uri.parse(
+      "${ApiBaseUrlConstant.baseUrl}"
+      "${ApiFunctionUrlGamesConstant.trivia}"
+      "${ApiFunctionUrlMapSectionConstant.aviationChronicle}",
+    );
+
+    try {
+      final jsonData = await ApiService.get(url: uri) as Map<String, dynamic>;
+      return JettingChronicleModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();
     }

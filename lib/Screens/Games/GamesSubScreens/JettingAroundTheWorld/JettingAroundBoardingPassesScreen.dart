@@ -139,22 +139,14 @@ class RouteCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 20, 15, 18),
       child: Column(
-        children: isFirst
-            ? [
-                _buildFromToLabels(),
-                const SizedBox(height: 10),
-                _buildCountryRow(true),
-                const SizedBox(height: 5),
-                _buildRoute(),
-                const SizedBox(height: 10),
-              ]
-            : [
-                _buildCountryRow(false),
-                const SizedBox(height: 5),
-                _buildRoute(),
-                const SizedBox(height: 10),
-                _buildFromToLabels(),
-              ],
+        children: [
+          _buildFromToLabels(),
+          const SizedBox(height: 10),
+          _buildCountryRow(true),
+          const SizedBox(height: 5),
+          _buildRoute(),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }
@@ -187,7 +179,9 @@ class RouteCard extends StatelessWidget {
         Expanded(
           child: buildCustomProgressBar(
             0.5,
-            airport.fromAirport.colourCode != "" ? airport.fromAirport.colourCode.toColor() : AppColors.primaryDark,
+            airport.toAirport.colourCode != ""
+                ? airport.toAirport.colourCode.toColor()
+                : AppColors.textHomeColour,
           ),
         ),
         Expanded(child: _buildRightAirport()),
