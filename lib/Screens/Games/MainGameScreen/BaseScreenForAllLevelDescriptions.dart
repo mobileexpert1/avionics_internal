@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
-import '../../../Constants/ConstantStrings.dart';
 import '../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxQuestionScreen.dart';
@@ -14,7 +13,6 @@ import '../GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
 import '../GamesSubScreens/JettingAroundTheWorld/JettingAroundTheWorldScreen.dart';
 import '../GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
 import '../GamesSubScreens/QuizSection/QuizLockScreen.dart';
-import '../GamesSubScreens/QuizSection/QuizQuestionScreen.dart';
 import 'ReusableGameDetailScreen.dart';
 
 class BaseScreenForAllLevelDescriptions extends StatefulWidget {
@@ -110,15 +108,15 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.imageBasedLockScreen,
         );
 
-        AppNavigator.push(
-          context,
-          QuizQuestionScreen(
-            sectionId: 0,
-            sectionTitle: ConstantStrings.imageBasedTitle,
-            gameId: "imageBased",
-          ),
-          disableSwipeBack: true,
-        );
+        // AppNavigator.push(
+        //   context,
+        //   QuizQuestionScreen(
+        //     sectionId: 0,
+        //     sectionTitle: ConstantStrings.imageBasedTitle,
+        //     gameId: "imageBased",
+        //   ),
+        //   disableSwipeBack: true,
+        // );
         break;
 
       case 'trivia':

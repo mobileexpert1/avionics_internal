@@ -67,7 +67,7 @@ class _JettingAroundBoardingPassesState
           final airports = state.airportList;
 
           if (airports.isEmpty) {
-            return const Center(child: Text('No flight routes available'));
+            return const Center(child: Text('No Boarding Pass available'));
           }
 
           return ListView.separated(

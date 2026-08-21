@@ -169,16 +169,20 @@ class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
                     // API DESCRIPTION
                     // =========================
                     if (!state.isLoading)
-                      Text(
-                        description,
-                        textAlign: TextAlign.center,
-                        maxLines: isExpanded ? null : 3,
-                        overflow: isExpanded
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                        style: AppTextStyles.regular(
-                          14,
-                        ).copyWith(height: 1.7, color: AppColors.black),
+                      Flexible(
+                        child: SingleChildScrollView(
+                          child: Text(
+                            description,
+                            textAlign: TextAlign.center,
+                            maxLines: isExpanded ? null : 3,
+                            overflow: isExpanded
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            style: AppTextStyles.regular(
+                              14,
+                            ).copyWith(height: 1.7, color: AppColors.black),
+                          ),
+                        ),
                       ),
 
                     const SizedBox(height: 20),
