@@ -18,7 +18,7 @@ class CustomSegmentController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 60,
       decoration: const BoxDecoration(
         color: AppColors.greyForAirportDetailCard,
         borderRadius: BorderRadius.only(
@@ -47,15 +47,15 @@ class CustomSegmentController extends StatelessWidget {
                             ? AppColors.primaryDark
                             : Colors.transparent,
 
-                          borderRadius: index == 0
-                              ? const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          )
-                              : const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
+                        borderRadius: index == 0
+                            ? const BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              )
+                            : const BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
                       ),
                       child: Text(
                         segments[index],
@@ -75,6 +75,7 @@ class CustomSegmentController extends StatelessWidget {
           : Row(
               children: List.generate(segments.length, (index) {
                 final isSelected = selectedIndex == index;
+
                 return Expanded(
                   child: GestureDetector(
                     onTap: () => onChanged?.call(index),
@@ -82,22 +83,17 @@ class CustomSegmentController extends StatelessWidget {
                       duration: const Duration(milliseconds: 250),
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 2,
+                        horizontal: 8,
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.primaryDark
                             : Colors.transparent,
-                        borderRadius: index == 0
-                            ? const BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              )
-                            : const BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
                       ),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
@@ -106,7 +102,7 @@ class CustomSegmentController extends StatelessWidget {
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             color: isSelected ? Colors.white : Colors.black54,
                             fontWeight: isSelected
                                 ? FontWeight.w800

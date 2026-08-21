@@ -1825,9 +1825,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           left: isDesktopWeb ? 400.0 : 0.0,
-          right: isDesktopWeb
-              ? 400.0
-              : MediaQuery.of(context).size.width / 2.53,
+          right: isDesktopWeb ? 400.0 : MediaQuery.of(context).size.width / 5.0,
           bottom: _activeCard == 2 ? cardHeight : -cardHeight,
           child: SizedBox(
             height: segmentHeight,
