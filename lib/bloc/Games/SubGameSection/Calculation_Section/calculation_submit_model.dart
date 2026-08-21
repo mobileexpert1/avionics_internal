@@ -35,6 +35,8 @@ class SubmitCalculationResultData {
 
   final UnlockAirportModel? unlockAirport;
 
+  final bool allUnlock;
+
   SubmitCalculationResultData({
     required this.percentage,
     required this.totalQuestions,
@@ -49,6 +51,7 @@ class SubmitCalculationResultData {
     required this.partUnlock,
     this.part,
     this.unlockAirport,
+    required this.allUnlock,
   });
 
   factory SubmitCalculationResultData.fromJson(Map<String, dynamic> json) {
@@ -85,6 +88,8 @@ class SubmitCalculationResultData {
       unlockAirport: airportJson != null
           ? UnlockAirportModel.fromJson(airportJson as Map<String, dynamic>)
           : null,
+
+      allUnlock: json['all_unlock'] ?? false,
     );
   }
 
@@ -112,6 +117,7 @@ class SubmitCalculationResultData {
     'unlock_part': part?.toJson(),
 
     'unlock_airport': unlockAirport?.toJson(),
+    'all_unlock': allUnlock,
   };
 }
 

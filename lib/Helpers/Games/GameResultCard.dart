@@ -18,6 +18,7 @@ class GameResultCard extends StatelessWidget {
   final int correctPoints;
   final List<String> bonusPoints;
   final String? badgeText;
+  final bool isImageBased;
 
   const GameResultCard({
     super.key,
@@ -28,6 +29,7 @@ class GameResultCard extends StatelessWidget {
     required this.correctPoints,
     required this.bonusPoints,
     this.badgeText,
+    this.isImageBased = false,
   });
 
   @override
@@ -50,7 +52,10 @@ class GameResultCard extends StatelessWidget {
 
                 (score / total) >= 0.8
                     ? Image.asset(
-                        CommonUi.setGifAndVideoImage(AssetsPath.gameResultGif,false),
+                        CommonUi.setGifAndVideoImage(
+                          AssetsPath.gameResultGif,
+                          false,
+                        ),
                         height: 120,
                         width: 120,
                       )
@@ -98,8 +103,10 @@ class GameResultCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text("$totalPoints points earned"),
-                        const SizedBox(height: 20),
+                        if (!isImageBased) ...[
+                          Text("$totalPoints points earned"),
+                          const SizedBox(height: 20),
+                        ],
 
                         LinearProgressIndicator(
                           value: score / total,
@@ -116,26 +123,27 @@ class GameResultCard extends StatelessWidget {
                 const Text("Keep learning and Keep playing"),
                 const SizedBox(height: 5),
 
-                correctPoints != 0
+                (!isImageBased && correctPoints != 0)
                     ? Text(
                         "$correctPoints points for correct answers",
                         style: const TextStyle(fontSize: 15),
                       )
                     : const SizedBox.shrink(),
 
-                ...bonusPoints.map(
-                  (b) => Padding(
-                    padding: const EdgeInsets.only(bottom: 6.0),
-                    child: Text(
-                      b,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.orange,
+                if (!isImageBased)
+                  ...bonusPoints.map(
+                    (b) => Padding(
+                      padding: const EdgeInsets.only(bottom: 6.0),
+                      child: Text(
+                        b,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.orange,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
-                ),
 
                 const SizedBox(height: 15),
 

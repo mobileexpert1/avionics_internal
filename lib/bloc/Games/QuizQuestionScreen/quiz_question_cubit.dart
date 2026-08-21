@@ -935,7 +935,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
 
           Future.delayed(const Duration(milliseconds: 100), () {
             if (gameId == "imageBased") {
-              _showImageBasedResult(context, data);
+              if (data.allUnlock) {
+                _showMainResult(context, data, isImageBased: true);
+              } else {
+                _showImageBasedResult(context, data);
+              }
             } else {
               _showMainResult(context, data);
             }
@@ -1018,7 +1022,11 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
   // MAIN RESULT
   // -----------------------------------------------------------------------------
 
-  void _showMainResult(BuildContext context, dynamic data) {
+  void _showMainResult(
+    BuildContext context,
+    dynamic data, {
+    bool isImageBased = false,
+  }) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -1030,6 +1038,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           isEarnedBadge: data.isEarnedBadge,
           badgeName: data.badgeName,
           isComeFromTrivia: false,
+          isImageBased: isImageBased,
         ),
       ),
     );

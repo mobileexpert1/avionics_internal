@@ -8,6 +8,7 @@ class AirPlanePartsModel {
   final String description;
   final String modelPath;
   final List<AirPlaneSubPartModel> subParts;
+  final String aircraftPath;
 
   const AirPlanePartsModel({
     required this.id,
@@ -19,6 +20,7 @@ class AirPlanePartsModel {
     this.description = '',
     this.subParts = const [],
     this.modelPath = '',
+    this.aircraftPath = '',
   });
 
   double get progress {
@@ -37,6 +39,7 @@ class AirPlanePartsModel {
     String? description,
     List<AirPlaneSubPartModel>? subParts,
     String? modelPath,
+    String? aircraftPath,
   }) {
     return AirPlanePartsModel(
       id: id ?? this.id,
@@ -48,23 +51,24 @@ class AirPlanePartsModel {
       description: description ?? this.description,
       subParts: subParts ?? this.subParts,
       modelPath: modelPath ?? this.modelPath,
+      aircraftPath: aircraftPath ?? this.aircraftPath,
     );
   }
 
-  factory AirPlanePartsModel.fromJson(Map<String, dynamic> json) {
-    final unlockedKey =
-        json['unlocked_key'] as Map<String, dynamic>? ?? {};
+  factory AirPlanePartsModel.fromJson(
+    Map<String, dynamic> json, {
+    String aircraftPath = '',
+  }) {
+    final unlockedKey = json['unlocked_key'] as Map<String, dynamic>? ?? {};
 
     return AirPlanePartsModel(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       image: json['icon']?.toString() ?? '',
 
-      collectedCount:
-      (unlockedKey['unlocked'] as num?)?.toInt() ?? 0,
+      collectedCount: (unlockedKey['unlocked'] as num?)?.toInt() ?? 0,
 
-      totalCount:
-      (unlockedKey['total'] as num?)?.toInt() ?? 5,
+      totalCount: (unlockedKey['total'] as num?)?.toInt() ?? 5,
 
       isUnlocked: json['unlocked'] as bool? ?? false,
 
@@ -72,17 +76,14 @@ class AirPlanePartsModel {
 
       modelPath: json['model_path']?.toString() ?? '',
 
+      aircraftPath: aircraftPath,
+
       subParts: (json['component'] as List? ?? [])
-          .map(
-            (e) => AirPlaneSubPartModel.fromJson(
-          e as Map<String, dynamic>,
-        ),
-      )
+          .map((e) => AirPlaneSubPartModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
   }
 }
-
 
 class AirPlaneSubPartModel {
   final String id;
@@ -111,9 +112,7 @@ class AirPlaneSubPartModel {
     );
   }
 
-  factory AirPlaneSubPartModel.fromJson(
-      Map<String, dynamic> json,
-      ) {
+  factory AirPlaneSubPartModel.fromJson(Map<String, dynamic> json) {
     return AirPlaneSubPartModel(
       id: json['id']?.toString() ?? '',
       name: json['title']?.toString() ?? '',
@@ -136,9 +135,7 @@ class PlaneSpotterPart {
     required this.modelPath,
   });
 
-  factory PlaneSpotterPart.fromJson(
-      Map<String, dynamic> json,
-      ) {
+  factory PlaneSpotterPart.fromJson(Map<String, dynamic> json) {
     return PlaneSpotterPart(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',

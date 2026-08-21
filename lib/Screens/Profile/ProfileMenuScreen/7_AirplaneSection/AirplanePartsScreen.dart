@@ -97,14 +97,17 @@ class _AirplanePartsView extends StatelessWidget {
                       isCompletedGreen: true,
                       onView3DAircraft: () {
                         final part = state.parts.firstWhere(
-                          (part) => part.collectedCount >= part.totalCount,
+                              (part) => part.collectedCount >= part.totalCount,
                           orElse: () => state.parts.first,
                         );
+
+                        debugPrint("Aircraft Path: ${part.aircraftPath}");
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => AirplaneCompleteScreen(
-                              modelPath: part.modelPath,
+                              aircraftPath: part.aircraftPath,
                             ),
                           ),
                         );

@@ -15,8 +15,15 @@ class AirPlanePartsRepository {
 
       final data = jsonData['data'] as List? ?? [];
 
+      final aircraftPath = jsonData['aircraft']?.toString() ?? '';
+
       return data
-          .map((e) => AirPlanePartsModel.fromJson(e as Map<String, dynamic>))
+          .map(
+            (e) => AirPlanePartsModel.fromJson(
+              e as Map<String, dynamic>,
+              aircraftPath: aircraftPath,
+            ),
+          )
           .toList();
     } catch (e) {
       throw e.toString();

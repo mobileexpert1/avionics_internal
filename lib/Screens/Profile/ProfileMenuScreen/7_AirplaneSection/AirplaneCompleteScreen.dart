@@ -9,9 +9,9 @@ import '../../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class AirplaneCompleteScreen extends StatefulWidget {
-  final String modelPath;
+  final String aircraftPath;
 
-  const AirplaneCompleteScreen({super.key, required this.modelPath});
+  const AirplaneCompleteScreen({super.key, required this.aircraftPath});
 
   @override
   State<AirplaneCompleteScreen> createState() => _AirplaneCompleteScreenState();
@@ -76,7 +76,7 @@ class _AirplaneCompleteScreenState extends State<AirplaneCompleteScreen> {
                     children: [
                       Flutter3DViewer(
                         controller: _controller,
-                        src: widget.modelPath,
+                        src: widget.aircraftPath,
                         progressBarColor: Colors.transparent,
                         onLoad: (model) {
                           if (mounted) {

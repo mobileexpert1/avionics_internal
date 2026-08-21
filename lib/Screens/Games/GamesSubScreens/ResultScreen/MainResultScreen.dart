@@ -20,6 +20,7 @@ class MainResultScreen extends StatefulWidget {
     required this.badgeName,
     required this.bonusPoints,
     required this.isComeFromTrivia,
+    this.isImageBased = false,
   });
 
   final int totalQuestion;
@@ -29,6 +30,8 @@ class MainResultScreen extends StatefulWidget {
   final String badgeName;
   final int bonusPoints;
   final bool isComeFromTrivia;
+  final bool isImageBased;
+
 
   @override
   _MainResultScreenState createState() => _MainResultScreenState();
@@ -89,6 +92,7 @@ class _MainResultScreenState extends State<MainResultScreen> {
                     correctPoints: state.correctPoints,
                     bonusPoints: state.bonusPoints,
                     badgeText: state.badgeText,
+                    isImageBased: widget.isImageBased,
                   );
                 },
               ),
