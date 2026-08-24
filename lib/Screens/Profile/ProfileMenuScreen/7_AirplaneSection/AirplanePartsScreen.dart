@@ -5,19 +5,17 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
-
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsCubit.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsState.dart';
-
+import '../8_Sticker/FlightStickers/ProgressHeader.dart';
 import 'Airplane3DViewScreen.dart';
 import 'AirplaneCompleteScreen.dart';
 import 'AirplanePartLockedDialog.dart';
 import 'AirplanePartsCard.dart';
 
-import '../../SettingScreen/SettingMenuScreen/5_6_AllDemoScreen/FlightStickers/ProgressHeader.dart';
-
 class AirplanePartsScreen extends StatelessWidget {
   final bool isFromGame;
+
   const AirplanePartsScreen({super.key, this.isFromGame = false});
 
   @override
@@ -39,8 +37,6 @@ class _AirplanePartsView extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
-
-    final bool isMobileWeb = kIsWeb && screenWidth < 900;
 
     final int crossAxisCount = isDesktopWeb
         ? (screenWidth >= 1500

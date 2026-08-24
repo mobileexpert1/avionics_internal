@@ -4,7 +4,7 @@
 // import '../../../../../../Constants/AppColors.dart';
 // import '../../../../../../Constants/constantImages.dart';
 // import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-// import '../FlightLog/AircraftCategoryModel.dart';
+// import '../AllMySticker/AircraftCategoryModel.dart';
 //
 // class StickerUnlockedDialog extends StatelessWidget {
 //   final AircraftCategoryModel category;
@@ -60,7 +60,7 @@
 //                       ),
 //                     ),
 //                     child: Text(
-//                       "New Sticker\nUnlocked",
+//                       "New 8_Sticker\nUnlocked",
 //                       textAlign: TextAlign.center,
 //                       style: AppTextStyles.bold(
 //                         19,

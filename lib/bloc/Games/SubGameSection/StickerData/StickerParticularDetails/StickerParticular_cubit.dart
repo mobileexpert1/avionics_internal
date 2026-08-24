@@ -1,14 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../Constants/ApiClass/ApiErrorModel.dart';
-import 'AllMySticker_repository.dart';
-import 'AllMySticker_state.dart';
+import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../AllMySticker_repository.dart';
+import 'StickerParticular_state.dart';
 
-class AllMyStickerCubit extends Cubit<AllMyStickerState> {
+class StickerParticularCubit extends Cubit<StickerParticularState> {
+  StickerParticularCubit() : super(StickerParticularState());
 
-  AllMyStickerCubit() : super(AllMyStickerState());
-
-  Future<void> loadMyStickers() async {
+  Future<void> loadParticularStickerDetails(String stickerId) async {
     emit(
       state.copyWith(
         isLoading: true,
@@ -18,11 +17,12 @@ class AllMyStickerCubit extends Cubit<AllMyStickerState> {
     );
 
     try {
-      final stickers = await AllMyStickerRepository().getListAllStickerTopic();
+      final stickers = await AllMyStickerRepository()
+          .geParticularStickerDetails(stickerId);
 
       emit(
         state.copyWith(
-          stickersAllData: stickers,
+          stickerAircraftData: stickers,
           isLoading: false,
           isSuccess: true,
           status: CommonApiStatus.success,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../../Helpers/CacheManger/CachedImageFile.dart';
-import '../../../../../../bloc/Games/SubGameSection/AllSticker/AllMySticker_model.dart';
+import '../../../../../../bloc/Games/SubGameSection/StickerData/AllSticker/AllMySticker_model.dart';
 
 class AircraftCategoryCard extends StatelessWidget {
   final StickerModel category;
@@ -90,19 +90,6 @@ class AircraftCategoryCard extends StatelessWidget {
                   ),
 
                   const Spacer(),
-
-                  // Stack(
-                  //   clipBehavior: Clip.none,
-                  //   alignment: Alignment.center,
-                  //   children: [
-                  // Container(
-                  //   width: isDesktopWeb ? 55 : 40,
-                  //   height: isDesktopWeb ? 55 : 40,
-                  //   decoration: BoxDecoration(
-                  //     color: category.color,
-                  //     shape: BoxShape.circle,
-                  //   ),
-                  // ),
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
@@ -122,9 +109,7 @@ class AircraftCategoryCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
-                  // ],
-                  // ),
+                  ),
                 ],
               ),
             ),

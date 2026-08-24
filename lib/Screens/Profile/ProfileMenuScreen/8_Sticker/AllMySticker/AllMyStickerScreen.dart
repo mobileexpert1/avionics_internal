@@ -1,5 +1,3 @@
-import 'package:avionics_internal/bloc/Games/SubGameSection/AllSticker/AllMySticker_cubit.dart';
-import 'package:avionics_internal/bloc/Games/SubGameSection/AllSticker/AllMySticker_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +6,12 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../../bloc/Games/SubGameSection/StickerData/AllSticker/AllMySticker_cubit.dart';
+import '../../../../../../bloc/Games/SubGameSection/StickerData/AllSticker/AllMySticker_state.dart';
+import '../../../../../Helpers/AppNavigator.dart';
+import '../../../../../bloc/Games/SubGameSection/StickerData/StickerParticularDetails/StickerParticular_cubit.dart';
 import '../FlightStickers/ProgressHeader.dart';
+import '../FlightStickers/StickerParticularDetailsScreen.dart';
 import 'AllMyStickerCard.dart';
 
 class AllMyStickerScreen extends StatefulWidget {
@@ -73,7 +76,7 @@ class _AllMyStickerScreenState extends State<AllMyStickerScreen> {
                   child: Column(
                     children: [
                       ProgressHeader(
-                        title: 'Sticker Unlock Progress',
+                        title: '8_Sticker Unlock Progress',
                         unlocked: state.stickersAllData!.totalUnlocked,
                         total: state.stickersAllData!.total,
                       ),
@@ -94,11 +97,16 @@ class _AllMyStickerScreenState extends State<AllMyStickerScreen> {
                               return AircraftCategoryCard(
                                 category: state.stickersAllData!.data[index],
                                 onTap: () {
-                                  // AppNavigator.push(
-                                  //   context,
-                                  //   const StickerUnlockScreen(),
-                                  //   disableSwipeBack: true,
-                                  // );
+                                  AppNavigator.push(
+                                    context,
+                                    StickerUnlockScreen(stickerId: state.stickersAllData!.data[index].id),
+                                    disableSwipeBack: true,
+                                    multiBlocProviders: [
+                                      BlocProvider(
+                                        create: (_) => StickerParticularCubit(),
+                                      ),
+                                    ],
+                                  );
 
                                   // showDialog(
                                   //   context: context,
