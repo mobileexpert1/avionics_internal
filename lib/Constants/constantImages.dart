@@ -27,9 +27,9 @@ abstract class AssetsPath {
   /// svg Images
   ///
 
-    static const String mainLogoTransparentColour = "0_0_ClearLogo";
+  static const String mainLogoTransparentColour = "0_0_ClearLogo";
 
-    static const String mainLogoWhiteColour = "0_0MainLogo";
+  static const String mainLogoWhiteColour = "0_0MainLogo";
   static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";
   static const String homeLeftMainLogo = "2homeLeftMainLogo";
@@ -165,11 +165,10 @@ abstract class AssetsPath {
   static const successJettingAround = '135SuccessJettingAround';
   static const rightArrow = '136RightArrow';
   static const String airplaneParts = 'aircraft-parts';
-
   static const successJettingYellowAround = '137SuccessJettingAround';
-  static const resultpopplaneIcon = '138resultplaneIcon';
-  static const progressbarplaneIcon = '139ProgressplaneIcon';
-
+  static const resultUpPlanIcon = '138resultUpPlanIcon';
+  static const progressLineIcon = '139ProgressLineIcon';
+  static const dummyAircraftImage = '140DummyAircraftImage';
 
   static const nose = '200nosse';
   static const cockpit = '201cockpit';
@@ -200,6 +199,7 @@ abstract class AssetsPath {
   static const String viewCreditTokensImage = "14ViewCreditTokens";
   static const String addOnPacksImage = "15AddOnPacks";
   static const String backgroundImagForPopup = "16BackgroundImagForPopup";
+
   //Gif
   static const String badgeGif = "1BadgeGif";
   static const String gameResultGif = "2GameResultGif";

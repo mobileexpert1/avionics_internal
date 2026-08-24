@@ -1,17 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import 'StickerModel.dart';
+import '../../../../../Constants/constantImages.dart';
+import '../../../../../Helpers/CacheManger/CachedImageFile.dart';
+import '../../../../../bloc/Games/SubGameSection/StickerData/StickerParticularDetails/StickerParticular_model.dart';
 
 class StickerCard extends StatelessWidget {
-  final StickerModel sticker;
+  final StickerAircraft sticker;
   final VoidCallback? onTap;
 
   const StickerCard({super.key, required this.sticker, this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
+
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
@@ -36,7 +43,7 @@ class StickerCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
-                child: _buildImage(),
+                child: _buildImage(isDesktopWeb),
               ),
             ),
             Expanded(
@@ -46,14 +53,14 @@ class StickerCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      sticker.brand,
+                      sticker.model,
                       style: AppTextStyles.bold(
                         16,
                       ).copyWith(height: 1.0, color: AppColors.primaryDark),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      sticker.model,
+                      sticker.icaoCode,
                       style: AppTextStyles.bold(
                         20,
                       ).copyWith(height: 1.0, color: AppColors.primaryDark),
@@ -68,19 +75,24 @@ class StickerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
-    if (sticker.isUnlocked) {
-      return Image.asset(
-        sticker.imageUrl ?? '',
-        fit: BoxFit.cover,
+  Widget _buildImage(bool isDesktopWeb) {
+    if (!sticker.unlocked) {
+      return CachedAnyImage(
+        imagePath: sticker.image ?? '',
         width: double.infinity,
+        height: double.infinity,
+        contentImage: BoxFit.fill,
+        isForStickerScreen: true,
       );
     }
 
     return Container(
-      color: const Color(0xffD6D6D6),
+      color: AppColors.grayLight,
       child: Center(
-        child: Image.asset("assets/dummyPictures/7777.png", fit: BoxFit.cover),
+        child: SvgPicture.asset(
+          CommonUi.setSvgImage(AssetsPath.dummyAircraftImage),
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }

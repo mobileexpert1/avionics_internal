@@ -67,7 +67,7 @@ class _JettingAroundBoardingPassesState
           final airports = state.airportList;
 
           if (airports.isEmpty) {
-            return const Center(child: Text('No flight routes available'));
+            return const Center(child: Text('No Boarding Pass available'));
           }
 
           return ListView.separated(
@@ -139,22 +139,14 @@ class RouteCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 20, 15, 18),
       child: Column(
-        children: isFirst
-            ? [
-                _buildFromToLabels(),
-                const SizedBox(height: 10),
-                _buildCountryRow(true),
-                const SizedBox(height: 5),
-                _buildRoute(),
-                const SizedBox(height: 10),
-              ]
-            : [
-                _buildCountryRow(false),
-                const SizedBox(height: 5),
-                _buildRoute(),
-                const SizedBox(height: 10),
-                _buildFromToLabels(),
-              ],
+        children: [
+          _buildFromToLabels(),
+          const SizedBox(height: 10),
+          _buildCountryRow(true),
+          const SizedBox(height: 5),
+          _buildRoute(),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }
@@ -170,9 +162,9 @@ class RouteCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _SubText(airport.fromAirport.country, isComeFromTop: isComeFromTop),
+        _SubText(airport.fromAirport.city, isComeFromTop: isComeFromTop),
         _SubText(
-          airport.toAirport.country,
+          airport.toAirport.city,
           alignRight: true,
           isComeFromTop: isComeFromTop,
         ),
@@ -185,7 +177,12 @@ class RouteCard extends StatelessWidget {
       children: [
         Expanded(child: _buildLeftAirport()),
         Expanded(
-          child: buildCustomProgressBar(0.5, AppColors.greenColourForPlan),
+          child: buildCustomProgressBar(
+            0.5,
+            airport.toAirport.colourCode != ""
+                ? airport.toAirport.colourCode.toColor()
+                : AppColors.textHomeColour,
+          ),
         ),
         Expanded(child: _buildRightAirport()),
       ],
@@ -195,14 +192,14 @@ class RouteCard extends StatelessWidget {
   Widget _buildLeftAirport() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_MainText(airport.fromAirport.city)],
+      children: [_MainText(airport.fromAirport.flightSegment)],
     );
   }
 
   Widget _buildRightAirport() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
-      children: [_MainText(airport.toAirport.city, alignRight: true)],
+      children: [_MainText(airport.toAirport.flightSegment, alignRight: true)],
     );
   }
 

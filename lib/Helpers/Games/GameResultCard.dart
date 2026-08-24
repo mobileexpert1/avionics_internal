@@ -38,7 +38,6 @@ class GameResultCard extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 16),
-
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(

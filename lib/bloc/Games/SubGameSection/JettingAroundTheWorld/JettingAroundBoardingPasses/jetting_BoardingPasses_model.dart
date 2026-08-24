@@ -55,6 +55,7 @@ class BoardingPassModel {
 }
 
 class AirportModel {
+  final String colourCode;
   final String city;
   final String equatorDistance;
   final String flightSegment;
@@ -62,6 +63,7 @@ class AirportModel {
 
   const AirportModel({
     required this.city,
+    required this.colourCode,
     required this.equatorDistance,
     required this.flightSegment,
     required this.country,
@@ -70,6 +72,7 @@ class AirportModel {
   factory AirportModel.fromJson(Map<String, dynamic> json) {
     return AirportModel(
       city: json['city'] ?? '',
+      colourCode: json['colour_code'] ?? '',
       equatorDistance: json['equator_distance'] ?? '',
       flightSegment: json['flight_segment'] ?? '',
       country: json['country'] ?? '',
@@ -79,6 +82,7 @@ class AirportModel {
   Map<String, dynamic> toJson() {
     return {
       'city': city,
+      'colour_code': colourCode,
       'equator_distance': equatorDistance,
       'flight_segment': flightSegment,
       'country': country,

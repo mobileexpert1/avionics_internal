@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:avionics_internal/Constants/constantImages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -154,7 +152,7 @@ class ProgressHeader extends StatelessWidget {
                         left: planeLeft,
                         top: 0.5,
                         child: SvgPicture.asset(
-                          CommonUi.setSvgImage(AssetsPath.progressbarplaneIcon),
+                          CommonUi.setSvgImage(AssetsPath.progressLineIcon),
                           width: planeSize,
                           height: planeSize,
                           fit: BoxFit.contain,

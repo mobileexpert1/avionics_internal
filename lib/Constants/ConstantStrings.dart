@@ -111,9 +111,6 @@ class ConstantStrings {
   static const String jettingAroundTheWorldTitle = "Jetting Around The World";
   static const String boardingPassTitle = "Boarding Passes";
 
-
-
-
   // ─────────────────────────────
   // Create New Password
   // ─────────────────────────────
@@ -251,7 +248,6 @@ class ApiServiceUrlConstant {
   static const String getGlossary = 'user/glossary';
   static const String chatHistorySession = 'ai-engine/wilco/session';
   static const String airplaneParts = 'aircraft-parts';
-
 }
 
 class ApiFunctionUrlAirplaneConstant {
@@ -304,6 +300,7 @@ class ApiFunctionUrlGamesConstant {
   static const String imageBased = "image-game/";
   static const String encyclopaedia = "encyclopaedia/";
 
+  static const String sticker = "sticker";
   static const String boardingPass = "boarding-pass?";
   static const String ticketUsername = "ticket?username=";
 }
@@ -325,7 +322,7 @@ class ApiFunctionUrlMapSectionConstant {
   static const String aircraftListNew = 'airport/new';
   static const String airport = 'airport';
   static const String boardingPassHistory = 'boarding-pass-history';
-
+  static const String aviationChronicle = 'aviation-chronicle';
 }
 
 class ApiServiceUrlGamesConstant {

@@ -86,3 +86,13 @@ class AppColors {
     0.25,
   );
 }
+
+extension ColorExtension on String {
+  Color toColor() {
+    String cleanHex = replaceAll('#', '').trim();
+    if (cleanHex.length == 6) {
+      cleanHex = 'FF$cleanHex';
+    }
+    return Color(int.parse(cleanHex, radix: 16));
+  }
+}

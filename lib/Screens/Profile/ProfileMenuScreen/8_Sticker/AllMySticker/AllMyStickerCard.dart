@@ -3,10 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import 'AircraftCategoryModel.dart';
+import '../../../../../../Helpers/CacheManger/CachedImageFile.dart';
+import '../../../../../../bloc/Games/SubGameSection/StickerData/AllSticker/AllMySticker_model.dart';
 
 class AircraftCategoryCard extends StatelessWidget {
-  final AircraftCategoryModel category;
+  final StickerModel category;
   final VoidCallback? onTap;
 
   const AircraftCategoryCard({super.key, required this.category, this.onTap});
@@ -45,7 +46,7 @@ class AircraftCategoryCard extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                category.letter,
+                category.orderChar,
                 style: AppTextStyles.medium(
                   isDesktopWeb ? 22 : 19,
                 ).copyWith(color: Colors.white),
@@ -56,7 +57,7 @@ class AircraftCategoryCard extends StatelessWidget {
 
             Expanded(
               child: Text(
-                category.title,
+                category.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.bold(
@@ -66,56 +67,51 @@ class AircraftCategoryCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 8),
+            Flexible(
+              child: Row(
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "${category.aircraftSummary.unlocked}",
+                          style: AppTextStyles.medium(
+                            isDesktopWeb ? 17 : 15,
+                          ).copyWith(color: AppColors.primaryBlue),
+                        ),
+                        TextSpan(
+                          text: "/${category.aircraftSummary.total}",
+                          style: AppTextStyles.medium(
+                            isDesktopWeb ? 17 : 15,
+                          ).copyWith(color: AppColors.primaryDark),
+                        ),
+                      ],
+                    ),
+                  ),
 
-            Row(
-              children: [
-                RichText(
-                  text: TextSpan(
+                  const Spacer(),
+                  Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      TextSpan(
-                        text: "${category.unlockedCount}",
-                        style: AppTextStyles.medium(
-                          isDesktopWeb ? 17 : 15,
-                        ).copyWith(color: AppColors.primaryBlue),
+                      SizedBox(
+                        width: isDesktopWeb ? 90 : 70,
+                        height: isDesktopWeb ? 65 : 50,
                       ),
-                      TextSpan(
-                        text: "/${category.totalCount}",
-                        style: AppTextStyles.medium(
-                          isDesktopWeb ? 17 : 15,
-                        ).copyWith(color: AppColors.primaryDark),
+
+                      Positioned(
+                        right: isDesktopWeb ? 6 : 4,
+                        top: isDesktopWeb ? -10 : -6,
+                        child: CachedAnyImage(
+                          imagePath: category.icon,
+                          width: isDesktopWeb ? 90 : 70,
+                          height: isDesktopWeb ? 65 : 50,
+                          contentImage: BoxFit.contain,
+                        ),
                       ),
                     ],
                   ),
-                ),
-
-                const Spacer(),
-
-                Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: isDesktopWeb ? 55 : 40,
-                      height: isDesktopWeb ? 55 : 40,
-                      decoration: BoxDecoration(
-                        color: category.color,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-
-                    Positioned(
-                      right: isDesktopWeb ? 6 : 4,
-                      top: isDesktopWeb ? -10 : -6,
-                      child: Image.asset(
-                        category.image,
-                        width: isDesktopWeb ? 90 : 70,
-                        height: isDesktopWeb ? 65 : 50,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

@@ -21,11 +21,11 @@ import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/AviationChr
 import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundResultPopup.dart';
 import '../../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundTheWorldScreen.dart';
 import '../../../Screens/Games/GamesSubScreens/ResultScreen/MainResultScreen.dart';
-import '../../../Screens/Games/MainGameScreen/BaseScreenForAllLevelDescriptions.dart';
 import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
 import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/PartUnlockScreen.dart';
 import '../../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/PlaneSpotterResultDialog.dart';
 import '../SubGameSection/Calculation_Section/calculation_model.dart';
+import '../SubGameSection/JettingAroundTheWorld/JettingChronicleModel/jettingChronicle_cubit.dart';
 import '../SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
 
 class QuizQuestionCubit extends Cubit<QuizQuestionState> {
@@ -510,18 +510,23 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (_) => AviationChroniclePopup(
-            onButtonTap: () async {
-              Navigator.of(context).pop();
-              await SharedPrefsHelper.saveIsAlreadyShowPopup(true);
-              await _moveToNextQuestion(context);
-            },
-            onCancelButtonTap: () async {
-              Navigator.of(context).pop();
-              await SharedPrefsHelper.saveIsAlreadyShowPopup(true);
-              await _moveToNextQuestion(context);
-            },
-          ),
+          builder: (_) {
+            return BlocProvider(
+              create: (_) => JettingChronicleCubit(),
+              child: AviationChroniclePopup(
+                onButtonTap: () async {
+                  Navigator.of(context).pop();
+                  await SharedPrefsHelper.saveIsAlreadyShowPopup(true);
+                  await _moveToNextQuestion(context);
+                },
+                onCancelButtonTap: () async {
+                  Navigator.of(context).pop();
+                  await SharedPrefsHelper.saveIsAlreadyShowPopup(true);
+                  await _moveToNextQuestion(context);
+                },
+              ),
+            );
+          },
         );
       } else {
         await _moveToNextQuestion(context);

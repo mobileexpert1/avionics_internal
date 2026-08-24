@@ -1,16 +1,16 @@
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
-import 'AircraftCategoryModel.dart';
+import 'AllMySticker_model.dart';
 
-class AircraftCategoryState {
-  final List<AircraftCategoryModel> categories;
+class AllMyStickerState {
+  final AllMyStickerResponseModel? stickersAllData;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
   final String? apiError;
   final CommonApiStatus status;
 
-  const AircraftCategoryState({
-    this.categories = const [],
+  const AllMyStickerState({
+    this.stickersAllData,
     this.isLoading = false,
     this.isSuccess = false,
     this.errorMessage,
@@ -18,27 +18,16 @@ class AircraftCategoryState {
     this.status = CommonApiStatus.initial,
   });
 
-  int get totalUnlocked =>
-      categories.fold(0, (sum, item) => sum + item.unlockedCount);
-
-  int get totalStickers =>
-      categories.fold(0, (sum, item) => sum + item.totalCount);
-
-  double get progress {
-    if (totalStickers == 0) return 0;
-    return totalUnlocked / totalStickers;
-  }
-
-  AircraftCategoryState copyWith({
-    List<AircraftCategoryModel>? categories,
+  AllMyStickerState copyWith({
+    AllMyStickerResponseModel? stickersAllData,
     bool? isLoading,
     bool? isSuccess,
     String? errorMessage,
     String? apiError,
     CommonApiStatus? status,
   }) {
-    return AircraftCategoryState(
-      categories: categories ?? this.categories,
+    return AllMyStickerState(
+      stickersAllData: stickersAllData ?? this.stickersAllData,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
