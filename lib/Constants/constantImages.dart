@@ -208,6 +208,21 @@ abstract class AssetsPath {
   static const String phaseAnimationVideo = "phase_Animation";
 }
 
+final List<String> aeroplaneImages = [
+  '141BoardingAeroplane1',
+  '142BoardingAeroplane2',
+  '143BoardingAeroplane3',
+  '144BoardingAeroplane4',
+];
+
+int currentIndex = 0;
+
+String getNextCategory() {
+  final category = aeroplaneImages[currentIndex];
+  currentIndex = (currentIndex + 1) % aeroplaneImages.length;
+  return category;
+}
+
 class CommonUi {
   static String setjpgImage(String image) {
     return 'assets/jpg_images/$image.jpg';

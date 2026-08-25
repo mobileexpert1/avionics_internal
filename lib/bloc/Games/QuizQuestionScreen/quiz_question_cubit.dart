@@ -740,13 +740,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       context: context,
       barrierDismissible: false,
       builder: (_) => JettingAroundResultPopup(
-        isSuccess: state.correctAnswers < 4 ? false : true,
+        isSuccess: state.correctAnswers < 3 ? false : true,
         currentStep: state.correctAnswers,
         totalStep: 5,
         earnedJettons: 200,
         onCrossButtonTap: () async {
           Navigator.of(context).pop();
-          if (state.correctAnswers < 4) {
+          if (state.correctAnswers < 3) {
             await _restartTrivia(context);
           } else {
             await _handleSuccessfulTrivia(context);
@@ -754,7 +754,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         },
         onButtonTap: () async {
           Navigator.of(context).pop();
-          if (state.correctAnswers < 4) {
+          if (state.correctAnswers < 3) {
             await _restartTrivia(context);
           } else {
             await _handleSuccessfulTrivia(context);

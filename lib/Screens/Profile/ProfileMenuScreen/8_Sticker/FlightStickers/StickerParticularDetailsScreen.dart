@@ -6,15 +6,24 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../Constants/AppColors.dart';
+import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Games/SubGameSection/StickerData/StickerParticularDetails/StickerParticular_cubit.dart';
 import '../../../../../bloc/Games/SubGameSection/StickerData/StickerParticularDetails/StickerParticular_state.dart';
 import 'ProgressHeader.dart';
 import 'StickerParticularCard.dart';
 
 class StickerUnlockScreen extends StatefulWidget {
-  const StickerUnlockScreen({super.key, required this.stickerId});
+  const StickerUnlockScreen({
+    super.key,
+    required this.stickerId,
+    required this.navTitle,
+    required this.orderChar,
+  });
 
   final String stickerId;
+  final String navTitle;
+  final String orderChar;
 
   @override
   State<StickerUnlockScreen> createState() => _StickerUnlockScreenState();
@@ -38,7 +47,7 @@ class _StickerUnlockScreenState extends State<StickerUnlockScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: "My Stickers",
+        title: widget.navTitle,
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -48,6 +57,21 @@ class _StickerUnlockScreenState extends State<StickerUnlockScreen> {
           onPressed: () {
             Navigator.pop(context, true);
           },
+        ),
+        rightButton: Container(
+          width: isDesktopWeb ? 50 : 40,
+          height: isDesktopWeb ? 50 : 40,
+          decoration: BoxDecoration(
+            color: AppColors.extraDarkYellow,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            widget.orderChar,
+            style: AppTextStyles.medium(
+              20,
+            ).copyWith(color: AppColors.primaryDark),
+          ),
         ),
       ),
       body: BlocBuilder<StickerParticularCubit, StickerParticularState>(

@@ -10,8 +10,10 @@ import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart'
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
 import '../../../../CustomFiles/Custom_SnackBar.dart';
+import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/NoInternetDialog.dart';
 import '../../../../Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxResultScreen.dart';
+import '../../../../Screens/Profile/ProfileMenuScreen/8_Sticker/FlightStickers/StickerUnlockedDialog.dart';
 import '../../QuizQuestionScreen/quiz_question_repository.dart';
 import 'blackBox_question_model.dart';
 import 'blackBox_repository.dart';
@@ -99,34 +101,46 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     List<int>? correctOptionList;
 
     if (type == '1') {
-      //Event Sequence
+      // Event Sequence
       if (q.answer != null && q.options != null && q.options!.isNotEmpty) {
         final answerLabels = q.answer!.split(',').map((e) => e.trim()).toList();
-        sequenceItems = [];
+
+        // IMPORTANT:
+        // Initial display order must remain A, B, C, D...
+        sequenceItems = q.options!
+            .map((o) => o.value ?? '')
+            .where((value) => value.isNotEmpty)
+            .toList();
+
+        // Correct sequence is based on API answer.
         correctSequence = [];
 
-        for (var label in answerLabels) {
+        for (final label in answerLabels) {
           final index = q.options!.indexWhere((o) => o.label == label);
-          if (index >= 0 && q.options![index].value != null) {
-            sequenceItems.add(q.options![index].value!);
+
+          if (index >= 0) {
             correctSequence.add(index);
           } else {
             print(
-              'Warning: Invalid option for label "$label" in question "${q.question}"',
+              'Warning: Invalid option label "$label" '
+              'for question "${q.question}"',
             );
           }
         }
 
-        if (sequenceItems.isEmpty || correctSequence.isEmpty) {
+        if (sequenceItems!.isEmpty || correctSequence!.isEmpty) {
           print(
-            'Warning: Empty sequence for event_sequence question "${q.question}"',
+            'Warning: Empty sequence for '
+            'event_sequence question "${q.question}"',
           );
+
           sequenceItems = null;
           correctSequence = null;
         }
       } else {
         print(
-          'Warning: Missing answer or options for event_sequence question "${q.question}"',
+          'Warning: Missing answer or options for '
+          'event_sequence question "${q.question}"',
         );
       }
     } else if (type == '2') {
@@ -193,7 +207,6 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
         );
       }
     }
-
     return BlackBoxQuestion(
       question: q.question ?? '',
       options: q.options?.map((o) => o.value ?? '').toList() ?? [],
@@ -520,6 +533,9 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
   }
 
   void startTimer(BuildContext context) {
+    print(
+      "Current Question correctIndex:- ${state.currentQuestion.correctIndex}      Current Quesiton Image Url:- ${state.currentQuestion}",
+    );
     _startTime = DateTime.now();
     emit(state.copyWith(timer: _totalDuration));
     _timer?.cancel();
@@ -714,9 +730,14 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
     if (state.currentIndex + 1 < state.questions.length) {
       final nextQuestion = state.questions[state.currentIndex + 1];
 
+      // final shuffledSequenceItems =
+      //     nextQuestion.type == '1' && nextQuestion.sequenceItems != null
+      //     ? (List<String>.from(nextQuestion.sequenceItems!)..shuffle())
+      //     : null;
+
       final shuffledSequenceItems =
           nextQuestion.type == '1' && nextQuestion.sequenceItems != null
-          ? (List<String>.from(nextQuestion.sequenceItems!)..shuffle())
+          ? List<String>.from(nextQuestion.sequenceItems!)
           : null;
 
       emit(
@@ -903,7 +924,11 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
       debugPrint(JsonEncoder.withIndent('  ').convert(payload));
       if (await InternetConnection().hasInternetAccess) {
         try {
-          await _repository.submitBlackBoxAnswers(payload, gameNumber, gameId);
+          final responseData = await _repository.submitBlackBoxAnswers(
+            payload,
+            gameNumber,
+            gameId,
+          );
 
           if (!context.mounted) return;
 
@@ -916,10 +941,35 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
             FirebaseEvents.blackBoxCalculationResultScreen,
           );
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlackBoxResultScreen(
+          if (responseData?.data.isStickerUnlock == true) {
+            showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (_) => StickerUnlockedDialog(
+                stickerName: responseData!.data.stickerAircraftModel!.modelName,
+                imagePath: responseData.data.stickerAircraftModel!.imageName,
+                onTap: () {
+                  AppNavigator.push(
+                    context,
+                    BlackBoxResultScreen(
+                      correctedAnswer: correctAnswers,
+                      correctPoints: correctPoints,
+                      totalQuestion: total,
+                      score: finalScore,
+                      winAchieved: winAchieved,
+                      bonusPoints: bonusPoints,
+                    ),
+                    disableSwipeBack: true,
+                  );
+                },
+                letterCode: responseData.data.stickerAircraftModel!.orderChar,
+                title: responseData.data.stickerAircraftModel!.categoryName,
+              ),
+            );
+          } else {
+            AppNavigator.push(
+              context,
+              BlackBoxResultScreen(
                 correctedAnswer: correctAnswers,
                 correctPoints: correctPoints,
                 totalQuestion: total,
@@ -927,8 +977,9 @@ class BlackBoxQuestionCubit extends Cubit<BlackBoxState> {
                 winAchieved: winAchieved,
                 bonusPoints: bonusPoints,
               ),
-            ),
-          );
+              disableSwipeBack: true,
+            );
+          }
         } catch (e) {
           SessionCommonTokenError.handleUnauthorizedError(context, e);
           ScaffoldMessenger.of(context).showSnackBar(

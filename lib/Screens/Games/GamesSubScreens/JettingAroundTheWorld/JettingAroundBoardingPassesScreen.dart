@@ -73,7 +73,7 @@ class _JettingAroundBoardingPassesState
           return ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             itemCount: airports.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 14),
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
             itemBuilder: (context, index) {
               final airport = airports[index];
               return GestureDetector(
@@ -83,6 +83,7 @@ class _JettingAroundBoardingPassesState
                     JettingAroundTheBoardingPass(
                       isComeFromHistoryScreen: true,
                       boardingPassId: airport.id,
+                      isNeedToShowOnlyBoardingPass: false,
                     ),
                     disableSwipeBack: true,
                   );
@@ -182,6 +183,7 @@ class RouteCard extends StatelessWidget {
             airport.toAirport.colourCode != ""
                 ? airport.toAirport.colourCode.toColor()
                 : AppColors.textHomeColour,
+            airport.toAirport.distanceNM.toString(),
           ),
         ),
         Expanded(child: _buildRightAirport()),
@@ -203,58 +205,86 @@ class RouteCard extends StatelessWidget {
     );
   }
 
-  Widget buildCustomProgressBar(double progress, Color color) {
+  Widget buildCustomProgressBar(double progress, Color color, String distance) {
     return Container(
       color: Colors.white,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 30,
+            height: 40,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final totalWidth = constraints.maxWidth;
+
                 const padding = 5.0;
-                const indicatorSize = 18.0;
-                final usableWidth = totalWidth - (padding * 2);
-                final indicatorCenterX = padding + (usableWidth * progress);
+                const planeSize = 28.0;
                 const overlap = 2.0;
+
+                final usableWidth = totalWidth - (padding * 2);
+                final planeCenterX = padding + (usableWidth * progress);
+
                 return Stack(
+                  clipBehavior: Clip.none,
                   children: [
                     Positioned(
-                      left: indicatorCenterX - overlap,
+                      left: planeCenterX - overlap,
                       right: padding,
-                      top: 20,
+                      top: 16,
                       child: Container(
                         height: 2.5,
                         color: Colors.grey.shade300,
                       ),
                     ),
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
-                      left: (indicatorCenterX - indicatorSize / 2).clamp(
-                        padding,
-                        totalWidth - padding - indicatorSize,
-                      ),
-                      top: 12.5,
-                      child: Container(
-                        width: indicatorSize,
-                        height: indicatorSize,
-                        decoration: BoxDecoration(
-                          color: color,
-                          border: Border.all(color: Colors.black, width: 2),
-                        ),
-                      ),
-                    ),
+
                     Positioned(
                       left: padding,
-                      top: 20,
-                      width: (indicatorCenterX - padding + overlap).clamp(
+                      top: 16,
+                      width: (planeCenterX - padding + overlap).clamp(
                         0,
                         usableWidth,
                       ),
                       child: Container(height: 2.5, color: Colors.black),
+                    ),
+
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                      left: (planeCenterX - 60).clamp(
+                        padding,
+                        totalWidth - padding - 100,
+                      ),
+                      top: -5,
+                      child: SizedBox(
+                        width: 120,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            //Transform.rotate(
+                             // angle: 1.57,
+                             // child:
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: SvgPicture.asset(
+                                  width: planeSize,
+                                  height: planeSize,
+                                  CommonUi.setSvgImage(getNextCategory()),
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                           // ),
+                            Text(
+                              "$distance NM",
+                              style: AppTextStyles.regular(14).copyWith(
+                                height: 1.0,
+                                color: AppColors.primaryBlue,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 );

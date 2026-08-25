@@ -144,8 +144,6 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
               state.currentQuestion.name?.isNotEmpty == true
               ? state.currentQuestion.name!
               : '';
-          print("Current Question Name-----------------: $currentQuestionName");
-
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: CustomAppBar(
@@ -161,7 +159,9 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
                   final shouldExit = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text("Exit Black Box Game?"),
+                      title: Text(
+                        "Exit ${widget.isForBlackBox ? "Black Box Game" : "Citius. Altius. Longius. Game"}",
+                      ),
                       backgroundColor: Colors.white,
                       content: const Text(
                         "Are you sure you want to exit? Your progress will be lost.",
@@ -480,8 +480,8 @@ class BlackBoxCard extends StatelessWidget {
                     child: SizedBox(
                       width: kIsWeb
                           ? (MediaQuery.of(context).size.width < 900
-                          ? double.infinity
-                          : MediaQuery.of(context).size.width * 0.45)
+                                ? double.infinity
+                                : MediaQuery.of(context).size.width * 0.45)
                           : double.infinity,
                       height: 48,
                       child: CustomBottomButton(
@@ -664,21 +664,24 @@ class BlackBoxCard extends StatelessWidget {
 
   Widget _buildEventSequence(BuildContext context) {
     final state = context.watch<BlackBoxQuestionCubit>().state;
-    final options = state.currentQuestion.options;
 
+    final options = state.currentQuestion.options;
     final sequenceItems =
         state.selectedSequenceItems ?? List<String>.from(options);
+
     final correctSequence = state.currentQuestion.correctSequence ?? [];
 
     final isCorrectSequence =
         state.showAnswer &&
         sequenceItems.length == correctSequence.length &&
+        correctSequence.every(
+          (correctIndex) => correctIndex >= 0 && correctIndex < options.length,
+        ) &&
         List.generate(
           sequenceItems.length,
           (index) => sequenceItems[index] == options[correctSequence[index]],
         ).every((isMatch) => isMatch);
 
-    final displaySequence = sequenceItems;
     final originalLabels = Map<String, String>.fromIterables(
       options,
       List.generate(options.length, (i) => String.fromCharCode(65 + i)),
@@ -686,29 +689,44 @@ class BlackBoxCard extends StatelessWidget {
 
     return ReorderableListView(
       buildDefaultDragHandles: false,
-      onReorder: (oldIndex, newIndex) {
-        if (state.timer > 0 && !state.showAnswer) {
-          final newList = List<String>.from(sequenceItems);
-          if (newIndex > oldIndex) newIndex -= 1;
-          final item = newList.removeAt(oldIndex);
-          newList.insert(newIndex, item);
-          context.read<BlackBoxQuestionCubit>().updateSequence(newList);
-        }
-      },
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      children: displaySequence.map((item) {
+
+      onReorder: (oldIndex, newIndex) {
+        if (state.timer <= 0 || state.showAnswer) {
+          return;
+        }
+
+        final newList = List<String>.from(sequenceItems);
+
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+
+        final item = newList.removeAt(oldIndex);
+        newList.insert(newIndex, item);
+
+        context.read<BlackBoxQuestionCubit>().updateSequence(newList);
+      },
+
+      children: sequenceItems.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
+
         final optionIndex = options.indexOf(item);
 
-        Color backgroundColor = state.showAnswer
+        final label =
+            originalLabels[item] ?? String.fromCharCode(65 + optionIndex);
+
+        final backgroundColor = state.showAnswer
             ? (isCorrectSequence ? Colors.green.shade100 : Colors.red.shade100)
             : Colors.grey.shade100;
 
-        Color borderColor = state.showAnswer
+        final borderColor = state.showAnswer
             ? (isCorrectSequence ? Colors.green : Colors.red)
             : Colors.grey.shade300;
 
-        Icon? trailingIcon = state.showAnswer
+        final trailingIcon = state.showAnswer
             ? Icon(
                 isCorrectSequence ? Icons.check_circle : Icons.cancel,
                 color: isCorrectSequence ? Colors.green : Colors.red,
@@ -716,17 +734,19 @@ class BlackBoxCard extends StatelessWidget {
               )
             : null;
 
-        final label =
-            originalLabels[item] ?? String.fromCharCode(65 + optionIndex);
         return Container(
-          key: ValueKey(item),
+          key: ValueKey('$optionIndex-$item'),
+
           margin: const EdgeInsets.only(bottom: 12),
+
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: borderColor),
           ),
+
           child: Row(
             children: [
               Container(
@@ -742,13 +762,16 @@ class BlackBoxCard extends StatelessWidget {
                   style: const TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ),
+
               const SizedBox(width: 12),
+
               Expanded(child: Text(item)),
+
               ReorderableDragStartListener(
-                index: displaySequence.indexOf(item),
+                index: index,
                 enabled: state.timer > 0 && !state.showAnswer,
                 child: Container(
-                  padding: const EdgeInsets.all(12), // increase touch area
+                  padding: const EdgeInsets.all(12),
                   child: const Icon(
                     Icons.drag_handle,
                     color: Colors.grey,
@@ -1009,7 +1032,10 @@ class BlackBoxProgressCard extends StatelessWidget {
                 children: [
                   (secondsRemaining > 0 && secondsRemaining < 10)
                       ? Image.asset(
-                          CommonUi.setGifAndVideoImage(AssetsPath.timeoutAlertGif,false),
+                          CommonUi.setGifAndVideoImage(
+                            AssetsPath.timeoutAlertGif,
+                            false,
+                          ),
                           width: 30,
                           height: 30,
                           fit: BoxFit.cover,

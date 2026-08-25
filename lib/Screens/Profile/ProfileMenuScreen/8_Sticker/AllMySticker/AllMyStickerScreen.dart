@@ -76,7 +76,7 @@ class _AllMyStickerScreenState extends State<AllMyStickerScreen> {
                   child: Column(
                     children: [
                       ProgressHeader(
-                        title: '8_Sticker Unlock Progress',
+                        title: 'Sticker Unlock Progress',
                         unlocked: state.stickersAllData!.totalUnlocked,
                         total: state.stickersAllData!.total,
                       ),
@@ -99,7 +99,18 @@ class _AllMyStickerScreenState extends State<AllMyStickerScreen> {
                                 onTap: () {
                                   AppNavigator.push(
                                     context,
-                                    StickerUnlockScreen(stickerId: state.stickersAllData!.data[index].id),
+                                    StickerUnlockScreen(
+                                      stickerId:
+                                          state.stickersAllData!.data[index].id,
+                                      navTitle: state
+                                          .stickersAllData!
+                                          .data[index]
+                                          .name,
+                                      orderChar: state
+                                          .stickersAllData!
+                                          .data[index]
+                                          .orderChar,
+                                    ),
                                     disableSwipeBack: true,
                                     multiBlocProviders: [
                                       BlocProvider(
@@ -107,24 +118,6 @@ class _AllMyStickerScreenState extends State<AllMyStickerScreen> {
                                       ),
                                     ],
                                   );
-
-                                  // showDialog(
-                                  //   context: context,
-                                  //   barrierDismissible: false,
-                                  //   builder: (_) => StickerUnlockedDialog(
-                                  //     category: state.categories[index],
-                                  //     stickerName: "Airbus A318",
-                                  //     imagePath:
-                                  //         "assets/dummyPictures/MainLogoAirplane.png",
-                                  //     onTap: () {
-                                  // AppNavigator.push(
-                                  //   context,
-                                  //   const StickerUnlockScreen(),
-                                  //   disableSwipeBack: true,
-                                  // );
-                                  //     },
-                                  //   ),
-                                  // );
                                 },
                               );
                             },

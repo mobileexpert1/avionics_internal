@@ -38,7 +38,7 @@ class StickerCard extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              flex: 5,
+              flex: 4,
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
@@ -48,26 +48,40 @@ class StickerCard extends StatelessWidget {
             ),
             Expanded(
               flex: 3,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      sticker.model,
-                      style: AppTextStyles.bold(
-                        16,
-                      ).copyWith(height: 1.0, color: AppColors.primaryDark),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      sticker.icaoCode,
-                      style: AppTextStyles.bold(
-                        20,
-                      ).copyWith(height: 1.0, color: AppColors.primaryDark),
-                    ),
-                  ],
-                ),
-              ),
+              child:
+                  // Padding(
+                  //   padding: const EdgeInsets.all(5),
+                  //   child:
+                  Column(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            sticker.model,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.bold(16).copyWith(
+                              color: AppColors.primaryDark,
+                              height: 1.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        sticker.icaoCode,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.bold(
+                          20,
+                        ).copyWith(color: AppColors.primaryDark, height: 1.0),
+                      ),
+                      SizedBox(height: 6),
+                    ],
+                  ),
+              //),
             ),
           ],
         ),
@@ -76,7 +90,7 @@ class StickerCard extends StatelessWidget {
   }
 
   Widget _buildImage(bool isDesktopWeb) {
-    if (!sticker.unlocked) {
+    if (sticker.unlocked) {
       return CachedAnyImage(
         imagePath: sticker.image ?? '',
         width: double.infinity,

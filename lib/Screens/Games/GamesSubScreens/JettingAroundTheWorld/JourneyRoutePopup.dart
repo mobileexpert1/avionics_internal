@@ -405,7 +405,15 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
 
                             AppNavigator.push(
                               context,
-                              JettingAroundTheBoardingPass(isComeFromHistoryScreen: false,boardingPassId: ""),
+                              JettingAroundTheBoardingPass(
+                                isComeFromHistoryScreen: false,
+                                boardingPassId: "",
+                                isNeedToShowOnlyBoardingPass:
+                                    state.airportList
+                                        .where((item) => item.unlocked == true)
+                                        .length >
+                                    1,
+                              ),
                               disableSwipeBack: true,
                             );
                           },

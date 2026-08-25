@@ -65,10 +65,7 @@ class BlackBoxSubmitResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'detail': detail,
-      'data': data.toJson(),
-    };
+    return {'detail': detail, 'data': data.toJson()};
   }
 }
 
@@ -82,6 +79,8 @@ class BlackBoxSubmitData {
   final int correctPoints;
   final int earnedPoints;
   final int additionalPoints;
+  final bool? isStickerUnlock;
+  final StickerAircraftModel? stickerAircraftModel;
 
   BlackBoxSubmitData({
     required this.game,
@@ -93,6 +92,8 @@ class BlackBoxSubmitData {
     required this.correctPoints,
     required this.earnedPoints,
     required this.additionalPoints,
+    this.isStickerUnlock,
+    this.stickerAircraftModel,
   });
 
   factory BlackBoxSubmitData.fromJson(Map<String, dynamic> json) {
@@ -100,12 +101,16 @@ class BlackBoxSubmitData {
       game: json['game'] ?? '',
       level: json['level'] ?? '',
       difficulty: json['difficulty'] ?? '',
-      percentage: (json['percentage'] != null) ? json['percentage'].toDouble() : 0.0,
+      percentage: (json['percentage'] != null)
+          ? json['percentage'].toDouble()
+          : 0.0,
       totalQuestions: json['total_questions'] ?? 0,
       correctAnswers: json['correct_answers'] ?? 0,
       correctPoints: json['correct_points'] ?? 0,
       earnedPoints: json['earned_points'] ?? 0,
       additionalPoints: json['additional_points'] ?? 0,
+      isStickerUnlock: json['is_sticker_unlock'] ?? false,
+      stickerAircraftModel: StickerAircraftModel.fromJson(json['unlock_sticker_aircraft'] ?? {}),
     );
   }
 
@@ -120,6 +125,8 @@ class BlackBoxSubmitData {
       'correct_points': correctPoints,
       'earned_points': earnedPoints,
       'additional_points': additionalPoints,
+      'is_sticker_unlock': isStickerUnlock,
+      'unlock_sticker_aircraft':  stickerAircraftModel,
     };
   }
 }
@@ -128,10 +135,7 @@ class BlackBoxTopicResponse {
   final String detail;
   final List<BlackBoxTopicModel> data;
 
-  BlackBoxTopicResponse({
-    required this.detail,
-    required this.data,
-  });
+  BlackBoxTopicResponse({required this.detail, required this.data});
 
   factory BlackBoxTopicResponse.fromJson(Map<String, dynamic> json) {
     return BlackBoxTopicResponse(
@@ -143,10 +147,7 @@ class BlackBoxTopicResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'detail': detail,
-      'data': data.map((e) => e.toJson()).toList(),
-    };
+    return {'detail': detail, 'data': data.map((e) => e.toJson()).toList()};
   }
 }
 
@@ -182,6 +183,46 @@ class BlackBoxTopicModel {
       'game_number': gameNumber,
       'is_enable': isEnable,
       'info': info,
+    };
+  }
+}
+
+class StickerAircraftModel {
+  final String stickerId;
+  final String modelName;
+  final String icaoCode;
+  final String imageName;
+  final String orderChar;
+  final String categoryName;
+
+  StickerAircraftModel({
+    required this.stickerId,
+    required this.modelName,
+    required this.icaoCode,
+    required this.imageName,
+    required this.orderChar,
+    required this.categoryName,
+  });
+
+  factory StickerAircraftModel.fromJson(Map<String, dynamic> json) {
+    return StickerAircraftModel(
+      stickerId: json['sticker_id'] ?? '',
+      modelName: json['model'] ?? '',
+      icaoCode: json['icao_code'] ?? '',
+      imageName: json['image'] ?? '',
+      orderChar: json['order_char'] ?? '',
+      categoryName: json['sticker_name'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sticker_id': stickerId,
+      'model': modelName,
+      'icao_code': icaoCode,
+      'image': imageName,
+      'order_char': orderChar,
+      'sticker_name': categoryName,
     };
   }
 }

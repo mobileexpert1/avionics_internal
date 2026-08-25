@@ -58,6 +58,7 @@ class AirportModel {
   final String colourCode;
   final String city;
   final String equatorDistance;
+  final double distanceNM;
   final String flightSegment;
   final String country;
 
@@ -65,6 +66,7 @@ class AirportModel {
     required this.city,
     required this.colourCode,
     required this.equatorDistance,
+    required this.distanceNM,
     required this.flightSegment,
     required this.country,
   });
@@ -74,6 +76,7 @@ class AirportModel {
       city: json['city'] ?? '',
       colourCode: json['colour_code'] ?? '',
       equatorDistance: json['equator_distance'] ?? '',
+      distanceNM: json['distance_nm'] ?? '',
       flightSegment: json['flight_segment'] ?? '',
       country: json['country'] ?? '',
     );
@@ -84,6 +87,7 @@ class AirportModel {
       'city': city,
       'colour_code': colourCode,
       'equator_distance': equatorDistance,
+      'distance_nm': distanceNM,
       'flight_segment': flightSegment,
       'country': country,
     };
