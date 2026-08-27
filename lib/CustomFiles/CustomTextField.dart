@@ -17,7 +17,7 @@ class CustomTextField extends StatefulWidget {
   final bool isMultiline;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.label,
     required this.controller,
     this.errorText,
@@ -26,7 +26,7 @@ class CustomTextField extends StatefulWidget {
     this.onEnterPressed,
     this.enabled = true,
     this.isMultiline = false,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();

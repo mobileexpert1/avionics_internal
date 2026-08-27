@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -41,7 +42,7 @@ class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+      insetPadding: const EdgeInsets.symmetric(horizontal: kIsWeb ? 30 : 30),
       child: BlocBuilder<JettingChronicleCubit, JettingChronicleState>(
         builder: (context, state) {
           final chronicle = state.chronicleModel;
@@ -52,8 +53,9 @@ class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
             alignment: Alignment.topCenter,
             children: [
               Container(
+                width: kIsWeb ? MediaQuery.of(context).size.width / 2.2 : null,
                 margin: const EdgeInsets.only(top: 0),
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(kIsWeb ? 30 : 14),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -63,7 +65,9 @@ class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
                   children: [
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 35),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: kIsWeb ? 30 : 35,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
@@ -151,7 +155,9 @@ class _AviationChroniclePopupState extends State<AviationChroniclePopup> {
                     // =========================
                     if (state.isLoading)
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: EdgeInsets.symmetric(
+                          vertical: kIsWeb ? 30 : 20,
+                        ),
                         child: CircularProgressIndicator(),
                       )
                     else

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -40,7 +41,9 @@ class JettingAroundResultPopup extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        width: MediaQuery.of(context).size.width / 1.1,
+        width: kIsWeb
+            ? MediaQuery.of(context).size.width / 3
+            : MediaQuery.of(context).size.width / 1.1,
         height: MediaQuery.of(context).size.height / 1.5,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
