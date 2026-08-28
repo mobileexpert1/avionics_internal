@@ -8,8 +8,6 @@ import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
-import '../../Profile/ProfileMenuScreen/8_Sticker/FlightStickers/StickerParticularDetailsScreen.dart';
-import '../../Profile/ProfileMenuScreen/8_Sticker/FlightStickers/StickerUnlockedDialog.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
 import '../GamesSubScreens/BlackBoxSection/BlackBoxQuestionScreen.dart';
 import '../GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
@@ -48,7 +46,6 @@ class _BaseScreenForAllLevelState
       gameInfo: gameInfo,
       buttonText: "Start Game",
       onButtonTap: () {
-        if (widget.gameId == "imageBased") return;
         onGameTap(context, widget.gameId);
       },
       onBackTap: () {

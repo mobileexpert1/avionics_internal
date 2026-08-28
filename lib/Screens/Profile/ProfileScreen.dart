@@ -26,6 +26,7 @@ import 'ProfileMenuScreen/2_FormulaSection/FormulaScreen.dart';
 import 'ProfileMenuScreen/3_Glossary/GlossaryScreen.dart';
 import 'ProfileMenuScreen/4_GameBadges/BadgesScreens.dart';
 import 'ProfileMenuScreen/5_SavedFlights/SavedFlighScreen.dart';
+import 'ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
 import 'ProfileMenuScreen/8_Sticker/AllMySticker/AllMyStickerScreen.dart';
 import 'ProfileSettingsSectionHeader.dart';
 import 'SettingScreen/SettingScreen.dart';
@@ -254,19 +255,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.myAirplaneIcon,
-                    //   ),
-                    //   title: "My Airplane",
-                    //   onTap: () {
-                    //     AppNavigator.push(
-                    //       context,
-                    //       const AirplanePartsScreen(),
-                    //       disableSwipeBack: true,
-                    //     );
-                    //   },
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.myAirplaneIcon,
+                      ),
+                      title: "My Airplane",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const AirplanePartsScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,
