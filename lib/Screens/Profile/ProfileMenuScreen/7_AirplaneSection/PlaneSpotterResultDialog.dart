@@ -147,7 +147,7 @@ class ImageBasedResultDialog extends StatelessWidget {
                               child: Text(
                                 componentTitle.toUpperCase(),
                                 textAlign: TextAlign.center,
-                                maxLines: 2,
+                                maxLines: 5,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: isDesktopWeb ? 21 : 22,
