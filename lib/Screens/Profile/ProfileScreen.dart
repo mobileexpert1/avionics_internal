@@ -28,6 +28,7 @@ import 'ProfileMenuScreen/4_GameBadges/BadgesScreens.dart';
 import 'ProfileMenuScreen/5_SavedFlights/SavedFlighScreen.dart';
 import 'ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
 import 'ProfileMenuScreen/8_Sticker/AllMySticker/AllMyStickerScreen.dart';
+import 'ProfileMenuScreen/9_AirmanshipBadges/AirmanshipBadgesScreen.dart';
 import 'ProfileSettingsSectionHeader.dart';
 import 'SettingScreen/SettingScreen.dart';
 
@@ -281,6 +282,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+
+                    // SettingsListItem(
+                    //   leadingSvgAsset: CommonUi.setSvgImage(
+                    //     AssetsPath.glossaryProfile,
+                    //   ),
+                    //   title: "Airmanship Badges",
+                    //   onTap: () {
+                    //     AppNavigator.push(
+                    //       context,
+                    //       const AirmanshipBadgesScreen(),
+                    //       disableSwipeBack: true,
+                    //     );
+                    //   },
+                    // ),
+
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
                         AssetsPath.glossaryProfile,

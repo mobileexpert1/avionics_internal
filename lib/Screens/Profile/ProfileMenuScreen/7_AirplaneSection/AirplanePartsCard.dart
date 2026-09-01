@@ -49,29 +49,33 @@ class AirplanePartsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Part name + check icon
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
                     '${index + 1}. ${part.name}',
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.medium(isDesktopWeb ? 16 : 16)
-                        .copyWith(
-                          color: isUnlocked
-                              ? AppColors.black
-                              : const Color(0xff666666),
-                        ),
+                    style: AppTextStyles.medium(
+                      isDesktopWeb ? 16 : 16,
+                    ).copyWith(
+                      color: isUnlocked
+                          ? AppColors.black
+                          : const Color(0xff666666),
+                    ),
                   ),
                 ),
 
                 if (isUnlocked)
-                  SvgPicture.asset(
-                    CommonUi.setSvgImage(AssetsPath.tickIcon),
-                    width: 16,
-                    height: 16,
-                    fit: BoxFit.contain,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: SvgPicture.asset(
+                      CommonUi.setSvgImage(AssetsPath.tickIcon),
+                      width: 16,
+                      height: 16,
+                      fit: BoxFit.contain,
+                    ),
                   ),
               ],
             ),

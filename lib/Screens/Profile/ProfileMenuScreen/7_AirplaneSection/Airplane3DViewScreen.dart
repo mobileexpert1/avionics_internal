@@ -43,7 +43,7 @@ class _Airplane3DView extends StatelessWidget {
       backgroundColor: Colors.white,
 
       appBar: CustomAppBar(
-        title: "My Airplane",
+        title: selectedPart.name,
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -201,6 +201,7 @@ class _AircraftPreviewState extends State<_AircraftPreview> {
         height: widget.isDesktopWeb ? 320 : 190,
         decoration: BoxDecoration(
           color: const Color(0xffEDEDED),
+          // color: const Color(0xff5DA6E5).withOpacity(0.2),
           borderRadius: BorderRadius.circular(widget.isDesktopWeb ? 24 : 20),
         ),
         child: Stack(
