@@ -175,9 +175,14 @@ class RouteCard extends StatelessWidget {
 
   Widget _buildRoute() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(child: _buildLeftAirport()),
+        // LEFT AIRPORT
+        Expanded(flex: 3, child: _buildLeftAirport()),
+
+        // CENTER ROUTE
         Expanded(
+          flex: 4,
           child: buildCustomProgressBar(
             0.5,
             airport.toAirport.colourCode != ""
@@ -186,8 +191,101 @@ class RouteCard extends StatelessWidget {
             airport.toAirport.distanceNM.toString(),
           ),
         ),
-        Expanded(child: _buildRightAirport()),
+
+        // RIGHT AIRPORT
+        Expanded(flex: 3, child: _buildRightAirport()),
       ],
+    );
+  }
+
+  Widget buildCustomProgressBar(double progress, Color color, String distance) {
+    return SizedBox(
+      width: double.infinity,
+      height: 58,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+
+          const planeSize = 28.0;
+          const lineHeight = 2.5;
+          const horizontalPadding = 2.0;
+
+          // Prevent invalid clamp ranges on very small devices.
+          final usableWidth = (totalWidth - (horizontalPadding * 2)).clamp(
+            0.0,
+            double.infinity,
+          );
+
+          final planeCenterX = horizontalPadding + (usableWidth * progress);
+
+          // Safe airplane position.
+          final maxPlaneLeft = (totalWidth - planeSize - horizontalPadding);
+
+          final planeLeft = maxPlaneLeft <= horizontalPadding
+              ? horizontalPadding
+              : (planeCenterX - (planeSize / 2)).clamp(
+                  horizontalPadding,
+                  maxPlaneLeft,
+                );
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // LEFT LINE
+              Positioned(
+                left: horizontalPadding,
+                top: 14,
+                width: (planeCenterX - horizontalPadding).clamp(
+                  0.0,
+                  usableWidth,
+                ),
+                child: Container(height: lineHeight, color: Colors.black),
+              ),
+
+              // RIGHT LINE
+              Positioned(
+                left: planeCenterX,
+                right: horizontalPadding,
+                top: 14,
+                child: Container(
+                  height: lineHeight,
+                  color: Colors.grey.shade300,
+                ),
+              ),
+
+              // AIRPLANE + DISTANCE
+              Positioned(
+                left: planeLeft,
+                top: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: planeSize,
+                      height: planeSize,
+                      child: SvgPicture.asset(
+                        CommonUi.setSvgImage(getNextCategory()),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+
+                    const SizedBox(height: 2),
+
+                    Text(
+                      "$distance NM",
+                      maxLines: 1,
+                      softWrap: false,
+                      style: AppTextStyles.regular(
+                        14,
+                      ).copyWith(height: 1.0, color: AppColors.primaryBlue),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -202,97 +300,6 @@ class RouteCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [_MainText(airport.toAirport.flightSegment, alignRight: true)],
-    );
-  }
-
-  Widget buildCustomProgressBar(double progress, Color color, String distance) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 40,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final totalWidth = constraints.maxWidth;
-
-                const padding = 5.0;
-                const planeSize = 28.0;
-                const overlap = 2.0;
-
-                final usableWidth = totalWidth - (padding * 2);
-                final planeCenterX = padding + (usableWidth * progress);
-
-                return Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned(
-                      left: planeCenterX - overlap,
-                      right: padding,
-                      top: 16,
-                      child: Container(
-                        height: 2.5,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-
-                    Positioned(
-                      left: padding,
-                      top: 16,
-                      width: (planeCenterX - padding + overlap).clamp(
-                        0,
-                        usableWidth,
-                      ),
-                      child: Container(height: 2.5, color: Colors.black),
-                    ),
-
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
-                      left: (planeCenterX - 60).clamp(
-                        padding,
-                        totalWidth - padding - 100,
-                      ),
-                      top: -5,
-                      child: SizedBox(
-                        width: 120,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            //Transform.rotate(
-                             // angle: 1.57,
-                             // child:
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: SvgPicture.asset(
-                                  width: planeSize,
-                                  height: planeSize,
-                                  CommonUi.setSvgImage(getNextCategory()),
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                           // ),
-                            Text(
-                              "$distance NM",
-                              style: AppTextStyles.regular(14).copyWith(
-                                height: 1.0,
-                                color: AppColors.primaryBlue,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
