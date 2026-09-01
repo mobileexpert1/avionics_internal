@@ -201,7 +201,7 @@ class RouteCard extends StatelessWidget {
   Widget buildCustomProgressBar(double progress, Color color, String distance) {
     return SizedBox(
       width: double.infinity,
-      height: 58,
+      height: 40,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final totalWidth = constraints.maxWidth;
@@ -234,7 +234,7 @@ class RouteCard extends StatelessWidget {
               // LEFT LINE
               Positioned(
                 left: horizontalPadding,
-                top: 14,
+                top: 13,
                 width: (planeCenterX - horizontalPadding).clamp(
                   0.0,
                   usableWidth,
@@ -246,7 +246,7 @@ class RouteCard extends StatelessWidget {
               Positioned(
                 left: planeCenterX,
                 right: horizontalPadding,
-                top: 14,
+                top: 13,
                 child: Container(
                   height: lineHeight,
                   color: Colors.grey.shade300,
