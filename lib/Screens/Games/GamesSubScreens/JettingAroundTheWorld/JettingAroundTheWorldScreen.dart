@@ -16,6 +16,7 @@ import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppNavigator.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/JettingAroundTheWorldHelper/globe_controls_state.dart';
+import '../../../../Helpers/WebAndMobileBrowser/web_iframe_widget.dart';
 import '../../../../bloc/Games/SubGameSection/Calculation_Section/calculation_submit_model.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_cubit.dart';
 import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
@@ -25,7 +26,7 @@ import '../../MainGameScreen/ReusableGameDetailScreen.dart';
 import 'JettingAroundBoardingPassesScreen.dart';
 import 'JourneyRoutePopup.dart';
 
-class JettingAroundTheWorldScreen extends StatefulWidget {
+class JettingAroundTheWorldScreen extends StatelessWidget {
   const JettingAroundTheWorldScreen({
     super.key,
     required this.isComeFromResultScreen,
@@ -36,18 +37,40 @@ class JettingAroundTheWorldScreen extends StatefulWidget {
   final SubmitCalculationResultData? responseFromResultScreenData;
 
   @override
-  State<JettingAroundTheWorldScreen> createState() =>
-      _JettingAroundTheWorldState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => JettingTheWorldCubit(),
+      child: _JettingAroundTheWorldView(
+        isComeFromResultScreen: isComeFromResultScreen,
+        responseFromResultScreenData: responseFromResultScreenData,
+      ),
+    );
+  }
 }
 
-class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  late FlutterEarthGlobeController _controller;
+class _JettingAroundTheWorldView extends StatefulWidget {
+  const _JettingAroundTheWorldView({
+    required this.isComeFromResultScreen,
+    this.responseFromResultScreenData,
+  });
 
-  List<Point> points = [];
-  bool _showLocations = false;
+  final bool isComeFromResultScreen;
+  final SubmitCalculationResultData? responseFromResultScreenData;
+
+  @override
+  State<_JettingAroundTheWorldView> createState() =>
+      _JettingAroundTheWorldViewState();
+}
+
+class _JettingAroundTheWorldViewState
+    extends State<_JettingAroundTheWorldView> {
+  String _webUrl = '';
+  final List<Point> points = [];
   int isShowCurrentAirportIndex = 0;
-  List<PointConnection> connections = [];
+  bool ignorePointer = false;
+  final List<PointConnection> connections = [];
+  late FlutterEarthGlobeController _controller;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget pointLabelBuilder(
     BuildContext context,
@@ -78,23 +101,10 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
   void initState() {
     super.initState();
 
-    if (!widget.isComeFromResultScreen) {
-      Future.microtask(() {
-        context.read<JettingTheWorldCubit>().loadAirports(context);
-      });
-    } else {
-      Future.microtask(() {
-        context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(
-          context,
-          widget.responseFromResultScreenData!,
-        );
-      });
-    }
-
     _controller = FlutterEarthGlobeController(
       rotationSpeed: 0.05,
       minZoom: 1.0,
-      maxZoom: 8,
+      maxZoom: 8.0,
       zoom: widget.isComeFromResultScreen ? 2.0 : 1.0,
       isRotating: false,
       atmosphereOpacity: 0.8,
@@ -110,16 +120,38 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       isDayNightCycleEnabled: false,
       dayNightBlendFactor: 0.15,
     );
+
+    Future.microtask(() {
+      if (!mounted) return;
+
+      final cubit = context.read<JettingTheWorldCubit>();
+
+      if (!widget.isComeFromResultScreen) {
+        cubit.loadAirports(context);
+      } else {
+        final result = widget.responseFromResultScreenData;
+
+        if (result != null) {
+          cubit.loadAirportsFromUnlockResponse(context, result);
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
+    points.clear();
+    connections.clear();
+
     super.dispose();
   }
 
   Future<void> openAddOnPacksBottomSheet(BuildContext context) async {
-    final _cubit = context.read<JettingTheWorldCubit>();
-    final result = await showModalBottomSheet<bool>(
+    setState(() => ignorePointer = true);
+
+    final cubit = context.read<JettingTheWorldCubit>();
+
+    await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
@@ -127,43 +159,52 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) {
         return BlocProvider.value(
-          value: _cubit,
+          value: cubit,
           child: FractionallySizedBox(
             heightFactor: 0.55,
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(20),
               ),
-              child: JourneyRoutePopup(cubit: _cubit),
+              child: JourneyRoutePopup(cubit: cubit),
             ),
           ),
         );
       },
     );
+
+    if (mounted) {
+      setState(() => ignorePointer = false);
+    }
   }
 
   void updateGlobeFromApi(List<AirportPerItemModel> airports) {
     points.clear();
     connections.clear();
 
+    isShowCurrentAirportIndex = 0;
+
     for (int i = 0; i < airports.length; i++) {
       final airport = airports[i];
-      points.add(
-        buildPoint(
-          id: airport.id.toString(),
-          coordinates: GlobeCoordinates(airport.latitude, airport.longitude),
-          label: airport.city,
-          color: airport.current == true
-              ? AppColors.greenColourForPlan
-              : airport.unlocked == true
-              ? AppColors.primaryBlue
-              : AppColors.greyForTextfield,
-        ),
+
+      final point = buildPoint(
+        id: airport.id.toString(),
+        coordinates: GlobeCoordinates(airport.latitude, airport.longitude),
+        label: airport.city,
+        color: airport.current == true
+            ? AppColors.greenColourForPlan
+            : airport.unlocked == true
+            ? AppColors.primaryBlue
+            : AppColors.greyForTextfield,
       );
-      if (airport.current) {
+
+      points.add(point);
+
+      if (airport.current == true) {
         isShowCurrentAirportIndex = i;
       }
     }
+
     if (widget.isComeFromResultScreen) {
       for (int i = 0; i < points.length - 1; i++) {
         connections.add(
@@ -172,7 +213,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             end: points[i + 1].coordinates,
             curveScale: 0.5,
             id: i.toString(),
-            // isLastId: i == points.length - 2 ? points.last.id : "",
+            isLastId: i == points.length - 2 ? points.last.id : '',
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,
@@ -183,13 +224,13 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
         );
       }
     } else {
-      if (points.length > 1) {
+      if (points.length > 1 && isShowCurrentAirportIndex < points.length) {
         connections.add(
           PointConnection(
             start: points[isShowCurrentAirportIndex].coordinates,
             end: points[isShowCurrentAirportIndex].coordinates,
             curveScale: 0.5,
-            id: "0",
+            id: '0',
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,
@@ -200,28 +241,56 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
         );
       }
     }
-    loadPointsOnGlobe();
+
+    if (!kIsWeb) {
+      loadPointsOnGlobe();
+    }
+  }
+
+  String _buildWebUrl() {
+    return 'https://avionica.csdevhub.com/globe/';
+  }
+
+  void _handleWebMessage(BuildContext context, dynamic data) {
+    final String message = data?.toString() ?? '';
+
+    debugPrint('[JettingAroundTheWorld] Web message: $message');
+
+    if (message == 'ViewYourJourney') {
+      if (!mounted) return;
+
+      openAddOnPacksBottomSheet(context);
+    }
   }
 
   void loadPointsOnGlobe() {
-    for (var point in points) {
+    for (final point in points) {
       _controller.addPoint(point);
+
       GlobeControlsState.instance.addVisiblePoint(point.id);
     }
+
     GlobeControlsState.instance.setZoom(_controller.zoom);
+
     Future.delayed(const Duration(milliseconds: 2200), () {
+      if (!mounted) return;
+
       startConnectionAnimation();
     });
   }
 
   Future<void> startConnectionAnimation() async {
     for (int i = 0; i < connections.length; i++) {
+      if (!mounted) return;
+
       final connection = connections[i];
 
       _controller.addPointConnection(connection, animateDraw: true);
+
       GlobeControlsState.instance.addVisibleConnection(connection.id);
 
       _controller.focusOnCoordinates(connection.end, animate: true);
+
       await Future.delayed(const Duration(seconds: 3));
     }
   }
@@ -248,47 +317,19 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
     );
   }
 
-  void showPointDialog({
-    required String title,
-    required String level,
-    required double latitude,
-    required double longitude,
-  }) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Level : $level'),
-              const SizedBox(height: 8),
-              Text('Latitude : $latitude'),
-              Text('Longitude : $longitude'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
     final isSmallScreen = screenWidth < 800;
-    double radius = screenWidth < 500 ? ((screenWidth / 3.5) - 20) : 140;
+
+    final double radius = screenWidth < 500 ? ((screenWidth / 3.5) - 20) : 140;
+
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: "Jetting Around The World",
+        title: 'Jetting Around The World',
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
@@ -304,217 +345,193 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
           },
         ),
       ),
-      key: _scaffoldKey,
       endDrawer: isSmallScreen ? null : null,
-      body: BlocBuilder<JettingTheWorldCubit, JettingTheWorldState>(
+      body: BlocConsumer<JettingTheWorldCubit, JettingTheWorldState>(
+        listenWhen: (previous, current) {
+          return current.airportList.isNotEmpty && points.isEmpty;
+        },
+        listener: (context, state) {
+          updateGlobeFromApi(state.airportList);
+
+          if (kIsWeb) {
+            if (!mounted) return;
+
+            setState(() {
+              _webUrl = _buildWebUrl();
+            });
+          } else {
+            if (!mounted) return;
+
+            setState(() {});
+          }
+        },
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state.airportList.isNotEmpty && points.isEmpty) {
-            updateGlobeFromApi(state.airportList);
-            return SafeArea(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: FlutterEarthGlobe(
-                      controller: _controller,
-                      radius: radius,
-                    ),
-                  ),
 
-                  // Bottom List
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 300),
-                    left: 0,
-                    right: 0,
-                    bottom: _showLocations ? 70 : -300,
-                    child: Material(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                      child: SizedBox(
-                        height: 250,
-                        child: ListView.builder(
-                          itemCount: points.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(points[index].label ?? ''),
-                              onTap: () {
-                                _controller.focusOnCoordinates(
-                                  points[index].coordinates,
-                                  animate: true,
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  if (widget.isComeFromResultScreen) ...[
-                    Positioned(
-                      top: 15,
-                      left: 15,
-                      right: 15,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Congratulations\n",
-                                  style: AppTextStyles.bold(
-                                    24,
-                                  ).copyWith(color: AppColors.white),
-                                ),
-                                TextSpan(
-                                  text: "\n",
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                TextSpan(
-                                  text:
-                                      "You have Reached ${state.airportList.last.city}",
-                                  style: AppTextStyles.regular(
-                                    16,
-                                  ).copyWith(color: AppColors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ] else
-                    Positioned(
-                      top: 15,
-                      left: 15,
-                      right: 15,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            textAlign: TextAlign.left,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Begin Your Adventure\n",
-                                  style: AppTextStyles.bold(
-                                    24,
-                                  ).copyWith(color: AppColors.white),
-                                ),
-                                TextSpan(
-                                  text: "\n",
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                TextSpan(
-                                  text:
-                                      "Travel across the world, explore iconic airports, and earn Jettons as you progress.",
-                                  style: AppTextStyles.regular(
-                                    16,
-                                  ).copyWith(color: AppColors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  Positioned(
-                    bottom: 15,
-                    left: 15,
-                    right: 15,
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: kIsWeb ? 900 : double.infinity,
-                        ),
-                        child: SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: ReusableBottomButton(
-                            backgroundColor: AppColors.greenColourForPlan,
-                            fontStyle: AppTextStyles.regular(
-                              18,
-                            ).copyWith(height: 1.0, color: AppColors.black),
-                            text: widget.isComeFromResultScreen
-                                ? "Journey around the world"
-                                : "View Your Journey",
-                            onTap: () async {
-                              if (widget.isComeFromResultScreen) {
-                                await SharedPrefsHelper.clearJettingGames();
-                                AppNavigator.push(
-                                  context,
-                                  JettingAroundBoardingPassesScreen(
-                                    isComeFromResultScreen: true,
-                                  ),
-                                  multiBlocProviders: [
-                                    BlocProvider(
-                                      create: (_) => JettingBoardingPassCubit(),
-                                    ),
-                                  ],
-                                  disableSwipeBack: true,
-                                );
-                              } else {
-                                openAddOnPacksBottomSheet(context);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  if (widget.isComeFromResultScreen) ...[
-                    Positioned(
-                      bottom: 60,
-                      left: 15,
-                      right: 15,
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: kIsWeb ? 900 : double.infinity,
-                          ),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 40),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: statCard(
-                                      value: '80',
-                                      label:
-                                          'Jettons earned as the\nFrequent Flyer',
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: statCard(
-                                      value: '1000',
-                                      label: 'Total Jettons Earned',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            );
+          if (points.isEmpty) {
+            return const Center(child: Text('No Data'));
           }
-          return Center(child: Text("No Data"));
+
+          return SafeArea(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: kIsWeb
+                      ? _buildWebGlobe()
+                      : FlutterEarthGlobe(
+                          controller: _controller,
+                          radius: radius,
+                        ),
+                ),
+
+                if (!kIsWeb) ...[_buildMobileOverlay(state)],
+              ],
+            ),
+          );
         },
       ),
+    );
+  }
+
+  Widget _buildWebGlobe() {
+    if (_webUrl.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return WebIframeWidget(
+      url: _webUrl,
+      ignorePointer: ignorePointer,
+      onMessageReceived: (data) {
+        _handleWebMessage(context, data);
+      },
+    );
+  }
+
+  Widget _buildMobileOverlay(JettingTheWorldState state) {
+    return Stack(
+      children: [
+        Positioned(
+          top: 15,
+          left: 15,
+          right: 15,
+          child: Column(
+            crossAxisAlignment: widget.isComeFromResultScreen
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
+            children: [
+              RichText(
+                textAlign: widget.isComeFromResultScreen
+                    ? TextAlign.center
+                    : TextAlign.left,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: widget.isComeFromResultScreen
+                          ? 'Congratulations\n'
+                          : 'Begin Your Adventure\n',
+                      style: AppTextStyles.bold(
+                        24,
+                      ).copyWith(color: AppColors.white),
+                    ),
+                    const TextSpan(text: '\n', style: TextStyle(fontSize: 10)),
+                    TextSpan(
+                      text: widget.isComeFromResultScreen
+                          ? 'You have Reached ${state.airportList.last.city}'
+                          : 'Travel across the world, explore iconic airports, and earn Jettons as you progress.',
+                      style: AppTextStyles.regular(
+                        16,
+                      ).copyWith(color: AppColors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Positioned(
+          bottom: 15,
+          left: 15,
+          right: 15,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 900),
+              child: SizedBox(
+                height: 50,
+                width: double.infinity,
+                child: ReusableBottomButton(
+                  backgroundColor: AppColors.greenColourForPlan,
+                  fontStyle: AppTextStyles.regular(
+                    18,
+                  ).copyWith(height: 1.0, color: AppColors.black),
+                  text: widget.isComeFromResultScreen
+                      ? 'Journey around the world'
+                      : 'View Your Journey',
+                  onTap: () async {
+                    if (widget.isComeFromResultScreen) {
+                      await SharedPrefsHelper.clearJettingGames();
+
+                      if (!mounted) return;
+
+                      AppNavigator.push(
+                        context,
+                        JettingAroundBoardingPassesScreen(
+                          isComeFromResultScreen: true,
+                        ),
+                        multiBlocProviders: [
+                          BlocProvider(
+                            create: (_) => JettingBoardingPassCubit(),
+                          ),
+                        ],
+                        disableSwipeBack: true,
+                      );
+                    } else {
+                      await openAddOnPacksBottomSheet(context);
+                    }
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        if (widget.isComeFromResultScreen)
+          Positioned(
+            bottom: 60,
+            left: 15,
+            right: 15,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 900),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: statCard(
+                            value: '80',
+                            label: 'Jettons earned as the\nFrequent Flyer',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: statCard(
+                            value: '1000',
+                            label: 'Total Jettons Earned',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -522,7 +539,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
     return Container(
       width: 160,
       height: 160,
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
         color: const Color(0xFF2B2B2E),
         borderRadius: BorderRadius.circular(16),
@@ -537,12 +554,10 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
               color: AppColors.extraDarkYellow,
               shape: BoxShape.circle,
             ),
-            child: SizedBox(
+            child: SvgPicture.asset(
+              CommonUi.setSvgImage(AssetsPath.successJettingYellowAround),
               height: 20,
               width: 20,
-              child: SvgPicture.asset(
-                CommonUi.setSvgImage(AssetsPath.successJettingYellowAround),
-              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -560,7 +575,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
               16,
             ).copyWith(height: 1.0, color: AppColors.white),
           ),
-          SizedBox(height: label.contains("Total") ? 20 : 0),
+          SizedBox(height: label.contains('Total') ? 20 : 0),
         ],
       ),
     );
