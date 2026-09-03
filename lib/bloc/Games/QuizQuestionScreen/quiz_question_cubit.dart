@@ -186,7 +186,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         );
 
         // Start timer
-        startTimer(context);
+        startTimer(context, gameId != "imageBased");
 
         // Fetch silently in background if needed
         if (allQuestions.length < maxQuestions) {
@@ -367,41 +367,46 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
     }
   }
 
-  void startTimer(BuildContext context) {
-    print(
-      "Current Quesiton correctIndex:- ${state.currentQuestion.correctIndex}      Current Quesiton Image Url:- ${state.currentQuestion.imgUrl}",
-    );
+  void startTimer(BuildContext context, bool isReadyToStartTimer) {
+    if (isReadyToStartTimer) {
+      print(
+        "Current Quesiton correctIndex:- ${state.currentQuestion.correctIndex}      Current Quesiton Image Url:- ${state.currentQuestion.imgUrl}",
+      );
 
-    _startTime = DateTime.now();
-    emit(state.copyWith(timer: _totalDuration));
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final elapsed = DateTime.now().difference(_startTime!).inSeconds;
-      final remaining = _totalDuration - elapsed;
+      _startTime = DateTime.now();
+      emit(state.copyWith(timer: _totalDuration));
+      _timer?.cancel();
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        final elapsed = DateTime.now().difference(_startTime!).inSeconds;
+        final remaining = _totalDuration - elapsed;
 
-      if (remaining >= 0) {
-        emit(
-          state.copyWith(timer: remaining, selectedIndex: state.selectedIndex),
-        );
-        print("Pending time $remaining");
-      } else {
-        _timer?.cancel();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Times Up')));
-
-        Future.delayed(const Duration(seconds: 2), () {
+        if (remaining >= 0) {
           emit(
             state.copyWith(
-              showAnswer: true,
-              isTimerEnded: true,
-              timeTaken: 0,
-              selectedIndex: state.currentQuestion.correctIndex,
+              timer: remaining,
+              selectedIndex: state.selectedIndex,
             ),
           );
-        });
-      }
-    });
+          print("Pending time $remaining");
+        } else {
+          _timer?.cancel();
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Times Up')));
+
+          Future.delayed(const Duration(seconds: 2), () {
+            emit(
+              state.copyWith(
+                showAnswer: true,
+                isTimerEnded: true,
+                timeTaken: 0,
+                selectedIndex: state.currentQuestion.correctIndex,
+              ),
+            );
+          });
+        }
+      });
+    }
   }
 
   Future<void> reportQuestionPostMethod(
@@ -573,7 +578,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       ),
     );
 
-    startTimer(context);
+    startTimer(context, gameId != "imageBased");
 
     if (gameId == "quiz") {
       switch (state.currentIndex) {
@@ -587,7 +592,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       }
 
       _timer?.cancel();
-      startTimer(context);
+      startTimer(context, gameId != "imageBased");
     }
 
     if (state.currentIndex == 9 || state.currentIndex == 13) {
@@ -800,7 +805,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       ),
     );
 
-    startTimer(context);
+    startTimer(context, gameId != "imageBased");
   }
 
   // -----------------------------------------------------------------------------

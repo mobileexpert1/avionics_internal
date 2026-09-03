@@ -282,7 +282,7 @@ class _JettingAroundTheBoardingState
                     Center(
                       child: SizedBox(
                         width: kIsWeb
-                            ? MediaQuery.of(context).size.width * 0.45
+                            ? 350
                             : double.infinity,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 40.0),

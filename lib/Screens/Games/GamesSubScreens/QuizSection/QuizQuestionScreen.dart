@@ -426,6 +426,13 @@ class QuizQuestionCard extends StatelessWidget {
                               contentImage: kIsWeb
                                   ? BoxFit.contain
                                   : BoxFit.cover,
+                              onLoaded: () {
+                                Future.delayed(const Duration(seconds: 1), () {
+                                  final quizCubit = context
+                                      .read<QuizQuestionCubit>();
+                                  quizCubit.startTimer(context, true);
+                                });
+                              },
                             ),
                           ),
 
