@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../../../Constants/constantImages.dart';
+
 class GameInfo {
   final String title;
   final String description;
@@ -222,7 +223,7 @@ class GameMapper {
       helpTitle: 'Need a route to the right answer? ',
       helpHighlightedTitle: 'Follow Me!',
       helpDescription:
-          'Learn real investigative reasoning and system-failure interpretation.',
+      'Learn real investigative reasoning and system-failure interpretation.',
     ), // Done
     'calculation': GameInfoModel(
       title: 'Calculations',
@@ -288,7 +289,7 @@ class GameMapper {
         GameInfoItem(
           asset: AssetsPath.timeLevelIcon,
           title: 'Time per question',
-          value: '40 seconds',
+          value: '60 seconds',
         ),
 
         GameInfoItem(
@@ -324,9 +325,9 @@ class GameMapper {
         ),
       ],
 
-      progress: 0.50,
+      progress: 0.60,
       winTitle: 'Score target to win',
-      winHighlightedText: '50%',
+      winHighlightedText: '60%',
       winNormalText: ' or higher',
       helpTitle: 'Need aircraft recognition help? ',
       helpHighlightedTitle: 'Follow Me!',
@@ -441,7 +442,7 @@ class GameMapper {
       helpTitle: 'Need aircraft guidance? ',
       helpHighlightedTitle: 'Follow Me!',
       helpDescription:
-          'Understand aircraft systems and aviation history faster.',
+      'Understand aircraft systems and aviation history faster.',
     ), // Done
   };
 }
