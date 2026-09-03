@@ -145,11 +145,39 @@ class _CreditsTokenUsageState extends State<CreditsTokenUsageScreen> {
             body: kIsWeb
                 ? _webUrl.isEmpty
                       ? const Center(child: CircularProgressIndicator())
-                      : WebIframeWidget(url: _webUrl)
+                      : WebIframeWidget(
+                          url: _webUrl,
+                          onMessageReceived: (data) {
+                            _handleWebMessage(context, data);
+                          },
+                        )
                 : WebViewWidget(controller: controller!),
           );
         },
       ),
     );
+  }
+
+  void _handleWebMessage(BuildContext context, dynamic data) {
+    final String message = data?.toString() ?? '';
+
+    debugPrint('[JettingAroundTheWorld] Web message: $message');
+
+    if (message == "AddOnPacksScreen") {
+      if (!mounted) return;
+
+      openAddOnPacksBottomSheet();
+    }
+
+    if (message == "MySubscriptionScreen") {
+      AppNavigator.push(
+        context,
+        SubscriptionPlanDetailScreen(
+          isComeFromSignup: false,
+          isComeFromProfile: true,
+        ),
+        disableSwipeBack: true,
+      );
+    }
   }
 }

@@ -248,19 +248,32 @@ class _JettingAroundTheWorldViewState
   }
 
   String _buildWebUrl() {
-    return 'https://avionica.csdevhub.com/globe/';
+    return widget.isComeFromResultScreen
+        ? 'https://avionica.csdevhub.com/globe/'
+        : 'https://avionica.csdevhub.com/globe/multi.html';
   }
 
-  void _handleWebMessage(BuildContext context, dynamic data) {
+  Future<void> _handleWebMessage(BuildContext context, dynamic data) async {
     final String message = data?.toString() ?? '';
 
     debugPrint('[JettingAroundTheWorld] Web message: $message');
 
     if (message == 'ViewYourJourney') {
       if (!mounted) return;
-
       openAddOnPacksBottomSheet(context);
+    } else if (message == 'journeyAroundTheWorld') {
+      await SharedPrefsHelper.clearJettingGames();
+      if (!mounted) return;
+      AppNavigator.push(
+        context,
+        JettingAroundBoardingPassesScreen(isComeFromResultScreen: true),
+        multiBlocProviders: [
+          BlocProvider(create: (_) => JettingBoardingPassCubit()),
+        ],
+        disableSwipeBack: true,
+      );
     }
+    //https://www.crreo.ai/video-maker
   }
 
   void loadPointsOnGlobe() {
