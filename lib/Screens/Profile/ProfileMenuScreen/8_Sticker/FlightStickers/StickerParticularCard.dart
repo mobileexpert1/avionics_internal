@@ -130,7 +130,7 @@ class StickerCard extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktopWeb = kIsWeb && screenWidth >= 900;
 
-    final String title = sticker?.model ?? airmanshipBadge?.title ?? '';
+    final String title = sticker?.model ?? airmanshipBadge?.name ?? '';
 
     final String code = sticker?.icaoCode ?? '';
 
@@ -203,30 +203,7 @@ class StickerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
-    if (airmanshipBadge != null) {
-      return Container(
-        color: AppColors.grayLight,
-        child: Center(
-          child: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.dummyAircraftImage),
-            fit: BoxFit.contain,
-          ),
-        ),
-      );
-    }
-
-    // Sticker aircraft
-    if (sticker?.unlocked == true) {
-      return CachedAnyImage(
-        imagePath: sticker?.image ?? '',
-        width: double.infinity,
-        height: double.infinity,
-        contentImage: BoxFit.fill,
-        isForStickerScreen: true,
-      );
-    }
-
+  Widget _buildDefaultImage() {
     return Container(
       color: AppColors.grayLight,
       child: Center(
@@ -236,5 +213,33 @@ class StickerCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildImage() {
+    if (airmanshipBadge != null) {
+      if (airmanshipBadge!.unlocked && airmanshipBadge!.icon.isNotEmpty) {
+        return CachedAnyImage(
+          imagePath: airmanshipBadge!.icon,
+          width: double.infinity,
+          height: double.infinity,
+          contentImage: BoxFit.fill,
+          isForStickerScreen: true,
+        );
+      }
+
+      return _buildDefaultImage();
+    }
+
+    if (sticker?.unlocked == true && sticker?.image.isNotEmpty == true) {
+      return CachedAnyImage(
+        imagePath: sticker!.image,
+        width: double.infinity,
+        height: double.infinity,
+        contentImage: BoxFit.fill,
+        isForStickerScreen: true,
+      );
+    }
+
+    return _buildDefaultImage();
   }
 }

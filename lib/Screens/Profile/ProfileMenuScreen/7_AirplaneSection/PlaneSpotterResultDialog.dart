@@ -195,7 +195,7 @@ class ImageBasedResultDialog extends StatelessWidget {
 
                         Expanded(
                           child: Text(
-                            'Score 80% or higher to unlock more '
+                            'Score 60% or higher to unlock more '
                             'aircraft components and continue '
                             'building your aircraft.',
                             textAlign: TextAlign.center,

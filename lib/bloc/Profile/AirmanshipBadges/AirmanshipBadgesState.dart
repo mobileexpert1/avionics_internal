@@ -1,8 +1,8 @@
-import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import 'AirmanshipBadgeModel.dart';
 
 class AirmanshipBadgesState {
-  final List<AirmanshipBadgeModel> categories;
+  final List<AirmanshipBadgeCategoryModel> categories;
   final bool isLoading;
   final bool isSuccess;
   final String? errorMessage;
@@ -19,7 +19,7 @@ class AirmanshipBadgesState {
   });
 
   AirmanshipBadgesState copyWith({
-    List<AirmanshipBadgeModel>? categories,
+    List<AirmanshipBadgeCategoryModel>? categories,
     bool? isLoading,
     bool? isSuccess,
     String? errorMessage,

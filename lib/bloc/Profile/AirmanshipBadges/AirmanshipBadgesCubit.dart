@@ -1,89 +1,62 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'AirmanshipBadgeModel.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../../Constants/ApiClass/SessionTokenClass/session_Common_Token_Error.dart';
+import 'AirmanshipBadgesRepository.dart';
 import 'AirmanshipBadgesState.dart';
 
 class AirmanshipBadgesCubit extends Cubit<AirmanshipBadgesState> {
-  AirmanshipBadgesCubit()
-      : super(
-    const AirmanshipBadgesState(
-      categories: [
-        AirmanshipBadgeModel(
-          title: 'Persistence',
-          badges: [
-            AirmanshipBadgeItemModel(
-              title: 'Holding Pattern',
-              icon: 'assets/images/badges/holding_pattern.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Transatlantic',
-              icon: 'assets/images/badges/transatlantic.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Circumnavigation',
-              icon: 'assets/images/badges/circumnavigation.png',
-            ),
-          ],
-        ),
+  AirmanshipBadgesCubit() : super(const AirmanshipBadgesState());
 
-        AirmanshipBadgeModel(
-          title: 'Returning',
-          badges: [
-            AirmanshipBadgeItemModel(
-              title: 'Return to Base',
-              icon: 'assets/images/badges/return_to_base.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Diversion',
-              icon: 'assets/images/badges/diversion.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Go-Around',
-              icon: 'assets/images/badges/go_around.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Wheels Up',
-              icon: 'assets/images/badges/wheels_up.png',
-            ),
-          ],
-        ),
+  Future<void> loadAirmanshipBadges(BuildContext context) async {
+    if (await InternetConnection().hasInternetAccess) {
+      try {
+        emit(state.copyWith(isLoading: true, status: CommonApiStatus.initial));
 
-        AirmanshipBadgeModel(
-          title: 'Experience',
-          badges: [
-            AirmanshipBadgeItemModel(
-              title: 'Short-haul',
-              icon: 'assets/images/badges/short_haul.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Medium-haul',
-              icon: 'assets/images/badges/medium_haul.png',
-            ),
-            AirmanshipBadgeItemModel(
-              title: 'Long-haul',
-              icon: 'assets/images/badges/long_haul.png',
-            ),
-          ],
-        ),
+        final response = await AirmanshipBadgesRepository()
+            .getAirmanshipBadges();
 
-        AirmanshipBadgeModel(
-          title: 'Mastery',
-          badges: [
-            AirmanshipBadgeItemModel(
-              title: 'Multi-Type Rated',
-              icon: 'assets/images/badges/multi_type_rated.png',
+        if (response != null) {
+          emit(
+            state.copyWith(
+              categories: response.data,
+              isLoading: false,
+              isSuccess: true,
+              status: CommonApiStatus.success,
             ),
-            AirmanshipBadgeItemModel(
-              title: 'Full Fleet',
-              icon: 'assets/images/badges/full_fleet.png',
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              isSuccess: false,
+              status: CommonApiStatus.failure,
+              errorMessage: 'No data found',
             ),
-            AirmanshipBadgeItemModel(
-              title: 'Master Aviator',
-              icon: 'assets/images/badges/master_aviator.png',
-            ),
-          ],
+          );
+        }
+      } catch (e) {
+        SessionCommonTokenError.handleUnauthorizedError(context, e);
+
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            errorMessage: e.toString(),
+            status: CommonApiStatus.failure,
+          ),
+        );
+      }
+    } else {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          isSuccess: false,
+          errorMessage: 'No internet connection',
+          status: CommonApiStatus.failure,
         ),
-      ],
-    ),
-  );
+      );
+    }
+  }
 }

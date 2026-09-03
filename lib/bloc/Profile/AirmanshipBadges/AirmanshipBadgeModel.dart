@@ -1,57 +1,81 @@
 class AirmanshipBadgeModel {
-  final String title;
+  final String detail;
+  final List<AirmanshipBadgeCategoryModel> data;
+
+  AirmanshipBadgeModel({required this.detail, required this.data});
+
+  factory AirmanshipBadgeModel.fromJson(Map<String, dynamic> json) {
+    return AirmanshipBadgeModel(
+      detail: json['detail'] ?? '',
+      data: (json['data'] as List<dynamic>? ?? [])
+          .map((e) => AirmanshipBadgeCategoryModel.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'detail': detail, 'data': data.map((e) => e.toJson()).toList()};
+  }
+}
+
+class AirmanshipBadgeCategoryModel {
+  final String id;
+  final String name;
   final List<AirmanshipBadgeItemModel> badges;
 
-  const AirmanshipBadgeModel({
-    required this.title,
+  AirmanshipBadgeCategoryModel({
+    required this.id,
+    required this.name,
     required this.badges,
   });
 
-  factory AirmanshipBadgeModel.fromJson(
-      Map<String, dynamic> json,
-      ) {
-    return AirmanshipBadgeModel(
-      title: json['title'] ?? '',
-      badges: (json['badges'] as List? ?? [])
-          .map(
-            (item) => AirmanshipBadgeItemModel.fromJson(
-          item as Map<String, dynamic>,
-        ),
-      )
+  factory AirmanshipBadgeCategoryModel.fromJson(Map<String, dynamic> json) {
+    return AirmanshipBadgeCategoryModel(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      badges: (json['badges'] as List<dynamic>? ?? [])
+          .map((e) => AirmanshipBadgeItemModel.fromJson(e))
           .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'title': title,
-      'badges': badges.map((item) => item.toJson()).toList(),
+      'id': id,
+      'name': name,
+      'badges': badges.map((e) => e.toJson()).toList(),
     };
   }
 }
 
 class AirmanshipBadgeItemModel {
-  final String title;
+  final String name;
+  final String description;
   final String icon;
+  final bool unlocked;
 
-  const AirmanshipBadgeItemModel({
-    required this.title,
+  AirmanshipBadgeItemModel({
+    required this.name,
+    required this.description,
     required this.icon,
+    required this.unlocked,
   });
 
-  factory AirmanshipBadgeItemModel.fromJson(
-      Map<String, dynamic> json,
-      ) {
+  factory AirmanshipBadgeItemModel.fromJson(Map<String, dynamic> json) {
     return AirmanshipBadgeItemModel(
-      title: json['title'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
       icon: json['icon'] ?? '',
+      unlocked: (json['unlocked'] as bool?) ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'title': title,
+      'name': name,
+      'description': description,
       'icon': icon,
+      'unlocked': unlocked,
     };
   }
 }

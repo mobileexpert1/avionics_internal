@@ -54,7 +54,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       _ => 20,
     };
 
-    const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40};
+    const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40, "imageBased":60};
     _quizTypesId = sectionId;
     _totalDuration = gameDurations[gameId] ?? 40;
     loadQuestions(sectionId, context);

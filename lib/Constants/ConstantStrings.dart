@@ -248,6 +248,7 @@ class ApiServiceUrlConstant {
   static const String getGlossary = 'user/glossary';
   static const String chatHistorySession = 'ai-engine/wilco/session';
   static const String airplaneParts = 'aircraft-parts';
+  static const String airmanshipBadges = 'badge';
 }
 
 class ApiFunctionUrlAirplaneConstant {
