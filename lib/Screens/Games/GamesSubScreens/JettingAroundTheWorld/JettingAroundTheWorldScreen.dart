@@ -166,7 +166,12 @@ class _JettingAroundTheWorldViewState
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(20),
               ),
-              child: JourneyRoutePopup(cubit: cubit),
+              child: JourneyRoutePopup(
+                cubit: cubit,
+                onClickButton: () {
+                  setState(() => ignorePointer = false);
+                },
+              ),
             ),
           ),
         );
@@ -273,7 +278,6 @@ class _JettingAroundTheWorldViewState
         disableSwipeBack: true,
       );
     }
-    //https://www.crreo.ai/video-maker
   }
 
   void loadPointsOnGlobe() {

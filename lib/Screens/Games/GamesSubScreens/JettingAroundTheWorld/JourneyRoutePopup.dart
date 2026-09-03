@@ -12,10 +12,12 @@ import '../../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWo
 import 'JettingAroundTheBoardingPass.dart';
 
 class JourneyRoutePopup extends StatefulWidget {
-  const JourneyRoutePopup({super.key, required JettingTheWorldCubit cubit})
+  const JourneyRoutePopup({super.key, required JettingTheWorldCubit cubit, required this.onClickButton})
     : _cubit = cubit;
 
   final JettingTheWorldCubit _cubit;
+  final VoidCallback onClickButton;
+
 
   @override
   State<JourneyRoutePopup> createState() => _JourneyRoutePopupState();
@@ -402,6 +404,8 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                               FirebaseEvents.goPremiumSubscriptionButton,
                             );
                             if (!mounted) return;
+
+                            widget.onClickButton();
 
                             AppNavigator.push(
                               context,
