@@ -54,7 +54,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       _ => 20,
     };
 
-    const gameDurations = {"quiz": 180, "calculation": 40, "one_word": 40, "imageBased":60};
+    const gameDurations = {
+      "quiz": 180,
+      "calculation": 40,
+      "one_word": 40,
+      "imageBased": 60,
+    };
     _quizTypesId = sectionId;
     _totalDuration = gameDurations[gameId] ?? 40;
     loadQuestions(sectionId, context);
@@ -75,6 +80,10 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
       default:
         return "Quiz Game";
     }
+  }
+
+  Future<void> updateTheAlreadyImageStatus(bool isAlreadyLoadedImage) async {
+    emit(state.copyWith(isAlreadyLoadedImage: true));
   }
 
   Future<void> loadQuestions(int sectionId, BuildContext context) async {
@@ -182,6 +191,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             categoryTypes: gameData.categoryTypes,
             setId: gameData.setId,
             imageBasedId: gameData.imageBasedId,
+            isAlreadyLoadedImage: false,
           ),
         );
 
@@ -575,6 +585,7 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         showAnswer: false,
         timer: _totalDuration,
         isTimerEnded: false,
+        isAlreadyLoadedImage: false,
       ),
     );
 
