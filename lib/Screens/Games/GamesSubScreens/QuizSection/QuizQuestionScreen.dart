@@ -432,12 +432,15 @@ class QuizQuestionCard extends StatelessWidget {
                               height: imageHeight,
                               contentImage: kIsWeb
                                   ? BoxFit.contain
-                                  : BoxFit.cover,
+                                  : BoxFit.contain,
                               onLoaded: () {
-                                Future.delayed(const Duration(seconds: 1), () {
-                                  quizCubit.updateTheAlreadyImageStatus(true);
-                                  quizCubit.startTimer(context, true);
-                                });
+                                Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                  () {
+                                    quizCubit.updateTheAlreadyImageStatus(true);
+                                    quizCubit.startTimer(context, true);
+                                  },
+                                );
                               },
                             ),
                           ),

@@ -20,6 +20,7 @@ import 'BaseScreenForAllLevelDescriptions.dart';
 
 class GamesScreen extends StatefulWidget {
   static const String routeName = '/games';
+
   const GamesScreen({super.key});
 
   @override
@@ -308,7 +309,7 @@ class _GamesScreenState extends State<GamesScreen> {
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: SizedBox(
-                                        height: screenWidth > 500 ? 300:160,
+                                        height: screenWidth > 500 ? 300 : 160,
                                         child: Container(
                                           color: Colors.white,
                                           child: Image.asset(
