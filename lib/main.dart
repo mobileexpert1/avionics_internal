@@ -61,10 +61,25 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
+  try {
+    await FlutterUxcam.optIntoSchematicRecordings();
 
-  // await FlutterUxcam.optIntoSchematicRecordings();
-  //
-  // FlutterUxcam.startWithKey(dotenv.env['UXCAM_APP_KEY'] ?? '');
+    final appKey = dotenv.env['UXCAM_APP_KEY'] ?? '';
+
+    final config = FlutterUxConfig(
+      userAppKey: appKey,
+    );
+
+    await FlutterUxcam.startWithConfiguration(config);
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    final isRecording = await FlutterUxcam.isRecording();
+
+    print('UXCam Recording: $isRecording');
+  } catch (e) {
+    print('UXCam Error: $e');
+  }
 
   FirebaseMessagingService().initialize(navigatorKey: navigatorKey);
   FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);

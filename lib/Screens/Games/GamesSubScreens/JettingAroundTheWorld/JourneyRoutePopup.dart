@@ -336,17 +336,19 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
                                                               : isLocked
                                                               ? "Locked"
                                                               : "UnLocked",
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: isCurrent
-                                                                ? AppColors
-                                                                      .greenColourForPlan
-                                                                : isLocked
-                                                                ? AppColors
-                                                                      .grayMedium
-                                                                : AppColors
-                                                                      .primaryBlue,
-                                                          ),
+                                                          style:
+                                                              AppTextStyles.regular(
+                                                                12,
+                                                              ).copyWith(
+                                                                color: isCurrent
+                                                                    ? AppColors
+                                                                          .greenColourForPlan
+                                                                    : isLocked
+                                                                    ? AppColors
+                                                                          .grayMedium
+                                                                    : AppColors
+                                                                          .primaryBlue,
+                                                              ),
                                                         ),
                                                       ],
                                                     ),

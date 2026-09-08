@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class MapToggleButtons extends StatelessWidget {
   final bool isMapViewSelected;
 
@@ -39,9 +41,7 @@ class MapToggleButtons extends StatelessWidget {
                 children: [
                   Text(
                     'Map view',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
+                    style: AppTextStyles.bold(13).copyWith(
                       color: isMapViewSelected ? Colors.white : Colors.black,
                     ),
                   ),
@@ -64,9 +64,7 @@ class MapToggleButtons extends StatelessWidget {
               child: Center(
                 child: Text(
                   'List view',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                  style: AppTextStyles.bold(13).copyWith(
                     color: isMapViewSelected ? Colors.black : Colors.white,
                   ),
                 ),

@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../Helpers/CacheManger/CachedImageFile.dart';
 
 class ComponentUnlockedScreen extends StatelessWidget {
@@ -103,11 +104,9 @@ class ComponentUnlockedScreen extends StatelessWidget {
                 Text(
                   'Congratulations!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: isDesktopWeb ? 34 : 32,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryDark,
-                  ),
+                  style: AppTextStyles.bold(
+                    isDesktopWeb ? 34 : 32,
+                  ).copyWith(color: AppColors.primaryDark),
                 ),
 
                 const SizedBox(height: 5),
@@ -119,10 +118,9 @@ class ComponentUnlockedScreen extends StatelessWidget {
                   child: Text(
                     'You have Earned the new 3D aircraft part',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: isDesktopWeb ? 15 : 14,
-                      color: Colors.black,
-                    ),
+                    style: AppTextStyles.regular(
+                      isDesktopWeb ? 15 : 14,
+                    ).copyWith(color: Colors.black),
                   ),
                 ),
 
@@ -150,11 +148,9 @@ class ComponentUnlockedScreen extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: isDesktopWeb ? 30 : 28,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                          ),
+                          style: AppTextStyles.bold(
+                            isDesktopWeb ? 30 : 28,
+                          ).copyWith(color: Colors.black),
                         ),
                       ),
 
@@ -182,11 +178,11 @@ class ComponentUnlockedScreen extends StatelessWidget {
                           ),
                           child: image3d.isNotEmpty
                               ? CachedAnyImage(
-                            imagePath: image3d,
-                            width: 150,
-                            height: 125,
-                            contentImage: BoxFit.contain,
-                          )
+                                  imagePath: image3d,
+                                  width: 150,
+                                  height: 125,
+                                  contentImage: BoxFit.contain,
+                                )
                               : const SizedBox(),
                         ),
                       ),
@@ -195,10 +191,9 @@ class ComponentUnlockedScreen extends StatelessWidget {
 
                       Text(
                         '3D part Unlocked!',
-                        style: TextStyle(
-                          fontSize: isDesktopWeb ? 17 : 16,
-                          color: Colors.black,
-                        ),
+                        style: AppTextStyles.regular(
+                          isDesktopWeb ? 17 : 16,
+                        ).copyWith(color: Colors.black),
                       ),
 
                       const SizedBox(height: 4),
@@ -226,9 +221,8 @@ class ComponentUnlockedScreen extends StatelessWidget {
                           ),
                           child: Text(
                             'View your 3D Part',
-                            style: TextStyle(
-                              fontSize: isDesktopWeb ? 15 : 14,
-                              fontWeight: FontWeight.w400,
+                            style: AppTextStyles.regular(
+                              isDesktopWeb ? 15 : 14,
                             ),
                           ),
                         ),
@@ -259,10 +253,7 @@ class ComponentUnlockedScreen extends StatelessWidget {
                           ),
                           child: Text(
                             'Next',
-                            style: TextStyle(
-                              fontSize: isDesktopWeb ? 15 : 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: AppTextStyles.medium(isDesktopWeb ? 15 : 14),
                           ),
                         ),
                       ),

@@ -139,7 +139,9 @@ class _OtpScreenState extends State<OtpScreen> {
                               : Alignment.centerLeft,
                           child: Text(
                             ConstantStrings.otpTitle,
-                            style: TextStyle(color: Colors.grey.shade600),
+                            style: AppTextStyles.regular(14).copyWith(
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -201,9 +203,9 @@ class _OtpScreenState extends State<OtpScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   ConstantStrings.continueText,
-                                  style: TextStyle(fontSize: 20),
+                                  style: AppTextStyles.regular(20)
                                 ),
                               ),
                             );
@@ -228,13 +230,9 @@ class _OtpScreenState extends State<OtpScreen> {
                             _isResendEnabled
                                 ? "Resend Code"
                                 : "Resend Code in $_secondsRemaining sec",
-                            style: TextStyle(
-                              color: _isResendEnabled
-                                  ? Colors.blue
-                                  : Colors.grey,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style:AppTextStyles.medium(16).copyWith(
+                              color: _isResendEnabled ? Colors.blue : Colors.grey,
+                            )
                           ),
                         ),
                         const SizedBox(height: 50),

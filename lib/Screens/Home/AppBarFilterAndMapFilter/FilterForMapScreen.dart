@@ -534,10 +534,9 @@ class CategoryChip extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.normal,
-              ),
+              style: AppTextStyles.regular(
+                14,
+              ).copyWith(color: Colors.black),
             ),
           ],
         ),

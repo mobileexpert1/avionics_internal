@@ -8,6 +8,9 @@ import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../../bloc/Games/SubGameSection/StickerData/AllSticker/AllMySticker_cubit.dart';
 import '../../../../../../bloc/Games/SubGameSection/StickerData/AllSticker/AllMySticker_state.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Helpers/AppNavigator.dart';
 import '../../../../../bloc/Games/SubGameSection/StickerData/StickerParticularDetails/StickerParticular_cubit.dart';
 import '../FlightStickers/ProgressHeader.dart';
@@ -26,6 +29,10 @@ class _AllMyStickerScreenState extends State<AllMyStickerScreen> {
   void initState() {
     super.initState();
     context.read<AllMyStickerCubit>().loadMyStickers();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.stickerscreen,
+    );
+    UxCamService.instance.logScreen(FirebaseEvents.stickerscreen);
   }
 
   @override

@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../Home/RootTabbar/RootDecider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -75,8 +76,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: Text(
                     ConstantStrings.poweredBy,
-                    style: TextStyle(
-                      fontSize: textFontSize,
+                    style: AppTextStyles.regular(
+                      textFontSize,
+                    ).copyWith(
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,

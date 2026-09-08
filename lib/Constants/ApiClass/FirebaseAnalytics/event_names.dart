@@ -37,7 +37,8 @@ class FirebaseEvents {
   static const aircraftEncyclopaedia = 'aircraft_Encyclopaedia';
   static const jettingaroundtheworldpasses = 'jetting_arround_passes';
   static const jettingaroundtheworld = 'jetting_arround_world';
-
+  static const stickerscreen = 'all_sticker_screen';
+  static const stickerdetailscreen = 'sticker_detail_screen';
 
 
   // =====================================================
@@ -72,6 +73,7 @@ class FirebaseEvents {
   static const myairplanescreen = 'airplane_complete_screen';
   static const ThreeDairplane = '3D_view_screen';
   static const airplanepartsscreen = 'airplane_parts_screen';
+  static const airmanshipbadges = 'airmanship_badges_screen';
 
   // =====================================================
   // PROFILE – ACTION EVENTS

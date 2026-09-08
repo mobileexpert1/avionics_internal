@@ -373,13 +373,11 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                       const SizedBox(width: 6),
 
-                      const Text(
+                      Text(
                         'History',
-                        style: TextStyle(
-                          color: Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
+                        style:AppTextStyles.semiBold(
+                          14,
+                        ).copyWith(color: AppColors.black),
                       ),
                     ],
                   ),

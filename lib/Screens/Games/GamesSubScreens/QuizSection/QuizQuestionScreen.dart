@@ -472,7 +472,9 @@ class QuizQuestionCard extends StatelessWidget {
                                   ),
                                   child: Text(
                                     "${scale.toStringAsFixed(1)}x",
-                                    style: const TextStyle(color: Colors.white),
+                                    style: AppTextStyles.regular(
+                                      14,
+                                    ).copyWith(color: Colors.white),
                                   ),
                                 );
                               },
@@ -565,13 +567,7 @@ class QuizQuestionCard extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 13),
-                  Text(
-                    question,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text(question, style: AppTextStyles.bold(18)),
                   const SizedBox(height: 20),
                   ...List.generate(options.length, (index) {
                     final isSelected = index == selectedOption;
@@ -632,10 +628,7 @@ class QuizQuestionCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   "$letter. ${options[index]}",
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  style: AppTextStyles.medium(15),
                                 ),
                               ),
                               if (trailingIcon != null) trailingIcon,
@@ -779,10 +772,7 @@ class QuizProgressCard extends StatelessWidget {
             children: [
               Text(
                 'Question $currentQuestion of $totalQuestions',
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: AppTextStyles.medium(17),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -810,11 +800,9 @@ class QuizProgressCard extends StatelessWidget {
                     child: Text(
                       '${secondsRemaining}s',
                       textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.semiBold(
+                        16,
+                      ).copyWith(color: Colors.black),
                     ),
                   ),
                 ],
@@ -890,13 +878,7 @@ class _RadioPopupState extends State<RadioPopup> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        widget.title,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: Text(widget.title, style: AppTextStyles.bold(17)),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
@@ -1011,9 +993,11 @@ class _RadioPopupState extends State<RadioPopup> {
                           ),
                         ),
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text(
+                        child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black),
+                          style: AppTextStyles.regular(
+                            14,
+                          ).copyWith(color: Colors.black),
                         ),
                       ),
                     ),
@@ -1037,9 +1021,11 @@ class _RadioPopupState extends State<RadioPopup> {
                                 Navigator.of(context).pop();
                               }
                             : null,
-                        child: const Text(
+                        child: Text(
                           'Report',
-                          style: TextStyle(color: Colors.white),
+                          style: AppTextStyles.regular(
+                            14,
+                          ).copyWith(color: Colors.white),
                         ),
                       ),
                     ),

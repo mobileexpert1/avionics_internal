@@ -488,21 +488,17 @@ class _BadgesScreenState extends State<BadgesScreen> {
                     Text(
                       badge.name,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.bold(
+                        20,
+                      ).copyWith(color: AppColors.black),
                     ),
 
                     const SizedBox(height: 8),
                     Text(
                       badge.isEarned ? "Badge Unlocked!" : "Badge Locked!",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.regular(
+                        16,
+                      ).copyWith(color: AppColors.black),
                     ),
 
                     if (!badge.isEarned) ...[

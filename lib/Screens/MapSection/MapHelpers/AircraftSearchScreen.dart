@@ -335,7 +335,7 @@ class _AircraftSearchViewState extends State<_AircraftSearchView> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text("Save", style: TextStyle(fontSize: 16)),
+                    child: Text("Save", style: AppTextStyles.regular(16)),
                   ),
                 );
               },

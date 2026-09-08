@@ -6,6 +6,10 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Profile/AirmanshipBadges/AirmanshipBadgesCubit.dart';
 import '../../../../bloc/Profile/AirmanshipBadges/AirmanshipBadgesState.dart';
 import '../8_Sticker/FlightStickers/StickerParticularCard.dart';
@@ -18,6 +22,13 @@ class AirmanshipBadgesScreen extends StatefulWidget {
 }
 
 class _AirmanshipBadgesScreenState extends State<AirmanshipBadgesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.airmanshipbadges);
+    UxCamService.instance.logScreen(FirebaseEvents.airmanshipbadges);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -82,10 +93,7 @@ class _AirmanshipBadgesScreenState extends State<AirmanshipBadgesScreen> {
                         ),
                         child: Text(
                           'Badges unlock',
-                          style: TextStyle(
-                            fontSize: isDesktopWeb ? 20 : 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTextStyles.bold(isDesktopWeb ? 20 : 20),
                         ),
                       ),
 
@@ -99,10 +107,7 @@ class _AirmanshipBadgesScreenState extends State<AirmanshipBadgesScreen> {
                               ),
                               child: Text(
                                 category.name,
-                                style: TextStyle(
-                                  fontSize: isDesktopWeb ? 20 : 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: AppTextStyles.bold(20),
                               ),
                             ),
 

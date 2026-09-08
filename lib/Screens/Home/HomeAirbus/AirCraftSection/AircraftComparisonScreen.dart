@@ -276,13 +276,10 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                         children: [
                                                           Text(
                                                             model.aircraftModel,
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize:
+                                                            style:
+                                                                AppTextStyles.semiBold(
                                                                   bodyFontSize,
-                                                            ),
+                                                                ),
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,
@@ -322,13 +319,10 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                                 child: Text(
                                                                   model
                                                                       .icaoTypeCode,
-                                                                  style: const TextStyle(
-                                                                    fontSize:
+                                                                  style:
+                                                                      AppTextStyles.medium(
                                                                         12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
+                                                                      ),
                                                                 ),
                                                               ),
                                                             ),
@@ -424,14 +418,13 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                         Text(
                                                           model.aircraftModel,
                                                           style:
-                                                              const TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Color(
-                                                                  0xFF3F3D56,
-                                                                ),
+                                                              AppTextStyles.medium(
+                                                                16,
+                                                              ).copyWith(
+                                                                color:
+                                                                    const Color(
+                                                                      0xFF3F3D56,
+                                                                    ),
                                                               ),
                                                         ),
 

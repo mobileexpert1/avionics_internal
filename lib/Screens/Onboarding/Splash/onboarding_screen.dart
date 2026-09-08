@@ -14,6 +14,7 @@ import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/splashInfo/onboarding_model.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -235,10 +236,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       },
                       child: Text(
                         ConstantStrings.skip,
-                        style: TextStyle(
+                        style: AppTextStyles.regular(
+                          isWeb ? 20 : 15,
+                        ).copyWith(
                           color: AppColors.skip,
-                          fontSize: isWeb ? 20 : 15,
-                        ),
+                        )
                       ),
                     ),
                     TextButton(
@@ -260,10 +262,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       },
                       child: Text(
                         ConstantStrings.next,
-                        style: TextStyle(
+                        style:AppTextStyles.regular(
+                          isWeb ? 20 : 15,
+                        ).copyWith(
                           color: AppColors.next,
-                          fontSize: isWeb ? 20 : 15,
-                        ),
+                        )
                       ),
                     ),
                   ],

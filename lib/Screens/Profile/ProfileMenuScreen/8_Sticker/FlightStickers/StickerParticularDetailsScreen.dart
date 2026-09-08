@@ -6,6 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Games/SubGameSection/StickerData/StickerParticularDetails/StickerParticular_cubit.dart';
@@ -36,6 +39,10 @@ class _StickerUnlockScreenState extends State<StickerUnlockScreen> {
     context.read<StickerParticularCubit>().loadParticularStickerDetails(
       widget.stickerId,
     );
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.subscriptionScreen,
+    );
+    UxCamService.instance.logScreen(FirebaseEvents.subscriptionScreen);
   }
 
   @override

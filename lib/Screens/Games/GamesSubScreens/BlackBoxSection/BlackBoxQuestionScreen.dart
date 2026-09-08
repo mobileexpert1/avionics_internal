@@ -416,13 +416,7 @@ class BlackBoxCard extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 13),
-                  Text(
-                    question,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text(question, style: AppTextStyles.bold(18)),
                   const SizedBox(height: 20),
                   if (questionType == '2')
                     _buildTrueFalseOptions(context)
@@ -573,15 +567,7 @@ class BlackBoxCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+              Expanded(child: Text(label, style: AppTextStyles.medium(15))),
               if (trailingIcon != null) trailingIcon,
             ],
           ),
@@ -648,10 +634,7 @@ class BlackBoxCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       "$letter. ${options[index]}",
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: AppTextStyles.medium(15),
                     ),
                   ),
                   if (trailingIcon != null) trailingIcon,
@@ -761,7 +744,9 @@ class BlackBoxCard extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   label,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  style: AppTextStyles.regular(
+                    14,
+                  ).copyWith(color: Colors.white),
                 ),
               ),
 
@@ -951,10 +936,7 @@ class BlackBoxCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       "$letter. ${options[index]}",
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: AppTextStyles.medium(15),
                     ),
                   ),
                   if (trailingIcon != null) trailingIcon,
@@ -1024,10 +1006,7 @@ class BlackBoxProgressCard extends StatelessWidget {
             children: [
               Text(
                 'Question $currentQuestion of $totalQuestions',
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: AppTextStyles.medium(17),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1056,11 +1035,9 @@ class BlackBoxProgressCard extends StatelessWidget {
                     child: Text(
                       '${secondsRemaining}s',
                       textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.semiBold(
+                        16,
+                      ).copyWith(color: Colors.black),
                     ),
                   ),
                 ],
@@ -1125,11 +1102,9 @@ class _AnimatedTitleState extends State<AnimatedTitle>
         position: _offsetAnimation,
         child: Text(
           widget.text,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF151A6A),
-          ),
+          style: AppTextStyles.bold(
+            18,
+          ).copyWith(color: const Color(0xFF151A6A)),
           maxLines: 1,
           overflow: TextOverflow.visible,
         ),

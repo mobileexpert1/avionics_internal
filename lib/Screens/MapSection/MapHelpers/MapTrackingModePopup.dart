@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class MapTrackingModePopup extends StatelessWidget {
   final VoidCallback onFlyingSelected;
@@ -47,11 +48,9 @@ class MapTrackingModePopup extends StatelessWidget {
                   child: Center(
                     child: Text(
                       "Choose Your Tracking Mode",
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
+                      style: AppTextStyles.medium(
+                        17,
+                      ).copyWith(color: Colors.black),
                     ),
                   ),
                 ),
@@ -86,7 +85,9 @@ class MapTrackingModePopup extends StatelessWidget {
                     Expanded(
                       child: Text(
                         "Flying in the Area",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: AppTextStyles.regular(
+                          16,
+                        ).copyWith(color: Colors.white),
                       ),
                     ),
                     Icon(
@@ -100,9 +101,9 @@ class MapTrackingModePopup extends StatelessWidget {
             ),
 
             const SizedBox(height: 6),
-            const Text(
+            Text(
               "Click to view flights currently flying in this area on the map",
-              style: TextStyle(color: Colors.black, fontSize: 13),
+              style: AppTextStyles.regular(13).copyWith(color: Colors.black),
               textAlign: TextAlign.start,
             ),
 
@@ -130,7 +131,9 @@ class MapTrackingModePopup extends StatelessWidget {
                     Expanded(
                       child: Text(
                         "Track a Flight",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: AppTextStyles.regular(
+                          16,
+                        ).copyWith(color: Colors.white),
                       ),
                     ),
                     const Icon(
@@ -144,9 +147,9 @@ class MapTrackingModePopup extends StatelessWidget {
             ),
 
             const SizedBox(height: 6),
-            const Text(
+            Text(
               "View real-time status, route, and updates for a flight.",
-              style: TextStyle(color: Colors.black, fontSize: 12),
+              style: AppTextStyles.regular(12).copyWith(color: Colors.black),
               textAlign: TextAlign.start,
             ),
             const SizedBox(height: 30),

@@ -458,11 +458,11 @@ class WinRuleProgressCard extends StatelessWidget {
                         child: Text(
                           '${(progress * 100).toStringAsFixed(0)}%',
 
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF27214B),
-                          ),
+                          style:AppTextStyles.bold(
+                            12,
+                          ).copyWith(
+                            color: const Color(0xFF27214B),
+                          )
                         ),
                       ),
 

@@ -57,12 +57,10 @@ class _AirportStationDetailCardState extends State<AirportStationDetailCard> {
           color: Colors.white,
           borderRadius: isDesktopWeb
               ? const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          )
-              : const BorderRadius.only(
-            topRight: Radius.circular(30),
-          ),
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                )
+              : const BorderRadius.only(topRight: Radius.circular(30)),
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,
@@ -229,11 +227,9 @@ Widget buildActionText(String title, VoidCallback onTap) {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: AppColors.primaryBlue,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.semiBold(
+            16,
+          ).copyWith(color: AppColors.primaryBlue),
         ),
         const SizedBox(width: 6),
         const Icon(

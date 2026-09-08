@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
+
 class LiveBadge extends StatefulWidget {
   const LiveBadge({Key? key}) : super(key: key);
 
@@ -51,14 +53,7 @@ class _LiveBadgeState extends State<LiveBadge>
           },
         ),
         const SizedBox(width: 5),
-        const Text(
-          "LIVE",
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-        ),
+        Text("LIVE", style: AppTextStyles.bold(12).copyWith(color: Colors.red)),
       ],
     );
   }

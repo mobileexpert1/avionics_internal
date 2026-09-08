@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class ImageBasedResultDialog extends StatelessWidget {
   final int correctAnswers;
@@ -97,11 +98,9 @@ class ImageBasedResultDialog extends StatelessWidget {
             // Score
             Text(
               '$correctAnswers/$totalQuestions',
-              style: TextStyle(
-                fontSize: isDesktopWeb ? 26 : 24,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xff201E48),
-              ),
+              style: AppTextStyles.bold(
+                isDesktopWeb ? 26 : 24,
+              ).copyWith(color: AppColors.primaryDark),
             ),
 
             const SizedBox(height: 8),
@@ -110,12 +109,9 @@ class ImageBasedResultDialog extends StatelessWidget {
             Text(
               isSuccess ? 'Component Earned!' : 'Aircraft\nComponent locked!',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: isDesktopWeb ? 26 : 24,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xff201E48),
-                height: 1.0,
-              ),
+              style: AppTextStyles.bold(
+                isDesktopWeb ? 26 : 24,
+              ).copyWith(color: AppColors.primaryDark, height: 1.0),
             ),
 
             const SizedBox(height: 12),
@@ -139,11 +135,9 @@ class ImageBasedResultDialog extends StatelessWidget {
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: isDesktopWeb ? 21 : 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                            style: AppTextStyles.bold(
+                              isDesktopWeb ? 21 : 20,
+                            ).copyWith(color: AppColors.black),
                           ),
 
                           const SizedBox(height: 12),
@@ -153,11 +147,9 @@ class ImageBasedResultDialog extends StatelessWidget {
                               child: Text(
                                 componentDescription,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: isDesktopWeb ? 13 : 14,
-                                  height: 1.4,
-                                  color: Colors.black87,
-                                ),
+                                style: AppTextStyles.regular(
+                                  isDesktopWeb ? 13 : 14,
+                                ).copyWith(height: 1.4, color: Colors.black87),
                               ),
                             ),
                           ),
@@ -183,11 +175,9 @@ class ImageBasedResultDialog extends StatelessWidget {
                             'aircraft components and continue '
                             'building your aircraft.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 15,
-                              height: 1.4,
-                              color: Colors.black87,
-                            ),
+                            style: AppTextStyles.regular(
+                              15,
+                            ).copyWith(height: 1.4, color: Colors.black87),
                           ),
                         ),
                       ],
@@ -214,7 +204,7 @@ class ImageBasedResultDialog extends StatelessWidget {
                 ),
                 child: Text(
                   'Continue',
-                  style: TextStyle(fontSize: isDesktopWeb ? 19 : 18),
+                  style: AppTextStyles.regular(isDesktopWeb ? 19 : 18),
                 ),
               ),
             ),

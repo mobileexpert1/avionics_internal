@@ -178,10 +178,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                       }
 
                       if (state.listoFAircraftModels.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
                             'No models available',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                            style: AppTextStyles.regular(
+                              16,
+                            ).copyWith(color: Colors.grey),
                           ),
                         );
                       }

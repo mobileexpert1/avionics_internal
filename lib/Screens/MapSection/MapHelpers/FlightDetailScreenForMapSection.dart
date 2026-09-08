@@ -674,11 +674,9 @@ class _FlightDetailScreenForMapSectionState
                                     ),
                                     child: Text(
                                       '© ${image.cc}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      style: AppTextStyles.medium(
+                                        8,
+                                      ).copyWith(color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -1823,7 +1821,10 @@ Widget buildCustomProgressBar(double progress, int groundSpeed, int altitude) {
               ).copyWith(height: 1.0, color: AppColors.primaryBlue),
             ),
             const SizedBox(width: 10),
-            const Text("•", style: TextStyle(color: Colors.grey)),
+            Text(
+              "•",
+              style: AppTextStyles.regular(14).copyWith(color: Colors.grey),
+            ),
             const SizedBox(width: 10),
             Text(
               '$altitude ft',

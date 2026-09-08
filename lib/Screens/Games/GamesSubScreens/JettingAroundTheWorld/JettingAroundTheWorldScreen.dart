@@ -195,7 +195,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             end: points[i + 1].coordinates,
             curveScale: 0.5,
             id: i.toString(),
-            isLastId: i == points.length - 2 ? points.last.id : "",
+            // isLastId: i == points.length - 2 ? points.last.id : "",
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,
@@ -432,7 +432,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                                 ),
                                 TextSpan(
                                   text: "\n",
-                                  style: TextStyle(fontSize: 10),
+                                  style: AppTextStyles.regular(10),
                                 ),
                                 TextSpan(
                                   text:

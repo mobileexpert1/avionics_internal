@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
+import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../bloc/Profile/UnitSelection/unit_selection_cubit.dart';
 import '../../../../bloc/Profile/UnitSelection/unit_selection_state.dart';
 
@@ -106,10 +108,7 @@ class UnitSelectionScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
+        Text(title, style: AppTextStyles.medium(14)),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
@@ -148,10 +147,9 @@ class UnitSelectionScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       option,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: AppTextStyles.regular(
+                        0,
+                      ).copyWith(color: AppColors.black),
                     ),
                   ),
                 ),

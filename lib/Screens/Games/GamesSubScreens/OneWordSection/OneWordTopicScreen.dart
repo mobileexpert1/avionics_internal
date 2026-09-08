@@ -272,11 +272,9 @@ class _TopicCardState extends State<_TopicCard> {
                         widget.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: widget.isWeb ? 18 : 15,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                        ),
+                        style: AppTextStyles.bold(
+                          widget.isWeb ? 18 : 15,
+                        ).copyWith(color: Colors.black87),
                       ),
 
                       if (widget.subtitle.isNotEmpty) ...[
@@ -286,12 +284,9 @@ class _TopicCardState extends State<_TopicCard> {
                           widget.subtitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: widget.isWeb ? 13 : 11,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black54,
-                            height: 1.3,
-                          ),
+                          style: AppTextStyles.regular(
+                            widget.isWeb ? 13 : 11,
+                          ).copyWith(color: Colors.black54, height: 1.3),
                         ),
                       ],
                     ],

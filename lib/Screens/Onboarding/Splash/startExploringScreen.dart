@@ -7,6 +7,7 @@ import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../Login/LoginScreen.dart';
 import '../Signup/SignupScreen.dart';
 
@@ -104,11 +105,9 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                         children: [
                           Text(
                             ConstantStrings.exploring,
-                            style: TextStyle(
-                              fontSize: textFontSize,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF1C1733),
-                            ),
+                            style: AppTextStyles.bold(
+                              textFontSize,
+                            ).copyWith(color: const Color(0xFF1C1733)),
                           ),
                           const SizedBox(height: 24),
 
@@ -136,12 +135,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                   disableSwipeBack: true,
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 ConstantStrings.createAccount,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
+                                style: AppTextStyles.regular(
+                                  16,
+                                ).copyWith(color: Colors.white),
                               ),
                             ),
                           ),
@@ -171,12 +169,11 @@ class _StartExploringScreenState extends State<StartExploringScreen> {
                                   disableSwipeBack: true,
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 ConstantStrings.loginButton,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColors.loginTxt,
-                                ),
+                                style: AppTextStyles.regular(
+                                  16,
+                                ).copyWith(color: AppColors.loginTxt),
                               ),
                             ),
                           ),

@@ -394,7 +394,10 @@ class _PopupMenuTile extends StatelessWidget {
       children: [
         SvgPicture.asset(CommonUi.setSvgImage(iconName), fit: BoxFit.cover),
         const SizedBox(width: 10),
-        Text(title, style: TextStyle(color: textColor)),
+        Text(
+          title,
+          style: AppTextStyles.regular(14).copyWith(color: textColor),
+        ),
       ],
     );
   }

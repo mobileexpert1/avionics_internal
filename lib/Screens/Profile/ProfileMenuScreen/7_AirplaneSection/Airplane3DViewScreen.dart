@@ -37,7 +37,6 @@ class _Airplane3DViewScreenState extends State<Airplane3DViewScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.ThreeDairplane,
     );
-
     UxCamService.instance.logScreen(
       FirebaseEvents.ThreeDairplane,
     );
