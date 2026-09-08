@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
@@ -40,6 +41,7 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.blackBoxOverViewClueScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.blackBoxOverViewClueScreen);
   }
 
   @override
@@ -509,6 +511,10 @@ class _OverviewAndClueDeckScreenState extends State<OverviewAndClueDeckScreen> {
                                     });
 
                                     AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.blackBoxOverViewClueScreen,
+                                      FirebaseEvents.blackBoxOverViewClueButton,
+                                    );
+                                    UxCamService.instance.buttonPressed(
                                       FirebaseEvents.blackBoxOverViewClueScreen,
                                       FirebaseEvents.blackBoxOverViewClueButton,
                                     );

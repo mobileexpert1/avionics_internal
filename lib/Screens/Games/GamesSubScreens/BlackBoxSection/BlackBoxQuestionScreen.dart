@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -49,6 +50,7 @@ class _BlackBoxScreenState extends State<BlackBoxScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.blackBoxMainQuestionScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.blackBoxMainQuestionScreen);
     isNeedToShowOrNot = false;
     isNeedToShowFlagOptions = false;
   }

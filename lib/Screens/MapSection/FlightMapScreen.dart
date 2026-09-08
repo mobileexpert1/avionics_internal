@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/CustomAppBar.dart';
@@ -99,6 +100,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.trackScreen);
+    UxCamService.instance.buttonPressed(
+      FirebaseEvents.flyingInTheAreaButton,
+      FirebaseEvents.trackScreen,
+    );
     polygonNotifier = ValueNotifier<Set<Polygon>>(<Polygon>{});
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -120,6 +125,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
               _handleFilterTap(context);
 
               AnalyticsService.instance.buttonPressed(
+                FirebaseEvents.flyingInTheAreaButton,
+                FirebaseEvents.trackScreen,
+              );
+              UxCamService.instance.buttonPressed(
                 FirebaseEvents.flyingInTheAreaButton,
                 FirebaseEvents.trackScreen,
               );
@@ -712,6 +721,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       FirebaseEvents.trackAndSearchFlight,
       FirebaseEvents.trackScreen,
     );
+    UxCamService.instance.buttonPressed(
+      FirebaseEvents.trackAndSearchFlight,
+      FirebaseEvents.trackScreen,
+    );
 
     final result = await AppNavigator.push(
       context,
@@ -864,6 +877,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                       FirebaseEvents.flyingInTheAreaButton,
                       FirebaseEvents.trackScreen,
                     );
+                    UxCamService.instance.buttonPressed(
+                      FirebaseEvents.flyingInTheAreaButton,
+                      FirebaseEvents.trackScreen,
+                    );
                   });
 
                   _resetFlightSelection();
@@ -926,6 +943,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                     _isForFlyingInTheArea = 2;
 
                     AnalyticsService.instance.buttonPressed(
+                      FirebaseEvents.trackAFlightButton,
+                      FirebaseEvents.trackScreen,
+                    );
+                    UxCamService.instance.buttonPressed(
                       FirebaseEvents.trackAFlightButton,
                       FirebaseEvents.trackScreen,
                     );
@@ -1259,6 +1280,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       FirebaseEvents.trackScreen,
     );
 
+    UxCamService.instance.buttonPressed(
+      FirebaseEvents.changeMapType,
+      FirebaseEvents.trackScreen,
+    );
     /* ---------------- MAP TYPE + POLYGON ---------------- */
 
     _disableMapGesture = false;
@@ -1557,7 +1582,13 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                                                                 FirebaseEvents
                                                                     .trackScreen,
                                                               );
-
+                                                          UxCamService.instance
+                                                              .buttonPressed(
+                                                                FirebaseEvents
+                                                                    .favOrUnFavFlightButton,
+                                                                FirebaseEvents
+                                                                    .trackScreen,
+                                                              );
                                                           final cubit = context
                                                               .read<
                                                                 AllPlanesCubit
@@ -1874,7 +1905,10 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                 FirebaseEvents.openAskWilcoChatButton,
                 FirebaseEvents.trackScreen,
               );
-
+              UxCamService.instance.buttonPressed(
+                FirebaseEvents.openAskWilcoChatButton,
+                FirebaseEvents.trackScreen,
+              );
               AppNavigator.push(
                 context,
                 AskWilcoScreen(

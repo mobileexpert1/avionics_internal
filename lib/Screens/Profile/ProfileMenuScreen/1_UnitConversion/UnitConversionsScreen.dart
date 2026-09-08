@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -32,6 +33,7 @@ class _UnitConversionsScreenState extends State<UnitConversionsScreen> {
     _cubit = ConversionCubit();
     _cubit.loadConversions(context);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.conversionScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.conversionScreen);
   }
 
   @override

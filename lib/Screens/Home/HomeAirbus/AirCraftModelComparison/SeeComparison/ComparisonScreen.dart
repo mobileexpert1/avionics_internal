@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -55,6 +56,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       aircraft2Id: widget.model2,
     );
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.comparisonScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.comparisonScreen);
   }
 
   @override

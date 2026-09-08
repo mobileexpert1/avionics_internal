@@ -29,6 +29,9 @@ class AirplanePartsCard extends StatelessWidget {
 
     final bool isUnlocked = part.collectedCount >= part.totalCount;
 
+    final bool isInProgress =
+        part.collectedCount > 0 && part.collectedCount < part.totalCount;
+
     return InkWell(
       borderRadius: BorderRadius.circular(10),
       onTap: onTap,
@@ -37,7 +40,13 @@ class AirplanePartsCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isUnlocked ? Colors.white : const Color(0xffD3D3D3),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xffE5E5E5)),
+          border: Border.all(
+            color: isInProgress
+                ? const Color(0xff4797DB)
+                : const Color(0xffE5E5E5),
+            width: isInProgress ? 1.5 : 1,
+          ),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(.04),
@@ -46,6 +55,7 @@ class AirplanePartsCard extends StatelessWidget {
             ),
           ],
         ),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -57,13 +67,12 @@ class AirplanePartsCard extends StatelessWidget {
                     '${index + 1}. ${part.name}',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.medium(
-                      isDesktopWeb ? 16 : 16,
-                    ).copyWith(
-                      color: isUnlocked
-                          ? AppColors.black
-                          : const Color(0xff666666),
-                    ),
+                    style: AppTextStyles.medium(isDesktopWeb ? 16 : 16)
+                        .copyWith(
+                          color: isUnlocked
+                              ? AppColors.black
+                              : const Color(0xff666666),
+                        ),
                   ),
                 ),
 
@@ -117,8 +126,33 @@ class AirplanePartsCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 3),
+            if (isInProgress) ...[
+              Center(
+                child: SizedBox(
+                  width: 80,
+                  height: 24,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(5),
+                    onTap: onTap,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xff4797DB),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'In Progress',
+                        style: AppTextStyles.medium(
+                          14,
+                        ).copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
 
+            // const SizedBox(height: 1),
             // Progress
             RichText(
               text: TextSpan(

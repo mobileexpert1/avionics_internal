@@ -9,6 +9,7 @@ import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
@@ -32,6 +33,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.trackAndSearchFlight,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.trackAndSearchFlight);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         searchFocusNode.requestFocus();

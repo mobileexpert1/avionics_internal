@@ -6,6 +6,7 @@ import 'package:purchases_flutter/models/package_wrapper.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -51,7 +52,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
-
+    UxCamService.instance.logScreen(FirebaseEvents.subscriptionScreen);
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded(
@@ -558,6 +559,10 @@ class _PlanCard extends StatelessWidget {
                   FirebaseEvents.subscriptionScreen,
                   FirebaseEvents.goPremiumSubscriptionButton,
                 );
+                UxCamService.instance.buttonPressed(
+                  FirebaseEvents.subscriptionScreen,
+                  FirebaseEvents.goPremiumSubscriptionButton,
+                );
               },
             ),
 
@@ -577,6 +582,10 @@ class _PlanCard extends StatelessWidget {
             //       FirebaseEvents.subscriptionScreen,
             //       FirebaseEvents.restoreSubscriptionButton,
             //     );
+            // UxCamService.instance.buttonPressed(
+            // FirebaseEvents.subscriptionScreen,
+            // FirebaseEvents.restoreSubscriptionButton,
+            // );
             //   },
             // ),
             const SizedBox(height: 20),

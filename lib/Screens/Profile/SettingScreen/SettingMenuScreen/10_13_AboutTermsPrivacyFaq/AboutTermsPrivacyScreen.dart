@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
@@ -31,7 +32,7 @@ class _AboutTermsPrivacyState extends State<AboutTermsPrivacyScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.creditTokenScreen,
     );
-
+    UxCamService.instance.logScreen(FirebaseEvents.creditTokenScreen);
     if (!kIsWeb) {
       controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted);

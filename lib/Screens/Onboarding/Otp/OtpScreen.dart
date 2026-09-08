@@ -8,6 +8,8 @@ import 'package:pinput/pinput.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/AppColors.dart';
+import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -49,6 +51,7 @@ class _OtpScreenState extends State<OtpScreen> {
   void initState() {
     super.initState();
     _startCountdown();
+    UxCamService.instance.logScreen(FirebaseEvents.otpScreen);
   }
 
   void _startCountdown() {

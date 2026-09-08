@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -46,6 +47,7 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.aircraftComparisonScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.aircraftComparisonScreen);
   }
 
   void _onScroll() {

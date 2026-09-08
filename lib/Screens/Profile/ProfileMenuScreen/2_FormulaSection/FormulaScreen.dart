@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -33,6 +34,7 @@ class _FormulasScreenState extends State<FormulasScreen> {
     _cubit = FormulaCubit();
     _cubit.loadFormulas(context);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.formulaScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.formulaScreen);
   }
 
   @override

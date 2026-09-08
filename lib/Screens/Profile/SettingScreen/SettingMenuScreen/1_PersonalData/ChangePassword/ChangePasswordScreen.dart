@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 
 import '../../../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Constants/ConstantStrings.dart';
 import '../../../../../../Constants/constantImages.dart';
@@ -41,6 +43,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.changePasswordScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.changePasswordScreen);
   }
 
   @override
@@ -99,14 +102,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               >(
                                 selector: (state) => state.oldPasswordError,
                                 builder: (context, oldPasswordError) {
-                                  return CustomTextField(
-                                    obscureText: true,
-                                    label: ConstantStrings.oldPasswordLabel,
-                                    controller: oldPasswordController,
-                                    errorText: oldPasswordError,
-                                    onChanged: (val) => context
-                                        .read<ChangePasswordCubit>()
-                                        .oldPasswordChanged(val),
+                                  return OccludeWrapper(
+                                    child: CustomTextField(
+                                      obscureText: true,
+                                      label: ConstantStrings.oldPasswordLabel,
+                                      controller: oldPasswordController,
+                                      errorText: oldPasswordError,
+                                      onChanged: (val) => context
+                                          .read<ChangePasswordCubit>()
+                                          .oldPasswordChanged(val),
+                                    ),
                                   );
                                 },
                               ),
@@ -118,14 +123,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               >(
                                 selector: (state) => state.passwordError,
                                 builder: (context, passwordError) {
-                                  return CustomTextField(
-                                    obscureText: true,
-                                    label: ConstantStrings.newPasswordLabel,
-                                    controller: namePasswordController,
-                                    errorText: passwordError,
-                                    onChanged: (val) => context
-                                        .read<ChangePasswordCubit>()
-                                        .newPasswordChanged(val),
+                                  return OccludeWrapper(
+                                    child: CustomTextField(
+                                      obscureText: true,
+                                      label: ConstantStrings.newPasswordLabel,
+                                      controller: namePasswordController,
+                                      errorText: passwordError,
+                                      onChanged: (val) => context
+                                          .read<ChangePasswordCubit>()
+                                          .newPasswordChanged(val),
+                                    ),
                                   );
                                 },
                               ),
@@ -137,14 +144,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               >(
                                 selector: (state) => state.confirmPasswordError,
                                 builder: (context, confirmPasswordError) {
-                                  return CustomTextField(
-                                    obscureText: true,
-                                    label: ConstantStrings.confirmPasswordLabel,
-                                    controller: confirmPasswordController,
-                                    errorText: confirmPasswordError,
-                                    onChanged: (val) => context
-                                        .read<ChangePasswordCubit>()
-                                        .confirmPasswordChanged(val),
+                                  return OccludeWrapper(
+                                    child: CustomTextField(
+                                      obscureText: true,
+                                      label:
+                                          ConstantStrings.confirmPasswordLabel,
+                                      controller: confirmPasswordController,
+                                      errorText: confirmPasswordError,
+                                      onChanged: (val) => context
+                                          .read<ChangePasswordCubit>()
+                                          .confirmPasswordChanged(val),
+                                    ),
                                   );
                                 },
                               ),
@@ -158,26 +168,39 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 builder: (context, isButtonEnabled) {
                                   return Center(
                                     child: SizedBox(
-                                      width: isDesktopWeb ? 500 : double.infinity,
+                                      width: isDesktopWeb
+                                          ? 500
+                                          : double.infinity,
                                       height: 50,
                                       child: CustomBottomButton(
-                                        fontStyle: AppTextStyles.regular(21.46).copyWith(
-                                          height: 1.0,
-                                          color: isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade600,
-                                        ),
+                                        fontStyle: AppTextStyles.regular(21.46)
+                                            .copyWith(
+                                              height: 1.0,
+                                              color: isButtonEnabled
+                                                  ? Colors.white
+                                                  : Colors.grey.shade600,
+                                            ),
                                         title: ConstantStrings.save,
                                         backgroundColor: isButtonEnabled
                                             ? AppColors.primaryValueColour
-                                            : AppColors.darkSeparatorColourAppBar,
+                                            : AppColors
+                                                  .darkSeparatorColourAppBar,
                                         textColor: Colors.white,
                                         icon: const SizedBox(width: 0),
                                         isEnabled: isButtonEnabled,
                                         onPressed: () {
-                                          context.read<ChangePasswordCubit>().submitIfValid(context);
+                                          context
+                                              .read<ChangePasswordCubit>()
+                                              .submitIfValid(context);
 
-                                          AnalyticsService.instance.buttonPressed(
+                                          AnalyticsService.instance
+                                              .buttonPressed(
+                                                FirebaseEvents
+                                                    .changePasswordButton,
+                                                FirebaseEvents
+                                                    .changePasswordScreen,
+                                              );
+                                          UxCamService.instance.buttonPressed(
                                             FirebaseEvents.changePasswordButton,
                                             FirebaseEvents.changePasswordScreen,
                                           );

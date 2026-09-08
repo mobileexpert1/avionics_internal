@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/AppNavigator.dart';
@@ -34,6 +35,7 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.oneWordTopicListScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.oneWordTopicListScreen);
   }
 
   @override
@@ -127,6 +129,10 @@ class _OneWordTopicScreenState extends State<OneWordTopicScreen> {
                                   disableSwipeBack: true,
                                 );
                                 AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.oneWordTopicListScreen,
+                                  FirebaseEvents.oneWordTopicButton,
+                                );
+                                UxCamService.instance.buttonPressed(
                                   FirebaseEvents.oneWordTopicListScreen,
                                   FirebaseEvents.oneWordTopicButton,
                                 );

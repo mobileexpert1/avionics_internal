@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/GameResultCard.dart';
@@ -37,6 +38,9 @@ class _BlackBoxResultScreenState extends State<BlackBoxResultScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.blackBoxCalculationResultScreen,
+    );
+    UxCamService.instance.logScreen(
       FirebaseEvents.blackBoxCalculationResultScreen,
     );
   }

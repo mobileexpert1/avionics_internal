@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../Helpers/Games/GameResultCard.dart';
@@ -44,6 +45,7 @@ class _MainResultScreenState extends State<MainResultScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.calculationResultScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.calculationResultScreen);
   }
 
   @override

@@ -9,6 +9,9 @@ import 'package:flutter_earth_globe/point_connection.dart';
 import 'package:flutter_earth_globe/point_connection_style.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
@@ -50,11 +53,11 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
   List<PointConnection> connections = [];
 
   Widget pointLabelBuilder(
-      BuildContext context,
-      Point point,
-      bool isHovering,
-      bool visible,
-      ) {
+    BuildContext context,
+    Point point,
+    bool isHovering,
+    bool visible,
+  ) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
@@ -110,6 +113,26 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
       isDayNightCycleEnabled: false,
       dayNightBlendFactor: 0.15,
     );
+
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.jettingaroundtheworld,
+    );
+    UxCamService.instance.logScreen(FirebaseEvents.jettingaroundtheworld);
+    Future.microtask(() {
+      if (!mounted) return;
+
+      final cubit = context.read<JettingTheWorldCubit>();
+
+      if (!widget.isComeFromResultScreen) {
+        cubit.loadAirports(context);
+      } else {
+        final result = widget.responseFromResultScreenData;
+
+        if (result != null) {
+          cubit.loadAirportsFromUnlockResponse(context, result);
+        }
+      }
+    });
   }
 
   @override
@@ -378,7 +401,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                                 ),
                                 TextSpan(
                                   text:
-                                  "You have Reached ${state.airportList.last.city}",
+                                      "You have Reached ${state.airportList.last.city}",
                                   style: AppTextStyles.regular(
                                     16,
                                   ).copyWith(color: AppColors.white),
@@ -413,7 +436,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                                 ),
                                 TextSpan(
                                   text:
-                                  "Travel across the world, explore iconic airports, and earn Jettons as you progress.",
+                                      "Travel across the world, explore iconic airports, and earn Jettons as you progress.",
                                   style: AppTextStyles.regular(
                                     16,
                                   ).copyWith(color: AppColors.white),
@@ -489,7 +512,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
                                     child: statCard(
                                       value: '80',
                                       label:
-                                      'Jettons earned as the\nFrequent Flyer',
+                                          'Jettons earned as the\nFrequent Flyer',
                                     ),
                                   ),
                                   const SizedBox(width: 12),

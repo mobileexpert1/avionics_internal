@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -38,7 +39,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.glossaryScreen);
-
+    UxCamService.instance.logScreen(FirebaseEvents.glossaryScreen);
     context.read<GlossaryCubit>().state.selectedLetter = "A";
     isSelectedExpanded = true;
     context.read<GlossaryCubit>().loadGlossary(context: context);

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -55,6 +56,7 @@ class _AirbusScreenState extends State<ManufacturerDetailScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.manufacturerDetailScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.manufacturerDetailScreen);
   }
 
   @override

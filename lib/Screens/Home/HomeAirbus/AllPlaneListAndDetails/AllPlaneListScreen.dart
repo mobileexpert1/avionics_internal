@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -52,6 +53,7 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.airCraftDetailScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.airCraftDetailScreen);
   }
 
   void _onScroll() {
@@ -248,7 +250,11 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                 FirebaseEvents
                                                     .allPlanesListScreen,
                                               );
-
+                                          UxCamService.instance.buttonPressed(
+                                            FirebaseEvents
+                                                .manufacturerListItemButton,
+                                            FirebaseEvents.allPlanesListScreen,
+                                          );
                                           AppNavigator.push(
                                             context,
                                             AirCraftDetailScreen(
@@ -310,7 +316,12 @@ class _AllPlanesScreenState extends State<AllPlanesListScreen> {
                                                   FirebaseEvents
                                                       .allPlanesListScreen,
                                                 );
-
+                                            UxCamService.instance.buttonPressed(
+                                              FirebaseEvents
+                                                  .manufacturerListItemButton,
+                                              FirebaseEvents
+                                                  .allPlanesListScreen,
+                                            );
                                             AppNavigator.push(
                                               context,
                                               AirCraftDetailScreen(

@@ -7,6 +7,9 @@ import '../../../../../../Constants/AppColors.dart';
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 
 class AirplaneCompleteScreen extends StatefulWidget {
   final String aircraftPath;
@@ -25,8 +28,9 @@ class _AirplaneCompleteScreenState extends State<AirplaneCompleteScreen> {
   @override
   void initState() {
     super.initState();
-
     _controller = Flutter3DController();
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.myairplanescreen);
+    UxCamService.instance.logScreen(FirebaseEvents.myairplanescreen);
   }
 
   @override

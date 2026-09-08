@@ -1,3 +1,4 @@
+import 'package:avionics_internal/Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class _GamesScreenState extends State<GamesScreen> {
     _gamesCubit = GamesCubit();
     _gamesCubit.loadGames();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.gamesScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.gamesScreen);
     scrollToAboveScreen();
   }
 

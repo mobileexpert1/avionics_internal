@@ -10,6 +10,7 @@ import 'package:universal_html/html.dart' as html;
 import '../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -49,6 +50,7 @@ class _BadgesScreenState extends State<BadgesScreen> {
     }
 
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.badgesScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.badgesScreen);
   }
 
   @override

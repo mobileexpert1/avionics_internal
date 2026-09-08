@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppNavigator.dart';
@@ -38,6 +39,7 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.quizLockListScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.quizLockListScreen);
   }
 
   @override
@@ -124,6 +126,10 @@ class _BlackBoxLockScreenState extends State<BlackBoxLockScreen> {
                                   );
 
                                   AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.quizListLockButton,
+                                    FirebaseEvents.quizLockListScreen,
+                                  );
+                                  UxCamService.instance.buttonPressed(
                                     FirebaseEvents.quizListLockButton,
                                     FirebaseEvents.quizLockListScreen,
                                   );

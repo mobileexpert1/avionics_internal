@@ -17,6 +17,7 @@ import 'package:flutter_facebook_auth_web/flutter_facebook_auth_web.dart';
 import 'package:flutter_inappwebview_web/web/main.dart';
 import 'package:flutter_local_notifications_web/flutter_local_notifications_web.dart';
 import 'package:flutter_secure_storage_web/flutter_secure_storage_web.dart';
+import 'package:flutter_uxcam/src/web/flutter_uxcam_web.dart';
 import 'package:geolocator_web/geolocator_web.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:google_sign_in_web/google_sign_in_web.dart';
@@ -43,6 +44,7 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   InAppWebViewFlutterPlugin.registerWith(registrar);
   WebFlutterLocalNotificationsPlugin.registerWith(registrar);
   FlutterSecureStorageWeb.registerWith(registrar);
+  FlutterUxcamWeb.registerWith(registrar);
   GeolocatorPlugin.registerWith(registrar);
   GoogleMapsPlugin.registerWith(registrar);
   GoogleSignInPlugin.registerWith(registrar);

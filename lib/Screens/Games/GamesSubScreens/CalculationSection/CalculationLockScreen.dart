@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
@@ -38,6 +39,7 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.calculationsLockListScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.calculationsLockListScreen);
   }
 
   @override
@@ -121,6 +123,10 @@ class _CalculationLockScreenState extends State<CalculationLockScreen> {
                                     disableSwipeBack: true,
                                   );
                                   AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.calculationsLockButton,
+                                    FirebaseEvents.calculationsLockListScreen,
+                                  );
+                                  UxCamService.instance.buttonPressed(
                                     FirebaseEvents.calculationsLockButton,
                                     FirebaseEvents.calculationsLockListScreen,
                                   );

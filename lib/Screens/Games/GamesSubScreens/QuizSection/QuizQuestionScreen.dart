@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:avionics_internal/Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/CustomFiles/CustomBottomButton.dart';
 import 'package:avionics_internal/bloc/Games/QuizQuestionScreen/quiz_question_cubit.dart';
@@ -56,6 +57,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.quizMainQuestionScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.quizMainQuestionScreen);
   }
 
   void _showRadioPopup(BuildContext context) {
@@ -66,6 +68,10 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
       builder: (_) => RadioPopup(
         onSelected: (selectedIndex) {
           AnalyticsService.instance.buttonPressed(
+            FirebaseEvents.quizQuestionReportButton,
+            FirebaseEvents.quizMainQuestionScreen,
+          );
+          UxCamService.instance.buttonPressed(
             FirebaseEvents.quizQuestionReportButton,
             FirebaseEvents.quizMainQuestionScreen,
           );

@@ -4,6 +4,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../Home/RootTabbar/RootDecider.dart';
@@ -21,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     _navigateAfterDelay();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.splashScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.splashScreen);
   }
 
   Future<void> _navigateAfterDelay() async {

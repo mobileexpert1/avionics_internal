@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Helpers/AppNavigator.dart';
@@ -40,6 +41,7 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.modelCompareScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.modelCompareScreen);
   }
 
   void _navigateAndSelectModel(int modelNumber) async {
@@ -47,7 +49,10 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
       FirebaseEvents.aircraftComparisonScreen,
       FirebaseEvents.comparisonScreen,
     );
-
+    UxCamService.instance.buttonPressed(
+      FirebaseEvents.aircraftComparisonScreen,
+      FirebaseEvents.comparisonScreen,
+    );
     final result = await AppNavigator.push<AircraftModel>(
       context,
       AircraftComparisonScreen(
@@ -235,7 +240,10 @@ class _SelectModelCompareScreenState extends State<SelectModelCompareScreen> {
                             FirebaseEvents.comparedbuttons,
                             FirebaseEvents.modelCompareScreen,
                           );
-
+                          UxCamService.instance.buttonPressed(
+                            FirebaseEvents.comparedbuttons,
+                            FirebaseEvents.modelCompareScreen,
+                          );
                           AppNavigator.push(
                             context,
                             ComparisonScreen(

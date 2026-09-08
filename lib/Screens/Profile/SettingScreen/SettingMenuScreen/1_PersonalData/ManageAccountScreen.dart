@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomBottomButton.dart';
@@ -46,6 +47,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.manageAccountScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.manageAccountScreen);
   }
 
   @override
@@ -65,7 +67,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
       child: BlocConsumer<ManageaccCubit, ManageAccState>(
         listener: (context, state) {
           if (!state.isLoading && state.status == CommonApiStatus.success) {
-            if (!_userDataLoaded ) {
+            if (!_userDataLoaded) {
               _userDataLoaded = true;
 
               firstNameController.text = state.firstName;
@@ -180,10 +182,7 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                               child: CustomBottomButton(
                                 fontStyle: AppTextStyles.regular(
                                   18,
-                                ).copyWith(
-                                  height: 1.0,
-                                  color: Colors.white,
-                                ),
+                                ).copyWith(height: 1.0, color: Colors.white),
 
                                 title: buttonBottomTitle,
 
@@ -195,19 +194,23 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
 
                                 icon: const SizedBox(width: 0),
 
-                                isEnabled: (buttonBottomTitle == ConstantStrings.save)
+                                isEnabled:
+                                    (buttonBottomTitle == ConstantStrings.save)
                                     ? state.isButtonEnabled
                                     : !isSocialLogin && state.isButtonEnabled,
 
                                 onPressed: () async {
-                                  if (buttonBottomTitle == ConstantStrings.changePassword) {
+                                  if (buttonBottomTitle ==
+                                      ConstantStrings.changePassword) {
                                     AppNavigator.push(
                                       context,
                                       ChangePasswordScreen(),
                                       disableSwipeBack: true,
                                     );
-                                  } else if (buttonBottomTitle == ConstantStrings.save) {
-                                    final cubit = context.read<ManageaccCubit>();
+                                  } else if (buttonBottomTitle ==
+                                      ConstantStrings.save) {
+                                    final cubit = context
+                                        .read<ManageaccCubit>();
 
                                     if (cubit.validateFields()) {
                                       await cubit.updateUserDetails(context);
@@ -215,10 +218,15 @@ class _ManageAccountScreenState extends State<ManageAccountScreen> {
                                       setState(() {
                                         isTextFiledEnabled = false;
                                         isRightButtonShow = true;
-                                        buttonBottomTitle = ConstantStrings.changePassword;
+                                        buttonBottomTitle =
+                                            ConstantStrings.changePassword;
                                       });
 
                                       AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.saveProfileInfoButton,
+                                        FirebaseEvents.manageAccountScreen,
+                                      );
+                                      UxCamService.instance.buttonPressed(
                                         FirebaseEvents.saveProfileInfoButton,
                                         FirebaseEvents.manageAccountScreen,
                                       );

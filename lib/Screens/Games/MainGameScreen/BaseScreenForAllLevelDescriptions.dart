@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/Games/MainGameSection/GameDetail/gameInfo_model.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../bloc/Games/SubGameSection/JettingAroundTheWorld/jettingTheWorld_cubit.dart';
@@ -38,6 +39,7 @@ class _BaseScreenForAllLevelState
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.oneWordTopicListScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.oneWordTopicListScreen);
   }
 
   @override
@@ -61,6 +63,10 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.quizListButton,
           FirebaseEvents.blackBoxListScreen,
         );
+        UxCamService.instance.buttonPressed(
+          FirebaseEvents.quizListButton,
+          FirebaseEvents.blackBoxListScreen,
+        );
 
         AppNavigator.push(context, QuizLockScreen(), disableSwipeBack: true);
         break;
@@ -70,7 +76,10 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.oneWordListButton,
           FirebaseEvents.oneWordTopicListScreen,
         );
-
+        UxCamService.instance.buttonPressed(
+          FirebaseEvents.quizListButton,
+          FirebaseEvents.blackBoxListScreen,
+        );
         AppNavigator.push(
           context,
           OneWordTopicScreen(),
@@ -83,7 +92,10 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.quizListButton,
           FirebaseEvents.blackBoxListScreen,
         );
-
+        UxCamService.instance.buttonPressed(
+          FirebaseEvents.quizListButton,
+          FirebaseEvents.blackBoxListScreen,
+        );
         AppNavigator.push(
           context,
           BlackBoxLockScreen(),
@@ -96,7 +108,10 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.calculationsListButton,
           FirebaseEvents.calculationsListScreen,
         );
-
+        UxCamService.instance.buttonPressed(
+          FirebaseEvents.quizListButton,
+          FirebaseEvents.blackBoxListScreen,
+        );
         AppNavigator.push(
           context,
           CalculationLockScreen(),
@@ -109,7 +124,10 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.imageBasedDetailLockScreen,
           FirebaseEvents.imageBasedLockScreen,
         );
-
+        UxCamService.instance.buttonPressed(
+          FirebaseEvents.quizListButton,
+          FirebaseEvents.blackBoxListScreen,
+        );
         AppNavigator.push(
           context,
           QuizQuestionScreen(
@@ -128,7 +146,10 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.quizListButton,
           FirebaseEvents.blackBoxListScreen,
         );
-
+        UxCamService.instance.buttonPressed(
+          FirebaseEvents.quizListButton,
+          FirebaseEvents.blackBoxListScreen,
+        );
         AppNavigator.push(
           context,
           JettingAroundTheWorldScreen(isComeFromResultScreen: false),
