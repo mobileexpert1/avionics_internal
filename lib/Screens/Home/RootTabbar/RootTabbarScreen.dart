@@ -36,7 +36,18 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
   @override
   void initState() {
     super.initState();
+    print("RootTabbar mounted");
+    print("Widget Key = ${widget.key}");
+    print(
+      "GlobalKey == WidgetKey : ${widget.key == RootTabbarscreen.globalKey}",
+    );
     _loadTokenAndInitPages();
+  }
+
+  @override
+  void dispose() {
+    print("RootTabbar disposed");
+    super.dispose();
   }
 
   Future<void> _loadTokenAndInitPages() async {

@@ -1,14 +1,21 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Screens/Games/GamesSubScreens/BlackBoxSection/BlackBoxLockScreen.dart';
 import '../../Screens/Games/GamesSubScreens/CalculationSection/CalculationLockScreen.dart';
+import '../../Screens/Games/GamesSubScreens/JettingAroundTheWorld/JettingAroundBoardingPassesScreen.dart';
 import '../../Screens/Games/GamesSubScreens/OneWordSection/OneWordTopicScreen.dart';
 import '../../Screens/Games/GamesSubScreens/QuizSection/QuizLockScreen.dart';
 import '../../Screens/Home/RootTabbar/RootTabbarScreen.dart';
 import '../../Screens/Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../Screens/Profile/ProfileMenuScreen/7_AirplaneSection/AirplanePartsScreen.dart';
+import '../../Screens/Profile/ProfileMenuScreen/8_Sticker/AllMySticker/AllMyStickerScreen.dart';
+import '../../Screens/Profile/ProfileMenuScreen/9_AirmanshipBadges/AirmanshipBadgesScreen.dart';
+import '../../bloc/Games/SubGameSection/JettingAroundTheWorld/JettingAroundBoardingPasses/jetting_BoardingPasses_cubit.dart';
+import '../AppNavigator.dart';
 
 final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -121,6 +128,10 @@ class FirebaseMessagingService {
   }) async {
     Future.delayed(const Duration(milliseconds: 500), () {
       final rootTabState = RootTabbarscreen.globalKey.currentState;
+      print("CurrentContext = ${RootTabbarscreen.globalKey.currentContext}");
+
+      print("CurrentState = ${RootTabbarscreen.globalKey.currentState}");
+      print("rootTabState-=-=-=-=-=$rootTabState");
       if (rootTabState == null) return;
 
       int tabIndex;
@@ -161,7 +172,25 @@ class FirebaseMessagingService {
         case 'badgess_calculation':
           tabIndex = 2;
           nextScreen = const CalculationLockScreen();
+        case 'airmanship_badges':
+          tabIndex = 4;
+          nextScreen = const AirmanshipBadgesScreen();
           break;
+        case 'my_stickers':
+          tabIndex = 4;
+          nextScreen = const AllMyStickerScreen();
+          break;
+        case 'my_airplanes':
+          tabIndex = 4;
+          nextScreen = const AirplanePartsScreen();
+          break;
+        case 'my_boarding_pass':
+          tabIndex = 4;
+          nextScreen = const JettingAroundBoardingPassesScreen(
+            isComeFromResultScreen: false,
+          );
+          break;
+
         default:
           tabIndex = 0;
       }
@@ -170,9 +199,22 @@ class FirebaseMessagingService {
 
       if (nextScreen != null) {
         Future.delayed(const Duration(milliseconds: 500), () {
-          Navigator.of(
-            rootTabState.context,
-          ).push(MaterialPageRoute(builder: (_) => nextScreen!));
+          if (screen.toLowerCase() == 'my_boarding_pass') {
+            AppNavigator.push(
+              rootTabState.context,
+              const JettingAroundBoardingPassesScreen(
+                isComeFromResultScreen: false,
+              ),
+              multiBlocProviders: [
+                BlocProvider(create: (_) => JettingBoardingPassCubit()),
+              ],
+              disableSwipeBack: true,
+            );
+          } else {
+            Navigator.of(
+              rootTabState.context,
+            ).push(MaterialPageRoute(builder: (_) => nextScreen!));
+          }
         });
       }
     });

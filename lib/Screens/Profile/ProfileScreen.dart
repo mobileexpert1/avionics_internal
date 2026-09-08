@@ -237,6 +237,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.savedProfile,
+                      ),
+                      title: "Saved",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const SavedFlighScreen(showTabs: true),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
                   ],
                 ),
 
@@ -283,19 +296,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
 
-                    // SettingsListItem(
-                    //   leadingSvgAsset: CommonUi.setSvgImage(
-                    //     AssetsPath.glossaryProfile,
-                    //   ),
-                    //   title: "Airmanship Badges",
-                    //   onTap: () {
-                    //     AppNavigator.push(
-                    //       context,
-                    //       const AirmanshipBadgesScreen(),
-                    //       disableSwipeBack: true,
-                    //     );
-                    //   },
-                    // ),
+                    SettingsListItem(
+                      leadingSvgAsset: CommonUi.setSvgImage(
+                        AssetsPath.glossaryProfile,
+                      ),
+                      title: "Airmanship Badges",
+                      onTap: () {
+                        AppNavigator.push(
+                          context,
+                          const AirmanshipBadgesScreen(),
+                          disableSwipeBack: true,
+                        );
+                      },
+                    ),
 
                     SettingsListItem(
                       leadingSvgAsset: CommonUi.setSvgImage(
@@ -313,19 +326,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               create: (_) => JettingBoardingPassCubit(),
                             ),
                           ],
-                          disableSwipeBack: true,
-                        );
-                      },
-                    ),
-                    SettingsListItem(
-                      leadingSvgAsset: CommonUi.setSvgImage(
-                        AssetsPath.savedProfile,
-                      ),
-                      title: "Saved",
-                      onTap: () {
-                        AppNavigator.push(
-                          context,
-                          const SavedFlighScreen(showTabs: true),
                           disableSwipeBack: true,
                         );
                       },

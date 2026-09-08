@@ -8,7 +8,9 @@ import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 
@@ -110,12 +112,12 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
                           }
 
                           if (state.flights.isEmpty) {
-                            return const Center(
+                            return Center(
                               child: Text(
                                 'No aircraft available',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
+                                style: AppTextStyles.medium(16).copyWith(
+                                  height: 1.0,
+                                  color: AppColors.grayMedium,
                                 ),
                               ),
                             );

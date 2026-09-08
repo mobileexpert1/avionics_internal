@@ -158,7 +158,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
 
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => RootTabbarscreen()),
+                  MaterialPageRoute(builder: (_) => RootTabbarscreen(key: RootTabbarscreen.globalKey)),
                   (route) => false,
                 );
               });

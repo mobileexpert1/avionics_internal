@@ -7,9 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
+import '../../../Constants/AppColors.dart';
 import '../../../Constants/ConstantStrings.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
+import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../bloc/Onboarding/otp/otp_cubit.dart';
 import '../../../bloc/Onboarding/otp/otp_state.dart';
 
@@ -29,21 +31,19 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _otpController = TextEditingController();
+  int _secondsRemaining = 60;
+  Timer? _timer;
+  bool _isResendEnabled = false;
   final defaultPinTheme = PinTheme(
     width: 50,
     height: 55,
-    textStyle: const TextStyle(
-      fontSize: 30,
-      color: Colors.black,
-      fontWeight: FontWeight.w600,
-    ),
+    textStyle: AppTextStyles.medium(
+      30,
+    ).copyWith(height: 1.0, color: AppColors.black),
     decoration: BoxDecoration(
       border: Border(bottom: BorderSide(color: Colors.grey.shade400, width: 2)),
     ),
   );
-  int _secondsRemaining = 60;
-  Timer? _timer;
-  bool _isResendEnabled = false;
 
   @override
   void initState() {

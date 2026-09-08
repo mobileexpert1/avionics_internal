@@ -685,9 +685,9 @@ class _HomeScreenState extends State<HomeScreen> {
     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
     child: Text(
       message,
-      style: TextStyle(
-        fontSize: kIsWeb ? screenWidth * 0.02 : screenWidth * 0.042,
-        color: const Color(0xFF9E9E9E),
+      style: AppTextStyles.regular(
+        kIsWeb ? screenWidth * 0.02 : screenWidth * 0.042,
+        color: AppColors.grayMedium,
       ),
     ),
   );

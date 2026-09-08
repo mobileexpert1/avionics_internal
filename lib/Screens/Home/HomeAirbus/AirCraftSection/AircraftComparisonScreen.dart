@@ -162,12 +162,12 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                       // Scrollable list
                       Flexible(
                         child: models.isEmpty
-                            ? const Center(
+                            ? Center(
                                 child: Text(
                                   'No Compare models available',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
+                                  style: AppTextStyles.medium(16).copyWith(
+                                    height: 1.0,
+                                    color: AppColors.grayMedium,
                                   ),
                                 ),
                               )
@@ -364,27 +364,6 @@ class _AircraftComparisonScreenState extends State<AircraftComparisonScreen> {
                                                               ),
                                                             ),
                                                           ),
-                                                          // const SizedBox(
-                                                          //   width: 8,
-                                                          // ),
-                                                          // if (model
-                                                          //         .manufacturer
-                                                          //         ?.companyName !=
-                                                          //     null)
-                                                          //   Text(
-                                                          //     model
-                                                          //             .manufacturer
-                                                          //             ?.companyName ??
-                                                          //         "",
-                                                          //     style:
-                                                          //         const TextStyle(
-                                                          //           fontSize:
-                                                          //               13,
-                                                          //         ),
-                                                          //     overflow:
-                                                          //         TextOverflow
-                                                          //             .ellipsis,
-                                                          //   ),
                                                         ],
                                                       ),
                                                     ],
