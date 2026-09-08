@@ -95,12 +95,15 @@ class AirplanePartLockedDialog extends StatelessWidget {
 
                   const SizedBox(height: 3),
 
-                  Text(
-                    "This Aircraft part is Currently locked.",
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.semiBold(
-                      15,
-                    ).copyWith(color: AppColors.black),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "This Aircraft part is Currently locked.",
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.semiBold(
+                        15,
+                      ).copyWith(color: AppColors.black),
+                    ),
                   ),
 
                   const SizedBox(height: 14),
@@ -118,14 +121,16 @@ class AirplanePartLockedDialog extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: const Color(0xffC8DDF7)),
                     ),
-                    child: Text(
-                      "Complete 10 more questions with a\n "
-                      "score of at least 60% to unlock this\n "
-                      "3D part.",
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.medium(
-                        15,
-                      ).copyWith(color: AppColors.black, height: 1.35),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        "Complete 10 more questions with a\n"
+                        "score of at least 60% to unlock this\n"
+                        "3D part.",
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.medium(
+                          15,
+                        ).copyWith(color: AppColors.black, height: 1.35),
+                      ),
                     ),
                   ),
 
@@ -149,7 +154,7 @@ class AirplanePartLockedDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        "Continue",
+                        "Close",
                         style: AppTextStyles.regular(
                           15,
                         ).copyWith(color: AppColors.white),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
@@ -332,14 +334,29 @@ class Airplane3DSubPartCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 8),
-
-          Text(
+          isUnlocked
+              ? Text(
             subPart.description,
             textAlign: TextAlign.center,
             style: AppTextStyles.semiBold(14).copyWith(
               fontWeight: FontWeight.w500,
-              color: isUnlocked ? AppColors.black : const Color(0xff777777),
+              color: AppColors.black,
               height: 1.4,
+            ),
+          )
+              : ImageFiltered(
+            imageFilter: ImageFilter.blur(
+              sigmaX: 1.5,
+              sigmaY: 1.5,
+            ),
+            child: Text(
+              subPart.description,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.semiBold(14).copyWith(
+                fontWeight: FontWeight.w500,
+                color: const Color(0xff777777),
+                height: 1.4,
+              ),
             ),
           ),
         ],

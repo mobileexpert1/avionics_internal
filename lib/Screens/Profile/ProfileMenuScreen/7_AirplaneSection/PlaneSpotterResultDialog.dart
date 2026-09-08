@@ -130,55 +130,39 @@ class ImageBasedResultDialog extends StatelessWidget {
                 border: Border.all(color: const Color(0xffC9E0F8)),
               ),
               child: isSuccess
-                  ? Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: isDesktopWeb ? 45 : 38,
-                              height: 1,
-                              color: const Color(0xff5799D8),
+                  ? SizedBox(
+                      height: isDesktopWeb ? 155 : 155,
+                      child: Column(
+                        children: [
+                          Text(
+                            componentTitle.toUpperCase(),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: isDesktopWeb ? 21 : 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
+                          ),
 
-                            const SizedBox(width: 8),
+                          const SizedBox(height: 12),
 
-                            Flexible(
+                          Expanded(
+                            child: SingleChildScrollView(
                               child: Text(
-                                componentTitle.toUpperCase(),
+                                componentDescription,
                                 textAlign: TextAlign.center,
-                                maxLines: 5,
-                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: isDesktopWeb ? 21 : 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                                  fontSize: isDesktopWeb ? 13 : 14,
+                                  height: 1.4,
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
-
-                            const SizedBox(width: 8),
-
-                            Container(
-                              width: isDesktopWeb ? 45 : 38,
-                              height: 1,
-                              color: const Color(0xff5799D8),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Text(
-                          componentDescription,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: isDesktopWeb ? 13 : 14,
-                            height: 1.4,
-                            color: Colors.black87,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     )
                   : Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
