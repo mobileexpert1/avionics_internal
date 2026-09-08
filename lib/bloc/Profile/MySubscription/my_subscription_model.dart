@@ -2,19 +2,59 @@ import 'package:intl/intl.dart';
 
 class MySubscriptionResponseModel {
   final String detail;
+  final int count;
+  final int totalPages;
+  final int? next;
+  final int? previous;
   final MySubscriptionData data;
 
-  MySubscriptionResponseModel({required this.detail, required this.data});
+  MySubscriptionResponseModel({
+    required this.detail,
+    required this.count,
+    required this.totalPages,
+    required this.next,
+    required this.previous,
+    required this.data,
+  });
 
   factory MySubscriptionResponseModel.fromJson(Map<String, dynamic> json) {
     return MySubscriptionResponseModel(
       detail: json['detail'] ?? '',
-      data: MySubscriptionData.fromJson(json['data'] ?? {}),
+      count: json['count'] ?? 0,
+      totalPages: json['total_pages'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      data: MySubscriptionData.fromJson(json['results'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'detail': detail, 'data': data.toJson()};
+    return {
+      'detail': detail,
+      'count': count,
+      'total_pages': totalPages,
+      'next': next,
+      'previous': previous,
+      'results': data.toJson(),
+    };
+  }
+
+  MySubscriptionResponseModel copyWith({
+    String? detail,
+    int? count,
+    int? totalPages,
+    int? next,
+    int? previous,
+    MySubscriptionData? data,
+  }) {
+    return MySubscriptionResponseModel(
+      detail: detail ?? this.detail,
+      count: count ?? this.count,
+      totalPages: totalPages ?? this.totalPages,
+      next: next ?? this.next,
+      previous: previous ?? this.previous,
+      data: data ?? this.data,
+    );
   }
 }
 
@@ -46,6 +86,18 @@ class MySubscriptionData {
               ?.map((e) => MySubscriptionItem.fromJson(e))
               .toList() ??
           [],
+    );
+  }
+
+  MySubscriptionData copyWith({
+    MySubscriptionItem? current,
+    MySubscriptionItem? upcoming,
+    List<MySubscriptionItem>? old,
+  }) {
+    return MySubscriptionData(
+      current: current ?? this.current,
+      upcoming: upcoming ?? this.upcoming,
+      old: old ?? this.old,
     );
   }
 
