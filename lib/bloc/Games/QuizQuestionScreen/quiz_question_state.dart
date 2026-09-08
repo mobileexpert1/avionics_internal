@@ -10,6 +10,7 @@ class QuizQuestionState {
   final int currentIndex;
   final int? selectedIndex;
   final bool showAnswer;
+  final bool isAlreadyLoadedImage;
   final int timer;
   final bool isTimerEnded;
   final int correctAnswers;
@@ -46,6 +47,7 @@ class QuizQuestionState {
     this.currentIndex = 0,
     this.selectedIndex,
     this.showAnswer = false,
+    this.isAlreadyLoadedImage = false,
     this.timer = 40,
     this.isTimerEnded = false,
     this.correctAnswers = 0,
@@ -83,6 +85,7 @@ class QuizQuestionState {
     int? currentIndex,
     int? selectedIndex,
     bool? showAnswer,
+    bool? isAlreadyLoadedImage,
     int? timer,
     bool? isTimerEnded,
     int? correctAnswers,
@@ -117,6 +120,7 @@ class QuizQuestionState {
       currentIndex: currentIndex ?? this.currentIndex,
       selectedIndex: selectedIndex,
       showAnswer: showAnswer ?? this.showAnswer,
+      isAlreadyLoadedImage: isAlreadyLoadedImage ?? this.isAlreadyLoadedImage,
       timer: timer ?? this.timer,
       isTimerEnded: isTimerEnded ?? this.isTimerEnded,
       correctAnswers: correctAnswers ?? this.correctAnswers,

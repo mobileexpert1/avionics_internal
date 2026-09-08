@@ -241,6 +241,7 @@ class _QuizQuestionScreenState extends State<QuizQuestionScreen> {
                             const SizedBox(height: 24),
 
                             QuizQuestionCard(
+                              isAlreadyLoadedImage: state.isAlreadyLoadedImage,
                               timeTaken: state.timeTaken,
                               hintText: state.currentQuestion.hint,
                               imgUrl: state.currentQuestion.imgUrl,
@@ -329,8 +330,11 @@ class QuizQuestionCard extends StatelessWidget {
   final String question;
   final List<String> options;
   final int? selectedOption;
+
   final int correctOption;
   final bool isShowAnswers;
+  final bool isAlreadyLoadedImage;
+
   final bool isNeedToShowOrNot;
   final int currentQuestion;
   final int totalQuestions;
@@ -347,6 +351,7 @@ class QuizQuestionCard extends StatelessWidget {
     required this.options,
     required this.correctOption,
     required this.isShowAnswers,
+    required this.isAlreadyLoadedImage,
     required this.isNeedToShowOrNot,
     required this.currentQuestion,
     required this.totalQuestions,
@@ -374,6 +379,8 @@ class QuizQuestionCard extends StatelessWidget {
         : kIsWeb
         ? screenWidth * 0.35
         : screenWidth * 0.6;
+
+    final quizCubit = context.read<QuizQuestionCubit>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -431,13 +438,15 @@ class QuizQuestionCard extends StatelessWidget {
                               height: imageHeight,
                               contentImage: kIsWeb
                                   ? BoxFit.contain
-                                  : BoxFit.cover,
+                                  : BoxFit.contain,
                               onLoaded: () {
-                                Future.delayed(const Duration(seconds: 1), () {
-                                  final quizCubit = context
-                                      .read<QuizQuestionCubit>();
-                                  quizCubit.startTimer(context, true);
-                                });
+                                Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                  () {
+                                    quizCubit.updateTheAlreadyImageStatus(true);
+                                    quizCubit.startTimer(context, true);
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -693,7 +702,13 @@ class QuizQuestionCard extends StatelessWidget {
                       child: CustomBottomButton(
                         fontStyle: AppTextStyles.regular(21.46).copyWith(
                           height: 1.0,
-                          color: selectedOption != null
+                          color:
+                              selectedOption != null &&
+                                  (quizCubit.gameId == "imageBased"
+                                      ? isAlreadyLoadedImage == true
+                                            ? true
+                                            : false
+                                      : true)
                               ? Colors.white
                               : Colors.grey.shade600,
                         ),
@@ -703,7 +718,13 @@ class QuizQuestionCard extends StatelessWidget {
                         backgroundColor: AppColors.primaryDark,
                         textColor: Colors.white,
                         icon: const SizedBox(width: 0),
-                        isEnabled: selectedOption != null,
+                        isEnabled:
+                            selectedOption != null &&
+                            (quizCubit.gameId == "imageBased"
+                                ? isAlreadyLoadedImage == true
+                                      ? true
+                                      : false
+                                : true),
                         onPressed: onNext ?? () {},
                       ),
                     ),
