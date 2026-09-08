@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
@@ -48,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     homeCubit.fetchHomeData(context);
     homeCubit.repository.getMapKeyValueFromServer();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.exploreScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.exploreScreen);
   }
 
   @override
@@ -100,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //           FirebaseEvents.openAskWilcoChatButton,
         //           FirebaseEvents.exploreScreen,
         //         );
+
         //         AppNavigator.push(
         //           context,
         //           AskWilcoScreen(
@@ -203,6 +206,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   onHeaderTap: () {
                                     AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.selectModelCompareScreen,
+                                      FirebaseEvents.exploreScreen,
+                                    );
+                                    UxCamService.instance.buttonPressed(
                                       FirebaseEvents.selectModelCompareScreen,
                                       FirebaseEvents.exploreScreen,
                                     );
@@ -381,6 +388,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.manufacturerDetailScreen,
                   FirebaseEvents.exploreScreen,
                 );
+                UxCamService.instance.buttonPressed(
+                  FirebaseEvents.manufacturerDetailScreen,
+                  FirebaseEvents.exploreScreen,
+                );
                 AppNavigator.push(
                   context,
                   ManufacturerDetailScreen(manufacturerDetailId: formula.id),
@@ -411,7 +422,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     FirebaseEvents.manufacturerScreen,
                     FirebaseEvents.exploreScreen,
                   );
-
+                  UxCamService.instance.buttonPressed(
+                    FirebaseEvents.manufacturerScreen,
+                    FirebaseEvents.exploreScreen,
+                  );
                   AppNavigator.push(
                     context,
                     ManufacturerScreen(),
@@ -542,7 +556,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.flightMapScreen,
                   FirebaseEvents.exploreScreen,
                 );
-
+                UxCamService.instance.buttonPressed(
+                  FirebaseEvents.flightMapScreen,
+                  FirebaseEvents.exploreScreen,
+                );
                 AppNavigator.push(
                   context,
                   FlightMapScreen(
@@ -642,7 +659,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   FirebaseEvents.flightMapScreen,
                   FirebaseEvents.exploreScreen,
                 );
-
+                UxCamService.instance.buttonPressed(
+                  FirebaseEvents.flightMapScreen,
+                  FirebaseEvents.exploreScreen,
+                );
                 AppNavigator.push(
                   context,
                   FlightMapScreen(

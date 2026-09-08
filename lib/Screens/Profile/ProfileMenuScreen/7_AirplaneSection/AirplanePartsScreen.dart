@@ -5,6 +5,9 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsCubit.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsState.dart';
 import '../8_Sticker/FlightStickers/ProgressHeader.dart';
@@ -13,20 +16,42 @@ import 'AirplaneCompleteScreen.dart';
 import 'AirplanePartLockedDialog.dart';
 import 'AirplanePartsCard.dart';
 
-class AirplanePartsScreen extends StatelessWidget {
+class AirplanePartsScreen extends StatefulWidget {
   final bool isFromGame;
 
-  const AirplanePartsScreen({super.key, this.isFromGame = false});
+  const AirplanePartsScreen({
+    super.key,
+    this.isFromGame = false,
+  });
+
+  @override
+  State<AirplanePartsScreen> createState() => _AirplanePartsScreenState();
+}
+
+class _AirplanePartsScreenState extends State<AirplanePartsScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.airplanepartsscreen,
+    );
+
+    UxCamService.instance.logScreen(
+      FirebaseEvents.airplanepartsscreen,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => AirPlanePartsCubit(context: context),
-      child: _AirplanePartsView(isFromGame: isFromGame),
+      child: _AirplanePartsView(
+        isFromGame: widget.isFromGame,
+      ),
     );
   }
 }
-
 class _AirplanePartsView extends StatelessWidget {
   final bool isFromGame;
 

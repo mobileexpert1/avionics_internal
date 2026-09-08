@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
 import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -40,6 +41,7 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.manufacturerScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.manufacturerScreen);
   }
 
   void _onScroll() {
@@ -225,7 +227,10 @@ class _ManufacturerScreenState extends State<ManufacturerScreen> {
                                     FirebaseEvents.allAirbusModelsButton,
                                     FirebaseEvents.manufacturerScreen,
                                   );
-
+                                  UxCamService.instance.buttonPressed(
+                                    FirebaseEvents.allAirbusModelsButton,
+                                    FirebaseEvents.manufacturerScreen,
+                                  );
                                   AppNavigator.push(
                                     context,
                                     ManufacturerDetailScreen(

@@ -9,6 +9,7 @@ class FirebaseEvents {
   static const loginScreen = 'login_Screen';
   static const signupScreen = 'signup_Screen';
   static const forgotScreen = 'forgot_Screen';
+  static const otpScreen = 'otp_Screen';
 
   // =====================================================
   // MAIN TAB SCREENS
@@ -34,6 +35,8 @@ class FirebaseEvents {
   static const imageBasedDetailLockScreen = 'image_Based_Detail_Lock_Screen';
   static const imageBasedLockScreen = 'image_Based_Lock_Screen';
   static const aircraftEncyclopaedia = 'aircraft_Encyclopaedia';
+  static const jettingaroundtheworldpasses = 'jetting_arround_passes';
+  static const jettingaroundtheworld = 'jetting_arround_world';
 
 
 
@@ -66,6 +69,9 @@ class FirebaseEvents {
   static const contactSupportScreen = 'contact_Support_Screen';
   static const changePasswordScreen = 'change_Password_Screen';
   static const creditTokenScreen = 'credit_Token_Screen';
+  static const myairplanescreen = 'airplane_complete_screen';
+  static const ThreeDairplane = '3D_view_screen';
+  static const airplanepartsscreen = 'airplane_parts_screen';
 
   // =====================================================
   // PROFILE – ACTION EVENTS

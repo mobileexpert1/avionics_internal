@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
@@ -29,6 +30,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.videoPlayerScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.videoPlayerScreen);
   }
 
   @override

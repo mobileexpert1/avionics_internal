@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../../Constants/constantImages.dart';
 import '../../../../../CustomFiles/CustomAppBar.dart';
@@ -35,6 +36,7 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.contactSupportScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.contactSupportScreen);
   }
 
   Future<void> _loadUserEmail() async {
@@ -307,17 +309,13 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                             //     ),
                             //   ),
                             // ),
-
                             Center(
                               child: SizedBox(
                                 width: isDesktopWeb ? 500 : double.infinity,
                                 child: CustomBottomButton(
                                   fontStyle: AppTextStyles.regular(
                                     18,
-                                  ).copyWith(
-                                    color: Colors.white,
-                                    height: 1,
-                                  ),
+                                  ).copyWith(color: Colors.white, height: 1),
 
                                   title: state.isSubmitting ? "" : "Submit",
 
@@ -327,19 +325,20 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
 
                                   icon: state.isSubmitting
                                       ? const SizedBox(
-                                    height: 22,
-                                    width: 22,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                      strokeWidth: 2,
-                                    ),
-                                  )
+                                          height: 22,
+                                          width: 22,
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                            strokeWidth: 2,
+                                          ),
+                                        )
                                       : const SizedBox.shrink(),
 
                                   isEnabled:
-                                  !state.isSubmitting &&
+                                      !state.isSubmitting &&
                                       state.email.isNotEmpty &&
                                       cubit.isValidEmail(state.email) &&
                                       state.message.isNotEmpty,
@@ -353,6 +352,10 @@ class _ContactSupportScreenState extends State<ContactSupportScreen> {
                                       cubit.submitSupport(context);
 
                                       AnalyticsService.instance.buttonPressed(
+                                        FirebaseEvents.contactSupportButton,
+                                        FirebaseEvents.contactSupportScreen,
+                                      );
+                                      UxCamService.instance.buttonPressed(
                                         FirebaseEvents.contactSupportButton,
                                         FirebaseEvents.contactSupportScreen,
                                       );

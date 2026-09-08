@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/ConstantStrings.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../CustomFiles/CustomAppBar.dart';
@@ -34,6 +37,8 @@ class _JettingAroundBoardingPassesState
     Future.microtask(() {
       context.read<JettingBoardingPassCubit>().loadAirports(context);
     });
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.jettingaroundtheworldpasses);
+    UxCamService.instance.logScreen(FirebaseEvents.jettingaroundtheworldpasses);
   }
 
   @override

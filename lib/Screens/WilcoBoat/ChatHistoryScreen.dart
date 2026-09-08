@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../Constants/constantImages.dart';
 import '../../CustomFiles/Custom_SnackBar.dart';
@@ -43,6 +44,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.chatHistoryScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.chatHistoryScreen);
   }
 
   void _hideDialogIfNeeded() {

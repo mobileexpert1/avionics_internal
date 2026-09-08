@@ -12,6 +12,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../Constants/ApiClass/alertHelperForSubsPopup.dart';
 import '../../Constants/AppColors.dart';
 import '../../Constants/constantImages.dart';
@@ -83,6 +84,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
     });
 
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.askChatScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.askChatScreen);
   }
 
   @override

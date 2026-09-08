@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
@@ -30,6 +31,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     super.initState();
     controller = TextEditingController();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.feedbackScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.feedbackScreen);
   }
 
   @override
@@ -61,7 +63,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         body: SafeArea(
           child: Align(
             alignment: Alignment.topCenter,
-            child:SizedBox(
+            child: SizedBox(
               width: isDesktopWeb ? 1500 : double.infinity,
               // constraints: BoxConstraints(maxWidth: maxWidth),
               child: BlocListener<FeedbackCubit, FeedbackState>(
@@ -186,7 +188,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               spacing: 8,
                               runSpacing: 8,
                               children: (state.categories).map((label) {
-                                final isSelected = state.selectedFeedbackCategories
+                                final isSelected = state
+                                    .selectedFeedbackCategories
                                     .contains(label);
 
                                 return GestureDetector(
@@ -341,6 +344,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                         .submitFeedback(context);
 
                                     AnalyticsService.instance.buttonPressed(
+                                      FirebaseEvents.submitReviewsButton,
+                                      FirebaseEvents.feedbackScreen,
+                                    );
+                                    UxCamService.instance.buttonPressed(
                                       FirebaseEvents.submitReviewsButton,
                                       FirebaseEvents.feedbackScreen,
                                     );

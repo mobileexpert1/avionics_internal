@@ -2,6 +2,7 @@ import 'package:avionics_internal/CustomFiles/CustomAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/AppColors.dart';
@@ -90,14 +91,16 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                         >(
                           selector: (state) => state.passwordError,
                           builder: (_, passwordError) {
-                            return CustomTextField(
-                              label: ConstantStrings.createNewPasswordLabel,
-                              controller: passwordController,
-                              errorText: passwordError,
-                              obscureText: true,
-                              onChanged: (val) => context
-                                  .read<CreateNewPasswordCubit>()
-                                  .passwordChanged(val),
+                            return OccludeWrapper(
+                              child: CustomTextField(
+                                label: ConstantStrings.createNewPasswordLabel,
+                                controller: passwordController,
+                                errorText: passwordError,
+                                obscureText: true,
+                                onChanged: (val) => context
+                                    .read<CreateNewPasswordCubit>()
+                                    .passwordChanged(val),
+                              ),
                             );
                           },
                         ),
@@ -112,14 +115,16 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                         >(
                           selector: (state) => state.confirmPasswordError,
                           builder: (_, confirmPasswordError) {
-                            return CustomTextField(
-                              label: ConstantStrings.confirmPasswordLabel,
-                              controller: confirmPasswordController,
-                              errorText: confirmPasswordError,
-                              obscureText: true,
-                              onChanged: (val) => context
-                                  .read<CreateNewPasswordCubit>()
-                                  .confirmPasswordChanged(val),
+                            return OccludeWrapper(
+                              child: CustomTextField(
+                                label: ConstantStrings.confirmPasswordLabel,
+                                controller: confirmPasswordController,
+                                errorText: confirmPasswordError,
+                                obscureText: true,
+                                onChanged: (val) => context
+                                    .read<CreateNewPasswordCubit>()
+                                    .confirmPasswordChanged(val),
+                              ),
                             );
                           },
                         ),

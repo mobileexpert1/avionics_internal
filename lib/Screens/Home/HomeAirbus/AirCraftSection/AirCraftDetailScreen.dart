@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
 import '../../../../Helpers/AppTextStyles/AppTextStyles.dart';
@@ -66,6 +67,7 @@ class _AirCraftDetailScreenState extends State<AirCraftDetailScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.allPlanesListScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.allPlanesListScreen);
     context.read<AirCraftDetailCubit>().fetchAircraftParams(context, 1);
   }
 

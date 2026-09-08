@@ -9,6 +9,9 @@ import 'package:flutter_earth_globe/point_connection.dart';
 import 'package:flutter_earth_globe/point_connection_style.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../Constants/ApiClass/shared_prefs_helper.dart';
 import '../../../../Constants/AppColors.dart';
 import '../../../../Constants/constantImages.dart';
@@ -120,7 +123,8 @@ class _JettingAroundTheWorldViewState
       isDayNightCycleEnabled: false,
       dayNightBlendFactor: 0.15,
     );
-
+    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.jettingaroundtheworld);
+    UxCamService.instance.logScreen(FirebaseEvents.jettingaroundtheworld);
     Future.microtask(() {
       if (!mounted) return;
 

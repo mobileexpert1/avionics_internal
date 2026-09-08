@@ -5,10 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -36,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.loginScreen);
-    // FlutterUxcam.tagScreenName("Login Screen");
+    UxCamService.instance.logScreen(FirebaseEvents.loginScreen);
     if (kIsWeb) {
       context.read<LoginCubit>().initGoogle(context);
     }
@@ -111,25 +113,27 @@ class _LoginScreenState extends State<LoginScreen> {
                               buildWhen: (p, c) =>
                                   p.passwordError != c.passwordError,
                               builder: (context, state) {
-                                return CustomTextField(
-                                  label: ConstantStrings.password,
-                                  controller: passwordController,
-                                  obscureText: true,
-                                  errorText: state.passwordError,
-                                  onChanged: (val) => context
-                                      .read<LoginCubit>()
-                                      .passwordChanged(val),
-                                  onEnterPressed: (val) {
-                                    context.read<LoginCubit>().passwordChanged(
-                                      val,
-                                    );
-
-                                    if (kIsWeb && mounted) {
+                                return OccludeWrapper(
+                                  child: CustomTextField(
+                                    label: ConstantStrings.password,
+                                    controller: passwordController,
+                                    obscureText: true,
+                                    errorText: state.passwordError,
+                                    onChanged: (val) => context
+                                        .read<LoginCubit>()
+                                        .passwordChanged(val),
+                                    onEnterPressed: (val) {
                                       context
                                           .read<LoginCubit>()
-                                          .validateAndLogin(context);
-                                    }
-                                  },
+                                          .passwordChanged(val);
+
+                                      if (kIsWeb && mounted) {
+                                        context
+                                            .read<LoginCubit>()
+                                            .validateAndLogin(context);
+                                      }
+                                    },
+                                  ),
                                 );
                               },
                             ),
@@ -157,7 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isEnabled: enabled,
                                   onPressed: () {
                                     if (!mounted) return;
-                                    // FlutterUxcam.logEvent("Login Button Clicked");
+                                    FlutterUxcam.logEvent(
+                                      "Login Button Clicked",
+                                    );
                                     context.read<LoginCubit>().validateAndLogin(
                                       context,
                                     );
@@ -179,6 +185,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
 
                                 AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.forgotButton,
+                                  FirebaseEvents.loginScreen,
+                                );
+                                UxCamService.instance.buttonPressed(
                                   FirebaseEvents.forgotButton,
                                   FirebaseEvents.loginScreen,
                                 );
@@ -284,6 +294,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   disableSwipeBack: true,
                                 );
                                 AnalyticsService.instance.buttonPressed(
+                                  FirebaseEvents.signupButton,
+                                  FirebaseEvents.loginScreen,
+                                );
+                                UxCamService.instance.buttonPressed(
                                   FirebaseEvents.signupButton,
                                   FirebaseEvents.loginScreen,
                                 );

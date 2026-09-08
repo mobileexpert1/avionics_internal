@@ -11,20 +11,45 @@ import '../../../../../../Constants/constantImages.dart';
 import '../../../../../../CustomFiles/CustomAppBar.dart';
 import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
+import '../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
+import '../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsCubit.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsModel.dart';
 import '../../../../bloc/Profile/AirPlanePartsSection/AirPlanePartsState.dart';
 
-class Airplane3DViewScreen extends StatelessWidget {
+class Airplane3DViewScreen extends StatefulWidget {
   final AirPlanePartsModel selectedPart;
 
-  const Airplane3DViewScreen({super.key, required this.selectedPart});
+  const Airplane3DViewScreen({
+    super.key,
+    required this.selectedPart,
+  });
+
+  @override
+  State<Airplane3DViewScreen> createState() => _Airplane3DViewScreenState();
+}
+
+class _Airplane3DViewScreenState extends State<Airplane3DViewScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.ThreeDairplane,
+    );
+
+    UxCamService.instance.logScreen(
+      FirebaseEvents.ThreeDairplane,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => AirPlanePartsCubit(context: context),
-      child: _Airplane3DView(selectedPart: selectedPart),
+      child: _Airplane3DView(
+        selectedPart: widget.selectedPart,
+      ),
     );
   }
 }

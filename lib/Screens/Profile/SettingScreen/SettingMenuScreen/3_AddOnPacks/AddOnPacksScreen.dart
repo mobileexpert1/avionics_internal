@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../CustomFiles/CustomBottomButton.dart';
 import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
@@ -60,7 +61,7 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
-
+    UxCamService.instance.logScreen(FirebaseEvents.subscriptionScreen);
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context
@@ -482,6 +483,10 @@ class _AddOnPacksScreenState extends State<AddOnPacksScreen> {
                                   .buyConsumable(context);
 
                               AnalyticsService.instance.buttonPressed(
+                                FirebaseEvents.subscriptionScreen,
+                                FirebaseEvents.goPremiumSubscriptionButton,
+                              );
+                              UxCamService.instance.buttonPressed(
                                 FirebaseEvents.subscriptionScreen,
                                 FirebaseEvents.goPremiumSubscriptionButton,
                               );

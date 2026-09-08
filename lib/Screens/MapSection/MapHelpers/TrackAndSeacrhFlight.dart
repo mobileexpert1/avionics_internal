@@ -8,6 +8,7 @@ import '../../../../Helpers/SearchBarWidget.dart';
 import '../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/SelectableAircraftCard.dart';
 import '../../../bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
@@ -30,6 +31,7 @@ class _AllPlanesScreenState extends State<TrackAndSearchFlight> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.trackAndSearchFlight,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.trackAndSearchFlight);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         searchFocusNode.requestFocus();

@@ -5,9 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomBottomButton.dart';
@@ -37,6 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void initState() {
     super.initState();
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.signupScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.signupScreen);
   }
 
   @override
@@ -159,14 +162,16 @@ class _SignupScreenState extends State<SignupScreen> {
                             BlocSelector<SignupCubit, SignupState, String?>(
                               selector: (state) => state.passwordError,
                               builder: (_, error) {
-                                return CustomTextField(
-                                  label: ConstantStrings.password,
-                                  controller: passwordController,
-                                  errorText: error,
-                                  obscureText: true,
-                                  onChanged: (val) => context
-                                      .read<SignupCubit>()
-                                      .passwordChanged(val),
+                                return OccludeWrapper(
+                                  child: CustomTextField(
+                                    label: ConstantStrings.password,
+                                    controller: passwordController,
+                                    errorText: error,
+                                    obscureText: true,
+                                    onChanged: (val) => context
+                                        .read<SignupCubit>()
+                                        .passwordChanged(val),
+                                  ),
                                 );
                               },
                             ),
@@ -176,25 +181,29 @@ class _SignupScreenState extends State<SignupScreen> {
                             BlocSelector<SignupCubit, SignupState, String?>(
                               selector: (state) => state.confirmPasswordError,
                               builder: (_, error) {
-                                return CustomTextField(
-                                  label: ConstantStrings.confirmPasswordLabel,
-                                  controller: confirmPasswordController,
-                                  errorText: error,
-                                  obscureText: true,
-                                  onChanged: (val) => context
-                                      .read<SignupCubit>()
-                                      .confirmPasswordChanged(val),
-                                  onEnterPressed: (val) {
-                                    context
+                                return OccludeWrapper(
+                                  child: CustomTextField(
+                                    label: ConstantStrings.confirmPasswordLabel,
+                                    controller: confirmPasswordController,
+                                    errorText: error,
+                                    obscureText: true,
+                                    onChanged: (val) => context
                                         .read<SignupCubit>()
-                                        .confirmPasswordChanged(val);
-
-                                    if (kIsWeb && mounted) {
+                                        .confirmPasswordChanged(val),
+                                    onEnterPressed: (val) {
                                       context
                                           .read<SignupCubit>()
-                                          .verifyEmailRegisteredOrNot(context);
-                                    }
-                                  },
+                                          .confirmPasswordChanged(val);
+
+                                      if (kIsWeb && mounted) {
+                                        context
+                                            .read<SignupCubit>()
+                                            .verifyEmailRegisteredOrNot(
+                                              context,
+                                            );
+                                      }
+                                    },
+                                  ),
                                 );
                               },
                             ),
@@ -230,6 +239,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                       FirebaseEvents.signupButton,
                                       FirebaseEvents.signupScreen,
                                     );
+                                    UxCamService.instance.buttonPressed(
+                                      FirebaseEvents.signupButton,
+                                      FirebaseEvents.signupScreen,
+                                    );
                                   },
                                 );
                               },
@@ -249,6 +262,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                   );
 
                                   AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.loginButton,
+                                    FirebaseEvents.signupScreen,
+                                  );
+                                  UxCamService.instance.buttonPressed(
                                     FirebaseEvents.loginButton,
                                     FirebaseEvents.signupScreen,
                                   );

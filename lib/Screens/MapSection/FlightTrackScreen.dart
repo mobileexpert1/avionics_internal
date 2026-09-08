@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../Constants/constantImages.dart';
 import '../../Helpers/MapSection/rotatePlane_icon.dart';
 import '../../bloc/MapSection/flight_Map_Cubit.dart';
@@ -91,6 +92,7 @@ class _TrackFlightScreenState extends State<TrackFlightScreen>
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.flightTrackScreen,
     );
+    UxCamService.instance.logScreen(FirebaseEvents.flightTrackScreen);
     flightMapCubit.isFromTrackingClass = true;
   }
 

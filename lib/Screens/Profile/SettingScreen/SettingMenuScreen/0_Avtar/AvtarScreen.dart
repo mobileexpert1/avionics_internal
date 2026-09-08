@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../Constants/ApiClass/ApiErrorModel.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../../../Constants/AppColors.dart';
 import '../../../../../Constants/ConstantStrings.dart';
 import '../../../../../Constants/constantImages.dart';
@@ -50,8 +51,8 @@ class _AvtarScreenState extends State<AvtarScreen> {
       widget.isComeFromSocialLogin,
       context,
     );
-
     AnalyticsService.instance.logVisibleScreen(FirebaseEvents.avtarScreen);
+    UxCamService.instance.logScreen(FirebaseEvents.avtarScreen);
   }
 
   @override
@@ -195,6 +196,10 @@ class _AvtarScreenState extends State<AvtarScreen> {
                             }
 
                             AnalyticsService.instance.buttonPressed(
+                              FirebaseEvents.avtarScreen,
+                              FirebaseEvents.updatedAvtarButtonTap,
+                            );
+                            UxCamService.instance.buttonPressed(
                               FirebaseEvents.avtarScreen,
                               FirebaseEvents.updatedAvtarButtonTap,
                             );

@@ -512,6 +512,12 @@
       "languageVersion": "3.10"
     },
     {
+      "name": "flutter_uxcam",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_uxcam-2.10.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "flutter_web_plugins",
       "rootUri": "file:///E:/flutter%203.44.4/flutter_windows_3.44.4-stable/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
@@ -1308,6 +1314,12 @@
       "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/video_player_web-2.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.6"
+    },
+    {
+      "name": "visibility_detector",
+      "rootUri": "file:///C:/Users/Abhishek/AppData/Local/Pub/Cache/hosted/pub.dev/visibility_detector-0.4.0+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "vm_service",

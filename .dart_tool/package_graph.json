@@ -32,6 +32,7 @@
         "flutter_local_notifications",
         "flutter_slidable",
         "flutter_svg",
+        "flutter_uxcam",
         "geocoding",
         "geolocator",
         "google_maps_flutter",
@@ -116,6 +117,16 @@
         "http",
         "path",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_uxcam",
+      "version": "2.10.0",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "stack_trace",
+        "visibility_detector"
       ]
     },
     {
@@ -738,6 +749,20 @@
       ]
     },
     {
+      "name": "visibility_detector",
+      "version": "0.4.0+2",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "firebase_core_platform_interface",
       "version": "7.1.0",
       "dependencies": [
@@ -832,13 +857,6 @@
         "ffi",
         "ffi_leak_tracker",
         "meta"
-      ]
-    },
-    {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
       ]
     },
     {

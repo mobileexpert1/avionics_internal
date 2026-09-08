@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
 import '../../../Constants/ApiClass/FirebaseAnalytics/event_names.dart';
+import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/AppColors.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../CustomFiles/CustomAppBar.dart';
@@ -104,7 +105,7 @@ class _FlightDetailScreenForMapSectionState
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.flightDetailScreen,
     );
-
+    UxCamService.instance.logScreen(FirebaseEvents.flightDetailScreen);
     context.read<AirCraftDetailCubit>().fetchAircraftParams(context, 1);
   }
 
