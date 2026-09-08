@@ -19,27 +19,105 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
     : repository = repository ?? MySubscriptionRepository(),
       super(MySubscriptionState());
 
-  Future<void> loadSubscriptionsHistory(BuildContext context) async {
+  bool _isRequestInProgress = false;
+
+  Future<void> loadSubscriptionsHistory({
+    required BuildContext context,
+    String? query,
+    int? page,
+    bool isLoadMore = false,
+  })  async {
     if (await InternetConnection().hasInternetAccess) {
-      emit(state.copyWith(isLoading: true, status: CommonApiStatus.initial));
+      if (_isRequestInProgress) return;
+
+      if (isLoadMore && !state.hasNextPage) {
+        return;
+      }
+
+      _isRequestInProgress = true;
+
+      final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
+
+      debugPrint(
+        'Loading Subscription Page => $nextPage '
+        'isLoadMore => $isLoadMore',
+      );
+
+      if (isLoadMore) {
+        emit(state.copyWith(isFetchingMore: true));
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: true,
+            isSuccess: false,
+            status: CommonApiStatus.initial,
+            currentPage: 1,
+          ),
+        );
+      }
 
       try {
-        final subscriptionData = await repository.getAllSubscriptionDetails();
+        final subscriptionData = await repository.getAllSubscriptionDetails(
+          nextPage,
+        );
+
+        // Existing old subscriptions from previous pages
+        final existingOldSubscriptions = isLoadMore
+            ? (state.subscriptionData?.data.old ?? [])
+            : <MySubscriptionItem>[];
+
+        // New subscriptions from current API page
+        final newOldSubscriptions = subscriptionData.data.old;
+
+        // Merge old + new
+        final combinedSubscriptions = [
+          ...existingOldSubscriptions,
+          ...newOldSubscriptions,
+        ];
+
+        // Remove duplicate IDs
+        final uniqueMap = {
+          for (final item in combinedSubscriptions) item.id: item,
+        };
+
+        final uniqueOldSubscriptions = uniqueMap.values.toList();
+
+        // Update results/data
+        final updatedData = subscriptionData.data.copyWith(
+          old: uniqueOldSubscriptions,
+        );
+
+        // Update complete response
+        final updatedSubscriptionData = subscriptionData.copyWith(
+          data: updatedData,
+        );
+
+        _isRequestInProgress = false;
 
         emit(
           state.copyWith(
-            subscriptionData: subscriptionData,
+            subscriptionData: updatedSubscriptionData,
+
+            currentPage: nextPage,
+
+            hasNextPage: subscriptionData.next != null,
+
             isLoading: false,
+            isFetchingMore: false,
+
             isSuccess: true,
             status: CommonApiStatus.success,
           ),
         );
       } catch (e) {
+        _isRequestInProgress = false;
+
         SessionCommonTokenError.handleUnauthorizedError(context, e);
+
         emit(
           state.copyWith(
-            subscriptionData: null,
             isLoading: false,
+            isFetchingMore: false,
             isSuccess: false,
             errorMessage: e.toString(),
             status: CommonApiStatus.failure,
@@ -47,9 +125,16 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
         );
       }
     } else {
+      _isRequestInProgress = false;
+
       NoInternetDialog.show(
         context,
-        onRetry: () => loadSubscriptionsHistory(context),
+        onRetry: () async {
+          await loadSubscriptionsHistory(
+            page: page,
+            isLoadMore: isLoadMore, context: context,
+          );
+        },
       );
     }
   }
@@ -78,30 +163,23 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
   }
 
   String getPackageDescriptionTitle(
-      String description,
-      bool isComeFromHistory,
-      ) {
+    String description,
+    bool isComeFromHistory,
+  ) {
     final lowerDescription = description.toLowerCase();
 
-    final packType =
-    lowerDescription.contains('credit') ? 'Credit' : 'Token';
+    final packType = lowerDescription.contains('credit') ? 'Credit' : 'Token';
 
     if (lowerDescription.contains('small')) {
-      return isComeFromHistory
-          ? 'Light Add-on $packType'
-          : 'Light (L)';
+      return isComeFromHistory ? 'Light Add-on $packType' : 'Light (L)';
     }
 
     if (lowerDescription.contains('medium')) {
-      return isComeFromHistory
-          ? 'Medium Add-on $packType'
-          : 'Medium (M)';
+      return isComeFromHistory ? 'Medium Add-on $packType' : 'Medium (M)';
     }
 
     if (lowerDescription.contains('large')) {
-      return isComeFromHistory
-          ? 'Heavy Add-on $packType'
-          : 'Heavy (H)';
+      return isComeFromHistory ? 'Heavy Add-on $packType' : 'Heavy (H)';
     }
 
     print(description);

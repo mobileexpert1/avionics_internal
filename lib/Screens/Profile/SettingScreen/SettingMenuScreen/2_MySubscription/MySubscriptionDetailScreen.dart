@@ -96,7 +96,7 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
   }
 
   List<Widget> _buildSubscriptionSection(MySubscriptionItem sub) {
-    // ✅ Yahan sub kabhi null nahi hoga, isliye '!' lagane ki zarurat nahi
+    //Yahan sub kabhi null nahi hoga, isliye '!' lagane ki zarurat nahi
     final namePlan = sub.plan.name;
     final isPlanExpired = sub.status == "expired";
     final isPlanActive = sub.status
@@ -312,6 +312,11 @@ class _MySubscriptionDetailState extends State<MySubscriptionDetailScreen> {
                   buildRow(
                     title: "Invoice date",
                     value: addOn.purchaseDateLocal,
+                  ),
+                  buildDivider(),
+                  buildRow(
+                    title: "Expiry date",
+                    value: addOn.expiryDateLocal,
                   ),
                   if (addOn.credit != 0) ...[
                     buildDivider(),

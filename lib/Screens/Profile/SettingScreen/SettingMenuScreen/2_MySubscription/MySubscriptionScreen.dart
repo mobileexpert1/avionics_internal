@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,17 +39,50 @@ class MySubscriptionScreen extends StatefulWidget {
 class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
   late MySubscriptionCubit _cubit;
 
+  Timer? _debounce;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _cubit = context.read<MySubscriptionCubit>();
-    _cubit.loadSubscriptionsHistory(context);
+    _cubit.loadSubscriptionsHistory(
+      page: 1,
+      isLoadMore: false,
+      context: context,
+    );
 
     if (widget.isComeForAddOnPacks == true) {
       Future.delayed(const Duration(seconds: 1), () {
         if (!context.mounted) return;
         openAddOnPacksBottomSheet();
       });
+    }
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _scrollController.dispose();
+    _cubit.close();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final position = _scrollController.position;
+    final state = _cubit.state;
+
+    if (position.pixels >= position.maxScrollExtent - 300) {
+      if (state.hasNextPage && !state.isFetchingMore && !state.isLoading) {
+        debugPrint(
+          'Pagination Triggered => Loading Page ${state.currentPage + 1}',
+        );
+
+        _cubit.loadSubscriptionsHistory(context: context, isLoadMore: true);
+      }
     }
   }
 
@@ -69,7 +104,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
     );
 
     if (result == true && mounted) {
-      _cubit.loadSubscriptionsHistory(context);
+      _cubit.loadSubscriptionsHistory(isLoadMore: true, context: context);
     }
   }
 
@@ -134,6 +169,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
             return state.subscriptionData != null
                 ? SingleChildScrollView(
+                    controller: _scrollController,
                     padding: const EdgeInsets.all(20),
                     child: Center(
                       child: SizedBox(
@@ -236,7 +272,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 );
 
                                 if (result == true) {
-                                  _cubit.loadSubscriptionsHistory(context);
+                                  _cubit.loadSubscriptionsHistory(
+                                    isLoadMore: false,
+                                    context: context,
+                                  );
                                 }
                               },
                               onAddOnTap: () async {
@@ -256,7 +295,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                   disableSwipeBack: true,
                                 );
                                 if (result == true) {
-                                  _cubit.loadSubscriptionsHistory(context);
+                                  _cubit.loadSubscriptionsHistory(
+                                    isLoadMore: false,
+                                    context: context,
+                                  );
                                 }
                               },
 
@@ -487,7 +529,11 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                       );
 
                       if (result == true) {
-                        _cubit.loadSubscriptionsHistory(context);
+                        _cubit.loadSubscriptionsHistory(
+                          isLoadMore: true,
+                          context: context,
+                        );
+                        ;
                       }
                     }
                   },
@@ -674,27 +720,49 @@ class BillingHistoryCard extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        // Purchase Date
-        Row(
-          children: [
-            const Icon(
-              Icons.calendar_today_outlined,
-              size: 15,
-              color: Colors.grey,
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                "Purchased: ${addOn.purchaseDateLocal}",
-                style: AppTextStyles.regular(12).copyWith(
-                  height: 1.0,
-                  color: AppColors.greyForTextSubscription,
-                ),
-                overflow: TextOverflow.ellipsis,
+        if (addOn.startDateLocal != "" && addOn.expiryDateLocal != "") ...[
+          Row(
+            children: [
+              const Icon(
+                Icons.calendar_today_outlined,
+                size: 15,
+                color: Colors.grey,
               ),
-            ),
-          ],
-        ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "${addOn.startDateLocal} - ${addOn.expiryDateLocal}",
+                  style: AppTextStyles.regular(12).copyWith(
+                    height: 1.0,
+                    color: AppColors.greyForTextSubscription,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ] else
+          // Purchase Date
+          Row(
+            children: [
+              const Icon(
+                Icons.calendar_today_outlined,
+                size: 15,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "Purchased: ${addOn.purchaseDateLocal}",
+                  style: AppTextStyles.regular(12).copyWith(
+                    height: 1.0,
+                    color: AppColors.greyForTextSubscription,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
