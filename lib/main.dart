@@ -62,23 +62,40 @@ Future<void> main() async {
     options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
   );
   try {
-    await FlutterUxcam.optIntoSchematicRecordings();
+    final appKey = kIsWeb
+        ? dotenv.env['UXCAM_WEB_APP_KEY'] ?? ''
+        : dotenv.env['UXCAM_APP_KEY'] ?? '';
 
-    final appKey = dotenv.env['UXCAM_APP_KEY'] ?? '';
+    if (appKey.isEmpty) {
+      print('UXCam Error: App key is missing');
+      return;
+    }
+
+    if (!kIsWeb) {
+      await FlutterUxcam.optIntoSchematicRecordings();
+    }
 
     final config = FlutterUxConfig(
       userAppKey: appKey,
+      enableAutomaticScreenNameTagging: !kIsWeb,
     );
 
-    await FlutterUxcam.startWithConfiguration(config);
+    final result = await FlutterUxcam.startWithConfiguration(config);
 
-    await Future.delayed(const Duration(seconds: 3));
+    print('UXCam initialized: $result');
 
-    final isRecording = await FlutterUxcam.isRecording();
+    if (!kIsWeb) {
+      await Future.delayed(const Duration(seconds: 3));
 
-    print('UXCam Recording: $isRecording');
-  } catch (e) {
+      final isRecording = await FlutterUxcam.isRecording();
+
+      print('UXCam Recording: $isRecording');
+    } else {
+      print('UXCam Web initialized');
+    }
+  } catch (e, stackTrace) {
     print('UXCam Error: $e');
+    print(stackTrace);
   }
 
   FirebaseMessagingService().initialize(navigatorKey: navigatorKey);

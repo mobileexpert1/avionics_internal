@@ -2,6 +2,7 @@ import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 
 import '../../../Constants/ApiClass/FirebaseAnalytics/analytics_service.dart';
@@ -53,6 +54,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
       FirebaseEvents.subscriptionScreen,
     );
     UxCamService.instance.logScreen(FirebaseEvents.subscriptionScreen);
+    FlutterUxcam.occludeSensitiveScreen(true);
     if (kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<SubscriptionBuyPlanCubit>().handleWebRedirectionIfNeeded(
@@ -64,6 +66,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
 
   @override
   void dispose() {
+    FlutterUxcam.occludeSensitiveScreen(false);
     _cubit.close();
     _controller.dispose();
     super.dispose();
