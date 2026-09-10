@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -253,7 +254,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 isFromWilcoAndTrackingScreen: true,
                 buttonText: "Buy Token",
                 message:
-                "Your token limit has been exhausted. Please purchase a subscription.",
+                    "Your token limit has been exhausted. Please purchase a subscription.",
                 onGoToActionBlock: () {
                   cubit.openAddOnPacksBottomSheet(
                     context,
@@ -269,7 +270,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 isFromWilcoAndTrackingScreen: true,
                 buttonText: "Buy Credits",
                 message:
-                "Your credit limit has been exhausted. Please purchase a subscription.",
+                    "Your credit limit has been exhausted. Please purchase a subscription.",
                 onGoToActionBlock: () {
                   cubit.openAddOnPacksBottomSheet(
                     context,
@@ -299,7 +300,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                 context: context,
                 title: "Subscription Required",
                 message:
-                "Your subscription has expired. Please renew to continue using the service.",
+                    "Your subscription has expired. Please renew to continue using the service.",
                 navigateTo: const SubscriptionPlanDetailScreen(
                   isComeFromSignup: true,
                 ),
@@ -325,21 +326,21 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               leftButton: widget.isComeFromTab && !widget.isFromHistory
                   ? const SizedBox()
                   : IconButton(
-                icon: SvgPicture.asset(
-                  CommonUi.setSvgImage(AssetsPath.backArrowButton),
-                  fit: BoxFit.cover,
-                ),
-                onPressed: () async {
-                  // if (widget.isComeFromTab) {
-                  //   await context.read<ChatCubit>().clearCurrentChat();
-                  // }
-                  if (mounted) {
-                    Navigator.of(
-                      context,
-                    ).popUntil((route) => route.isFirst);
-                  }
-                },
-              ),
+                      icon: SvgPicture.asset(
+                        CommonUi.setSvgImage(AssetsPath.backArrowButton),
+                        fit: BoxFit.cover,
+                      ),
+                      onPressed: () async {
+                        // if (widget.isComeFromTab) {
+                        //   await context.read<ChatCubit>().clearCurrentChat();
+                        // }
+                        if (mounted) {
+                          Navigator.of(
+                            context,
+                          ).popUntil((route) => route.isFirst);
+                        }
+                      },
+                    ),
 
               rightButton: InkWell(
                 borderRadius: BorderRadius.circular(30),
@@ -375,7 +376,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                       Text(
                         'History',
-                        style:AppTextStyles.semiBold(
+                        style: AppTextStyles.semiBold(
                           14,
                         ).copyWith(color: AppColors.black),
                       ),
@@ -423,8 +424,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                               builder: (_, isLoading, __) {
                                 if (!isLoading) {
                                   WidgetsBinding.instance.addPostFrameCallback((
-                                      _,
-                                      ) {
+                                    _,
+                                  ) {
                                     _scrollToBottom();
                                   });
                                 }
@@ -434,14 +435,14 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                 }
 
                                 return BlocBuilder<
-                                    ChatCubit,
-                                    List<Map<String, String>>
+                                  ChatCubit,
+                                  List<Map<String, String>>
                                 >(
                                   builder: (context, messages) {
                                     return SelectableRegion(
                                       focusNode: _selectableFocusNode,
                                       selectionControls:
-                                      MaterialTextSelectionControls(),
+                                          MaterialTextSelectionControls(),
 
                                       child: ListView.builder(
                                         controller: _scrollCtrl,
@@ -470,7 +471,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                                           final isInitialGreeting =
                                               message['type'] ==
-                                                  'initial_greeting';
+                                              'initial_greeting';
 
                                           return Padding(
                                             padding: const EdgeInsets.only(
@@ -479,7 +480,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                                             child: Row(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
 
                                               mainAxisAlignment: isUser
                                                   ? MainAxisAlignment.end
@@ -490,20 +491,20 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                                                 if (!isUser)
                                                   isInitialGreeting
                                                       ? const SizedBox(
-                                                    width: 40,
-                                                  )
+                                                          width: 40,
+                                                        )
                                                       : _buildBotAvatarOrUser(
-                                                    true,
-                                                    message['text'] ?? "",
-                                                  ),
+                                                          true,
+                                                          message['text'] ?? "",
+                                                        ),
 
                                                 Flexible(
                                                   child: Container(
                                                     padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 10,
-                                                    ),
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 15,
+                                                          vertical: 10,
+                                                        ),
 
                                                     constraints: BoxConstraints(
                                                       maxWidth: MediaQuery.of(
@@ -513,65 +514,67 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                                                     decoration: isUser
                                                         ? BoxDecoration(
-                                                      color: AppColors
-                                                          .primaryDark,
-                                                      borderRadius: BorderRadius.only(
-                                                        topLeft:
-                                                        Radius.circular(
-                                                          10,
-                                                        ),
-                                                        bottomLeft:
-                                                        Radius.circular(
-                                                          10,
-                                                        ),
-                                                        bottomRight:
-                                                        Radius.circular(
-                                                          10,
-                                                        ),
-                                                      ),
+                                                            color: AppColors
+                                                                .primaryDark,
+                                                            borderRadius: BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(
+                                                                    10,
+                                                                  ),
+                                                              bottomLeft:
+                                                                  Radius.circular(
+                                                                    10,
+                                                                  ),
+                                                              bottomRight:
+                                                                  Radius.circular(
+                                                                    10,
+                                                                  ),
+                                                            ),
 
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors
-                                                              .black
-                                                              .withValues(
-                                                            alpha:
-                                                            0.04,
-                                                          ),
-                                                          blurRadius: 8,
-                                                          offset:
-                                                          const Offset(
-                                                            0,
-                                                            2,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.04,
+                                                                    ),
+                                                                blurRadius: 8,
+                                                                offset:
+                                                                    const Offset(
+                                                                      0,
+                                                                      2,
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          )
                                                         : null,
-
-                                                    child: isUser
-                                                        ? SelectableText(
-                                                      message['text'] ??
-                                                          '',
-                                                      style:
-                                                      AppTextStyles.regular(
-                                                        15,
-                                                      ).copyWith(
-                                                        height: 1.5,
-                                                        color: Colors
-                                                            .white,
-                                                      ),
-                                                    )
-                                                        : FormattedText(
-                                                      text:
-                                                      message['text'] ??
-                                                          '',
-                                                      fontSize: 15,
-                                                      normalColor:
-                                                      Colors.black87,
-                                                      boldColor:
-                                                      Colors.black,
-                                                      lineHeight: 1.5,
+                                                    child: OccludeWrapper(
+                                                      child: isUser
+                                                          ? SelectableText(
+                                                              message['text'] ??
+                                                                  '',
+                                                              style:
+                                                                  AppTextStyles.regular(
+                                                                    15,
+                                                                  ).copyWith(
+                                                                    height: 1.5,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                            )
+                                                          : FormattedText(
+                                                              text:
+                                                                  message['text'] ??
+                                                                  '',
+                                                              fontSize: 15,
+                                                              normalColor:
+                                                                  Colors
+                                                                      .black87,
+                                                              boldColor:
+                                                                  Colors.black,
+                                                              lineHeight: 1.5,
+                                                            ),
                                                     ),
 
                                                     // SelectableText(
@@ -652,8 +655,8 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
           isUnexpectedError
               ? AssetsPath.wilcoAttention
               : (isForBoat
-              ? AssetsPath.wilcoChatBoat
-              : AssetsPath.wilcoChatUser),
+                    ? AssetsPath.wilcoChatBoat
+                    : AssetsPath.wilcoChatUser),
         ),
         height: 40,
       ),
@@ -754,7 +757,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                             final cubit = chatContext.read<ChatCubit>();
 
                             final isAnalyzing = cubit.state.any(
-                                  (msg) => msg['type'] == 'analyzing',
+                              (msg) => msg['type'] == 'analyzing',
                             );
 
                             if (!isAnalyzing) {
@@ -778,21 +781,22 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                           return KeyEventResult.ignored;
                         },
-
-                        child: TextField(
-                          controller: _controller,
-                          minLines: 1,
-                          maxLines: 5,
-                          style: AppTextStyles.regular(
-                            16,
-                          ).copyWith(height: 1.0, color: AppColors.black),
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Type your message here...',
-                            hintStyle: AppTextStyles.regular(16).copyWith(
-                              height: 1.0,
-                              color: AppColors.greyFlightDetailText,
+                        child: OccludeWrapper(
+                          child: TextField(
+                            controller: _controller,
+                            minLines: 1,
+                            maxLines: 5,
+                            style: AppTextStyles.regular(
+                              16,
+                            ).copyWith(height: 1.0, color: AppColors.black),
+                            textInputAction: TextInputAction.done,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Type your message here...',
+                              hintStyle: AppTextStyles.regular(16).copyWith(
+                                height: 1.0,
+                                color: AppColors.greyFlightDetailText,
+                              ),
                             ),
                           ),
                         ),
@@ -805,7 +809,7 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
               BlocBuilder<ChatCubit, List<Map<String, String>>>(
                 builder: (context, state) {
                   final isAnalyzing = state.any(
-                        (msg) => msg['type'] == 'analyzing',
+                    (msg) => msg['type'] == 'analyzing',
                   );
 
                   return ValueListenableBuilder<bool>(
@@ -827,46 +831,46 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
 
                         onTap: showSendButton && isConnected
                             ? () {
-                          // if (isAnalyzing) {
-                          //   context.read<ChatCubit>().stopResponse();
-                          //
-                          //   return;
-                          // }
+                                // if (isAnalyzing) {
+                                //   context.read<ChatCubit>().stopResponse();
+                                //
+                                //   return;
+                                // }
 
-                          if (isAnalyzing) {
-                            context.read<ChatCubit>().stopResponse();
+                                if (isAnalyzing) {
+                                  context.read<ChatCubit>().stopResponse();
 
-                            Future.delayed(
-                              const Duration(milliseconds: 100),
-                                  () {},
-                            );
+                                  Future.delayed(
+                                    const Duration(milliseconds: 100),
+                                    () {},
+                                  );
 
-                            return;
-                          }
+                                  return;
+                                }
 
-                          final text = _controller.text.trim();
+                                final text = _controller.text.trim();
 
-                          if (text.isNotEmpty) {
-                            context.read<ChatCubit>().sendMessage(
-                              text,
-                              context,
-                              isReceivedTokenFullWarning,
-                            );
+                                if (text.isNotEmpty) {
+                                  context.read<ChatCubit>().sendMessage(
+                                    text,
+                                    context,
+                                    isReceivedTokenFullWarning,
+                                  );
 
-                            _controller.clear();
+                                  _controller.clear();
 
-                            _messageFocusNode.unfocus();
+                                  _messageFocusNode.unfocus();
 
-                            _scrollToBottom();
+                                  _scrollToBottom();
 
-                            _stopListening(context);
+                                  _stopListening(context);
 
-                            AnalyticsService.instance.buttonPressed(
-                              FirebaseEvents.chatSendButton,
-                              FirebaseEvents.askChatScreen,
-                            );
-                          }
-                        }
+                                  AnalyticsService.instance.buttonPressed(
+                                    FirebaseEvents.chatSendButton,
+                                    FirebaseEvents.askChatScreen,
+                                  );
+                                }
+                              }
                             : null,
 
                         child: AnimatedContainer(
@@ -883,23 +887,23 @@ class _AskWilcoScreenState extends State<AskWilcoScreen> {
                           child: Center(
                             child: showSendButton
                                 ? (isAnalyzing
-                                ? const Icon(
-                              Icons.stop,
-                              size: 40,
-                              //color: Color(0xFF2D235A),
-                            )
-                                : SvgPicture.asset(
-                              CommonUi.setSvgImage(
-                                AssetsPath.chatSendIcon,
-                              ),
-                            ))
+                                      ? const Icon(
+                                          Icons.stop,
+                                          size: 40,
+                                          //color: Color(0xFF2D235A),
+                                        )
+                                      : SvgPicture.asset(
+                                          CommonUi.setSvgImage(
+                                            AssetsPath.chatSendIcon,
+                                          ),
+                                        ))
                                 : Icon(
-                              _isListening
-                                  ? Icons.mic_rounded
-                                  : Icons.mic_none_rounded,
-                              color: AppColors.primaryDark,
-                              size: 40,
-                            ),
+                                    _isListening
+                                        ? Icons.mic_rounded
+                                        : Icons.mic_none_rounded,
+                                    color: AppColors.primaryDark,
+                                    size: 40,
+                                  ),
                           ),
                         ),
                       );
