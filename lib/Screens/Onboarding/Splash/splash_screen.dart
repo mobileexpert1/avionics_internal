@@ -2,8 +2,10 @@ import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/analytics
 import 'package:avionics_internal/Constants/ApiClass/FirebaseAnalytics/event_names.dart';
 import 'package:avionics_internal/Constants/AppColors.dart';
 import 'package:avionics_internal/Constants/ConstantStrings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../Constants/ApiClass/UxCamAnalytics/UxCamService.dart';
 import '../../../Constants/constantImages.dart';
 import '../../../Helpers/AppNavigator.dart';
@@ -40,11 +42,11 @@ class _SplashScreenState extends State<SplashScreen> {
     //     disableSwipeBack: true,
     //   );
     //} else {
-      AppNavigator.pushReplacement(
-        context,
-        RootDecider(),
-        disableSwipeBack: true,
-      );
+    AppNavigator.pushReplacement(
+      context,
+      RootDecider(),
+      disableSwipeBack: true,
+    );
     //}
   }
 
@@ -71,6 +73,13 @@ class _SplashScreenState extends State<SplashScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
+                Center(
+                  child: SvgPicture.asset(
+                    CommonUi.setSvgImage(AssetsPath.mainLogoWithBottomLine),
+                     height: 25,
+                    fit: BoxFit.contain,
+                  ),
+                ),
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20.0),
@@ -78,9 +87,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ConstantStrings.poweredBy,
                     style: AppTextStyles.regular(
                       textFontSize,
-                    ).copyWith(
-                      color: Colors.white,
-                    ),
+                    ).copyWith(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                 ),

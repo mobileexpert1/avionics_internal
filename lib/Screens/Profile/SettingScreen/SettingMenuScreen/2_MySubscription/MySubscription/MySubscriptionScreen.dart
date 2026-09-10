@@ -1,28 +1,28 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../../../../Constants/AppColors.dart';
-import '../../../../../Constants/ConstantStrings.dart';
-import '../../../../../Constants/constantImages.dart';
-import '../../../../../CustomFiles/CustomAppBar.dart';
-import '../../../../../Helpers/AppNavigator.dart';
-import '../../../../../Helpers/AppText.dart';
-import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
-import '../../../../../bloc/Profile/DeleteProfile/delete_state.dart';
-import '../../../../../bloc/Profile/MySubscription/my_subscription_cubit.dart';
-import '../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
-import '../../../../../bloc/Profile/MySubscription/my_subscription_state.dart';
-import '../../../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
-import '../../InfoBottomSheet.dart';
-import '../3_AddOnPacks/AddOnPacksScreen.dart';
-import '../4_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
-import '../8_Review/FeedbackScreen.dart';
+import '../../../../../../Constants/AppColors.dart';
+import '../../../../../../Constants/ConstantStrings.dart';
+import '../../../../../../Constants/constantImages.dart';
+import '../../../../../../CustomFiles/CustomAppBar.dart';
+import '../../../../../../Helpers/AppNavigator.dart';
+import '../../../../../../Helpers/AppText.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../../../bloc/Onboarding/Subscription/SubscriptionPlanList/subscriptionPlanList_cubit.dart';
+import '../../../../../../bloc/Profile/DeleteProfile/delete_cubit.dart';
+import '../../../../../../bloc/Profile/DeleteProfile/delete_state.dart';
+import '../../../../../../bloc/Profile/MySubscription/my_subscription_cubit.dart';
+import '../../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
+import '../../../../../../bloc/Profile/MySubscription/my_subscription_state.dart';
+import '../../../../../Onboarding/Subscription/SubscriptionPlanDetailScreen.dart';
+import '../../../InfoBottomSheet.dart';
+import '../../3_AddOnPacks/AddOnPacksScreen.dart';
+import '../../4_CreditsTokenUsage/CreditsTokenUsageScreen.dart';
+import '../../8_Review/FeedbackScreen.dart';
+import '../AllSubsciptionPlanListPopup/AllSubPlanListPopup.dart';
 import 'EmptyPackagesView.dart';
 import 'MySubscriptionDetailScreen.dart';
 import 'SubscriptionPlanCard.dart';
@@ -39,7 +39,6 @@ class MySubscriptionScreen extends StatefulWidget {
 class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
   late MySubscriptionCubit _cubit;
 
-  Timer? _debounce;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -63,25 +62,19 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _scrollController.dispose();
-    _cubit.close();
     super.dispose();
   }
 
   void _onScroll() {
-    if (!_scrollController.hasClients) return;
-
-    final position = _scrollController.position;
-    final state = _cubit.state;
-
-    if (position.pixels >= position.maxScrollExtent - 300) {
-      if (state.hasNextPage && !state.isFetchingMore && !state.isLoading) {
-        debugPrint(
-          'Pagination Triggered => Loading Page ${state.currentPage + 1}',
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      if (_cubit.state.hasNextPage && !_cubit.state.isFetchingMore) {
+        _cubit.loadSubscriptionsHistory(
+          context: context,
+          page: _cubit.state.currentPage + 1,
+          isLoadMore: true,
         );
-
-        _cubit.loadSubscriptionsHistory(context: context, isLoadMore: true);
       }
     }
   }

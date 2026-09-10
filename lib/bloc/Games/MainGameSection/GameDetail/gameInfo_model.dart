@@ -247,7 +247,7 @@ class GameMapper {
         GameInfoItem(
           asset: AssetsPath.aeroplaneLevelIcon,
           title: 'Question type',
-          value: 'Topic wise modules',
+          value: 'Includes MCQs, True False',
         ),
 
         GameInfoItem(
@@ -258,16 +258,16 @@ class GameMapper {
 
         GameInfoItem(
           asset: AssetsPath.speedLevelBounce,
-          title: 'Speed bonus',
-          value: '+1 point',
-          subtitle: 'If answered under 20 sec',
+          title: 'Win bonus',
+          value: '+200 Jettons',
+          subtitle: 'For each set won',
         ),
 
         GameInfoItem(
           asset: AssetsPath.perfectLevelBounce,
           title: 'Perfect bonus',
-          value: '+3 points',
-          subtitle: 'For all correct answers',
+          value: '+80 Jettons',
+          subtitle: 'For all sets completed successfully',
         ),
       ],
 
@@ -356,7 +356,7 @@ class GameMapper {
         GameInfoItem(
           asset: AssetsPath.aeroplaneLevelIcon,
           title: 'Question type',
-          value: 'Topic wise modules',
+          value: 'Includes MCQs, True False',
         ),
 
         GameInfoItem(
@@ -367,16 +367,16 @@ class GameMapper {
 
         GameInfoItem(
           asset: AssetsPath.speedLevelBounce,
-          title: 'Speed bonus',
-          value: '+1 point',
-          subtitle: 'If answered under 20 sec',
+          title: 'Win bonus',
+          value: 'Unlock Sub Components of Plane',
+          subtitle: 'Winning 5 Sub Components will unlock 3D part of the plane',
         ),
 
         GameInfoItem(
           asset: AssetsPath.perfectLevelBounce,
           title: 'Perfect bonus',
-          value: '+3 points',
-          subtitle: 'For all correct answers',
+          value: 'Unlock 3D Parts of the Plane',
+          subtitle: 'Winning all 3D Parts will reward full 3D Aircraft',
         ),
       ],
 

@@ -28,7 +28,7 @@ abstract class AssetsPath {
   ///
 
   static const String mainLogoTransparentColour = "0_0_ClearLogo";
-
+  static const String mainLogoWithBottomLine = "0_0MainLogo_BottomLine";
   static const String mainLogoWhiteColour = "0_0MainLogo";
   static const String mainLogo = "0MainLogo";
   static const String avionicaHome = "1avionicaHome";

@@ -80,44 +80,8 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
   @override
   void initState() {
     super.initState();
-
-    if (!widget.isComeFromResultScreen) {
-      Future.microtask(() {
-        context.read<JettingTheWorldCubit>().loadAirports(context);
-      });
-    } else {
-      Future.microtask(() {
-        context.read<JettingTheWorldCubit>().loadAirportsFromUnlockResponse(
-          context,
-          widget.responseFromResultScreenData!,
-        );
-      });
-    }
-
-    _controller = FlutterEarthGlobeController(
-      rotationSpeed: 0.05,
-      minZoom: 1.0,
-      maxZoom: 8,
-      zoom: widget.isComeFromResultScreen ? 2.0 : 1.0,
-      isRotating: false,
-      atmosphereOpacity: 0.8,
-      zoomToMousePosition: false,
-      isBackgroundFollowingSphereRotation: true,
-      background: Image.asset('assets/google_earth_map/2k_stars.jpg').image,
-      surface: Image.asset(
-        'assets/google_earth_map/1_2k_earth-day_light.jpg',
-      ).image,
-      nightSurface: Image.asset(
-        'assets/google_earth_map/2k_earth-night.jpg',
-      ).image,
-      isDayNightCycleEnabled: false,
-      dayNightBlendFactor: 0.15,
-    );
-
-    AnalyticsService.instance.logVisibleScreen(
-      FirebaseEvents.jettingaroundtheworld,
-    );
     UxCamService.instance.logScreen(FirebaseEvents.jettingaroundtheworld);
+
     Future.microtask(() {
       if (!mounted) return;
 
@@ -133,6 +97,30 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
         }
       }
     });
+
+    _controller = FlutterEarthGlobeController(
+      rotationSpeed: 0.05,
+      minZoom: 1.0,
+      maxZoom: 8,
+      zoom: widget.isComeFromResultScreen ? 2.0 : 1.0,
+      isRotating: false,
+      atmosphereOpacity: 0.8,
+      zoomToMousePosition: false,
+      isBackgroundFollowingSphereRotation: true,
+      background: Image.asset('assets/google_earth_map/2k_stars.jpg').image,
+      surface: Image.asset(
+        'assets/google_earth_map/1_1_2k_earth-day_light.jpg',
+      ).image,
+      nightSurface: Image.asset(
+        'assets/google_earth_map/2k_earth-night.jpg',
+      ).image,
+      isDayNightCycleEnabled: false,
+      dayNightBlendFactor: 0.15,
+    );
+
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.jettingaroundtheworld,
+    );
   }
 
   @override
@@ -195,7 +183,7 @@ class _JettingAroundTheWorldState extends State<JettingAroundTheWorldScreen> {
             end: points[i + 1].coordinates,
             curveScale: 0.5,
             id: i.toString(),
-            // isLastId: i == points.length - 2 ? points.last.id : "",
+            isLastId: i == points.length - 2 ? points.last.id : "",
             style: const PointConnectionStyle(
               color: AppColors.greenColourForPlan,
               transitionDuration: 2000,

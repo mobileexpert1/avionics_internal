@@ -25,7 +25,7 @@ import 'InfoBottomSheet.dart';
 import 'SettingMenuScreen/0_Avtar/AvtarScreen.dart';
 import 'SettingMenuScreen/10_13_AboutTermsPrivacyFaq/AboutTermsPrivacyScreen.dart';
 import 'SettingMenuScreen/1_PersonalData/ManageAccountScreen.dart';
-import 'SettingMenuScreen/2_MySubscription/MySubscriptionScreen.dart';
+import 'SettingMenuScreen/2_MySubscription/MySubscription/MySubscriptionScreen.dart';
 import 'SettingMenuScreen/7_TutorialScreen/VideoPlayerScreen.dart';
 import 'SettingMenuScreen/8_Review/FeedbackScreen.dart';
 import 'SettingMenuScreen/9_ContactSupport/ContactSupportScreen.dart';

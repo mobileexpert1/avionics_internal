@@ -144,7 +144,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
             .map((q) => _mapQuestion(q, gameData!.setId, gameData.imageBasedId))
             .toList();
 
-        maxQuestions = allQuestions.length;
+        if (gameId == "trivia" ||
+            gameId == "imageBased" ||
+            gameId == "aircraftEncyclopaedia") {
+          maxQuestions = allQuestions.length;
+        } else {
+          maxQuestions = 20;
+        }
 
         print("maxQuestions-=-=-=-=$maxQuestions");
 
@@ -202,8 +208,13 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
         startTimer(context, gameId != "imageBased");
 
         // Fetch silently in background if needed
-        if (allQuestions.length < maxQuestions) {
-          _fetchAndBufferBackgroundQuestions(sectionId, context);
+
+        if (gameId == "calculation" ||
+            gameId == "one_word" ||
+            gameId == "quiz") {
+          if (allQuestions.length < 20) {
+            _fetchAndBufferBackgroundQuestions(sectionId, context);
+          }
         }
       } catch (e, stackTrace) {
         print('Error loading questions: $e, StackTrace: $stackTrace');

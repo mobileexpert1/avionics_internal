@@ -13,7 +13,9 @@ class MySubscriptionState {
   final CommonApiStatus status;
 
   final int currentPage;
+  final int totalPages;
   final bool hasNextPage;
+  final String currentQuery;
 
   const MySubscriptionState({
     this.isLoading = false,
@@ -24,7 +26,9 @@ class MySubscriptionState {
     this.errorMessage,
     this.status = CommonApiStatus.initial,
     this.currentPage = 1,
+    this.totalPages = 1,
     this.hasNextPage = true,
+    this.currentQuery = '',
   });
 
   MySubscriptionState copyWith({
@@ -36,7 +40,9 @@ class MySubscriptionState {
     String? errorMessage,
     CommonApiStatus? status,
     int? currentPage,
+    int? totalPages,
     bool? hasNextPage,
+    String? currentQuery,
   }) {
     return MySubscriptionState(
       isLoading: isLoading ?? this.isLoading,
@@ -47,7 +53,9 @@ class MySubscriptionState {
       errorMessage: errorMessage ?? this.errorMessage,
       status: status ?? this.status,
       currentPage: currentPage ?? this.currentPage,
+      totalPages: totalPages ?? this.totalPages,
       hasNextPage: hasNextPage ?? this.hasNextPage,
+      currentQuery: currentQuery ?? this.currentQuery,
     );
   }
 }

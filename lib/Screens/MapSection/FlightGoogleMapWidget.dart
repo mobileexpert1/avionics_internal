@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../Constants/ApiClass/shared_prefs_helper.dart';
 
 class FlightGoogleMapWidget extends StatefulWidget {
@@ -93,7 +94,7 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
       zoomControlsEnabled: widget.zoomControlsEnabled,
       myLocationButtonEnabled: widget.myLocationButtonEnabled,
       rotateGesturesEnabled: widget.rotateGesturesEnabled,
-      minMaxZoomPreference: MinMaxZoomPreference(0, 15),
+      minMaxZoomPreference: MinMaxZoomPreference(kIsWeb ? 2 : 0, 15),
       myLocationEnabled: widget.myLocationEnabled,
       mapType: widget.mapType,
       polygons: widget.polygons,
@@ -105,7 +106,6 @@ class _FlightGoogleMapWidgetState extends State<FlightGoogleMapWidget> {
 
       scrollGesturesEnabled: widget.scrollGesturesEnabled,
       zoomGesturesEnabled: widget.zoomGesturesEnabled,
-
 
       onMapCreated: (controller) async {
         _mapController = controller;

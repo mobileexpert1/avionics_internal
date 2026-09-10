@@ -1,4 +1,5 @@
 import 'package:avionics_internal/Constants/AppColors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,53 +35,83 @@ class _JettingAroundBoardingPassesState
   @override
   void initState() {
     super.initState();
+
     Future.microtask(() {
+      if (!mounted) return;
+
       context.read<JettingBoardingPassCubit>().loadAirports(context);
     });
-    AnalyticsService.instance.logVisibleScreen(FirebaseEvents.jettingaroundtheworldpasses);
-    UxCamService.instance.logScreen(FirebaseEvents.jettingaroundtheworldpasses);
+
+    AnalyticsService.instance.logVisibleScreen(
+      FirebaseEvents.jettingaroundtheworldpasses,
+    );
+
+    UxCamService.instance.logScreen(
+      FirebaseEvents.jettingaroundtheworldpasses,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: CustomAppBar(
         title: ConstantStrings.boardingPassTitle,
         isForComparison: true,
         centerTitle: false,
         leftButton: IconButton(
           icon: SvgPicture.asset(
-            CommonUi.setSvgImage(AssetsPath.backArrowButton),
+            CommonUi.setSvgImage(
+              AssetsPath.backArrowButton,
+            ),
             fit: BoxFit.cover,
           ),
           onPressed: () {
             if (widget.isComeFromResultScreen) {
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).popUntil(
+                    (route) => route.isFirst,
+              );
             } else {
               Navigator.pop(context, true);
             }
           },
         ),
       ),
-      body: BlocBuilder<JettingBoardingPassCubit, JettingBoardingPassState>(
+
+      body: BlocBuilder<
+          JettingBoardingPassCubit,
+          JettingBoardingPassState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           final airports = state.airportList;
 
           if (airports.isEmpty) {
-            return const Center(child: Text('No Boarding Pass available'));
+            return const Center(
+              child: Text(
+                'No Boarding Pass available',
+              ),
+            );
           }
 
-          return ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          /// Main boarding pass list
+          final boardingPassList = ListView.separated(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 15,
+            ),
             itemCount: airports.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            separatorBuilder: (_, _) => const SizedBox(
+              height: 14,
+            ),
             itemBuilder: (context, index) {
               final airport = airports[index];
+
               return GestureDetector(
                 onTap: () {
                   AppNavigator.push(
@@ -93,10 +124,38 @@ class _JettingAroundBoardingPassesState
                     disableSwipeBack: true,
                   );
                 },
-                child: RouteCard(airport: airport, isFirst: index == 0),
+                child: RouteCard(
+                  airport: airport,
+                  isFirst: index == 0,
+                ),
               );
             },
           );
+
+          /// ----------------------------------------------------------
+          /// RESPONSIVE WEB CONTAINER
+          /// ----------------------------------------------------------
+          ///
+          /// Web:
+          ///   - Maximum width = 1500
+          ///   - Center aligned
+          ///
+          /// Mobile / Tablet:
+          ///   - Uses complete available width
+          ///
+          if (kIsWeb) {
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 1200,
+                ),
+                child: boardingPassList,
+              ),
+            );
+          }
+
+          /// Android / iOS
+          return boardingPassList;
         },
       ),
     );
@@ -107,7 +166,11 @@ class RouteCard extends StatelessWidget {
   final BoardingPassModel airport;
   final bool isFirst;
 
-  const RouteCard({super.key, required this.airport, this.isFirst = false});
+  const RouteCard({
+    super.key,
+    required this.airport,
+    this.isFirst = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +178,17 @@ class RouteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryDark, width: 1),
+        border: Border.all(
+          color: AppColors.primaryDark,
+          width: 1,
+        ),
       ),
-      child: Column(children: [_buildHeader(), _buildRouteContent()]),
+      child: Column(
+        children: [
+          _buildHeader(),
+          _buildRouteContent(),
+        ],
+      ),
     );
   }
 
@@ -134,7 +205,9 @@ class RouteCard extends StatelessWidget {
       ),
       child: Center(
         child: SvgPicture.asset(
-          CommonUi.setSvgImage(AssetsPath.mainLogoTransparentColour),
+          CommonUi.setSvgImage(
+            AssetsPath.mainLogoTransparentColour,
+          ),
           fit: BoxFit.fill,
         ),
       ),
@@ -143,15 +216,31 @@ class RouteCard extends StatelessWidget {
 
   Widget _buildRouteContent() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 20, 15, 18),
+      padding: const EdgeInsets.fromLTRB(
+        15,
+        20,
+        15,
+        18,
+      ),
       child: Column(
         children: [
           _buildFromToLabels(),
-          const SizedBox(height: 10),
+
+          const SizedBox(
+            height: 10,
+          ),
+
           _buildCountryRow(true),
-          const SizedBox(height: 5),
+
+          const SizedBox(
+            height: 5,
+          ),
+
           _buildRoute(),
-          const SizedBox(height: 10),
+
+          const SizedBox(
+            height: 10,
+          ),
         ],
       ),
     );
@@ -160,7 +249,10 @@ class RouteCard extends StatelessWidget {
   Widget _buildFromToLabels() {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [_SmallLabel('From'), _SmallLabel('To')],
+      children: [
+        _SmallLabel('From'),
+        _SmallLabel('To'),
+      ],
     );
   }
 
@@ -168,7 +260,11 @@ class RouteCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _SubText(airport.fromAirport.city, isComeFromTop: isComeFromTop),
+        _SubText(
+          airport.fromAirport.city,
+          isComeFromTop: isComeFromTop,
+        ),
+
         _SubText(
           airport.toAirport.city,
           alignRight: true,
@@ -182,10 +278,13 @@ class RouteCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // LEFT AIRPORT
-        Expanded(flex: 3, child: _buildLeftAirport()),
+        /// LEFT AIRPORT
+        Expanded(
+          flex: 3,
+          child: _buildLeftAirport(),
+        ),
 
-        // CENTER ROUTE
+        /// CENTER ROUTE
         Expanded(
           flex: 4,
           child: buildCustomProgressBar(
@@ -197,13 +296,20 @@ class RouteCard extends StatelessWidget {
           ),
         ),
 
-        // RIGHT AIRPORT
-        Expanded(flex: 3, child: _buildRightAirport()),
+        /// RIGHT AIRPORT
+        Expanded(
+          flex: 3,
+          child: _buildRightAirport(),
+        ),
       ],
     );
   }
 
-  Widget buildCustomProgressBar(double progress, Color color, String distance) {
+  Widget buildCustomProgressBar(
+      double progress,
+      Color color,
+      String distance,
+      ) {
     return SizedBox(
       width: double.infinity,
       height: 40,
@@ -215,39 +321,54 @@ class RouteCard extends StatelessWidget {
           const lineHeight = 2.5;
           const horizontalPadding = 2.0;
 
-          // Prevent invalid clamp ranges on very small devices.
-          final usableWidth = (totalWidth - (horizontalPadding * 2)).clamp(
+          /// Prevent invalid clamp ranges on very small devices.
+          final usableWidth = (totalWidth -
+              (horizontalPadding * 2))
+              .clamp(
             0.0,
             double.infinity,
           );
 
-          final planeCenterX = horizontalPadding + (usableWidth * progress);
+          final planeCenterX =
+              horizontalPadding +
+                  (usableWidth * progress);
 
-          // Safe airplane position.
-          final maxPlaneLeft = (totalWidth - planeSize - horizontalPadding);
+          /// Safe airplane position.
+          final maxPlaneLeft =
+              totalWidth -
+                  planeSize -
+                  horizontalPadding;
 
-          final planeLeft = maxPlaneLeft <= horizontalPadding
+          final planeLeft =
+          maxPlaneLeft <= horizontalPadding
               ? horizontalPadding
-              : (planeCenterX - (planeSize / 2)).clamp(
-                  horizontalPadding,
-                  maxPlaneLeft,
-                );
+              : (planeCenterX -
+              (planeSize / 2))
+              .clamp(
+            horizontalPadding,
+            maxPlaneLeft,
+          );
 
           return Stack(
             clipBehavior: Clip.none,
             children: [
-              // LEFT LINE
+              /// LEFT LINE
               Positioned(
                 left: horizontalPadding,
                 top: 13,
-                width: (planeCenterX - horizontalPadding).clamp(
+                width: (planeCenterX -
+                    horizontalPadding)
+                    .clamp(
                   0.0,
                   usableWidth,
                 ),
-                child: Container(height: lineHeight, color: Colors.black),
+                child: Container(
+                  height: lineHeight,
+                  color: Colors.black,
+                ),
               ),
 
-              // RIGHT LINE
+              /// RIGHT LINE
               Positioned(
                 left: planeCenterX,
                 right: horizontalPadding,
@@ -258,7 +379,7 @@ class RouteCard extends StatelessWidget {
                 ),
               ),
 
-              // AIRPLANE + DISTANCE
+              /// AIRPLANE + DISTANCE
               Positioned(
                 left: planeLeft,
                 top: 0,
@@ -269,12 +390,16 @@ class RouteCard extends StatelessWidget {
                       width: planeSize,
                       height: planeSize,
                       child: SvgPicture.asset(
-                        CommonUi.setSvgImage(getNextCategory()),
+                        CommonUi.setSvgImage(
+                          getNextCategory(),
+                        ),
                         fit: BoxFit.contain,
                       ),
                     ),
 
-                    const SizedBox(height: 2),
+                    const SizedBox(
+                      height: 2,
+                    ),
 
                     Text(
                       "$distance NM",
@@ -282,7 +407,10 @@ class RouteCard extends StatelessWidget {
                       softWrap: false,
                       style: AppTextStyles.regular(
                         14,
-                      ).copyWith(height: 1.0, color: AppColors.primaryBlue),
+                      ).copyWith(
+                        height: 1.0,
+                        color: AppColors.primaryBlue,
+                      ),
                     ),
                   ],
                 ),
@@ -297,14 +425,23 @@ class RouteCard extends StatelessWidget {
   Widget _buildLeftAirport() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_MainText(airport.fromAirport.flightSegment)],
+      children: [
+        _MainText(
+          airport.fromAirport.flightSegment,
+        ),
+      ],
     );
   }
 
   Widget _buildRightAirport() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
-      children: [_MainText(airport.toAirport.flightSegment, alignRight: true)],
+      children: [
+        _MainText(
+          airport.toAirport.flightSegment,
+          alignRight: true,
+        ),
+      ],
     );
   }
 }
@@ -320,7 +457,10 @@ class _SmallLabel extends StatelessWidget {
       text,
       style: AppTextStyles.regular(
         14,
-      ).copyWith(height: 1.0, color: AppColors.grayMedium),
+      ).copyWith(
+        height: 1.0,
+        color: AppColors.grayMedium,
+      ),
     );
   }
 }
@@ -331,23 +471,31 @@ class _SubText extends StatelessWidget {
   final bool isComeFromTop;
 
   const _SubText(
-    this.text, {
-    this.alignRight = false,
-    this.isComeFromTop = false,
-  });
+      this.text, {
+        this.alignRight = false,
+        this.isComeFromTop = false,
+      });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      textAlign: alignRight ? TextAlign.right : TextAlign.left,
+      textAlign: alignRight
+          ? TextAlign.right
+          : TextAlign.left,
       style: isComeFromTop
           ? AppTextStyles.regular(
-              12,
-            ).copyWith(height: 1.0, color: AppColors.primaryDark)
+        12,
+      ).copyWith(
+        height: 1.0,
+        color: AppColors.primaryDark,
+      )
           : AppTextStyles.medium(
-              16,
-            ).copyWith(height: 1.0, color: AppColors.primaryDark),
+        16,
+      ).copyWith(
+        height: 1.0,
+        color: AppColors.primaryDark,
+      ),
     );
   }
 }
@@ -356,16 +504,24 @@ class _MainText extends StatelessWidget {
   final String text;
   final bool alignRight;
 
-  const _MainText(this.text, {this.alignRight = false});
+  const _MainText(
+      this.text, {
+        this.alignRight = false,
+      });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      textAlign: alignRight ? TextAlign.right : TextAlign.left,
+      textAlign: alignRight
+          ? TextAlign.right
+          : TextAlign.left,
       style: AppTextStyles.bold(
         22,
-      ).copyWith(height: 1.0, color: AppColors.primaryDark),
+      ).copyWith(
+        height: 1.0,
+        color: AppColors.primaryDark,
+      ),
     );
   }
 }

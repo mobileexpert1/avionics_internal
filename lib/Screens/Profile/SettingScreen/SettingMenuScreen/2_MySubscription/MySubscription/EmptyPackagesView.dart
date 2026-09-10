@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
 
 class EmptyPackagesView extends StatelessWidget {
   final bool isLoading;

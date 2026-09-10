@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../../../../../Constants/AppColors.dart';
-import '../../../../../Constants/constantImages.dart';
-import '../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
-import '../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
+import '../../../../../../Constants/AppColors.dart';
+import '../../../../../../Constants/constantImages.dart';
+import '../../../../../../Helpers/AppTextStyles/AppTextStyles.dart';
+import '../../../../../../bloc/Profile/MySubscription/my_subscription_model.dart';
 
 class SubscriptionPlanCard extends StatelessWidget {
   final bool isPremiumPlan;

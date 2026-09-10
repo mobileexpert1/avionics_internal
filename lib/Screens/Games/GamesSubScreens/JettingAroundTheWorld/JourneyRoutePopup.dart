@@ -24,6 +24,8 @@ class JourneyRoutePopup extends StatefulWidget {
 class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
   int selectedIndex = -1;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,29 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToCurrentAirport() {
+    final airports = widget._cubit.state.airportList;
+
+    final currentIndex = airports.indexWhere(
+      (airport) => airport.current == true,
+    );
+
+    if (currentIndex == -1) return;
+    const double itemHeight = 100;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+
+      _scrollController.animateTo(
+        currentIndex * itemHeight,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   void _showSnackBar(BuildContext ctx, String message) {
@@ -68,6 +92,10 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
       listener: _onStateChange,
       builder: (context, state) {
         final airports = widget._cubit.state.airportList;
+
+        if (state.airportList.isNotEmpty) {
+          _scrollToCurrentAirport();
+        }
 
         return Stack(
           children: [
@@ -111,6 +139,7 @@ class _JourneyRoutePopupState extends State<JourneyRoutePopup> {
 
                     Expanded(
                       child: ListView.separated(
+                        controller: _scrollController,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         itemCount: airports.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 0),

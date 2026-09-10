@@ -3,19 +3,16 @@ import '../../../Constants/ConstantStrings.dart';
 import 'my_subscription_model.dart';
 
 class MySubscriptionRepository {
-  Future<MySubscriptionResponseModel> getAllSubscriptionDetails(
-    page,
-  ) async {
+  Future<MySubscriptionResponseModel> getAllSubscriptionDetails(int page) async {
     final url = Uri.parse(
       "${ApiBaseUrlConstant.baseUrl}"
       "${ApiFunctionUrlConstant.userService}"
       "${ApiServiceUrlConstant.getSubscriptionList}"
-      "${ApiServiceUrlConstant.historySubscription}?=$page",
+      "${ApiServiceUrlConstant.historySubscription}?page=$page",
     );
 
     try {
       final jsonData = await ApiService.get(url: url);
-
       return MySubscriptionResponseModel.fromJson(jsonData);
     } catch (e) {
       throw e.toString();

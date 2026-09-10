@@ -16,9 +16,11 @@ import '../../../Helpers/AppTextStyles/AppTextStyles.dart';
 import '../../../Helpers/CardWithBadgeClipper.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
 import '../../../bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanState.dart';
+import '../../../bloc/Onboarding/Subscription/SubscriptionPlanList/subscriptionPlanList_cubit.dart';
 import '../../Home/RootTabbar/RootTabbarScreen.dart';
-import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/FeatureRow.dart';
-import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/StepIndicator.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/AllSubsciptionPlanListPopup/AllSubPlanListPopup.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/MySubscription/FeatureRow.dart';
+import '../../Profile/SettingScreen/SettingMenuScreen/2_MySubscription/MySubscription/StepIndicator.dart';
 import '../Login/LoginScreen.dart';
 
 class SubscriptionPlanDetailScreen extends StatefulWidget {
@@ -159,7 +161,10 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
 
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => RootTabbarscreen(key: RootTabbarscreen.globalKey)),
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        RootTabbarscreen(key: RootTabbarscreen.globalKey),
+                  ),
                   (route) => false,
                 );
               });
@@ -552,17 +557,18 @@ class _PlanCard extends StatelessWidget {
               icon: const SizedBox(),
               isEnabled: !state.loading,
               onPressed: () {
-                context.read<SubscriptionBuyPlanCubit>().selectPackage(package);
-                context.read<SubscriptionBuyPlanCubit>().buySelected();
-
-                AnalyticsService.instance.buttonPressed(
-                  FirebaseEvents.subscriptionScreen,
-                  FirebaseEvents.goPremiumSubscriptionButton,
-                );
-                UxCamService.instance.buttonPressed(
-                  FirebaseEvents.subscriptionScreen,
-                  FirebaseEvents.goPremiumSubscriptionButton,
-                );
+                openSubscriptionPlan(context);
+                // context.read<SubscriptionBuyPlanCubit>().selectPackage(package);
+                // context.read<SubscriptionBuyPlanCubit>().buySelected();
+                //
+                // AnalyticsService.instance.buttonPressed(
+                //   FirebaseEvents.subscriptionScreen,
+                //   FirebaseEvents.goPremiumSubscriptionButton,
+                // );
+                // UxCamService.instance.buttonPressed(
+                //   FirebaseEvents.subscriptionScreen,
+                //   FirebaseEvents.goPremiumSubscriptionButton,
+                // );
               },
             ),
 
@@ -592,6 +598,29 @@ class _PlanCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+
+  void openSubscriptionPlan(BuildContext context) {
+    final subscriptionCubit = context.read<SubscriptionCubit>();
+    subscriptionCubit.loadPlans(true);
+    showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.55,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: BlocProvider.value(
+              value: subscriptionCubit,
+              child: const AllSubPlanListPopup(),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -37,6 +37,7 @@ import 'bloc/Home/AircraftComparison/Comparison/ComparisonCubit.dart';
 import 'bloc/Home/manufacturer/manufacturer_cubit.dart';
 import 'bloc/MapSection/MapSeacrhAircraftList/map_Search_Aircraft_List_cubit.dart';
 import 'bloc/Onboarding/Subscription/SubscriptionBuyPlan/SubscriptionBuyPlanCubit.dart';
+import 'bloc/Onboarding/Subscription/SubscriptionPlanList/subscriptionPlanList_cubit.dart';
 import 'bloc/Onboarding/forgotPassword/forgot_cubit.dart';
 import 'bloc/Onboarding/login/login_cubit.dart';
 import 'bloc/Onboarding/signup/signup_cubit.dart';
@@ -166,6 +167,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => History()),
         BlocProvider(create: (_) => MySubscriptionCubit()),
         BlocProvider(create: (_) => AllMyStickerCubit()),
+        BlocProvider(create: (_) => SubscriptionCubit()),
+
       ],
       child: ResponsiveSizer(
         builder: (context, orientation, screenType) {

@@ -19,49 +19,69 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
     : repository = repository ?? MySubscriptionRepository(),
       super(MySubscriptionState());
 
-  bool _isRequestInProgress = false;
+  bool _isPaginationRunning = false;
 
   Future<void> loadSubscriptionsHistory({
-    required BuildContext context,
     String? query,
-    int? page,
+    required BuildContext context,
+    int page = 1,
     bool isLoadMore = false,
-  })  async {
-    if (await InternetConnection().hasInternetAccess) {
-      if (_isRequestInProgress) return;
-
-      if (isLoadMore && !state.hasNextPage) {
+  }) async {
+    if (isLoadMore) {
+      if (_isPaginationRunning) {
+        debugPrint("Pagination already running");
         return;
       }
 
-      _isRequestInProgress = true;
+      if (!state.hasNextPage) {
+        debugPrint("No more pages");
+        return;
+      }
 
-      final nextPage = page ?? (isLoadMore ? state.currentPage + 1 : 1);
+      _isPaginationRunning = true;
+    }
 
-      debugPrint(
-        'Loading Subscription Page => $nextPage '
-        'isLoadMore => $isLoadMore',
+    if (!isLoadMore) {
+      emit(
+        state.copyWith(
+          currentQuery: query ?? '',
+          currentPage: 1,
+          hasNextPage: false,
+        ),
       );
+    }
 
+    if (await InternetConnection().hasInternetAccess) {
       if (isLoadMore) {
+        _isPaginationRunning = true;
+
         emit(state.copyWith(isFetchingMore: true));
       } else {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            isSuccess: false,
-            status: CommonApiStatus.initial,
-            currentPage: 1,
-          ),
-        );
+        emit(state.copyWith(isLoading: true, currentPage: 1));
       }
 
       try {
+        final nextPage = isLoadMore ? state.currentPage + 1 : 1;
+
+        if (nextPage > state.totalPages) {
+          return;
+        }
+
         final subscriptionData = await repository.getAllSubscriptionDetails(
           nextPage,
         );
 
-        // Existing old subscriptions from previous pages
+        if (subscriptionData.data.current == null) {
+          emit(
+            state.copyWith(
+              hasNextPage: false,
+              isLoading: false,
+              isFetchingMore: false,
+            ),
+          );
+          return;
+        }
+
         final existingOldSubscriptions = isLoadMore
             ? (state.subscriptionData?.data.old ?? [])
             : <MySubscriptionItem>[];
@@ -92,7 +112,10 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
           data: updatedData,
         );
 
-        _isRequestInProgress = false;
+        // debugPrint("Existing: ${existingOldSubscriptions.length}");
+        // debugPrint("New: ${newOldSubscriptions.length}");
+        // debugPrint("Combined: ${combinedSubscriptions.length}");
+        // debugPrint("Unique: ${uniqueOldSubscriptions.length}");
 
         emit(
           state.copyWith(
@@ -106,33 +129,26 @@ class MySubscriptionCubit extends Cubit<MySubscriptionState> {
             isFetchingMore: false,
 
             isSuccess: true,
+            totalPages: updatedSubscriptionData.totalPages,
             status: CommonApiStatus.success,
           ),
         );
       } catch (e) {
-        _isRequestInProgress = false;
-
         SessionCommonTokenError.handleUnauthorizedError(context, e);
 
-        emit(
-          state.copyWith(
-            isLoading: false,
-            isFetchingMore: false,
-            isSuccess: false,
-            errorMessage: e.toString(),
-            status: CommonApiStatus.failure,
-          ),
-        );
+        emit(state.copyWith(isLoading: false, isFetchingMore: false));
+      } finally {
+        _isPaginationRunning = false;
       }
     } else {
-      _isRequestInProgress = false;
-
       NoInternetDialog.show(
         context,
         onRetry: () async {
           await loadSubscriptionsHistory(
+            query: query,
+            context: context,
             page: page,
-            isLoadMore: isLoadMore, context: context,
+            isLoadMore: isLoadMore,
           );
         },
       );
