@@ -31,9 +31,11 @@ class JettingAroundTheWorldScreen extends StatelessWidget {
     super.key,
     required this.isComeFromResultScreen,
     this.responseFromResultScreenData,
+    required this.trackUserId,
   });
 
   final bool isComeFromResultScreen;
+  final String trackUserId;
   final SubmitCalculationResultData? responseFromResultScreenData;
 
   @override
@@ -43,6 +45,7 @@ class JettingAroundTheWorldScreen extends StatelessWidget {
       child: _JettingAroundTheWorldView(
         isComeFromResultScreen: isComeFromResultScreen,
         responseFromResultScreenData: responseFromResultScreenData,
+        trackUserId: trackUserId,
       ),
     );
   }
@@ -52,9 +55,11 @@ class _JettingAroundTheWorldView extends StatefulWidget {
   const _JettingAroundTheWorldView({
     required this.isComeFromResultScreen,
     this.responseFromResultScreenData,
+    required this.trackUserId,
   });
 
   final bool isComeFromResultScreen;
+  final String trackUserId;
   final SubmitCalculationResultData? responseFromResultScreenData;
 
   @override
@@ -249,8 +254,8 @@ class _JettingAroundTheWorldViewState
 
   String _buildWebUrl() {
     return widget.isComeFromResultScreen
-        ? 'https://avionica.csdevhub.com/globe/'
-        : 'https://avionica.csdevhub.com/globe/multi.html';
+        ? 'https://avionica.csdevhub.com/globe?track_id=${widget.trackUserId}'
+        : 'https://avionica.csdevhub.com/globe/multi.html?track_id=${widget.trackUserId}';
   }
 
   Future<void> _handleWebMessage(BuildContext context, dynamic data) async {

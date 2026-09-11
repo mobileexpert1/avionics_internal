@@ -109,7 +109,7 @@ class ConstantStrings {
   static const String airlineTicketTitle = "Airline Ticket";
 
   static const String jettingAroundTheWorldTitle = "Jetting Around The World";
-  static const String boardingPassTitle = "My Boarding Passes";
+  static const String boardingPassTitle = "Boarding Pass";
 
   // ─────────────────────────────
   // Create New Password

@@ -129,9 +129,11 @@ class _BaseScreenForAllLevelState
           FirebaseEvents.blackBoxListScreen,
         );
 
+        final storedId = await SharedPrefsHelper.readUserId();
+
         AppNavigator.push(
           context,
-          JettingAroundTheWorldScreen(isComeFromResultScreen: false),
+          JettingAroundTheWorldScreen(isComeFromResultScreen: false, trackUserId:storedId ?? ""),
           multiBlocProviders: [
             BlocProvider(create: (_) => JettingTheWorldCubit()),
           ],

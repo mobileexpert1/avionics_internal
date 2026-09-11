@@ -26,7 +26,7 @@ class ManageAccountRepository {
       final Map<String, dynamic> json =
       raw is String ? jsonDecode(raw) as Map<String, dynamic> : raw;
       final profile = ManageAccountModel.fromJson(json);
-      await SharedPrefsHelper.save(profile.id);
+      await SharedPrefsHelper.saveUserId(profile.id);
       return profile;
     }
     on HttpStatusException catch (e) {
@@ -62,7 +62,7 @@ class ManageAccountRepository {
   }
 
   Future<ManageAccountModel> _getLocalRow() async {
-    final uid = await SharedPrefsHelper.read();
+    final uid = await SharedPrefsHelper.readUserId();
     if (uid == null || uid.isEmpty) {
       throw Exception('No logged-in user id stored');
     }

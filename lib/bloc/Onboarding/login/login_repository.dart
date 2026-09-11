@@ -44,7 +44,7 @@ class LoginRepository {
       final response = LoginResponseModel.fromJson(user);
 
       if (response.userDetails != null) {
-        await SharedPrefsHelper.save(response.userDetails!.id);
+        await SharedPrefsHelper.saveUserId(response.userDetails!.id);
         await _users.insertAll([response.userDetails!]);
       }
       return response;
@@ -71,7 +71,7 @@ class LoginRepository {
       final response = LoginResponseModel.fromJson(user);
 
       if (response.userDetails != null) {
-        await SharedPrefsHelper.save(response.userDetails!.id);
+        await SharedPrefsHelper.saveUserId(response.userDetails!.id);
         await _users.insertAll([response.userDetails!]);
       }
       return response;

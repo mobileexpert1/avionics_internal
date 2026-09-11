@@ -26,7 +26,7 @@ class OtpRepository {
       );
       final model = LoginResponseModel.fromJson(response);
       if (model.userDetails?.id != null) {
-        await SharedPrefsHelper.save(model.userDetails!.id);
+        await SharedPrefsHelper.saveUserId(model.userDetails!.id);
       }
       return model;
     } catch (e) {
