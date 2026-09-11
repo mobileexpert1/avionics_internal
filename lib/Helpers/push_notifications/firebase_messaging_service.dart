@@ -127,10 +127,10 @@ class FirebaseMessagingService {
     GlobalKey<NavigatorState>? navigatorKey,
   }) async {
     Future.delayed(const Duration(milliseconds: 500), () {
-      final rootTabState = RootTabbarscreen.globalKey.currentState;
-      print("CurrentContext = ${RootTabbarscreen.globalKey.currentContext}");
+      final rootTabState = RootTabbarScreen.globalKey.currentState;
+      print("CurrentContext = ${RootTabbarScreen.globalKey.currentContext}");
 
-      print("CurrentState = ${RootTabbarscreen.globalKey.currentState}");
+      print("CurrentState = ${RootTabbarScreen.globalKey.currentState}");
       print("rootTabState-=-=-=-=-=$rootTabState");
       if (rootTabState == null) return;
 

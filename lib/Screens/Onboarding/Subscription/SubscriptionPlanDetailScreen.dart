@@ -55,6 +55,7 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
     AnalyticsService.instance.logVisibleScreen(
       FirebaseEvents.subscriptionScreen,
     );
+
     UxCamService.instance.logScreen(FirebaseEvents.subscriptionScreen);
     FlutterUxcam.occludeSensitiveScreen(true);
     if (kIsWeb) {
@@ -161,12 +162,23 @@ class _SubscriptionPlanDetailState extends State<SubscriptionPlanDetailScreen> {
                       : "Restore Subscription Successfully"),
                   svgAsset: CommonUi.setSvgImage(AssetsPath.signInIconForAlert),
                 );
+                // Navigator.pushAndRemoveUntil(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (_) =>
+                //         RootTabbarScreen(key: RootTabbarScreen.globalKey),
+                //   ),
+                //   (route) => false,
+                // );
 
+                final hasRootTabbar =
+                    RootTabbarScreen.globalKey.currentState?.mounted ?? false;
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        RootTabbarscreen(key: RootTabbarscreen.globalKey),
+                    builder: (_) => hasRootTabbar
+                        ? const RootTabbarScreen()
+                        : RootTabbarScreen(key: RootTabbarScreen.globalKey),
                   ),
                   (route) => false,
                 );
@@ -561,17 +573,6 @@ class _PlanCard extends StatelessWidget {
               isEnabled: !state.loading,
               onPressed: () {
                 openSubscriptionPlan(context);
-                // context.read<SubscriptionBuyPlanCubit>().selectPackage(package);
-                // context.read<SubscriptionBuyPlanCubit>().buySelected();
-                //
-                // AnalyticsService.instance.buttonPressed(
-                //   FirebaseEvents.subscriptionScreen,
-                //   FirebaseEvents.goPremiumSubscriptionButton,
-                // );
-                // UxCamService.instance.buttonPressed(
-                //   FirebaseEvents.subscriptionScreen,
-                //   FirebaseEvents.goPremiumSubscriptionButton,
-                // );
               },
             ),
 
@@ -606,7 +607,9 @@ class _PlanCard extends StatelessWidget {
 
   void openSubscriptionPlan(BuildContext context) {
     final subscriptionCubit = context.read<SubscriptionCubit>();
-    subscriptionCubit.loadPlans(true);
+    subscriptionCubit.loadPlans(package.storeProduct.title
+        .toLowerCase()
+        .contains("basic"));
     showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -619,7 +622,23 @@ class _PlanCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: BlocProvider.value(
               value: subscriptionCubit,
-              child: const AllSubPlanListPopup(),
+              child: AllSubPlanListPopup(
+                onContinueButton: () {
+                  context.read<SubscriptionBuyPlanCubit>().selectPackage(
+                    package,
+                  );
+                  context.read<SubscriptionBuyPlanCubit>().buySelected();
+
+                  AnalyticsService.instance.buttonPressed(
+                    FirebaseEvents.subscriptionScreen,
+                    FirebaseEvents.goPremiumSubscriptionButton,
+                  );
+                  UxCamService.instance.buttonPressed(
+                    FirebaseEvents.subscriptionScreen,
+                    FirebaseEvents.goPremiumSubscriptionButton,
+                  );
+                },
+              ),
             ),
           ),
         );

@@ -17,17 +17,17 @@ import '../../Profile/SettingScreen/SettingMenuScreen/3_AddOnPacks/AddOnPacksScr
 import '../../WilcoBoat/ChatBotScreen.dart';
 import '../HomeScreen.dart';
 
-class RootTabbarscreen extends StatefulWidget {
+class RootTabbarScreen extends StatefulWidget {
   static final GlobalKey<RootTabbarScreenState> globalKey =
       GlobalKey<RootTabbarScreenState>();
 
-  const RootTabbarscreen({Key? key}) : super(key: key);
+  const RootTabbarScreen({Key? key}) : super(key: key);
 
   @override
-  State<RootTabbarscreen> createState() => RootTabbarScreenState();
+  State<RootTabbarScreen> createState() => RootTabbarScreenState();
 }
 
-class RootTabbarScreenState extends State<RootTabbarscreen> {
+class RootTabbarScreenState extends State<RootTabbarScreen> {
   int _selectedIndex = 0;
   List<Widget> _pages = [];
   bool _isLoading = true;
@@ -39,7 +39,7 @@ class RootTabbarScreenState extends State<RootTabbarscreen> {
     print("RootTabbar mounted");
     print("Widget Key = ${widget.key}");
     print(
-      "GlobalKey == WidgetKey : ${widget.key == RootTabbarscreen.globalKey}",
+      "GlobalKey == WidgetKey : ${widget.key == RootTabbarScreen.globalKey}",
     );
     _loadTokenAndInitPages();
   }

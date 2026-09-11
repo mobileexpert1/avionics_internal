@@ -485,7 +485,7 @@ class LoginCubit extends Cubit<LoginState> {
         );
         AppNavigator.pushAndRemoveUntil(
           context,
-          RootTabbarscreen(key: RootTabbarscreen.globalKey),
+          RootTabbarScreen(key: RootTabbarScreen.globalKey),
           disableSwipeBack: true,
         );
       }

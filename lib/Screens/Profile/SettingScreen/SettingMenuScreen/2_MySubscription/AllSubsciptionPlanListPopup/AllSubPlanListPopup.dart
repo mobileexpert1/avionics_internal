@@ -8,7 +8,9 @@ import '../../../../../../bloc/Onboarding/Subscription/SubscriptionPlanList/subs
 import '../../../../../../bloc/Onboarding/Subscription/SubscriptionPlanList/subscriptionPlanList_state.dart';
 
 class AllSubPlanListPopup extends StatelessWidget {
-  const AllSubPlanListPopup({super.key});
+  final VoidCallback onContinueButton;
+
+  const AllSubPlanListPopup({super.key, required this.onContinueButton});
 
   @override
   Widget build(BuildContext context) {
@@ -265,6 +267,7 @@ class AllSubPlanListPopup extends StatelessWidget {
                           );
 
                           Navigator.pop(context, true);
+                          onContinueButton.call();
                         },
                       ),
                     ),

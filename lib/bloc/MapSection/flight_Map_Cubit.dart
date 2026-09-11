@@ -614,7 +614,7 @@ class FlightMapCubit extends Cubit<FlightMapState> {
               isComeFromSignup: true,
             ),
             onGoToFirstTab: () {
-              RootTabbarscreen.globalKey.currentState?.onItemTapped(0);
+              RootTabbarScreen.globalKey.currentState?.onItemTapped(0);
             },
           );
         }

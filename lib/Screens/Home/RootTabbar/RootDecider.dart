@@ -22,7 +22,7 @@ class RootDecider extends StatelessWidget {
           );
         } else {
           final isUserLoggedIn = snapshot.data ?? false;
-          return isUserLoggedIn ? RootTabbarscreen(key: RootTabbarscreen.globalKey) : LoginScreen();
+          return isUserLoggedIn ? RootTabbarScreen(key: RootTabbarScreen.globalKey) : LoginScreen();
         }
       },
     );

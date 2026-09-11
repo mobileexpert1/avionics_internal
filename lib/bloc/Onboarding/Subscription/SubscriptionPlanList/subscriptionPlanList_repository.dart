@@ -16,12 +16,12 @@ class SubscriptionRepository {
               durations: [
                 SubscriptionDuration(
                   title: "1 month",
-                  totalPrice: 13.99,
-                  monthlyPrice: 13.99,
+                  totalPrice: 12.99,
+                  monthlyPrice: 12.99,
                 ),
                 SubscriptionDuration(
                   title: "6 months",
-                  totalPrice: 71.94,
+                  totalPrice: 71.24,
                   monthlyPrice: 11.99,
                 ),
                 SubscriptionDuration(
@@ -34,8 +34,8 @@ class SubscriptionRepository {
           ]
         : [
             SubscriptionPlan(
-              name: "Basic",
-              tag: "Starter",
+              name: "Premium",
+              tag: "Premium",
               features: [
                 "Aircraft Encyclopedia",
                 "Live Aircraft Tracking",
@@ -44,18 +44,18 @@ class SubscriptionRepository {
               durations: [
                 SubscriptionDuration(
                   title: "1 month",
-                  totalPrice: 13.99,
-                  monthlyPrice: 13.99,
+                  totalPrice: 24.99,
+                  monthlyPrice: 24.99,
                 ),
                 SubscriptionDuration(
                   title: "6 months",
-                  totalPrice: 71.94,
-                  monthlyPrice: 11.99,
+                  totalPrice: 137.94,
+                  monthlyPrice: 22.99,
                 ),
                 SubscriptionDuration(
                   title: "1 year",
-                  totalPrice: 119.88,
-                  monthlyPrice: 9.99,
+                  totalPrice: 227.88,
+                  monthlyPrice: 18.99,
                 ),
               ],
             ),
