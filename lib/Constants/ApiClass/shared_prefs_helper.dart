@@ -97,17 +97,17 @@ class SharedPrefsHelper {
     await prefs.remove(key);
   }
 
-  static Future<void> save(String uid) async {
+  static Future<void> saveUserId(String uid) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_key, uid);
   }
 
-  static Future<String?> read() async {
+  static Future<String?> readUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_key);
   }
 
-  static Future<void> clear() async {
+  static Future<void> clearUseId() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
   }

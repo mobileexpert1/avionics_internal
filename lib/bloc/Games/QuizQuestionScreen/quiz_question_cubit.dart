@@ -880,12 +880,12 @@ class QuizQuestionCubit extends Cubit<QuizQuestionState> {
           Future.delayed(const Duration(milliseconds: 100), () async {
             // await SharedPrefsHelper.clearJettingGames();
             // Handle After Show All Button.
-
+            final storedId = await SharedPrefsHelper.readUserId();
             AppNavigator.push(
               context,
               JettingAroundTheWorldScreen(
                 isComeFromResultScreen: true,
-                responseFromResultScreenData: response.data,
+                responseFromResultScreenData: response.data, trackUserId: storedId ?? "",
               ),
               multiBlocProviders: [
                 BlocProvider(create: (_) => JettingTheWorldCubit()),

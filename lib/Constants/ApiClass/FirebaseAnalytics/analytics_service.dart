@@ -16,7 +16,7 @@ class AnalyticsService {
   }
 
   Future<String> _generateUserId() async {
-    final storedId = await SharedPrefsHelper.read();
+    final storedId = await SharedPrefsHelper.readUserId();
     final uid = storedId ?? "";
     if (kIsWeb) {
       return "web_user_$uid";
